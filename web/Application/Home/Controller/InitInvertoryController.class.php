@@ -9,7 +9,8 @@ class InitInvertoryController extends Controller {
 
     public function warehouseList() {
         if (IS_POST) {
-            $this->ajaxReturn((new InitInvertoryService())->warehouseList());
+			$is = new InitInvertoryService();
+            $this->ajaxReturn($is->warehouseList());
         }
     }
 
@@ -21,13 +22,15 @@ class InitInvertoryController extends Controller {
                 "start" => I("post.start"),
                 "limit" => I("post.limit")
             );
-            $this->ajaxReturn((new InitInvertoryService())->initInfoList($params));
+			$is = new InitInvertoryService();
+            $this->ajaxReturn($is->initInfoList($params));
         }
     }
 
     public function goodsCategoryList() {
         if (IS_POST) {
-            $this->ajaxReturn((new InitInvertoryService())->goodsCategoryList());
+			$is = new InitInvertoryService();
+            $this->ajaxReturn($is->goodsCategoryList());
         }
     }
 
@@ -40,7 +43,8 @@ class InitInvertoryController extends Controller {
                 "start" => I("post.start"),
                 "limit" => I("post.limit")
             );
-            $this->ajaxReturn((new InitInvertoryService())->goodsList($params));
+			$is = new InitInvertoryService();
+            $this->ajaxReturn($is->goodsList($params));
         }
     }
 
@@ -52,7 +56,8 @@ class InitInvertoryController extends Controller {
                 "goodsCount" => I("post.goodsCount"),
                 "goodsMoney" => I("post.goodsMoney")
             );
-            $this->ajaxReturn((new InitInvertoryService())->commitInitInvertoryGoods($params));
+			$is = new InitInvertoryService();
+            $this->ajaxReturn($is->commitInitInvertoryGoods($params));
         }
     }
 
@@ -61,7 +66,8 @@ class InitInvertoryController extends Controller {
             $params = array(
                 "warehouseId" => I("post.warehouseId"),
             );
-            $this->ajaxReturn((new InitInvertoryService())->finish($params));
+			$is = new InitInvertoryService();
+            $this->ajaxReturn($is->finish($params));
         }
     }
     
@@ -70,7 +76,8 @@ class InitInvertoryController extends Controller {
             $params = array(
                 "warehouseId" => I("post.warehouseId"),
             );
-            $this->ajaxReturn((new InitInvertoryService())->cancel($params));
+			$is = new InitInvertoryService();
+            $this->ajaxReturn($is->cancel($params));
         }
     }
 }
