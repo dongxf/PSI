@@ -157,7 +157,10 @@ class InitInvertoryService extends PSIBaseService {
                         . " biz_date, biz_user_id, date_created,  ref_number, ref_type) "
                         . " values ('%s', '%s', %d, %f, %f, %d, %f, %f, now(), '%s', now(),"
                         . " '', '库存建账')";
-                $db->execute($sql, $warehouseId, $goodsId, $goodsCount, $goodsPrice, $goodsMoney, $goodsCount, $goodsPrice, $goodsMoney, (new UserService())->getLoginUserId());
+				$us = new UserService();
+                $db->execute($sql, $warehouseId, $goodsId, $goodsCount, 
+						$goodsPrice, $goodsMoney, $goodsCount, $goodsPrice, 
+						$goodsMoney, $us->getLoginUserId());
             } else {
                 $id = $data[0]["id"];
                 $sql = "update t_invertory_detail "
@@ -202,7 +205,8 @@ class InitInvertoryService extends PSIBaseService {
             $db->execute($sql, $warehouseId);
 
             $log = "仓库 [{$name}] 建账完毕";
-            (new BizlogService())->insertBizlog($log, "库存");
+			$bs = new BizlogService();
+            $bs->insertBizlog($log, "库存");
 
             $db->commit();
         } catch (Exception $exc) {
@@ -240,7 +244,8 @@ class InitInvertoryService extends PSIBaseService {
         $db->execute($sql, $warehouseId);
 
         $log = "仓库 [{$name}] 取消建账完毕标志";
-        (new BizlogService())->insertBizlog($log, "库存");
+		$bs = new BizlogService();
+        $bs->insertBizlog($log, "库存");
 
 
         return $this->ok();
