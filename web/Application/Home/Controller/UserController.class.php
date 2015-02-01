@@ -73,7 +73,8 @@ class UserController extends Controller {
 		if (IS_POST) {
 			$loginName = I("post.loginName");
 			$password = I("post.password");
-			$this->ajaxReturn((new UserService())->doLogin($loginName, $password));
+			$us = new UserService();
+			$this->ajaxReturn($us->doLogin($loginName, $password));
 		}
 	}
 
@@ -178,7 +179,8 @@ class UserController extends Controller {
 	public function queryData() {
 		if (IS_POST) {
 			$queryKey = I("post.queryKey");
-			$this->ajaxReturn((new UserService())->queryData($queryKey));
+			$us = new UserService();
+			$this->ajaxReturn($us->queryData($queryKey));
 		}
 	}
 }
