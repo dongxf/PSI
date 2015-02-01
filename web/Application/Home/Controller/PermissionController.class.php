@@ -15,7 +15,8 @@ class PermissionController extends Controller {
 		$this->assign("uri", __ROOT__ . "/");
 		
 		$this->assign("loginUserName", $us->getLoginUserName());
-		$this->assign("dtFlag", getdate()[0]);
+		$dtFlag = getdate();
+		$this->assign("dtFlag", $dtFlag[0]);
 
 		if ($us->hasPermission(FIdConst::PERMISSION_MANAGEMENT)) {
 			$this->display();
