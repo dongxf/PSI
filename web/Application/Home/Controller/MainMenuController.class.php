@@ -30,7 +30,8 @@ class MainMenuController extends Controller {
 		switch ($fid) {
 			case FIdConst::RELOGIN:
 				// 重新登录
-				(new UserService())->clearLoginUserInSession();
+				$us = new UserService();
+				$us->clearLoginUserInSession();
 				redirect(__ROOT__ . "/Home");
 				break;
 			case FIdConst::CHANGE_MY_PASSWORD:
