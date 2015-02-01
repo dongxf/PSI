@@ -172,10 +172,13 @@ class PayablesService extends PSIBaseService {
 			$sql = "insert into t_payment (id, act_money, biz_date, date_created, input_user_id,"
 					. "pay_user_id,  bill_id,  ref_type, ref_number, remark) "
 					. " values ('%s', %f, '%s', now(), '%s', '%s', '%s', '%s', '%s', '%s')";
-			$db->execute($sql, (new IdGenService())->newId(), $actMoney, $bizDT, (new UserService())->getLoginUserId(), $bizUserId, $billId, $refType, $refNumber, $remark);
+			$idGen = new IdGenService();
+			$us = new UserService();
+			$db->execute($sql, $idGen->newId(), $actMoney, $bizDT, $us->getLoginUserId(), $bizUserId, $billId, $refType, $refNumber, $remark);
 
 			$log = "为 {$refType} - 单号：{$refNumber} 付款：{$actMoney}元";
-			(new BizlogService())->insertBizlog($log, "应付账款管理");
+			$bs = new BizlogService();
+			$bs->insertBizlog($log, "应付账款管理");
 
 			// 应付明细账			
 			$sql = "select pay_money, act_money, ca_type, ca_id "
