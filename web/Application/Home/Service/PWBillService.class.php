@@ -147,7 +147,8 @@ class PWBillService extends PSIBaseService {
 						$bizDT, $id);
 				
 				$log = "编辑采购入库单: 单号 = {$ref}";
-				(new BizlogService())->insertBizlog($log, "采购入库");
+				$bs = new BizlogService();
+				$bs->insertBizlog($log, "采购入库");
 				$db->commit();
 			} catch (Exception $exc) {
 				$db->rollback();
@@ -163,7 +164,9 @@ class PWBillService extends PSIBaseService {
 						. " values ('%s', '%s', '%s', '%s', '%s', '%s', 0, now(), 0, '%s')";
 
 				$ref = $this->genNewBillRef();
-				$db->execute($sql, $id, $ref, $supplierId, $warehouseId, $bizDT, $bizUserId, (new UserService())->getLoginUserId());
+				$us = new UserService();
+				$db->execute($sql, $id, $ref, $supplierId, $warehouseId, 
+						$bizDT, $bizUserId, $us->getLoginUserId());
 
 				// 明细记录
 				$items = $bill["items"];
@@ -198,7 +201,8 @@ class PWBillService extends PSIBaseService {
 				$db->execute($sql, $totalMoney, $id);
 
 				$log = "新建采购入库单: 单号 = {$ref}";
-				(new BizlogService())->insertBizlog($log, "采购入库");
+				$bs = new BizlogService();
+				$bs->insertBizlog($log, "采购入库");
 				
 				$db->commit();
 			} catch (Exception $exc) {
@@ -302,7 +306,8 @@ class PWBillService extends PSIBaseService {
 			$db->execute($sql, $id);
 
 			$log = "删除采购入库单: 单号 = {$ref}";
-			(new BizlogService())->insertBizlog($log, "采购入库");
+			$bs = new BizlogService();
+			$bs->insertBizlog($log, "采购入库");
 			
 			$db->commit();
 		} catch (Exception $exc) {
@@ -431,7 +436,8 @@ class PWBillService extends PSIBaseService {
 			$sql = "insert into t_payables_detail (id, pay_money, act_money, balance_money,"
 					. "ca_id, ca_type, date_created, ref_number, ref_type)"
 					. " values ('%s', %f, 0, %f, '%s', 'supplier', now(), '%s', '采购入库' )";
-			$db->execute($sql, (new IdGenService())->newId(), $billPayables,
+			$idGen = new IdGenService();
+			$db->execute($sql, $idGen->newId(), $billPayables,
 					$billPayables, $supplierId, $ref);
 			// 应付总账
 			$sql = "select id, pay_money from t_payables where ca_id = '%s' and ca_type = 'supplier' ";
@@ -449,14 +455,15 @@ class PWBillService extends PSIBaseService {
 				
 				$sql = "insert into t_payables (id, pay_money, act_money, balance_money, "
 						. "ca_id, ca_type) values ('%s', %f, 0, %f, '%s', 'supplier')";
-				$db->execute($sql, (new IdGenService())->newId(), $payMoney,
+				$db->execute($sql, $idGen->newId(), $payMoney,
 						$payMoney, $supplierId);
 			}
 			
 			
 			// 日志
 			$log = "提交采购入库: 单号 = {$ref}";
-			(new BizlogService())->insertBizlog($log, "采购入库");
+			$bs = new BizlogService();
+			$bs->insertBizlog($log, "采购入库");
 			
 			$db->commit();
 		} catch (Exception $exc) {
