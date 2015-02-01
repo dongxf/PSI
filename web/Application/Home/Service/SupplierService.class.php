@@ -77,7 +77,8 @@ class SupplierService extends PSIBaseService {
 			$db->execute($sql, $code, $name, $id);
 
 			$log = "编辑供应商分类: 编码 = $code, 分类名 = $name";
-			(new BizlogService())->insertBizlog($log, "基础数据-供应商档案");
+			$bs = new BizlogService();
+			$bs->insertBizlog($log, "基础数据-供应商档案");
 		} else {
 			// 新增
 			// 检查分类编码是否已经存在
@@ -88,13 +89,15 @@ class SupplierService extends PSIBaseService {
 				return $this->bad("编码为 [$code] 的分类已经存在");
 			}
 
-			$id = (new IdGenService())->newId();
+			$idGen = new IdGenService();
+			$id = $idGen->newId();
 
 			$sql = "insert into t_supplier_category (id, code, name) values ('%s', '%s', '%s') ";
 			$db->execute($sql, $id, $code, $name);
 
 			$log = "新增供应商分类：编码 = $code, 分类名 = $name";
-			(new BizlogService())->insertBizlog($log, "基础数据-供应商档案");
+			$bs = new BizlogService();
+			$bs->insertBizlog($log, "基础数据-供应商档案");
 		}
 
 		return $this->ok($id);
@@ -119,7 +122,8 @@ class SupplierService extends PSIBaseService {
 
 		$db->execute("delete from t_supplier_category where id = '%s' ", $id);
 		$log = "删除供应商分类： 编码 = {$category['code']}, 分类名称 = {$category['name']}";
-		(new BizlogService())->insertBizlog($log, "基础数据-供应商档案");
+		$bs = new BizlogService();
+		$bs->insertBizlog($log, "基础数据-供应商档案");
 
 		return $this->ok();
 	}
@@ -139,7 +143,8 @@ class SupplierService extends PSIBaseService {
 		$initPayables = $params["initPayables"];
 		$initPayablesDT = $params["initPayablesDT"];
 		
-		$py = (new PinyinService())->toPY($name);
+		$ps = new PinyinService();
+		$py = $ps->toPY($name);
 
 		$categoryId = $params["categoryId"];
 		
@@ -174,10 +179,12 @@ class SupplierService extends PSIBaseService {
 					$id);
 			
 			$log = "编辑供应商：编码 = $code, 名称 = $name";
-			(new BizlogService())->insertBizlog($log, "基础数据-供应商档案");
+			$bs = new BizlogService();
+			$bs->insertBizlog($log, "基础数据-供应商档案");
 		} else {
 			// 新增
-			$id = (new IdGenService())->newId();
+			$idGen = new IdGenService();
+			$id = $idGen->newId();
 			
 			// 检查编码是否已经存在
 			$sql = "select count(*) as cnt from t_supplier where code = '%s' ";
@@ -197,8 +204,9 @@ class SupplierService extends PSIBaseService {
 					$qq01, $tel01, $mobile01, $contact02, $qq02,
 					$tel02, $mobile02);
 			
-			$log = "新增供应商：编码 = $code, 名称 = $name";
-			(new BizlogService())->insertBizlog($log, "基础数据-供应商档案");
+			$log = "新增供应商：编码 = {$code}, 名称 = {$name}";
+			$bs = new BizlogService();
+			$bs->insertBizlog($log, "基础数据-供应商档案");
 		}
 		
 		// 处理应付期初余额
@@ -230,7 +238,8 @@ class SupplierService extends PSIBaseService {
 						. " where id = '%s' ";
 				$db->execute($sql, $initPayables, $initPayables, $initPayablesDT, $payId);
 			} else {
-				$payId = (new IdGenService())->newId();
+				$idGen = new IdGenService();
+				$payId = $idGen->newId();
 				$sql = "insert into t_payables_detail (id, pay_money, act_money, balance_money, ca_id,"
 						. " ca_type, ref_type, ref_number, date_created)"
 						. " values ('%s', %f, 0, %f, '%s', 'supplier', '期初建账', '', '%s') ";
@@ -247,7 +256,8 @@ class SupplierService extends PSIBaseService {
 						. " where id = '%s' ";
 				$db->execute($sql, $initPayables, $initPayables, $pId);
 			} else {
-				$pId = (new IdGenService())->newId();
+				$idGen = new IdGenService();
+				$pId = $idGen->newId();
 				$sql = "insert into t_payables (id, pay_money, act_money, balance_money, ca_id,"
 						. " ca_type)"
 						. " values ('%s', %f, 0, %f, '%s', 'supplier') ";
@@ -276,8 +286,9 @@ class SupplierService extends PSIBaseService {
 			$sql = "delete from t_supplier where id = '%s' ";
 			$db->execute($sql, $id);
 						
-			$log = "删除供应商档案：编码 = $code,  名称 = $name";
-			(new BizlogService())->insertBizlog($log, "基础数据-供应商档案");
+			$log = "删除供应商档案：编码 = {$code},  名称 = {$name}";
+			$bs = new BizlogService();
+			$bs->insertBizlog($log, "基础数据-供应商档案");
 			
 			$db->commit();
 		} catch (Exception $exc) {
@@ -291,7 +302,7 @@ class SupplierService extends PSIBaseService {
 	
 	public function queryData($queryKey) {
 		if (!$queryKey) {
-			return [];
+			return array();
 		}
 		
 		$sql = "select id, code, name from t_supplier"
