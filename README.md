@@ -2,6 +2,10 @@
 -------------
 >PSI是开源进销存系统。PSI是Purchase Sale Invertory这三个单词的首字母。
 
+PSI演示
+-------------
+>PSI的演示见：http://psi.oschina.mopaas.com
+
 PSI的开源协议
 -------------
 >PSI的开源协议为GPL v3
