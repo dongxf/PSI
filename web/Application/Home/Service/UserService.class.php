@@ -279,7 +279,8 @@ class UserService extends PSIBaseService {
 		$orgId = $params["orgId"];
 		$enabled = $params["enabled"];
 
-		$py = (new PinyinService())->toPY($name);
+		$pys = new PinyinService();
+		$py = $pys->toPY($name);
 
 		if ($id) {
 			// 修改
