@@ -36,7 +36,8 @@ class CustomerService extends PSIBaseService {
 			$db->execute($sql, $code, $name, $id);
 
 			$log = "编辑客户分类: 编码 = {$code}, 分类名 = {$name}";
-			(new BizlogService())->insertBizlog($log, "客户关系-客户资料");
+			$bs = new BizlogService();
+			$bs->insertBizlog($log, "客户关系-客户资料");
 		} else {
 			// 新增
 			// 检查分类编码是否已经存在
@@ -47,13 +48,15 @@ class CustomerService extends PSIBaseService {
 				return $this->bad("编码为 [{$code}] 的分类已经存在");
 			}
 
-			$id = (new IdGenService())->newId();
+			$idGen = new IdGenService();
+			$id = $idGen->newId();
 
 			$sql = "insert into t_customer_category (id, code, name) values ('%s', '%s', '%s') ";
 			$db->execute($sql, $id, $code, $name);
 
 			$log = "新增客户分类：编码 = {$code}, 分类名 = {$name}";
-			(new BizlogService())->insertBizlog($log, "客户关系-客户资料");
+			$bs = new BizlogService();
+			$bs->insertBizlog($log, "客户关系-客户资料");
 		}
 
 		return $this->ok($id);
@@ -79,7 +82,8 @@ class CustomerService extends PSIBaseService {
 
 		$db->execute("delete from t_customer_category where id = '%s' ", $id);
 		$log = "删除客户分类： 编码 = {$category['code']}, 分类名称 = {$category['name']}";
-		(new BizlogService())->insertBizlog($log, "客户关系-客户资料");
+		$bs = new BizlogService();
+		$bs->insertBizlog($log, "客户关系-客户资料");
 
 		return $this->ok();
 	}
@@ -99,7 +103,8 @@ class CustomerService extends PSIBaseService {
 		$initReceivables = $params["initReceivables"];
 		$initReceivablesDT = $params["initReceivablesDT"];
 		
-		$py = (new PinyinService())->toPY($name);
+		$ps = new PinyinService();
+		$py = $ps->toPY($name);
 
 		$categoryId = $params["categoryId"];
 
@@ -131,10 +136,12 @@ class CustomerService extends PSIBaseService {
 			$db->execute($sql, $code, $name, $categoryId, $py, $contact01, $qq01, $tel01, $mobile01, $contact02, $qq02, $tel02, $mobile02, $id);
 
 			$log = "编辑客户：编码 = {$code}, 名称 = {$name}";
-			(new BizlogService())->insertBizlog($log, "客户关系-客户资料");
+			$bs = new BizlogService();
+			$bs->insertBizlog($log, "客户关系-客户资料");
 		} else {
 			// 新增
-			$id = (new IdGenService())->newId();
+			$idGen = new IdGenService();
+			$id = $idGen->newId();
 
 			// 检查编码是否已经存在
 			$sql = "select count(*) as cnt from t_customer where code = '%s' ";
@@ -153,7 +160,8 @@ class CustomerService extends PSIBaseService {
 			$db->execute($sql, $id, $categoryId, $code, $name, $py, $contact01, $qq01, $tel01, $mobile01, $contact02, $qq02, $tel02, $mobile02);
 
 			$log = "新增客户：编码 = {$code}, 名称 = {$name}";
-			(new BizlogService())->insertBizlog($log, "客户关系-客户资料");
+			$bs = new BizlogService();
+			$bs->insertBizlog($log, "客户关系-客户资料");
 		}
 		
 		// 处理应收账款
@@ -184,7 +192,8 @@ class CustomerService extends PSIBaseService {
 						. " where id = '%s' ";
 				$db->execute($sql, $initReceivables, $initReceivables, $initReceivablesDT, $rvId);
 			} else {
-				$rvId = (new IdGenService())->newId();
+				$idGen = new IdGenService();
+				$rvId = $idGen->newId();
 				$sql = "insert into t_receivables_detail (id, rv_money, act_money, balance_money,"
 						. " date_created, ca_id, ca_type, ref_number, ref_type)"
 						. " values ('%s', %f, 0, %f, '%s', '%s', 'customer', '', '应收建账') ";
@@ -201,7 +210,8 @@ class CustomerService extends PSIBaseService {
 						. " where id = '%s' ";
 				$db->execute($sql, $initReceivables, $initReceivables, $rvId);
 			}else {
-				$rvId = (new IdGenService())->newId();
+				$idGen = new IdGenService();
+				$rvId = $idGen->newId();
 				$sql = "insert into t_receivables (id, rv_money, act_money, balance_money,"
 						. "ca_id, ca_type) values ('%s', %f, 0, %f, '%s', 'customer')";
 				$db->execute($sql, $rvId, $initReceivables, $initReceivables, $id);
@@ -268,7 +278,8 @@ class CustomerService extends PSIBaseService {
 			$db->execute($sql, $id);
 
 			$log = "删除客户资料：编码 = {$code},  名称 = {$name}";
-			(new BizlogService())->insertBizlog($log, "客户关系-客户资料");
+			$bs = new BizlogService();
+			$bs->insertBizlog($log, "客户关系-客户资料");
 
 			$db->commit();
 		} catch (Exception $exc) {
@@ -283,7 +294,7 @@ class CustomerService extends PSIBaseService {
 	public function queryData($params) {
 		$queryKey = $params["queryKey"];
 		if (!queryKey) {
-			return [];
+			return array();
 		}
 		
 		$sql = "select id, code, name"
