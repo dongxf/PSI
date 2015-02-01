@@ -59,7 +59,9 @@
 	<script type="text/javascript">
 	    Ext.onReady(function () {
                 PSI.Const.BASE_URL = "{$uri}";
-	        var form = Ext.create("PSI.User.LoginForm");
+	        var form = Ext.create("PSI.User.LoginForm", {
+                demoInfo: "{$demoInfo}"
+            });
 	        form.show();
 	
 	        Ext.get("loading").remove();

@@ -8,6 +8,13 @@ namespace Home\Service;
  * @author 李静波
  */
 class UserService extends PSIBaseService {
+	public function getDemoLoginInfo() {
+		if ($this->isDemo()) {
+			return "您当前处于演示环境，默认的登录名和密码均为 admin 更多帮助请点击 [帮助] 按钮来查看";
+		} else {
+			return "";
+		}
+	}
 
 	public function hasPermission($fid = null) {
 		$result = session("loginUserId") != null;

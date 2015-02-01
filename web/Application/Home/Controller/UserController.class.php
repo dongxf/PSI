@@ -33,7 +33,9 @@ class UserController extends Controller {
 		$this->assign("uri", __ROOT__ . "/");
 		$dtFlag = getdate();
 		$this->assign("dtFlag", $dtFlag[0]);
-
+		$us = new UserService();
+		$this->assign("demoInfo", $us->getDemoLoginInfo());
+		
 		$this->display();
 	}
 

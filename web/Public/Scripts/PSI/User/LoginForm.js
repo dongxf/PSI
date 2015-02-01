@@ -1,5 +1,9 @@
 Ext.define("PSI.User.LoginForm", {
     extend: 'Ext.window.Window',
+    
+    config: {
+        demoInfo: ""
+    },
 
     header: {
         title: "<span style='font-size:120%'>登录 - PSI</span>",
@@ -10,7 +14,6 @@ Ext.define("PSI.User.LoginForm", {
     closable: false,
     onEsc: Ext.emptyFn,
     width: 400,
-    height: 140,
     layout: "fit",
     defaultFocus: Ext.util.Cookies.get("PSI_user_login_name") ? "editPassword" : "editLoginName",
 
@@ -18,6 +21,7 @@ Ext.define("PSI.User.LoginForm", {
         var me = this;
 
         Ext.apply(me, {
+            height: me.getDemoInfo() == "" ? 140 : 180,
             items: [{
                 id: "loginForm",
                 xtype: "form",
@@ -64,6 +68,9 @@ Ext.define("PSI.User.LoginForm", {
                             }
                         }
                     }
+                },{
+                    xtype: "displayfield",
+                    value: me.getDemoInfo()
                 }],
                 buttons: [{
                     text: "登录",
