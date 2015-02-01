@@ -78,7 +78,7 @@ CREATE TABLE IF NOT EXISTS `t_role_user` (
 DROP TABLE IF EXISTS `t_user`;
 CREATE TABLE IF NOT EXISTS `t_user` (
   `id` varchar(255) NOT NULL,
-  `enabled` bit(1) NOT NULL,
+  `enabled` int(11) NOT NULL,
   `login_name` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
   `org_id` varchar(255) NOT NULL,
@@ -92,7 +92,7 @@ DROP TABLE IF EXISTS `t_warehouse`;
 CREATE TABLE IF NOT EXISTS `t_warehouse` (
   `id` varchar(255) NOT NULL,
   `code` varchar(255) NOT NULL,
-  `inited` bit(1) NOT NULL,
+  `inited` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
   `py` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
