@@ -174,10 +174,13 @@ class ReceivablesService extends PSIBaseService {
 			$sql = "insert into t_receiving (id, act_money, biz_date, date_created, input_user_id,"
 					. "rv_user_id, remark, ref_number, ref_type, bill_id) "
 					. " values ('%s', %f, '%s', now(), '%s', '%s', '%s', '%s', '%s', '%s')";
-			$db->execute($sql, (new IdGenService())->newId(), $actMoney, $bizDT, (new UserService())->getLoginUserId(), $bizUserId, $remark, $refNumber, $refType, $billId);
+			$idGen = new IdGenService();
+			$us = new UserService();
+			$db->execute($sql, $idGen->newId(), $actMoney, $bizDT, $us->getLoginUserId(), $bizUserId, $remark, $refNumber, $refType, $billId);
 
 			$log = "为 {$refType} - 单号：{$refNumber} 收款：{$actMoney}元";
-			(new BizlogService())->insertBizlog($log, "应收账款管理");
+			$bs = new BizlogService();
+			$bs->insertBizlog($log, "应收账款管理");
 
 			// 应收明细账
 			$sql = "select ca_id, ca_type, act_money, balance_money"
