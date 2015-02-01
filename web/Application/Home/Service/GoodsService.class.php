@@ -33,7 +33,8 @@ class GoodsService extends PSIBaseService {
 			$db->execute($sql, $name, $id);
 
 			$log = "编辑计量单位: $name";
-			(new BizlogService())->insertBizlog($log, "基础数据-商品计量单位");
+			$bs = new BizlogService();
+			$bs->insertBizlog($log, "基础数据-商品计量单位");
 		} else {
 			// 新增
 			// 检查计量单位是否存在
@@ -44,12 +45,14 @@ class GoodsService extends PSIBaseService {
 				return $this->bad("计量单位 [$name] 已经存在");
 			}
 
-			$id = (new IdGenService())->newId();
+			$idGen = new IdGenService();
+			$id = $idGen->newId();
 			$sql = "insert into t_goods_unit(id, name) values ('%s', '%s') ";
 			$db->execute($sql, $id, $name);
 
 			$log = "新增计量单位: $name";
-			(new BizlogService())->insertBizlog($log, "基础数据-商品计量单位");
+			$bs = new BizlogService();
+			$bs->insertBizlog($log, "基础数据-商品计量单位");
 		}
 
 		return $this->ok($id);
@@ -78,7 +81,8 @@ class GoodsService extends PSIBaseService {
 		$db->execute($sql, $id);
 
 		$log = "删除商品计量单位: $name";
-		(new BizlogService())->insertBizlog($log, "基础数据-商品计量单位");
+		$bs = new BizlogService();
+		$bs->insertBizlog($log, "基础数据-商品计量单位");
 
 		return $this->ok();
 	}
@@ -110,7 +114,8 @@ class GoodsService extends PSIBaseService {
 			$db->execute($sql, $code, $name, $id);
 
 			$log = "编辑商品分类: 编码 = {$code}， 分类名称 = {$name}";
-			(new BizlogService())->insertBizlog($log, "基础数据-商品");
+			$bs = new BizlogService();
+			$bs->insertBizlog($log, "基础数据-商品");
 		} else {
 			// 新增
 			// 检查同编码的分类是否存在
@@ -121,13 +126,15 @@ class GoodsService extends PSIBaseService {
 				return $this->bad("编码为 [{$code}] 的分类已经存在");
 			}
 
-			$id = (new IdGenService())->newId();
+			$idGen = new IdGenService();
+			$id = $idGen->newId();
 
 			$sql = "insert into t_goods_category (id, code, name) values ('%s', '%s', '%s')";
 			$db->execute($sql, $id, $code, $name);
 
 			$log = "新增商品分类: 编码 = {$code}， 分类名称 = {$name}";
-			(new BizlogService())->insertBizlog($log, "基础数据-商品");
+			$bs = new BizlogService();
+			$bs->insertBizlog($log, "基础数据-商品");
 		}
 		return $this->ok($id);
 	}
@@ -155,7 +162,8 @@ class GoodsService extends PSIBaseService {
 		$db->execute($sql, $id);
 
 		$log = "删除商品分类：  编码 = {$code}， 分类名称 = {$name}";
-		(new BizlogService())->insertBizlog($log, "基础数据-商品");
+		$bs = new BizlogService();
+		$bs->insertBizlog($log, "基础数据-商品");
 
 		return $this->ok();
 	}
@@ -223,7 +231,8 @@ class GoodsService extends PSIBaseService {
 				return $this->bad("编码为 [{$code}]的商品已经存在");
 			}
 
-			$py = (new PinyinService())->toPY($name);
+			$ps = new PinyinService();
+			$py = $ps->toPY($name);
 
 			$sql = "update t_goods"
 					. " set code = '%s', name = '%s', spec = '%s', category_id = '%s', "
@@ -233,7 +242,8 @@ class GoodsService extends PSIBaseService {
 			$db->execute($sql, $code, $name, $spec, $categoryId, $unitId, $salePrice, $py, $id);
 
 			$log = "编辑商品: 商品编码 = {$code}, 品名 = {$name}, 规格型号 = {$spec}";
-			(new BizlogService())->insertBizlog($log, "基础数据-商品");
+			$bs = new BizlogService();
+			$bs->insertBizlog($log, "基础数据-商品");
 		} else {
 			// 新增
 			// 检查商品编码是否唯一
@@ -244,15 +254,18 @@ class GoodsService extends PSIBaseService {
 				return $this->bad("编码为 [{$code}]的商品已经存在");
 			}
 
-			$id = (new IdGenService())->newId();
-			$py = (new PinyinService())->toPY($name);
+			$idGen = new IdGenService();
+			$id = $idGen->newId();
+			$ps = new PinyinService();
+			$py = $ps->toPY($name);
 
 			$sql = "insert into t_goods (id, code, name, spec, category_id, unit_id, sale_price, py)"
 					. " values ('%s', '%s', '%s', '%s', '%s', '%s', %f, '%s')";
 			$db->execute($sql, $id, $code, $name, $spec, $categoryId, $unitId, $salePrice, $py);
 
 			$log = "新增商品: 商品编码 = {$code}, 品名 = {$name}, 规格型号 = {$spec}";
-			(new BizlogService())->insertBizlog($log, "基础数据-商品");
+			$bs = new BizlogService();
+			$bs->insertBizlog($log, "基础数据-商品");
 		}
 
 		return $this->ok($id);
@@ -277,14 +290,15 @@ class GoodsService extends PSIBaseService {
 		$db->execute($sql, $id);
 
 		$log = "删除商品： 商品编码 = {$code}， 品名 = {$name}，规格型号 = {$spec}";
-		(new BizlogService())->insertBizlog($log, "基础数据-商品");
+		$bs = new BizlogService();
+		$bs->insertBizlog($log, "基础数据-商品");
 
 		return $this->ok();
 	}
 
 	public function queryData($queryKey) {
 		if (!queryKey) {
-			return [];
+			return array();
 		}
 		
 		$sql = "select g.id, g.code, g.name, g.spec, u.name as unit_name"
@@ -308,7 +322,7 @@ class GoodsService extends PSIBaseService {
 	}
 	public function queryDataWithSalePrice($queryKey) {
 		if (!queryKey) {
-			return [];
+			return array();
 		}
 		
 		$sql = "select g.id, g.code, g.name, g.spec, u.name as unit_name, g.sale_price"
