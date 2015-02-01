@@ -14,7 +14,8 @@ class PurchaseController extends Controller {
 		$this->assign("uri", __ROOT__ . "/");
 		
 		$this->assign("loginUserName", $us->getLoginUserName());
-		$this->assign("dtFlag", getdate()[0]);
+		$dtFlag = getdate();
+		$this->assign("dtFlag", $dtFlag[0]);
 
 		if ($us->hasPermission(FIdConst::PURCHASE_WAREHOUSE)) {
 			$this->display();
@@ -25,42 +26,48 @@ class PurchaseController extends Controller {
 	
 	public function pwbillList() {
 		if (IS_POST) {
-			$this->ajaxReturn((new PWBillService())->pwbillList());
+			$ps = new PWBillService();
+			$this->ajaxReturn($ps->pwbillList());
 		}
 	}
 	
 	public function pwBillDetailList() {
 		if (IS_POST) {
 			$pwbillId = I("post.pwBillId");
-			$this->ajaxReturn((new PWBillService())->pwBillDetailList($pwbillId));
+			$ps = new PWBillService();
+			$this->ajaxReturn($ps->pwBillDetailList($pwbillId));
 		}
 	}
 	
 	public function editPWBill() {
 		if (IS_POST) {
 			$json = I("post.jsonStr");
-			$this->ajaxReturn((new PWBillService())->editPWBill($json));
+			$ps = new PWBillService();
+			$this->ajaxReturn($ps->editPWBill($json));
 		}
 	}
 	
 	public function pwBillInfo() {
 		if (IS_POST) {
 			$id = I("post.id");
-			$this->ajaxReturn((new PWBillService())->pwBillInfo($id));
+			$ps = new PWBillService();
+			$this->ajaxReturn($ps->pwBillInfo($id));
 		}
 	}
 	
 	public function deletePWBill() {
 		if (IS_POST) {
 			$id = I("post.id");
-			$this->ajaxReturn((new PWBillService())->deletePWBill($id));
+			$ps = new PWBillService();
+			$this->ajaxReturn($ps->deletePWBill($id));
 		}
 	}
 	
 	public function commitPWBill() {
 		if (IS_POST) {
 			$id = I("post.id");
-			$this->ajaxReturn((new PWBillService())->commitPWBill($id));
+			$ps = new PWBillService();
+			$this->ajaxReturn($ps->commitPWBill($id));
 		}
 	}
 }
