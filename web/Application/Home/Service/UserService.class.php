@@ -408,7 +408,7 @@ class UserService extends PSIBaseService {
 
 	public function queryData($queryKey) {
 		if (!$queryKey) {
-			return [];
+			return array();
 		}
 		
 		$sql = "select id, login_name, name from t_user "
@@ -417,7 +417,7 @@ class UserService extends PSIBaseService {
 				. " limit 20";
 		$key = "%{$queryKey}%";
 		$data = M()->query($sql, $key, $key, $key);
-		$result = [];
+		$result = array();
 		foreach ($data as $i => $v) {
 			$result[$i]["id"] = $v["id"];
 			$result[$i]["loginName"] = $v["login_name"];
