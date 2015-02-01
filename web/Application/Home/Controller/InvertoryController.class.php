@@ -16,7 +16,8 @@ class InvertoryController extends Controller {
 		$this->assign("uri", __ROOT__ . "/");
 
 		$this->assign("loginUserName", $us->getLoginUserName());
-		$this->assign("dtFlag", getdate()[0]);
+		$dtFlag = getdate();
+		$this->assign("dtFlag", $dtFlag[0]);
 
 		if ($us->hasPermission(FIdConst::INVERTORY_INIT)) {
 			$this->display();
@@ -32,7 +33,8 @@ class InvertoryController extends Controller {
 		$this->assign("uri", __ROOT__ . "/");
 
 		$this->assign("loginUserName", $us->getLoginUserName());
-		$this->assign("dtFlag", getdate()[0]);
+		$dtFlag = getdate();
+		$this->assign("dtFlag", $dtFlag[0]);
 
 		if ($us->hasPermission(FIdConst::INVERTORY_QUERY)) {
 			$this->display();
@@ -43,7 +45,8 @@ class InvertoryController extends Controller {
 
 	public function warehouseList() {
 		if (IS_POST) {
-			$this->ajaxReturn((new InvertoryService())->warehouseList());
+			$is = new InvertoryService();
+			$this->ajaxReturn($is->warehouseList());
 		}
 	}
 
@@ -52,7 +55,8 @@ class InvertoryController extends Controller {
 			$params = array(
 				"warehouseId" => I("post.warehouseId")
 			);
-			$this->ajaxReturn((new InvertoryService())->invertoryList($params));
+			$is = new InvertoryService();
+			$this->ajaxReturn($is->invertoryList($params));
 		}
 	}
 
@@ -67,8 +71,8 @@ class InvertoryController extends Controller {
 				"start" => I("post.start"),
 				"limit" => I("post.limit")
 			);
-			$this->ajaxReturn((new InvertoryService())->invertoryDetailList($params));
+			$is = new InvertoryService();
+			$this->ajaxReturn($is->invertoryDetailList($params));
 		}
 	}
-
 }
