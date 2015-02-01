@@ -14,7 +14,8 @@ class UserController extends Controller {
 		$this->assign("loginUserName", $us->getLoginUserName());
 		$this->assign("title", "用户管理");
 		$this->assign("uri", __ROOT__ . "/");
-		$this->assign("dtFlag", getdate()[0]);
+		$dtFlag = getdate();
+		$this->assign("dtFlag", $dtFlag[0]);
 
 		if ($us->hasPermission(FIdConst::USR_MANAGEMENT)) {
 			$this->display();
@@ -30,7 +31,8 @@ class UserController extends Controller {
 
 		$this->assign("title", "登录");
 		$this->assign("uri", __ROOT__ . "/");
-		$this->assign("dtFlag", getdate()[0]);
+		$dtFlag = getdate();
+		$this->assign("dtFlag", $dtFlag[0]);
 
 		$this->display();
 	}
@@ -43,7 +45,8 @@ class UserController extends Controller {
 		$this->assign("loginUserName", $us->getLoginUserName());
 		$this->assign("title", "修改我的密码");
 		$this->assign("uri", __ROOT__ . "/");
-		$this->assign("dtFlag", getdate()[0]);
+		$dtFlag = getdate();
+		$this->assign("dtFlag", $dtFlag[0]);
 
 		if ($us->hasPermission("-9996")) {
 			$this->display();
