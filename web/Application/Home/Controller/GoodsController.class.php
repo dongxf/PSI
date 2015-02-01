@@ -16,7 +16,8 @@ class GoodsController extends Controller {
 		$this->assign("uri", __ROOT__ . "/");
 
 		$this->assign("loginUserName", $us->getLoginUserName());
-		$this->assign("dtFlag", getdate()[0]);
+		$dtFlag = getdate();
+		$this->assign("dtFlag", $dtFlag[0]);
 
 		if ($us->hasPermission(FIdConst::GOODS)) {
 			$this->display();
@@ -32,7 +33,8 @@ class GoodsController extends Controller {
 		$this->assign("uri", __ROOT__ . "/");
 
 		$this->assign("loginUserName", $us->getLoginUserName());
-		$this->assign("dtFlag", getdate()[0]);
+		$dtFlag = getdate();
+		$this->assign("dtFlag", $dtFlag[0]);
 
 		if ($us->hasPermission(FIdConst::GOODS_UNIT)) {
 			$this->display();
@@ -43,7 +45,8 @@ class GoodsController extends Controller {
 
 	public function allUnits() {
 		if (IS_POST) {
-			$this->ajaxReturn((new GoodsService())->allUnits());
+			$gs = new GoodsService();
+			$this->ajaxReturn($gs->allUnits());
 		}
 	}
 
@@ -53,7 +56,8 @@ class GoodsController extends Controller {
 				"id" => I("post.id"),
 				"name" => I("post.name")
 			);
-			$this->ajaxReturn((new GoodsService())->editUnit($params));
+			$gs = new GoodsService();
+			$this->ajaxReturn($gs->editUnit($params));
 		}
 	}
 
@@ -62,13 +66,15 @@ class GoodsController extends Controller {
 			$params = array(
 				"id" => I("post.id"),
 			);
-			$this->ajaxReturn((new GoodsService())->deleteUnit($params));
+			$gs = new GoodsService();
+			$this->ajaxReturn($gs->deleteUnit($params));
 		}
 	}
 
 	public function allCategories() {
 		if (IS_POST) {
-			$this->ajaxReturn((new GoodsService())->allCategories());
+			$gs = new GoodsService();
+			$this->ajaxReturn($gs->allCategories());
 		}
 	}
 
@@ -79,7 +85,8 @@ class GoodsController extends Controller {
 				"code" => I("post.code"),
 				"name" => I("post.name")
 			);
-			$this->ajaxReturn((new GoodsService())->editCategory($params));
+			$gs = new GoodsService();
+			$this->ajaxReturn($gs->editCategory($params));
 		}
 	}
 
@@ -88,7 +95,8 @@ class GoodsController extends Controller {
 			$params = array(
 				"id" => I("post.id"),
 			);
-			$this->ajaxReturn((new GoodsService())->deleteCategory($params));
+			$gs = new GoodsService();
+			$this->ajaxReturn($gs->deleteCategory($params));
 		}
 	}
 
@@ -100,7 +108,8 @@ class GoodsController extends Controller {
 				"start" => I("post.start"),
 				"limit" => I("post.limit")
 			);
-			$this->ajaxReturn((new GoodsService())->goodsList($params));
+			$gs = new GoodsService();
+			$this->ajaxReturn($gs->goodsList($params));
 		}
 	}
 
@@ -115,7 +124,8 @@ class GoodsController extends Controller {
 				"unitId" => I("post.unitId"),
 				"salePrice" => I("post.salePrice")
 			);
-			$this->ajaxReturn((new GoodsService())->editGoods($params));
+			$gs = new GoodsService();
+			$this->ajaxReturn($gs->editGoods($params));
 		}
 	}
 
@@ -124,20 +134,23 @@ class GoodsController extends Controller {
 			$params = array(
 				"id" => I("post.id"),
 			);
-			$this->ajaxReturn((new GoodsService())->deleteGoods($params));
+			$gs = new GoodsService();
+			$this->ajaxReturn($gs->deleteGoods($params));
 		}
 	}
 
 	public function queryData() {
 		if (IS_POST) {
 			$queryKey = I("post.queryKey");
-			$this->ajaxReturn((new GoodsService())->queryData($queryKey));
+			$gs = new GoodsService();
+			$this->ajaxReturn($gs->queryData($queryKey));
 		}
 	}
 	public function queryDataWithSalePrice() {
 		if (IS_POST) {
 			$queryKey = I("post.queryKey");
-			$this->ajaxReturn((new GoodsService())->queryDataWithSalePrice($queryKey));
+			$gs = new GoodsService();
+			$this->ajaxReturn($gs->queryDataWithSalePrice($queryKey));
 		}
 	}
 }
