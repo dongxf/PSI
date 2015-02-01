@@ -15,7 +15,8 @@ class WarehouseController extends Controller {
 		$this->assign("uri", __ROOT__ . "/");
 		
 		$this->assign("loginUserName", $us->getLoginUserName());
-		$this->assign("dtFlag", getdate()[0]);
+		$dtFlag = getdate();
+		$this->assign("dtFlag", $dtFlag[0]);
 
 		if ($us->hasPermission(FIdConst::WAREHOUSE)) {
 			$this->display();
@@ -26,7 +27,8 @@ class WarehouseController extends Controller {
 	
 	public function warehouseList() {
 		if (IS_POST) {
-			$this->ajaxReturn((new WarehouseService())->warehouseList());
+			$ws = new WarehouseService();
+			$this->ajaxReturn($ws->warehouseList());
 		}
 	}
 	
@@ -37,7 +39,8 @@ class WarehouseController extends Controller {
 				"code" => I("post.code"),
 				"name" => I("post.name")
 			);
-			$this->ajaxReturn((new WarehouseService())->editWarehouse($params));
+			$ws = new WarehouseService();
+			$this->ajaxReturn($ws->editWarehouse($params));
 		}
 	}
 	
@@ -46,14 +49,16 @@ class WarehouseController extends Controller {
 			$params = array(
 				"id" => I("post.id"),
 			);
-			$this->ajaxReturn((new WarehouseService())->deleteWarehouse($params));
+			$ws = new WarehouseService();
+			$this->ajaxReturn($ws->deleteWarehouse($params));
 		}
 	}
 	
 	public function queryData() {
 		if (IS_POST) {
 			$queryKey = I("post.queryKey");
-			$this->ajaxReturn((new WarehouseService())->queryData($queryKey));
+			$ws = new WarehouseService();
+			$this->ajaxReturn($ws->queryData($queryKey));
 		}
 	}
 }
