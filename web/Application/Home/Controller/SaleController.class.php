@@ -14,7 +14,8 @@ class SaleController extends Controller {
 		$this->assign("uri", __ROOT__ . "/");
 		
 		$this->assign("loginUserName", $us->getLoginUserName());
-		$this->assign("dtFlag", getdate()[0]);
+		$dtFlag = getdate();
+		$this->assign("dtFlag", $dtFlag[0]);
 
 		if ($us->hasPermission(FIdConst::WAREHOUSING_SALE)) {
 			$this->display();
@@ -28,7 +29,8 @@ class SaleController extends Controller {
 			"id" => I("post.id")
 		);
 		
-		$this->ajaxReturn((new WSBillService())->wsBillInfo($params));
+		$ws = new WSBillService();
+		$this->ajaxReturn($ws->wsBillInfo($params));
 	}
 	
 	
@@ -37,14 +39,16 @@ class SaleController extends Controller {
 			"jsonStr" => I("post.jsonStr")
 		);
 		
-		$this->ajaxReturn((new WSBillService())->editWSBill($params));
+		$ws = new WSBillService();
+		$this->ajaxReturn($ws->editWSBill($params));
 	}
 	
 	public function wsbillList() {
 		$params = array (
 		);
 		
-		$this->ajaxReturn((new WSBillService())->wsbillList($params));
+		$ws = new WSBillService();
+		$this->ajaxReturn($ws->wsbillList($params));
 	}
 	
 	public function wsBillDetailList() {
@@ -52,7 +56,8 @@ class SaleController extends Controller {
 			"billId" => I("post.billId")
 		);
 		
-		$this->ajaxReturn((new WSBillService())->wsBillDetailList($params));
+		$ws = new WSBillService();
+		$this->ajaxReturn($ws->wsBillDetailList($params));
 	}
 	
 	public function deleteWSBill() {
@@ -60,7 +65,8 @@ class SaleController extends Controller {
 			"id" => I("post.id")
 		);
 		
-		$this->ajaxReturn((new WSBillService())->deleteWSBill($params));
+		$ws = new WSBillService();
+		$this->ajaxReturn($ws->deleteWSBill($params));
 	}
 	
 	public function commitWSBill() {
@@ -68,6 +74,7 @@ class SaleController extends Controller {
 			"id" => I("post.id")
 		);
 		
-		$this->ajaxReturn((new WSBillService())->commitWSBill($params));
+		$ws = new WSBillService();
+		$this->ajaxReturn($ws->commitWSBill($params));
 	}
 }
