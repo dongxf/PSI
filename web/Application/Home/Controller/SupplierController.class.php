@@ -16,7 +16,8 @@ class SupplierController extends Controller {
 		$this->assign("uri", __ROOT__ . "/");
 
 		$this->assign("loginUserName", $us->getLoginUserName());
-		$this->assign("dtFlag", getdate()[0]);
+		$dtFlag = getdate();
+		$this->assign("dtFlag", $dtFlag[0]);
 
 		if ($us->hasPermission(FIdConst::SUPPLIER)) {
 			$this->display();
@@ -27,7 +28,8 @@ class SupplierController extends Controller {
 
 	public function categoryList() {
 		if (IS_POST) {
-			$this->ajaxReturn((new SupplierService())->categoryList());
+			$ss = new SupplierService();
+			$this->ajaxReturn($ss->categoryList());
 		}
 	}
 
@@ -39,7 +41,8 @@ class SupplierController extends Controller {
 				"start" => I("post.start"),
 				"limit" => I("post.limit")
 			);
-			$this->ajaxReturn((new SupplierService())->supplierList($params));
+			$ss = new SupplierService();
+			$this->ajaxReturn($ss->supplierList($params));
 		}
 	}
 
@@ -50,7 +53,8 @@ class SupplierController extends Controller {
 				"code" => I("post.code"),
 				"name" => I("post.name")
 			);
-			$this->ajaxReturn((new SupplierService())->editCategory($params));
+			$ss = new SupplierService();
+			$this->ajaxReturn($ss->editCategory($params));
 		}
 	}
 
@@ -59,7 +63,8 @@ class SupplierController extends Controller {
 			$params = array(
 				"id" => I("post.id"),
 			);
-			$this->ajaxReturn((new SupplierService())->deleteCategory($params));
+			$ss = new SupplierService();
+			$this->ajaxReturn($ss->deleteCategory($params));
 		}
 	}
 
@@ -81,7 +86,8 @@ class SupplierController extends Controller {
 				"initPayables" => I("post.initPayables"),
 				"initPayablesDT" => I("post.initPayablesDT")
 			);
-			$this->ajaxReturn((new SupplierService())->editSupplier($params));
+			$ss = new SupplierService();
+			$this->ajaxReturn($ss->editSupplier($params));
 		}
 	}
 
@@ -90,14 +96,16 @@ class SupplierController extends Controller {
 			$params = array(
 				"id" => I("post.id"),
 			);
-			$this->ajaxReturn((new SupplierService())->deleteSupplier($params));
+			$ss = new SupplierService();
+			$this->ajaxReturn($ss->deleteSupplier($params));
 		}
 	}
 
 	public function queryData() {
 		if (IS_POST) {
 			$queryKey = I("post.queryKey");
-			$this->ajaxReturn((new SupplierService())->queryData($queryKey));
+			$ss = new SupplierService();
+			$this->ajaxReturn($ss->queryData($queryKey));
 		}
 	}
 }
