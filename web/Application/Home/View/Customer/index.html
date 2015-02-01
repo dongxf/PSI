@@ -1,0 +1,19 @@
+<layout name="layout" />
+
+<script src="{$uri}Public/Scripts/PSI/Customer/MainForm.js?dt={$dtFlag}" type="text/javascript"></script>
+<script src="{$uri}Public/Scripts/PSI/Customer/CategoryEditForm.js?dt={$dtFlag}" type="text/javascript"></script>
+<script src="{$uri}Public/Scripts/PSI/Customer/CustomerEditForm.js?dt={$dtFlag}" type="text/javascript"></script>
+
+<script>
+    Ext.onReady(function(){
+        var app = Ext.create("PSI.App", {
+            userName: "{$loginUserName}"
+        });
+
+        app.add(Ext.create("PSI.Customer.MainForm"));
+        app.setAppHeader({
+            title: "{$title}",
+            iconCls: "PSI-fid1007"
+            });
+    });
+</script>

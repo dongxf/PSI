@@ -1,0 +1,18 @@
+<layout name="layout" />
+
+<script src="{$uri}Public/Scripts/PSI/Invertory/InitInvertoryMainForm.js?dt={$dtFlag}" type="text/javascript"></script>
+<script src="{$uri}Public/Scripts/PSI/Invertory/InitInvertoryEditForm.js?dt={$dtFlag}" type="text/javascript"></script>
+
+<script>
+    Ext.onReady(function(){
+        var app = Ext.create("PSI.App", {
+            userName: "{$loginUserName}"
+        });
+
+        app.add(Ext.create("PSI.Invertory.InitInvertoryMainForm"));
+        app.setAppHeader({
+            title: "{$title}",
+            iconCls: "PSI-fid2000"
+            });
+    });
+</script>

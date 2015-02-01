@@ -1,0 +1,18 @@
+<layout name="layout" />
+
+<script src="{$uri}Public/Scripts/PSI/Warehouse/MainForm.js?dt={$dtFlag}" type="text/javascript"></script>
+<script src="{$uri}Public/Scripts/PSI/Warehouse/EditForm.js?dt={$dtFlag}" type="text/javascript"></script>
+
+<script>
+    Ext.onReady(function(){
+        var app = Ext.create("PSI.App", {
+            userName: "{$loginUserName}"
+        });
+
+        app.add(Ext.create("PSI.Warehouse.MainForm"));
+        app.setAppHeader({
+            title: "{$title}",
+            iconCls: "PSI-fid1003"
+            });
+    });
+</script>

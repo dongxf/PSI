@@ -1,0 +1,20 @@
+<layout name="layout" />
+
+<script src="{$uri}Public/Scripts/PSI/Permission/MainForm.js?dt={$dtFlag}" type="text/javascript"></script>
+<script src="{$uri}Public/Scripts/PSI/Permission/EditForm.js?dt={$dtFlag}" type="text/javascript"></script>
+<script src="{$uri}Public/Scripts/PSI/Permission/SelectPermissionForm.js?dt={$dtFlag}" type="text/javascript"></script>
+<script src="{$uri}Public/Scripts/PSI/Permission/SelectUserForm.js?dt={$dtFlag}" type="text/javascript"></script>
+
+<script>
+    Ext.onReady(function(){
+        var app = Ext.create("PSI.App", {
+            userName: "{$loginUserName}"
+        });
+
+        app.add(Ext.create("PSI.Permission.MainForm"));
+        app.setAppHeader({
+            title: "{$title}",
+            iconCls: "PSI-fid-8996"
+            });
+    });
+</script>
