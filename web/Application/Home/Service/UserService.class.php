@@ -66,7 +66,8 @@ class UserService extends PSIBaseService {
 		if ($user) {
 			session("loginUserId", $user[0]["id"]);
 
-			(new BizlogService())->insertBizlog("登录系统");
+			$bls = new BizlogService();
+			$bls->insertBizlog("登录系统");
 			return $this->ok();
 		} else {
 			return $this->bad("用户名或者密码错误");
