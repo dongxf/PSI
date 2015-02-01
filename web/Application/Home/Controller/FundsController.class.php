@@ -17,7 +17,9 @@ class FundsController extends Controller {
 		$this->assign("uri", __ROOT__ . "/");
 
 		$this->assign("loginUserName", $us->getLoginUserName());
-		$this->assign("dtFlag", getdate()[0]);
+		
+		$dtFlag = getdate();
+		$this->assign("dtFlag", $dtFlag[0]);
 
 		if ($us->hasPermission(FIdConst::PAYABLES)) {
 			$this->display();
@@ -31,7 +33,8 @@ class FundsController extends Controller {
 			$params = array(
 				"id" => I("post.id")
 			);
-			$this->ajaxReturn((new PayablesService())->payCategoryList($params));
+			$ps = new PayablesService();
+			$this->ajaxReturn($ps->payCategoryList($params));
 		}
 	}
 
@@ -44,7 +47,8 @@ class FundsController extends Controller {
 				"start" => I("post.start"),
 				"limit" => I("post.limit")
 			);
-			$this->ajaxReturn((new PayablesService())->payList($params));
+			$ps = new PayablesService();
+			$this->ajaxReturn($ps->payList($params));
 		}
 	}
 
@@ -57,7 +61,8 @@ class FundsController extends Controller {
 				"start" => I("post.start"),
 				"limit" => I("post.limit")
 			);
-			$this->ajaxReturn((new PayablesService())->payDetailList($params));
+			$ps = new PayablesService();
+			$this->ajaxReturn($ps->payDetailList($params));
 		}
 	}
 
@@ -70,7 +75,8 @@ class FundsController extends Controller {
 				"start" => I("post.start"),
 				"limit" => I("post.limit")
 			);
-			$this->ajaxReturn((new PayablesService())->payRecordList($params));
+			$ps = new PayablesService();
+			$this->ajaxReturn($ps->payRecordList($params));
 		}
 	}
 
@@ -93,7 +99,8 @@ class FundsController extends Controller {
 				"bizUserId" => I("post.bizUserId"),
 				"remark" => I("post.remark")
 			);
-			$this->ajaxReturn((new PayablesService())->addPayment($params));
+			$ps = new PayablesService();
+			$this->ajaxReturn($ps->addPayment($params));
 		}
 	}
 
@@ -102,7 +109,8 @@ class FundsController extends Controller {
 			$params = array(
 				"id" => I("post.id"),
 			);
-			$this->ajaxReturn((new PayablesService())->refreshPayInfo($params));
+			$ps = new PayablesService();
+			$this->ajaxReturn($ps->refreshPayInfo($params));
 		}
 	}
 
@@ -111,7 +119,8 @@ class FundsController extends Controller {
 			$params = array(
 				"id" => I("post.id"),
 			);
-			$this->ajaxReturn((new PayablesService())->refreshPayDetailInfo($params));
+			$ps = new PayablesService();
+			$this->ajaxReturn($ps->refreshPayDetailInfo($params));
 		}
 	}
 
@@ -122,7 +131,9 @@ class FundsController extends Controller {
 		$this->assign("uri", __ROOT__ . "/");
 
 		$this->assign("loginUserName", $us->getLoginUserName());
-		$this->assign("dtFlag", getdate()[0]);
+		
+		$dtFlag = getdate();
+		$this->assign("dtFlag", $dtFlag[0]);
 
 		if ($us->hasPermission(FIdConst::RECEIVING)) {
 			$this->display();
@@ -136,7 +147,8 @@ class FundsController extends Controller {
 			$params = array(
 				"id" => I("post.id")
 			);
-			$this->ajaxReturn((new ReceivablesService())->rvCategoryList($params));
+			$rs = new ReceivablesService();
+			$this->ajaxReturn($rs->rvCategoryList($params));
 		}
 	}
 
@@ -149,7 +161,8 @@ class FundsController extends Controller {
 				"start" => I("post.start"),
 				"limit" => I("post.limit")
 			);
-			$this->ajaxReturn((new ReceivablesService())->rvList($params));
+			$rs = new ReceivablesService();
+			$this->ajaxReturn($rs->rvList($params));
 		}
 	}
 
@@ -162,7 +175,8 @@ class FundsController extends Controller {
 				"start" => I("post.start"),
 				"limit" => I("post.limit")
 			);
-			$this->ajaxReturn((new ReceivablesService())->rvDetailList($params));
+			$rs = new ReceivablesService();
+			$this->ajaxReturn($rs->rvDetailList($params));
 		}
 	}
 
@@ -175,7 +189,8 @@ class FundsController extends Controller {
 				"start" => I("post.start"),
 				"limit" => I("post.limit")
 			);
-			$this->ajaxReturn((new ReceivablesService())->rvRecordList($params));
+			$rs = new ReceivablesService();
+			$this->ajaxReturn($rs->rvRecordList($params));
 		}
 	}
 
@@ -198,7 +213,8 @@ class FundsController extends Controller {
 				"bizUserId" => I("post.bizUserId"),
 				"remark" => I("post.remark")
 			);
-			$this->ajaxReturn((new ReceivablesService())->addRvRecord($params));
+			$rs = new ReceivablesService();
+			$this->ajaxReturn($rs->addRvRecord($params));
 		}
 	}
 	
@@ -207,7 +223,8 @@ class FundsController extends Controller {
 			$params = array(
 				"id" => I("post.id"),
 			);
-			$this->ajaxReturn((new ReceivablesService())->refreshRvInfo($params));
+			$rs = new ReceivablesService();
+			$this->ajaxReturn($rs->refreshRvInfo($params));
 		}
 	}
 	
@@ -216,7 +233,8 @@ class FundsController extends Controller {
 			$params = array(
 				"id" => I("post.id"),
 			);
-			$this->ajaxReturn((new ReceivablesService())->refreshRvDetailInfo($params));
+			$rs = new ReceivablesService();
+			$this->ajaxReturn($rs->refreshRvDetailInfo($params));
 		}
 	}
 }
