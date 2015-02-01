@@ -16,7 +16,9 @@ class BizlogController extends Controller {
 		$this->assign("uri", __ROOT__ . "/");
 
 		$this->assign("loginUserName", $us->getLoginUserName());
-		$this->assign("dtFlag", getdate()[0]);
+		
+		$dtFlag = getdate();
+		$this->assign("dtFlag", $dtFlag[0]);
 
 		if ($us->hasPermission(FIdConst::BIZ_LOG)) {
 			$this->display();
@@ -43,5 +45,4 @@ class BizlogController extends Controller {
 			$this->ajaxReturn($result);
 		}
 	}
-
 }

@@ -8,6 +8,9 @@ namespace Home\Service;
  * @author 李静波
  */
 class PSIBaseService {
+	protected function isDemo() {
+		return getenv("IS_DEMO") == "1";
+	}
 
 	protected function ok($id = null) {
 		if ($id) {

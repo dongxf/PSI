@@ -16,7 +16,9 @@ class CustomerController extends Controller {
 		$this->assign("uri", __ROOT__ . "/");
 
 		$this->assign("loginUserName", $us->getLoginUserName());
-		$this->assign("dtFlag", getdate()[0]);
+		
+		$dtFlag = getdate();
+		$this->assign("dtFlag", $dtFlag[0]);
 
 		if ($us->hasPermission(FIdConst::CUSTOMER)) {
 			$this->display();
@@ -27,7 +29,8 @@ class CustomerController extends Controller {
 
 	public function categoryList() {
 		if (IS_POST) {
-			$this->ajaxReturn((new CustomerService())->categoryList());
+			$cs = new CustomerService();
+			$this->ajaxReturn($cs->categoryList());
 		}
 	}
 
@@ -38,7 +41,8 @@ class CustomerController extends Controller {
 				"code" => I("post.code"),
 				"name" => I("post.name")
 			);
-			$this->ajaxReturn((new CustomerService())->editCategory($params));
+			$cs = new CustomerService();
+			$this->ajaxReturn($cs->editCategory($params));
 		}
 	}
 
@@ -47,7 +51,8 @@ class CustomerController extends Controller {
 			$params = array(
 				"id" => I("post.id"),
 			);
-			$this->ajaxReturn((new CustomerService())->deleteCategory($params));
+			$cs = new CustomerService();
+			$this->ajaxReturn($cs->deleteCategory($params));
 		}
 	}
 
@@ -69,7 +74,8 @@ class CustomerController extends Controller {
 				"initReceivables" =>I("post.initReceivables"),
 				"initReceivablesDT" => I("post.initReceivablesDT")
 			);
-			$this->ajaxReturn((new CustomerService())->editCustomer($params));
+			$cs = new CustomerService();
+			$this->ajaxReturn($cs->editCustomer($params));
 		}
 	}
 
@@ -81,7 +87,8 @@ class CustomerController extends Controller {
 				"start" => I("post.start"),
 				"limit" => I("post.limit")
 			);
-			$this->ajaxReturn((new CustomerService())->customerList($params));
+			$cs = new CustomerService();
+			$this->ajaxReturn($cs->customerList($params));
 		}
 	}
 
@@ -90,7 +97,8 @@ class CustomerController extends Controller {
 			$params = array(
 				"id" => I("post.id"),
 			);
-			$this->ajaxReturn((new CustomerService())->deleteCustomer($params));
+			$cs = new CustomerService();
+			$this->ajaxReturn($cs->deleteCustomer($params));
 		}
 	}
 
@@ -99,7 +107,8 @@ class CustomerController extends Controller {
 			$params = array(
 				"queryKey" => I("post.queryKey"),
 			);
-			$this->ajaxReturn((new CustomerService())->queryData($params));
+			$cs = new CustomerService();
+			$this->ajaxReturn($cs->queryData($params));
 		}
 	}
 }
