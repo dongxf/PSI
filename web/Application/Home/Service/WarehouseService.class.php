@@ -18,7 +18,8 @@ class WarehouseService extends PSIBaseService {
 		$id = $params["id"];
 		$code = $params["code"];
 		$name = $params["name"];
-		$py = (new PinyinService())->toPY($name);
+		$ps = new PinyinService();
+		$py = $ps->toPY($name);
 		$db = M();
 		
 		if ($id) {
@@ -36,11 +37,12 @@ class WarehouseService extends PSIBaseService {
 					. " where id = '%s' ";
 			$db->execute($sql, $code, $name, $py, $id);
 			$log = "编辑仓库：编码 = $code,  名称 = $name";
-			(new BizlogService())->insertBizlog($log, "基础数据-仓库");
+			$bs = new BizlogService();
+			$bs->insertBizlog($log, "基础数据-仓库");
 		} else {
 			// 新增
-			
-			$id = (new IdGenService())->newId();
+			$idGen = new IdGenService();
+			$id = $idGen->newId();
 			
 			//检查同编号的仓库是否存在
 			$sql = "select count(*) as cnt from t_warehouse where code = '%s' ";
@@ -54,8 +56,9 @@ class WarehouseService extends PSIBaseService {
 					. " values ('%s', '%s', '%s', 0, '%s' )";
 			$db->execute($sql, $id, $code, $name, $py);
 			
-			$log = "新增仓库：编码 = $code,  名称 = $name";
-			(new BizlogService())->insertBizlog($log, "基础数据-仓库");
+			$log = "新增仓库：编码 = {$code},  名称 = {$name}";
+			$bs = new BizlogService();
+			$bs->insertBizlog($log, "基础数据-仓库");
 		}
 		
 		return $this->ok($id);
@@ -81,7 +84,8 @@ class WarehouseService extends PSIBaseService {
 		$db->execute($sql, $id);
 		
 		$log = "删除仓库： 编码 = {$warehouse['code']}， 名称 = {$warehouse['name']}";
-		(new BizlogService())->insertBizlog($log, "基础数据-仓库");
+		$bs = new BizlogService();
+		$bs->insertBizlog($log, "基础数据-仓库");
 		
 		return $this->ok();
 	}

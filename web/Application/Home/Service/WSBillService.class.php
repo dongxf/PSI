@@ -117,7 +117,8 @@ class WSBillService extends PSIBaseService {
 				$db->execute($sql, $sumGoodsMoney, $customerId, $warehouseId, $bizUserId, $bizDT, $id);
 
 				$log = "编辑销售出库单，单号 = {$ref}";
-				(new BizlogService())->insertBizlog($log, "销售出库");
+				$bs = new BizlogService();
+				$bs->insertBizlog($log, "销售出库");
 
 				$db->commit();
 			} catch (Exception $ex) {
@@ -133,7 +134,8 @@ class WSBillService extends PSIBaseService {
 				$sql = "insert into t_ws_bill(id, bill_status, bizdt, biz_user_id, customer_id,  date_created,"
 						. " input_user_id, ref, warehouse_id) "
 						. " values ('%s', 0, '%s', '%s', '%s', now(), '%s', '%s', '%s')";
-				$db->execute($sql, $id, $bizDT, $bizUserId, $customerId, (new UserService())->getLoginUserId(), $ref, $warehouseId);
+				$us = new UserService();
+				$db->execute($sql, $id, $bizDT, $bizUserId, $customerId, $us->getLoginUserId(), $ref, $warehouseId);
 
 				$sql = "insert into t_ws_bill_detail (id, date_created, goods_id, "
 						. " goods_count, goods_price, goods_money,"
@@ -156,7 +158,8 @@ class WSBillService extends PSIBaseService {
 				$db->execute($sql, $sumGoodsMoney, $id);
 
 				$log = "新增销售出库单，单号 = {$ref}";
-				(new BizlogService())->insertBizlog($log, "销售出库");
+				$bs = new BizlogService();
+				$bs->insertBizlog($log, "销售出库");
 
 				$db->commit();
 			} catch (Exception $ex) {
@@ -258,7 +261,8 @@ class WSBillService extends PSIBaseService {
 			$db->execute($sql, $id);
 
 			$log = "删除销售出库单，单号: {$ref}";
-			(new BizlogService())->insertBizlog($log, "销售出库");
+			$bs = new BizlogService();
+			$bs->insertBizlog($log, "销售出库");
 			$db->commit();
 		} catch (Exception $ex) {
 			$db->rollback();
@@ -417,7 +421,8 @@ class WSBillService extends PSIBaseService {
 			} else {
 				$sql = "insert into t_receivables (id, rv_money, act_money, balance_money,"
 						. " ca_id, ca_type) values ('%s', %f, 0, %f, '%s', 'customer')";
-				$db->execute($sql, (new IdGenService())->newId(), $saleMoney,
+				$idGen = new IdGenService();
+				$db->execute($sql, $idGen->newId(), $saleMoney,
 						$saleMoney, $customerId);
 			}
 			
@@ -425,7 +430,8 @@ class WSBillService extends PSIBaseService {
 			$sql = "insert into t_receivables_detail (id, rv_money, act_money, balance_money,"
 					. " ca_id, ca_type, date_created, ref_number, ref_type) "
 					. " values('%s', %f, 0, %f, '%s', 'customer', now(), '%s', '销售出库')";
-			$db->execute($sql, (new IdGenService())->newId(), $saleMoney,
+			$idGen = new IdGenService();
+			$db->execute($sql, $idGen->newId(), $saleMoney,
 					$saleMoney, $customerId, $ref);
 			
 			// 单据本身设置为已经提交出库
