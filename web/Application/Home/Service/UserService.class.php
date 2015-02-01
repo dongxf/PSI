@@ -138,7 +138,7 @@ class UserService extends PSIBaseService {
 			$result[$key]["id"] = $value["id"];
 			$result[$key]["loginName"] = $value["login_name"];
 			$result[$key]["name"] = $value["name"];
-			$result[$key]["enabled"] = intval($value["enabled"]);
+			$result[$key]["enabled"] = $value["enabled"];
 			$result[$key]["orgCode"] = $value["org_code"];
 		}
 
