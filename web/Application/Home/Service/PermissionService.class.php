@@ -2,6 +2,8 @@
 
 namespace Home\Service;
 
+use Home\Common\DemoConst;
+
 /**
  * 权限 Service
  *
@@ -50,6 +52,10 @@ class PermissionService extends PSIBaseService {
 		$permissionIdList = $params["permissionIdList"];
 		$userIdList = $params["userIdList"];
 
+		if ($this->isDemo() && $id == DemoConst::ADMIN_ROLE_ID) {
+			return $this->bad("在演示环境下，系统管理角色不希望被您修改，请见谅");
+		}
+		
 		$db = M();
 
 		$pid = explode(",", $permissionIdList);
@@ -185,6 +191,10 @@ class PermissionService extends PSIBaseService {
 	}
 
 	public function deleteRole($id) {
+		if ($this->isDemo() && $id == DemoConst::ADMIN_ROLE_ID) {
+			return $this->bad("在演示环境下，系统管理角色不希望被您删除，请见谅");
+		}
+
 		$db = M();
 
 		$db->startTrans();
