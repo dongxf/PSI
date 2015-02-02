@@ -21,7 +21,7 @@ Ext.define("PSI.User.LoginForm", {
         var me = this;
 
         Ext.apply(me, {
-            height: me.getDemoInfo() == "" ? 140 : 180,
+            height: me.getDemoInfo() == "" ? 140 : 200,
             items: [{
                 id: "loginForm",
                 xtype: "form",
