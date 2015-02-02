@@ -32,6 +32,10 @@ Ext.define("PSI.Permission.SelectPermissionForm", {
                 mode: "MULTI"
             },
             selType: "checkboxmodel",
+            viewConfig: {
+                deferEmptyText: false,
+                emptyText: "所有权限都已经加入到当前角色中了"
+            },
             store: permissionStore,
             columns: [
                 { header: "权限名称", dataIndex: "name", flex: 1, menuDisabled: true }
