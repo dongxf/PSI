@@ -75,6 +75,14 @@ Ext.define("PSI.Permission.MainForm", {
                 { text: "新增角色", handler: me.onAddRole, scope: me, iconCls: "PSI-button-add" },
                 { text: "编辑角色", handler: me.onEditRole, scope: me, iconCls: "PSI-button-edit" },
                 { text: "删除角色", handler: me.onDeleteRole, scope: me, iconCls: "PSI-button-delete" }, "-",
+                                {
+                    text: "帮助",
+                    iconCls: "PSI-help",
+                    handler: function() {
+                        window.open("http://my.oschina.net/u/134395/blog/374337");
+                    }
+                },
+                "-",
                 {
                     text: "关闭", iconCls: "PSI-button-exit", handler: function () {
                         location.replace(PSI.Const.BASE_URL);
