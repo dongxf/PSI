@@ -155,6 +155,15 @@ class UserService extends PSIBaseService {
 	}
 
 	public function editOrg($id, $name, $parentId, $orgCode) {
+		if ($this->isDemo()) {
+			if ($id == DemoConst::ORG_COMPANY_ID) {
+				return $this->bad("在演示环境下，组织机构[公司]不希望被您修改，请见谅");
+			}
+			if ($id == DemoConst::ORG_INFODEPT_ID) {
+				return $this->bad("在演示环境下，组织机构[信息部]不希望被您修改，请见谅");
+			}
+		}
+
 		if ($id) {
 			// 编辑
 			if ($parentId == $id) {
@@ -259,6 +268,15 @@ class UserService extends PSIBaseService {
 	}
 
 	public function deleteOrg($id) {
+		if ($this->isDemo()) {
+			if ($id == DemoConst::ORG_COMPANY_ID) {
+				return $this->bad("在演示环境下，组织机构[公司]不希望被您删除，请见谅");
+			}
+			if ($id == DemoConst::ORG_INFODEPT_ID) {
+				return $this->bad("在演示环境下，组织机构[信息部]不希望被您删除，请见谅");
+			}
+		}
+		
 		$db = M();
 		$sql = "select count(*) as cnt from t_org where parent_id = '%s' ";
 		$data = $db->query($sql, $id);
@@ -287,6 +305,12 @@ class UserService extends PSIBaseService {
 		$orgCode = $params["orgCode"];
 		$orgId = $params["orgId"];
 		$enabled = $params["enabled"];
+
+		if ($this->isDemo()) {
+			if ($id == DemoConst::ADMIN_USER_ID) {
+				return $this->bad("在演示环境下，admin用户不希望被您修改，请见谅");
+			}
+		}
 
 		$pys = new PinyinService();
 		$py = $pys->toPY($name);
@@ -368,6 +392,11 @@ class UserService extends PSIBaseService {
 
 	public function changePassword($params) {
 		$id = $params["id"];
+		
+		if ($this->isDemo() && $id == DemoConst::ADMIN_USER_ID) {
+			return $this->bad("在演示环境下，admin用户的密码不希望被您修改，请见谅");
+		}
+		
 		$password = $params["password"];
 		if (strlen($password) < 5) {
 			return $this->bad("密码长度不能小于5位");
