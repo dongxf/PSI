@@ -2,6 +2,8 @@
 
 namespace Home\Service;
 
+use Home\Common\DemoConst;
+
 /**
  * 用户Service
  *
@@ -387,6 +389,10 @@ class UserService extends PSIBaseService {
 		$userId = $params["userId"];
 		$oldPassword = $params["oldPassword"];
 		$newPassword = $params["newPassword"];
+		
+		if ($this->isDemo() && $userId == DemoConst::ADMIN_USER_ID) {
+			return $this->bad("在演示环境下，admin用户的密码不希望被您修改，请见谅");
+		}
 
 		if ($userId != $this->getLoginUserId()) {
 			return $this->bad("服务器环境发生变化，请重新登录后再操作");
