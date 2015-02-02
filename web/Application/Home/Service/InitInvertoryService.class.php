@@ -70,7 +70,7 @@ class InitInvertoryService extends PSIBaseService {
                 . " order by g.code "
                 . " limit " . $start . ", " . $limit;
         $data = $db->query($sql, $categoryId, $warehouseId);
-        $result = [];
+        $result = array();
         foreach ($data as $i => $v) {
             $result[$i]["id"] = $v["id"];
             $result[$i]["goodsCode"] = $v["code"];

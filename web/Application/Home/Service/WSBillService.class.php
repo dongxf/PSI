@@ -18,7 +18,7 @@ class WSBillService extends PSIBaseService {
 			return $result;
 		} else {
 			$db = M();
-			$result = [];
+			$result = array();
 			$sql = "select w.id, w.ref, w.bizdt, c.id as customer_id, c.name as customer_name, "
 					. " u.id as biz_user_id, u.name as biz_user_name,"
 					. " h.id as warehouse_id, h.name as warehouse_name "
@@ -44,7 +44,7 @@ class WSBillService extends PSIBaseService {
 					. " where d.wsbill_id = '%s' and d.goods_id = g.id and g.unit_id = u.id"
 					. " order by d.show_order";
 			$data = $db->query($sql, $id);
-			$items = [];
+			$items = array();
 			foreach ($data as $i => $v) {
 				$items[$i]["id"] = $v["id"];
 				$items[$i]["goodsId"] = $v["goods_id"];
@@ -198,7 +198,7 @@ class WSBillService extends PSIBaseService {
 				. " and w.input_user_id = user.id and w.warehouse_id = h.id "
 				. " order by w.ref desc ";
 		$data = $db->query($sql);
-		$result = [];
+		$result = array();
 
 		foreach ($data as $i => $v) {
 			$result[$i]["id"] = $v["id"];
@@ -223,7 +223,7 @@ class WSBillService extends PSIBaseService {
 				. " where d.wsbill_id = '%s' and d.goods_id = g.id and g.unit_id = u.id"
 				. " order by d.show_order";
 		$data = M()->query($sql, $billId);
-		$result = [];
+		$result = array();
 
 		foreach ($data as $i => $v) {
 			$result[$i]["id"] = $v["id"];

@@ -33,7 +33,7 @@ class PayablesService extends PSIBaseService {
 					. " order by s.code "
 					. " limit " . $start . ", " . $limit;
 			$data = $db->query($sql, $categoryId);
-			$result = [];
+			$result = array();
 			foreach ($data as $i => $v) {
 				$result[$i]["id"] = $v["id"];
 				$result[$i]["caId"] = $v["ca_id"];
@@ -57,7 +57,7 @@ class PayablesService extends PSIBaseService {
 					. " order by s.code "
 					. " limit " . $start . ", " . $limit;
 			$data = $db->query($sql, $categoryId);
-			$result = [];
+			$result = array();
 			foreach ($data as $i => $v) {
 				$result[$i]["id"] = $v["id"];
 				$result[$i]["caId"] = $v["ca_id"];
@@ -91,7 +91,7 @@ class PayablesService extends PSIBaseService {
 				. " where ca_type = '%s' and ca_id = '%s' "
 				. " limit " . $start . ", " . $limit;
 		$data = $db->query($sql, $caType, $caId);
-		$result = [];
+		$result = array();
 		foreach ($data as $i => $v) {
 			$result[$i]["id"] = $v["id"];
 			$result[$i]["refType"] = $v["ref_type"];
@@ -126,7 +126,7 @@ class PayablesService extends PSIBaseService {
 				. "          and  p.pay_user_id = u.id and p.input_user_id = bu.id "
 				. " limit " . $start . ", " . $limit;
 		$data = $db->query($sql, $refType, $refNumber);
-		$result = [];
+		$result = array();
 		foreach ($data as $i => $v) {
 			$result[$i]["id"] = $v["id"];
 			$result[$i]["actMoney"] = $v["act_money"];

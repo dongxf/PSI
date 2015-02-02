@@ -17,7 +17,7 @@ class PWBillService extends PSIBaseService {
 				. "    and p.biz_user_id = u1.id and p.input_user_id = u2.id"
 				. " order by p.ref desc ";
 		$data = M()->query($sql);
-		$result = [];
+		$result = array();
 
 		foreach ($data as $i => $v) {
 			$result[$i]["id"] = $v["id"];
@@ -40,7 +40,7 @@ class PWBillService extends PSIBaseService {
 				. " where p.pwbill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id"
 				. " order by p.show_order ";
 		$data = M()->query($sql, $pwbillId);
-		$result = [];
+		$result = array();
 
 		foreach ($data as $i => $v) {
 			$result[$i]["id"] = $v["id"];
@@ -255,7 +255,7 @@ class PWBillService extends PSIBaseService {
 			$result["bizUserName"] = $v["biz_user_name"];
 			$result["bizDT"] = date("Y-m-d", strtotime($v["biz_dt"]));
 
-			$items = [];
+			$items = array();
 			$sql = "select p.id, p.goods_id, g.code, g.name, g.spec, u.name as unit_name, "
 					. " p.goods_count, p.goods_price, p.goods_money "
 					. " from t_pw_bill_detail p, t_goods g, t_goods_unit u"

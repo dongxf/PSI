@@ -92,7 +92,7 @@ class WarehouseService extends PSIBaseService {
 	
 	public function queryData($queryKey) {
 		if (!$queryKey) {
-			return [];
+			return array();
 		}
 		
 		$sql = "select id, code, name from t_warehouse"

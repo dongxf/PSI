@@ -309,7 +309,7 @@ class GoodsService extends PSIBaseService {
 				. " limit 20";
 		$key = "%{$queryKey}%";
 		$data = M()->query($sql, $key, $key, $key);
-		$result = [];
+		$result = array();
 		foreach ($data as $i => $v) {
 			$result[$i]["id"] = $v["id"];
 			$result[$i]["code"] = $v["code"];
@@ -333,7 +333,7 @@ class GoodsService extends PSIBaseService {
 				. " limit 20";
 		$key = "%{$queryKey}%";
 		$data = M()->query($sql, $key, $key, $key);
-		$result = [];
+		$result = array();
 		foreach ($data as $i => $v) {
 			$result[$i]["id"] = $v["id"];
 			$result[$i]["code"] = $v["code"];

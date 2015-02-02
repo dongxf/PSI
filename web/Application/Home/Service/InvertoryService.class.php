@@ -24,7 +24,7 @@ class InvertoryService extends PSIBaseService {
 				. " order by g.code";
 		$data = $db->query($sql, $warehouseId);
 
-		$result = [];
+		$result = array();
 
 		foreach ($data as $i => $v) {
 			$result[$i]["goodsId"] = $v["id"];
@@ -68,7 +68,7 @@ class InvertoryService extends PSIBaseService {
 				. " limit " . $start . ", " . $limit;
 		$data = $db->query($sql, $warehouseId, $goodsId, $dtFrom, $dtTo);
 
-		$result = [];
+		$result = array();
 
 		foreach ($data as $i => $v) {
 			$result[$i]["goodsId"] = $v["id"];
