@@ -105,6 +105,14 @@ Ext.define("PSI.User.MainForm", {
                 {text: "删除用户", iconCls: "PSI-button-delete-user", handler: me.onDeleteUser, scope: me}, "-",
                 {text: "修改用户密码", iconCls: "PSI-button-change-password", handler: me.onEditUserPassword, scope: me}, "-",
                 {
+                    text: "帮助",
+                    iconCls: "PSI-help",
+                    handler: function() {
+                        window.open("http://my.oschina.net/u/134395/blog/374303");
+                    }
+                },
+                "-",
+                {
                     text: "关闭", iconCls: "PSI-button-exit", handler: function () {
                         location.replace(me.getBaseURL());
                     }
