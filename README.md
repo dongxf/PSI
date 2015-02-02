@@ -19,3 +19,13 @@ PSI的开源协议
 -------------
 >QQ：1569352868
 >Email：1569352868@qq.com
+
+致谢
+-------------
+>PSI使用了如下开源软件，没有你们，就没有PSI
+>PHP (http://php.net/)
+>MySQL (http://www.mysql.com/)
+>ExtJS 4.2 (http://www.sencha.com/)
+>ThinkPHP 3.2.3 (http://www.thinkphp.cn/)
+>Overtrue\Pinyin (http://overtrue.me/pinyin/)
+>PHPExcel (http://phpexcel.codeplex.com/)
