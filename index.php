@@ -1,5 +1,9 @@
 <?php
+require "Mobile_Detect.php";
 
-// 为了在MOPASS部署
-
-header('Location: /web/');
+$detect = new Mobile_Detect();
+if ($detect->isMobile()) {
+	header('Location: /web/Mobile');
+} else {
+	header('Location: /web/');
+}
