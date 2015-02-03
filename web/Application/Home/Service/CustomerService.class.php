@@ -277,6 +277,15 @@ class CustomerService extends PSIBaseService {
 		if ($cnt > 0) {
 			return $this->bad("客户资料 [{$code} {$name}] 已经在销售出库单中使用了，不能删除");
 		}
+		$sql = "select count(*) as cnt "
+				. " from t_receivables_detail r, t_receiving v"
+				. " where r.ref_number = v.ref_number and r.ref_type = v.ref_type"
+				. "   and r.ca_id = '%s' and r.ca_type = 'customer' ";
+		$data = $db->query($sql, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("客户资料 [{$code} {$name}] 已经有收款记录，不能删除");
+		}
 
 		$db->startTrans();
 		try {
