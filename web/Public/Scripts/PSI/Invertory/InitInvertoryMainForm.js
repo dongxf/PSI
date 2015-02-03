@@ -146,6 +146,13 @@ Ext.define("PSI.Invertory.InitInvertoryMainForm", {
                 },
                 {
                     text: "取消建账完毕标记", iconCls: "PSI-button-cancel", scope: me, handler: me.onCancel
+                }, "-",
+                {
+                    text: "帮助",
+                    iconCls: "PSI-help",
+                    handler: function() {
+                        window.open("http://my.oschina.net/u/134395/blog/375000");
+                    }
                 },
                 "-", {
                     text: "关闭", iconCls: "PSI-button-exit", handler: function () {
