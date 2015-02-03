@@ -279,13 +279,35 @@ class SupplierService extends PSIBaseService {
 		$code = $data[0]["code"];
 		$name = $data[0]["name"];
 		
-		// TODO 需要判断是否能删除供应商
+		// 判断是否能删除供应商
+		$sql = "select count(*) as cnt from t_pw_bill where supplier_id = '%s' ";
+		$data = $db->query($sql, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("供应商档案 [{$code} {$name}] 在采购入库单中已经被使用，不能删除");
+		}
+		$sql = "select count(*) as cnt "
+				. " from t_payables_detail p, t_payment m "
+				. " where p.ref_type = m.ref_type and p.ref_number = m.ref_number "
+				. " and p.ca_id = '%s' and p.ca_type = 'supplier' ";
+		$data = $db->query($sql, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("供应商档案 [{$code} {$name}] 已经产生付款记录，不能删除");
+		}
 		
 		$db->startTrans();
 		try {
 			$sql = "delete from t_supplier where id = '%s' ";
 			$db->execute($sql, $id);
-						
+			
+			// 删除应付总账、明细账
+			$sql = "delete from t_payables where ca_id = '%s' and ca_type = 'supplier' ";
+			$db->execute($sql, $id);
+			$sql = "delete from t_payables_detail where ca_id = '%s' and ca_type = 'supplier' ";
+			$db->execute($sql, $id);
+			
+			
 			$log = "删除供应商档案：编码 = {$code},  名称 = {$name}";
 			$bs = new BizlogService();
 			$bs->insertBizlog($log, "基础数据-供应商档案");
