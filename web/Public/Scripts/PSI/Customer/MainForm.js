@@ -159,6 +159,14 @@ Ext.define("PSI.Customer.MainForm", {
                 {text: "修改客户", iconCls: "PSI-button-edit-detail", handler: me.onEditCustomer, scope: me},
                 {text: "删除客户", iconCls: "PSI-button-delete-detail", handler: me.onDeleteCustomer, scope: me}, "-",
                 {
+                    text: "帮助",
+                    iconCls: "PSI-help",
+                    handler: function() {
+                        window.open("http://my.oschina.net/u/134395/blog/374871");
+                    }
+                },
+                "",
+                {
                     text: "关闭", iconCls: "PSI-button-exit", handler: function () {
                         location.replace(PSI.Const.BASE_URL);
                     }
