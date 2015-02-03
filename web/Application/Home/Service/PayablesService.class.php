@@ -181,30 +181,32 @@ class PayablesService extends PSIBaseService {
 			$bs->insertBizlog($log, "应付账款管理");
 
 			// 应付明细账			
-			$sql = "select pay_money, act_money, ca_type, ca_id "
+			$sql = "select balance_money, act_money, ca_type, ca_id "
 					. " from t_payables_detail "
 					. " where ref_type = '%s' and ref_number = '%s' ";
 			$data = $db->query($sql, $refType, $refNumber);
 			$caType = $data[0]["ca_type"];
 			$caId = $data[0]["ca_id"];
-			$payMoney = $data[0]["pay_money"];
+			$balanceMoney = $data[0]["balance_money"];
 			$actMoneyNew = $data[0]["act_money"];
 			$actMoneyNew += $actMoney;
-			$balanceMoney = $payMoney - $actMoneyNew;
+			$balanceMoney -= $actMoney;
 			$sql = "update t_payables_detail "
 					. " set act_money = %f, balance_money = %f "
-					. " where ref_type = '%s' and ref_number = '%s' ";
-			$db->execute($sql, $actMoneyNew, $balanceMoney, $refType, $refNumber);
+					. " where ref_type = '%s' and ref_number = '%s' "
+					. " and ca_id = '%s' and ca_type = '%s' ";
+			$db->execute($sql, $actMoneyNew, $balanceMoney, $refType, $refNumber,
+					$caId, $caType);
 
 			// 应付总账
-			$sql = "select pay_money, act_money "
+			$sql = "select balance_money, act_money "
 					. " from t_payables "
 					. " where ca_type = '%s' and ca_id = '%s' ";
 			$data = $db->query($sql, $caType, $caId);
-			$payMoneyTotal = $data[0]["pay_money"];
+			$balanceMoneyTotal = $data[0]["balance_money"];
 			$actMoneyTotal = $data[0]["act_money"];
 			$actMoneyTotal += $actMoney;
-			$balanceMoneyTotal = $payMoneyTotal - $actMoneyTotal;
+			$balanceMoneyTotal -= $actMoney;
 			$sql = "update t_payables"
 					. " set act_money = %f, balance_money = %f "
 					. " where ca_type = '%s' and ca_id = '%s' ";

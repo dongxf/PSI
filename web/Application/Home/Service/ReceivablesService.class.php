@@ -199,8 +199,10 @@ class ReceivablesService extends PSIBaseService {
 			$balanceMoneyDetail -= $actMoney;
 			$sql = "update t_receivables_detail"
 					. " set act_money = %f, balance_money = %f "
-					. " where ref_number = '%s' and ref_type = '%s' ";
-			$db->execute($sql, $actMoneyDetail, $balanceMoneyDetail, $refNumber, $refType);
+					. " where ref_number = '%s' and ref_type = '%s' "
+					. " and ca_id = '%s' and ca_type = '%s' ";
+			$db->execute($sql, $actMoneyDetail, $balanceMoneyDetail, 
+					$refNumber, $refType, $caId, $caType);
 
 			// 应收总账
 			$sql = "select act_money, balance_money "
