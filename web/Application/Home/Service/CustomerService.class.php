@@ -270,13 +270,25 @@ class CustomerService extends PSIBaseService {
 		$code = $data[0]["code"];
 		$name = $data[0]["name"];
 
-		// TODO 需要判断是否能删除客户资料
+		// 判断是否能删除客户资料
+		$sql = "select count(*) as cnt from t_ws_bill where customer_id = '%s' ";
+		$data = $db->query($sql, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("客户资料 [{$code} {$name}] 已经在销售出库单中使用了，不能删除");
+		}
 
 		$db->startTrans();
 		try {
 			$sql = "delete from t_customer where id = '%s' ";
 			$db->execute($sql, $id);
-
+			
+			// 删除客户应收总账和明细账
+			$sql = "delete from t_receivables where ca_id = '%s' and ca_type = 'customer' ";
+			$db->execute($sql, $id);
+			$sql = "delete from t_receivables_detail where ca_id = '%s' and ca_type = 'customer' ";
+			$db->execute($sql, $id);
+			
 			$log = "删除客户资料：编码 = {$code},  名称 = {$name}";
 			$bs = new BizlogService();
 			$bs->insertBizlog($log, "客户关系-客户资料");
