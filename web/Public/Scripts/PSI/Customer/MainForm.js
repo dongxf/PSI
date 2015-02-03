@@ -165,7 +165,7 @@ Ext.define("PSI.Customer.MainForm", {
                         window.open("http://my.oschina.net/u/134395/blog/374871");
                     }
                 },
-                "",
+                "-",
                 {
                     text: "关闭", iconCls: "PSI-button-exit", handler: function () {
                         location.replace(PSI.Const.BASE_URL);
