@@ -70,7 +70,7 @@ class GoodsService extends PSIBaseService {
 		$name = $data[0]["name"];
 
 		// 检查记录单位是否被使用
-		$sql = "select count(*) from t_goods where unit_id = '%s' ";
+		$sql = "select count(*) as cnt from t_goods where unit_id = '%s' ";
 		$data = $db->query($sql, $id);
 		$cnt = $data[0]["cnt"];
 		if ($cnt > 0) {
@@ -284,7 +284,27 @@ class GoodsService extends PSIBaseService {
 		$name = $data[0]["name"];
 		$spec = $data[0]["spec"];
 
-		// TODO : 判断商品是否能删除
+		// 判断商品是否能删除
+		$sql = "select count(*) as cnt from t_pw_bill_detail where goods_id = '%s' ";
+		$data = $db->query($sql, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("商品[{$code} {$name}]已经在采购入库单中使用了，不能删除");
+		}
+
+		$sql = "select count(*) as cnt from t_ws_bill_detail where goods_id = '%s' ";
+		$data = $db->query($sql, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("商品[{$code} {$name}]已经在销售出库单中使用了，不能删除");
+		}
+
+		$sql = "select count(*) as cnt from t_invertory_detail where goods_id = '%s' ";
+		$data = $db->query($sql, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("商品[{$code} {$name}]在业务中已经使用了，不能删除");
+		}
 
 		$sql = "delete from t_goods where id = '%s' ";
 		$db->execute($sql, $id);
