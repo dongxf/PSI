@@ -168,7 +168,7 @@ class CustomerService extends PSIBaseService {
 		$initReceivables = floatval($initReceivables);
 		if ($initReceivables && $initReceivablesDT) {
 			$sql = "select count(*) as cnt from t_receivables_detail "
-					. " where ca_id = '%s' and ca_type = 'customer' and ref_type <> '应收建账' ";
+					. " where ca_id = '%s' and ca_type = 'customer' and ref_type <> '应收账款期初建账' ";
 			$data = $db->query($sql, $id);
 			$cnt = $data[0]["cnt"];
 			if ($cnt > 0) {
@@ -183,7 +183,7 @@ class CustomerService extends PSIBaseService {
 			
 			// 应收明细账
 			$sql = "select id from t_receivables_detail "
-					. " where ca_id = '%s' and ca_type = 'customer' and ref_type = '应收建账' ";
+					. " where ca_id = '%s' and ca_type = 'customer' and ref_type = '应收账款期初建账' ";
 			$data = $db->query($sql, $id);
 			if ($data) {
 				$rvId = $data[0]["id"];
@@ -196,8 +196,8 @@ class CustomerService extends PSIBaseService {
 				$rvId = $idGen->newId();
 				$sql = "insert into t_receivables_detail (id, rv_money, act_money, balance_money,"
 						. " date_created, ca_id, ca_type, ref_number, ref_type)"
-						. " values ('%s', %f, 0, %f, '%s', '%s', 'customer', '', '应收建账') ";
-				$db->execute($sql, $rvId, $initReceivables, $initReceivables, $initReceivablesDT, $id);
+						. " values ('%s', %f, 0, %f, '%s', '%s', 'customer', '%s', '应收账款期初建账') ";
+				$db->execute($sql, $rvId, $initReceivables, $initReceivables, $initReceivablesDT, $id, $id);
 			}
 			
 			// 应收总账

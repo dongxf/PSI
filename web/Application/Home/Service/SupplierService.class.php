@@ -214,7 +214,7 @@ class SupplierService extends PSIBaseService {
 		$initPayables = floatval($initPayables);
 		if ($initPayables && $initPayablesDT) {
 			$sql = "select count(*) as cnt from t_payables_detail "
-					. " where ca_id = '%s' and ca_type = 'supplier' and ref_type <> '期初建账' ";
+					. " where ca_id = '%s' and ca_type = 'supplier' and ref_type <> '应付账款期初建账' ";
 			$data = $db->query($sql, $id);
 			$cnt = $data[0]["cnt"];
 			if ($cnt > 0) {
@@ -229,7 +229,7 @@ class SupplierService extends PSIBaseService {
 			
 			// 应付明细账
 			$sql = "select id from t_payables_detail "
-					. " where ca_id = '%s' and ca_type = 'supplier' and ref_type = '期初建账' ";
+					. " where ca_id = '%s' and ca_type = 'supplier' and ref_type = '应付账款期初建账' ";
 			$data = $db->query($sql, $id);
 			if ($data) {
 				$payId = $data[0]["id"];
@@ -242,8 +242,8 @@ class SupplierService extends PSIBaseService {
 				$payId = $idGen->newId();
 				$sql = "insert into t_payables_detail (id, pay_money, act_money, balance_money, ca_id,"
 						. " ca_type, ref_type, ref_number, date_created)"
-						. " values ('%s', %f, 0, %f, '%s', 'supplier', '期初建账', '', '%s') ";
-				$db->execute($sql, $payId, $initPayables, $initPayables, $id, $initPayablesDT);
+						. " values ('%s', %f, 0, %f, '%s', 'supplier', '应付账款期初建账', '%s', '%s') ";
+				$db->execute($sql, $payId, $initPayables, $initPayables, $id, $id, $initPayablesDT);
 			}
 			
 			// 应付总账
