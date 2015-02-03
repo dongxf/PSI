@@ -90,10 +90,6 @@ Ext.define("PSI.User.LoginForm", {
         me.callParent(arguments);
     },
 
-    getPostURL: function() {
-    	return PSI.Const.BASE_URL + "Home/User/loginPOST";
-    },
-    
     // private
     onOK: function () {
         var me = this;
@@ -103,7 +99,7 @@ Ext.define("PSI.User.LoginForm", {
         var el = f.getEl() || Ext.getBody();
         el.mask("系统登录中...");
         f.getForm().submit({
-            url: me.getPostURL(),
+            url: PSI.Const.BASE_URL + "Home/User/loginPOST",
             method: "POST",
             success: function (form, action) {
                 Ext.util.Cookies.set("PSI_user_login_name", encodeURIComponent(loginName),
