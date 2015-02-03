@@ -164,6 +164,14 @@ Ext.define("PSI.Supplier.MainForm", {
                 {text: "修改供应商", iconCls: "PSI-button-edit-detail", handler: this.onEditSupplier, scope: this},
                 {text: "删除供应商", iconCls: "PSI-button-delete-detail", handler: this.onDeleteSupplier, scope: this}, "-",
                 {
+                    text: "帮助",
+                    iconCls: "PSI-help",
+                    handler: function() {
+                        window.open("http://my.oschina.net/u/134395/blog/374838");
+                    }
+                },
+                "-",
+                {
                     text: "关闭", iconCls: "PSI-button-exit", handler: function () {
                         location.replace(PSI.Const.BASE_URL);
                     }
