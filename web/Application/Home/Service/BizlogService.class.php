@@ -52,10 +52,18 @@ class BizlogService {
 
             $sql = "insert into t_biz_log (user_id, info, ip, date_created, log_category) "
                     . " values ('%s', '%s', '%s',  now(), '%s')";
-            M()->execute($sql, $us->getLoginUserId(), $log, get_client_ip(), $category);
+            M()->execute($sql, $us->getLoginUserId(), $log, $this->getClientIP(), $category);
         } catch (Exception $ex) {
             // TODO log 
         }
     }
 
+	private function getClientIP() {
+		$xRealIP = $_["X-REAL-IP"];
+		if ($xRealIP) {
+			return $xRealIP;
+		} else {
+			return get_client_ip();
+		}
+	}
 }
