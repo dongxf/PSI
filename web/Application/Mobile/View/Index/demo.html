@@ -3,11 +3,14 @@
 <script src="{$uri}Public/echarts/echarts.js" type="text/javascript"></script>
 
 <div data-role="page">
-    <div data-role="header"><h1>{$title} - PSI</h1></div>
+    <div data-role="header">
+        <a href="{$uri}Mobile/">返回首页</a>
+        <h1>{$title} - PSI</h1>
+    </div>
+    
     <div data-role="content">
 
-    <div id="chartMain" style="height:500px;border:1px solid #ccc;padding:10px;"></div>
-    <div id="mainMap" style="height:500px;border:1px solid #ccc;padding:10px;"></div>
+    <div id="chartMain" style="height:400px;border:1px solid #ccc;padding:10px;"></div>
 
     <script>
     require.config({
@@ -19,8 +22,7 @@
         [
             'echarts',
             'echarts/chart/bar',
-            'echarts/chart/line',
-            'echarts/chart/map'
+            'echarts/chart/line'
         ],
         function (ec) {
             //--- 折柱 ---
@@ -33,13 +35,13 @@
                     data:['蒸发量','降水量']
                 },
                 toolbox: {
-                    show : true,
+                    show : false,
                     feature : {
-                        mark : {show: true},
-                        dataView : {show: true, readOnly: false},
+                        mark : {show: false},
+                        dataView : {show: true, readOnly: true},
                         magicType : {show: true, type: ['line', 'bar']},
-                        restore : {show: true},
-                        saveAsImage : {show: true}
+                        restore : {show: false},
+                        saveAsImage : {show: false}
                     }
                 },
                 calculable : true,
@@ -68,35 +70,6 @@
                     }
                 ]
             });
-            
-            // --- 地图 ---
-            var myChart2 = ec.init(document.getElementById('mainMap'));
-            myChart2.setOption({
-                tooltip : {
-                    trigger: 'item',
-                    formatter: '{b}'
-                },
-                series : [
-                    {
-                        name: '中国',
-                        type: 'map',
-                        mapType: 'china',
-                        selectedMode : 'multiple',
-                        itemStyle:{
-                            normal:{label:{show:true}},
-                            emphasis:{label:{show:true}}
-                        },
-                        data:[
-                            {name:'广东',selected:true}
-                        ]
-                    }
-                ]
-            });
-
-            window.onresize = function() {
-                myChart.resize();
-                myChart2.resize();
-            };
         }
     );
 
