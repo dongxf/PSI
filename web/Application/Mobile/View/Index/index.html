@@ -2,13 +2,37 @@
 
 <div data-role="page">
     <div data-role="header"><h1>{$title} - PSI</h1></div>
+
     <div data-role="content">
-        <ul data-role="listview">
-            <li><a href="#">采购报表</a></li>
-            <li><a href="#">库存报表</a></li>
-            <li><a href="#">销售报表</a></li>
-            <li><a href="#">资金报表</a></li>
-        </ul>
+        <div data-role="collapsible">
+            <h2>销售报表</h2>
+            <ul data-role="listview" data-inset="true">
+                <li><a href="#">当日销售排行榜</a></li>
+                <li><a href="#">销售汇总表</a></li>
+            </ul>
+        </div>
+        <div data-role="collapsible">
+            <h2>采购报表</h2>
+            <ul data-role="listview" data-inset="true">
+                <li><a href="#">采购汇总报表</a></li>
+            </ul>
+        </div>
+        <div data-role="collapsible">
+            <h2>库存报表</h2>
+            <ul data-role="listview" data-inset="true">
+                <li><a href="#">库存预警</a></li>
+                <li><a href="#">库存汇总表</a></li>
+            </ul>
+        </div>
+        <div data-role="collapsible">
+            <h2>资金报表</h2>
+            <ul data-role="listview" data-inset="true">
+                <li><a href="#">盈亏表</a></li>
+                <li><a href="#">应收账款账龄分析</a></li>
+                <li><a href="#">应收账款账龄分析</a></li>
+            </ul>
+        </div>
     </div>
+
     <div data-role="footer" data-position="fixed"></div>
 </div>
