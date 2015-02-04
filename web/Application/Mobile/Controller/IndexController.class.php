@@ -12,4 +12,14 @@ class IndexController extends Controller {
 
 		$this->display();
     }
+	
+	public function demo(){		
+		$this->assign("title", "报表");
+		$this->assign("uri", __ROOT__ . "/");
+		
+		$dtFlag = getdate();
+		$this->assign("dtFlag", $dtFlag[0]);
+
+		$this->display();
+    }
 }
