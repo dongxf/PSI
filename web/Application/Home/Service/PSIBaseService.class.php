@@ -11,6 +11,11 @@ class PSIBaseService {
 	protected function isDemo() {
 		return getenv("IS_DEMO") == "1";
 	}
+	
+	protected function isMOPAAS() {
+		// 是否部署在 http://psi.oschina.mopaas.com
+		return getenv("IS_MOPAAS") == "1";
+	}
 
 	protected function ok($id = null) {
 		if ($id) {
