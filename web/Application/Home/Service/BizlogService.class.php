@@ -59,7 +59,7 @@ class BizlogService {
     }
 
 	private function getClientIP() {
-		$xRealIP = $_SERVER["X-REAL-IP"];
+		$xRealIP = $_SERVER["X-Real-IP"];
 		if ($xRealIP) {
 			return $xRealIP;
 		} else {
