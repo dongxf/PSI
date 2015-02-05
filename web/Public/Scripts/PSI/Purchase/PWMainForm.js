@@ -42,7 +42,7 @@ Ext.define("PSI.Purchase.PWMainForm", {
                 {header: "入库单号", dataIndex: "ref", width: 110, menuDisabled: true, sortable: false},
                 {header: "业务日期", dataIndex: "bizDate", menuDisabled: true, sortable: false},
                 {header: "供应商", dataIndex: "supplierName", width: 200, menuDisabled: true, sortable: false},
-                {header: "采购金额", dataIndex: "amount", menuDisabled: true, sortable: false, align: "right", xtype: "numbercolumn", width: 80},
+                {header: "采购金额", dataIndex: "amount", menuDisabled: true, sortable: false, align: "right", xtype: "numbercolumn", width: 100},
                 {header: "入库仓库", dataIndex: "warehouseName", menuDisabled: true, sortable: false},
                 {header: "业务员", dataIndex: "bizUserName", menuDisabled: true, sortable: false},
                 {header: "录单人", dataIndex: "inputUserName", menuDisabled: true, sortable: false}
