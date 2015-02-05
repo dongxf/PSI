@@ -1,12 +1,6 @@
 <layout name="layout" />
 
-<script src="{$uri}Public/Scripts/PSI/Warehouse/WarehouseField.js?dt={$dtFlag}" type="text/javascript"></script>
-<script src="{$uri}Public/Scripts/PSI/User/UserField.js?dt={$dtFlag}" type="text/javascript"></script>
-<script src="{$uri}Public/Scripts/PSI/Customer/CustomerField.js?dt={$dtFlag}" type="text/javascript"></script>
-<script src="{$uri}Public/Scripts/PSI/Goods/GoodsWithSalePriceField.js?dt={$dtFlag}" type="text/javascript"></script>
-
-<script src="{$uri}Public/Scripts/PSI/Sale/WSMainForm.js?dt={$dtFlag}" type="text/javascript"></script>
-<script src="{$uri}Public/Scripts/PSI/Sale/WSEditForm.js?dt={$dtFlag}" type="text/javascript"></script>
+<script src="{$uri}Public/Scripts/PSI/Sale/SRMainForm.js?dt={$dtFlag}" type="text/javascript"></script>
 
 <script>
     Ext.onReady(function(){
@@ -14,6 +8,7 @@
             userName: "{$loginUserName}"
         });
 
+        app.add(Ext.create("PSI.Sale.SRMainForm"));
         app.setAppHeader({
             title: "{$title}",
             iconCls: "PSI-fid2006"
