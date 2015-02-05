@@ -444,6 +444,8 @@ Ext.define("PSI.Invertory.InvQueryMainForm", {
 	},
 
 	refreshInvertoryGrid : function() {
+        this.getInvertoryDetailGrid().getStore().removeAll();
+        
 		var item = this.getWarehouseGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
 			return;
