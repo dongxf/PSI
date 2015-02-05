@@ -9,14 +9,21 @@ namespace Home\Service;
  */
 class PWBillService extends PSIBaseService {
 
-	public function pwbillList() {
+	public function pwbillList($params) {
+		$page = $params["page"];
+		$start = $params["start"];
+		$limit = $params["limit"];
+		
+		$db = M();
+
 		$sql = "select p.id, p.bill_status, p.ref, p.biz_dt, u1.name as biz_user_name, u2.name as input_user_name, "
 				. " p.goods_money, w.name as warehouse_name, s.name as supplier_name "
 				. " from t_pw_bill p, t_warehouse w, t_supplier s, t_user u1, t_user u2"
 				. " where p.warehouse_id = w.id and p.supplier_id = s.id "
 				. "    and p.biz_user_id = u1.id and p.input_user_id = u2.id"
-				. " order by p.ref desc ";
-		$data = M()->query($sql);
+				. " order by p.ref desc "
+				. " limit " . $start . ", " . $limit;
+		$data = $db->query($sql);
 		$result = array();
 
 		foreach ($data as $i => $v) {
@@ -31,7 +38,14 @@ class PWBillService extends PSIBaseService {
 			$result[$i]["amount"] = $v["goods_money"];
 		}
 
-		return $result;
+		$sql = "select count(*) as cnt "
+		. " from t_pw_bill p, t_warehouse w, t_supplier s, t_user u1, t_user u2"
+		. " where p.warehouse_id = w.id and p.supplier_id = s.id "
+		. "    and p.biz_user_id = u1.id and p.input_user_id = u2.id";
+		$data = $db->query($sql);
+		$cnt = $data[0]["cnt"];
+
+		return array("dataList" => $result, "totalCount" => $cnt);
 	}
 
 	public function pwBillDetailList($pwbillId) {

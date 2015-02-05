@@ -13,10 +13,29 @@ Ext.define("PSI.Purchase.PWMainForm", {
         var storePWBill = Ext.create("Ext.data.Store", {
             autoLoad: false,
             model: "PSIPWBill",
-            data: []
+            data: [],
+            pageSize: 20,
+            proxy: {
+                type: "ajax",
+                actionMethods: {
+                    read: "POST"
+                },
+                url: PSI.Const.BASE_URL + "Home/Purchase/pwbillList",
+                reader: {
+                    root: 'dataList',
+                    totalProperty: 'totalCount'
+                }
+            }
+        });
+        storePWBill.on("load", function (e, records, successful) {
+            if (successful) {
+                me.gotoPWBillGridRecord(me.__lastId);
+            }
         });
 
+
         var gridPWBill = Ext.create("Ext.grid.Panel", {
+            border: 0,
             columnLines: true,
             columns: [
                 {header: "状态", dataIndex: "billStatus", menuDisabled: true, sortable: false, width: 60},
@@ -29,6 +48,38 @@ Ext.define("PSI.Purchase.PWMainForm", {
                 {header: "录单人", dataIndex: "inputUserName", menuDisabled: true, sortable: false}
             ],
             store: storePWBill,
+            tbar: [{
+                    id: "pagingToobar",
+                    xtype: "pagingtoolbar",
+                    border: 0,
+                    store: storePWBill
+                }, "-", {
+                    xtype: "displayfield",
+                    value: "每页显示"
+                }, {
+                    id: "comboCountPerPage",
+                    xtype: "combobox",
+                    editable: false,
+                    width: 60,
+                    store: Ext.create("Ext.data.ArrayStore", {
+                        fields: ["text"],
+                        data: [["20"], ["50"], ["100"], ["300"], ["1000"]]
+                    }),
+                    value: 20,
+                    listeners: {
+                        change: {
+                            fn: function () {
+                                storePWBill.pageSize = Ext.getCmp("comboCountPerPage").getValue();
+                                storePWBill.currentPage = 1;
+                                Ext.getCmp("pagingToobar").doRefresh();
+                            },
+                            scope: me
+                        }
+                    }
+                }, {
+                    xtype: "displayfield",
+                    value: "条记录"
+                }],
             listeners: {
                 select: {
                     fn: me.onPWBillGridSelect,
@@ -111,37 +162,8 @@ Ext.define("PSI.Purchase.PWMainForm", {
         var gridDetail = this.pwBillDetailGrid;
         gridDetail.setTitle("采购入库单明细");
         gridDetail.getStore().removeAll();
-
-        var grid = this.pwBillGrid;
-        var el = grid.getEl() || Ext.getBody();
-        el.mask(PSI.Const.LOADING);
-        Ext.Ajax.request({
-            url: PSI.Const.BASE_URL + "Home/Purchase/pwbillList",
-            method: "POST",
-            callback: function (options, success, response) {
-                var store = grid.getStore();
-
-                store.removeAll();
-
-                if (success) {
-                    var data = Ext.JSON.decode(response.responseText);
-                    store.add(data);
-
-                    if (store.getCount() > 0) {
-                        if (id) {
-                            var r = store.findExact("id", id);
-                            if (r != -1) {
-                                grid.getSelectionModel().select(r);
-                            }
-                        } else {
-                            grid.getSelectionModel().select(0);
-                        }
-                    }
-                }
-
-                el.unmask();
-            }
-        });
+        Ext.getCmp("pagingToobar").doRefresh();
+        this.__lastId = id;
     },
     onAddPWBill: function () {
         var form = Ext.create("PSI.Purchase.PWEditForm", {
@@ -298,5 +320,21 @@ Ext.define("PSI.Purchase.PWMainForm", {
                 }
             });
         });
+    },
+    
+    gotoPWBillGridRecord: function (id) {
+        var me = this;
+        var grid = me.pwBillGrid;
+        var store = grid.getStore();
+        if (id) {
+            var r = store.findExact("id", id);
+            if (r != -1) {
+                grid.getSelectionModel().select(r);
+            } else {
+                grid.getSelectionModel().select(0);
+            }
+        } else {
+            grid.getSelectionModel().select(0);
+        }
     }
 });
