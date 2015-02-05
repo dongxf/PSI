@@ -87,4 +87,9 @@ class FIdConst {
 	 * 销售出库
 	 */
 	const WAREHOUSING_SALE = "2002";
+	
+	/**
+	 * 销售退货入库
+	 */
+	const SALE_REJECTION = "2006";
 }

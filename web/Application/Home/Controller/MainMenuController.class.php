@@ -94,6 +94,10 @@ class MainMenuController extends Controller {
 				// 销售出库
 				redirect(__ROOT__ . "/Home/Sale/wsIndex");
 				break;
+			case FIdConst::SALE_REJECTION:
+				// 销售退货入库
+				redirect(__ROOT__ . "/Home/Sale/srIndex");
+				break;
 			default:
 				redirect(__ROOT__ . "/Home");
 		}

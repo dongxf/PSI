@@ -82,4 +82,20 @@ class SaleController extends Controller {
         $this->ajaxReturn($ws->commitWSBill($params));
     }
 
+	public function srIndex() {
+        $us = new UserService();
+
+        $this->assign("title", "销售退货入库");
+        $this->assign("uri", __ROOT__ . "/");
+
+        $this->assign("loginUserName", $us->getLoginUserName());
+        $dtFlag = getdate();
+        $this->assign("dtFlag", $dtFlag[0]);
+
+        if ($us->hasPermission(FIdConst::SALE_REJECTION)) {
+            $this->display();
+        } else {
+            redirect(__ROOT__ . "/Home/User/login");
+        }
+	}
 }
