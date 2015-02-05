@@ -246,7 +246,7 @@ Ext.define("PSI.Invertory.InvQueryMainForm", {
 	},
 
 	getGoodsIdParam : function() {
-		item = this.getInvertoryGrid().getSelectionModel().getSelection();
+		var item = this.getInvertoryGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
 			return null;
 		}
