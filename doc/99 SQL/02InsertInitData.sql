@@ -73,7 +73,8 @@ INSERT INTO `t_permission` (`id`, `fid`, `name`, `note`) VALUES
 ('2002', '2002', '销售出库', '销售出库'),
 ('2003', '2003', '库存账查询', '库存账查询'),
 ('2004', '2004', '应收账款管理', '应收账款管理'),
-('2005', '2005', '应付账款管理', '应付账款管理');
+('2005', '2005', '应付账款管理', '应付账款管理'),
+('2006', '2006', '销售退货入库', '销售退货入库');
 
 INSERT INTO `t_role` (`id`, `name`) VALUES
 ('A83F617E-A153-11E4-A9B8-782BCBD7746B', '系统管理');
@@ -92,7 +93,8 @@ INSERT INTO `t_role_permission` (`role_id`, `permission_id`) VALUES
 ('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2002'),
 ('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2003'),
 ('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2004'),
-('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2005');
+('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2005'),
+('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2006');
 
 INSERT INTO `t_role_user` (`role_id`, `user_id`) VALUES
 ('A83F617E-A153-11E4-A9B8-782BCBD7746B', '6C2A09CD-A129-11E4-9B6A-782BCBD7746B');

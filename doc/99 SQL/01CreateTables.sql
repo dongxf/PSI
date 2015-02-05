@@ -371,6 +371,43 @@ CREATE TABLE IF NOT EXISTS `t_receiving` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+
+DROP TABLE IF EXISTS `t_sr_bill`;
+CREATE TABLE IF NOT EXISTS `t_sr_bill` (
+  `id` varchar(255) NOT NULL,
+  `bill_status` int(11) NOT NULL,
+  `bizdt` datetime NOT NULL,
+  `biz_user_id` varchar(255) NOT NULL,
+  `customer_id` varchar(255) NOT NULL,
+  `date_created` datetime DEFAULT NULL,
+  `input_user_id` varchar(255) NOT NULL,
+  `invertory_money` decimal(19,2) DEFAULT NULL,
+  `profit` decimal(19,2) DEFAULT NULL,
+  `ref` varchar(255) NOT NULL,
+  `retrun_sale_money` decimal(19,2) DEFAULT NULL,
+  `warehouse_id` varchar(255) NOT NULL,
+  `ws_bill_id` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `t_sr_bill_detail`;
+CREATE TABLE IF NOT EXISTS `t_sr_bill_detail` (
+  `id` varchar(255) NOT NULL,
+  `date_created` datetime DEFAULT NULL,
+  `goods_id` varchar(255) NOT NULL,
+  `goods_count` int(11) NOT NULL,
+  `goods_money` decimal(19,2) NOT NULL,
+  `goods_price` decimal(19,2) NOT NULL,
+  `invertory_money` decimal(19,2) NOT NULL,
+  `invertory_price` decimal(19,2) NOT NULL,
+  `retrun_sale_money` decimal(19,2) NOT NULL,
+  `show_order` int(11) NOT NULL,
+  `srbill_id` varchar(255) NOT NULL,
+  `wsbilldetail_id` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
