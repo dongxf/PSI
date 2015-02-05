@@ -325,6 +325,7 @@ Ext.define("PSI.Purchase.PWMainForm", {
     gotoPWBillGridRecord: function (id) {
         var me = this;
         var grid = me.pwBillGrid;
+        grid.getSelectionModel().deselectAll();
         var store = grid.getStore();
         if (id) {
             var r = store.findExact("id", id);

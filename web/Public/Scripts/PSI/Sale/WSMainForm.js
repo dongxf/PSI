@@ -433,6 +433,7 @@ Ext.define("PSI.Sale.WSMainForm", {
     gotoWSBillGridRecord: function(id) {
         var me = this;
         var grid = me.wsBillGrid;
+        grid.getSelectionModel().deselectAll();
         var store = grid.getStore();
         if (id) {
             var r = store.findExact("id", id);
