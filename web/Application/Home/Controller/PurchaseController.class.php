@@ -31,7 +31,6 @@ class PurchaseController extends Controller {
 				"page" => I("post.page"),
 				"start" => I("post.start"),
 				"limit" => I("post.limit")
-
 			);
 			$this->ajaxReturn($ps->pwbillList($params));
 		}
