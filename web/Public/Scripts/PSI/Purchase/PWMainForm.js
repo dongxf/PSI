@@ -108,7 +108,7 @@ Ext.define("PSI.Purchase.PWMainForm", {
             columnLines: true,
             columns: [
                 Ext.create("Ext.grid.RowNumberer", {text: "序号", width: 30}),
-                {header: "商品编码", dataIndex: "goodsCode", menuDisabled: true, sortable: false, width: 60},
+                {header: "商品编码", dataIndex: "goodsCode", menuDisabled: true, sortable: false, width: 120},
                 {header: "商品名称", dataIndex: "goodsName", menuDisabled: true, sortable: false, width: 120},
                 {header: "规格型号", dataIndex: "goodsSpec", menuDisabled: true, sortable: false},
                 {header: "采购数量", dataIndex: "goodsCount", menuDisabled: true, sortable: false, align: "right"},
