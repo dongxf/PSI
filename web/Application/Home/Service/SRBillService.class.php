@@ -142,4 +142,8 @@ class SRBillService extends PSIBaseService {
 
 		return array("dataList" => $result, "totalCount" => $cnt);
 	}
+	
+	public function editSRBill($params) {
+		return $this->todo();
+	}
 }

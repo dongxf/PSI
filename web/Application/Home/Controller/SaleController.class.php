@@ -116,11 +116,10 @@ class SaleController extends Controller {
             "id" => I("post.id")
         );
 
-        $ws = new SRBillService();
-        $this->ajaxReturn($ws->srBillInfo($params));
+        $rs = new SRBillService();
+        $this->ajaxReturn($rs->srBillInfo($params));
 
 	}
-	
 	
 	public function selectWSBillList() {
         $params = array(
@@ -129,8 +128,16 @@ class SaleController extends Controller {
             "limit" => I("post.limit")
         );
 
-        $ws = new SRBillService();
-        $this->ajaxReturn($ws->selectWSBillList($params));
+        $rs = new SRBillService();
+        $this->ajaxReturn($rs->selectWSBillList($params));
     }
+	
+	public function editSRBill() {
+        $params = array(
+            "jsonStr" => I("post.jsonStr")
+        );
 
+        $rs = new SRBillService();
+        $this->ajaxReturn($rs->editSRBill($params));
+    }
 }
