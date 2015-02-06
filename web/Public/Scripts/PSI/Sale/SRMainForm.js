@@ -55,12 +55,16 @@ Ext.define("PSI.Sale.SRMainForm", {
     refreshBillGrid: function (id) {
     },
     onAddSRBill: function () {
+        PSI.MsgBox.showInfo("正在开发中...");
     },
     onEditSRBill: function () {
+        PSI.MsgBox.showInfo("正在开发中...");
     },
     onDeleteSRBill: function () {
+        PSI.MsgBox.showInfo("正在开发中...");
     },
     onCommit: function () {
+        PSI.MsgBox.showInfo("正在开发中...");
     },
     getSRGrid: function () {
         var me = this;
