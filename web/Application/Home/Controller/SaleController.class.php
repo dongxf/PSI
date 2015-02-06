@@ -110,4 +110,14 @@ class SaleController extends Controller {
         $ws = new SRBillService();
         $this->ajaxReturn($ws->srbillList($params));
 	}
+	
+	public function srBillInfo() {
+		$params = array(
+            "id" => I("post.id")
+        );
+
+        $ws = new SRBillService();
+        $this->ajaxReturn($ws->srBillInfo($params));
+
+	}
 }

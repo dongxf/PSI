@@ -12,10 +12,10 @@ Ext.define("PSI.Sale.SREditForm", {
         Ext.apply(me, {title: entity == null ? "新建销售退货入库单" : "编辑销售退货入库单",
             modal: true,
             onEsc: Ext.emptyFn,
-            width: 800,
+            width: 900,
             height: 600,
             layout: "border",
-            defaultFocus: "editCustomer",
+            defaultFocus: "editWarehouse",
             items: [{
                     region: "center",
                     border: 0,
@@ -75,23 +75,13 @@ Ext.define("PSI.Sale.SREditForm", {
                         },
                         {
                             id: "editCustomer",
-                            xtype: "psi_customerfield",
-                            parentCmp: me,
+                            xtype: "displayfield",
                             fieldLabel: "客户",
-                            allowBlank: false,
                             labelWidth: 60,
                             labelAlign: "right",
                             labelSeparator: "",
                             colspan: 2,
-                            width: 430,
-                            blankText: "没有输入客户",
-                            beforeLabelTextTpl: PSI.Const.REQUIRED,
-                            listeners: {
-                                specialkey: {
-                                    fn: me.onEditCustomerSpecialKey,
-                                    scope: me
-                                }
-                            }
+                            width: 430
                         },
                         {
                             xtype: "hidden",
@@ -181,9 +171,6 @@ Ext.define("PSI.Sale.SREditForm", {
                     if (data.ref) {
                         Ext.getCmp("editRef").setValue(data.ref);
                     }
-
-                    Ext.getCmp("editCustomerId").setValue(data.customerId);
-                    Ext.getCmp("editCustomer").setValue(data.customerName);
 
                     Ext.getCmp("editWarehouseId").setValue(data.warehouseId);
                     Ext.getCmp("editWarehouse").setValue(data.warehouseName);
@@ -322,10 +309,13 @@ Ext.define("PSI.Sale.SREditForm", {
             columns: [
                 Ext.create("Ext.grid.RowNumberer", {text: "序号", width: 30}),
                 {header: "商品编码", dataIndex: "goodsCode", menuDisabled: true,
-                    sortable: false, editor: {xtype: "psi_goods_with_saleprice_field", parentCmp: me}},
+                    sortable: false},
                 {header: "商品名称", dataIndex: "goodsName", menuDisabled: true, sortable: false, width: 120},
                 {header: "规格型号", dataIndex: "goodsSpec", menuDisabled: true, sortable: false},
                 {header: "销售数量", dataIndex: "goodsCount", menuDisabled: true,
+                    sortable: false, align: "right"
+                },
+                {header: "退货数量", dataIndex: "goodsCount", menuDisabled: true,
                     sortable: false, align: "right",
                     editor: {xtype: "numberfield",
                         allowDecimals: false,
@@ -335,7 +325,10 @@ Ext.define("PSI.Sale.SREditForm", {
                 {header: "销售单价", dataIndex: "goodsPrice", menuDisabled: true,
                     sortable: false, align: "right", xtype: "numbercolumn",
                     width: 60},
-                {header: "采购金额", dataIndex: "goodsMoney", menuDisabled: true,
+                {header: "退货单价", dataIndex: "goodsPrice", menuDisabled: true,
+                    sortable: false, align: "right", xtype: "numbercolumn",
+                    width: 60},
+                {header: "退货金额", dataIndex: "goodsMoney", menuDisabled: true,
                     sortable: false, align: "right", xtype: "numbercolumn", width: 80},
                 {
                     header: "",

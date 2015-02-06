@@ -61,7 +61,10 @@ Ext.define("PSI.Sale.SRMainForm", {
 
     },
     onAddSRBill: function () {
-        PSI.MsgBox.showInfo("正在开发中...");
+        var form = Ext.create("PSI.Sale.SREditForm", {
+            parentForm: this
+        });
+        form.show();
     },
     onEditSRBill: function () {
         PSI.MsgBox.showInfo("正在开发中...");
