@@ -40,6 +40,16 @@ Ext.define("PSI.Sale.SREditForm", {
                             value: entity == null ? null : entity.get("id")
                         },
                         {
+                            id: "editCustomer",
+                            xtype: "displayfield",
+                            fieldLabel: "客户",
+                            labelWidth: 60,
+                            labelAlign: "right",
+                            labelSeparator: "",
+                            colspan: 2,
+                            width: 430
+                        },
+                        {
                             id: "editRef",
                             fieldLabel: "单号",
                             labelWidth: 60,
@@ -72,16 +82,6 @@ Ext.define("PSI.Sale.SREditForm", {
                             xtype: "hidden",
                             id: "editCustomerId",
                             name: "customerId"
-                        },
-                        {
-                            id: "editCustomer",
-                            xtype: "displayfield",
-                            fieldLabel: "客户",
-                            labelWidth: 60,
-                            labelAlign: "right",
-                            labelSeparator: "",
-                            colspan: 2,
-                            width: 430
                         },
                         {
                             xtype: "hidden",
@@ -186,10 +186,6 @@ Ext.define("PSI.Sale.SREditForm", {
                     if (data.items) {
                         store.add(data.items);
                     }
-                    if (store.getCount() == 0) {
-                        store.add({});
-                    }
-
                 } else {
                     PSI.MsgBox.showInfo("网络错误")
                 }
@@ -223,11 +219,6 @@ Ext.define("PSI.Sale.SREditForm", {
     },
     onEditBizDTSpecialKey: function (field, e) {
         if (e.getKey() == e.ENTER) {
-            Ext.getCmp("editCustomer").focus();
-        }
-    },
-    onEditCustomerSpecialKey: function (field, e) {
-        if (e.getKey() == e.ENTER) {
             Ext.getCmp("editWarehouse").focus();
         }
     },
@@ -240,9 +231,6 @@ Ext.define("PSI.Sale.SREditForm", {
         if (e.getKey() == e.ENTER) {
             var me = this;
             var store = me.getGoodsGrid().getStore();
-            if (store.getCount() == 0) {
-                store.add({});
-            }
             me.getGoodsGrid().focus();
             me.__cellEditing.startEdit(0, 1);
         }
@@ -359,9 +347,6 @@ Ext.define("PSI.Sale.SREditForm", {
         if (e.colIdx == 4) {
             me.calcMoney();
             var store = me.getGoodsGrid().getStore();
-            if (e.rowIdx == store.getCount() - 1) {
-                store.add({});
-            }
             e.rowIdx += 1;
             me.getGoodsGrid().getSelectionModel().select(e.rowIdx);
             me.__cellEditing.startEdit(e.rowIdx, 1);
