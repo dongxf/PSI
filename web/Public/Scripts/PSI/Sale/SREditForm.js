@@ -1,4 +1,4 @@
-Ext.define("PSI.Sale.WSEditForm", {
+Ext.define("PSI.Sale.SREditForm", {
     extend: "Ext.window.Window",
     config: {
         parentForm: null,
@@ -9,7 +9,7 @@ Ext.define("PSI.Sale.WSEditForm", {
         var entity = me.getEntity();
         this.adding = entity == null;
 
-        Ext.apply(me, {title: entity == null ? "新建销售出库单" : "编辑销售出库单",
+        Ext.apply(me, {title: entity == null ? "新建销售退货入库单" : "编辑销售退货入库单",
             modal: true,
             onEsc: Ext.emptyFn,
             width: 800,
@@ -100,14 +100,14 @@ Ext.define("PSI.Sale.WSEditForm", {
                         },
                         {
                             id: "editWarehouse",
-                            fieldLabel: "出库仓库",
+                            fieldLabel: "入库仓库",
                             labelWidth: 60,
                             labelAlign: "right",
                             labelSeparator: "",
                             xtype: "psi_warehousefield",
                             parentCmp: me,
                             allowBlank: false,
-                            blankText: "没有输入出库仓库",
+                            blankText: "没有输入入库仓库",
                             beforeLabelTextTpl: PSI.Const.REQUIRED,
                             listeners: {
                                 specialkey: {
@@ -167,7 +167,7 @@ Ext.define("PSI.Sale.WSEditForm", {
         var el = me.getEl() || Ext.getBody();
         el.mask(PSI.Const.LOADING);
         Ext.Ajax.request({
-            url: PSI.Const.BASE_URL + "Home/Sale/wsBillInfo",
+            url: PSI.Const.BASE_URL + "Home/Sale/srBillInfo",
             params: {
                 id: Ext.getCmp("hiddenId").getValue()
             },
@@ -214,7 +214,7 @@ Ext.define("PSI.Sale.WSEditForm", {
         var me = this;
         Ext.getBody().mask("正在保存中...");
         Ext.Ajax.request({
-            url: PSI.Const.BASE_URL + "Home/Sale/editWSBill",
+            url: PSI.Const.BASE_URL + "Home/Sale/editSRBill",
             method: "POST",
             params: {jsonStr: me.getSaveData()},
             callback: function (options, success, response) {
@@ -225,7 +225,7 @@ Ext.define("PSI.Sale.WSEditForm", {
                     if (data.success) {
                         PSI.MsgBox.showInfo("成功保存数据", function () {
                             me.close();
-                            me.getParentForm().refreshWSBillGrid(data.id);
+                            me.getParentForm().refreshSRBillGrid(data.id);
                         });
                     } else {
                         PSI.MsgBox.showInfo(data.msg);
@@ -277,14 +277,15 @@ Ext.define("PSI.Sale.WSEditForm", {
         if (me.__goodsGrid) {
             return me.__goodsGrid;
         }
-        Ext.define("PSIWSBillDetail_EditForm", {
+        var modelName = "PSISRBillDetail_EditForm";
+        Ext.define(modelName, {
             extend: "Ext.data.Model",
             fields: ["id", "goodsId", "goodsCode", "goodsName", "goodsSpec", "unitName", "goodsCount",
                 "goodsMoney", "goodsPrice"]
         });
         var store = Ext.create("Ext.data.Store", {
             autoLoad: false,
-            model: "PSIWSBillDetail_EditForm",
+            model: modelName,
             data: []
         });
 
@@ -334,7 +335,7 @@ Ext.define("PSI.Sale.WSEditForm", {
                 {header: "销售单价", dataIndex: "goodsPrice", menuDisabled: true,
                     sortable: false, align: "right", xtype: "numbercolumn",
                     width: 60},
-                {header: "销售金额", dataIndex: "goodsMoney", menuDisabled: true,
+                {header: "采购金额", dataIndex: "goodsMoney", menuDisabled: true,
                     sortable: false, align: "right", xtype: "numbercolumn", width: 80},
                 {
                     header: "",
