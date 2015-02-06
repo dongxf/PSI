@@ -6,6 +6,7 @@ use Think\Controller;
 use Home\Service\UserService;
 use Home\Common\FIdConst;
 use Home\Service\WSBillService;
+use Home\Service\SRBillService;
 
 class SaleController extends Controller {
 
@@ -97,5 +98,16 @@ class SaleController extends Controller {
         } else {
             redirect(__ROOT__ . "/Home/User/login");
         }
+	}
+	
+	public function srbillList() {
+	    $params = array(
+            "page" => I("post.page"),
+            "start" => I("post.start"),
+            "limit" => I("post.limit")
+        );
+
+        $ws = new SRBillService();
+        $this->ajaxReturn($ws->srbillList($params));
 	}
 }

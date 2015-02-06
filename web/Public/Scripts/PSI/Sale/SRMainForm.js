@@ -50,9 +50,15 @@ Ext.define("PSI.Sale.SRMainForm", {
 
         me.callParent(arguments);
 
-        me.refreshBillGrid();
+        me.refreshSRBillGrid();
     },
-    refreshBillGrid: function (id) {
+    refreshSRBillGrid: function (id) {
+        var gridDetail = this.getSRDetailGrid();
+        gridDetail.setTitle("销售退货入库单明细");
+        gridDetail.getStore().removeAll();
+        Ext.getCmp("pagingToobar").doRefresh();
+        this.__lastId = id;
+
     },
     onAddSRBill: function () {
         PSI.MsgBox.showInfo("正在开发中...");
