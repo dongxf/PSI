@@ -384,7 +384,7 @@ CREATE TABLE IF NOT EXISTS `t_sr_bill` (
   `invertory_money` decimal(19,2) DEFAULT NULL,
   `profit` decimal(19,2) DEFAULT NULL,
   `ref` varchar(255) NOT NULL,
-  `retrun_sale_money` decimal(19,2) DEFAULT NULL,
+  `rejection_sale_money` decimal(19,2) DEFAULT NULL,
   `warehouse_id` varchar(255) NOT NULL,
   `ws_bill_id` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
