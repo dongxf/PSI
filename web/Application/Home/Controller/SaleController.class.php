@@ -120,4 +120,17 @@ class SaleController extends Controller {
         $this->ajaxReturn($ws->srBillInfo($params));
 
 	}
+	
+	
+	public function selectWSBillList() {
+        $params = array(
+            "page" => I("post.page"),
+            "start" => I("post.start"),
+            "limit" => I("post.limit")
+        );
+
+        $ws = new SRBillService();
+        $this->ajaxReturn($ws->selectWSBillList($params));
+    }
+
 }

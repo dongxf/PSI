@@ -91,7 +91,7 @@ Ext.define("PSI.Sale.SRSelectWSBillForm", {
                 actionMethods: {
                     read: "POST"
                 },
-                url: PSI.Const.BASE_URL + "Home/Sale/wsbillList",
+                url: PSI.Const.BASE_URL + "Home/Sale/selectWSBillList",
                 reader: {
                     root: 'dataList',
                     totalProperty: 'totalCount'
