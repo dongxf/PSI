@@ -15,6 +15,12 @@ Ext.define("PSI.Sale.SREditForm", {
             width: 900,
             height: 600,
             layout: "border",
+            tbar:["-",{
+                    text: "选择销售出库单",
+                    iconCls: "PSI-button-add",
+                    handler: me.onSelectWSBill,
+                    scope: me
+            }, "-"],
             defaultFocus: "editWarehouse",
             items: [{
                     region: "center",
@@ -170,6 +176,10 @@ Ext.define("PSI.Sale.SREditForm", {
 
                     if (data.ref) {
                         Ext.getCmp("editRef").setValue(data.ref);
+                    } else {
+                        // 这是：新建退货入库单
+                        // 第一步就是选中销售出库单
+                        me.onSelectWSBill();
                     }
 
                     Ext.getCmp("editWarehouseId").setValue(data.warehouseId);
@@ -398,6 +408,11 @@ Ext.define("PSI.Sale.SREditForm", {
         }
 
         return Ext.JSON.encode(result);
+    },
+    onSelectWSBill: function() {
+        var form = Ext.create("PSI.Sale.SRSelectWSBillForm", {
+            parentForm: this
+        });
+        form.show();
     }
-
 });
