@@ -25,7 +25,7 @@ Ext.define("PSI.Sale.SRSelectWSBillForm", {
                         type: "table",
                         columns: 2
                     },
-                    height: 100,
+                    height: 150,
                     bodyPadding: 10,
                     items: [
                         {
@@ -35,7 +35,39 @@ Ext.define("PSI.Sale.SRSelectWSBillForm", {
                         },
                         {
                             xtype: "textfield",
+                            labelAlign: "right",
+                            labelSeparator: "",
                             fieldLabel: "销售出库单单号"
+                        },{
+                            xtype: "psi_customerfield",
+                            labelAlign: "right",
+                            labelSeparator: "",
+                            fieldLabel: "客户"
+                        },{
+                            xtype: "datefield",
+                            format: "Y-m-d",
+                            labelAlign: "right",
+                            labelSeparator: "",
+                            fieldLabel: "业务日期（起）"
+                        },{
+                            xtype: "datefield",
+                            format: "Y-m-d",
+                            labelAlign: "right",
+                            labelSeparator: "",
+                            fieldLabel: "业务日期（止）"
+                        },{
+                            xtype: "psi_warehousefield",
+                            labelAlign: "right",
+                            labelSeparator: "",
+                            fieldLabel: "仓库"
+                        },{
+                            xtype: "button",
+                            text: "查询",
+                            width: 100,
+                            margin: "0 0 0 10",
+                            iconCls: "PSI-button-refresh",
+                            handler: me.onQuery,
+                            scope: me
                         }
                     ]
                 }],
@@ -46,7 +78,7 @@ Ext.define("PSI.Sale.SRSelectWSBillForm", {
                 }
             },
             buttons: [{
-                    text: "确定",
+                    text: "选择",
                     iconCls: "PSI-button-ok",
                     formBind: true,
                     handler: me.onOK,
@@ -66,6 +98,13 @@ Ext.define("PSI.Sale.SRSelectWSBillForm", {
     // private
     onOK: function () {
         var me = this;
+        
+        var item = me.getWSBillGrid().getSelectionModel().getSelection();
+        if (item == null || item.length != 1) {
+            PSI.MsgBox.showInfo("请选择销售出库单");
+            return;
+        }
+        var wsBill = item[0];
         me.close();
     },
     getWSBillGrid: function() {
@@ -154,12 +193,8 @@ Ext.define("PSI.Sale.SRSelectWSBillForm", {
                     sortable: false
                 }],
             listeners: {
-                select: {
-                    fn: me.onWSBillGridSelect,
-                    scope: me
-                },
                 itemdblclick: {
-                    fn: me.onEditWSBill,
+                    fn: me.onOK,
                     scope: me
                 }
             },
@@ -199,5 +234,8 @@ Ext.define("PSI.Sale.SRSelectWSBillForm", {
         });
         
         return me.__wsBillGrid;
+    },
+    onQuery: function() {
+        Ext.getCmp("srbill_selectform_pagingToobar").doRefresh();
     }
 });
