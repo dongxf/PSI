@@ -460,6 +460,9 @@ class WSBillService extends PSIBaseService {
 					. " where id = '%s' ";
 			$db->execute($sql, $sumInvertoryMoney, $profit, $id);
 					
+			$log = "提交销售出库单，单号 = {$ref}";
+			$bs = new BizlogService();
+			$bs->insertBizlog($log, "销售出库");
 			$db->commit();
 		} catch (Exception $ex) {
 			$db->rollback();
