@@ -414,5 +414,26 @@ Ext.define("PSI.Sale.SREditForm", {
             parentForm: this
         });
         form.show();
+    },
+    getWSBillInfo: function(id) {
+        var me = this;
+        var el = me.getEl() || Ext.getBody();
+        el.mask(PSI.Const.LOADING);
+        Ext.Ajax.request({
+            url: PSI.Const.BASE_URL + "Home/Sale/getWSBillInfoForSRBill",
+            params: {
+                id: id
+            },
+            method: "POST",
+            callback: function (options, success, response) {
+                if (success) {
+                    var data = Ext.JSON.decode(response.responseText);
+                    Ext.getCmp("editCustomer").setValue(data.customerName + " 销售单号: " + data.ref);
+                }
+
+                el.unmask();
+            }
+        });
+
     }
 });

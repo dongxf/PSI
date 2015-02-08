@@ -106,6 +106,7 @@ Ext.define("PSI.Sale.SRSelectWSBillForm", {
         }
         var wsBill = item[0];
         me.close();
+        me.getParentForm().getWSBillInfo(wsBill.get("id"));
     },
     getWSBillGrid: function() {
         var me = this;

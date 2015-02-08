@@ -146,4 +146,23 @@ class SRBillService extends PSIBaseService {
 	public function editSRBill($params) {
 		return $this->todo();
 	}
+	
+	public function getWSBillInfoForSRBill($params) {
+		$result = array();
+		
+		$id = $params["id"];
+		$db = M();
+		$sql = "select c.name as customer_name, w.ref"
+				. " from t_ws_bill w, t_customer c"
+				. " where w.id = '%s' and w.customer_id = c.id ";
+		$data = $db->query($sql, $id);
+		if (!$data) {
+			return $result;
+		}
+		
+		$result["ref"] = $data[0]["ref"];
+		$result["customerName"] = $data[0]["customer_name"];
+		
+		return $result;
+	}
 }
