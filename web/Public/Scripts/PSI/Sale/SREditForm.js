@@ -262,6 +262,7 @@ Ext.define("PSI.Sale.SREditForm", {
         if (me.__goodsGrid) {
             return me.__goodsGrid;
         }
+        
         var modelName = "PSISRBillDetail_EditForm";
         Ext.define(modelName, {
             extend: "Ext.data.Model",
@@ -327,23 +328,7 @@ Ext.define("PSI.Sale.SREditForm", {
                     sortable: false, align: "right", xtype: "numbercolumn",
                     width: 60},
                 {header: "退货金额", dataIndex: "rejMoney", menuDisabled: true,
-                    sortable: false, align: "right", xtype: "numbercolumn", width: 80},
-                {
-                    header: "",
-                    align: "center",
-                    menuDisabled: true,
-                    width: 50,
-                    xtype: "actioncolumn",
-                    items: [
-                        {
-                            icon: PSI.Const.BASE_URL + "Public/Images/icons/delete.png",
-                            handler: function (grid, row) {
-                                var store = grid.getStore();
-                                store.remove(store.getAt(row));
-                            }, scope: me
-                        }
-                    ]
-                }
+                    sortable: false, align: "right", xtype: "numbercolumn", width: 80}
             ],
             store: store,
             listeners: {
