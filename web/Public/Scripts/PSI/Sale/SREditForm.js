@@ -266,7 +266,7 @@ Ext.define("PSI.Sale.SREditForm", {
         Ext.define(modelName, {
             extend: "Ext.data.Model",
             fields: ["id", "goodsId", "goodsCode", "goodsName", "goodsSpec", "unitName", "goodsCount",
-                "goodsMoney", "goodsPrice"]
+                "goodsMoney", "goodsPrice", "rejCount", "rejPrice", "rejMoney"]
         });
         var store = Ext.create("Ext.data.Store", {
             autoLoad: false,
@@ -313,7 +313,7 @@ Ext.define("PSI.Sale.SREditForm", {
                 {header: "销售数量", dataIndex: "goodsCount", menuDisabled: true,
                     sortable: false, align: "right"
                 },
-                {header: "退货数量", dataIndex: "goodsCount", menuDisabled: true,
+                {header: "退货数量", dataIndex: "rejCount", menuDisabled: true,
                     sortable: false, align: "right",
                     editor: {xtype: "numberfield",
                         allowDecimals: false,
@@ -323,10 +323,10 @@ Ext.define("PSI.Sale.SREditForm", {
                 {header: "销售单价", dataIndex: "goodsPrice", menuDisabled: true,
                     sortable: false, align: "right", xtype: "numbercolumn",
                     width: 60},
-                {header: "退货单价", dataIndex: "goodsPrice", menuDisabled: true,
+                {header: "退货单价", dataIndex: "rejPrice", menuDisabled: true,
                     sortable: false, align: "right", xtype: "numbercolumn",
                     width: 60},
-                {header: "退货金额", dataIndex: "goodsMoney", menuDisabled: true,
+                {header: "退货金额", dataIndex: "rejMoney", menuDisabled: true,
                     sortable: false, align: "right", xtype: "numbercolumn", width: 80},
                 {
                     header: "",
@@ -429,6 +429,9 @@ Ext.define("PSI.Sale.SREditForm", {
                 if (success) {
                     var data = Ext.JSON.decode(response.responseText);
                     Ext.getCmp("editCustomer").setValue(data.customerName + " 销售单号: " + data.ref);
+                    var store = me.getGoodsGrid().getStore();
+                    store.removeAll();
+                    store.add(data.items);
                 }
 
                 el.unmask();
