@@ -145,7 +145,9 @@ Ext.define("PSI.Sale.SRSelectWSBillForm", {
 
         me.__wsBillGrid = Ext.create("Ext.grid.Panel", {
             columnLines: true,
-            columns: [{
+            columns: [
+                Ext.create("Ext.grid.RowNumberer", {text: "序号", width: 50}),
+                {
                     header: "状态",
                     dataIndex: "billStatus",
                     menuDisabled: true,
