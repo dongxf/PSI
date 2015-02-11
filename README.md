@@ -4,7 +4,7 @@
 
 PSI演示
 -------------
->PSI的演示见：<a href="http://psi.oschina.mopaas.com" target=_blank>http://psi.oschina.mopaas.com</a>
+>PSI的演示见：http://psi.oschina.mopaas.com
 
 PSI 2015 beta1下载地址
 -------------
