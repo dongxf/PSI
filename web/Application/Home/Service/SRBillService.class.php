@@ -152,9 +152,9 @@ class SRBillService extends PSIBaseService {
 
 		$id = $params["id"];
 		$db = M();
-		$sql = "select c.name as customer_name, w.ref"
-				. " from t_ws_bill w, t_customer c"
-				. " where w.id = '%s' and w.customer_id = c.id ";
+		$sql = "select c.name as customer_name, w.ref, h.id as warehouse_id, h.name as warehouse_name "
+				. " from t_ws_bill w, t_customer c, t_warehouse h"
+				. " where w.id = '%s' and w.customer_id = c.id and w.warehouse_id = h.id ";
 		$data = $db->query($sql, $id);
 		if (!$data) {
 			return $result;
@@ -162,6 +162,8 @@ class SRBillService extends PSIBaseService {
 
 		$result["ref"] = $data[0]["ref"];
 		$result["customerName"] = $data[0]["customer_name"];
+		$result["warehouseId"] = $data[0]["warehouse_id"];
+		$result["warehouseName"] = $data[0]["warehouse_name"];
 
 		$sql = "select d.id, g.code, g.name, g.spec, u.name as unit_name, d.goods_count, "
 				. "d.goods_price, d.goods_money "
@@ -180,6 +182,7 @@ class SRBillService extends PSIBaseService {
 			$items[$i]["goodsCount"] = $v["goods_count"];
 			$items[$i]["goodsPrice"] = $v["goods_price"];
 			$items[$i]["goodsMoney"] = $v["goods_money"];
+			$items[$i]["rejPrice"] = $v["goods_price"];
 		}
 
 		$result["items"] = $items;

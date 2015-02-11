@@ -240,9 +240,8 @@ Ext.define("PSI.Sale.SREditForm", {
     onEditBizUserSpecialKey: function (field, e) {
         if (e.getKey() == e.ENTER) {
             var me = this;
-            var store = me.getGoodsGrid().getStore();
             me.getGoodsGrid().focus();
-            me.__cellEditing.startEdit(0, 1);
+            me.__cellEditing.startEdit(0, 5);
         }
     },
     // CustomerField回调此方法
@@ -339,12 +338,11 @@ Ext.define("PSI.Sale.SREditForm", {
     },
     cellEditingAfterEdit: function (editor, e) {
         var me = this;
-        if (e.colIdx == 4) {
+        if (e.colIdx == 5) {
             me.calcMoney();
-            var store = me.getGoodsGrid().getStore();
             e.rowIdx += 1;
             me.getGoodsGrid().getSelectionModel().select(e.rowIdx);
-            me.__cellEditing.startEdit(e.rowIdx, 1);
+            me.__cellEditing.startEdit(e.rowIdx, 4);
         }
     },
     calcMoney: function () {
@@ -354,7 +352,7 @@ Ext.define("PSI.Sale.SREditForm", {
             return;
         }
         var goods = item[0];
-        goods.set("goodsMoney", goods.get("goodsCount") * goods.get("goodsPrice"));
+        goods.set("rejMoney", goods.get("rejCount") * goods.get("rejPrice"));
     },
     __setGoodsInfo: function (data) {
         var me = this;
@@ -414,6 +412,9 @@ Ext.define("PSI.Sale.SREditForm", {
                 if (success) {
                     var data = Ext.JSON.decode(response.responseText);
                     Ext.getCmp("editCustomer").setValue(data.customerName + " 销售单号: " + data.ref);
+                    Ext.getCmp("editWarehouseId").setValue(data.warehouseId);
+                    Ext.getCmp("editWarehouse").setValue(data.warehouseName);
+                    
                     var store = me.getGoodsGrid().getStore();
                     store.removeAll();
                     store.add(data.items);
