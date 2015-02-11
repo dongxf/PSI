@@ -193,7 +193,7 @@ class GoodsService extends PSIBaseService {
 			$result[$i]["unitName"] = $v["unit_name"];
 		}
 
-		$sql = "select count(*) from t_goods where category_id = '%s' ";
+		$sql = "select count(*) as cnt from t_goods where category_id = '%s' ";
 		$data = $db->query($sql, $categoryId);
 		$totalCount = $data[0]["cnt"];
 		
