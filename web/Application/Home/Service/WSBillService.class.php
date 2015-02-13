@@ -12,13 +12,15 @@ class WSBillService extends PSIBaseService {
 	public function wsBillInfo($params) {
 		$id = $params["id"];
 		$us = new UserService();
+		$result = array();
+		$result["canEditGoodsPrice"] = $this->canEditGoodsPrice();
+		
 		if (!$id) {
 			$result["bizUserId"] = $us->getLoginUserId();
 			$result["bizUserName"] = $us->getLoginUserName();
 			return $result;
 		} else {
 			$db = M();
-			$result = array();
 			$sql = "select w.id, w.ref, w.bizdt, c.id as customer_id, c.name as customer_name, "
 					. " u.id as biz_user_id, u.name as biz_user_name,"
 					. " h.id as warehouse_id, h.name as warehouse_name "
@@ -61,6 +63,24 @@ class WSBillService extends PSIBaseService {
 
 			return $result;
 		}
+	}
+	
+	private function canEditGoodsPrice() {
+		$db = M();
+		$sql = "select value from t_config where id = '2002-01' ";
+		$data = $db->query($sql);
+		if (!$data) {
+			return false;
+		}
+		
+		$v = intval($data[0]["value"]);
+		if ($v == 0) {
+			return false;
+		}
+		
+		$us = new UserService();
+		
+		return $us->hasPermission("2002-01");
 	}
 
 	public function editWSBill($params) {

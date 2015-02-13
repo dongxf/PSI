@@ -164,6 +164,7 @@ Ext.define("PSI.Sale.WSEditForm", {
     },
     onWndShow: function () {
         var me = this;
+        me.__canEditGoodsPrice = false;
         var el = me.getEl() || Ext.getBody();
         el.mask(PSI.Const.LOADING);
         Ext.Ajax.request({
@@ -178,6 +179,13 @@ Ext.define("PSI.Sale.WSEditForm", {
                 if (success) {
                     var data = Ext.JSON.decode(response.responseText);
 
+                    if (data.canEditGoodsPrice) {
+                        me.__canEditGoodsPrice = true;
+                        Ext.getCmp("columnGoodsPrice").setEditor({xtype: "numberfield",
+                            allowDecimals: false,
+                            hideTrigger: true});
+                    }
+                    
                     if (data.ref) {
                         Ext.getCmp("editRef").setValue(data.ref);
                     }
@@ -333,7 +341,7 @@ Ext.define("PSI.Sale.WSEditForm", {
                 {header: "单位", dataIndex: "unitName", menuDisabled: true, sortable: false, width: 60},
                 {header: "销售单价", dataIndex: "goodsPrice", menuDisabled: true,
                     sortable: false, align: "right", xtype: "numbercolumn",
-                    width: 60},
+                    width: 60, id: "columnGoodsPrice"},
                 {header: "销售金额", dataIndex: "goodsMoney", menuDisabled: true,
                     sortable: false, align: "right", xtype: "numbercolumn", width: 80},
                 {
@@ -363,6 +371,17 @@ Ext.define("PSI.Sale.WSEditForm", {
     cellEditingAfterEdit: function (editor, e) {
         var me = this;
         if (e.colIdx == 4) {
+            me.calcMoney();
+            if (!me.__canEditGoodsPrice) {
+                var store = me.getGoodsGrid().getStore();
+                if (e.rowIdx == store.getCount() - 1) {
+                    store.add({});
+                }
+                e.rowIdx += 1;
+                me.getGoodsGrid().getSelectionModel().select(e.rowIdx);
+                me.__cellEditing.startEdit(e.rowIdx, 1);
+            }
+        } else if (e.colIdx == 6) {
             me.calcMoney();
             var store = me.getGoodsGrid().getStore();
             if (e.rowIdx == store.getCount() - 1) {
