@@ -34,6 +34,15 @@ class BizConfigService extends PSIBaseService {
 	}
 	
 	public function edit($params) {
-		return $this->todo();
+		$db = M();
+		$sql = "update t_config "
+				. " set value = '%s' "
+				. " where id = '%s' ";
+		
+		foreach ($params as $key => $value) {
+			$db->execute($sql, $value, $key);
+		}
+		
+		return $this->ok();
 	}
 }

@@ -39,7 +39,9 @@ class BizConfigController extends Controller {
 		if (IS_POST) {
 			$bs = new BizConfigService();
 			
-			$params = array();
+			$params = array(
+				"2002-01" => I("post.value2002-01")
+			);
 			
 			$this->ajaxReturn($bs->edit($params));
 		}

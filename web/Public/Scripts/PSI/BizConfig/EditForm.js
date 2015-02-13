@@ -44,12 +44,18 @@ Ext.define("PSI.BizConfig.EditForm", {
                     },
                     items: [
                         {
-                            fieldLabel: "设置项",
-                            xtype: "displayfield",
-                            value: ""
+                            id: "editName2002-01",
+                            xtype: "displayfield"
                         }, {
                             id: "editValue2002-01",
-                            fieldLabel: "值",
+                            xtype: "combo",
+                            queryMode: "local",
+                            editable: false,
+                            valueField: "id",
+                            store: Ext.create("Ext.data.ArrayStore", {
+                                fields: ["id", "text"],
+                                data: [["0", "不允许编辑销售单价"], ["1", "允许编辑销售单价"]]
+                            }),
                             name: "value2002-01"
                         }
                     ],
@@ -81,8 +87,8 @@ Ext.define("PSI.BizConfig.EditForm", {
             success: function (form, action) {
                 el.unmask();
                 me.__saved = true;
-                PSI.MsgBox.info("数据保存成功", function() {
-                    me.close();    
+                PSI.MsgBox.showInfo("数据保存成功", function (){
+                    me.close();
                 });
             },
             failure: function (form, action) {
@@ -100,5 +106,26 @@ Ext.define("PSI.BizConfig.EditForm", {
     onWndShow: function () {
         var me = this;
         me.__saved = false;
+
+        var el = me.getEl() || Ext.getBody();
+        el.mask(PSI.Const.LOADING);
+        Ext.Ajax.request({
+            url: PSI.Const.BASE_URL + "Home/BizConfig/allConfigs",
+            method: "POST",
+            callback: function (options, success, response) {
+                if (success) {
+                    var data = Ext.JSON.decode(response.responseText);
+                    for (var i = 0; i < data.length; i++) {
+                        var item = data[i];
+                        Ext.getCmp("editName" + item.id).setValue(item.name);
+                        Ext.getCmp("editValue" + item.id).setValue(item.value);
+                    }
+                } else {
+                    PSI.MsgBox.showInfo("网络错误");
+                }
+
+                el.unmask();
+            }
+        });
     }
 });
