@@ -102,12 +102,16 @@ class WSBillService extends PSIBaseService {
 		$idGen = new IdGenService();
 		if ($id) {
 			// 编辑
-			$sql = "select ref from t_ws_bill where id = '%s' ";
+			$sql = "select ref, bill_status from t_ws_bill where id = '%s' ";
 			$data = $db->query($sql, $id);
 			if (!$data) {
 				return $this->bad("要编辑的销售出库单不存在");
 			}
 			$ref = $data[0]["ref"];
+			$billStatus = $data[0]["bill_status"];
+			if ($billStatus != 0) {
+				return $this->bad("销售出库单[单号：{$ref}]已经提交出库了，不能再编辑");
+			}
 			
 			$db->startTrans();
 			try {
