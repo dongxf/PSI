@@ -8,7 +8,14 @@ Ext.define("PSI.BizConfig.MainForm", {
             layout: "border",
             tbar: [{
                     text: "设置", iconCls: "PSI-button-edit", handler: me.onEdit, scope: me
-            },"-",
+                }, "-",
+                {
+                    text: "帮助",
+                    iconCls: "PSI-help",
+                    handler: function () {
+                        window.open("http://my.oschina.net/u/134395/blog/378538");
+                    }
+                }, "-",
                 {
                     text: "关闭", iconCls: "PSI-button-exit", handler: function () {
                         location.replace(PSI.Const.BASE_URL);
@@ -24,7 +31,7 @@ Ext.define("PSI.BizConfig.MainForm", {
         });
 
         me.callParent(arguments);
-        
+
         me.refreshGrid();
     },
     getGrid: function () {
@@ -66,11 +73,10 @@ Ext.define("PSI.BizConfig.MainForm", {
                 }
             }
         });
-        
+
         return me.__grid;
     },
-    
-    refreshGrid: function(id) {
+    refreshGrid: function (id) {
         var me = this;
         var grid = me.getGrid();
         var el = grid.getEl() || Ext.getBody();
@@ -101,7 +107,7 @@ Ext.define("PSI.BizConfig.MainForm", {
             }
         });
     },
-    onEdit: function() {
+    onEdit: function () {
         var form = Ext.create("PSI.BizConfig.EditForm", {
             parentForm: this
         });
