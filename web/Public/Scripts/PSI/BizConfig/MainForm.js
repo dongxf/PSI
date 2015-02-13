@@ -58,7 +58,13 @@ Ext.define("PSI.BizConfig.MainForm", {
                 {text: "值", dataIndex: "displayValue", width: 200, menuDisabled: true},
                 {text: "备注", dataIndex: "note", width: 500, menuDisabled: true}
             ],
-            store: store
+            store: store,
+            listeners: {
+                itemdblclick: {
+                    fn: me.onEdit,
+                    scope: me
+                }
+            }
         });
         
         return me.__grid;
