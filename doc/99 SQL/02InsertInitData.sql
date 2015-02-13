@@ -20,6 +20,7 @@ INSERT INTO `t_fid` (`fid`, `name`) VALUES
 ('2000', '库存建账'),
 ('2001', '采购入库'),
 ('2002', '销售出库'),
+('2002-01', '销售出库'),
 ('2003', '库存账查询'),
 ('2004', '应收账款管理'),
 ('2005', '应付账款管理'),
@@ -71,6 +72,7 @@ INSERT INTO `t_permission` (`id`, `fid`, `name`, `note`) VALUES
 ('2000', '2000', '库存建账', '库存建账'),
 ('2001', '2001', '采购入库', '采购入库'),
 ('2002', '2002', '销售出库', '销售出库'),
+('2002-01', '2002-01', '销售出库单允许编辑销售单价', '销售出库单允许编辑销售单价'),
 ('2003', '2003', '库存账查询', '库存账查询'),
 ('2004', '2004', '应收账款管理', '应收账款管理'),
 ('2005', '2005', '应付账款管理', '应付账款管理'),
@@ -91,6 +93,7 @@ INSERT INTO `t_role_permission` (`role_id`, `permission_id`) VALUES
 ('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2000'),
 ('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2001'),
 ('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2002'),
+('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2002-01'),
 ('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2003'),
 ('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2004'),
 ('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2005'),
@@ -101,6 +104,9 @@ INSERT INTO `t_role_user` (`role_id`, `user_id`) VALUES
 
 INSERT INTO `t_user` (`id`, `enabled`, `login_name`, `name`, `org_id`, `org_code`, `password`, `py`) VALUES
 ('6C2A09CD-A129-11E4-9B6A-782BCBD7746B', '1', 'admin', '系统管理员', '5EBDBE11-A129-11E4-9B6A-782BCBD7746B', '019901', '21232f297a57a5a743894a0e4a801fc3', 'XTGLY');
+
+INSERT INTO `t_config` (`id`, `name`, `value`, `note`) VALUES
+('2002-01', '销售出库单允许编辑销售单价', '0', '当允许编辑的时候，还需要给用户赋予权限[销售出库单允许编辑销售单价]');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
