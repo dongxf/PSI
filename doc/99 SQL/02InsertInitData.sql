@@ -25,7 +25,8 @@ INSERT INTO `t_fid` (`fid`, `name`) VALUES
 ('2004', '应收账款管理'),
 ('2005', '应付账款管理'),
 ('2006', '销售退货入库'),
-('2007', '采购退货出库');
+('2007', '采购退货出库'),
+('2008', '业务设置');
 
 INSERT INTO `t_menu_item` (`id`, `caption`, `fid`, `parent_id`, `show_order`) VALUES
 ('01', '文件', NULL, NULL, 1),
@@ -54,7 +55,8 @@ INSERT INTO `t_menu_item` (`id`, `caption`, `fid`, `parent_id`, `show_order`) VA
 ('09', '系统管理', NULL, NULL, 9),
 ('0901', '用户管理', '-8999', '09', 1),
 ('0902', '权限管理', '-8996', '09', 2),
-('0903', '业务日志', '-8997', '09', 3);
+('0903', '业务日志', '-8997', '09', 3),
+('0904', '业务设置', '2008', '09', 4);
 
 INSERT INTO `t_org` (`id`, `full_name`, `name`, `org_code`, `parent_id`) VALUES
 ('4D74E1E4-A129-11E4-9B6A-782BCBD7746B', '公司', '公司', '01', NULL),
@@ -76,7 +78,8 @@ INSERT INTO `t_permission` (`id`, `fid`, `name`, `note`) VALUES
 ('2003', '2003', '库存账查询', '库存账查询'),
 ('2004', '2004', '应收账款管理', '应收账款管理'),
 ('2005', '2005', '应付账款管理', '应付账款管理'),
-('2006', '2006', '销售退货入库', '销售退货入库');
+('2006', '2006', '销售退货入库', '销售退货入库'),
+('2008', '2008', '业务设置', '业务设置');
 
 INSERT INTO `t_role` (`id`, `name`) VALUES
 ('A83F617E-A153-11E4-A9B8-782BCBD7746B', '系统管理');
@@ -97,7 +100,8 @@ INSERT INTO `t_role_permission` (`role_id`, `permission_id`) VALUES
 ('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2003'),
 ('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2004'),
 ('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2005'),
-('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2006');
+('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2006'),
+('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2008');
 
 INSERT INTO `t_role_user` (`role_id`, `user_id`) VALUES
 ('A83F617E-A153-11E4-A9B8-782BCBD7746B', '6C2A09CD-A129-11E4-9B6A-782BCBD7746B');
