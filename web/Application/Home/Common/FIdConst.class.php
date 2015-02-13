@@ -92,4 +92,9 @@ class FIdConst {
 	 * 销售退货入库
 	 */
 	const SALE_REJECTION = "2006";
+	
+	/**
+	 * 业务设置
+	 */
+	const BIZ_CONFIG = "2008";
 }

@@ -7,12 +7,12 @@ use Home\Service\UserService;
 use Home\Service\BizlogService;
 use Home\Common\FIdConst;
 
-class BizlogController extends Controller {
+class BizConfigController extends Controller {
 
 	public function index() {
 		$us = new UserService();
 
-		$this->assign("title", "业务日志");
+		$this->assign("title", "业务设置");
 		$this->assign("uri", __ROOT__ . "/");
 
 		$this->assign("loginUserName", $us->getLoginUserName());
@@ -20,7 +20,7 @@ class BizlogController extends Controller {
 		$dtFlag = getdate();
 		$this->assign("dtFlag", $dtFlag[0]);
 
-		if ($us->hasPermission(FIdConst::BIZ_LOG)) {
+		if ($us->hasPermission(FIdConst::BIZ_CONFIG)) {
 			$this->display();
 		} else {
 			redirect(__ROOT__ . "/Home/User/login");
