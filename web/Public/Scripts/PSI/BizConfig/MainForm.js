@@ -6,7 +6,9 @@ Ext.define("PSI.BizConfig.MainForm", {
         Ext.apply(me, {
             border: 0,
             layout: "border",
-            tbar: [
+            tbar: [{
+                    text: "设置", iconCls: "PSI-button-edit", handler: me.onEdit, scope: me
+            },"-",
                 {
                     text: "关闭", iconCls: "PSI-button-exit", handler: function () {
                         location.replace(PSI.Const.BASE_URL);
@@ -34,7 +36,7 @@ Ext.define("PSI.BizConfig.MainForm", {
         var modelName = "PSIBizConfig";
         Ext.define(modelName, {
             extend: "Ext.data.Model",
-            fields: ["id", "name", "value", "note"],
+            fields: ["id", "name", "value", "displayValue", "note"],
             idProperty: "id"
         });
         var store = Ext.create("Ext.data.Store", {
@@ -53,7 +55,7 @@ Ext.define("PSI.BizConfig.MainForm", {
             columns: [
                 Ext.create("Ext.grid.RowNumberer", {text: "序号", width: 40}),
                 {text: "设置项", dataIndex: "name", width: 200, menuDisabled: true},
-                {text: "值", dataIndex: "value", width: 200, menuDisabled: true},
+                {text: "值", dataIndex: "displayValue", width: 200, menuDisabled: true},
                 {text: "备注", dataIndex: "note", width: 500, menuDisabled: true}
             ],
             store: store
@@ -92,5 +94,11 @@ Ext.define("PSI.BizConfig.MainForm", {
                 el.unmask();
             }
         });
+    },
+    onEdit: function() {
+        var form = Ext.create("PSI.BizConfig.EditForm", {
+            parentForm: this
+        });
+        form.show();
     }
 });

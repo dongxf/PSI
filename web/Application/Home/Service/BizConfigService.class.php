@@ -20,14 +20,20 @@ class BizConfigService extends PSIBaseService {
 			$id = $v["id"];
 			$result[$i]["id"] = $id;
 			$result[$i]["name"] = $v["name"];
+			$result[$i]["value"] = $v["value"];
+			
 			if ($id == "2002-01") {
-				$result[$i]["value"] = $v["value"] == 1 ? "允许编辑销售单价" : "不允许编辑销售单价";
+				$result[$i]["displayValue"] = $v["value"] == 1 ? "允许编辑销售单价" : "不允许编辑销售单价";
 			} else {
-				$result[$i]["value"] = $v["value"];
+				$result[$i]["displayValue"] = $v["value"];
 			}
 			$result[$i]["note"] = $v["note"];
 		}
 
 		return $result;
+	}
+	
+	public function edit($params) {
+		return $this->todo();
 	}
 }

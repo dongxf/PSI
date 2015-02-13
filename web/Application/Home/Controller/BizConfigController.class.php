@@ -34,4 +34,14 @@ class BizConfigController extends Controller {
 			$this->ajaxReturn($bs->allConfigs());
 		}
 	}
+	
+	public function edit() {
+		if (IS_POST) {
+			$bs = new BizConfigService();
+			
+			$params = array();
+			
+			$this->ajaxReturn($bs->edit($params));
+		}
+	}
 }
