@@ -16,11 +16,81 @@ Ext.define("PSI.BizConfig.MainForm", {
             items: [
                 {
                     region: "center", layout: "fit", xtype: "panel", border: 0,
-                    items: []
+                    items: [me.getGrid()]
                 }
             ]
         });
 
         me.callParent(arguments);
+        
+        me.refreshGrid();
+    },
+    getGrid: function () {
+        var me = this;
+        if (me.__grid) {
+            return me.__grid;
+        }
+
+        var modelName = "PSIBizConfig";
+        Ext.define(modelName, {
+            extend: "Ext.data.Model",
+            fields: ["id", "name", "value", "note"],
+            idProperty: "id"
+        });
+        var store = Ext.create("Ext.data.Store", {
+            model: modelName,
+            data: [],
+            autoLoad: false
+        });
+
+        me.__grid = Ext.create("Ext.grid.Panel", {
+            viewConfig: {
+                enableTextSelection: true
+            },
+            loadMask: true,
+            border: 0,
+            columnLines: true,
+            columns: [
+                Ext.create("Ext.grid.RowNumberer", {text: "序号", width: 40}),
+                {text: "设置项", dataIndex: "name", width: 200, menuDisabled: true},
+                {text: "值", dataIndex: "value", width: 200, menuDisabled: true},
+                {text: "备注", dataIndex: "note", width: 500, menuDisabled: true}
+            ],
+            store: store
+        });
+        
+        return me.__grid;
+    },
+    
+    refreshGrid: function(id) {
+        var me = this;
+        var grid = me.getGrid();
+        var el = grid.getEl() || Ext.getBody();
+        el.mask(PSI.Const.LOADING);
+        Ext.Ajax.request({
+            url: PSI.Const.BASE_URL + "Home/BizConfig/allConfigs",
+            method: "POST",
+            callback: function (options, success, response) {
+                var store = grid.getStore();
+
+                store.removeAll();
+
+                if (success) {
+                    var data = Ext.JSON.decode(response.responseText);
+                    store.add(data);
+
+                    if (id) {
+                        var r = store.findExact("id", id);
+                        if (r != -1) {
+                            grid.getSelectionModel().select(r);
+                        }
+                    } else {
+                        grid.getSelectionModel().select(0);
+                    }
+                }
+
+                el.unmask();
+            }
+        });
     }
 });

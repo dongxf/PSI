@@ -4,7 +4,7 @@ namespace Home\Controller;
 
 use Think\Controller;
 use Home\Service\UserService;
-use Home\Service\BizlogService;
+use Home\Service\BizConfigService;
 use Home\Common\FIdConst;
 
 class BizConfigController extends Controller {
@@ -27,22 +27,11 @@ class BizConfigController extends Controller {
 		}
 	}
 
-	public function logList() {
+	public function allConfigs() {
 		if (IS_POST) {
-			$bs = new BizlogService();
-
-			$params = array(
-				"page" => I("post.page"),
-				"start" => I("post.start"),
-				"limit" => I("post.limit")
-			);
-
-			$data = $bs->logList($params);
-			$totalCount = $bs->logTotalCount();
-			$result["totalCount"] = $totalCount;
-			$result["logs"] = $data;
+			$bs = new BizConfigService();
 			
-			$this->ajaxReturn($result);
+			$this->ajaxReturn($bs->allConfigs());
 		}
 	}
 }
