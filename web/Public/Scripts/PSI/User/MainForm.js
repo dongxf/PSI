@@ -31,7 +31,6 @@ Ext.define("PSI.User.MainForm", {
             },
             columns: {
                 defaults: {
-                    flex: 1,
                     sortable: false,
                     menuDisabled: true,
                     draggable: false
@@ -39,10 +38,12 @@ Ext.define("PSI.User.MainForm", {
                 items: [{
                         xtype: "treecolumn",
                         text: "名称",
-                        dataIndex: "text"
+                        dataIndex: "text",
+                        width: 220
                     }, {
                         text: "编码",
-                        dataIndex: "orgCode"
+                        dataIndex: "orgCode",
+                        flex: 1
                     }]
             }
         });
