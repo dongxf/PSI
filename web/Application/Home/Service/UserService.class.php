@@ -170,18 +170,19 @@ class UserService extends PSIBaseService {
 			if ($parentId == $id) {
 				return $this->bad("上级组织不能是自身");
 			}
+			$fullName = "";
+			$db = M();
 
 			if ($parentId == "root") {
 				$parentId = null;
 			}
 
 			if ($parentId == null) {
+				$fullName = $name;
 				$sql = "update t_org set name = '%s', full_name = '%s', org_code = '%s', parent_id = null"
 						. " where id = '%s' ";
-				M()->execute($sql, $name, $name, $orgCode, $id);
+				$db->execute($sql, $name, $fullName, $orgCode, $id);
 			} else {
-				$db = M();
-
 				$tempParentId = $parentId;
 				while ($tempParentId != null) {
 					$sql = "select parent_id from t_org where id = '%s' ";
@@ -201,12 +202,35 @@ class UserService extends PSIBaseService {
 				$data = $db->query($sql, $parentId);
 				if ($data) {
 					$parentFullName = $data[0]["full_name"];
+					$fullName = $parentFullName . "\\" . $name;
 
 					$sql = "update t_org set name = '%s', full_name = '%s', org_code = '%s', parent_id = '%s' "
 							. " where id = '%s' ";
-					$db->execute($sql, $name, $parentFullName . "\\" . $name, $orgCode, $parentId, $id);
+					$db->execute($sql, $name, $fullName, $orgCode, $parentId, $id);
 				} else {
 					return $this->bad("上级组织不存在");
+				}
+			}
+			
+			// 同步下级组织的full_name字段
+			// 因为目前组织结构就最多三级，所以下面也就两个foreach就够了
+			$sql = "select id, name from t_org where parent_id = '%s' ";
+			$data = $db->query($sql, $id);
+			foreach ($data as $v) {
+				$idChild = $v["id"];
+				$nameChild = $v["name"];
+				$fullNameChild = $fullName . "\\" . $nameChild;
+				$sql = "update t_org set full_name = '%s' where id = '%s' ";
+				$db->execute($sql, $fullNameChild, $idChild);
+				
+				$sql = "select id, name from t_org where parent_id = '%s'";
+				$data2 = $db->query($sql, $idChild);
+				foreach ($data2 as $v2) {
+					$idChild2 = $v2["id"];
+					$nameChild2 = $v2["name"];
+					$fullNameChild2 = $fullNameChild . "\\" . $nameChild2;
+					$sql = "update t_org set full_name = '%s' where id = '%s' ";
+					$db->execute($sql, $fullNameChild2, $idChild2);
 				}
 			}
 
