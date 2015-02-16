@@ -3,6 +3,7 @@
 namespace Home\Service;
 
 use Home\Common\DemoConst;
+use Home\Common\FIdConst;
 
 /**
  * 用户Service
@@ -19,13 +20,21 @@ class UserService extends PSIBaseService {
 		}
 	}
 
+	/**
+	 * 判断当前用户是否有$fid对应的权限
+	 * 
+	 * @param type $fid fid
+	 * @return boolean true：有对应的权限
+	 */
 	public function hasPermission($fid = null) {
 		$result = session("loginUserId") != null;
 		if (!$result) {
 			return false;
 		}
 
-		$idList = array("-9997", "-9999", "-9996");
+		// 修改我的密码，重新登录，首页，这三个功能对所有的在线用户均不需要特别的权限
+		$idList = array(FIdConst::CHANGE_MY_PASSWORD, 
+			FIdConst::RELOGIN, FIdConst::HOME);
 		if ($fid == null || in_array($fid, $idList)) {
 			return $result;
 		}

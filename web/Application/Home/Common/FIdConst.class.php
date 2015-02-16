@@ -8,6 +8,12 @@ namespace Home\Common;
  * @author Administrator
  */
 class FIdConst {
+	
+	/**
+	 * 首页
+	 */
+	const HOME = "-9997";
+	
 	/**
 	 * 重新登录
 	 */
