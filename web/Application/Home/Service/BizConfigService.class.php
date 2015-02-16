@@ -41,6 +41,13 @@ class BizConfigService extends PSIBaseService {
 		
 		foreach ($params as $key => $value) {
 			$db->execute($sql, $value, $key);
+			
+			if ($key == "2002-01") {
+				$v  = $value == 1 ? "允许编辑销售单价" : "不允许编辑销售单价";
+				$log = "把[销售出库单允许编辑销售单价]设置为[{$v}]";
+				$bs = new BizlogService();
+				$bs->insertBizlog($log, "业务设置");
+			}
 		}
 		
 		return $this->ok();
