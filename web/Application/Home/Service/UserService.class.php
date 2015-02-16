@@ -411,16 +411,52 @@ class UserService extends PSIBaseService {
 	public function deleteUser($params) {
 		$id = $params["id"];
 
-		// TODO: 临时代码
 		if ($id == "6C2A09CD-A129-11E4-9B6A-782BCBD7746B") {
 			return $this->bad("不能删除系统管理员用户");
 		}
 		// TODO:　检查用户是否存在，以及是否能删除
+		$db = M();
+		$sql = "select name from t_user where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if (!$data) {
+			return $this->bad("要删除的用户不存在");
+		}
+		$userName = $data[0]["name"];
 
+		// 判断在采购入库单中是否使用了该用户
+		$sql = "select count(*) as cnt from t_pw_bill "
+				. " where biz_user_id = '%s' or input_user_id = '%s' ";
+		$data = $db->query($sql, $id, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("用户[{$userName}]已经在采购入库单中使用了，不能删除");
+		}
+		
+		// 判断在销售出库单中是否使用了该用户
+		$sql = "select count(*) as cnt from t_ws_bill "
+				. " where biz_user_id = '%s' or input_user_id = '%s' ";
+		$data = $db->query($sql, $id, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("用户[{$userName}]已经在销售出库单中使用了，不能删除");
+		}
+		
+		// 判断在销售退货入库单中是否使用了该用户
+		$sql = "select count(*) as cnt from t_sr_bill "
+				. " where biz_user_id = '%s' or input_user_id = '%s' ";
+		$data = $db->query($sql, $id, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("用户[{$userName}]已经在销售退货入库单中使用了，不能删除");
+		}
+		
+		// TODO 如果增加了其他单据，同样需要做出判断是否使用了该用户
+		
 		$sql = "delete from t_user where id = '%s' ";
+		$db->execute($sql, $id);
 
-		M()->execute($sql, $id);
-
+		$bs = new BizlogService();
+		$bs->insertBizlog("删除用户[{$userName}]", "用户管理");
 		return $this->ok();
 	}
 
