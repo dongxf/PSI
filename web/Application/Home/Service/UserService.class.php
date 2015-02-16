@@ -21,7 +21,7 @@ class UserService extends PSIBaseService {
 
 	public function hasPermission($fid = null) {
 		$result = session("loginUserId") != null;
-		if (!result) {
+		if (!$result) {
 			return false;
 		}
 
