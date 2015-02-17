@@ -137,12 +137,18 @@ Ext.define("PSI.App", {
         var me = this;
 
         var menuItemClick = function () {
-            if (this.fid === "-9999") {
+            var fid = this.fid;
+            
+            if (fid == "-9995") {
+                window.open("http://my.oschina.net/u/134395/blog/374195");
+            } else if (fid == "-9994"){
+                Ext.create("PSI.About.MainForm").show();
+            } else if (fid === "-9999") {
                 PSI.MsgBox.confirm("请确认是否重新登录", function () {
                     location.replace(PSI.Const.BASE_URL + "Home/MainMenu/navigateTo/fid/-9999");
                 });
             } else {
-                location.replace(PSI.Const.BASE_URL + "Home/MainMenu/navigateTo/fid/" + this.fid);
+                location.replace(PSI.Const.BASE_URL + "Home/MainMenu/navigateTo/fid/" + fid);
             }
         };
 

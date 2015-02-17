@@ -23,7 +23,7 @@ class UserService extends PSIBaseService {
 	/**
 	 * 判断当前用户是否有$fid对应的权限
 	 * 
-	 * @param type $fid fid
+	 * @param string $fid fid
 	 * @return boolean true：有对应的权限
 	 */
 	public function hasPermission($fid = null) {
@@ -32,9 +32,10 @@ class UserService extends PSIBaseService {
 			return false;
 		}
 
-		// 修改我的密码，重新登录，首页，这三个功能对所有的在线用户均不需要特别的权限
+		// 修改我的密码，重新登录，首页，使用帮助，关于，这五个功能对所有的在线用户均不需要特别的权限
 		$idList = array(FIdConst::CHANGE_MY_PASSWORD, 
-			FIdConst::RELOGIN, FIdConst::HOME);
+			FIdConst::RELOGIN, FIdConst::HOME,
+			FIdConst::HELP, FIdConst::ABOUT);
 		if ($fid == null || in_array($fid, $idList)) {
 			return $result;
 		}

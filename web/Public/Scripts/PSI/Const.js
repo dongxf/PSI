@@ -3,6 +3,7 @@ Ext.define("PSI.Const", {
         REQUIRED: '<span style="color:red;font-weight:bold" data-qtip="必录项">*</span>',
         LOADING: "数据加载中...",
         SAVING: "数据保存中...",
-        BASE_URL: ""
+        BASE_URL: "",
+        VERSION: "beta1 - 20150217"
     }
 });

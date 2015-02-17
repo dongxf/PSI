@@ -25,6 +25,16 @@ class FIdConst {
 	const CHANGE_MY_PASSWORD = "-9996";
 	
 	/**
+	 * 使用帮助
+	 */
+	const HELP = "-9995";
+	
+	/**
+	 * 关于
+	 */
+	const ABOUT = "-9994";
+	
+	/**
 	 * 用户管理
 	 */
 	const USR_MANAGEMENT = "-8999";
