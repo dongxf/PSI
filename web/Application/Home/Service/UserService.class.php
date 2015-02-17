@@ -217,6 +217,10 @@ class UserService extends PSIBaseService {
 					$sql = "update t_org set name = '%s', full_name = '%s', org_code = '%s', parent_id = '%s' "
 							. " where id = '%s' ";
 					$db->execute($sql, $name, $fullName, $orgCode, $parentId, $id);
+
+					$log = "编辑组织机构：名称 = {$name} 编码 = {$orgCode}";
+					$bs = new BizlogService();
+					$bs->insertBizlog($log, "用户管理");
 				} else {
 					return $this->bad("上级组织不存在");
 				}
@@ -272,6 +276,10 @@ class UserService extends PSIBaseService {
 
 				$db->execute($sql, $id, $name, $fullName, $orgCode, $parentId);
 			}
+			
+			$log = "新增组织机构：名称 = {$name} 编码 = {$orgCode}";
+			$bs = new BizlogService();
+			$bs->insertBizlog($log, "用户管理");
 		}
 		
 		return $this->ok($id);
@@ -313,6 +321,14 @@ class UserService extends PSIBaseService {
 		}
 		
 		$db = M();
+		$sql = "select name, org_code from t_org where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if (!$data) {
+			return $this->bad("要删除的组织机构不存在");
+		}
+		$name = $data[0]["name"];
+		$orgCode = $data[0]["org_code"];
+		
 		$sql = "select count(*) as cnt from t_org where parent_id = '%s' ";
 		$data = $db->query($sql, $id);
 		$cnt = $data[0]["cnt"];
@@ -330,6 +346,10 @@ class UserService extends PSIBaseService {
 		$sql = "delete from t_org where id = '%s' ";
 		$db->execute($sql, $id);
 
+		$log = "删除组织机构： 名称 = {$name} 编码  = {$orgCode}";
+		$bs = new BizlogService();
+		$bs->insertBizlog($log, "用户管理");
+		
 		return $this->ok();
 	}
 
