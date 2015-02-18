@@ -11,10 +11,11 @@ use Home\Common\FIdConst;
  * @author 李静波
  */
 class UserService extends PSIBaseService {
+
 	public function getDemoLoginInfo() {
 		if ($this->isDemo()) {
 			return "您当前处于演示环境，默认的登录名和密码均为 admin <br/>更多帮助请点击 [帮助] 按钮来查看 "
-			. "<br /><div style='color:red'>请勿在演示环境中保存正式数据，演示数据库通常每天在21:00后会清空一次</div>";
+					. "<br /><div style='color:red'>请勿在演示环境中保存正式数据，演示数据库通常每天在21:00后会清空一次</div>";
 		} else {
 			return "";
 		}
@@ -33,7 +34,7 @@ class UserService extends PSIBaseService {
 		}
 
 		// 修改我的密码，重新登录，首页，使用帮助，关于，这五个功能对所有的在线用户均不需要特别的权限
-		$idList = array(FIdConst::CHANGE_MY_PASSWORD, 
+		$idList = array(FIdConst::CHANGE_MY_PASSWORD,
 			FIdConst::RELOGIN, FIdConst::HOME,
 			FIdConst::HELP, FIdConst::ABOUT);
 		if ($fid == null || in_array($fid, $idList)) {
@@ -225,7 +226,7 @@ class UserService extends PSIBaseService {
 					return $this->bad("上级组织不存在");
 				}
 			}
-			
+
 			// 同步下级组织的full_name字段
 			// 因为目前组织结构就最多三级，所以下面也就两个foreach就够了
 			$sql = "select id, name from t_org where parent_id = '%s' ";
@@ -236,7 +237,7 @@ class UserService extends PSIBaseService {
 				$fullNameChild = $fullName . "\\" . $nameChild;
 				$sql = "update t_org set full_name = '%s' where id = '%s' ";
 				$db->execute($sql, $fullNameChild, $idChild);
-				
+
 				$sql = "select id, name from t_org where parent_id = '%s'";
 				$data2 = $db->query($sql, $idChild);
 				foreach ($data2 as $v2) {
@@ -276,12 +277,12 @@ class UserService extends PSIBaseService {
 
 				$db->execute($sql, $id, $name, $fullName, $orgCode, $parentId);
 			}
-			
+
 			$log = "新增组织机构：名称 = {$name} 编码 = {$orgCode}";
 			$bs = new BizlogService();
 			$bs->insertBizlog($log, "用户管理");
 		}
-		
+
 		return $this->ok($id);
 	}
 
@@ -319,7 +320,7 @@ class UserService extends PSIBaseService {
 				return $this->bad("在演示环境下，组织机构[信息部]不希望被您删除，请见谅");
 			}
 		}
-		
+
 		$db = M();
 		$sql = "select name, org_code from t_org where id = '%s' ";
 		$data = $db->query($sql, $id);
@@ -328,7 +329,7 @@ class UserService extends PSIBaseService {
 		}
 		$name = $data[0]["name"];
 		$orgCode = $data[0]["org_code"];
-		
+
 		$sql = "select count(*) as cnt from t_org where parent_id = '%s' ";
 		$data = $db->query($sql, $id);
 		$cnt = $data[0]["cnt"];
@@ -349,7 +350,7 @@ class UserService extends PSIBaseService {
 		$log = "删除组织机构： 名称 = {$name} 编码  = {$orgCode}";
 		$bs = new BizlogService();
 		$bs->insertBizlog($log, "用户管理");
-		
+
 		return $this->ok();
 	}
 
@@ -393,8 +394,11 @@ class UserService extends PSIBaseService {
 					. " set login_name = '%s', name = '%s', org_code = '%s', "
 					. "       org_id = '%s', enabled = %d, py = '%s' "
 					. " where id = '%s' ";
-			$db->execute($sql, $loginName, $name, $orgCode, $orgId, $enabled, 
-					$py, $id);
+			$db->execute($sql, $loginName, $name, $orgCode, $orgId, $enabled, $py, $id);
+
+			$log = "编辑用户： 登录名 = {$loginName} 姓名 = {$name} 编码 = {$orgCode}";
+			$bs = new BizlogService();
+			$bs->insertBizlog($log, "用户管理");
 		} else {
 			// 新建
 			// 检查登录名是否被使用
@@ -422,10 +426,13 @@ class UserService extends PSIBaseService {
 
 			$sql = "insert into t_user (id, login_name, name, org_code, org_id, enabled, password, py) "
 					. " values ('%s', '%s', '%s', '%s', '%s', %d, '%s', '%s') ";
-			$db->execute($sql, $id, $loginName, $name, $orgCode, $orgId, 
-					$enabled, $password, $py);
+			$db->execute($sql, $id, $loginName, $name, $orgCode, $orgId, $enabled, $password, $py);
+
+			$log = "新建用户： 登录名 = {$loginName} 姓名 = {$name} 编码 = {$orgCode}";
+			$bs = new BizlogService();
+			$bs->insertBizlog($log, "用户管理");
 		}
-		
+
 		return $this->ok($id);
 	}
 
@@ -452,7 +459,7 @@ class UserService extends PSIBaseService {
 		if ($cnt > 0) {
 			return $this->bad("用户[{$userName}]已经在采购入库单中使用了，不能删除");
 		}
-		
+
 		// 判断在销售出库单中是否使用了该用户
 		$sql = "select count(*) as cnt from t_ws_bill "
 				. " where biz_user_id = '%s' or input_user_id = '%s' ";
@@ -461,7 +468,7 @@ class UserService extends PSIBaseService {
 		if ($cnt > 0) {
 			return $this->bad("用户[{$userName}]已经在销售出库单中使用了，不能删除");
 		}
-		
+
 		// 判断在销售退货入库单中是否使用了该用户
 		$sql = "select count(*) as cnt from t_sr_bill "
 				. " where biz_user_id = '%s' or input_user_id = '%s' ";
@@ -470,9 +477,9 @@ class UserService extends PSIBaseService {
 		if ($cnt > 0) {
 			return $this->bad("用户[{$userName}]已经在销售退货入库单中使用了，不能删除");
 		}
-		
+
 		// TODO 如果增加了其他单据，同样需要做出判断是否使用了该用户
-		
+
 		$sql = "delete from t_user where id = '%s' ";
 		$db->execute($sql, $id);
 
@@ -483,22 +490,35 @@ class UserService extends PSIBaseService {
 
 	public function changePassword($params) {
 		$id = $params["id"];
-		
+
 		if ($this->isDemo() && $id == DemoConst::ADMIN_USER_ID) {
 			return $this->bad("在演示环境下，admin用户的密码不希望被您修改，请见谅");
 		}
-		
+
 		$password = $params["password"];
 		if (strlen($password) < 5) {
 			return $this->bad("密码长度不能小于5位");
 		}
 
+		$db = M();
+		$sql = "select login_name, name from t_user where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if (!$data) {
+			return $this->bad("要修改密码的用户不存在");
+		}
+		$loginName = $data[0]["login_name"];
+		$name = $data[0]["name"];
+		
 		$sql = "update t_user "
 				. " set password = '%s' "
 				. " where id = '%s' ";
-		M()->execute($sql, md5($password), $id);
+		$db->execute($sql, md5($password), $id);
+		
+		$log = "修改用户[登录名 ={$loginName} 姓名 = {$name}]的密码";
+		$bs = new BizlogService();
+		$bs->insertBizlog($log, "用户管理");
 
-		return $this->ok();
+		return $this->ok($id);
 	}
 
 	public function clearLoginUserInSession() {
@@ -509,7 +529,7 @@ class UserService extends PSIBaseService {
 		$userId = $params["userId"];
 		$oldPassword = $params["oldPassword"];
 		$newPassword = $params["newPassword"];
-		
+
 		if ($this->isDemo() && $userId == DemoConst::ADMIN_USER_ID) {
 			return $this->bad("在演示环境下，admin用户的密码不希望被您修改，请见谅");
 		}
@@ -531,11 +551,23 @@ class UserService extends PSIBaseService {
 			return $this->bad("密码长度不能小于5位");
 		}
 
+		$sql = "select login_name, name from t_user where id = '%s' ";
+		$data = $db->query($sql, $userId);
+		if (!$data) {
+			return $this->bad("要修改密码的用户不存在");
+		}
+		$loginName = $data[0]["login_name"];
+		$name = $data[0]["name"];
+
 		$sql = "update t_user "
 				. " set password = '%s' "
 				. " where id = '%s' ";
 		$db->execute($sql, md5($newPassword), $userId);
 
+		$log = "用户[登录名 ={$loginName} 姓名 = {$name}]修改了自己的登录密码";
+		$bs = new BizlogService();
+		$bs->insertBizlog($log, "用户管理");
+		
 		return $this->ok();
 	}
 
@@ -543,7 +575,7 @@ class UserService extends PSIBaseService {
 		if (!$queryKey) {
 			return array();
 		}
-		
+
 		$sql = "select id, login_name, name from t_user "
 				. " where login_name like '%s' or name like '%s' or py like '%s' "
 				. " order by login_name "
@@ -558,4 +590,5 @@ class UserService extends PSIBaseService {
 		}
 		return $result;
 	}
+
 }
