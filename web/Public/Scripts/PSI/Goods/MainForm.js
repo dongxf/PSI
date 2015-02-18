@@ -80,6 +80,7 @@ Ext.define("PSI.Goods.MainForm", {
         });
         store.on("load", function (e, records, successful) {
             if (successful) {
+                me.refreshCategoryCount();
                 me.gotoGoodsGridRecord(me.__lastId);
             }
         });
@@ -419,5 +420,16 @@ Ext.define("PSI.Goods.MainForm", {
                 grid.getSelectionModel().select(0);
             }
         }
+    },
+    refreshCategoryCount: function() {
+        var me = this;
+        var item = me.categoryGrid.getSelectionModel().getSelection();
+        if (item == null || item.length != 1) {
+            return;
+        }
+
+        var category = item[0];
+        category.set("cnt", me.goodsGrid.getStore().getTotalCount());
+        me.categoryGrid.getStore().commitChanges();
     }
 });
