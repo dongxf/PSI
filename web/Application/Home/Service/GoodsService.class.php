@@ -88,7 +88,13 @@ class GoodsService extends PSIBaseService {
 	}
 
 	public function allCategories() {
-		return M()->query("select id, code, name from t_goods_category order by code");
+		$sql = "select c.id, c.code, c.name, count(g.id) as cnt "
+				. " from t_goods_category c, t_goods g "
+				. " where c.id = g.category_id "
+				. " group by c.id "
+				. " order by c.code";
+		
+		return M()->query($sql);
 	}
 
 	public function editCategory($params) {

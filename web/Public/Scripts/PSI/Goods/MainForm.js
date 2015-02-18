@@ -5,16 +5,21 @@ Ext.define("PSI.Goods.MainForm", {
 
         Ext.define("PSIGoodsCategory", {
             extend: "Ext.data.Model",
-            fields: ["id", "code", "name"]
+            fields: ["id", "code", "name", {name: "cnt", type: "int"}]
         });
 
         var categoryGrid = Ext.create("Ext.grid.Panel", {
             title: "商品分类",
             forceFit: true,
             columnLines: true,
+            features: [{ftype: "summary"}],
             columns: [
-                {header: "编码", dataIndex: "code", flex: 1, menuDisabled: true, sortable: false},
-                {header: "类别", dataIndex: "name", flex: 1, menuDisabled: true, sortable: false}
+                {header: "编码", dataIndex: "code", width: 80, menuDisabled: true, sortable: false},
+                {header: "类别", dataIndex: "name", flex: 1, menuDisabled: true, sortable: false,
+                    summaryRenderer: function() { return "商品种类数合计";}
+                },
+                {header: "商品种类数", dataIndex: "cnt", width: 80, align: "right", 
+                    menuDisabled: true, sortable: false, summaryType: "sum"}
             ],
             store: Ext.create("Ext.data.Store", {
                 model: "PSIGoodsCategory",
