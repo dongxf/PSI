@@ -50,7 +50,7 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 					region : "center",
 					layout : "fit",
 					border : 0,
-					items : [ me.getInvertoryGrid() ]
+					items : [ me.getInventoryGrid() ]
 				}, {
 					title : "明细账",
 					region : "south",
@@ -58,7 +58,7 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 					split : true,
 					layout : "fit",
 					border : 0,
-					items : [ me.getInvertoryDetailGrid() ]
+					items : [ me.getInventoryDetailGrid() ]
 				} ]
 			} ]
 		});
@@ -128,13 +128,13 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 		});
 	},
 
-	getInvertoryGrid : function() {
+	getInventoryGrid : function() {
 		var me = this;
-		if (me.__invertoryGrid) {
-			return me.__invertoryGrid;
+		if (me.__inventoryGrid) {
+			return me.__inventoryGrid;
 		}
 
-		me.__invertoryGrid = Ext.create("Ext.grid.Panel", {
+		me.__inventoryGrid = Ext.create("Ext.grid.Panel", {
 			border : 0,
 			columnLines : true,
 			columns : [ {
@@ -226,13 +226,13 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 			}),
 			listeners : {
 				select : {
-					fn : me.onInvertoryGridSelect,
+					fn : me.onInventoryGridSelect,
 					scope : me
 				}
 			}
 		});
 
-		return me.__invertoryGrid;
+		return me.__inventoryGrid;
 	},
 
 	getWarehouseIdParam : function() {
@@ -246,19 +246,19 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 	},
 
 	getGoodsIdParam : function() {
-		var item = this.getInvertoryGrid().getSelectionModel().getSelection();
+		var item = this.getInventoryGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
 			return null;
 		}
 
-		var invertory = item[0];
-		return invertory.get("goodsId");
+		var inventory = item[0];
+		return inventory.get("goodsId");
 	},
 
-	getInvertoryDetailGrid : function() {
+	getInventoryDetailGrid : function() {
 		var me = this;
-		if (me.__invertoryDetailGrid) {
-			return me.__invertoryDetailGrid;
+		if (me.__inventoryDetailGrid) {
+			return me.__inventoryDetailGrid;
 		}
 
 		var store = Ext.create("Ext.data.Store", {
@@ -289,7 +289,7 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 			});
 		});
 
-		me.__invertoryDetailGrid = Ext.create("Ext.grid.Panel", {
+		me.__inventoryDetailGrid = Ext.create("Ext.grid.Panel", {
 			viewConfig: {
 		        enableTextSelection: true
 		    },
@@ -436,15 +436,15 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 		dt.setDate(dt.getDate() - 7);
 		Ext.getCmp("dtFrom").setValue(dt);
 
-		return me.__invertoryDetailGrid;
+		return me.__inventoryDetailGrid;
 	},
 
 	onWarehouseGridSelect : function() {
-		this.refreshInvertoryGrid()
+		this.refreshInventoryGrid()
 	},
 
-	refreshInvertoryGrid : function() {
-        this.getInvertoryDetailGrid().getStore().removeAll();
+	refreshInventoryGrid : function() {
+        this.getInventoryDetailGrid().getStore().removeAll();
         
 		var item = this.getWarehouseGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
@@ -453,13 +453,13 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 
 		var warehouse = item[0];
 
-		var grid = this.getInvertoryGrid();
+		var grid = this.getInventoryGrid();
 		grid.setTitle("仓库 [" + warehouse.get("name") + "] 的总账");
 
 		var el = grid.getEl();
 		el.mask(PSI.Const.LOADING);
 		Ext.Ajax.request({
-			url : PSI.Const.BASE_URL + "Home/Inventory/invertoryList",
+			url : PSI.Const.BASE_URL + "Home/Inventory/inventoryList",
 			params : {
 				warehouseId : warehouse.get("id")
 			},
@@ -484,8 +484,8 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 		});
 	},
 
-	onInvertoryGridSelect : function() {
-		this.getInvertoryDetailGrid().getStore().loadPage(1);
+	onInventoryGridSelect : function() {
+		this.getInventoryDetailGrid().getStore().loadPage(1);
 	},
 
 	onQuery : function() {
@@ -501,6 +501,6 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 			Ext.getCmp("dtFrom").setValue(dt);
 		}
 
-		this.getInvertoryDetailGrid().getStore().loadPage(1);
+		this.getInventoryDetailGrid().getStore().loadPage(1);
 	}
 });

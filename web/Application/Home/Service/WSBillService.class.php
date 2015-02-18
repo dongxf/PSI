@@ -475,14 +475,14 @@ class WSBillService extends PSIBaseService {
 					. " from t_ws_bill_detail "
 					. " where wsbill_id = '%s' ";
 			$data = $db->query($sql, $id);
-			$sumInvertoryMoney = $data[0]["sum_inventory_money"];
+			$sumInventoryMoney = $data[0]["sum_inventory_money"];
 			
-			$profit = $saleMoney - $sumInvertoryMoney;
+			$profit = $saleMoney - $sumInventoryMoney;
 			
 			$sql = "update t_ws_bill "
 					. " set bill_status = 1000, inventory_money = %f, profit = %f "
 					. " where id = '%s' ";
-			$db->execute($sql, $sumInvertoryMoney, $profit, $id);
+			$db->execute($sql, $sumInventoryMoney, $profit, $id);
 					
 			$log = "提交销售出库单，单号 = {$ref}";
 			$bs = new BizlogService();
