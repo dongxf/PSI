@@ -295,7 +295,10 @@ Ext.define("PSI.Goods.MainForm", {
     },
     // private
     onCategoryGridSelect: function () {
-        this.freshGoodsGrid();
+        var me = this;
+        me.goodsGrid.getStore().currentPage = 1;
+        
+        me.freshGoodsGrid();
     },
     onAddGoods: function () {
         if (this.categoryGrid.getStore().getCount() == 0) {
