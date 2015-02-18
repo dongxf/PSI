@@ -200,7 +200,7 @@ class InitInvertoryService extends PSIBaseService {
             $sql = "update t_warehouse set inited = 1 where id = '%s' ";
             $db->execute($sql, $warehouseId);
 
-            $sql = "update t_invertory_detail set biz_date = now() "
+            $sql = "update t_invertory_detail set biz_date = curdate() "
                     . " where warehouse_id = '%s' and ref_type = '库存建账' ";
             $db->execute($sql, $warehouseId);
 
