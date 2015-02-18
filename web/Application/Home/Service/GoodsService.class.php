@@ -89,8 +89,9 @@ class GoodsService extends PSIBaseService {
 
 	public function allCategories() {
 		$sql = "select c.id, c.code, c.name, count(g.id) as cnt "
-				. " from t_goods_category c, t_goods g "
-				. " where c.id = g.category_id "
+				. " from t_goods_category c"
+				. " left join t_goods g "
+				. " on c.id = g.category_id "
 				. " group by c.id "
 				. " order by c.code";
 		
