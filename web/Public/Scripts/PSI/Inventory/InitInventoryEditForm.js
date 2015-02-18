@@ -6,7 +6,6 @@ Ext.define("PSI.Inventory.InitInventoryEditForm", {
     initComponent: function () {
         var me = this;
         var warehouse = me.getWarehouse();
-
         Ext.define("PSIGoodsCategory", {
             extend: "Ext.data.Model",
             fields: ["id", "name"]
@@ -17,7 +16,6 @@ Ext.define("PSI.Inventory.InitInventoryEditForm", {
             data: []
         });
         me.storeGoodsCategory = storeGoodsCategory;
-
         Ext.apply(me, {
             title: "库存建账",
             modal: true,
@@ -87,11 +85,15 @@ Ext.define("PSI.Inventory.InitInventoryEditForm", {
                                                 }, {
                                                     id: "editGoodsCount",
                                                     fieldLabel: "期初数量",
-                                                    width: "100%",
+                                                    beforeLabelTextTpl: PSI.Const.REQUIRED,
                                                     xtype: "numberfield",
                                                     allowDecimals: false,
-                                                    hideTrigger: true,
-                                                    beforeLabelTextTpl: PSI.Const.REQUIRED
+                                                    hideTrigger: true
+                                                }, {
+                                                    id: "editUnit",
+                                                    xtype: "displayfield",
+                                                    fieldLabel: "计量单位",
+                                                    value: ""
                                                 }, {
                                                     id: "editGoodsMoney",
                                                     fieldLabel: "期初金额",
@@ -133,10 +135,7 @@ Ext.define("PSI.Inventory.InitInventoryEditForm", {
                     }
                 }]
         });
-
-
         me.callParent(arguments);
-
         Ext.getCmp("editGoodsCount").on("specialkey", function (field, e) {
             if (e.getKey() == e.ENTER) {
                 Ext.getCmp("editGoodsMoney").focus();
@@ -147,7 +146,6 @@ Ext.define("PSI.Inventory.InitInventoryEditForm", {
                 Ext.getCmp("buttonSubmit").focus();
             }
         });
-
         me.getGoodsCategories();
     },
     getGoodsGrid: function () {
@@ -182,7 +180,6 @@ Ext.define("PSI.Inventory.InitInventoryEditForm", {
                         var comboboxGoodsCategory = Ext.getCmp("comboboxGoodsCategory");
                         var categoryId = comboboxGoodsCategory.getValue();
                         var warehouseId = this.getWarehouse().get("id");
-
                         Ext.apply(store.proxy.extraParams, {
                             categoryId: categoryId,
                             warehouseId: warehouseId
@@ -200,7 +197,6 @@ Ext.define("PSI.Inventory.InitInventoryEditForm", {
                 }
             }
         });
-
         me.__gridGoods = Ext.create("Ext.grid.Panel", {
             border: 0,
             columns: [
@@ -252,12 +248,10 @@ Ext.define("PSI.Inventory.InitInventoryEditForm", {
                 }
             }
         });
-
         return me.__gridGoods;
     },
     getGoodsCategories: function () {
         var store = this.storeGoodsCategory;
-
         var el = Ext.getBody();
         el.mask(PSI.Const.LOADING);
         Ext.Ajax.request({
@@ -265,7 +259,6 @@ Ext.define("PSI.Inventory.InitInventoryEditForm", {
             method: "POST",
             callback: function (options, success, response) {
                 store.removeAll();
-
                 if (success) {
                     var data = Ext.JSON.decode(response.responseText);
                     store.add(data);
@@ -281,7 +274,6 @@ Ext.define("PSI.Inventory.InitInventoryEditForm", {
     onGoodsGridSelect: function () {
         var me = this;
         var grid = me.getGoodsGrid();
-
         var item = grid.getSelectionModel().getSelection();
         if (item == null || item.length != 1) {
             return;
@@ -291,6 +283,7 @@ Ext.define("PSI.Inventory.InitInventoryEditForm", {
         Ext.getCmp("editGoodsCode").setValue(goods.get("goodsCode"));
         Ext.getCmp("editGoodsName").setValue(goods.get("goodsName"));
         Ext.getCmp("editGoodsSpec").setValue(goods.get("goodsSpec"));
+        Ext.getCmp("editUnit").setValue(goods.get("unitName"));
         var goodsCount = goods.get("goodsCount");
         if (goodsCount == "0") {
             Ext.getCmp("editGoodsCount").setValue(null);
@@ -305,7 +298,6 @@ Ext.define("PSI.Inventory.InitInventoryEditForm", {
     updateAfterSave: function (goods) {
         goods.set("goodsCount", Ext.getCmp("editGoodsCount").getValue());
         goods.set("goodsMoney", Ext.getCmp("editGoodsMoney").getValue());
-
         var cnt = Ext.getCmp("editGoodsCount").getValue();
         if (cnt == 0) {
             goods.set("goodsPrice", null);
@@ -319,7 +311,6 @@ Ext.define("PSI.Inventory.InitInventoryEditForm", {
     },
     onSave: function () {
         var me = this;
-
         var grid = me.getGoodsGrid();
         var item = grid.getSelectionModel().getSelection();
         if (item == null || item.length != 1) {
@@ -328,13 +319,10 @@ Ext.define("PSI.Inventory.InitInventoryEditForm", {
         }
 
         var goods = item[0];
-
         var goodsCount = Ext.getCmp("editGoodsCount").getValue();
         var goodsMoney = Ext.getCmp("editGoodsMoney").getValue();
-
         var el = Ext.getBody();
         el.mask(PSI.Const.SAVING);
-
         Ext.Ajax.request({
             url: PSI.Const.BASE_URL + "Home/InitInventory/commitInitInventoryGoods",
             params: {
@@ -346,10 +334,8 @@ Ext.define("PSI.Inventory.InitInventoryEditForm", {
             method: "POST",
             callback: function (options, success, response) {
                 el.unmask();
-
                 if (success) {
                     var result = Ext.JSON.decode(response.responseText);
-
                     if (result.success) {
                         me.updateAfterSave(goods);
                         if (!Ext.getCmp("checkboxGotoNext").getValue()) {
@@ -372,7 +358,6 @@ Ext.define("PSI.Inventory.InitInventoryEditForm", {
             return;
         }
         var grid = me.getGoodsGrid();
-
         var hasNext = grid.getSelectionModel().selectNext();
         if (!hasNext) {
             Ext.getCmp("_pagingToolbar").moveNext();
