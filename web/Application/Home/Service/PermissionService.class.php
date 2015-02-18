@@ -88,6 +88,10 @@ class PermissionService extends PSIBaseService {
 						$db->execute($sql, $id, $v);
 					}
 				}
+				
+				$log = "编辑角色[{$name}]";
+				$bs = new BizlogService();
+				$bs->insertBizlog($log, "权限管理");
 
 				$db->commit();
 			} catch (Exception $exc) {
@@ -121,6 +125,10 @@ class PermissionService extends PSIBaseService {
 						$db->execute($sql, $id, $v);
 					}
 				}
+
+				$log = "新增角色[{$name}]";
+				$bs = new BizlogService();
+				$bs->insertBizlog($log, "权限管理");
 
 				$db->commit();
 			} catch (Exception $exc) {
@@ -196,6 +204,12 @@ class PermissionService extends PSIBaseService {
 		}
 
 		$db = M();
+		$sql = "select name from t_role where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if (!$data) {
+			return $this->bad("要删除的角色不存在");
+		}
+		$roleName = $data[0]["name"];
 
 		$db->startTrans();
 		try {
@@ -208,6 +222,10 @@ class PermissionService extends PSIBaseService {
 			$sql = "delete from t_role where id = '%s' ";
 			$db->execute($sql, $id);
 
+			$log = "删除角色[{$roleName}]";
+			$bs = new BizlogService();
+			$bs->insertBizlog($log, "权限管理");
+			
 			$db->commit();
 		} catch (Exception $exc) {
 			$db->rollback();
