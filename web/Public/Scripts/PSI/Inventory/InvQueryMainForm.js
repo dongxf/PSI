@@ -269,7 +269,7 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 				actionMethods : {
 					read : "POST"
 				},
-				url : PSI.Const.BASE_URL + "Home/Inventory/invertoryDetailList",
+				url : PSI.Const.BASE_URL + "Home/Inventory/inventoryDetailList",
 				reader : {
 					root : 'details',
 					totalProperty : 'totalCount'

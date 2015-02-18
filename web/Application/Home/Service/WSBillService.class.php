@@ -471,16 +471,16 @@ class WSBillService extends PSIBaseService {
 					$saleMoney, $customerId, $ref);
 			
 			// 单据本身设置为已经提交出库
-			$sql = "select sum(invertory_money) as sum_invertory_money "
+			$sql = "select sum(inventory_money) as sum_inventory_money "
 					. " from t_ws_bill_detail "
 					. " where wsbill_id = '%s' ";
 			$data = $db->query($sql, $id);
-			$sumInvertoryMoney = $data[0]["sum_invertory_money"];
+			$sumInvertoryMoney = $data[0]["sum_inventory_money"];
 			
 			$profit = $saleMoney - $sumInvertoryMoney;
 			
 			$sql = "update t_ws_bill "
-					. " set bill_status = 1000, invertory_money = %f, profit = %f "
+					. " set bill_status = 1000, inventory_money = %f, profit = %f "
 					. " where id = '%s' ";
 			$db->execute($sql, $sumInvertoryMoney, $profit, $id);
 					

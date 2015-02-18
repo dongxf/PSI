@@ -336,7 +336,7 @@ Ext.define("PSI.Inventory.InitInventoryEditForm", {
         el.mask(PSI.Const.SAVING);
 
         Ext.Ajax.request({
-            url: PSI.Const.BASE_URL + "Home/InitInventory/commitInitInvertoryGoods",
+            url: PSI.Const.BASE_URL + "Home/InitInventory/commitInitInventoryGoods",
             params: {
                 goodsId: goods.get("id"),
                 goodsCount: goodsCount,
