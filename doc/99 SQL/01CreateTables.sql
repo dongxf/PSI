@@ -188,8 +188,8 @@ CREATE TABLE IF NOT EXISTS `t_customer_category` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-DROP TABLE IF EXISTS `t_invertory`;
-CREATE TABLE IF NOT EXISTS `t_invertory` (
+DROP TABLE IF EXISTS `t_inventory`;
+CREATE TABLE IF NOT EXISTS `t_inventory` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `balance_count` int(11) NOT NULL,
   `balance_money` decimal(19,2) NOT NULL,
@@ -205,8 +205,8 @@ CREATE TABLE IF NOT EXISTS `t_invertory` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
-DROP TABLE IF EXISTS `t_invertory_detail`;
-CREATE TABLE IF NOT EXISTS `t_invertory_detail` (
+DROP TABLE IF EXISTS `t_inventory_detail`;
+CREATE TABLE IF NOT EXISTS `t_inventory_detail` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `balance_count` int(11) NOT NULL,
   `balance_money` decimal(19,2) NOT NULL,

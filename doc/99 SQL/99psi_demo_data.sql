@@ -92,8 +92,8 @@ INSERT INTO `t_goods_unit` (`id`, `name`) VALUES
 ('50C40382-B745-11E4-9C3C-782BCBD7746B', '套'),
 ('5D6D901E-B3F3-11E4-9DEA-782BCBD7746B', '台');
 
-TRUNCATE TABLE `t_invertory`;
-TRUNCATE TABLE `t_invertory_detail`;
+TRUNCATE TABLE `t_inventory`;
+TRUNCATE TABLE `t_inventory_detail`;
 TRUNCATE TABLE `t_menu_item`;
 INSERT INTO `t_menu_item` (`id`, `caption`, `fid`, `parent_id`, `show_order`) VALUES
 ('01', '文件', NULL, NULL, 1),
