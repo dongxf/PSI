@@ -155,7 +155,7 @@ class InitInvertoryService extends PSIBaseService {
                 $sql = "insert into t_invertory_detail (warehouse_id, goods_id,  in_count, in_price,"
                         . "in_money, balance_count, balance_price, balance_money,"
                         . " biz_date, biz_user_id, date_created,  ref_number, ref_type) "
-                        . " values ('%s', '%s', %d, %f, %f, %d, %f, %f, now(), '%s', now(),"
+                        . " values ('%s', '%s', %d, %f, %f, %d, %f, %f, curdate(), '%s', now(),"
                         . " '', '库存建账')";
 				$us = new UserService();
                 $db->execute($sql, $warehouseId, $goodsId, $goodsCount, 
@@ -166,7 +166,7 @@ class InitInvertoryService extends PSIBaseService {
                 $sql = "update t_invertory_detail "
                         . " set in_count = %d, in_price = %f, in_money = %f,"
                         . "      balance_count = %d, balance_price = %f, balance_money = %f,"
-                        . "      biz_date = now()  "
+                        . "      biz_date = curdate()  "
                         . " where id = %d ";
                 $db->execute($sql, $goodsCount, $goodsPrice, $goodsMoney, $goodsCount, $goodsPrice, $goodsMoney, $id);
             }
