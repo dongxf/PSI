@@ -9,6 +9,9 @@ Ext.define("PSI.Goods.MainForm", {
         });
 
         var categoryGrid = Ext.create("Ext.grid.Panel", {
+            viewConfig: {
+                enableTextSelection: true
+            },
             title: "商品分类",
             forceFit: true,
             columnLines: true,
