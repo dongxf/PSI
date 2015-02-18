@@ -5,9 +5,9 @@ Ext.define("PSI.App", {
     constructor: function (config) {
         this.initConfig(config);
 
-        this.__createMainUI();
+        this.createMainUI();
     },
-    __createMainUI: function () {
+    createMainUI: function () {
         var me = this;
 
         me.mainPanel = Ext.create("Ext.panel.Panel", {

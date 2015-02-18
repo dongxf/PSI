@@ -118,8 +118,8 @@ Ext.define("PSI.Goods.MainForm", {
                 Ext.create("Ext.grid.RowNumberer", {text: "序号", width: 30}),
                 {header: "商品编码", dataIndex: "code", menuDisabled: true, sortable: false},
                 {header: "品名", dataIndex: "name", menuDisabled: true, sortable: false, width: 300},
-                {header: "规格型号", dataIndex: "spec", menuDisabled: true, sortable: false, widht: 200},
-                {header: "计量单位", dataIndex: "unitName", menuDisabled: true, sortable: false},
+                {header: "规格型号", dataIndex: "spec", menuDisabled: true, sortable: false, width: 200},
+                {header: "计量单位", dataIndex: "unitName", menuDisabled: true, sortable: false, width: 60},
                 {header: "销售价", dataIndex: "salePrice", menuDisabled: true, sortable: false, align: "right", xtype: "numbercolumn"}
             ],
             store: store,
