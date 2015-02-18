@@ -22,7 +22,7 @@ class InitInventoryController extends Controller {
                 "start" => I("post.start"),
                 "limit" => I("post.limit")
             );
-			$is = new InitInvertoryService();
+			$is = new InitInventoryService();
             $this->ajaxReturn($is->initInfoList($params));
         }
     }
@@ -48,7 +48,7 @@ class InitInventoryController extends Controller {
         }
     }
 
-    public function commitInitInvertoryGoods() {
+    public function commitInitInventoryGoods() {
         if (IS_POST) {
             $params = array(
                 "warehouseId" => I("post.warehouseId"),
@@ -57,7 +57,7 @@ class InitInventoryController extends Controller {
                 "goodsMoney" => I("post.goodsMoney")
             );
 			$is = new InitInventoryService();
-            $this->ajaxReturn($is->commitInitInvertoryGoods($params));
+            $this->ajaxReturn($is->commitInitInventoryGoods($params));
         }
     }
 

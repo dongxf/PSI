@@ -89,7 +89,7 @@ class InitInventoryService extends PSIBaseService {
         return array("goodsList" => $result, "totalCount" => $data[0]["cnt"]);
     }
 
-    public function commitInitInvertoryGoods($params) {
+    public function commitInitInventoryGoods($params) {
         $warehouseId = $params["warehouseId"];
         $goodsId = $params["goodsId"];
         $goodsCount = intval($params["goodsCount"]);

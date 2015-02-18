@@ -50,17 +50,17 @@ class InventoryController extends Controller {
 		}
 	}
 
-	public function invertoryList() {
+	public function inventoryList() {
 		if (IS_POST) {
 			$params = array(
 				"warehouseId" => I("post.warehouseId")
 			);
 			$is = new InventoryService();
-			$this->ajaxReturn($is->invertoryList($params));
+			$this->ajaxReturn($is->inventoryList($params));
 		}
 	}
 
-	public function invertoryDetailList() {
+	public function inventoryDetailList() {
 		if (IS_POST) {
 			$params = array(
 				"warehouseId" => I("post.warehouseId"),
@@ -72,7 +72,7 @@ class InventoryController extends Controller {
 				"limit" => I("post.limit")
 			);
 			$is = new InventoryService();
-			$this->ajaxReturn($is->invertoryDetailList($params));
+			$this->ajaxReturn($is->inventoryDetailList($params));
 		}
 	}
 }

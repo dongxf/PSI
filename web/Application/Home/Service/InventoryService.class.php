@@ -13,7 +13,7 @@ class InventoryService extends PSIBaseService {
 		return M()->query("select id, code, name from t_warehouse order by code");
 	}
 
-	public function invertoryList($params) {
+	public function inventoryList($params) {
 		$warehouseId = $params["warehouseId"];
 		$db = M();
 		$sql = "select g.id, g.code, g.name, g.spec, u.name as unit_name,"
@@ -46,7 +46,7 @@ class InventoryService extends PSIBaseService {
 		return $result;
 	}
 
-	public function invertoryDetailList($params) {
+	public function inventoryDetailList($params) {
 		$warehouseId = $params["warehouseId"];
 		$goodsId = $params["goodsId"];
 		$dtFrom = $params["dtFrom"];
