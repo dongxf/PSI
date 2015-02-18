@@ -1,4 +1,4 @@
-Ext.define("PSI.Invertory.InitInvertoryEditForm", {
+Ext.define("PSI.Inventory.InitInventoryEditForm", {
     extend: "Ext.window.Window",
     config: {
         warehouse: null

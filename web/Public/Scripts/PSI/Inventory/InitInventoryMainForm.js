@@ -1,4 +1,4 @@
-Ext.define("PSI.Invertory.InitInvertoryMainForm", {
+Ext.define("PSI.Inventory.InitInventoryMainForm", {
     extend: "Ext.panel.Panel",
     initComponent: function () {
         var me = this;

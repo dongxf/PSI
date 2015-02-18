@@ -77,7 +77,7 @@ class FIdConst {
 	/**
 	 * 库存建账
 	 */
-	const INVERTORY_INIT = "2000";
+	const INVENTORY_INIT = "2000";
 	
 	/**
 	 * 采购入库
@@ -87,7 +87,7 @@ class FIdConst {
 	/**
 	 * 库存账查询
 	 */
-	const INVERTORY_QUERY = "2003";
+	const INVENTORY_QUERY = "2003";
 	
 	/**
 	 * 应付账款管理

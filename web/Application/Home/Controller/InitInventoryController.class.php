@@ -5,7 +5,7 @@ namespace Home\Controller;
 use Think\Controller;
 use Home\Service\InitInvertoryService;
 
-class InitInvertoryController extends Controller {
+class InitInventoryController extends Controller {
 
     public function warehouseList() {
         if (IS_POST) {

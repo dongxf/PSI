@@ -1,0 +1,18 @@
+<layout name="layout" />
+
+<script src="{$uri}Public/Scripts/PSI/Inventory/InitInventoryMainForm.js?dt={$dtFlag}" type="text/javascript"></script>
+<script src="{$uri}Public/Scripts/PSI/Inventory/InitInventoryEditForm.js?dt={$dtFlag}" type="text/javascript"></script>
+
+<script>
+    Ext.onReady(function(){
+        var app = Ext.create("PSI.App", {
+            userName: "{$loginUserName}"
+        });
+
+        app.add(Ext.create("PSI.Inventory.InitInventoryMainForm"));
+        app.setAppHeader({
+            title: "{$title}",
+            iconCls: "PSI-fid2000"
+            });
+    });
+</script>

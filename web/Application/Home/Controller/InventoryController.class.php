@@ -7,7 +7,7 @@ use Home\Service\UserService;
 use Home\Service\InvertoryService;
 use Home\Common\FIdConst;
 
-class InvertoryController extends Controller {
+class InventoryController extends Controller {
 
 	public function initIndex() {
 		$us = new UserService();
@@ -19,14 +19,14 @@ class InvertoryController extends Controller {
 		$dtFlag = getdate();
 		$this->assign("dtFlag", $dtFlag[0]);
 
-		if ($us->hasPermission(FIdConst::INVERTORY_INIT)) {
+		if ($us->hasPermission(FIdConst::INVENTORY_INIT)) {
 			$this->display();
 		} else {
 			redirect(__ROOT__ . "/Home/User/login");
 		}
 	}
 
-	public function invertoryQuery() {
+	public function inventoryQuery() {
 		$us = new UserService();
 
 		$this->assign("title", "库存账查询");
@@ -36,7 +36,7 @@ class InvertoryController extends Controller {
 		$dtFlag = getdate();
 		$this->assign("dtFlag", $dtFlag[0]);
 
-		if ($us->hasPermission(FIdConst::INVERTORY_QUERY)) {
+		if ($us->hasPermission(FIdConst::INVENTORY_QUERY)) {
 			$this->display();
 		} else {
 			redirect(__ROOT__ . "/Home/User/login");

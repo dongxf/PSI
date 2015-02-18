@@ -1,4 +1,4 @@
-Ext.define("PSI.Invertory.InvQueryMainForm", {
+Ext.define("PSI.Inventory.InvQueryMainForm", {
 	extend : "Ext.panel.Panel",
 
 	border : 0,

@@ -70,17 +70,17 @@ class MainMenuController extends Controller {
 				// 客户关系 - 客户资料
 				redirect(__ROOT__ . "/Home/Customer");
 				break;
-			case FIdConst::INVERTORY_INIT:
+			case FIdConst::INVENTORY_INIT:
 				// 库存建账
-				redirect(__ROOT__ . "/Home/Invertory/initIndex");
+				redirect(__ROOT__ . "/Home/Inventory/initIndex");
 				break;
 			case FIdConst::PURCHASE_WAREHOUSE:
 				// 采购入库
 				redirect(__ROOT__ . "/Home/Purchase/pwbillIndex");
 				break;
-			case FIdConst::INVERTORY_QUERY:
+			case FIdConst::INVENTORY_QUERY:
 				// 库存账查询
-				redirect(__ROOT__ . "/Home/Invertory/invertoryQuery");
+				redirect(__ROOT__ . "/Home/Inventory/inventoryQuery");
 				break;
 			case FIdConst::PAYABLES:
 				// 应付账款管理

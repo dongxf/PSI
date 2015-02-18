@@ -1,6 +1,6 @@
 <layout name="layout" />
 
-<script src="{$uri}Public/Scripts/PSI/Invertory/InvQueryMainForm.js?dt={$dtFlag}" type="text/javascript"></script>
+<script src="{$uri}Public/Scripts/PSI/Inventory/InvQueryMainForm.js?dt={$dtFlag}" type="text/javascript"></script>
 
 <script>
     Ext.onReady(function(){
@@ -8,7 +8,7 @@
             userName: "{$loginUserName}"
         });
 
-        app.add(Ext.create("PSI.Invertory.InvQueryMainForm"));
+        app.add(Ext.create("PSI.Inventory.InvQueryMainForm"));
         app.setAppHeader({
             title: "{$title}",
             iconCls: "PSI-fid2003"
