@@ -433,7 +433,7 @@ class WSBillService extends PSIBaseService {
 				
 				// 单据本身的记录
 				$sql = "update t_ws_bill_detail "
-						. " set invertory_price = %f, invertory_money = %f"
+						. " set inventory_price = %f, inventory_money = %f"
 						. " where id = '%s' ";
 				$db->execute($sql, $outPriceDetail, $outMoneyDetail, $itemId);
 			}
