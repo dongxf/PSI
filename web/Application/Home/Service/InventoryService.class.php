@@ -7,7 +7,7 @@ namespace Home\Service;
  *
  * @author 李静波
  */
-class InvertoryService extends PSIBaseService {
+class InventoryService extends PSIBaseService {
 
 	public function warehouseList() {
 		return M()->query("select id, code, name from t_warehouse order by code");
@@ -19,7 +19,7 @@ class InvertoryService extends PSIBaseService {
 		$sql = "select g.id, g.code, g.name, g.spec, u.name as unit_name,"
 				. " v.in_count, v.in_price, v.in_money, v.out_count, v.out_price, v.out_money,"
 				. "v.balance_count, v.balance_price, v.balance_money "
-				. " from t_invertory v, t_goods g, t_goods_unit u"
+				. " from t_inventory v, t_goods g, t_goods_unit u"
 				. " where v.warehouse_id = '%s' and v.goods_id = g.id and g.unit_id = u.id"
 				. " order by g.code";
 		$data = $db->query($sql, $warehouseId);
@@ -60,7 +60,7 @@ class InvertoryService extends PSIBaseService {
 				. " v.in_count, v.in_price, v.in_money, v.out_count, v.out_price, v.out_money,"
 				. "v.balance_count, v.balance_price, v.balance_money,"
 				. " v.biz_date,  user.name as biz_user_name, v.ref_number, v.ref_type "
-				. " from t_invertory_detail v, t_goods g, t_goods_unit u, t_user user"
+				. " from t_inventory_detail v, t_goods g, t_goods_unit u, t_user user"
 				. " where v.warehouse_id = '%s' and v.goods_id = '%s' "
 				. "	and v.goods_id = g.id and g.unit_id = u.id and v.biz_user_id = user.id "
 				. "   and (v.biz_date between '%s' and '%s' ) "
@@ -91,7 +91,7 @@ class InvertoryService extends PSIBaseService {
 			$result[$i]["refType"] = $v["ref_type"];
 		}
 		
-		$sql = "select count(*) as cnt from t_invertory_detail"
+		$sql = "select count(*) as cnt from t_inventory_detail"
 				. " where warehouse_id = '%s' and goods_id = '%s' "
 				. "     and (biz_date between '%s' and '%s')";
 		$data = $db->query($sql, $warehouseId, $goodsId, $dtFrom, $dtTo);

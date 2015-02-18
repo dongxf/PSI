@@ -383,7 +383,7 @@ class WSBillService extends PSIBaseService {
 				
 				// 库存总账
 				$sql = "select out_count, out_money, balance_count, balance_price,"
-						. " balance_money from t_invertory "
+						. " balance_money from t_inventory "
 						. " where warehouse_id = '%s' and goods_id = '%s' ";
 				$data = $db->query($sql, $warehouseId, $goodsId);
 				if (!$data) {
@@ -415,7 +415,7 @@ class WSBillService extends PSIBaseService {
 				$outCount += $goodsCount;
 				$outPrice = $outMoney / $outCount;
 				
-				$sql = "update t_invertory "
+				$sql = "update t_inventory "
 						. " set out_count = %d, out_price = %f, out_money = %f,"
 						. "       balance_count = %d, balance_money = %f "
 						. " where warehouse_id = '%s' and goods_id = '%s' ";
@@ -423,7 +423,7 @@ class WSBillService extends PSIBaseService {
 						$balanceCount, $balanceMoney, $warehouseId, $goodsId);
 				
 				// 库存明细账
-				$sql = "insert into t_invertory_detail(out_count, out_price, out_money, "
+				$sql = "insert into t_inventory_detail(out_count, out_price, out_money, "
 						. " balance_count, balance_price, balance_money, warehouse_id,"
 						. " goods_id, biz_date, biz_user_id, date_created, ref_number, ref_type) "
 						. " values(%d, %f, %f, %d, %f, %f, '%s', '%s', '%s', '%s', now(), '%s', '销售出库')";

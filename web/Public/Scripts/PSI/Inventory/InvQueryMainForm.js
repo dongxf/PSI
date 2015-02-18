@@ -12,7 +12,7 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 			fields : [ "id", "code", "name" ]
 		});
 
-		Ext.define("PSIInvertory", {
+		Ext.define("PSIInventory", {
 			extend : "Ext.data.Model",
 			fields : [ "id", "goodsId", "goodsCode", "goodsName", "goodsSpec",
 					"unitName", "inCount", "inPrice", "inMoney", "outCount",
@@ -20,7 +20,7 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 					"balanceMoney" ]
 		});
 
-		Ext.define("PSIInvertoryDetail", {
+		Ext.define("PSIInventoryDetail", {
 			extend : "Ext.data.Model",
 			fields : [ "id", "goodsCode", "goodsName", "goodsSpec", "unitName",
 					"inCount", "inPrice", "inMoney", "outCount", "outPrice",
@@ -111,7 +111,7 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 		var el = grid.getEl() || Ext.getBody();
 		el.mask(PSI.Const.LOADING);
 		Ext.Ajax.request({
-			url : PSI.Const.BASE_URL + "Home/Invertory/warehouseList",
+			url : PSI.Const.BASE_URL + "Home/Inventory/warehouseList",
 			method : "POST",
 			callback : function(options, success, response) {
 				var store = grid.getStore();
@@ -220,7 +220,7 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 				sortable : false
 			} ],
 			store : Ext.create("Ext.data.Store", {
-				model : "PSIInvertory",
+				model : "PSIInventory",
 				autoLoad : false,
 				data : []
 			}),
@@ -262,14 +262,14 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 		}
 
 		var store = Ext.create("Ext.data.Store", {
-			model : "PSIInvertoryDetail",
+			model : "PSIInventoryDetail",
 			pageSize: 20,
 			proxy : {
 				type : "ajax",
 				actionMethods : {
 					read : "POST"
 				},
-				url : PSI.Const.BASE_URL + "Home/Invertory/invertoryDetailList",
+				url : PSI.Const.BASE_URL + "Home/Inventory/invertoryDetailList",
 				reader : {
 					root : 'details',
 					totalProperty : 'totalCount'
@@ -459,7 +459,7 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 		var el = grid.getEl();
 		el.mask(PSI.Const.LOADING);
 		Ext.Ajax.request({
-			url : PSI.Const.BASE_URL + "Home/Invertory/invertoryList",
+			url : PSI.Const.BASE_URL + "Home/Inventory/invertoryList",
 			params : {
 				warehouseId : warehouse.get("id")
 			},

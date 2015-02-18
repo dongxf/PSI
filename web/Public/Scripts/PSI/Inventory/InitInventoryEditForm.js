@@ -170,7 +170,7 @@ Ext.define("PSI.Inventory.InitInventoryEditForm", {
                 actionMethods: {
                     read: "POST"
                 },
-                url: PSI.Const.BASE_URL + "Home/InitInvertory/goodsList",
+                url: PSI.Const.BASE_URL + "Home/InitInventory/goodsList",
                 reader: {
                     root: 'goodsList',
                     totalProperty: 'totalCount'
@@ -261,7 +261,7 @@ Ext.define("PSI.Inventory.InitInventoryEditForm", {
         var el = Ext.getBody();
         el.mask(PSI.Const.LOADING);
         Ext.Ajax.request({
-            url: PSI.Const.BASE_URL + "Home/InitInvertory/goodsCategoryList",
+            url: PSI.Const.BASE_URL + "Home/InitInventory/goodsCategoryList",
             method: "POST",
             callback: function (options, success, response) {
                 store.removeAll();
@@ -336,7 +336,7 @@ Ext.define("PSI.Inventory.InitInventoryEditForm", {
         el.mask(PSI.Const.SAVING);
 
         Ext.Ajax.request({
-            url: PSI.Const.BASE_URL + "Home/InitInvertory/commitInitInvertoryGoods",
+            url: PSI.Const.BASE_URL + "Home/InitInventory/commitInitInvertoryGoods",
             params: {
                 goodsId: goods.get("id"),
                 goodsCount: goodsCount,

@@ -306,7 +306,7 @@ class GoodsService extends PSIBaseService {
 			return $this->bad("商品[{$code} {$name}]已经在销售出库单中使用了，不能删除");
 		}
 
-		$sql = "select count(*) as cnt from t_invertory_detail where goods_id = '%s' ";
+		$sql = "select count(*) as cnt from t_inventory_detail where goods_id = '%s' ";
 		$data = $db->query($sql, $id);
 		$cnt = $data[0]["cnt"];
 		if ($cnt > 0) {

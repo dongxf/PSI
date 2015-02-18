@@ -17,7 +17,7 @@ Ext.define("PSI.Inventory.InitInventoryMainForm", {
                 actionMethods: {
                     read: "POST"
                 },
-                url: PSI.Const.BASE_URL + "Home/InitInvertory/initInfoList",
+                url: PSI.Const.BASE_URL + "Home/InitInventory/initInfoList",
                 reader: {
                     root: 'initInfoList',
                     totalProperty: 'totalCount'
@@ -182,7 +182,7 @@ Ext.define("PSI.Inventory.InitInventoryMainForm", {
         var el = grid.getEl() || Ext.getBody();
         el.mask(PSI.Const.LOADING);
         Ext.Ajax.request({
-            url: PSI.Const.BASE_URL + "Home/InitInvertory/warehouseList",
+            url: PSI.Const.BASE_URL + "Home/InitInventory/warehouseList",
             method: "POST",
             callback: function (options, success, response) {
                 var store = grid.getStore();
@@ -230,7 +230,7 @@ Ext.define("PSI.Inventory.InitInventoryMainForm", {
             return;
         }
 
-        var form = Ext.create("PSI.Invertory.InitInvertoryEditForm", {
+        var form = Ext.create("PSI.Inventory.InitInventoryEditForm", {
             warehouse: warehouse
         });
         form.show();
@@ -252,7 +252,7 @@ Ext.define("PSI.Inventory.InitInventoryMainForm", {
             var el = Ext.getBody();
             el.mask(PSI.Const.SAVING);
             Ext.Ajax.request({
-                url: PSI.Const.BASE_URL + "Home/InitInvertory/finish",
+                url: PSI.Const.BASE_URL + "Home/InitInventory/finish",
                 params: {warehouseId: warehouse.get("id")},
                 method: "POST",
                 callback: function (options, success, response) {
@@ -291,7 +291,7 @@ Ext.define("PSI.Inventory.InitInventoryMainForm", {
             var el = Ext.getBody();
             el.mask(PSI.Const.SAVING);
             Ext.Ajax.request({
-                url: PSI.Const.BASE_URL + "Home/InitInvertory/cancel",
+                url: PSI.Const.BASE_URL + "Home/InitInventory/cancel",
                 params: {warehouseId: warehouse.get("id")},
                 method: "POST",
                 callback: function (options, success, response) {

@@ -394,7 +394,7 @@ class PWBillService extends PSIBaseService {
 				$balancePrice = (float)0;
 				// 库存总账
 				$sql = "select in_count, in_money, balance_count, balance_money "
-						. " from t_invertory where warehouse_id = '%s' and goods_id = '%s' ";
+						. " from t_inventory where warehouse_id = '%s' and goods_id = '%s' ";
 				$data = $db->query($sql, $warehouseId, $goodsId);
 				if ($data) {
 					$inCount = intval($data[0]["in_count"]);
@@ -410,7 +410,7 @@ class PWBillService extends PSIBaseService {
 					$balanceMoney += $goodsMoney;
 					$balancePrice = $balanceMoney / $balanceCount;
 					
-					$sql = "update t_invertory "
+					$sql = "update t_inventory "
 							. " set in_count = %d, in_price = %f, in_money = %f,"
 							. "      balance_count = %d, balance_price = %f, balance_money = %f "
 							. " where warehouse_id = '%s' and goods_id = '%s' ";
@@ -425,7 +425,7 @@ class PWBillService extends PSIBaseService {
 					$balanceMoney += $goodsMoney;
 					$balancePrice = $balanceMoney / $balanceCount;
 
-					$sql = "insert into t_invertory (in_count, in_price, in_money, balance_count,"
+					$sql = "insert into t_inventory (in_count, in_price, in_money, balance_count,"
 							. "balance_price, balance_money, warehouse_id, goods_id)"
 							. " values (%d, %f, %f, %d, %f, %f, '%s', '%s')";
 					$db->execute($sql, $inCount, $inPrice, $inMoney,
@@ -434,7 +434,7 @@ class PWBillService extends PSIBaseService {
 				}
 				
 				// 库存明细账
-				$sql = "insert into t_invertory_detail (in_count, in_price, in_money, balance_count,"
+				$sql = "insert into t_inventory_detail (in_count, in_price, in_money, balance_count,"
 						. "balance_price, balance_money, warehouse_id, goods_id, biz_date,"
 						. " biz_user_id, date_created, ref_number, ref_type)"
 						. " values (%d, %f, %f, %d, %f, %f, '%s', '%s', '%s', '%s', now(), '%s', '采购入库')";

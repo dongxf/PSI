@@ -4,7 +4,7 @@ namespace Home\Controller;
 
 use Think\Controller;
 use Home\Service\UserService;
-use Home\Service\InvertoryService;
+use Home\Service\InventoryService;
 use Home\Common\FIdConst;
 
 class InventoryController extends Controller {
@@ -45,7 +45,7 @@ class InventoryController extends Controller {
 
 	public function warehouseList() {
 		if (IS_POST) {
-			$is = new InvertoryService();
+			$is = new InventoryService();
 			$this->ajaxReturn($is->warehouseList());
 		}
 	}
@@ -55,7 +55,7 @@ class InventoryController extends Controller {
 			$params = array(
 				"warehouseId" => I("post.warehouseId")
 			);
-			$is = new InvertoryService();
+			$is = new InventoryService();
 			$this->ajaxReturn($is->invertoryList($params));
 		}
 	}
@@ -71,7 +71,7 @@ class InventoryController extends Controller {
 				"start" => I("post.start"),
 				"limit" => I("post.limit")
 			);
-			$is = new InvertoryService();
+			$is = new InventoryService();
 			$this->ajaxReturn($is->invertoryDetailList($params));
 		}
 	}

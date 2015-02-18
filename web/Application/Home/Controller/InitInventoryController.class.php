@@ -3,13 +3,13 @@
 namespace Home\Controller;
 
 use Think\Controller;
-use Home\Service\InitInvertoryService;
+use Home\Service\InitInventoryService;
 
 class InitInventoryController extends Controller {
 
     public function warehouseList() {
         if (IS_POST) {
-			$is = new InitInvertoryService();
+			$is = new InitInventoryService();
             $this->ajaxReturn($is->warehouseList());
         }
     }
@@ -29,7 +29,7 @@ class InitInventoryController extends Controller {
 
     public function goodsCategoryList() {
         if (IS_POST) {
-			$is = new InitInvertoryService();
+			$is = new InitInventoryService();
             $this->ajaxReturn($is->goodsCategoryList());
         }
     }
@@ -43,7 +43,7 @@ class InitInventoryController extends Controller {
                 "start" => I("post.start"),
                 "limit" => I("post.limit")
             );
-			$is = new InitInvertoryService();
+			$is = new InitInventoryService();
             $this->ajaxReturn($is->goodsList($params));
         }
     }
@@ -56,7 +56,7 @@ class InitInventoryController extends Controller {
                 "goodsCount" => I("post.goodsCount"),
                 "goodsMoney" => I("post.goodsMoney")
             );
-			$is = new InitInvertoryService();
+			$is = new InitInventoryService();
             $this->ajaxReturn($is->commitInitInvertoryGoods($params));
         }
     }
@@ -66,7 +66,7 @@ class InitInventoryController extends Controller {
             $params = array(
                 "warehouseId" => I("post.warehouseId"),
             );
-			$is = new InitInvertoryService();
+			$is = new InitInventoryService();
             $this->ajaxReturn($is->finish($params));
         }
     }
@@ -76,7 +76,7 @@ class InitInventoryController extends Controller {
             $params = array(
                 "warehouseId" => I("post.warehouseId"),
             );
-			$is = new InitInvertoryService();
+			$is = new InitInventoryService();
             $this->ajaxReturn($is->cancel($params));
         }
     }

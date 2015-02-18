@@ -7,7 +7,7 @@ namespace Home\Service;
  *
  * @author 李静波
  */
-class InitInvertoryService extends PSIBaseService {
+class InitInventoryService extends PSIBaseService {
 
     public function warehouseList() {
         return M()->query("select id, code, name, inited from t_warehouse order by code");
@@ -22,7 +22,7 @@ class InitInvertoryService extends PSIBaseService {
         $db = M();
         $sql = "select v.id, g.code, g.name, g.spec, v.balance_count, v.balance_price, "
                 . " v.balance_money, u.name as unit_name, v.biz_date "
-                . " from t_invertory_detail v, t_goods g, t_goods_unit u "
+                . " from t_inventory_detail v, t_goods g, t_goods_unit u "
                 . " where v.goods_id = g.id and g.unit_id = u.id and v.warehouse_id = '%s' "
                 . "             and ref_type = '库存建账' "
                 . " order by g.code "
@@ -41,7 +41,7 @@ class InitInvertoryService extends PSIBaseService {
             $result[$i]["initDate"] = date("Y-m-d", strtotime($v["biz_date"]));
         }
 
-        $sql = "select count(*) as cnt from t_invertory_detail "
+        $sql = "select count(*) as cnt from t_inventory_detail "
                 . " where warehouse_id = '%s' and ref_type = '库存建账' ";
         $data = $db->query($sql, $warehouseId);
 
@@ -64,7 +64,7 @@ class InitInvertoryService extends PSIBaseService {
                 . " v.balance_money, u.name as unit_name, v.biz_date "
                 . " from t_goods g inner join t_goods_unit u "
                 . "   on g.unit_id = u.id and g.category_id = '%s' "
-                . " left join t_invertory_detail v"
+                . " left join t_inventory_detail v"
                 . " on g.id = v.goods_id and v.ref_type = '库存建账' "
                 . "      and v.warehouse_id = '%s' "
                 . " order by g.code "
@@ -120,7 +120,7 @@ class InitInvertoryService extends PSIBaseService {
         if (!$data) {
             return $this->bad("商品不存在");
         }
-        $sql = "select count(*) as cnt from t_invertory_detail "
+        $sql = "select count(*) as cnt from t_inventory_detail "
                 . " where warehouse_id = '%s' and goods_id = '%s' and ref_type <> '库存建账' ";
         $data = $db->query($sql, $warehouseId, $goodsId);
         $cnt = $data[0]["cnt"];
@@ -131,16 +131,16 @@ class InitInvertoryService extends PSIBaseService {
         $db->startTrans();
         try {
             // 总账
-            $sql = "select id from t_invertory where warehouse_id = '%s' and goods_id = '%s' ";
+            $sql = "select id from t_inventory where warehouse_id = '%s' and goods_id = '%s' ";
             $data = $db->query($sql, $warehouseId, $goodsId);
             if (!$data) {
-                $sql = "insert into t_invertory (warehouse_id, goods_id, in_count, in_price, "
+                $sql = "insert into t_inventory (warehouse_id, goods_id, in_count, in_price, "
                         . " in_money, balance_count, balance_price, balance_money) "
                         . " values ('%s', '%s', %d, %f, %f, %d, %f, %f) ";
                 $db->execute($sql, $warehouseId, $goodsId, $goodsCount, $goodsPrice, $goodsMoney, $goodsCount, $goodsPrice, $goodsMoney);
             } else {
                 $id = $data[0]["id"];
-                $sql = "update t_invertory "
+                $sql = "update t_inventory "
                         . " set in_count = %d, in_price = %f, in_money = %f, "
                         . "       balance_count = %d, balance_price = %f, balance_money = %f "
                         . " where id = %d ";
@@ -148,11 +148,11 @@ class InitInvertoryService extends PSIBaseService {
             }
 
             // 明细账
-            $sql = "select id from t_invertory_detail  "
+            $sql = "select id from t_inventory_detail  "
                     . " where warehouse_id = '%s' and goods_id = '%s' and ref_type = '库存建账' ";
             $data = $db->query($sql, $warehouseId, $goodsId);
             if (!$data) {
-                $sql = "insert into t_invertory_detail (warehouse_id, goods_id,  in_count, in_price,"
+                $sql = "insert into t_inventory_detail (warehouse_id, goods_id,  in_count, in_price,"
                         . "in_money, balance_count, balance_price, balance_money,"
                         . " biz_date, biz_user_id, date_created,  ref_number, ref_type) "
                         . " values ('%s', '%s', %d, %f, %f, %d, %f, %f, curdate(), '%s', now(),"
@@ -163,7 +163,7 @@ class InitInvertoryService extends PSIBaseService {
 						$goodsMoney, $us->getLoginUserId());
             } else {
                 $id = $data[0]["id"];
-                $sql = "update t_invertory_detail "
+                $sql = "update t_inventory_detail "
                         . " set in_count = %d, in_price = %f, in_money = %f,"
                         . "      balance_count = %d, balance_price = %f, balance_money = %f,"
                         . "      biz_date = curdate()  "
@@ -200,7 +200,7 @@ class InitInvertoryService extends PSIBaseService {
             $sql = "update t_warehouse set inited = 1 where id = '%s' ";
             $db->execute($sql, $warehouseId);
 
-            $sql = "update t_invertory_detail set biz_date = curdate() "
+            $sql = "update t_inventory_detail set biz_date = curdate() "
                     . " where warehouse_id = '%s' and ref_type = '库存建账' ";
             $db->execute($sql, $warehouseId);
 
@@ -232,7 +232,7 @@ class InitInvertoryService extends PSIBaseService {
         if ($inited != 1) {
             return $this->bad("仓库 [{$name}] 还没有标记为建账完毕，无需取消建账标志");
         }
-        $sql = "select count(*) as cnt from t_invertory_detail "
+        $sql = "select count(*) as cnt from t_inventory_detail "
                 . " where warehouse_id = '%s' and ref_type <> '库存建账' ";
         $data = $db->query($sql, $warehouseId);
         $cnt = $data[0]["cnt"];
