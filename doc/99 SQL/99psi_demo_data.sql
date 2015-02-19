@@ -105,8 +105,6 @@ INSERT INTO `t_goods_unit` (`id`, `name`) VALUES
 
 TRUNCATE TABLE `t_inventory`;
 TRUNCATE TABLE `t_inventory_detail`;
-TRUNCATE TABLE `t_invertory`;
-TRUNCATE TABLE `t_invertory_detail`;
 TRUNCATE TABLE `t_menu_item`;
 INSERT INTO `t_menu_item` (`id`, `caption`, `fid`, `parent_id`, `show_order`) VALUES
 ('01', '文件', NULL, NULL, 1),
