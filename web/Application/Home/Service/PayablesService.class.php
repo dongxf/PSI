@@ -86,7 +86,7 @@ class PayablesService extends PSIBaseService {
 
 		$db = M();
 
-		$sql = "select id, ref_type, ref_number, pay_money, act_money, balance_money, date_created"
+		$sql = "select id, ref_type, ref_number, pay_money, act_money, balance_money, date_created, biz_date"
 				. " from t_payables_detail "
 				. " where ca_type = '%s' and ca_id = '%s' "
 				. " limit " . $start . ", " . $limit;
@@ -96,7 +96,8 @@ class PayablesService extends PSIBaseService {
 			$result[$i]["id"] = $v["id"];
 			$result[$i]["refType"] = $v["ref_type"];
 			$result[$i]["refNumber"] = $v["ref_number"];
-			$result[$i]["bizDT"] = date("Y-m-d", strtotime($v["date_created"]));
+			$result[$i]["bizDT"] = date("Y-m-d", strtotime($v["biz_date"]));
+			$result[$i]["dateCreated"] = $v["date_created"];
 			$result[$i]["payMoney"] = $v["pay_money"];
 			$result[$i]["actMoney"] = $v["act_money"];
 			$result[$i]["balanceMoney"] = $v["balance_money"];

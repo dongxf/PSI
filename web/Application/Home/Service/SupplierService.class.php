@@ -234,15 +234,15 @@ class SupplierService extends PSIBaseService {
 			if ($data) {
 				$payId = $data[0]["id"];
 				$sql = "update t_payables_detail "
-						. " set pay_money = %f ,  balance_money = %f , date_created = '%s', act_money = 0"
+						. " set pay_money = %f ,  balance_money = %f , biz_date = '%s', date_created = now(), act_money = 0"
 						. " where id = '%s' ";
 				$db->execute($sql, $initPayables, $initPayables, $initPayablesDT, $payId);
 			} else {
 				$idGen = new IdGenService();
 				$payId = $idGen->newId();
 				$sql = "insert into t_payables_detail (id, pay_money, act_money, balance_money, ca_id,"
-						. " ca_type, ref_type, ref_number, date_created)"
-						. " values ('%s', %f, 0, %f, '%s', 'supplier', '应付账款期初建账', '%s', '%s') ";
+						. " ca_type, ref_type, ref_number, biz_date, date_created)"
+						. " values ('%s', %f, 0, %f, '%s', 'supplier', '应付账款期初建账', '%s', '%s', now()) ";
 				$db->execute($sql, $payId, $initPayables, $initPayables, $id, $id, $initPayablesDT);
 			}
 			

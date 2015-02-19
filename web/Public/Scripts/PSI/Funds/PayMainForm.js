@@ -192,7 +192,7 @@ Ext.define("PSI.Funds.PayMainForm", {
 		Ext.define("PSIPayDetail", {
 			extend : "Ext.data.Model",
 			fields : [ "id", "payMoney", "actMoney", "balanceMoney", "refType",
-					"refNumber", "bizDT" ]
+					"refNumber", "bizDT", "dateCreated" ]
 		});
 
 		var store = Ext.create("Ext.data.Store", {
@@ -272,6 +272,11 @@ Ext.define("PSI.Funds.PayMainForm", {
 				sortable : false,
 				align : "right",
 				xtype : "numbercolumn"
+			},{
+				header : "创建时间",
+				dataIndex : "dateCreated",
+				menuDisabled : true,
+				sortable : false
 			} ],
 			store : store,
 			listeners : {
