@@ -88,7 +88,7 @@ class ReceivablesService extends PSIBaseService {
 		$limit = $params["limit"];
 
 		$db = M();
-		$sql = "select id, rv_money, act_money, balance_money, ref_type, ref_number, date_created"
+		$sql = "select id, rv_money, act_money, balance_money, ref_type, ref_number, date_created, biz_date"
 				. " from t_receivables_detail "
 				. " where ca_type = '%s' and ca_id = '%s' "
 				. " limit " . $start . ", " . $limit;
@@ -98,7 +98,8 @@ class ReceivablesService extends PSIBaseService {
 			$result[$i]["id"] = $v["id"];
 			$result[$i]["refType"] = $v["ref_type"];
 			$result[$i]["refNumber"] = $v["ref_number"];
-			$result[$i]["bizDT"] = date("Y-m-d", strtotime($v["date_created"]));
+			$result[$i]["dateCreated"] = $v["date_created"];
+			$result[$i]["bizDT"] = date("Y-m-d", strtotime($v["biz_date"]));
 			$result[$i]["rvMoney"] = $v["rv_money"];
 			$result[$i]["actMoney"] = $v["act_money"];
 			$result[$i]["balanceMoney"] = $v["balance_money"];

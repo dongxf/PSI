@@ -207,7 +207,7 @@ Ext.define("PSI.Funds.RvMainForm", {
 		Ext.define("PSIRvDetail", {
 			extend : "Ext.data.Model",
 			fields : [ "id", "rvMoney", "actMoney", "balanceMoney", "refType",
-					"refNumber", "bizDT" ]
+					"refNumber", "bizDT", "dateCreated" ]
 		});
 
 		var store = Ext.create("Ext.data.Store", {
@@ -279,6 +279,11 @@ Ext.define("PSI.Funds.RvMainForm", {
 				sortable : false,
 				align : "right",
 				xtype : "numbercolumn"
+			},{
+				header : "创建时间",
+				dataIndex : "dateCreated",
+				menuDisabled : true,
+				sortable : false
 			} ],
 			store : store,
 			listeners : {

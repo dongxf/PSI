@@ -188,15 +188,15 @@ class CustomerService extends PSIBaseService {
 			if ($data) {
 				$rvId = $data[0]["id"];
 				$sql = "update t_receivables_detail"
-						. " set rv_money = %f, act_money = 0, balance_money = %f, date_created = '%s' "
+						. " set rv_money = %f, act_money = 0, balance_money = %f, biz_date ='%s' date_created = now() "
 						. " where id = '%s' ";
 				$db->execute($sql, $initReceivables, $initReceivables, $initReceivablesDT, $rvId);
 			} else {
 				$idGen = new IdGenService();
 				$rvId = $idGen->newId();
 				$sql = "insert into t_receivables_detail (id, rv_money, act_money, balance_money,"
-						. " date_created, ca_id, ca_type, ref_number, ref_type)"
-						. " values ('%s', %f, 0, %f, '%s', '%s', 'customer', '%s', '应收账款期初建账') ";
+						. " biz_date, date_created, ca_id, ca_type, ref_number, ref_type)"
+						. " values ('%s', %f, 0, %f, '%s', now(), '%s', 'customer', '%s', '应收账款期初建账') ";
 				$db->execute($sql, $rvId, $initReceivables, $initReceivables, $initReceivablesDT, $id, $id);
 			}
 			
