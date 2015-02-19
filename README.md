@@ -1,6 +1,6 @@
 关于PSI
 -------------
->PSI是开源进销存系统。PSI是Purchasing Sale Invertory这三个单词的首字母。
+>PSI是开源进销存系统。PSI是Purchasing Sale Inventory这三个单词的首字母。
 
 PSI演示
 -------------
