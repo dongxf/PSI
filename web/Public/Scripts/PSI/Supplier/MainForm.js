@@ -314,7 +314,9 @@ Ext.define("PSI.Supplier.MainForm", {
     },
     // private
     onCategoryGridSelect: function () {
-        this.freshSupplierGrid();
+        var me = this;
+        me.supplierGrid.getStore().currentPage = 1;
+        me.freshSupplierGrid();
     },
     onAddSupplier: function () {
         if (this.categoryGrid.getStore().getCount() == 0) {
