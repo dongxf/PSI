@@ -11,7 +11,18 @@ INSERT INTO `t_config` (`id`, `name`, `value`, `note`) VALUES
 ('2002-01', '销售出库单允许编辑销售单价', '0', '当允许编辑的时候，还需要给用户赋予权限[销售出库单允许编辑销售单价]');
 
 TRUNCATE TABLE `t_customer`;
+INSERT INTO `t_customer` (`id`, `category_id`, `code`, `name`, `contact01`, `qq01`, `tel01`, `mobile01`, `contact02`, `qq02`, `tel02`, `mobile02`, `py`, `init_receivables`, `init_receivables_dt`, `init_payables`, `init_payables_dt`) VALUES
+('04B53C5E-B812-11E4-8FC9-782BCBD7746B', 'CDD1DE38-B811-11E4-8FC9-782BCBD7746B', '102', '大连宏光天宝大酒店有限公司', '', '', '', '', '', '', '', '', 'DLHGTBDJDYXGS', '7000.00', '2015-01-01 00:00:00', NULL, NULL),
+('20B0AF03-B812-11E4-8FC9-782BCBD7746B', 'CDD1DE38-B811-11E4-8FC9-782BCBD7746B', '103', '大连华城电子有限公司', '', '', '', '', '', '', '', '', 'DLHCDZYXGS', NULL, NULL, NULL, NULL),
+('2A837526-B812-11E4-8FC9-782BCBD7746B', 'CDD1DE38-B811-11E4-8FC9-782BCBD7746B', '104', '哈尔滨工大建设监理有限公司', '', '', '', '', '', '', '', '', 'HEBGDJSJLYXGS', NULL, NULL, NULL, NULL),
+('3DE2F4E1-B812-11E4-8FC9-782BCBD7746B', 'D33D2C0B-B811-11E4-8FC9-782BCBD7746B', '201', '大连海恩橡胶辅机有限公司', '', '', '', '', '', '', '', '', 'DLHEXJFJYXGS', NULL, NULL, NULL, NULL),
+('E76FA3FC-B811-11E4-8FC9-782BCBD7746B', 'CDD1DE38-B811-11E4-8FC9-782BCBD7746B', '101', '匿名', '', '', '', '', '', '', '', '', 'NM', NULL, NULL, NULL, NULL);
+
 TRUNCATE TABLE `t_customer_category`;
+INSERT INTO `t_customer_category` (`id`, `code`, `name`) VALUES
+('CDD1DE38-B811-11E4-8FC9-782BCBD7746B', '1', '市内'),
+('D33D2C0B-B811-11E4-8FC9-782BCBD7746B', '2', '北三市');
+
 TRUNCATE TABLE `t_fid`;
 INSERT INTO `t_fid` (`fid`, `name`) VALUES
 ('-9999', '重新登录'),
@@ -94,6 +105,8 @@ INSERT INTO `t_goods_unit` (`id`, `name`) VALUES
 
 TRUNCATE TABLE `t_inventory`;
 TRUNCATE TABLE `t_inventory_detail`;
+TRUNCATE TABLE `t_invertory`;
+TRUNCATE TABLE `t_invertory_detail`;
 TRUNCATE TABLE `t_menu_item`;
 INSERT INTO `t_menu_item` (`id`, `caption`, `fid`, `parent_id`, `show_order`) VALUES
 ('01', '文件', NULL, NULL, 1),
@@ -139,7 +152,13 @@ INSERT INTO `t_org` (`id`, `full_name`, `name`, `org_code`, `parent_id`) VALUES
 ('92FAB90F-B3E8-11E4-A1A5-782BCBD7746B', '大连安世商贸有限公司\\财务部', '财务部', '0105', '4D74E1E4-A129-11E4-9B6A-782BCBD7746B');
 
 TRUNCATE TABLE `t_payables`;
+INSERT INTO `t_payables` (`id`, `act_money`, `balance_money`, `ca_id`, `ca_type`, `pay_money`) VALUES
+('88072F8B-B80F-11E4-8FC9-782BCBD7746B', '0.00', '5000.00', '87D62652-B80F-11E4-8FC9-782BCBD7746B', 'supplier', '5000.00');
+
 TRUNCATE TABLE `t_payables_detail`;
+INSERT INTO `t_payables_detail` (`id`, `act_money`, `balance_money`, `ca_id`, `ca_type`, `biz_date`, `date_created`, `pay_money`, `ref_number`, `ref_type`) VALUES
+('8800479E-B80F-11E4-8FC9-782BCBD7746B', '0.00', '5000.00', '87D62652-B80F-11E4-8FC9-782BCBD7746B', 'supplier', '2015-01-01 00:00:00', '2015-02-19 16:15:57', '5000.00', '87D62652-B80F-11E4-8FC9-782BCBD7746B', '应付账款期初建账');
+
 TRUNCATE TABLE `t_payment`;
 TRUNCATE TABLE `t_permission`;
 INSERT INTO `t_permission` (`id`, `fid`, `name`, `note`) VALUES
@@ -164,17 +183,28 @@ INSERT INTO `t_permission` (`id`, `fid`, `name`, `note`) VALUES
 TRUNCATE TABLE `t_pw_bill`;
 TRUNCATE TABLE `t_pw_bill_detail`;
 TRUNCATE TABLE `t_receivables`;
+INSERT INTO `t_receivables` (`id`, `act_money`, `balance_money`, `ca_id`, `ca_type`, `rv_money`) VALUES
+('04DFC20D-B812-11E4-8FC9-782BCBD7746B', '0.00', '7000.00', '04B53C5E-B812-11E4-8FC9-782BCBD7746B', 'customer', '7000.00');
+
 TRUNCATE TABLE `t_receivables_detail`;
+INSERT INTO `t_receivables_detail` (`id`, `act_money`, `balance_money`, `ca_id`, `ca_type`, `biz_date`, `date_created`, `ref_number`, `ref_type`, `rv_money`) VALUES
+('04D71E39-B812-11E4-8FC9-782BCBD7746B', '0.00', '7000.00', '04B53C5E-B812-11E4-8FC9-782BCBD7746B', 'customer', '2015-01-01 00:00:00', '2015-02-19 16:33:45', '04B53C5E-B812-11E4-8FC9-782BCBD7746B', '应收账款期初建账', '7000.00');
+
 TRUNCATE TABLE `t_receiving`;
 TRUNCATE TABLE `t_recent_fid`;
 INSERT INTO `t_recent_fid` (`fid`, `user_id`, `click_count`) VALUES
 ('-8999', '6C2A09CD-A129-11E4-9B6A-782BCBD7746B', 4),
 ('-8996', '6C2A09CD-A129-11E4-9B6A-782BCBD7746B', 2),
-('1003', '6C2A09CD-A129-11E4-9B6A-782BCBD7746B', 1),
+('1003', '6C2A09CD-A129-11E4-9B6A-782BCBD7746B', 2),
 ('1002', '6C2A09CD-A129-11E4-9B6A-782BCBD7746B', 2),
 ('1001', '6C2A09CD-A129-11E4-9B6A-782BCBD7746B', 12),
 ('-8997', '6C2A09CD-A129-11E4-9B6A-782BCBD7746B', 1),
-('2001', '6C2A09CD-A129-11E4-9B6A-782BCBD7746B', 3);
+('2001', '6C2A09CD-A129-11E4-9B6A-782BCBD7746B', 3),
+('1004', '6C2A09CD-A129-11E4-9B6A-782BCBD7746B', 2),
+('2005', '6C2A09CD-A129-11E4-9B6A-782BCBD7746B', 1),
+('1007', '6C2A09CD-A129-11E4-9B6A-782BCBD7746B', 2),
+('2004', '6C2A09CD-A129-11E4-9B6A-782BCBD7746B', 1),
+('2000', '6C2A09CD-A129-11E4-9B6A-782BCBD7746B', 1);
 
 TRUNCATE TABLE `t_role`;
 INSERT INTO `t_role` (`id`, `name`) VALUES
@@ -224,7 +254,39 @@ INSERT INTO `t_role_user` (`role_id`, `user_id`) VALUES
 TRUNCATE TABLE `t_sr_bill`;
 TRUNCATE TABLE `t_sr_bill_detail`;
 TRUNCATE TABLE `t_supplier`;
+INSERT INTO `t_supplier` (`id`, `category_id`, `code`, `name`, `contact01`, `qq01`, `tel01`, `mobile01`, `contact02`, `qq02`, `tel02`, `mobile02`, `py`, `init_receivables`, `init_receivables_dt`, `init_payables`, `init_payables_dt`) VALUES
+('01F98E5A-B811-11E4-8FC9-782BCBD7746B', '602BA712-B80F-11E4-8FC9-782BCBD7746B', '220', '大连华鑫船舶物资有限公司', '', '', '', '', '', '', '', '', 'DLHXCBWZYXGS', NULL, NULL, NULL, NULL),
+('0AAE3DAA-B811-11E4-8FC9-782BCBD7746B', '602BA712-B80F-11E4-8FC9-782BCBD7746B', '221', '大连聚丰芮生国际贸易有限公司', '', '', '', '', '', '', '', '', 'DLJFRSGJMYYXGS', NULL, NULL, NULL, NULL),
+('1275ABFD-B810-11E4-8FC9-782BCBD7746B', '602BA712-B80F-11E4-8FC9-782BCBD7746B', '208', '大连纳源电力建设工程有限公司', '', '', '', '', '', '', '', '', 'DLNYDLJSGCYXGS', NULL, NULL, NULL, NULL),
+('2530FF8A-B810-11E4-8FC9-782BCBD7746B', '602BA712-B80F-11E4-8FC9-782BCBD7746B', '209', '大连天运物流设备有限公司', '', '', '', '', '', '', '', '', 'DLTYWLSBYXGS', NULL, NULL, NULL, NULL),
+('267C11BA-B811-11E4-8FC9-782BCBD7746B', '602BA712-B80F-11E4-8FC9-782BCBD7746B', '222', '大连弗瑞得科技有限公司', '', '', '', '', '', '', '', '', 'DLFRDKJYXGS', NULL, NULL, NULL, NULL),
+('3AE15383-B811-11E4-8FC9-782BCBD7746B', '599B7CF5-B80F-11E4-8FC9-782BCBD7746B', '101', '杉德电子商务服务有限公司大连分公司', '', '', '', '', '', '', '', '', 'SDDZSWFWYXGSDLFGS', NULL, NULL, NULL, NULL),
+('3EB4B95E-B810-11E4-8FC9-782BCBD7746B', '602BA712-B80F-11E4-8FC9-782BCBD7746B', '210', '大连亚农农业科技有限公司', '', '', '', '', '', '', '', '', 'DLYNNYKJYXGS', NULL, NULL, NULL, NULL),
+('4B41D6E0-B810-11E4-8FC9-782BCBD7746B', '602BA712-B80F-11E4-8FC9-782BCBD7746B', '211', '大连市友光科技有限公司', '', '', '', '', '', '', '', '', 'DLSYGKJYXGS', NULL, NULL, NULL, NULL),
+('5AD88F44-B810-11E4-8FC9-782BCBD7746B', '602BA712-B80F-11E4-8FC9-782BCBD7746B', '212', '大连保税区埃玛国际贸易有限公司', '', '', '', '', '', '', '', '', 'DLBSQAMGJMYYXGS', NULL, NULL, NULL, NULL),
+('634489C3-B811-11E4-8FC9-782BCBD7746B', '602BA712-B80F-11E4-8FC9-782BCBD7746B', '223', '辽宁华谊兄弟贸易有限公司', '', '', '', '', '', '', '', '', 'LNHYXDMYYXGS', NULL, NULL, NULL, NULL),
+('7566E8A3-B810-11E4-8FC9-782BCBD7746B', '602BA712-B80F-11E4-8FC9-782BCBD7746B', '213', '大连北城国际贸易有限公司', '', '', '', '', '', '', '', '', 'DLBCGJMYYXGS', NULL, NULL, NULL, NULL),
+('83E70C80-B810-11E4-8FC9-782BCBD7746B', '602BA712-B80F-11E4-8FC9-782BCBD7746B', '214', '大连升鑫金属制品有限公司', '', '', '', '', '', '', '', '', 'DLSXJSZPYXGS', NULL, NULL, NULL, NULL),
+('87D62652-B80F-11E4-8FC9-782BCBD7746B', '602BA712-B80F-11E4-8FC9-782BCBD7746B', '201', '大连保税区海尔电冰箱贸易有限公司', '', '', '', '', '', '', '', '', 'DLBSQHEDBXMYYXGS', NULL, NULL, '5000.00', '2015-01-01 00:00:00'),
+('92FC6367-B811-11E4-8FC9-782BCBD7746B', '599B7CF5-B80F-11E4-8FC9-782BCBD7746B', '102', '大连铭源伟业商贸有限公司', '', '', '', '', '', '', '', '', 'DLMYWYSMYXGS', NULL, NULL, NULL, NULL),
+('97940C9F-B80F-11E4-8FC9-782BCBD7746B', '602BA712-B80F-11E4-8FC9-782BCBD7746B', '202', '大连宜家家居有限公司', '', '', '', '', '', '', '', '', 'DLYJJJYXGS', NULL, NULL, NULL, NULL),
+('99D4AD20-B811-11E4-8FC9-782BCBD7746B', '599B7CF5-B80F-11E4-8FC9-782BCBD7746B', '103', '苏宁易购大连分公司', '', '', '', '', '', '', '', '', 'SNYGDLFGS', NULL, NULL, NULL, NULL),
+('AAE2F77F-B80F-11E4-8FC9-782BCBD7746B', '602BA712-B80F-11E4-8FC9-782BCBD7746B', '203', '大连伊辉商贸有限公司', '', '', '', '', '', '', '', '', 'DLYHSMYXGS', NULL, NULL, NULL, NULL),
+('AEF560B6-B810-11E4-8FC9-782BCBD7746B', '602BA712-B80F-11E4-8FC9-782BCBD7746B', '215', '海而空调器有限公司大连分公司', '', '', '', '', '', '', '', '', 'HEKTQYXGSDLFGS', NULL, NULL, NULL, NULL),
+('B7DCAC49-B80F-11E4-8FC9-782BCBD7746B', '602BA712-B80F-11E4-8FC9-782BCBD7746B', '204', '屈臣氏个人用品连锁商店有限公司', '', '', '', '', '', '', '', '', 'QCSGRYPLSSDYXGS', NULL, NULL, NULL, NULL),
+('BB1C951F-B810-11E4-8FC9-782BCBD7746B', '602BA712-B80F-11E4-8FC9-782BCBD7746B', '216', '大连富盾机械有限公司', '', '', '', '', '', '', '', '', 'DLFDJXYXGS', NULL, NULL, NULL, NULL),
+('C881D864-B810-11E4-8FC9-782BCBD7746B', '602BA712-B80F-11E4-8FC9-782BCBD7746B', '217', '大连伟丰国际贸易有限公司', '', '', '', '', '', '', '', '', 'DLWFGJMYYXGS', NULL, NULL, NULL, NULL),
+('C8D67CBB-B80F-11E4-8FC9-782BCBD7746B', '602BA712-B80F-11E4-8FC9-782BCBD7746B', '205', '大连明天良友金伴便利连锁有限公司', '', '', '', '', '', '', '', '', 'DLMTLYJBBLLSYXGS', NULL, NULL, NULL, NULL),
+('DDA71B3E-B810-11E4-8FC9-782BCBD7746B', '602BA712-B80F-11E4-8FC9-782BCBD7746B', '218', '大连中运国际', '', '', '', '', '', '', '', '', 'DLZYGJ', NULL, NULL, NULL, NULL),
+('F1974D46-B80F-11E4-8FC9-782BCBD7746B', '602BA712-B80F-11E4-8FC9-782BCBD7746B', '206', '大连冠晨科技发展有限公司', '', '', '', '', '', '', '', '', 'DLGCKJFZYXGS', NULL, NULL, NULL, NULL),
+('F5AA127C-B810-11E4-8FC9-782BCBD7746B', '602BA712-B80F-11E4-8FC9-782BCBD7746B', '219', '大连海珍尚品海洋产品商贸有限公司', '', '', '', '', '', '', '', '', 'DLHZSPHYCPSMYXGS', NULL, NULL, NULL, NULL),
+('FE7BCC92-B80F-11E4-8FC9-782BCBD7746B', '602BA712-B80F-11E4-8FC9-782BCBD7746B', '207', '大连彤加贸易有限公司', '', '', '', '', '', '', '', '', 'DLTJMYYXGS', NULL, NULL, NULL, NULL);
+
 TRUNCATE TABLE `t_supplier_category`;
+INSERT INTO `t_supplier_category` (`id`, `code`, `name`) VALUES
+('599B7CF5-B80F-11E4-8FC9-782BCBD7746B', '1', '电商'),
+('602BA712-B80F-11E4-8FC9-782BCBD7746B', '2', '本地供应商');
+
 TRUNCATE TABLE `t_user`;
 INSERT INTO `t_user` (`id`, `enabled`, `login_name`, `name`, `org_id`, `org_code`, `password`, `py`) VALUES
 ('073089A4-B3E6-11E4-AC63-782BCBD7746B', 1, 'lijingbo', '李静波', '37500493-B3E5-11E4-AC63-782BCBD7746B', '010301', 'e10adc3949ba59abbe56e057f20f883e', 'LJB'),
