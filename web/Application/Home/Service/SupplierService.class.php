@@ -13,7 +13,14 @@ use Home\Service\BizlogService;
 class SupplierService extends PSIBaseService {
 
 	public function categoryList() {
-		return M()->query("select id, code, name from t_supplier_category order by code");
+		$sql = "select c.id, c.code, c.name, count(s.id) as cnt"
+				. " from t_supplier_category c "
+				. " left join t_supplier s"
+				. " on c.id = s.category_id "
+				. " group by c.id "
+				. " order by c.code";
+		
+		return M()->query($sql);
 	}
 
 	public function supplierList($params) {
