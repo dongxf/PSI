@@ -448,11 +448,11 @@ class PWBillService extends PSIBaseService {
 			
 			// 应付明细账
 			$sql = "insert into t_payables_detail (id, pay_money, act_money, balance_money,"
-					. "ca_id, ca_type, date_created, ref_number, ref_type)"
-					. " values ('%s', %f, 0, %f, '%s', 'supplier', now(), '%s', '采购入库' )";
+					. "ca_id, ca_type, date_created, ref_number, ref_type, biz_date)"
+					. " values ('%s', %f, 0, %f, '%s', 'supplier', now(), '%s', '采购入库', '%s')";
 			$idGen = new IdGenService();
 			$db->execute($sql, $idGen->newId(), $billPayables,
-					$billPayables, $supplierId, $ref);
+					$billPayables, $supplierId, $ref, $bizDT);
 			// 应付总账
 			$sql = "select id, pay_money from t_payables where ca_id = '%s' and ca_type = 'supplier' ";
 			$data = $db->query($sql, $supplierId);

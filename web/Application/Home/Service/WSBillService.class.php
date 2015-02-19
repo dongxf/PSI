@@ -464,11 +464,11 @@ class WSBillService extends PSIBaseService {
 			
 			// 应收明细账
 			$sql = "insert into t_receivables_detail (id, rv_money, act_money, balance_money,"
-					. " ca_id, ca_type, date_created, ref_number, ref_type) "
-					. " values('%s', %f, 0, %f, '%s', 'customer', now(), '%s', '销售出库')";
+					. " ca_id, ca_type, date_created, ref_number, ref_type, biz_date) "
+					. " values('%s', %f, 0, %f, '%s', 'customer', now(), '%s', '销售出库', '%s')";
 			$idGen = new IdGenService();
 			$db->execute($sql, $idGen->newId(), $saleMoney,
-					$saleMoney, $customerId, $ref);
+					$saleMoney, $customerId, $ref, $bizDT);
 			
 			// 单据本身设置为已经提交出库
 			$sql = "select sum(inventory_money) as sum_inventory_money "
