@@ -10,7 +10,13 @@ namespace Home\Service;
 class CustomerService extends PSIBaseService {
 
 	public function categoryList() {
-		return M()->query("select id, code, name from t_customer_category order by code");
+		$sql = "select c.id, c.code, c.name, count(u.id) as cnt "
+				. " from t_customer_category c "
+				. " left join t_customer u "
+				. " on c.id = u.category_id "
+				. " group by c.id "
+				. " order by c.code";
+		return M()->query($sql);
 	}
 
 	public function editCategory($params) {

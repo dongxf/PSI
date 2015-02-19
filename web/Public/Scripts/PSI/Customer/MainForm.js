@@ -6,16 +6,22 @@ Ext.define("PSI.Customer.MainForm", {
         var me = this;
         Ext.define("PSICustomerCategory", {
             extend: "Ext.data.Model",
-            fields: ["id", "code", "name"]
+            fields: ["id", "code", "name", {name: "cnt", type: "int"}]
         });
 
         var categoryGrid = Ext.create("Ext.grid.Panel", {
             title: "客户分类",
+            features: [{ftype: "summary"}],
             forceFit: true,
             columnLines: true,
             columns: [
-                {header: "类别编码", dataIndex: "code", flex: 1, menuDisabled: true, sortable: false},
-                {header: "类别", dataIndex: "name", flex: 1, menuDisabled: true, sortable: false}
+                {header: "类别编码", dataIndex: "code", width: 60, menuDisabled: true, sortable: false},
+                {header: "类别", dataIndex: "name", flex: 1, menuDisabled: true, sortable: false,
+                    summaryRenderer: function () {
+                        return "客户个数合计";
+                    }},
+                {header: "客户个数", dataIndex: "cnt", width: 80, menuDisabled: true, sortable: false,
+                    summaryType: "sum"}
             ],
             store: Ext.create("Ext.data.Store", {
                 model: "PSICustomerCategory",
@@ -39,7 +45,7 @@ Ext.define("PSI.Customer.MainForm", {
             extend: "Ext.data.Model",
             fields: ["id", "code", "name", "contact01", "tel01", "mobile01", "qq01",
                 "contact02", "tel02", "mobile02", "qq02", "categoryId", "initReceivables",
-            "initReceivablesDT"]
+                "initReceivablesDT"]
         });
 
         var store = Ext.create("Ext.data.Store", {
@@ -78,6 +84,7 @@ Ext.define("PSI.Customer.MainForm", {
                 load: {
                     fn: function (e, records, successful) {
                         if (successful) {
+                            me.refreshCategoryCount();
                             me.gotoCustomerGridRecord(me.__lastId);
                         }
                     },
@@ -161,7 +168,7 @@ Ext.define("PSI.Customer.MainForm", {
                 {
                     text: "帮助",
                     iconCls: "PSI-help",
-                    handler: function() {
+                    handler: function () {
                         window.open("http://my.oschina.net/u/134395/blog/374871");
                     }
                 },
@@ -415,6 +422,17 @@ Ext.define("PSI.Customer.MainForm", {
         } else {
             grid.getSelectionModel().select(0);
         }
+    },
+    refreshCategoryCount: function() {
+        var me = this;
+        var item = me.categoryGrid.getSelectionModel().getSelection();
+        if (item == null || item.length != 1) {
+            return;
+        }
+
+        var category = item[0];
+        category.set("cnt", me.customerGrid.getStore().getTotalCount());
+        me.categoryGrid.getStore().commitChanges();
     }
 
 });
