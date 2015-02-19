@@ -10,6 +10,9 @@ Ext.define("PSI.Customer.MainForm", {
         });
 
         var categoryGrid = Ext.create("Ext.grid.Panel", {
+            viewConfig: {
+                enableTextSelection: true
+            },
             title: "客户分类",
             features: [{ftype: "summary"}],
             forceFit: true,
@@ -21,7 +24,7 @@ Ext.define("PSI.Customer.MainForm", {
                         return "客户个数合计";
                     }},
                 {header: "客户个数", dataIndex: "cnt", width: 80, menuDisabled: true, sortable: false,
-                    summaryType: "sum"}
+                    summaryType: "sum", align: "right"}
             ],
             store: Ext.create("Ext.data.Store", {
                 model: "PSICustomerCategory",

@@ -23,7 +23,7 @@ Ext.define("PSI.Supplier.MainForm", {
                         return "供应商个数合计";
                     }},
                 {header: "供应商个数", dataIndex: "cnt", width: 80, menuDisabled: true, sortable: false,
-                    summaryType: "sum"}
+                    summaryType: "sum", align: "right"}
             ],
             store: Ext.create("Ext.data.Store", {
                 model: "PSISupplierCategory",
