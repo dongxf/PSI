@@ -1,6 +1,6 @@
 <?php
 return array(
-		'URL_CASE_INSENSITIVE' => true,
+		'URL_CASE_INSENSITIVE' => false,
 		'SHOW_ERROR_MSG' => true,
 		'DB_TYPE' => 'mysql', // 数据库类型
 		'DB_HOST' => getenv("MOPAAS_MYSQL22118_HOST") ? getenv("MOPAAS_MYSQL22118_HOST") : 'localhost', // 服务器地址
