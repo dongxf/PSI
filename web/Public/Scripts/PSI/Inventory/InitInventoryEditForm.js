@@ -190,6 +190,7 @@ Ext.define("PSI.Inventory.InitInventoryEditForm", {
                 load: {
                     fn: function (e, records, successful) {
                         if (successful) {
+                        	me.getGoodsGrid().getSelectionModel().select(0);
                             Ext.getCmp("editGoodsCount").focus();
                         }
                     },
@@ -199,7 +200,9 @@ Ext.define("PSI.Inventory.InitInventoryEditForm", {
         });
         me.__gridGoods = Ext.create("Ext.grid.Panel", {
             border: 0,
+            columnLines: true,
             columns: [
+                Ext.create("Ext.grid.RowNumberer", {text: "序号", width: 50}),
                 {header: "商品编码", dataIndex: "goodsCode", menuDisabled: true, sortable: false, width: 80},
                 {header: "品名", dataIndex: "goodsName", menuDisabled: true, sortable: false, width: 200},
                 {header: "规格型号", dataIndex: "goodsSpec", menuDisabled: true, sortable: false, width: 200},
@@ -269,6 +272,8 @@ Ext.define("PSI.Inventory.InitInventoryEditForm", {
         });
     },
     getGoods: function () {
+    	var me = this;
+    	me.getGoodsGrid().getStore().currentPage = 1;
         Ext.getCmp("_pagingToolbar").doRefresh();
     },
     onGoodsGridSelect: function () {
@@ -283,7 +288,7 @@ Ext.define("PSI.Inventory.InitInventoryEditForm", {
         Ext.getCmp("editGoodsCode").setValue(goods.get("goodsCode"));
         Ext.getCmp("editGoodsName").setValue(goods.get("goodsName"));
         Ext.getCmp("editGoodsSpec").setValue(goods.get("goodsSpec"));
-        Ext.getCmp("editUnit").setValue(goods.get("unitName"));
+        Ext.getCmp("editUnit").setValue("<strong>" + goods.get("unitName") + "</strong>");
         var goodsCount = goods.get("goodsCount");
         if (goodsCount == "0") {
             Ext.getCmp("editGoodsCount").setValue(null);
