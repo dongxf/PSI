@@ -55,7 +55,7 @@
         var wnd = Ext.create("Ext.window.Window", {
             title: "选择 - 商品",
             modal: true,
-            width: 450,
+            width: 650,
             height: 300,
             layout: "border",
             items: [

@@ -54,7 +54,7 @@ Ext.define("PSI.Goods.GoodsField", {
         var wnd = Ext.create("Ext.window.Window", {
             title: "选择 - 商品",
             modal: true,
-            width: 400,
+            width: 600,
             height: 300,
             layout: "border",
             items: [
