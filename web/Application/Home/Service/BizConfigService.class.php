@@ -55,10 +55,20 @@ class BizConfigService extends PSIBaseService {
 	}
 	public function edit($params) {
 		$db = M();
-		$sql = "update t_config set value = '%s' 
-				where id = '%s' ";
 		
 		foreach ( $params as $key => $value ) {
+			$sql = "select value from t_config where id = '%s' ";
+			$data = $db->query($sql, $key);
+			if (!$data) {
+				continue;
+			}
+			$oldValue = $data[0]["value"];
+			if ($value == $oldValue) {
+				continue;
+			}
+			
+			$sql = "update t_config set value = '%s'
+				where id = '%s' ";
 			$db->execute($sql, $value, $key);
 			
 			if ($key == "2001-01") {
