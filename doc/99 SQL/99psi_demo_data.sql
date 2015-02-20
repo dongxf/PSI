@@ -8,7 +8,9 @@ SET time_zone = "+00:00";
 
 TRUNCATE TABLE `t_config`;
 INSERT INTO `t_config` (`id`, `name`, `value`, `note`) VALUES
-('2002-01', '销售出库单允许编辑销售单价', '0', '当允许编辑的时候，还需要给用户赋予权限[销售出库单允许编辑销售单价]');
+('2002-01', '销售出库单允许编辑销售单价', '0', '当允许编辑的时候，还需要给用户赋予权限[销售出库单允许编辑销售单价]'),
+('2001-01', '采购入库默认仓库', '', ''),
+('2002-02', '销售出库默认仓库', '', '');
 
 TRUNCATE TABLE `t_customer`;
 INSERT INTO `t_customer` (`id`, `category_id`, `code`, `name`, `contact01`, `qq01`, `tel01`, `mobile01`, `contact02`, `qq02`, `tel02`, `mobile02`, `py`, `init_receivables`, `init_receivables_dt`, `init_payables`, `init_payables_dt`) VALUES
