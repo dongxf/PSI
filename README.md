@@ -42,3 +42,10 @@ PSI的开源协议
 >5、Overtrue\Pinyin (http://overtrue.me/pinyin/)
 >
 >6、PHPExcel (http://phpexcel.codeplex.com/)
+
+商业付费服务
+-------------
+>微店：http://weidian.com/?userid=315007574
+>
+>请加微信洽谈
+<img src="http://static.oschina.net/uploads/space/2015/0220/171355_VdiS_134395.png">
