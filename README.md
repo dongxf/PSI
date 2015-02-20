@@ -49,4 +49,4 @@ PSI的开源协议
 >
 >请加微信洽谈
 <p>
-<img src="http://static.oschina.net/uploads/space/2015/0220/171355_VdiS_134395.png" height="200" width="200">
+<img src="http://static.oschina.net/uploads/space/2015/0220/171355_VdiS_134395.png" height="300" width="300">
