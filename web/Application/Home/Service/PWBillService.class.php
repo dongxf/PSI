@@ -290,9 +290,22 @@ class PWBillService extends PSIBaseService {
 
 			$result["items"] = $items;
 		} else {
+			// 新建采购入库单
 			$us = new UserService();
 			$result["bizUserId"] = $us->getLoginUserId();
 			$result["bizUserName"] = $us->getLoginUserName();
+			
+			$sql = "select value from t_config where id = '2001-01' ";
+			$data = $db->query($sql);
+			if ($data) {
+				$warehouseId = $data[0]["value"];
+				$sql = "select id, name from t_warehouse where id = '%s' ";
+				$data = $db->query($sql, $warehouseId);
+				if ($data) {
+					$result["warehouseId"] = $data[0]["id"];
+					$result["warehouseName"] = $data[0]["name"];
+				}
+			}
 		}
 
 		return $result;
