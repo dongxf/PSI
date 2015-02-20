@@ -48,4 +48,5 @@ PSI的开源协议
 >微店：http://weidian.com/?userid=315007574
 >
 >请加微信洽谈
+<p>
 <img src="http://static.oschina.net/uploads/space/2015/0220/171355_VdiS_134395.png">
