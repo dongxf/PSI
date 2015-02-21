@@ -1,22 +1,17 @@
 <!DOCTYPE html>
 <html>
-
 	<head>
 		<meta charset="utf-8">
-		<title>"{$title}" - 开源进销存PSI</title>
+		<title>{$title} - 开源进销存PSI</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
 		<meta name="apple-mobile-web-app-capable" content="yes">
 		<meta name="apple-mobile-web-app-status-bar-style" content="black">
 
 		<link rel="stylesheet" href="{$uri}Public/mui/css/mui.min.css">
 		<script src="{$uri}Public/mui/js/mui.min.js"></script>
-		<script src="{$uri}Public/mui/js/app.js"></script>
 		<style>
 			html,body {
 				background-color: #efeff4;
-			}
-			header.mui-bar{
-				display: none;
 			}
 			.mui-bar-nav~.mui-content{
 				padding: 0;
@@ -42,7 +37,7 @@
 	}
 	.mui-grid-view {
 		position: absolute;
-		top: 184px;
+		top: 0px;
 		bottom: 0;
 		min-height: 330px;
 	}
@@ -58,17 +53,13 @@
 		margin-left: -40px;
 	}
 </style>
-<header class="mui-bar mui-bar-nav">
-	<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
-	<h1 class="mui-title">自适应9宫图</h1>
-</header>
 <div class="mui-content">
 	<ul class="mui-table-view mui-grid-view mui-grid-9">
 		<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
 			<a href="#">
 				<span class="mui-icon mui-icon-home"></span>
 				<div class="mui-media-body">
-					Home
+					首页
 				</div>
 			</a>
 		</li>
