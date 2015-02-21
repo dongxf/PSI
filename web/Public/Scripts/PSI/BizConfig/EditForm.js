@@ -22,7 +22,13 @@ Ext.define("PSI.BizConfig.EditForm", {
 				me.close();
 			},
 			scope : me
-		});
+		},{
+            text: "帮助",
+            iconCls: "PSI-help",
+            handler: function () {
+                window.open("http://my.oschina.net/u/134395/blog/378538");
+            }
+        });
 		
 		var modelName = "PSIWarehouse";
         Ext.define(modelName, {
