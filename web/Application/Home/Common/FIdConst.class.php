@@ -35,6 +35,11 @@ class FIdConst {
 	const ABOUT = "-9994";
 	
 	/**
+	 * 购买商业服务
+	 */
+	const PSI_SERVICE = "-9993";
+	
+	/**
 	 * 用户管理
 	 */
 	const USR_MANAGEMENT = "-8999";

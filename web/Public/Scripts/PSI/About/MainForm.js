@@ -13,13 +13,14 @@ Ext.define("PSI.About.MainForm", {
         var me = this;
 
         Ext.apply(me, {
-            height: 250,
+            height: 300,
             items: [{
                     border: 0,
                     xtype: "container",
                     html: "<h1>欢迎使用开源进销存PSI</h1><p>当前版本：" + PSI.Const.VERSION + "</p>"
                     + "<p>更多帮助请点击这里：<a href='http://my.oschina.net/u/134395/blog/374195' target='_blank'>http://my.oschina.net/u/134395/blog/374195</a></p>"
                     + "<p>如需技术支持，请联系：</p><p>QQ：1569352868 Email：1569352868@qq.com QQ群：414474186</p>"
+                    + "<p>如需购买商业服务，请访问：<a href='http://weidian.com/?userid=315007574' target='_blank'>http://weidian.com/?userid=315007574</a></p>"
                 }
             ],
             buttons: [{
