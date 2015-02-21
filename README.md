@@ -46,7 +46,7 @@ PSI的开源协议
 捐赠
 -------------
 >
-<img src="http://static.oschina.net/uploads/space/2015/0221/213257_xb48_134395.jpg" height="300" width="300">
+<img src="http://static.oschina.net/uploads/space/2015/0221/215715_jA8D_134395.jpg" height="300" width="300">
 
 商业付费服务
 -------------
