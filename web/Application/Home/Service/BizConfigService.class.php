@@ -9,7 +9,9 @@ namespace Home\Service;
  */
 class BizConfigService extends PSIBaseService {
 	public function allConfigs($params) {
-		$sql = "select id, name, value, note " . " from t_config " . " order by id";
+		$sql = "select id, name, value, note  
+				from t_config  
+				order by id";
 		$data = M()->query($sql);
 		$result = array();
 		
@@ -19,7 +21,9 @@ class BizConfigService extends PSIBaseService {
 			$result[$i]["name"] = $v["name"];
 			$result[$i]["value"] = $v["value"];
 			
-			if ($id == "2002-01") {
+			if ($id == "1001-01") {
+				$result[$i]["displayValue"] = $v["value"] == 1 ? "使用不同计量单位" : "使用同一个计量单位";
+			} else if ($id == "2002-01") {
 				$result[$i]["displayValue"] = $v["value"] == 1 ? "允许编辑销售单价" : "不允许编辑销售单价";
 			} else if ($id == "2001-01" || $id == "2002-02") {
 				$result[$i]["displayValue"] = $this->getWarehouseName($v["value"]);
@@ -71,7 +75,12 @@ class BizConfigService extends PSIBaseService {
 				where id = '%s' ";
 			$db->execute($sql, $value, $key);
 			
-			if ($key == "2001-01") {
+			if ($key == "1001-01") {
+				$v = $value == 1 ? "使用不同计量单位" : "使用同一个计量单位";
+				$log = "把[商品采购和销售分别使用不同的计量单位]设置为[{$v}]";
+				$bs = new BizlogService();
+				$bs->insertBizlog($log, "业务设置");
+			}else if ($key == "2001-01") {
 				$v = $this->getWarehouseName($value);
 				$log = "把[采购入库默认仓库]设置为[{$v}]";
 				$bs = new BizlogService();

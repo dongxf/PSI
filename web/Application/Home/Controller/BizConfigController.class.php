@@ -17,7 +17,7 @@ class BizConfigController extends Controller {
 		$this->assign("loginUserName", $us->getLoginUserName());
 		
 		$dtFlag = getdate();
-		$this->assign("dtFlag", $dtFlag [0]);
+		$this->assign("dtFlag", $dtFlag[0]);
 		
 		if ($us->hasPermission(FIdConst::BIZ_CONFIG)) {
 			$this->display();
@@ -43,10 +43,11 @@ class BizConfigController extends Controller {
 		if (IS_POST) {
 			$bs = new BizConfigService();
 			
-			$params = array (
+			$params = array(
+					"1001-01" => I("post.value1001-01"),
 					"2001-01" => I("post.value2001-01"),
 					"2002-01" => I("post.value2002-01"),
-					"2002-02" => I("post.value2002-02") 
+					"2002-02" => I("post.value2002-02")
 			);
 			
 			$this->ajaxReturn($bs->edit($params));

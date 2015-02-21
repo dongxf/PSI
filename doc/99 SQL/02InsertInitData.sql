@@ -117,7 +117,8 @@ INSERT INTO `t_user` (`id`, `enabled`, `login_name`, `name`, `org_id`, `org_code
 INSERT INTO `t_config` (`id`, `name`, `value`, `note`) VALUES
 ('2002-01', '销售出库单允许编辑销售单价', '0', '当允许编辑的时候，还需要给用户赋予权限[销售出库单允许编辑销售单价]'),
 ('2001-01', '采购入库默认仓库', '', ''),
-('2002-02', '销售出库默认仓库', '', '');
+('2002-02', '销售出库默认仓库', '', ''),
+('1001-01', '商品采购和销售分别使用不同的计量单位', '0', '');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
