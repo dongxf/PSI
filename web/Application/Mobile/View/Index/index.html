@@ -1,136 +1,35 @@
-<!DOCTYPE html>
-<html>
-	<head>
-		<meta charset="utf-8">
-		<title>{$title} - 开源进销存PSI</title>
-		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
-		<meta name="apple-mobile-web-app-capable" content="yes">
-		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<layout name="layout" />
 
-		<link rel="stylesheet" href="{$uri}Public/mui/css/mui.min.css">
-		<script src="{$uri}Public/mui/js/mui.min.js"></script>
-		<style>
-			html,body {
-				background-color: #efeff4;
-			}
-			.mui-bar-nav~.mui-content{
-				padding: 0;
-			}
-		</style>
-		<script>
-			mui.init();
-		</script>
-	</head>
+<ul class="mui-table-view mui-grid-view mui-grid-9">
+	<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+		<a href="#"> <span class="mui-icon mui-icon-home"></span>
+			<div class="mui-media-body">首页</div>
+	</a>
+	</li>
+	<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+		<a href="#"> <span class="mui-icon mui-icon-list"></span>
+			<div class="mui-media-body">采购报表</div>
+	</a>
+	</li>
+	<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+		<a href="#"> <span class="mui-icon mui-icon-list"></span>
+			<div class="mui-media-body">库存报表</div>
+	</a>
+	</li>
+	<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+		<a href="#"> <span class="mui-icon mui-icon-list"></span>
+			<div class="mui-media-body">销售报表</div>
+	</a>
+	</li>
+	<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+		<a href="#"> <span class="mui-icon mui-icon-list"></span>
+			<div class="mui-media-body">资金报表</div>
+	</a>
+	</li>
+	<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+		<a href="#"> <span class="mui-icon mui-icon-info"></span>
+			<div class="mui-media-body">关于</div>
+	</a>
+	</li>
+</ul>
 
-	<body>
-
-<style>
-	/**grid 自适应代码**/
-	html, body, .mui-content {
-		height: 100%;
-	}
-	.mui-content > .mui-table-view:first-child {
-		margin-top: 0px;
-	}
-	.mui-content {
-		position: relative;
-	}
-	.mui-grid-view {
-		position: absolute;
-		top: 0px;
-		bottom: 0;
-		min-height: 330px;
-	}
-	.mui-table-view.mui-grid-view .mui-table-view-cell {
-		height: 33.33333333%;
-	}
-
-	.mui-table-view.mui-grid-view .mui-table-view-cell > a:not(.mui-btn) {
-		position: absolute;
-		top: 50%;
-		margin-top: -50px;
-		left: 50%;
-		margin-left: -20px;
-	}
-</style>
-<div class="mui-content">
-	<ul class="mui-table-view mui-grid-view mui-grid-9">
-		<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-			<a href="#">
-				<span class="mui-icon mui-icon-home"></span>
-				<div class="mui-media-body">
-					首页
-				</div>
-			</a>
-		</li>
-		<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-			<a href="#">
-				<span class="mui-icon mui-icon-email"></span>
-				<div class="mui-media-body">
-					Email
-				</div>
-			</a>
-		</li>
-		<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-			<a href="#">
-				<span class="mui-icon mui-icon-contact"></span>
-				<div class="mui-media-body">
-					Contact
-				</div>
-			</a>
-		</li>
-		<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-			<a href="#">
-				<span class="mui-icon mui-icon-chat"></span>
-				<div class="mui-media-body">
-					Chat
-				</div>
-			</a>
-		</li>
-		<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-			<a href="#">
-				<span class="mui-icon mui-icon-list"></span>
-				<div class="mui-media-body">
-					Sort
-				</div>
-			</a>
-		</li>
-		<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-			<a href="#">
-				<span class="mui-icon mui-icon-map"></span>
-				<div class="mui-media-body">
-					Map
-				</div>
-			</a>
-		</li>
-		<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-			<a href="#">
-				<span class="mui-icon mui-icon-search"></span>
-				<div class="mui-media-body">
-					Search
-				</div>
-			</a>
-		</li>
-		<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-			<a href="#">
-				<span class="mui-icon mui-icon-phone"></span>
-				<div class="mui-media-body">
-					Phone
-				</div>
-			</a>
-		</li>
-		<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-			<a href="#">
-				<span class="mui-icon mui-icon-gear"></span>
-				<div class="mui-media-body">
-					Setting
-				</div>
-			</a>
-		</li>
-	</ul>
-
-</div>
-
-</body>
-
-</html>
