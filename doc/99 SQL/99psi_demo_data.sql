@@ -11,7 +11,8 @@ INSERT INTO `t_config` (`id`, `name`, `value`, `note`) VALUES
 ('2002-01', '销售出库单允许编辑销售单价', '0', '当允许编辑的时候，还需要给用户赋予权限[销售出库单允许编辑销售单价]'),
 ('2001-01', '采购入库默认仓库', '', ''),
 ('2002-02', '销售出库默认仓库', '', ''),
-('1001-01', '商品采购和销售分别使用不同的计量单位', '0', '');
+('1001-01', '商品采购和销售分别使用不同的计量单位', '0', ''),
+('1003-01', '仓库需指定组织机构', '0', '当仓库需要指定组织机构的时候，就意味着可以控制仓库的使用人');
 
 TRUNCATE TABLE `t_customer`;
 INSERT INTO `t_customer` (`id`, `category_id`, `code`, `name`, `contact01`, `qq01`, `tel01`, `mobile01`, `contact02`, `qq02`, `tel02`, `mobile02`, `py`, `init_receivables`, `init_receivables_dt`, `init_payables`, `init_payables_dt`) VALUES

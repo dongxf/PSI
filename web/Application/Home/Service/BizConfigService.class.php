@@ -23,6 +23,8 @@ class BizConfigService extends PSIBaseService {
 			
 			if ($id == "1001-01") {
 				$result[$i]["displayValue"] = $v["value"] == 1 ? "使用不同计量单位" : "使用同一个计量单位";
+			} else if ($id == "1003-01") {
+				$result[$i]["displayValue"] = $v["value"] == 1 ? "仓库需指定组织机构" : "仓库不需指定组织机构";
 			} else if ($id == "2002-01") {
 				$result[$i]["displayValue"] = $v["value"] == 1 ? "允许编辑销售单价" : "不允许编辑销售单价";
 			} else if ($id == "2001-01" || $id == "2002-02") {
@@ -63,7 +65,7 @@ class BizConfigService extends PSIBaseService {
 		foreach ( $params as $key => $value ) {
 			$sql = "select value from t_config where id = '%s' ";
 			$data = $db->query($sql, $key);
-			if (!$data) {
+			if (! $data) {
 				continue;
 			}
 			$oldValue = $data[0]["value"];
@@ -80,7 +82,12 @@ class BizConfigService extends PSIBaseService {
 				$log = "把[商品采购和销售分别使用不同的计量单位]设置为[{$v}]";
 				$bs = new BizlogService();
 				$bs->insertBizlog($log, "业务设置");
-			}else if ($key == "2001-01") {
+			} else if ($key == "1003-01") {
+				$v = $value == 1 ? "仓库需指定组织机构" : "仓库不需指定组织机构";
+				$log = "把[仓库需指定组织机构]设置为[{$v}]";
+				$bs = new BizlogService();
+				$bs->insertBizlog($log, "业务设置");
+			} else if ($key == "2001-01") {
 				$v = $this->getWarehouseName($value);
 				$log = "把[采购入库默认仓库]设置为[{$v}]";
 				$bs = new BizlogService();
