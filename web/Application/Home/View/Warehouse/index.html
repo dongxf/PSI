@@ -15,16 +15,11 @@
 
         
         <if condition="$warehouseUsesOrg eq true">
-        	var warehouseUsesOrg = true;
+        	app.add(Ext.create("PSI.Warehouse.MainFormWithOrg"));
         <else />
-        	var warehouseUsesOrg = false;
+        	app.add(Ext.create("PSI.Warehouse.MainForm"));
         </if>
 
-        if (warehouseUsesOrg) {
-            app.add(Ext.create("PSI.Warehouse.MainFormWithOrg"));
-        } else {
-            app.add(Ext.create("PSI.Warehouse.MainForm"));
-        }
         app.setAppHeader({
             title: "{$title}",
             iconCls: "PSI-fid1003"
