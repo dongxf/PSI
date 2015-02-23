@@ -22,6 +22,7 @@ PSI的开源协议
 如需要技术支持，请联系
 -------------
 >QQ：1569352868
+><a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=1569352868&site=qq&menu=yes"><img border="0" src="http://wpa.qq.com/pa?p=2:1569352868:51" alt="点击这里给我发消息" title="点击这里给我发消息"/></a>
 >
 >Email：1569352868@qq.com
 >
