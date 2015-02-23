@@ -115,4 +115,17 @@ class BizConfigService extends PSIBaseService {
 			return "[没有设置]";
 		}
 	}
+	
+	/**
+	 * 仓库是否需要设置组织结构
+	 */
+	public function warehouseUsesOrg() {
+		$sql = "select value from t_config where id = '1003-01' ";
+		$data = M()->query($sql);
+		if ($data) {
+			return $data[0]["value"] == "1";
+		} else {
+			return false;
+		}
+	}
 }

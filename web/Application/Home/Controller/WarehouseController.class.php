@@ -6,6 +6,7 @@ use Home\Service\UserService;
 use Home\Service\WarehouseService;
 
 use Home\Common\FIdConst;
+use Home\Service\BizConfigService;
 
 class WarehouseController extends Controller {
     public function index(){
@@ -19,6 +20,9 @@ class WarehouseController extends Controller {
 		$this->assign("dtFlag", $dtFlag[0]);
 
 		if ($us->hasPermission(FIdConst::WAREHOUSE)) {
+			$ts = new BizConfigService();
+			$this->assign("warehouseUsesOrg", $ts->warehouseUsesOrg());
+			
 			$this->display();
 		} else {
 			redirect(__ROOT__ . "/Home/User/login");
