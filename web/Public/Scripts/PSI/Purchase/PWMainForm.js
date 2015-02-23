@@ -135,7 +135,13 @@ Ext.define("PSI.Purchase.PWMainForm", {
                     text: "删除采购入库单", iconCls: "PSI-button-delete", scope: me, handler: me.onDeletePWBill
                 }, "-", {
                     text: "提交入库", iconCls: "PSI-button-commit", scope: me, handler: me.onCommit
-                }, "-", {
+                },"-",{
+    				text : "帮助",
+    				iconCls : "PSI-help",
+    				handler : function() {
+    					window.open("http://my.oschina.net/u/134395/blog/379622");
+    				}
+    			}, "-", {
                     text: "关闭", iconCls: "PSI-button-exit", handler: function () {
                         location.replace(PSI.Const.BASE_URL);
                     }
