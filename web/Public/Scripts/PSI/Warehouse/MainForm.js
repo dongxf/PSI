@@ -11,6 +11,7 @@ Ext.define("PSI.Warehouse.MainForm", {
         });
 
         var grid = Ext.create("Ext.grid.Panel", {
+        	border: 0,
             viewConfig: {
                 enableTextSelection: true
             },
