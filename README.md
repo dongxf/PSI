@@ -21,13 +21,14 @@ PSI的开源协议
 
 如需要技术支持，请联系
 -------------
->QQ：1569352868
-><a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=1569352868&site=qq&menu=yes"><img border="0" src="http://wpa.qq.com/pa?p=2:1569352868:51" alt="点击这里给我发消息" title="点击这里给我发消息"/></a>
->
->Email：1569352868@qq.com
->
->QQ群：414474186
-><a target="_blank" href="http://shang.qq.com/wpa/qunwpa?idkey=64808ce24f2a3186ccb1f37aad9ed591bcc4fb257d09749753aca98c6c73e400"><img border="0" src="http://pub.idqqimg.com/wpa/images/group.png" alt="开源进销存PSI" title="开源进销存PSI"></a>
+- QQ：1569352868
+ <a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=1569352868&site=qq&menu=yes"><img border="0" src="http://wpa.qq.com/pa?p=2:1569352868:51" alt="点击这里给我发消息" title="点击这里给我发消息"/></a>
+
+- Email：1569352868@qq.com
+
+- QQ群：414474186
+ <a target="_blank" href="http://shang.qq.com/wpa/qunwpa?idkey=64808ce24f2a3186ccb1f37aad9ed591bcc4fb257d09749753aca98c6c73e400"><img border="0" src="http://pub.idqqimg.com/wpa/images/group.png" alt="开源进销存PSI" title="开源进销存PSI"></a>
+
 致谢
 -------------
 >PSI使用了如下开源软件，没有你们，就没有PSI
