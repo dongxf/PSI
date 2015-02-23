@@ -47,10 +47,10 @@ PSI的开源协议
 捐赠
 -------------
 - 支付宝
-<img src="http://static.oschina.net/uploads/space/2015/0223/220628_NiUJ_134395.jpg" height="300" width="300">
+- <img src="http://static.oschina.net/uploads/space/2015/0223/220628_NiUJ_134395.jpg" height="300" width="300">
 
 - 微信支付
-<img src="http://static.oschina.net/uploads/space/2015/0221/215715_jA8D_134395.jpg" height="300" width="300">
+- <img src="http://static.oschina.net/uploads/space/2015/0221/215715_jA8D_134395.jpg" height="300" width="300">
 
 商业付费服务
 -------------
