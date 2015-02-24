@@ -137,4 +137,57 @@ class WarehouseService extends PSIBaseService {
 		
 		return $result;
 	}
+	
+	public function allOrgs() {
+		$sql = "select id, name,  org_code, full_name "
+				. " from t_org where parent_id is null order by org_code";
+		$db = M();
+		$orgList1 = $db->query($sql);
+		$result = array();
+		
+		// 第一级组织
+		foreach ($orgList1 as $i => $org1) {
+			$result[$i]["id"] = $org1["id"];
+			$result[$i]["text"] = $org1["name"];
+			$result[$i]["orgCode"] = $org1["org_code"];
+			$result[$i]["fullName"] = $org1["full_name"];
+		
+			// 第二级
+			$sql = "select id, name,  org_code, full_name "
+					. " from t_org where parent_id = '%s' order by org_code";
+			$orgList2 = $db->query($sql, $org1["id"]);
+		
+			$c2 = array();
+			foreach ($orgList2 as $j => $org2) {
+				$c2[$j]["id"] = $org2["id"];
+				$c2[$j]["text"] = $org2["name"];
+				$c2[$j]["orgCode"] = $org2["org_code"];
+				$c2[$j]["fullName"] = $org2["full_name"];
+				$c2[$j]["expanded"] = true;
+		
+				// 第三级
+				$sql = "select id, name,  org_code, full_name "
+						. " from t_org where parent_id = '%s' order by org_code";
+				$orgList3 = $db->query($sql, $org2["id"]);
+				$c3 = array();
+				foreach ($orgList3 as $k => $org3) {
+					$c3[$k]["id"] = $org3["id"];
+					$c3[$k]["text"] = $org3["name"];
+					$c3[$k]["orgCode"] = $org3["org_code"];
+					$c3[$k]["fullName"] = $org3["full_name"];
+					$c3[$k]["children"] = array();
+					$c3[$k]["leaf"] = true;
+				}
+		
+				$c2[$j]["children"] = $c3;
+				$c2[$j]["leaf"] = count($c3) == 0;
+			}
+		
+			$result[$i]["children"] = $c2;
+			$result[$i]["leaf"] = count($orgList2) == 0;
+			$result[$i]["expanded"] = true;
+		}
+		
+		return $result;
+	}
 }

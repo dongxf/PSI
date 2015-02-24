@@ -41,7 +41,7 @@ Ext.define("PSI.Warehouse.EditOrgForm", {
 					scope : me
 				}
 			},
-			items : [],
+			items : [me.getOrgTreeGrid()],
 			buttons : buttons
 		});
 
@@ -55,5 +55,53 @@ Ext.define("PSI.Warehouse.EditOrgForm", {
 	onWndClose : function() {
 	},
 	onWndShow : function() {
+	},
+	getOrgTreeGrid: function() {
+		var me = this;
+		if (me.__treeGrid) {
+			return me.__treeGrid;
+		}
+		
+		var modelName = "PSIOrgModel_EditOrgForm";
+        Ext.define(modelName, {
+            extend: "Ext.data.Model",
+            fields: ["id", "text", "fullName", "orgCode", "leaf", "children"]
+        });
+
+        var orgStore = Ext.create("Ext.data.TreeStore", {
+            model: modelName,
+            proxy: {
+                type: "ajax",
+                url: PSI.Const.BASE_URL + "Home/Warehouse/allOrgs"
+            }
+        });
+
+        me.__treeGrid = Ext.create("Ext.tree.Panel", {
+            store: orgStore,
+            rootVisible: false,
+            useArrows: true,
+            viewConfig: {
+                loadMask: true
+            },
+            columns: {
+                defaults: {
+                    sortable: false,
+                    menuDisabled: true,
+                    draggable: false
+                },
+                items: [{
+                        xtype: "treecolumn",
+                        text: "名称",
+                        dataIndex: "text",
+                        width: 220
+                    }, {
+                        text: "编码",
+                        dataIndex: "orgCode",
+                        flex: 1
+                    }]
+            }
+        });
+        
+        return me.__treeGrid;
 	}
 });
