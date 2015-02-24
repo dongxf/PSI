@@ -65,4 +65,15 @@ class WarehouseController extends Controller {
 			$this->ajaxReturn($ws->queryData($queryKey));
 		}
 	}
+	
+	public function warehouseOrgList() {
+		if (IS_POST) {
+			$params = array( 
+					"warehouseId" => I("post.warehouseId"),
+					"fid" => I("post.fid")
+			);
+			$ws = new WarehouseService();
+			$this->ajaxReturn($ws->warehouseOrgList($params));
+		}
+	}
 }

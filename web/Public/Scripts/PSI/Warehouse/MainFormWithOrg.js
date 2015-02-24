@@ -51,6 +51,10 @@ Ext.define("PSI.Warehouse.MainFormWithOrg", {
 				itemdblclick : {
 					fn : me.onEditWarehouse,
 					scope : me
+				},
+				select : {
+					fn : me.onWarehouseSelect,
+					scope : me
 				}
 			}
 		});
@@ -89,16 +93,18 @@ Ext.define("PSI.Warehouse.MainFormWithOrg", {
 				region : "east",
 				width : "60%",
 				border : 0,
+				split: true,
 				layout : "border",
 				items : [ {
 					region : "north",
-					height : 100,
-					layout: "fit",
+					height : 130,
+					split: true,
+					layout : "fit",
 					items : [ me.getBillGrid() ]
 				}, {
 					region : "center",
-					layout: "fit",
-					items : [me.getOrgGrid()]
+					layout : "fit",
+					items : [ me.getOrgGrid() ]
 				} ]
 			}, {
 				region : "center",
@@ -218,6 +224,8 @@ Ext.define("PSI.Warehouse.MainFormWithOrg", {
 			} else {
 				grid.getSelectionModel().select(0);
 			}
+		} else {
+			grid.getSelectionModel().select(0);
 		}
 	},
 	getBillGrid : function() {
@@ -233,12 +241,13 @@ Ext.define("PSI.Warehouse.MainFormWithOrg", {
 		});
 
 		me.__billGrid = Ext.create("Ext.grid.Panel", {
+			title : "请选择仓库",
 			border : 0,
 			viewConfig : {
 				enableTextSelection : true
 			},
 			columnLines : true,
-			columns : [ {
+			columns : [ Ext.create("Ext.grid.RowNumberer", {text: "序号", width: 30}),{
 				header : "业务类型",
 				dataIndex : "name",
 				menuDisabled : true,
@@ -248,14 +257,26 @@ Ext.define("PSI.Warehouse.MainFormWithOrg", {
 			store : Ext.create("Ext.data.Store", {
 				model : modelName,
 				autoLoad : true,
-				data : [{fid: "2001", name: "采购入库"}, {fid: "2002", name: "销售出库"}]
-			})
+				data : [ {
+					fid : "2001",
+					name : "采购入库"
+				}, {
+					fid : "2002",
+					name : "销售出库"
+				} ]
+			}),
+			listeners : {
+				select : {
+					fn : me.onBillGridSelect,
+					scope : me
+				}
+			}
 		});
 
 		return me.__billGrid;
 	},
-	
-	getOrgGrid: function() {
+
+	getOrgGrid : function() {
 		var me = this;
 		if (me.__orgGrid) {
 			return me.__orgGrid;
@@ -268,6 +289,7 @@ Ext.define("PSI.Warehouse.MainFormWithOrg", {
 		});
 
 		me.__orgGrid = Ext.create("Ext.grid.Panel", {
+			title : "请选择业务类型",
 			border : 0,
 			viewConfig : {
 				enableTextSelection : true
@@ -284,9 +306,81 @@ Ext.define("PSI.Warehouse.MainFormWithOrg", {
 				model : modelName,
 				autoLoad : false,
 				data : []
-			})
+			}),
+			tbar : [ {
+				text : "添加组织机构",
+				iconCls : "PSI-button-add",
+				handler : me.onAddOrg,
+				scope : me
+			}, "-", {
+				text : "移除组织机构",
+				iconCls : "PSI-button-delete",
+				handler : me.onRemoveOrg,
+				scope : me
+			} ]
 		});
 
 		return me.__orgGrid;
+	},
+	onWarehouseSelect : function() {
+		var me = this;
+		var grid = me.grid;
+		var item = grid.getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			return;
+		}
+		var warehouse = item[0];
+		me.getBillGrid().setTitle("仓库[" + warehouse.get("name") + "]");
+		me.getBillGrid().getSelectionModel().select(0);
+	},
+	onBillGridSelect : function() {
+		var me = this;
+		var grid = me.grid;
+		var item = grid.getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			return;
+		}
+		var warehouse = item[0];
+		grid = me.getBillGrid();
+		itemBill = grid.getSelectionModel().getSelection();
+		if (itemBill == null || itemBill.length != 1) {
+			return;
+		}
+
+		var bill = itemBill[0];
+
+		me.getOrgGrid().setTitle(
+				"仓库[" + warehouse.get("name") + "] - [" + bill.get("name")
+						+ "]的操作人范围");
+		
+		grid = me.getOrgGrid();
+		var el = grid.getEl() || Ext.getBody();
+		el.mask(PSI.Const.LOADING);
+		Ext.Ajax.request({
+			url : PSI.Const.BASE_URL + "Home/Warehouse/warehouseOrgList",
+			params: {
+				warehouseId: warehouse.get("id"),
+				fid: bill.get("fid")
+			},
+			method : "POST",
+			callback : function(options, success, response) {
+				var store = grid.getStore();
+
+				store.removeAll();
+
+				if (success) {
+					var data = Ext.JSON.decode(response.responseText);
+					store.add(data);
+				}
+
+				el.unmask();
+			}
+		});
+	},
+	onAddOrg: function() {
+		PSI.MsgBox.showInfo("TODO");
+	},
+	onRemoveOrg: function() {
+		PSI.MsgBox.showInfo("TODO");
 	}
 });

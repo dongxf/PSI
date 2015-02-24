@@ -3,6 +3,7 @@ namespace Home\Service;
 
 use Home\Service\IdGenService;
 use Home\Service\BizlogService;
+use Org\Util\ArrayList;
 
 /**
  * 基础数据仓库Service
@@ -100,5 +101,40 @@ class WarehouseService extends PSIBaseService {
 				. " order by code";
 		$key = "%{$queryKey}%";
 		return M()->query($sql, $key, $key, $key);
+	}
+	
+	public function warehouseOrgList($params) {
+		$warehouseId = $params["warehouseId"];
+		$fid = $params["fid"];
+		$db = M();
+		$result = array();
+		// 组织机构
+		$sql = "select o.id, o.full_name
+				from t_warehouse_org w, t_org o
+				where w.warehouse_id = '%s' and w.bill_fid = '%s' 
+				    and w.org_id = o.id and w.org_type = '0' 
+				order by o.org_code";
+		$data = $db->query($sql, $warehouseId, $fid);
+		foreach($data as $i => $v) {
+			$result[$i]["id"] = $v["id"];
+			$result[$i]["fullName"] = $v["full_name"];
+		}
+		
+		$cnt = count($result);
+		
+		// 具体人员
+		$sql = "select u.id, u.name, o.full_name
+				from t_warehouse_org w, t_user u, t_org o
+				where w.warehouse_id = '%s' and w.bill_fid = '%s'
+				    and w.org_id = u.id and w.org_type = '1'
+					and u.org_id = o.id
+				order by u.org_code";
+		$data = $db->query($sql, $warehouseId, $fid);
+		foreach($data as $i => $v) {
+			$result[$i + $cnt]["id"] = $v["id"];
+			$result[$i + $cnt]["fullName"] = $v["full_name"] . "\\" . $v["name"];
+		}
+		
+		return $result;
 	}
 }
