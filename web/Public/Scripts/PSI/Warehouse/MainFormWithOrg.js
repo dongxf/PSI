@@ -93,12 +93,12 @@ Ext.define("PSI.Warehouse.MainFormWithOrg", {
 				region : "east",
 				width : "60%",
 				border : 0,
-				split: true,
+				split : true,
 				layout : "border",
 				items : [ {
 					region : "north",
 					height : 130,
-					split: true,
+					split : true,
 					layout : "fit",
 					items : [ me.getBillGrid() ]
 				}, {
@@ -247,7 +247,10 @@ Ext.define("PSI.Warehouse.MainFormWithOrg", {
 				enableTextSelection : true
 			},
 			columnLines : true,
-			columns : [ Ext.create("Ext.grid.RowNumberer", {text: "序号", width: 30}),{
+			columns : [ Ext.create("Ext.grid.RowNumberer", {
+				text : "序号",
+				width : 30
+			}), {
 				header : "业务类型",
 				dataIndex : "name",
 				menuDisabled : true,
@@ -256,14 +259,8 @@ Ext.define("PSI.Warehouse.MainFormWithOrg", {
 			} ],
 			store : Ext.create("Ext.data.Store", {
 				model : modelName,
-				autoLoad : true,
-				data : [ {
-					fid : "2001",
-					name : "采购入库"
-				}, {
-					fid : "2002",
-					name : "销售出库"
-				} ]
+				autoLoad : false,
+				data : []
 			}),
 			listeners : {
 				select : {
@@ -331,6 +328,16 @@ Ext.define("PSI.Warehouse.MainFormWithOrg", {
 		}
 		var warehouse = item[0];
 		me.getBillGrid().setTitle("仓库[" + warehouse.get("name") + "]");
+		var store = me.getBillGrid().getStore();
+		store.removeAll();
+		store.add({
+			fid : "2001",
+			name : "采购入库"
+		});
+		store.add({
+			fid : "2002",
+			name : "销售出库"
+		});
 		me.getBillGrid().getSelectionModel().select(0);
 	},
 	onBillGridSelect : function() {
@@ -352,15 +359,15 @@ Ext.define("PSI.Warehouse.MainFormWithOrg", {
 		me.getOrgGrid().setTitle(
 				"仓库[" + warehouse.get("name") + "] - [" + bill.get("name")
 						+ "]的操作人范围");
-		
+
 		grid = me.getOrgGrid();
 		var el = grid.getEl() || Ext.getBody();
 		el.mask(PSI.Const.LOADING);
 		Ext.Ajax.request({
 			url : PSI.Const.BASE_URL + "Home/Warehouse/warehouseOrgList",
-			params: {
-				warehouseId: warehouse.get("id"),
-				fid: bill.get("fid")
+			params : {
+				warehouseId : warehouse.get("id"),
+				fid : bill.get("fid")
 			},
 			method : "POST",
 			callback : function(options, success, response) {
@@ -377,10 +384,27 @@ Ext.define("PSI.Warehouse.MainFormWithOrg", {
 			}
 		});
 	},
-	onAddOrg: function() {
-		PSI.MsgBox.showInfo("TODO");
+	onAddOrg : function() {
+		var me = this;
+		var item = me.grid.getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			PSI.MsgBox.showInfo("没有选择仓库");
+			return;
+		}
+
+		grid = me.getBillGrid();
+		itemBill = grid.getSelectionModel().getSelection();
+		if (itemBill == null || itemBill.length != 1) {
+			PSI.MsgBox.showInfo("请选择业务类型");
+			return;
+		}
+
+		var form = Ext.create("PSI.Warehouse.EditOrgForm", {
+			parentForm : this
+		});
+		form.show();
 	},
-	onRemoveOrg: function() {
+	onRemoveOrg : function() {
 		PSI.MsgBox.showInfo("TODO");
 	}
 });
