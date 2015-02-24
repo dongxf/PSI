@@ -190,4 +190,8 @@ class WarehouseService extends PSIBaseService {
 		
 		return $result;
 	}
+	
+	public function addOrg($params) {
+		return $this->todo();
+	}
 }

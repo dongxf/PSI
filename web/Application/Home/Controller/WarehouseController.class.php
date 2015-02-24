@@ -82,4 +82,11 @@ class WarehouseController extends Controller {
 	
 		$this->ajaxReturn($ws->allOrgs());
 	}
+	
+	public function addOrg() {
+		$params = array(
+		);
+		$ws = new WarehouseService();
+		$this->ajaxReturn($ws->addOrg($params));
+			}
 }

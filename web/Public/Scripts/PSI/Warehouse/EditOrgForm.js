@@ -50,7 +50,32 @@ Ext.define("PSI.Warehouse.EditOrgForm", {
 	// private
 	onOK : function() {
 		var me = this;
-		me.close();
+		var item = me.getOrgTreeGrid().getSelectionModel().getSelection();
+        if (item == null || item.length != 1) {
+            PSI.MsgBox.showInfo("请选择组织机构或者人员");
+            return;
+        }
+
+        var el = me.getEl() || Ext.getBody();
+        el.mask(PSI.Const.LOADING);
+        Ext.Ajax.request({
+            url: PSI.Const.BASE_URL + "Home/Warehouse/addOrg",
+            params: {},
+            method: "POST",
+            callback: function (options, success, response) {
+                el.unmask();
+                if (success) {
+                    var data = Ext.JSON.decode(response.responseText);
+                    if (data.success) {
+                    	me.close();
+                    } else {
+                        PSI.MsgBox.showInfo(data.msg);
+                    }
+                } else {
+                    PSI.MsgBox.showInfo("网络错误");
+                }
+            }
+        });
 	},
 	onWndClose : function() {
 	},
