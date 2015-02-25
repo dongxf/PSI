@@ -1,15 +1,15 @@
 <?php
-namespace Home\Controller;
-use Think\Controller;
 
+namespace Home\Controller;
+
+use Think\Controller;
 use Home\Service\UserService;
 use Home\Service\WarehouseService;
-
 use Home\Common\FIdConst;
 use Home\Service\BizConfigService;
 
 class WarehouseController extends Controller {
-    public function index(){
+	public function index() {
 		$us = new UserService();
 		
 		$this->assign("title", "仓库");
@@ -18,7 +18,7 @@ class WarehouseController extends Controller {
 		$this->assign("loginUserName", $us->getLoginUserName());
 		$dtFlag = getdate();
 		$this->assign("dtFlag", $dtFlag[0]);
-
+		
 		if ($us->hasPermission(FIdConst::WAREHOUSE)) {
 			$ts = new BizConfigService();
 			$this->assign("warehouseUsesOrg", $ts->warehouseUsesOrg());
@@ -27,37 +27,33 @@ class WarehouseController extends Controller {
 		} else {
 			redirect(__ROOT__ . "/Home/User/login");
 		}
-    }
-	
+	}
 	public function warehouseList() {
 		if (IS_POST) {
 			$ws = new WarehouseService();
 			$this->ajaxReturn($ws->warehouseList());
 		}
 	}
-	
 	public function editWarehouse() {
 		if (IS_POST) {
 			$params = array(
-				"id" => I("post.id"),
-				"code" => I("post.code"),
-				"name" => I("post.name")
+					"id" => I("post.id"),
+					"code" => I("post.code"),
+					"name" => I("post.name")
 			);
 			$ws = new WarehouseService();
 			$this->ajaxReturn($ws->editWarehouse($params));
 		}
 	}
-	
 	public function deleteWarehouse() {
 		if (IS_POST) {
 			$params = array(
-				"id" => I("post.id"),
+					"id" => I("post.id")
 			);
 			$ws = new WarehouseService();
 			$this->ajaxReturn($ws->deleteWarehouse($params));
 		}
 	}
-	
 	public function queryData() {
 		if (IS_POST) {
 			$queryKey = I("post.queryKey");
@@ -65,10 +61,9 @@ class WarehouseController extends Controller {
 			$this->ajaxReturn($ws->queryData($queryKey));
 		}
 	}
-	
 	public function warehouseOrgList() {
 		if (IS_POST) {
-			$params = array( 
+			$params = array(
 					"warehouseId" => I("post.warehouseId"),
 					"fid" => I("post.fid")
 			);
@@ -76,17 +71,20 @@ class WarehouseController extends Controller {
 			$this->ajaxReturn($ws->warehouseOrgList($params));
 		}
 	}
-	
 	public function allOrgs() {
 		$ws = new WarehouseService();
-	
+		
 		$this->ajaxReturn($ws->allOrgs());
 	}
-	
 	public function addOrg() {
-		$params = array(
-		);
-		$ws = new WarehouseService();
-		$this->ajaxReturn($ws->addOrg($params));
-			}
+		if (IS_POST) {
+			$params = array(
+					"warehouseId" => I("post.warehouseId"),
+					"fid" => I("post.fid"),
+					"orgId" => I("post.orgId")
+			);
+			$ws = new WarehouseService();
+			$this->ajaxReturn($ws->addOrg($params));
+		}
+	}
 }

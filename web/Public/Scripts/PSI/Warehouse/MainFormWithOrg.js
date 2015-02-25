@@ -391,6 +391,7 @@ Ext.define("PSI.Warehouse.MainFormWithOrg", {
 			PSI.MsgBox.showInfo("没有选择仓库");
 			return;
 		}
+		var warehouse = item[0];
 
 		grid = me.getBillGrid();
 		itemBill = grid.getSelectionModel().getSelection();
@@ -398,9 +399,12 @@ Ext.define("PSI.Warehouse.MainFormWithOrg", {
 			PSI.MsgBox.showInfo("请选择业务类型");
 			return;
 		}
+		var bill = itemBill[0];
 
 		var form = Ext.create("PSI.Warehouse.EditOrgForm", {
-			parentForm : this
+			parentForm : me,
+			warehouseId: warehouse.get("id"),
+			fid: bill.get("fid")
 		});
 		form.show();
 	},

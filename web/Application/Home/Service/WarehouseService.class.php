@@ -228,6 +228,53 @@ class WarehouseService extends PSIBaseService {
 		return $result;
 	}
 	public function addOrg($params) {
-		return $this->todo();
+		$warehouseId = $params["warehouseId"];
+		$fid = $params["fid"];
+		$orgId = $params["orgId"];
+		
+		$db = M();
+		$sql = "select count(*) as cnt from t_warehouse where id = '%s' ";
+		$data = $db->query($sql, $warehouseId);
+		$cnt = $data[0]["cnt"];
+		if ($cnt != 1) {
+			return $this->bad("仓库不存在");
+		}
+		
+		$fidArray = array("2001", "2002");
+		if (!in_array($fid, $fidArray)) {
+			return $this->bad("业务类型不存在");
+		}
+		
+		$orgType = null;
+		
+		$sql = "select count(*) as cnt from t_org where id = '%s' ";
+		$data = $db->query($sql, $orgId);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 1) {
+			$orgType = "0";
+		} else {
+			$sql = "select count(*) as cnt from t_user where id = '%s' ";
+			$data = $db->query($sql, $orgId);
+			$cnt = $data[0]["cnt"];
+			if ($cnt == 1) {
+				$orgType = "1";
+			} else {
+				return $this->bad("组织机构不存在");
+			}
+		}
+		
+		$sql = "select count(*) as cnt from t_warehouse_org 
+				where warehouse_id = '%s' and bill_fid = '%s' and org_id = '%s' ";
+		$data = $db->query($sql, $warehouseId, $fid, $orgId);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 1) {
+			return $this->bad("当前组织机构已经添加过了，不能重复添加");
+		}
+		
+		$sql = "insert into t_warehouse_org (warehouse_id, bill_fid, org_id, org_type)
+				values ('%s', '%s', '%s', '%s')";
+		$db->execute($sql, $warehouseId, $fid, $orgId, $orgType);
+		
+		return $this->ok();
 	}
 }

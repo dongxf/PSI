@@ -1,7 +1,9 @@
 Ext.define("PSI.Warehouse.EditOrgForm", {
 	extend : "Ext.window.Window",
 	config : {
-		parentForm : null
+		parentForm : null,
+		warehouseId: null,
+		fid: null
 	},
 	initComponent : function() {
 		var me = this;
@@ -55,12 +57,17 @@ Ext.define("PSI.Warehouse.EditOrgForm", {
             PSI.MsgBox.showInfo("请选择组织机构或者人员");
             return;
         }
+        var org = item[0];
 
         var el = me.getEl() || Ext.getBody();
         el.mask(PSI.Const.LOADING);
         Ext.Ajax.request({
             url: PSI.Const.BASE_URL + "Home/Warehouse/addOrg",
-            params: {},
+            params: {
+            	warehouseId: me.getWarehouseId(),
+            	fid: me.getFid(),
+            	orgId: org.get("id")
+            },
             method: "POST",
             callback: function (options, success, response) {
                 el.unmask();
@@ -78,6 +85,7 @@ Ext.define("PSI.Warehouse.EditOrgForm", {
         });
 	},
 	onWndClose : function() {
+		this.getParentForm().onBillGridSelect();
 	},
 	onWndShow : function() {
 	},
