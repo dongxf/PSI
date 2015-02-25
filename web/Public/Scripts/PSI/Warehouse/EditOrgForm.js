@@ -122,7 +122,11 @@ Ext.define("PSI.Warehouse.EditOrgForm", {
                     }, {
                         text: "编码",
                         dataIndex: "orgCode",
-                        flex: 1
+                        width: 100
+                    },{
+                    	text: "全名",
+                    	dataIndex: "fullName",
+                    	flex: 1
                     }]
             }
         });
