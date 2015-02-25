@@ -28,7 +28,7 @@ Ext.define("PSI.Warehouse.EditOrgForm", {
 			title : "添加组织机构",
 			modal : true,
 			onEsc : Ext.emptyFn,
-			width : 500,
+			width : 650,
 			height : 400,
 			layout : "fit",
 			listeners : {
