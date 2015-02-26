@@ -282,7 +282,7 @@ Ext.define("PSI.Warehouse.MainFormWithOrg", {
 		var modelName = "PSIWarehouse_Org";
 		Ext.define(modelName, {
 			extend : "Ext.data.Model",
-			fields : [ "id", "fullName" ]
+			fields : [ "id", "orgCode", "fullName" ]
 		});
 
 		me.__orgGrid = Ext.create("Ext.grid.Panel", {
@@ -292,7 +292,13 @@ Ext.define("PSI.Warehouse.MainFormWithOrg", {
 				enableTextSelection : true
 			},
 			columnLines : true,
-			columns : [ {
+			columns : [{
+				header : "编码",
+				dataIndex : "orgCode",
+				menuDisabled : true,
+				sortable : false,
+				width: 100
+			}, {
 				header : "组织机构",
 				dataIndex : "fullName",
 				menuDisabled : true,

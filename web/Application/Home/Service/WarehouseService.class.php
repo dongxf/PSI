@@ -101,7 +101,7 @@ class WarehouseService extends PSIBaseService {
 		$db = M();
 		$result = array();
 		// 组织机构
-		$sql = "select o.id, o.full_name
+		$sql = "select o.id, o.full_name, o.org_code
 				from t_warehouse_org w, t_org o
 				where w.warehouse_id = '%s' and w.bill_fid = '%s' 
 				    and w.org_id = o.id and w.org_type = '0' 
@@ -110,12 +110,13 @@ class WarehouseService extends PSIBaseService {
 		foreach ( $data as $i => $v ) {
 			$result[$i]["id"] = $v["id"];
 			$result[$i]["fullName"] = $v["full_name"];
+			$result[$i]["orgCode"] = $v["org_code"];
 		}
 		
 		$cnt = count($result);
 		
 		// 具体人员
-		$sql = "select u.id, u.name, o.full_name
+		$sql = "select u.id, u.name, o.full_name, o.org_code
 				from t_warehouse_org w, t_user u, t_org o
 				where w.warehouse_id = '%s' and w.bill_fid = '%s'
 				    and w.org_id = u.id and w.org_type = '1'
@@ -125,6 +126,7 @@ class WarehouseService extends PSIBaseService {
 		foreach ( $data as $i => $v ) {
 			$result[$i + $cnt]["id"] = $v["id"];
 			$result[$i + $cnt]["fullName"] = $v["full_name"] . "\\" . $v["name"];
+			$result[$i + $cnt]["orgCode"] = $v["org_code"];
 		}
 		
 		return $result;
