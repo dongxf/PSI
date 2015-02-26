@@ -330,8 +330,8 @@ class SupplierService extends PSIBaseService {
 	}
 	
 	public function queryData($queryKey) {
-		if (!$queryKey) {
-			return array();
+		if ($queryKey = null) {
+			$queryKey = "";
 		}
 		
 		$sql = "select id, code, name from t_supplier"

@@ -320,8 +320,8 @@ class CustomerService extends PSIBaseService {
 
 	public function queryData($params) {
 		$queryKey = $params["queryKey"];
-		if (!queryKey) {
-			return array();
+		if ($queryKey == null) {
+			$queryKey = "";
 		}
 		
 		$sql = "select id, code, name"

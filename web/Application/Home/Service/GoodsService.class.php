@@ -324,8 +324,8 @@ class GoodsService extends PSIBaseService {
 	}
 
 	public function queryData($queryKey) {
-		if (!queryKey) {
-			return array();
+		if ($queryKey == null) {
+			$queryKey = "";
 		}
 		
 		$sql = "select g.id, g.code, g.name, g.spec, u.name as unit_name"
@@ -348,8 +348,8 @@ class GoodsService extends PSIBaseService {
 		return $result;
 	}
 	public function queryDataWithSalePrice($queryKey) {
-		if (!queryKey) {
-			return array();
+		if ($queryKey == null) {
+			$queryKey = "";
 		}
 		
 		$sql = "select g.id, g.code, g.name, g.spec, u.name as unit_name, g.sale_price"

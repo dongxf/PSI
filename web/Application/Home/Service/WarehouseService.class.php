@@ -87,11 +87,13 @@ class WarehouseService extends PSIBaseService {
 		return $this->ok();
 	}
 	public function queryData($queryKey) {
-		if (! $queryKey) {
-			return array();
+		if ($queryKey == null) {
+			$queryKey = "";
 		}
 		
-		$sql = "select id, code, name from t_warehouse" . " where code like '%s' or name like '%s' or py like '%s' " . " order by code";
+		$sql = "select id, code, name from t_warehouse 
+				where code like '%s' or name like '%s' or py like '%s' 
+				order by code";
 		$key = "%{$queryKey}%";
 		return M()->query($sql, $key, $key, $key);
 	}

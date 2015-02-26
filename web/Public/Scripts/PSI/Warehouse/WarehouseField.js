@@ -171,6 +171,7 @@ Ext.define("PSI.Warehouse.WarehouseField", {
 
         me.wnd.on("show", function () {
             editName.focus();
+            editName.fireEvent("change");
         }, me);
         wnd.show();
     },
