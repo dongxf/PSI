@@ -86,16 +86,38 @@ class WarehouseService extends PSIBaseService {
 		
 		return $this->ok();
 	}
-	public function queryData($queryKey) {
+	public function queryData($queryKey, $fid) {
 		if ($queryKey == null) {
 			$queryKey = "";
 		}
 		
-		$sql = "select id, code, name from t_warehouse 
-				where code like '%s' or name like '%s' or py like '%s' 
-				order by code";
-		$key = "%{$queryKey}%";
-		return M()->query($sql, $key, $key, $key);
+		$cs = new BizConfigService();
+		if ($cs->warehouseUsesOrg()) {
+			$us = new UserService();
+			$userId = $us->getLoginUserId();
+			
+			$sql = "select id, code, name 
+					from t_warehouse
+					where (code like '%s' or name like '%s' or py like '%s') 
+					  and id in (
+							select warehouse_id 
+							from t_warehouse_org
+							where org_id = '%s' and org_type = '1' and bill_fid = '%s'
+					    	union
+							select w.warehouse_id
+							from t_warehouse_org w, t_org o, t_user u
+							where w.bill_fid = '%s' and w.org_type = '0' and w.org_id = o.id and o.id = u.org_id and u.id = '%s'
+					  )
+					order by code";
+			$key = "%{$queryKey}%";
+			return M()->query($sql, $key, $key, $key, $userId, $fid, $fid, $userId);
+		} else {
+			$sql = "select id, code, name from t_warehouse 
+					where code like '%s' or name like '%s' or py like '%s' 
+					order by code";
+			$key = "%{$queryKey}%";
+			return M()->query($sql, $key, $key, $key);
+		}
 	}
 	public function warehouseOrgList($params) {
 		$warehouseId = $params["warehouseId"];

@@ -3,7 +3,8 @@ Ext.define("PSI.Warehouse.WarehouseField", {
     alias: "widget.psi_warehousefield",
     
     config: {
-    	parentCmp: null
+    	parentCmp: null,
+    	fid: null
     },
 
     initComponent: function () {
@@ -110,7 +111,8 @@ Ext.define("PSI.Warehouse.WarehouseField", {
             Ext.Ajax.request({
                 url: PSI.Const.BASE_URL + "Home/Warehouse/queryData",
                 params: {
-                    queryKey: editName.getValue()
+                    queryKey: editName.getValue(),
+                    fid: me.getFid()
                 },
                 method: "POST",
                 callback: function (opt, success, response) {

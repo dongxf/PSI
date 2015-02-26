@@ -100,6 +100,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 					fieldLabel : "入库仓库",
 					xtype : "psi_warehousefield",
 					parentCmp : me,
+					fid: "2001",
 					allowBlank : false,
 					blankText : "没有输入入库仓库",
 					beforeLabelTextTpl : PSI.Const.REQUIRED,

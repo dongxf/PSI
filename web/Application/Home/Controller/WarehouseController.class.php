@@ -57,8 +57,9 @@ class WarehouseController extends Controller {
 	public function queryData() {
 		if (IS_POST) {
 			$queryKey = I("post.queryKey");
+			$fid = I("post.fid");
 			$ws = new WarehouseService();
-			$this->ajaxReturn($ws->queryData($queryKey));
+			$this->ajaxReturn($ws->queryData($queryKey, $fid));
 		}
 	}
 	public function warehouseOrgList() {

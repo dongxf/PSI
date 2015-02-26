@@ -106,6 +106,7 @@ Ext.define("PSI.Sale.WSEditForm", {
                             labelSeparator: "",
                             xtype: "psi_warehousefield",
                             parentCmp: me,
+                            fid: "2002",
                             allowBlank: false,
                             blankText: "没有输入出库仓库",
                             beforeLabelTextTpl: PSI.Const.REQUIRED,
