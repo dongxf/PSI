@@ -233,30 +233,33 @@ class WarehouseService extends PSIBaseService {
 		$orgId = $params["orgId"];
 		
 		$db = M();
-		$sql = "select count(*) as cnt from t_warehouse where id = '%s' ";
+		$sql = "select name from t_warehouse where id = '%s' ";
 		$data = $db->query($sql, $warehouseId);
-		$cnt = $data[0]["cnt"];
-		if ($cnt != 1) {
+		if (! $data) {
 			return $this->bad("仓库不存在");
 		}
+		$warehouseName = $data[0]["name"];
 		
-		$fidArray = array("2001", "2002");
-		if (!in_array($fid, $fidArray)) {
+		$fidArray = array(
+				"2001",
+				"2002"
+		);
+		if (! in_array($fid, $fidArray)) {
 			return $this->bad("业务类型不存在");
 		}
 		
 		$orgType = null;
-		
-		$sql = "select count(*) as cnt from t_org where id = '%s' ";
+		$orgName = null;
+		$sql = "select full_name from t_org where id = '%s' ";
 		$data = $db->query($sql, $orgId);
-		$cnt = $data[0]["cnt"];
-		if ($cnt == 1) {
+		if ($data) {
+			$orgName = $data[0]["full_name"];
 			$orgType = "0";
 		} else {
-			$sql = "select count(*) as cnt from t_user where id = '%s' ";
+			$sql = "select name from t_user where id = '%s' ";
 			$data = $db->query($sql, $orgId);
-			$cnt = $data[0]["cnt"];
-			if ($cnt == 1) {
+			if ($data) {
+				$orgName = $data[0]["name"];
 				$orgType = "1";
 			} else {
 				return $this->bad("组织机构不存在");
@@ -268,25 +271,91 @@ class WarehouseService extends PSIBaseService {
 		$data = $db->query($sql, $warehouseId, $fid, $orgId);
 		$cnt = $data[0]["cnt"];
 		if ($cnt == 1) {
-			return $this->bad("当前组织机构已经添加过了，不能重复添加");
+			return $this->bad("当前组织机构[{$orgName}]已经添加过了，不能重复添加");
 		}
 		
 		$sql = "insert into t_warehouse_org (warehouse_id, bill_fid, org_id, org_type)
 				values ('%s', '%s', '%s', '%s')";
 		$db->execute($sql, $warehouseId, $fid, $orgId, $orgType);
 		
+		$bizName = "";
+		if ($fid == "2001") {
+			$bizName = "采购入库";
+		} else if ($fid == "2002") {
+			$bizName = "销售出库";
+		}
+		
+		$log = "";
+		if ($orgType == "0") {
+			$log = "为仓库[{$warehouseName}]的业务类型[{$bizName}]添加组织机构[{$orgName}]";
+		} else {
+			$log = "为仓库[{$warehouseName}]的业务类型[{$bizName}]添加用户[{$orgName}]";
+		}
+		
+		$bs = new BizlogService();
+		$bs->insertBizlog($log, "基础数据-仓库");
+		
 		return $this->ok();
 	}
-	
 	public function deleteOrg($params) {
 		$warehouseId = $params["warehouseId"];
 		$fid = $params["fid"];
 		$orgId = $params["orgId"];
 		
 		$db = M();
+		$sql = "select name from t_warehouse where id = '%s' ";
+		$data = $db->query($sql, $warehouseId);
+		if (! $data) {
+			return $this->bad("仓库不存在");
+		}
+		$warehouseName = $data[0]["name"];
+		
+		$fidArray = array(
+				"2001",
+				"2002"
+		);
+		if (! in_array($fid, $fidArray)) {
+			return $this->bad("业务类型不存在");
+		}
+		
+		$orgType = null;
+		$orgName = null;
+		$sql = "select full_name from t_org where id = '%s' ";
+		$data = $db->query($sql, $orgId);
+		if ($data) {
+			$orgName = $data[0]["full_name"];
+			$orgType = "0";
+		} else {
+			$sql = "select name from t_user where id = '%s' ";
+			$data = $db->query($sql, $orgId);
+			if ($data) {
+				$orgName = $data[0]["name"];
+				$orgType = "1";
+			} else {
+				return $this->bad("组织机构不存在");
+			}
+		}
+		
 		$sql = "delete from t_warehouse_org 
 				where warehouse_id = '%s' and bill_fid = '%s' and org_id = '%s' ";
 		$db->execute($sql, $warehouseId, $fid, $orgId);
+		
+		$bizName = "";
+		if ($fid == "2001") {
+			$bizName = "采购入库";
+		} else if ($fid == "2002") {
+			$bizName = "销售出库";
+		}
+		
+		$log = "";
+		if ($orgType == "0") {
+			$log = "为仓库[{$warehouseName}]的业务类型[{$bizName}]移除组织机构[{$orgName}]";
+		} else {
+			$log = "为仓库[{$warehouseName}]的业务类型[{$bizName}]移除用户[{$orgName}]";
+		}
+		
+		$bs = new BizlogService();
+		$bs->insertBizlog($log, "基础数据-仓库");
 		
 		return $this->ok();
 	}
