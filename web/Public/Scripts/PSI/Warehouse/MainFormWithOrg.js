@@ -76,6 +76,10 @@ Ext.define("PSI.Warehouse.MainFormWithOrg", {
 				iconCls : "PSI-button-delete",
 				handler : this.onDeleteWarehouse,
 				scope : this
+			}, "-",{
+				text : "从组织机构视角来查看仓库",
+				handler : this.onView,
+				scope : this
 			}, "-", {
 				text : "帮助",
 				iconCls : "PSI-help",
@@ -468,5 +472,8 @@ Ext.define("PSI.Warehouse.MainFormWithOrg", {
 				}
 			});
 		});
+	},
+	onView: function() {
+		PSI.MsgBox.showInfo("TODO");
 	}
 });
