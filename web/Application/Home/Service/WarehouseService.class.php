@@ -116,7 +116,7 @@ class WarehouseService extends PSIBaseService {
 		$cnt = count($result);
 		
 		// 具体人员
-		$sql = "select u.id, u.name, o.full_name, o.org_code
+		$sql = "select u.id, u.name, o.full_name, u.org_code
 				from t_warehouse_org w, t_user u, t_org o
 				where w.warehouse_id = '%s' and w.bill_fid = '%s'
 				    and w.org_id = u.id and w.org_type = '1'
