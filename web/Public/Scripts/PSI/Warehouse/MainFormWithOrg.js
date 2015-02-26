@@ -409,6 +409,58 @@ Ext.define("PSI.Warehouse.MainFormWithOrg", {
 		form.show();
 	},
 	onRemoveOrg : function() {
-		PSI.MsgBox.showInfo("TODO");
+		var me = this;
+		var item = me.grid.getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			PSI.MsgBox.showInfo("没有选择仓库");
+			return;
+		}
+		var warehouse = item[0];
+
+		grid = me.getBillGrid();
+		itemBill = grid.getSelectionModel().getSelection();
+		if (itemBill == null || itemBill.length != 1) {
+			PSI.MsgBox.showInfo("请选择业务类型");
+			return;
+		}
+		var bill = itemBill[0];
+		
+		grid = me.getOrgGrid();
+		itemOrg = grid.getSelectionModel().getSelection();
+		if (itemOrg == null || itemOrg.length != 1) {
+			PSI.MsgBox.showInfo("请选择要移除的组织机构");
+			return;
+		}
+		var org = itemOrg[0];
+		
+		var info = "请确认是否移除[" + org.get("fullName") + "]?";
+
+		PSI.MsgBox.confirm(info, function() {
+			var el = Ext.getBody();
+			el.mask(PSI.Const.LOADING);
+			Ext.Ajax.request({
+				url : PSI.Const.BASE_URL + "Home/Warehouse/deleteOrg",
+				params : {
+					warehouseId : warehouse.get("id"),
+					fid: bill.get("fid"),
+					orgId: org.get("id")
+				},
+				method : "POST",
+				callback : function(options, success, response) {
+					el.unmask();
+					if (success) {
+						var data = Ext.JSON.decode(response.responseText);
+						if (data.success) {
+							PSI.MsgBox.tip("成功完成操作");
+							me.onBillGridSelect();
+						} else {
+							PSI.MsgBox.showInfo(data.msg);
+						}
+					} else {
+						PSI.MsgBox.showInfo("网络错误");
+					}
+				}
+			});
+		});
 	}
 });

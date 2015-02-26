@@ -277,4 +277,17 @@ class WarehouseService extends PSIBaseService {
 		
 		return $this->ok();
 	}
+	
+	public function deleteOrg($params) {
+		$warehouseId = $params["warehouseId"];
+		$fid = $params["fid"];
+		$orgId = $params["orgId"];
+		
+		$db = M();
+		$sql = "delete from t_warehouse_org 
+				where warehouse_id = '%s' and bill_fid = '%s' and org_id = '%s' ";
+		$db->execute($sql, $warehouseId, $fid, $orgId);
+		
+		return $this->ok();
+	}
 }
