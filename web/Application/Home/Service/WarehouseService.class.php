@@ -385,4 +385,27 @@ class WarehouseService extends PSIBaseService {
 		
 		return $this->ok();
 	}
+	/**
+	 * 在仓库启用的组织机构绑定的前提，查询当前登录用户的操作的仓库
+	 */
+	public function getWarehouseListForLoginUser($fid) {
+		$us = new UserService();
+		$userId = $us->getLoginUserId();
+		$result = array();
+		$sql = "select id, name
+					from t_warehouse
+					where id in (
+							select warehouse_id
+							from t_warehouse_org
+							where org_id = '%s' and org_type = '1' and bill_fid = '%s'
+					    	union
+							select w.warehouse_id
+							from t_warehouse_org w, t_org o, t_user u
+							where w.bill_fid = '%s' and w.org_type = '0' 
+									and w.org_id = o.id and o.id = u.org_id and u.id = '%s'
+					  )
+					order by code";
+		$result = M()->query($sql, $userId, $fid, $fid, $userId);
+		return $result;
+	}
 }
