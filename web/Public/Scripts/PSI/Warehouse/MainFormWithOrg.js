@@ -474,6 +474,7 @@ Ext.define("PSI.Warehouse.MainFormWithOrg", {
 		});
 	},
 	onView: function() {
-		PSI.MsgBox.showInfo("TODO");
+		var form = Ext.create("PSI.Warehouse.OrgViewForm");
+		form.show();
 	}
 });

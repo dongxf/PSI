@@ -76,6 +76,7 @@ Ext.define("PSI.User.LoginForm", {
                     text: "登录",
                     formBind: true,
                     handler: me.onOK,
+                    scope: me,
                     iconCls: "PSI-button-ok"
                 },{
                     text: "帮助",

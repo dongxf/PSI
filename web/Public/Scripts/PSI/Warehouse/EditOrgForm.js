@@ -15,7 +15,7 @@ Ext.define("PSI.Warehouse.EditOrgForm", {
 			formBind : true,
 			iconCls : "PSI-button-ok",
 			handler : function() {
-				me.onOK(false);
+				me.onOK();
 			},
 			scope : me
 		}, {
