@@ -99,4 +99,13 @@ class WarehouseController extends Controller {
 			$this->ajaxReturn($ws->deleteOrg($params));
 		}
 	}
+	public function orgViewWarehouseList() {
+		if (IS_POST) {
+			$params = array(
+					"orgId" => I("post.orgId")
+			);
+			$ws = new WarehouseService();
+			$this->ajaxReturn($ws->orgViewWarehouseList($params));
+		}
+	}
 }

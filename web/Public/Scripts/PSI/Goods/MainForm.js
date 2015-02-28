@@ -70,9 +70,9 @@ Ext.define("PSI.Goods.MainForm", {
             var categoryId;
             if (item == null || item.length != 1) {
                 categoryId = null;
+            } else {
+            	categoryId = item[0].get("id");	
             }
-
-            categoryId = item[0].get("id");
 
             Ext.apply(store.proxy.extraParams, {
                 categoryId: categoryId

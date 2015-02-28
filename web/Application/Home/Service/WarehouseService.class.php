@@ -408,4 +408,90 @@ class WarehouseService extends PSIBaseService {
 		$result = M()->query($sql, $userId, $fid, $fid, $userId);
 		return $result;
 	}
+	public function orgViewWarehouseList($params) {
+		$orgId = $params["orgId"];
+		$result = array();
+		if ($orgId == null) {
+			return $result;
+		}
+		
+		$db = M();
+		$orgType = null;
+		$sql = "select count(*) as cnt from t_org where id = '%s' ";
+		$data = $db->query($sql, $orgId);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 1) {
+			$orgType = "0";
+		} else {
+			$sql = "select count(*) as cnt from t_user where id = '%s' ";
+			$data = $db->query($sql, $orgId);
+			$cnt = $data[0]["cnt"];
+			if ($cnt == 1) {
+				$orgType = "1";
+			} else {
+				// 非法的orgId
+				return $result;
+			}
+		}
+		
+		$billFidArray = array(
+				"2001" => "采购入库",
+				"2002" => "销售出库"
+		);
+		
+		$result["text"] = "root";
+		$result["expanded"] = true;
+		$result["leaf"] = false;
+		$c1 = array();
+		$index = 0;
+		foreach ( $billFidArray as $fid => $billType ) {
+			if ($orgType == "0") {
+				$sql = "select w.id, w.code, w.name
+				from t_warehouse w, t_warehouse_org wo
+				where w.id = wo.warehouse_id and wo.org_id = '%s' 
+					and wo.bill_fid = '%s' and wo.org_type = '0' 
+				order by w.code";
+				
+				$data = $db->query($sql, $orgId, $fid);
+			} else {
+				$sql = "select id, name, code
+					from t_warehouse
+					where id in (
+							select warehouse_id
+							from t_warehouse_org
+							where org_id = '%s' and org_type = '1' and bill_fid = '%s'
+					    	union
+							select w.warehouse_id
+							from t_warehouse_org w, t_org o, t_user u
+							where w.bill_fid = '%s' and w.org_type = '0'
+									and w.org_id = o.id and o.id = u.org_id and u.id = '%s'
+					  )
+					order by code";
+				
+				$data = $db->query($sql, $orgId, $fid, $fid, $orgId);
+			}
+			if (! $data) {
+				continue;
+			}
+			$c1[$index]["text"] = $billType;
+			$c1[$index]["expanded"] = true;
+			$c1[$index]["leaf"] = false;
+			$c2 = array();
+			foreach ( $data as $i => $v ) {
+				$c2[$i]["text"] = $billType;
+				$c2[$i]["code"] = $v["code"];
+				$c2[$i]["name"] = $v["name"];
+				$c2[$i]["leaf"] = true;
+				
+				$c2[$i]["children"] = array();
+			}
+			
+			$c1[$index]["children"] = $c2;
+			$index ++;
+		}
+		
+		$result["children"] = $c1;
+		
+		return $result;
+	}
 }

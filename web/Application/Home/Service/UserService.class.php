@@ -96,7 +96,7 @@ class UserService extends PSIBaseService {
 	}
 
 	public function allOrgs() {
-		$sql = "select id, name,  org_code, full_name "
+		$sql = "select id, name, org_code, full_name "
 				. " from t_org where parent_id is null order by org_code";
 		$db = M();
 		$orgList1 = $db->query($sql);

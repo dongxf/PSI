@@ -48,7 +48,7 @@ Ext.define("PSI.Warehouse.OrgViewForm", {
 			}, {
 				region : "center",
 				layout : "fit",
-				items : [me.getWarehouseTreeGrid()]
+				items : [ me.getWarehouseTreeGrid() ]
 			} ],
 			buttons : buttons
 		});
@@ -112,6 +112,12 @@ Ext.define("PSI.Warehouse.OrgViewForm", {
 					dataIndex : "fullName",
 					flex : 1
 				} ]
+			},
+			listeners : {
+				itemclick : {
+					fn : me.onOrgItemClick,
+					scope : me
+				}
 			}
 		});
 
@@ -124,23 +130,39 @@ Ext.define("PSI.Warehouse.OrgViewForm", {
 		}
 
 		var modelName = "PSIOrgModel_EditOrgForm";
-		Ext.define(modelName,
-				{
-					extend : "Ext.data.Model",
-					fields : [ "id", "billType", "code", "name", "leaf",
-							"children" ]
-				});
+		Ext.define(modelName, {
+			extend : "Ext.data.Model",
+			fields : [ "id", "text", "code", "name", "leaf", "children" ]
+		});
 
 		var store = Ext.create("Ext.data.TreeStore", {
 			model : modelName,
-			autoLoad : false,
-			data: []
+			proxy : {
+				type : "ajax",
+				actionMethods: {
+                    read: "POST"
+                },
+				url : PSI.Const.BASE_URL + "Home/Warehouse/orgViewWarehouseList"
+			}
 		});
+		store.on("beforeload", function () {
+            var item = me.getOrgTreeGrid().getSelectionModel().getSelection();
+            var orgId;
+            if (item == null || item.length != 1) {
+                orgId = null;
+            } else {
+            	orgId = item[0].get("id");	
+            }
+
+            Ext.apply(store.proxy.extraParams, {
+                orgId: orgId
+            });
+        });
 
 		me.__treeGridWarehouse = Ext.create("Ext.tree.Panel", {
+			title : "请选择组织机构",
 			store : store,
 			rootVisible : false,
-			root: {},
 			useArrows : true,
 			columns : {
 				defaults : {
@@ -151,20 +173,26 @@ Ext.define("PSI.Warehouse.OrgViewForm", {
 				items : [ {
 					xtype : "treecolumn",
 					text : "业务类型",
-					dataIndex : "billType",
+					dataIndex : "text",
 					width : 220
 				}, {
-					text : "编码",
-					dataIndex : "code",
-					width : 100
-				}, {
-					text : "仓库名次",
+					text : "仓库名称",
 					dataIndex : "name",
 					flex : 1
+				}, {
+					text : "仓库编码",
+					dataIndex : "code",
+					width : 100
 				} ]
 			}
 		});
 
 		return me.__treeGridWarehouse;
+	},
+	onOrgItemClick : function(view, rec) {
+		var me = this;
+		var grid = me.getWarehouseTreeGrid();
+		grid.setTitle("[" + rec.data.fullName + "] 能操作的仓库");
+		grid.getStore().load();
 	}
 });
