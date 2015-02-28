@@ -78,6 +78,7 @@ Ext.define("PSI.Warehouse.MainFormWithOrg", {
 				scope : this
 			}, "-",{
 				text : "从组织机构视角来查看仓库",
+				iconCls: "PSI-button-view",
 				handler : this.onView,
 				scope : this
 			}, "-", {

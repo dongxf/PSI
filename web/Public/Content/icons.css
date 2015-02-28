@@ -62,6 +62,10 @@
     background-image:url(../Images/icons/change_password.png) !important;
 }
 
+.PSI-button-view {
+    background-image:url(../Images/icons/view.png) !important;
+}
+
 .PSI-fid-8993 {
     background-image:url(../Images/fid/fid-8993.png) !important;
 }
