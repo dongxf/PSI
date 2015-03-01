@@ -330,7 +330,7 @@ class SupplierService extends PSIBaseService {
 	}
 	
 	public function queryData($queryKey) {
-		if ($queryKey = null) {
+		if ($queryKey == null) {
 			$queryKey = "";
 		}
 		
