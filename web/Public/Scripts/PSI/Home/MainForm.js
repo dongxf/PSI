@@ -12,8 +12,8 @@
 <p>免费技术支持请联系：</p>" 
             	+ "<p>QQ：1569352868 " + '<a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=1569352868&site=qq&menu=yes"><img border="0" src="http://wpa.qq.com/pa?p=2:1569352868:51" alt="点击这里给我发消息" title="点击这里给我发消息"/></a>'
             	+ "<p>Email：1569352868@qq.com  <p>QQ群：414474186 " + '<a target="_blank" href="http://shang.qq.com/wpa/qunwpa?idkey=64808ce24f2a3186ccb1f37aad9ed591bcc4fb257d09749753aca98c6c73e400"><img border="0" src="http://pub.idqqimg.com/wpa/images/group.png" alt="开源进销存PSI" title="开源进销存PSI"></a>'
-            	+ "</p> <br/>" +
-"<p>如需购买商业服务，请访问：<a href='http://weidian.com/?userid=315007574' target='_blank'>http://weidian.com/?userid=315007574</a></p> <br />" +
+            	+ "</p>" +
+"<p>微信公众号：opensource-psi</p> <br />" +
 		"<p>当前版本：" + PSI.Const.VERSION + "</p>"
     }],
 
