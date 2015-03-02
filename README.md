@@ -8,7 +8,7 @@
 
 PSI演示
 -------------
->PSI的演示见：<a href="http://psi.oschina.mopaas.com" target="_blank">http://psi.oschina.mopaas.com</a>
+>PSI的演示见：(http://psi.oschina.mopaas.com){target = "_blank"}
 
 <p>
     <img src="http://static.oschina.net/uploads/space/2015/0302/215537_vaAs_134395.jpg"/>
