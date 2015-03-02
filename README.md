@@ -10,6 +10,16 @@ PSI演示
 -------------
 >PSI的演示见：http://psi.oschina.mopaas.com
 
+<p>
+    <img src="http://static.oschina.net/uploads/space/2015/0302/215537_vaAs_134395.jpg"/>
+</p>
+<p>
+    <img src="http://static.oschina.net/uploads/space/2015/0302/215556_Szez_134395.jpg"/>
+</p>
+<p>
+    <img src="http://static.oschina.net/uploads/space/2015/0302/215612_fu1s_134395.jpg"/>
+</p>
+
 PSI 2015 beta1下载地址
 -------------
 >PSI 2015 beta1下载地址见：http://pan.baidu.com/s/18krym
