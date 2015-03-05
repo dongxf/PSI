@@ -6,6 +6,12 @@
 >
 >产品寓意：PSI本身不完美，但追求的是不断改进的品质，距离终极产品就一步之遥(因为在希腊字母表中，Ψ之后是Ω，Ω有终极的意思)。
 
+一张图片看懂PSI
+-------------
+<p>
+    <img src="http://d.pcs.baidu.com/thumbnail/d325ef75192efcab43f33d81d2d3597e?fid=2788625700-250528-523909350557482&time=1425528000&sign=FDTAER-DCb740ccc5511e5e8fedcff06b081203-Z%2FvKBY2VfVK9nvKfw7ZIjLFSTPQ%3D&rt=sh&expires=2h&r=600654797&sharesign=unknown&size=c710_u500&quality=100"/>
+</p>
+
 PSI演示
 -------------
 >PSI的演示见：<a href = 'http://psi.oschina.mopaas.com' target = '_blank'>http://psi.oschina.mopaas.com</a>
