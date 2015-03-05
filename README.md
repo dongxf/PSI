@@ -6,12 +6,6 @@
 >
 >产品寓意：PSI本身不完美，但追求的是不断改进的品质，距离终极产品就一步之遥(因为在希腊字母表中，Ψ之后是Ω，Ω有终极的意思)。
 
-一张图看懂开源进销存PSI
--------------
-<p>
-    <img src="http://git.oschina.net/crm8000/PSI/blob/master/doc/01%20%E6%A6%82%E8%A6%81%E8%AE%BE%E8%AE%A1/PSI.png"/>
-</p>
-
 PSI演示
 -------------
 >PSI的演示见：<a href = 'http://psi.oschina.mopaas.com' target = '_blank'>http://psi.oschina.mopaas.com</a>
