@@ -9,7 +9,7 @@
 一张图看懂开源进销存PSI
 -------------
 <p>
-    <img src="http://d.pcs.baidu.com/thumbnail/d325ef75192efcab43f33d81d2d3597e?fid=2788625700-250528-523909350557482&time=1425528000&sign=FDTAER-DCb740ccc5511e5e8fedcff06b081203-Z%2FvKBY2VfVK9nvKfw7ZIjLFSTPQ%3D&rt=sh&expires=2h&r=600654797&sharesign=unknown&size=c710_u500&quality=100"/>
+    <img src="http://static.oschina.net/uploads/space/2015/0306/111629_RuyO_134395.jpg"/>
 </p>
 
 PSI演示
