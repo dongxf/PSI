@@ -1,8 +1,13 @@
 <layout name="layout" />
-
+<if condition="$useTU eq true">
+<script src="{$uri}Public/Scripts/PSI/Goods/MainFormTU.js?dt={$dtFlag}" type="text/javascript"></script>
+<script src="{$uri}Public/Scripts/PSI/Goods/CategoryEditForm.js?dt={$dtFlag}" type="text/javascript"></script>
+<script src="{$uri}Public/Scripts/PSI/Goods/GoodsTUEditForm.js?dt={$dtFlag}" type="text/javascript"></script>
+<else />
 <script src="{$uri}Public/Scripts/PSI/Goods/MainForm.js?dt={$dtFlag}" type="text/javascript"></script>
 <script src="{$uri}Public/Scripts/PSI/Goods/CategoryEditForm.js?dt={$dtFlag}" type="text/javascript"></script>
 <script src="{$uri}Public/Scripts/PSI/Goods/GoodsEditForm.js?dt={$dtFlag}" type="text/javascript"></script>
+</if>
 
 <script>
     Ext.onReady(function(){
@@ -10,7 +15,11 @@
             userName: "{$loginUserName}"
         });
 
-        app.add(Ext.create("PSI.Goods.MainForm"));
+        <if condition="$useTU eq true">
+        	app.add(Ext.create("PSI.Goods.MainFormTU"));
+        <else />
+        	app.add(Ext.create("PSI.Goods.MainForm"));
+        </if>
         app.setAppHeader({
             title: "{$title}",
             iconCls: "PSI-fid1001"

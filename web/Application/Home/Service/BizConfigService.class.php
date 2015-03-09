@@ -117,10 +117,27 @@ class BizConfigService extends PSIBaseService {
 	}
 	
 	/**
-	 * 仓库是否需要设置组织结构
+	 * 仓库是否需要设置组织机构
+	 *
+	 * @return true 仓库需要设置组织机构
 	 */
 	public function warehouseUsesOrg() {
 		$sql = "select value from t_config where id = '1003-01' ";
+		$data = M()->query($sql);
+		if ($data) {
+			return $data[0]["value"] == "1";
+		} else {
+			return false;
+		}
+	}
+	
+	/**
+	 * 商品是否启用双单位
+	 *
+	 * @return true: 启用双单位
+	 */
+	public function goodsUsesTwoUnits() {
+		$sql = "select value from t_config where id = '1001-01' ";
 		$data = M()->query($sql);
 		if ($data) {
 			return $data[0]["value"] == "1";

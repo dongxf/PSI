@@ -6,6 +6,7 @@ use Think\Controller;
 use Home\Service\UserService;
 use Home\Service\GoodsService;
 use Home\Common\FIdConst;
+use Home\Service\BizConfigService;
 
 class GoodsController extends Controller {
 
@@ -20,6 +21,9 @@ class GoodsController extends Controller {
 		$this->assign("dtFlag", $dtFlag[0]);
 
 		if ($us->hasPermission(FIdConst::GOODS)) {
+			$ts = new BizConfigService();
+			$this->assign("useTU", $ts->goodsUsesTwoUnits());
+			
 			$this->display();
 		} else {
 			redirect(__ROOT__ . "/Home/User/login");
