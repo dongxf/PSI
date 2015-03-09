@@ -145,6 +145,9 @@ CREATE TABLE IF NOT EXISTS `t_goods` (
   `sale_price` decimal(19,2) NOT NULL,
   `spec` varchar(255) NOT NULL,
   `unit_id` varchar(255) NOT NULL,
+  `purchase_unit_id` varchar(255) DEFAULT NULL,
+  `purchase_price` decimal(19, 2) DEFAULT NULL,
+  `ps_factor` decimal(19, 2) DEFAULT NULL,
   `py` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
