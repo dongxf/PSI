@@ -32,6 +32,11 @@ PSI 2015 beta1下载地址
 >
 >源码下载地址：http://git.oschina.net/crm8000/PSI/repository/archive?ref=master
 
+通过PSI源码在本地安装
+-------------
+> 本地环境搭建: http://my.oschina.net/u/134395/blog/376530
+> 用WampServer来部署可能会遇到的问题：http://my.oschina.net/u/134395/blog/383754
+
 PSI的开源协议
 -------------
 >PSI的开源协议为GPL v3
