@@ -129,8 +129,11 @@ Ext.define("PSI.Goods.MainFormTU", {
                 {header: "商品编码", dataIndex: "code", menuDisabled: true, sortable: false},
                 {header: "品名", dataIndex: "name", menuDisabled: true, sortable: false, width: 300},
                 {header: "规格型号", dataIndex: "spec", menuDisabled: true, sortable: false, width: 200},
+                {header: "采购计量单位", dataIndex: "purchaseUnitName", menuDisabled: true, sortable: false, width: 80},
+                {header: "建议采购价", dataIndex: "purchasePrice", menuDisabled: true, sortable: false, align: "right", xtype: "numbercolumn"},
                 {header: "销售计量单位", dataIndex: "unitName", menuDisabled: true, sortable: false, width: 80},
-                {header: "销售价", dataIndex: "salePrice", menuDisabled: true, sortable: false, align: "right", xtype: "numbercolumn"}
+                {header: "销售价", dataIndex: "salePrice", menuDisabled: true, sortable: false, align: "right", xtype: "numbercolumn"},
+                {header: "采购/销售计量单位转换比例", dataIndex: "psFactor", menuDisabled: true, sortable: false, align: "right", xtype: "numbercolumn", width: 160}
             ],
             store: store,
             listeners: {
