@@ -372,4 +372,46 @@ class GoodsService extends PSIBaseService {
 		
 		return $result;
 	}
+	
+	public function goodsListTU($params) {
+		$categoryId = $params["categoryId"];
+		$page = $params["page"];
+		$start = $params["start"];
+		$limit = $params["limit"];
+	
+		$db = M();
+		$result = array();
+		$sql = "select g.id, g.code, g.name, g.sale_price, g.spec,  
+					g.unit_id, u.name as unit_name, u2.name as purchase_unit_name,
+				    u2.id as purchase_unit_id, g.purchase_price, g.ps_factor
+				 from t_goods g
+				 left join t_goods_unit u
+				 on g.unit_id = u.id and g.category_id = '%s'
+				 left join t_goods_unit u2
+				 on g.purchase_unit_id = u2.id 
+				 order by g.code 
+				 limit " . $start . ", " . $limit;
+		$data = $db->query($sql, $categoryId);
+	
+		foreach ($data as $i => $v) {
+			$result[$i]["id"] = $v["id"];
+			$result[$i]["code"] = $v["code"];
+			$result[$i]["name"] = $v["name"];
+			$result[$i]["salePrice"] = $v["sale_price"];
+			$result[$i]["spec"] = $v["spec"];
+			$result[$i]["unitId"] = $v["unit_id"];
+			$result[$i]["unitName"] = $v["unit_name"];
+			$result[$i]["purchaseUnitId"] = $v["purchase_unit_id"];
+			$result[$i]["purchaseUnitName"] = $v["purchase_unit_name"];
+			$result[$i]["purchasePrice"] = $v["purchase_price"];
+			$result[$i]["psFactor"] = $v["ps_factor"];
+		}
+	
+		$sql = "select count(*) as cnt from t_goods where category_id = '%s' ";
+		$data = $db->query($sql, $categoryId);
+		$totalCount = $data[0]["cnt"];
+	
+		return array("goodsList" => $result, "totalCount" => $totalCount);
+	}
+	
 }

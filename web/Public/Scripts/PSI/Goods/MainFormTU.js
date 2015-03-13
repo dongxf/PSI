@@ -45,7 +45,7 @@ Ext.define("PSI.Goods.MainFormTU", {
         Ext.define("PSIGoods", {
             extend: "Ext.data.Model",
             fields: ["id", "code", "name", "spec", "unitId", "unitName", "categoryId", "salePrice",
-                     "purchaseUnitName", "purchasePrice", "psFactor"]
+                     "purchaseUnitId", "purchaseUnitName", "purchasePrice", "psFactor"]
         });
 
         var store = Ext.create("Ext.data.Store", {
@@ -58,7 +58,7 @@ Ext.define("PSI.Goods.MainFormTU", {
                 actionMethods: {
                     read: "POST"
                 },
-                url: PSI.Const.BASE_URL + "Home/Goods/goodsList",
+                url: PSI.Const.BASE_URL + "Home/Goods/goodsListTU",
                 reader: {
                     root: 'goodsList',
                     totalProperty: 'totalCount'
