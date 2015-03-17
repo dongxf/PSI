@@ -59,7 +59,7 @@ Ext.define("PSI.Goods.GoodsTUEditForm", {
             modal: true,
             onEsc: Ext.emptyFn,
             width: 400,
-            height: 230,
+            height: 300,
             layout: "fit",
             items: [
                 {
@@ -70,7 +70,7 @@ Ext.define("PSI.Goods.GoodsTUEditForm", {
                     bodyPadding: 5,
                     defaultType: 'textfield',
                     fieldDefaults: {
-                        labelWidth: 60,
+                        labelWidth: 80,
                         labelAlign: "right",
                         labelSeparator: "",
                         msgTarget: 'side'
@@ -147,9 +147,9 @@ Ext.define("PSI.Goods.GoodsTUEditForm", {
                         {
                             id: "editUnit",
                             xtype: "combo",
-                            fieldLabel: "计量单位",
+                            fieldLabel: "销售计量单位",
                             allowBlank: false,
-                            blankText: "没有输入计量单位",
+                            blankText: "没有输入销售计量单位",
                             beforeLabelTextTpl: PSI.Const.REQUIRED,
                             valueField: "id",
                             displayField: "name",

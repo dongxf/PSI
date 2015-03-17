@@ -60,6 +60,14 @@ class BizConfigService extends PSIBaseService {
 		);
 	}
 	public function edit($params) {
+		// 临时代码
+		if ($this->isDemo()) {
+			$value = $params["1001-01"];
+			if ($value == 1) {
+				return $this->bad("当前版本还不支持修改[商品采购和销售分别使用不同的计量单位]的值，该功能牵涉很多处代码修改，还没有开发完成");
+			}
+		}
+		
 		$db = M();
 		
 		foreach ( $params as $key => $value ) {
