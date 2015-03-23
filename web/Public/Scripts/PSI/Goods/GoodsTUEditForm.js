@@ -183,7 +183,7 @@ Ext.define("PSI.Goods.GoodsTUEditForm", {
                             value: entity == null ? null : entity.get("purchasePrice"),
                             listeners: {
                                 specialkey: {
-                                    fn: me.onEditSalePriceSpecialKey,
+                                    fn: me.onEditSpecialKey,
                                     scope: me
                                 }
                             }
@@ -219,7 +219,7 @@ Ext.define("PSI.Goods.GoodsTUEditForm", {
                             value: entity == null ? null : entity.get("salePrice"),
                             listeners: {
                                 specialkey: {
-                                    fn: me.onEditSalePriceSpecialKey,
+                                    fn: me.onEditSpecialKey,
                                     scope: me
                                 }
                             }
@@ -235,7 +235,7 @@ Ext.define("PSI.Goods.GoodsTUEditForm", {
                             value: entity == null ? null : entity.get("psFactor"),
                             listeners: {
                                 specialkey: {
-                                    fn: me.onEditSalePriceSpecialKey,
+                                    fn: me.onEditSpecialKey,
                                     scope: me
                                 }
                             }
@@ -258,7 +258,8 @@ Ext.define("PSI.Goods.GoodsTUEditForm", {
         me.callParent(arguments);
 
         me.__editorList = ["editCategory", "editCode", "editName", "editSpec",
-            "editUnit", "editSalePrice"];
+                           "editPurchaseUnit", "editPurchasePrice",
+                           "editUnit", "editSalePrice", "editFactor"];
     },
     onWndShow: function () {
         var me = this;
@@ -349,7 +350,7 @@ Ext.define("PSI.Goods.GoodsTUEditForm", {
             }
         }
     },
-    onEditSalePriceSpecialKey: function (field, e) {
+    onLastEditSpecialKey: function (field, e) {
         if (e.getKey() == e.ENTER) {
             var f = Ext.getCmp("editForm");
             if (f.getForm().isValid()) {
