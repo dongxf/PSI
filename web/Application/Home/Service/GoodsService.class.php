@@ -278,6 +278,79 @@ class GoodsService extends PSIBaseService {
 		return $this->ok($id);
 	}
 
+	public function editGoodsTU($params) {
+		return $this->todo();
+		
+		$id = $params["id"];
+		$code = $params["code"];
+		$name = $params["name"];
+		$spec = $params["spec"];
+		$categoryId = $params["categoryId"];
+		$unitId = $params["unitId"];
+		$salePrice = $params["salePrice"];
+
+		$db = M();
+		$sql = "select name from t_goods_unit where id = '%s' ";
+		$data = $db->query($sql, $unitId);
+		if (!$data) {
+			return $this->bad("计量单位不存在");
+		}
+		$sql = "select name from t_goods_category where id = '%s' ";
+		$data = $db->query($sql, $categoryId);
+		if (!$data) {
+			return $this->bad("商品分类不存在");
+		}
+
+		if ($id) {
+			// 编辑
+			// 检查商品编码是否唯一
+			$sql = "select count(*) as cnt from t_goods where code = '%s' and id <> '%s' ";
+			$data = $db->query($sql, $code, $id);
+			$cnt = $data[0]["cnt"];
+			if ($cnt > 0) {
+				return $this->bad("编码为 [{$code}]的商品已经存在");
+			}
+
+			$ps = new PinyinService();
+			$py = $ps->toPY($name);
+
+			$sql = "update t_goods"
+					. " set code = '%s', name = '%s', spec = '%s', category_id = '%s', "
+					. "       unit_id = '%s', sale_price = %f, py = '%s' "
+					. " where id = '%s' ";
+
+			$db->execute($sql, $code, $name, $spec, $categoryId, $unitId, $salePrice, $py, $id);
+
+			$log = "编辑商品: 商品编码 = {$code}, 品名 = {$name}, 规格型号 = {$spec}";
+			$bs = new BizlogService();
+			$bs->insertBizlog($log, "基础数据-商品");
+		} else {
+			// 新增
+			// 检查商品编码是否唯一
+			$sql = "select count(*) as cnt from t_goods where code = '%s' ";
+			$data = $db->query($sql, $code);
+			$cnt = $data[0]["cnt"];
+			if ($cnt > 0) {
+				return $this->bad("编码为 [{$code}]的商品已经存在");
+			}
+
+			$idGen = new IdGenService();
+			$id = $idGen->newId();
+			$ps = new PinyinService();
+			$py = $ps->toPY($name);
+
+			$sql = "insert into t_goods (id, code, name, spec, category_id, unit_id, sale_price, py)"
+					. " values ('%s', '%s', '%s', '%s', '%s', '%s', %f, '%s')";
+			$db->execute($sql, $id, $code, $name, $spec, $categoryId, $unitId, $salePrice, $py);
+
+			$log = "新增商品: 商品编码 = {$code}, 品名 = {$name}, 规格型号 = {$spec}";
+			$bs = new BizlogService();
+			$bs->insertBizlog($log, "基础数据-商品");
+		}
+
+		return $this->ok($id);
+	}
+	
 	public function deleteGoods($params) {
 		$id = $params["id"];
 

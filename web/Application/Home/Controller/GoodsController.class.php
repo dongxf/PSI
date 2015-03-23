@@ -122,6 +122,24 @@ class GoodsController extends Controller {
 			$this->ajaxReturn($gs->editGoods($params));
 		}
 	}
+	public function editGoodsTU() {
+		if (IS_POST) {
+			$params = array(
+					"id" => I("post.id"),
+					"categoryId" => I("post.categoryId"),
+					"code" => I("post.code"),
+					"name" => I("post.name"),
+					"spec" => I("post.spec"),
+					"unitId" => I("post.unitId"),
+					"salePrice" => I("post.salePrice"),
+					"purchaseUnitId" => I("post.purchaseUnitId"),
+					"purchasePrice" => I("post.purchasePrice"),
+					"psFactor" => I("post.psFactor")
+			);
+			$gs = new GoodsService();
+			$this->ajaxReturn($gs->editGoodsTU($params));
+		}
+	}
 	public function deleteGoods() {
 		if (IS_POST) {
 			$params = array(

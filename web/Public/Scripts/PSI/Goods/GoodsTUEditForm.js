@@ -20,6 +20,13 @@ Ext.define("PSI.Goods.GoodsTUEditForm", {
         });
         me.unitStore = unitStore;
 
+        var purchaseUnitStore = Ext.create("Ext.data.Store", {
+            model: "PSIGoodsUnit",
+            autoLoad: false,
+            data: []
+        });
+        me.purchaseUnitStore = purchaseUnitStore;
+
         me.adding = entity == null;
 
         var buttons = [];
@@ -59,7 +66,7 @@ Ext.define("PSI.Goods.GoodsTUEditForm", {
             modal: true,
             onEsc: Ext.emptyFn,
             width: 400,
-            height: 300,
+            height: 320,
             layout: "fit",
             items: [
                 {
@@ -70,7 +77,7 @@ Ext.define("PSI.Goods.GoodsTUEditForm", {
                     bodyPadding: 5,
                     defaultType: 'textfield',
                     fieldDefaults: {
-                        labelWidth: 80,
+                        labelWidth: 90,
                         labelAlign: "right",
                         labelSeparator: "",
                         msgTarget: 'side'
@@ -145,6 +152,43 @@ Ext.define("PSI.Goods.GoodsTUEditForm", {
                             }
                         },
                         {
+                            id: "editPurchaseUnit",
+                            xtype: "combo",
+                            fieldLabel: "采购计量单位",
+                            allowBlank: false,
+                            blankText: "没有输入采购计量单位",
+                            beforeLabelTextTpl: PSI.Const.REQUIRED,
+                            valueField: "id",
+                            displayField: "name",
+                            store: purchaseUnitStore,
+                            queryMode: "local",
+                            editable: false,
+                            name: "purchaseUnitId",
+                            listeners: {
+                                specialkey: {
+                                    fn: me.onEditSpecialKey,
+                                    scope: me
+                                }
+                            }
+                        },
+                        {
+                            fieldLabel: "建议采购价",
+                            allowBlank: false,
+                            blankText: "没有输入建议采购价",
+                            beforeLabelTextTpl: PSI.Const.REQUIRED,
+                            xtype: "numberfield",
+                            hideTrigger: true,
+                            name: "purchasePrice",
+                            id: "editPurchasePrice",
+                            value: entity == null ? null : entity.get("purchasePrice"),
+                            listeners: {
+                                specialkey: {
+                                    fn: me.onEditSalePriceSpecialKey,
+                                    scope: me
+                                }
+                            }
+                        },
+                        {
                             id: "editUnit",
                             xtype: "combo",
                             fieldLabel: "销售计量单位",
@@ -173,6 +217,22 @@ Ext.define("PSI.Goods.GoodsTUEditForm", {
                             name: "salePrice",
                             id: "editSalePrice",
                             value: entity == null ? null : entity.get("salePrice"),
+                            listeners: {
+                                specialkey: {
+                                    fn: me.onEditSalePriceSpecialKey,
+                                    scope: me
+                                }
+                            }
+                        },{
+                            fieldLabel: "采购/销售计量单位转换比例",
+                            allowBlank: false,
+                            blankText: "没有输入采购/销售计量单位转换比例",
+                            beforeLabelTextTpl: PSI.Const.REQUIRED,
+                            xtype: "numberfield",
+                            hideTrigger: true,
+                            name: "psFactor",
+                            id: "editFactor",
+                            value: entity == null ? null : entity.get("psFactor"),
                             listeners: {
                                 specialkey: {
                                     fn: me.onEditSalePriceSpecialKey,
@@ -208,6 +268,8 @@ Ext.define("PSI.Goods.GoodsTUEditForm", {
 
         var el = me.getEl();
         var unitStore = me.unitStore;
+        var purchaseUnitStore = me.purchaseUnitStore;
+        
         el.mask(PSI.Const.LOADING);
         Ext.Ajax.request({
             url: PSI.Const.BASE_URL + "Home/Goods/allUnits",
@@ -218,6 +280,11 @@ Ext.define("PSI.Goods.GoodsTUEditForm", {
                 if (success) {
                     var data = Ext.JSON.decode(response.responseText);
                     unitStore.add(data);
+                    
+                    for (var i = 0; i < data.length; i++) {
+                    	var item = data[i];
+                    	purchaseUnitStore.add({id: item.id, name: item.name});
+                    }
                 }
 
                 el.unmask();
@@ -225,10 +292,12 @@ Ext.define("PSI.Goods.GoodsTUEditForm", {
                 if (!me.adding) {
                     Ext.getCmp("editCategory").setValue(me.getEntity().get("categoryId"));
                     Ext.getCmp("editUnit").setValue(me.getEntity().get("unitId"));
+                    Ext.getCmp("editPurchaseUnit").setValue(me.getEntity().get("purchaseUnitId"));
                 } else {
                     if (unitStore.getCount() > 0) {
                         var unitId = unitStore.getAt(0).get("id");
                         Ext.getCmp("editUnit").setValue(unitId);
+                        Ext.getCmp("editPurchaseUnit").setValue(unitId);
                     }
                 }
             }
@@ -241,7 +310,7 @@ Ext.define("PSI.Goods.GoodsTUEditForm", {
         var el = f.getEl();
         el.mask(PSI.Const.SAVING);
         f.submit({
-            url: PSI.Const.BASE_URL + "Home/Goods/editGoods",
+            url: PSI.Const.BASE_URL + "Home/Goods/editGoodsTU",
             method: "POST",
             success: function (form, action) {
                 el.unmask();
