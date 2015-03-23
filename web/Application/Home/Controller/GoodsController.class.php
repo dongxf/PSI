@@ -15,7 +15,7 @@ class GoodsController extends Controller {
 		$this->assign("title", "商品");
 		$this->assign("uri", __ROOT__ . "/");
 		
-		$this->assign("loginUserName", $us->getLoginUserName());
+		$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
 		$dtFlag = getdate();
 		$this->assign("dtFlag", $dtFlag[0]);
 		
@@ -34,7 +34,7 @@ class GoodsController extends Controller {
 		$this->assign("title", "商品计量单位");
 		$this->assign("uri", __ROOT__ . "/");
 		
-		$this->assign("loginUserName", $us->getLoginUserName());
+		$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
 		$dtFlag = getdate();
 		$this->assign("dtFlag", $dtFlag[0]);
 		

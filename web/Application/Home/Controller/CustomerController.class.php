@@ -15,7 +15,7 @@ class CustomerController extends Controller {
 		$this->assign("title", "客户资料");
 		$this->assign("uri", __ROOT__ . "/");
 
-		$this->assign("loginUserName", $us->getLoginUserName());
+		$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
 		
 		$dtFlag = getdate();
 		$this->assign("dtFlag", $dtFlag[0]);

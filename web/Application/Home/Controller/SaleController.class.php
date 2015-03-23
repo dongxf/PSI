@@ -16,7 +16,7 @@ class SaleController extends Controller {
         $this->assign("title", "销售出库");
         $this->assign("uri", __ROOT__ . "/");
 
-        $this->assign("loginUserName", $us->getLoginUserName());
+        $this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
         $dtFlag = getdate();
         $this->assign("dtFlag", $dtFlag[0]);
 
@@ -89,7 +89,7 @@ class SaleController extends Controller {
         $this->assign("title", "销售退货入库");
         $this->assign("uri", __ROOT__ . "/");
 
-        $this->assign("loginUserName", $us->getLoginUserName());
+        $this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
         $dtFlag = getdate();
         $this->assign("dtFlag", $dtFlag[0]);
 

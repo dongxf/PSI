@@ -46,7 +46,7 @@
                         xtype: "displayfield",
                         value: user.loginName
                     }, {
-                        fieldLabel: "姓名",
+                        fieldLabel: "用户名",
                         xtype: "displayfield",
                         value: user.name
                     }, {

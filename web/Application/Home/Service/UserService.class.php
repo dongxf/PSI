@@ -66,6 +66,23 @@ class UserService extends PSIBaseService {
 			return "";
 		}
 	}
+	
+	public function getLoignUserNameWithOrgFullName() {
+		$userName = $this->getLoginUserName();
+		if ($userName == "") {
+			return $userName;
+		}
+		$sql = "select o.full_name
+				from t_org o, t_user u
+				where o.id = u.org_id and u.id = '%s' ";
+		$data = M()->query($sql, $this->getLoginUserId());
+		$orgFullName = "";
+		if ($data) {
+			$orgFullName = $data[0]["full_name"];
+		}
+		
+		return addslashes($orgFullName . "\\" . $userName);
+	}
 
 	public function getLoginName() {
 		$sql = "select login_name from t_user where id = '%s' ";

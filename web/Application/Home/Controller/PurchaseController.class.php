@@ -13,7 +13,7 @@ class PurchaseController extends Controller {
 		$this->assign("title", "采购入库");
 		$this->assign("uri", __ROOT__ . "/");
 		
-		$this->assign("loginUserName", $us->getLoginUserName());
+		$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
 		$dtFlag = getdate();
 		$this->assign("dtFlag", $dtFlag[0]);
 

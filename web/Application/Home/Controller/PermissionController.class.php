@@ -14,7 +14,7 @@ class PermissionController extends Controller {
 		$this->assign("title", "首页");
 		$this->assign("uri", __ROOT__ . "/");
 		
-		$this->assign("loginUserName", $us->getLoginUserName());
+		$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
 		$dtFlag = getdate();
 		$this->assign("dtFlag", $dtFlag[0]);
 

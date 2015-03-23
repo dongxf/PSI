@@ -11,7 +11,7 @@ class UserController extends Controller {
 	public function index() {
 		$us = new UserService();
 
-		$this->assign("loginUserName", $us->getLoginUserName());
+		$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
 		$this->assign("title", "用户管理");
 		$this->assign("uri", __ROOT__ . "/");
 		$dtFlag = getdate();
@@ -44,7 +44,7 @@ class UserController extends Controller {
 
 		$this->assign("loginUserId", $us->getLoginUserId());
 		$this->assign("loginName", $us->getLoginName());
-		$this->assign("loginUserName", $us->getLoginUserName());
+		$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
 		$this->assign("title", "修改我的密码");
 		$this->assign("uri", __ROOT__ . "/");
 		$dtFlag = getdate();

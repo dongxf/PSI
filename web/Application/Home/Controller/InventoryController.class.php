@@ -15,7 +15,7 @@ class InventoryController extends Controller {
 		$this->assign("title", "库存建账");
 		$this->assign("uri", __ROOT__ . "/");
 
-		$this->assign("loginUserName", $us->getLoginUserName());
+		$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
 		$dtFlag = getdate();
 		$this->assign("dtFlag", $dtFlag[0]);
 
@@ -32,7 +32,7 @@ class InventoryController extends Controller {
 		$this->assign("title", "库存账查询");
 		$this->assign("uri", __ROOT__ . "/");
 
-		$this->assign("loginUserName", $us->getLoginUserName());
+		$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
 		$dtFlag = getdate();
 		$this->assign("dtFlag", $dtFlag[0]);
 

@@ -16,7 +16,7 @@ class FundsController extends Controller {
 		$this->assign("title", "应付账款管理");
 		$this->assign("uri", __ROOT__ . "/");
 
-		$this->assign("loginUserName", $us->getLoginUserName());
+		$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
 		
 		$dtFlag = getdate();
 		$this->assign("dtFlag", $dtFlag[0]);
@@ -130,7 +130,7 @@ class FundsController extends Controller {
 		$this->assign("title", "应收账款管理");
 		$this->assign("uri", __ROOT__ . "/");
 
-		$this->assign("loginUserName", $us->getLoginUserName());
+		$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
 		
 		$dtFlag = getdate();
 		$this->assign("dtFlag", $dtFlag[0]);
