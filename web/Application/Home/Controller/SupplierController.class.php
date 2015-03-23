@@ -12,7 +12,7 @@ class SupplierController extends Controller {
 	public function index() {
 		$us = new UserService();
 
-		$this->assign("title", "供应商");
+		$this->assign("title", "供应商档案");
 		$this->assign("uri", __ROOT__ . "/");
 
 		$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
