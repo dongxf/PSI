@@ -232,10 +232,10 @@ Ext.define("PSI.Goods.GoodsTUEditForm", {
                             hideTrigger: true,
                             name: "psFactor",
                             id: "editFactor",
-                            value: entity == null ? null : entity.get("psFactor"),
+                            value: entity == null ? 1 : entity.get("psFactor"),
                             listeners: {
                                 specialkey: {
-                                    fn: me.onEditSpecialKey,
+                                    fn: me.onLastEditSpecialKey,
                                     scope: me
                                 }
                             }
@@ -363,7 +363,7 @@ Ext.define("PSI.Goods.GoodsTUEditForm", {
         Ext.getCmp("editCode").focus();
 
         var editors = [Ext.getCmp("editCode"), Ext.getCmp("editName"), Ext.getCmp("editSpec"),
-            Ext.getCmp("editSalePrice")];
+            Ext.getCmp("editSalePrice"), Ext.getCmp("editPurchasePrice")];
         for (var i = 0; i < editors.length; i++) {
             var edit = editors[i];
             edit.setValue(null);

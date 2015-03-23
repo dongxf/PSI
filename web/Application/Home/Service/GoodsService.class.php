@@ -278,9 +278,10 @@ class GoodsService extends PSIBaseService {
 		return $this->ok($id);
 	}
 
+	/**
+	 * 编辑商品（双单位，TU : Two Units)
+	 */
 	public function editGoodsTU($params) {
-		return $this->todo();
-		
 		$id = $params["id"];
 		$code = $params["code"];
 		$name = $params["name"];
@@ -288,12 +289,25 @@ class GoodsService extends PSIBaseService {
 		$categoryId = $params["categoryId"];
 		$unitId = $params["unitId"];
 		$salePrice = $params["salePrice"];
+		$purchaseUnitId = $params["purchaseUnitId"];
+		$purchasePrice = $params["purchasePrice"];
+		$psFactor = $params["psFactor"];
 
+		if (floatval($psFactor) <= 0) {
+			return $this->bad("采购/销售计量单位转换比例必须大于0");
+		}
+		
 		$db = M();
+		$sql = "select name from t_goods_unit where id = '%s' ";
+		$data = $db->query($sql, $purchaseUnitId);
+		if (!$data) {
+			return $this->bad("采购计量单位不存在");
+		}
+		
 		$sql = "select name from t_goods_unit where id = '%s' ";
 		$data = $db->query($sql, $unitId);
 		if (!$data) {
-			return $this->bad("计量单位不存在");
+			return $this->bad("销售计量单位不存在");
 		}
 		$sql = "select name from t_goods_category where id = '%s' ";
 		$data = $db->query($sql, $categoryId);
@@ -316,10 +330,12 @@ class GoodsService extends PSIBaseService {
 
 			$sql = "update t_goods"
 					. " set code = '%s', name = '%s', spec = '%s', category_id = '%s', "
-					. "       unit_id = '%s', sale_price = %f, py = '%s' "
+					. "       unit_id = '%s', sale_price = %f, py = '%s',
+							purchase_unit_id = '%s', purchase_price = %f, ps_factor = %f "
 					. " where id = '%s' ";
 
-			$db->execute($sql, $code, $name, $spec, $categoryId, $unitId, $salePrice, $py, $id);
+			$db->execute($sql, $code, $name, $spec, $categoryId, $unitId, $salePrice, $py, 
+					$purchaseUnitId, $purchasePrice, $psFactor, $id);
 
 			$log = "编辑商品: 商品编码 = {$code}, 品名 = {$name}, 规格型号 = {$spec}";
 			$bs = new BizlogService();
@@ -339,9 +355,11 @@ class GoodsService extends PSIBaseService {
 			$ps = new PinyinService();
 			$py = $ps->toPY($name);
 
-			$sql = "insert into t_goods (id, code, name, spec, category_id, unit_id, sale_price, py)"
-					. " values ('%s', '%s', '%s', '%s', '%s', '%s', %f, '%s')";
-			$db->execute($sql, $id, $code, $name, $spec, $categoryId, $unitId, $salePrice, $py);
+			$sql = "insert into t_goods (id, code, name, spec, category_id, unit_id, sale_price, py,
+					 purchase_unit_id, purchase_price, ps_factor)"
+					. " values ('%s', '%s', '%s', '%s', '%s', '%s', %f, '%s', '%s', %f, %f)";
+			$db->execute($sql, $id, $code, $name, $spec, $categoryId, $unitId, $salePrice, $py,
+					$purchaseUnitId, $purchasePrice, $psFactor);
 
 			$log = "新增商品: 商品编码 = {$code}, 品名 = {$name}, 规格型号 = {$spec}";
 			$bs = new BizlogService();
@@ -459,9 +477,10 @@ class GoodsService extends PSIBaseService {
 				    u2.id as purchase_unit_id, g.purchase_price, g.ps_factor
 				 from t_goods g
 				 left join t_goods_unit u
-				 on g.unit_id = u.id and g.category_id = '%s'
+				 on g.unit_id = u.id 
 				 left join t_goods_unit u2
-				 on g.purchase_unit_id = u2.id 
+				 on g.purchase_unit_id = u2.id
+				 where g.category_id = '%s'
 				 order by g.code 
 				 limit " . $start . ", " . $limit;
 		$data = $db->query($sql, $categoryId);
