@@ -35,8 +35,10 @@ PSI 2015 beta1下载地址
 通过PSI源码在本地安装
 -------------
 > 本地环境搭建: http://my.oschina.net/u/134395/blog/376530
-> <br />
-> 用WampServer来部署可能会遇到的问题：http://my.oschina.net/u/134395/blog/383754
+> <br /> <br />
+> 用WampServer部署可能会遇到的问题：http://my.oschina.net/u/134395/blog/383754
+> <br /> <br />
+> 用Nginx部署可能会遇到的问题：http://my.oschina.net/u/134395/blog/390650
 
 PSI的开源协议
 -------------
