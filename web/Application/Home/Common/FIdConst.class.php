@@ -5,7 +5,7 @@ namespace Home\Common;
 /**
  * FId常数值
  *
- * @author Administrator
+ * @author 李静波
  */
 class FIdConst {
 	

@@ -5,7 +5,7 @@ namespace Home\Common;
 /**
  * 演示用的一些常数值
  *
- * @author Administrator
+ * @author 李静波
  */
 class DemoConst {
 	/**
