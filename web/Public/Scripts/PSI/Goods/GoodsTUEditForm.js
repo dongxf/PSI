@@ -273,34 +273,44 @@ Ext.define("PSI.Goods.GoodsTUEditForm", {
         
         el.mask(PSI.Const.LOADING);
         Ext.Ajax.request({
-            url: PSI.Const.BASE_URL + "Home/Goods/allUnits",
+            url: PSI.Const.BASE_URL + "Home/Goods/goodsInfoTU",
+            params: {
+            	id: me.adding ? null : me.getEntity().get("id")
+            },
             method: "POST",
             callback: function (options, success, response) {
                 unitStore.removeAll();
 
                 if (success) {
                     var data = Ext.JSON.decode(response.responseText);
-                    unitStore.add(data);
-                    
-                    for (var i = 0; i < data.length; i++) {
-                    	var item = data[i];
-                    	purchaseUnitStore.add({id: item.id, name: item.name});
+                    if (data.units) {
+                    	unitStore.add(data.units);
+                        for (var i = 0; i < data.units.length; i++) {
+                        	var item = data.units[i];
+                        	purchaseUnitStore.add({id: item.id, name: item.name});
+                        }
+                    }
+
+                    if (!me.adding) {
+                        Ext.getCmp("editCategory").setValue(data.categoryId);
+                        Ext.getCmp("editCode").setValue(data.code);
+                        Ext.getCmp("editName").setValue(data.name);
+                        Ext.getCmp("editSpec").setValue(data.spec);
+                        Ext.getCmp("editUnit").setValue(data.unitId);
+                        Ext.getCmp("editPurchaseUnit").setValue(data.purchaseUnitId);
+                        Ext.getCmp("editPurchasePrice").setValue(data.purchasePrice);
+                        Ext.getCmp("editSalePrice").setValue(data.salePrice);
+                        Ext.getCmp("editFactor").setValue(data.psFactor);
+                    } else {
+                        if (unitStore.getCount() > 0) {
+                            var unitId = unitStore.getAt(0).get("id");
+                            Ext.getCmp("editUnit").setValue(unitId);
+                            Ext.getCmp("editPurchaseUnit").setValue(unitId);
+                        }
                     }
                 }
 
                 el.unmask();
-
-                if (!me.adding) {
-                    Ext.getCmp("editCategory").setValue(me.getEntity().get("categoryId"));
-                    Ext.getCmp("editUnit").setValue(me.getEntity().get("unitId"));
-                    Ext.getCmp("editPurchaseUnit").setValue(me.getEntity().get("purchaseUnitId"));
-                } else {
-                    if (unitStore.getCount() > 0) {
-                        var unitId = unitStore.getAt(0).get("id");
-                        Ext.getCmp("editUnit").setValue(unitId);
-                        Ext.getCmp("editPurchaseUnit").setValue(unitId);
-                    }
-                }
             }
         });
     },

@@ -7,6 +7,7 @@ use Home\Service\UserService;
 use Home\Service\GoodsService;
 use Home\Common\FIdConst;
 use Home\Service\BizConfigService;
+use Home\Service\Home\Service;
 
 class GoodsController extends Controller {
 	public function index() {
@@ -177,4 +178,25 @@ class GoodsController extends Controller {
 			$this->ajaxReturn($gs->goodsListTU($params));
 		}
 	}
+	
+	public function goodsInfo() {
+		if (IS_POST) {
+			$id = I("post.id");
+			$gs = new GoodsService();
+			$data = $gs->getGoodsInfo($id);
+			$data["units"] = $gs->allUnits();
+			$this->ajaxReturn($data);
+		}
+	}
+	
+	public function goodsInfoTU() {
+		if (IS_POST) {
+			$id = I("post.id");
+			$gs = new GoodsService();
+			$data = $gs->getGoodsInfoTU($id);
+			$data["units"] = $gs->allUnits();
+			$this->ajaxReturn($data);
+		}
+	}
+	
 }

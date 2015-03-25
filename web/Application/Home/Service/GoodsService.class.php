@@ -506,4 +506,47 @@ class GoodsService extends PSIBaseService {
 		return array("goodsList" => $result, "totalCount" => $totalCount);
 	}
 	
+	public function getGoodsInfo($id) {
+		$sql = "select category_id, code, name, spec, unit_id, sale_price
+				from t_goods
+				where id = '%s' ";
+		$data = M()->query($sql, $id);
+		if ($data) {
+			$result = array();
+			$result["categoryId"] = $data[0]["category_id"];
+			$result["code"] = $data[0]["code"];
+			$result["name"] = $data[0]["name"];
+			$result["spec"] = $data[0]["spec"];
+			$result["unitId"] = $data[0]["unit_id"];
+			$result["salePrice"] = $data[0]["sale_price"];
+				
+			return $result;
+		} else {
+			return array();
+		}
+	}
+	
+	public function getGoodsInfoTU($id) {
+		$sql = "select category_id, code, name, spec, unit_id, sale_price, 
+				   purchase_unit_id, purchase_price, ps_factor
+				from t_goods
+				where id = '%s' ";
+		$data = M()->query($sql, $id);
+		if ($data) {
+			$result = array();
+			$result["categoryId"] = $data[0]["category_id"];
+			$result["code"] = $data[0]["code"];
+			$result["name"] = $data[0]["name"];
+			$result["spec"] = $data[0]["spec"];
+			$result["unitId"] = $data[0]["unit_id"];
+			$result["salePrice"] = $data[0]["sale_price"];
+			$result["purchaseUnitId"] = $data[0]["purchase_unit_id"];
+			$result["purchasePrice"] = $data[0]["purchase_price"];
+			$result["psFactor"] = $data[0]["ps_factor"];
+				
+			return $result;
+		} else {
+			return array();
+		}
+	}
 }

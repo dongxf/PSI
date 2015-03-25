@@ -210,27 +210,38 @@ Ext.define("PSI.Goods.GoodsEditForm", {
         var unitStore = me.unitStore;
         el.mask(PSI.Const.LOADING);
         Ext.Ajax.request({
-            url: PSI.Const.BASE_URL + "Home/Goods/allUnits",
+            url: PSI.Const.BASE_URL + "Home/Goods/goodsInfo",
+            params: {
+            	id: me.adding ? null : me.getEntity().get("id")
+            },
             method: "POST",
             callback: function (options, success, response) {
                 unitStore.removeAll();
 
                 if (success) {
                     var data = Ext.JSON.decode(response.responseText);
-                    unitStore.add(data);
+                    if (data.units) {
+                    	unitStore.add(data.units);
+                    }
+
+                    if (!me.adding) {
+                    	// 编辑商品信息
+                        Ext.getCmp("editCategory").setValue(data.categoryId);
+                        Ext.getCmp("editCode").setValue(data.code);
+                        Ext.getCmp("editName").setValue(data.name);
+                        Ext.getCmp("editSpec").setValue(data.spec);
+                        Ext.getCmp("editUnit").setValue(data.unitId);
+                        Ext.getCmp("editSalePrice").setValue(data.salePrice);
+                    } else {
+                    	// 新增商品
+                        if (unitStore.getCount() > 0) {
+                            var unitId = unitStore.getAt(0).get("id");
+                            Ext.getCmp("editUnit").setValue(unitId);
+                        }
+                    }
                 }
 
                 el.unmask();
-
-                if (!me.adding) {
-                    Ext.getCmp("editCategory").setValue(me.getEntity().get("categoryId"));
-                    Ext.getCmp("editUnit").setValue(me.getEntity().get("unitId"));
-                } else {
-                    if (unitStore.getCount() > 0) {
-                        var unitId = unitStore.getAt(0).get("id");
-                        Ext.getCmp("editUnit").setValue(unitId);
-                    }
-                }
             }
         });
     },
