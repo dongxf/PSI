@@ -8,6 +8,7 @@ namespace Home\Service;
  * @author 李静波
  */
 class PWBillService extends PSIBaseService {
+
 	public function pwbillList($params) {
 		$page = $params["page"];
 		$start = $params["start"];
@@ -40,6 +41,7 @@ class PWBillService extends PSIBaseService {
 				"totalCount" => $cnt
 		);
 	}
+
 	public function pwBillDetailList($pwbillId) {
 		$sql = "select p.id, g.code, g.name, g.spec, u.name as unit_name, p.goods_count, p.goods_price, p.goods_money" . " from t_pw_bill_detail p, t_goods g, t_goods_unit u" . " where p.pwbill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id" . " order by p.show_order ";
 		$data = M()->query($sql, $pwbillId);
@@ -58,6 +60,7 @@ class PWBillService extends PSIBaseService {
 		
 		return $result;
 	}
+
 	public function editPWBill($json) {
 		$bill = json_decode(html_entity_decode($json), true);
 		if ($bill == null) {
@@ -202,6 +205,7 @@ class PWBillService extends PSIBaseService {
 		
 		return $this->ok($id);
 	}
+
 	private function genNewBillRef() {
 		$pre = "PW";
 		$mid = date("Ymd");
@@ -217,6 +221,7 @@ class PWBillService extends PSIBaseService {
 		
 		return $pre . $mid . $suf;
 	}
+
 	public function pwBillInfo($id) {
 		$result["id"] = $id;
 		
@@ -281,6 +286,7 @@ class PWBillService extends PSIBaseService {
 		
 		return $result;
 	}
+
 	public function deletePWBill($id) {
 		$db = M();
 		$sql = "select ref, bill_status from t_pw_bill where id = '%s' ";
@@ -314,6 +320,7 @@ class PWBillService extends PSIBaseService {
 		
 		return $this->ok();
 	}
+
 	public function commitPWBill($id) {
 		$db = M();
 		$sql = "select ref, warehouse_id, bill_status, biz_dt, biz_user_id,  goods_money, supplier_id " . " from t_pw_bill where id = '%s' ";

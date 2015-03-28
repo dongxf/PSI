@@ -10,6 +10,7 @@ use Home\Service\BizConfigService;
 use Home\Service\Home\Service;
 
 class GoodsController extends Controller {
+
 	public function index() {
 		$us = new UserService();
 		
@@ -29,6 +30,7 @@ class GoodsController extends Controller {
 			redirect(__ROOT__ . "/Home/User/login");
 		}
 	}
+
 	public function unitIndex() {
 		$us = new UserService();
 		
@@ -45,12 +47,14 @@ class GoodsController extends Controller {
 			redirect("Home/User/login");
 		}
 	}
+
 	public function allUnits() {
 		if (IS_POST) {
 			$gs = new GoodsService();
 			$this->ajaxReturn($gs->allUnits());
 		}
 	}
+
 	public function editUnit() {
 		if (IS_POST) {
 			$params = array(
@@ -61,6 +65,7 @@ class GoodsController extends Controller {
 			$this->ajaxReturn($gs->editUnit($params));
 		}
 	}
+
 	public function deleteUnit() {
 		if (IS_POST) {
 			$params = array(
@@ -70,12 +75,14 @@ class GoodsController extends Controller {
 			$this->ajaxReturn($gs->deleteUnit($params));
 		}
 	}
+
 	public function allCategories() {
 		if (IS_POST) {
 			$gs = new GoodsService();
 			$this->ajaxReturn($gs->allCategories());
 		}
 	}
+
 	public function editCategory() {
 		if (IS_POST) {
 			$params = array(
@@ -87,6 +94,7 @@ class GoodsController extends Controller {
 			$this->ajaxReturn($gs->editCategory($params));
 		}
 	}
+
 	public function deleteCategory() {
 		if (IS_POST) {
 			$params = array(
@@ -96,6 +104,7 @@ class GoodsController extends Controller {
 			$this->ajaxReturn($gs->deleteCategory($params));
 		}
 	}
+
 	public function goodsList() {
 		if (IS_POST) {
 			$params = array(
@@ -108,6 +117,7 @@ class GoodsController extends Controller {
 			$this->ajaxReturn($gs->goodsList($params));
 		}
 	}
+
 	public function editGoods() {
 		if (IS_POST) {
 			$params = array(
@@ -123,6 +133,7 @@ class GoodsController extends Controller {
 			$this->ajaxReturn($gs->editGoods($params));
 		}
 	}
+
 	public function editGoodsTU() {
 		if (IS_POST) {
 			$params = array(
@@ -141,6 +152,7 @@ class GoodsController extends Controller {
 			$this->ajaxReturn($gs->editGoodsTU($params));
 		}
 	}
+
 	public function deleteGoods() {
 		if (IS_POST) {
 			$params = array(
@@ -150,6 +162,7 @@ class GoodsController extends Controller {
 			$this->ajaxReturn($gs->deleteGoods($params));
 		}
 	}
+
 	public function queryData() {
 		if (IS_POST) {
 			$queryKey = I("post.queryKey");
@@ -157,6 +170,7 @@ class GoodsController extends Controller {
 			$this->ajaxReturn($gs->queryData($queryKey));
 		}
 	}
+
 	public function queryDataWithSalePrice() {
 		if (IS_POST) {
 			$queryKey = I("post.queryKey");
@@ -178,7 +192,7 @@ class GoodsController extends Controller {
 			$this->ajaxReturn($gs->goodsListTU($params));
 		}
 	}
-	
+
 	public function goodsInfo() {
 		if (IS_POST) {
 			$id = I("post.id");
@@ -188,7 +202,7 @@ class GoodsController extends Controller {
 			$this->ajaxReturn($data);
 		}
 	}
-	
+
 	public function goodsInfoTU() {
 		if (IS_POST) {
 			$id = I("post.id");
@@ -198,5 +212,4 @@ class GoodsController extends Controller {
 			$this->ajaxReturn($data);
 		}
 	}
-	
 }

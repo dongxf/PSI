@@ -8,6 +8,7 @@ namespace Home\Service;
  * @author 李静波
  */
 class WSBillService extends PSIBaseService {
+
 	public function wsBillInfo($params) {
 		$id = $params["id"];
 		$us = new UserService();
@@ -77,6 +78,7 @@ class WSBillService extends PSIBaseService {
 			return $result;
 		}
 	}
+
 	private function canEditGoodsPrice() {
 		$db = M();
 		$sql = "select value from t_config where id = '2002-01' ";
@@ -94,6 +96,7 @@ class WSBillService extends PSIBaseService {
 		
 		return $us->hasPermission("2002-01");
 	}
+
 	public function editWSBill($params) {
 		$json = $params["jsonStr"];
 		$bill = json_decode(html_entity_decode($json), true);
@@ -196,6 +199,7 @@ class WSBillService extends PSIBaseService {
 		
 		return $this->ok($id);
 	}
+
 	private function genNewBillRef() {
 		$pre = "WS";
 		$mid = date("Ymd");
@@ -212,6 +216,7 @@ class WSBillService extends PSIBaseService {
 		
 		return $pre . $mid . $suf;
 	}
+
 	public function wsbillList($params) {
 		$page = $params["page"];
 		$start = $params["start"];
@@ -243,6 +248,7 @@ class WSBillService extends PSIBaseService {
 				"totalCount" => $cnt
 		);
 	}
+
 	public function wsBillDetailList($params) {
 		$billId = $params["billId"];
 		$sql = "select d.id, g.code, g.name, g.spec, u.name as unit_name, d.goods_count, " . "d.goods_price, d.goods_money " . " from t_ws_bill_detail d, t_goods g, t_goods_unit u " . " where d.wsbill_id = '%s' and d.goods_id = g.id and g.unit_id = u.id" . " order by d.show_order";
@@ -262,6 +268,7 @@ class WSBillService extends PSIBaseService {
 		
 		return $result;
 	}
+
 	public function deleteWSBill($params) {
 		$id = $params["id"];
 		$db = M();
@@ -294,6 +301,7 @@ class WSBillService extends PSIBaseService {
 		
 		return $this->ok();
 	}
+
 	public function commitWSBill($params) {
 		$id = $params["id"];
 		

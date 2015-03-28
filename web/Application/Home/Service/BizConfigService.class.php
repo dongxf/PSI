@@ -8,6 +8,7 @@ namespace Home\Service;
  * @author 李静波
  */
 class BizConfigService extends PSIBaseService {
+
 	public function allConfigs($params) {
 		$sql = "select id, name, value, note  
 				from t_config  
@@ -37,6 +38,7 @@ class BizConfigService extends PSIBaseService {
 		
 		return $result;
 	}
+
 	public function allConfigsWithExtData($params) {
 		$sql = "select id, name, value from t_config order by id";
 		$db = M();
@@ -59,6 +61,7 @@ class BizConfigService extends PSIBaseService {
 				"extData" => $extDataList
 		);
 	}
+
 	public function edit($params) {
 		// 临时代码
 		if ($this->isDemo()) {
@@ -115,6 +118,7 @@ class BizConfigService extends PSIBaseService {
 		
 		return $this->ok();
 	}
+
 	private function getWarehouseName($id) {
 		$data = M()->query("select name from t_warehouse where id = '%s' ", $id);
 		if ($data) {
@@ -123,7 +127,7 @@ class BizConfigService extends PSIBaseService {
 			return "[没有设置]";
 		}
 	}
-	
+
 	/**
 	 * 仓库是否需要设置组织机构
 	 *
@@ -138,7 +142,7 @@ class BizConfigService extends PSIBaseService {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * 商品是否启用双单位
 	 *

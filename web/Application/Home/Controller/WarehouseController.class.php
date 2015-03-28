@@ -9,6 +9,7 @@ use Home\Common\FIdConst;
 use Home\Service\BizConfigService;
 
 class WarehouseController extends Controller {
+
 	public function index() {
 		$us = new UserService();
 		
@@ -28,12 +29,14 @@ class WarehouseController extends Controller {
 			redirect(__ROOT__ . "/Home/User/login");
 		}
 	}
+
 	public function warehouseList() {
 		if (IS_POST) {
 			$ws = new WarehouseService();
 			$this->ajaxReturn($ws->warehouseList());
 		}
 	}
+
 	public function editWarehouse() {
 		if (IS_POST) {
 			$params = array(
@@ -45,6 +48,7 @@ class WarehouseController extends Controller {
 			$this->ajaxReturn($ws->editWarehouse($params));
 		}
 	}
+
 	public function deleteWarehouse() {
 		if (IS_POST) {
 			$params = array(
@@ -54,6 +58,7 @@ class WarehouseController extends Controller {
 			$this->ajaxReturn($ws->deleteWarehouse($params));
 		}
 	}
+
 	public function queryData() {
 		if (IS_POST) {
 			$queryKey = I("post.queryKey");
@@ -62,6 +67,7 @@ class WarehouseController extends Controller {
 			$this->ajaxReturn($ws->queryData($queryKey, $fid));
 		}
 	}
+
 	public function warehouseOrgList() {
 		if (IS_POST) {
 			$params = array(
@@ -72,11 +78,13 @@ class WarehouseController extends Controller {
 			$this->ajaxReturn($ws->warehouseOrgList($params));
 		}
 	}
+
 	public function allOrgs() {
 		$ws = new WarehouseService();
 		
 		$this->ajaxReturn($ws->allOrgs());
 	}
+
 	public function addOrg() {
 		if (IS_POST) {
 			$params = array(
@@ -88,6 +96,7 @@ class WarehouseController extends Controller {
 			$this->ajaxReturn($ws->addOrg($params));
 		}
 	}
+
 	public function deleteOrg() {
 		if (IS_POST) {
 			$params = array(
@@ -99,6 +108,7 @@ class WarehouseController extends Controller {
 			$this->ajaxReturn($ws->deleteOrg($params));
 		}
 	}
+
 	public function orgViewWarehouseList() {
 		if (IS_POST) {
 			$params = array(

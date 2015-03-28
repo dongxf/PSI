@@ -12,9 +12,11 @@ use Org\Util\ArrayList;
  * @author 李静波
  */
 class WarehouseService extends PSIBaseService {
+
 	public function warehouseList() {
 		return M()->query("select id, code, name, inited from t_warehouse order by code");
 	}
+
 	public function editWarehouse($params) {
 		$id = $params["id"];
 		$code = $params["code"];
@@ -61,6 +63,7 @@ class WarehouseService extends PSIBaseService {
 		
 		return $this->ok($id);
 	}
+
 	public function deleteWarehouse($params) {
 		$id = $params["id"];
 		
@@ -86,6 +89,7 @@ class WarehouseService extends PSIBaseService {
 		
 		return $this->ok();
 	}
+
 	public function queryData($queryKey, $fid) {
 		if ($queryKey == null) {
 			$queryKey = "";
@@ -119,6 +123,7 @@ class WarehouseService extends PSIBaseService {
 			return M()->query($sql, $key, $key, $key);
 		}
 	}
+
 	public function warehouseOrgList($params) {
 		$warehouseId = $params["warehouseId"];
 		$fid = $params["fid"];
@@ -155,6 +160,7 @@ class WarehouseService extends PSIBaseService {
 		
 		return $result;
 	}
+
 	public function allOrgs() {
 		$sql = "select id, name, org_code, full_name 
 				from t_org where parent_id is null order by org_code";
@@ -253,6 +259,7 @@ class WarehouseService extends PSIBaseService {
 		
 		return $result;
 	}
+
 	public function addOrg($params) {
 		$warehouseId = $params["warehouseId"];
 		$fid = $params["fid"];
@@ -323,6 +330,7 @@ class WarehouseService extends PSIBaseService {
 		
 		return $this->ok();
 	}
+
 	public function deleteOrg($params) {
 		$warehouseId = $params["warehouseId"];
 		$fid = $params["fid"];
@@ -385,6 +393,7 @@ class WarehouseService extends PSIBaseService {
 		
 		return $this->ok();
 	}
+
 	/**
 	 * 在仓库启用的组织机构绑定的前提，查询当前登录用户的操作的仓库
 	 */
@@ -408,6 +417,7 @@ class WarehouseService extends PSIBaseService {
 		$result = M()->query($sql, $userId, $fid, $fid, $userId);
 		return $result;
 	}
+
 	public function orgViewWarehouseList($params) {
 		$orgId = $params["orgId"];
 		$result = array();
