@@ -9,6 +9,11 @@ use Home\Service\UserService;
 
 use Home\Common\FIdConst;
 
+/**
+ * 主菜单Controller
+ * @author 李静波
+ *
+ */
 class MainMenuController extends Controller {
 
 	public function navigateTo() {
@@ -107,12 +112,16 @@ class MainMenuController extends Controller {
 		}
 	}
 
+	/**
+	 * 返回生成主菜单的JSON数据
+	 * 目前只能处理到生成三级菜单的情况
+	 */
 	public function mainMenuItems() {
 		if (IS_POST) {
 			$us = new UserService();
 
-			$sql = "select id, caption, fid from t_menu_item "
-					. " where parent_id is null order by show_order";
+			$sql = "select id, caption, fid from t_menu_item 
+					where parent_id is null order by show_order";
 			$db = M();
 			$m1 = $db->query($sql);
 			$result = array();
@@ -166,14 +175,15 @@ class MainMenuController extends Controller {
 		}
 	}
 
+	/**
+	 * 常用功能
+	 */
 	public function recentFid() {
 		if (IS_POST) {
-
 			$fidService = new FIdService();
 			$data = $fidService->recentFid();
 
 			$this->ajaxReturn($data);
 		}
 	}
-
 }

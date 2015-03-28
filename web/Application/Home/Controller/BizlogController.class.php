@@ -7,6 +7,11 @@ use Home\Service\UserService;
 use Home\Service\BizlogService;
 use Home\Common\FIdConst;
 
+/**
+ * 业务日志Controller
+ * @author 李静波
+ *
+ */
 class BizlogController extends Controller {
 
 	public function index() {
