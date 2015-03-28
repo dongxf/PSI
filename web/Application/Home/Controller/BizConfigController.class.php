@@ -8,6 +8,7 @@ use Home\Service\BizConfigService;
 use Home\Common\FIdConst;
 
 class BizConfigController extends Controller {
+
 	public function index() {
 		$us = new UserService();
 		
@@ -25,6 +26,7 @@ class BizConfigController extends Controller {
 			redirect(__ROOT__ . "/Home/User/login");
 		}
 	}
+
 	public function allConfigs() {
 		if (IS_POST) {
 			$bs = new BizConfigService();
@@ -32,6 +34,7 @@ class BizConfigController extends Controller {
 			$this->ajaxReturn($bs->allConfigs());
 		}
 	}
+
 	public function allConfigsWithExtData() {
 		if (IS_POST) {
 			$bs = new BizConfigService();
@@ -39,6 +42,7 @@ class BizConfigController extends Controller {
 			$this->ajaxReturn($bs->allConfigsWithExtData());
 		}
 	}
+
 	public function edit() {
 		if (IS_POST) {
 			$bs = new BizConfigService();
