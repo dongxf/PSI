@@ -7,6 +7,11 @@ use Home\Service\UserService;
 use Home\Service\BizConfigService;
 use Home\Common\FIdConst;
 
+/**
+ * 业务设置Controller
+ * @author 李静波
+ *
+ */
 class BizConfigController extends Controller {
 
 	public function index() {

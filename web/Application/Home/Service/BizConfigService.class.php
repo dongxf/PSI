@@ -39,7 +39,7 @@ class BizConfigService extends PSIBaseService {
 		return $result;
 	}
 
-	public function allConfigsWithExtData($params) {
+	public function allConfigsWithExtData() {
 		$sql = "select id, name, value from t_config order by id";
 		$db = M();
 		$result = $db->query($sql);
