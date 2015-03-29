@@ -85,6 +85,12 @@ CREATE TABLE IF NOT EXISTS `t_user` (
   `org_code` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
   `py` varchar(255) DEFAULT NULL,
+  `gender` varchar(255) DEFAULT NULL,
+  `birthday` varchar(255) DEFAULT NULL,
+  `id_card_number` varchar(255) DEFAULT NULL,
+  `tel` varchar(255) DEFAULT NULL,
+  `tel02` varchar(255) DEFAULT NULL,
+  `address` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
