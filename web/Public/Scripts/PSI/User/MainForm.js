@@ -57,7 +57,8 @@ Ext.define("PSI.User.MainForm", {
 
         Ext.define("PSIUser", {
             extend: "Ext.data.Model",
-            fields: ["id", "loginName", "name", "enabled", "orgCode"]
+            fields: ["id", "loginName", "name", "enabled", "orgCode", "gender", "birthday", 
+                     "idCardNumber", "tel", "tel02", "address"]
         });
         var storeGrid = Ext.create("Ext.data.Store", {
             autoLoad: false,
@@ -81,7 +82,13 @@ Ext.define("PSI.User.MainForm", {
                     renderer: function (value) {
                         return value == 1 ? "允许登录" : "<span style='color:red'>禁止登录</span>";
                     }
-                }
+                },
+                {header: "性别", dataIndex: "gender", menuDisabled: true, sortable: false, width: 70},
+                {header: "生日", dataIndex: "birthday", menuDisabled: true, sortable: false},
+                {header: "身份证号", dataIndex: "idCardNumber", menuDisabled: true, sortable: false, width: 200},
+                {header: "联系电话", dataIndex: "tel", menuDisabled: true, sortable: false},
+                {header: "备用联系电话", dataIndex: "tel02", menuDisabled: true, sortable: false},
+                {header: "家庭住址", dataIndex: "address", menuDisabled: true, sortable: false, width: 200}
             ],
             store: storeGrid,
             listeners: {
