@@ -14,7 +14,8 @@ class UserService extends PSIBaseService {
 
 	public function getDemoLoginInfo() {
 		if ($this->isDemo()) {
-			return "您当前处于演示环境，默认的登录名和密码均为 admin <br/>更多帮助请点击 [帮助] 按钮来查看 " . "<br /><div style='color:red'>请勿在演示环境中保存正式数据，演示数据库通常每天在21:00后会清空一次</div>";
+			return "您当前处于演示环境，默认的登录名和密码均为 admin <br/>更多帮助请点击 [帮助] 按钮来查看 
+					<br /><div style='color:red'>请勿在演示环境中保存正式数据，演示数据库通常每天在21:00后会清空一次</div>";
 		} else {
 			return "";
 		}
@@ -47,7 +48,10 @@ class UserService extends PSIBaseService {
 		}
 		
 		$userId = $this->getLoginUserId();
-		$sql = "select count(*) as cnt from " . " t_role_user ru, t_role_permission rp, t_permission p " . " where ru.user_id = '%s' and ru.role_id = rp.role_id " . "     and rp.permission_id = p.id and p.fid = '%s' ";
+		$sql = "select count(*) as cnt 
+				from  t_role_user ru, t_role_permission rp, t_permission p 
+				where ru.user_id = '%s' and ru.role_id = rp.role_id 
+				      and rp.permission_id = p.id and p.fid = '%s' ";
 		$data = M()->query($sql, $userId, $fid);
 		
 		return $data[0]["cnt"] > 0;
@@ -115,7 +119,10 @@ class UserService extends PSIBaseService {
 	}
 
 	public function allOrgs() {
-		$sql = "select id, name, org_code, full_name " . " from t_org where parent_id is null order by org_code";
+		$sql = "select id, name, org_code, full_name 
+				from t_org 
+				where parent_id is null 
+				order by org_code";
 		$db = M();
 		$orgList1 = $db->query($sql);
 		$result = array();
@@ -128,7 +135,10 @@ class UserService extends PSIBaseService {
 			$result[$i]["fullName"] = $org1["full_name"];
 			
 			// 第二级
-			$sql = "select id, name,  org_code, full_name " . " from t_org where parent_id = '%s' order by org_code";
+			$sql = "select id, name,  org_code, full_name 
+					from t_org 
+					where parent_id = '%s' 
+					order by org_code";
 			$orgList2 = $db->query($sql, $org1["id"]);
 			
 			$c2 = array();
@@ -140,7 +150,10 @@ class UserService extends PSIBaseService {
 				$c2[$j]["expanded"] = true;
 				
 				// 第三级
-				$sql = "select id, name,  org_code, full_name " . " from t_org where parent_id = '%s' order by org_code";
+				$sql = "select id, name,  org_code, full_name 
+						from t_org 
+						where parent_id = '%s'  
+						order by org_code ";
 				$orgList3 = $db->query($sql, $org2["id"]);
 				$c3 = array();
 				foreach ( $orgList3 as $k => $org3 ) {
@@ -215,7 +228,9 @@ class UserService extends PSIBaseService {
 			
 			if ($parentId == null) {
 				$fullName = $name;
-				$sql = "update t_org set name = '%s', full_name = '%s', org_code = '%s', parent_id = null" . " where id = '%s' ";
+				$sql = "update t_org 
+						set name = '%s', full_name = '%s', org_code = '%s', parent_id = null 
+						where id = '%s' ";
 				$db->execute($sql, $name, $fullName, $orgCode, $id);
 			} else {
 				$tempParentId = $parentId;
@@ -239,7 +254,9 @@ class UserService extends PSIBaseService {
 					$parentFullName = $data[0]["full_name"];
 					$fullName = $parentFullName . "\\" . $name;
 					
-					$sql = "update t_org set name = '%s', full_name = '%s', org_code = '%s', parent_id = '%s' " . " where id = '%s' ";
+					$sql = "update t_org 
+							set name = '%s', full_name = '%s', org_code = '%s', parent_id = '%s' 
+							where id = '%s' ";
 					$db->execute($sql, $name, $fullName, $orgCode, $parentId, $id);
 					
 					$log = "编辑组织机构：名称 = {$name} 编码 = {$orgCode}";
@@ -290,11 +307,13 @@ class UserService extends PSIBaseService {
 			}
 			
 			if ($parentId == null) {
-				$sql = "insert into t_org (id, name, full_name, org_code, parent_id) " . " values ('%s', '%s', '%s', '%s', null)";
+				$sql = "insert into t_org (id, name, full_name, org_code, parent_id) 
+						values ('%s', '%s', '%s', '%s', null)";
 				
 				$db->execute($sql, $id, $name, $fullName, $orgCode);
 			} else {
-				$sql = "insert into t_org (id, name, full_name, org_code, parent_id) " . " values ('%s', '%s', '%s', '%s', '%s')";
+				$sql = "insert into t_org (id, name, full_name, org_code, parent_id) 
+						values ('%s', '%s', '%s', '%s', '%s')";
 				
 				$db->execute($sql, $id, $name, $fullName, $orgCode, $parentId);
 			}
@@ -411,7 +430,10 @@ class UserService extends PSIBaseService {
 				return $this->bad("组织机构不存在");
 			}
 			
-			$sql = "update t_user " . " set login_name = '%s', name = '%s', org_code = '%s', " . "       org_id = '%s', enabled = %d, py = '%s' " . " where id = '%s' ";
+			$sql = "update t_user 
+					set login_name = '%s', name = '%s', org_code = '%s', 
+					    org_id = '%s', enabled = %d, py = '%s' 
+					where id = '%s' ";
 			$db->execute($sql, $loginName, $name, $orgCode, $orgId, $enabled, $py, $id);
 			
 			$log = "编辑用户： 登录名 = {$loginName} 姓名 = {$name} 编码 = {$orgCode}";
@@ -442,7 +464,8 @@ class UserService extends PSIBaseService {
 			$idGen = new IdGenService();
 			$id = $idGen->newId();
 			
-			$sql = "insert into t_user (id, login_name, name, org_code, org_id, enabled, password, py) " . " values ('%s', '%s', '%s', '%s', '%s', %d, '%s', '%s') ";
+			$sql = "insert into t_user (id, login_name, name, org_code, org_id, enabled, password, py) 
+					values ('%s', '%s', '%s', '%s', '%s', %d, '%s', '%s') ";
 			$db->execute($sql, $id, $loginName, $name, $orgCode, $orgId, $enabled, $password, $py);
 			
 			$log = "新建用户： 登录名 = {$loginName} 姓名 = {$name} 编码 = {$orgCode}";
@@ -469,7 +492,7 @@ class UserService extends PSIBaseService {
 		$userName = $data[0]["name"];
 		
 		// 判断在采购入库单中是否使用了该用户
-		$sql = "select count(*) as cnt from t_pw_bill " . " where biz_user_id = '%s' or input_user_id = '%s' ";
+		$sql = "select count(*) as cnt from t_pw_bill where biz_user_id = '%s' or input_user_id = '%s' ";
 		$data = $db->query($sql, $id, $id);
 		$cnt = $data[0]["cnt"];
 		if ($cnt > 0) {
@@ -477,7 +500,7 @@ class UserService extends PSIBaseService {
 		}
 		
 		// 判断在销售出库单中是否使用了该用户
-		$sql = "select count(*) as cnt from t_ws_bill " . " where biz_user_id = '%s' or input_user_id = '%s' ";
+		$sql = "select count(*) as cnt from t_ws_bill where biz_user_id = '%s' or input_user_id = '%s' ";
 		$data = $db->query($sql, $id, $id);
 		$cnt = $data[0]["cnt"];
 		if ($cnt > 0) {
@@ -485,7 +508,7 @@ class UserService extends PSIBaseService {
 		}
 		
 		// 判断在销售退货入库单中是否使用了该用户
-		$sql = "select count(*) as cnt from t_sr_bill " . " where biz_user_id = '%s' or input_user_id = '%s' ";
+		$sql = "select count(*) as cnt from t_sr_bill where biz_user_id = '%s' or input_user_id = '%s' ";
 		$data = $db->query($sql, $id, $id);
 		$cnt = $data[0]["cnt"];
 		if ($cnt > 0) {
@@ -571,7 +594,7 @@ class UserService extends PSIBaseService {
 		$loginName = $data[0]["login_name"];
 		$name = $data[0]["name"];
 		
-		$sql = "update t_user " . " set password = '%s' " . " where id = '%s' ";
+		$sql = "update t_user set password = '%s' where id = '%s' ";
 		$db->execute($sql, md5($newPassword), $userId);
 		
 		$log = "用户[登录名 ={$loginName} 姓名 = {$name}]修改了自己的登录密码";
@@ -586,7 +609,10 @@ class UserService extends PSIBaseService {
 			return array();
 		}
 		
-		$sql = "select id, login_name, name from t_user " . " where login_name like '%s' or name like '%s' or py like '%s' " . " order by login_name " . " limit 20";
+		$sql = "select id, login_name, name from t_user 
+				where login_name like '%s' or name like '%s' or py like '%s' 
+				order by login_name 
+				limit 20";
 		$key = "%{$queryKey}%";
 		$data = M()->query($sql, $key, $key, $key);
 		$result = array();
