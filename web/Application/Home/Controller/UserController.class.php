@@ -8,15 +8,18 @@ use Home\Common\FIdConst;
 
 class UserController extends Controller {
 
+	/**
+	 * 用户管理-主页面
+	 */
 	public function index() {
 		$us = new UserService();
-
+		
 		$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
 		$this->assign("title", "用户管理");
 		$this->assign("uri", __ROOT__ . "/");
 		$dtFlag = getdate();
 		$this->assign("dtFlag", $dtFlag[0]);
-
+		
 		if ($us->hasPermission(FIdConst::USR_MANAGEMENT)) {
 			$this->display();
 		} else {
@@ -24,11 +27,14 @@ class UserController extends Controller {
 		}
 	}
 
+	/**
+	 * 登录页面
+	 */
 	public function login() {
 		if (session("loginUserId")) {
 			redirect(__ROOT__);
 		}
-
+		
 		$this->assign("title", "登录");
 		$this->assign("uri", __ROOT__ . "/");
 		$dtFlag = getdate();
@@ -39,9 +45,12 @@ class UserController extends Controller {
 		$this->display();
 	}
 
+	/**
+	 * 页面：修改我的密码
+	 */
 	public function changeMyPassword() {
 		$us = new UserService();
-
+		
 		$this->assign("loginUserId", $us->getLoginUserId());
 		$this->assign("loginName", $us->getLoginName());
 		$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
@@ -49,7 +58,7 @@ class UserController extends Controller {
 		$this->assign("uri", __ROOT__ . "/");
 		$dtFlag = getdate();
 		$this->assign("dtFlag", $dtFlag[0]);
-
+		
 		if ($us->hasPermission("-9996")) {
 			$this->display();
 		} else {
@@ -61,11 +70,11 @@ class UserController extends Controller {
 		if (IS_POST) {
 			$us = new UserService();
 			$params = array(
-				"userId" => I("post.userId"),
-				"oldPassword" => I("post.oldPassword"),
-				"newPassword" => I("post.newPassword")
+					"userId" => I("post.userId"),
+					"oldPassword" => I("post.oldPassword"),
+					"newPassword" => I("post.newPassword")
 			);
-
+			
 			$result = $us->changeMyPassword($params);
 			$this->ajaxReturn($result);
 		}
@@ -83,7 +92,7 @@ class UserController extends Controller {
 	public function allOrgs() {
 		$us = new UserService();
 		$data = $us->allOrgs();
-
+		
 		$this->ajaxReturn($data);
 	}
 
@@ -91,7 +100,7 @@ class UserController extends Controller {
 		if (IS_POST) {
 			$us = new UserService();
 			$data = $us->users(I("post.orgId"));
-
+			
 			$this->ajaxReturn($data);
 		}
 	}
@@ -103,9 +112,9 @@ class UserController extends Controller {
 			$name = I("post.name");
 			$parentId = I("post.parentId");
 			$orgCode = I("post.orgCode");
-
+			
 			$result = $us->editOrg($id, $name, $parentId, $orgCode);
-
+			
 			$this->ajaxReturn($result);
 		}
 	}
@@ -115,7 +124,7 @@ class UserController extends Controller {
 			$us = new UserService();
 			$id = I("post.id");
 			$data = $us->orgParentName($id);
-
+			
 			$this->ajaxReturn($data);
 		}
 	}
@@ -125,26 +134,35 @@ class UserController extends Controller {
 			$us = new UserService();
 			$id = I("post.id");
 			$data = $us->deleteOrg($id);
-
+			
 			$this->ajaxReturn($data);
 		}
 	}
 
+	/**
+	 * 新增或编辑用户
+	 */
 	public function editUser() {
 		if (IS_POST) {
 			$us = new UserService();
-
+			
 			$params = array(
-				"id" => I("post.id"),
-				"loginName" => I("post.loginName"),
-				"name" => I("post.name"),
-				"orgCode" => I("post.orgCode"),
-				"orgId" => I("post.orgId"),
-				"enabled" => I("post.enabled") == "true" ? 1 : 0
+					"id" => I("post.id"),
+					"loginName" => I("post.loginName"),
+					"name" => I("post.name"),
+					"orgCode" => I("post.orgCode"),
+					"orgId" => I("post.orgId"),
+					"enabled" => I("post.enabled") == "true" ? 1 : 0,
+					"gender" => I("post.gender"),
+					"birthday" => I("post.birthday"),
+					"idCardNumber" => I("post.idCardNumber"),
+					"tel" => I("post.tel"),
+					"tel02" => I("post.tel02"),
+					"address" => I("post.address")
 			);
-
+			
 			$result = $us->editUser($params);
-
+			
 			$this->ajaxReturn($result);
 		}
 	}
@@ -152,13 +170,13 @@ class UserController extends Controller {
 	public function deleteUser() {
 		if (IS_POST) {
 			$us = new UserService();
-
+			
 			$params = array(
-				"id" => I("post.id")
+					"id" => I("post.id")
 			);
-
+			
 			$result = $us->deleteUser($params);
-
+			
 			$this->ajaxReturn($result);
 		}
 	}
@@ -166,14 +184,14 @@ class UserController extends Controller {
 	public function changePassword() {
 		if (IS_POST) {
 			$us = new UserService();
-
+			
 			$params = array(
-				"id" => I("post.id"),
-				"password" => I("post.password")
+					"id" => I("post.id"),
+					"password" => I("post.password")
 			);
-
+			
 			$result = $us->changePassword($params);
-
+			
 			$this->ajaxReturn($result);
 		}
 	}

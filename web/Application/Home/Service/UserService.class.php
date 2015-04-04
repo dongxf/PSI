@@ -393,6 +393,9 @@ class UserService extends PSIBaseService {
 		return $this->ok();
 	}
 
+	/**
+	 * 新增或编辑用户
+	 */
 	public function editUser($params) {
 		$id = $params["id"];
 		$loginName = $params["loginName"];
@@ -400,6 +403,12 @@ class UserService extends PSIBaseService {
 		$orgCode = $params["orgCode"];
 		$orgId = $params["orgId"];
 		$enabled = $params["enabled"];
+		$gender = $params["gender"];
+		$birthday = $params["birthday"];
+		$idCardNumber = $params["idCardNumber"];
+		$tel = $params["tel"];
+		$tel02 = $params["tel02"];
+		$address = $params["address"];
 		
 		if ($this->isDemo()) {
 			if ($id == DemoConst::ADMIN_USER_ID) {
@@ -431,9 +440,12 @@ class UserService extends PSIBaseService {
 			
 			$sql = "update t_user 
 					set login_name = '%s', name = '%s', org_code = '%s', 
-					    org_id = '%s', enabled = %d, py = '%s' 
+					    org_id = '%s', enabled = %d, py = '%s', 
+					    gender = '%s', birthday = '%s', id_card_number = '%s',
+					    tel = '%s', tel02 = '%s', address = '%s' 
 					where id = '%s' ";
-			$db->execute($sql, $loginName, $name, $orgCode, $orgId, $enabled, $py, $id);
+			$db->execute($sql, $loginName, $name, $orgCode, $orgId, $enabled, $py,
+					$gender, $birthday, $idCardNumber, $tel, $tel02, $address, $id);
 			
 			$log = "编辑用户： 登录名 = {$loginName} 姓名 = {$name} 编码 = {$orgCode}";
 			$bs = new BizlogService();
@@ -463,9 +475,12 @@ class UserService extends PSIBaseService {
 			$idGen = new IdGenService();
 			$id = $idGen->newId();
 			
-			$sql = "insert into t_user (id, login_name, name, org_code, org_id, enabled, password, py) 
-					values ('%s', '%s', '%s', '%s', '%s', %d, '%s', '%s') ";
-			$db->execute($sql, $id, $loginName, $name, $orgCode, $orgId, $enabled, $password, $py);
+			$sql = "insert into t_user (id, login_name, name, org_code, org_id, enabled, password, py,
+					gender, birthday, id_card_number, tel, tel02, address) 
+					values ('%s', '%s', '%s', '%s', '%s', %d, '%s', '%s',
+					'%s', '%s', '%s', '%s', '%s', '%s') ";
+			$db->execute($sql, $id, $loginName, $name, $orgCode, $orgId, $enabled, $password, $py,
+					$gender, $birthday, $idCardNumber, $tel, $tel02, $address);
 			
 			$log = "新建用户： 登录名 = {$loginName} 姓名 = {$name} 编码 = {$orgCode}";
 			$bs = new BizlogService();

@@ -16,7 +16,7 @@ Ext.define("PSI.User.UserEditForm", {
             modal: true,
             onEsc: Ext.emptyFn,
             width: 400,
-            height: 220,
+            height: 370,
             layout: "fit",
             defaultFocus: "editLoginName",
             items: [{
@@ -46,7 +46,7 @@ Ext.define("PSI.User.UserEditForm", {
                     value: entity === null ? null : entity.loginName,
                     listeners: {
                         specialkey: {
-                            fn: me.onEditLoginNameSpecialKey,
+                            fn: me.onEditSpecialKey,
                             scope: me
                         }
                     }
@@ -60,7 +60,7 @@ Ext.define("PSI.User.UserEditForm", {
                     value: entity === null ? null : entity.name,
                     listeners: {
                         specialkey: {
-                            fn: me.onEditNameSpecialKey,
+                            fn: me.onEditSpecialKey,
                             scope: me
                         }
                     }
@@ -74,7 +74,7 @@ Ext.define("PSI.User.UserEditForm", {
                     value: entity === null ? null : entity.orgCode,
                     listeners: {
                         specialkey: {
-                            fn: me.onEditOrgCodeSpecialKey,
+                            fn: me.onEditSpecialKey,
                             scope: me
                         }
                     }
@@ -89,7 +89,7 @@ Ext.define("PSI.User.UserEditForm", {
                     value: entity === null ? null : entity.orgName,
                     listeners: {
                         specialkey: {
-                            fn: me.onEditOrgNameSpecialKey,
+                            fn: me.onEditSpecialKey,
                             scope: me
                         }
                     }
@@ -98,6 +98,78 @@ Ext.define("PSI.User.UserEditForm", {
                     xtype: "hidden",
                     name: "orgId",
                     value: entity === null ? null : entity.orgId
+                }, {
+					id : "editBirthday",
+					fieldLabel : "生日",
+					xtype : "datefield",
+					format : "Y-m-d",
+					name : "birthday",
+					value: entity === null ? null : entity.birthday,
+					listeners : {
+						specialkey : {
+							fn : me.onEditSpecialKey,
+							scope : me
+						}
+					}
+				}, {
+                    id: "editIdCardNumber",
+                    fieldLabel: "身份证号",
+                    name: "idCardNumber",
+                    value: entity === null ? null : entity.idCardNumber,
+                    listeners: {
+                        specialkey: {
+                            fn: me.onEditSpecialKey,
+                            scope: me
+                        }
+                    }
+                }, {
+                    id: "editTel",
+                    fieldLabel: "联系电话",
+                    name: "tel",
+                    value: entity === null ? null : entity.tel,
+                    listeners: {
+                        specialkey: {
+                            fn: me.onEditSpecialKey,
+                            scope: me
+                        }
+                    }
+                }, {
+                    id: "editTel02",
+                    fieldLabel: "备用电话",
+                    name: "tel02",
+                    value: entity === null ? null : entity.tel02,
+                    listeners: {
+                        specialkey: {
+                            fn: me.onEditSpecialKey,
+                            scope: me
+                        }
+                    }
+                }, {
+                    id: "editAddress",
+                    fieldLabel: "家庭住址",
+                    name: "address",
+                    value: entity === null ? null : entity.address,
+                    listeners: {
+                        specialkey: {
+                            fn: me.onLastEditSpecialKey,
+                            scope: me
+                        }
+                    }
+                }, {
+                    xtype: "radiogroup",
+                    fieldLabel: "性别",
+                    columns: 2,
+                    items: [
+                        {
+                            boxLabel: "男 ", name: "gender", inputValue: "男",
+                            checked: entity === null ? true : entity.gender == "男"
+                        },
+                        {
+                            boxLabel: "女 ",
+                            name: "gender", inputValue: "女",
+                            checked: entity === null ? false : entity.gender == "女"
+                        }
+                    ]
                 }, {
                     xtype: "radiogroup",
                     fieldLabel: "能否登录",
@@ -131,6 +203,10 @@ Ext.define("PSI.User.UserEditForm", {
         });
 
         me.callParent(arguments);
+        
+        me.__editorList = ["editLoginName", "editName", "editOrgCode", "editOrgName",
+                           "editBirthday", "editIdCardNumber", "editTel", "editTel02", "editAddress"];
+
     },
 
     setOrg: function (data) {
@@ -166,25 +242,22 @@ Ext.define("PSI.User.UserEditForm", {
         });
     },
 
-    onEditLoginNameSpecialKey: function (field, e) {
+    onEditSpecialKey: function (field, e) {
         if (e.getKey() === e.ENTER) {
-            Ext.getCmp("editName").focus();
+            var me = this;
+            var id = field.getId();
+            for (var i = 0; i < me.__editorList.length; i++) {
+                var editorId = me.__editorList[i];
+                if (id === editorId) {
+                    var edit = Ext.getCmp(me.__editorList[i + 1]);
+                    edit.focus();
+                    edit.setValue(edit.getValue());
+                }
+            }
         }
     },
 
-    onEditNameSpecialKey: function (field, e) {
-        if (e.getKey() === e.ENTER) {
-            Ext.getCmp("editOrgCode").focus();
-        }
-    },
-
-    onEditOrgCodeSpecialKey: function (field, e) {
-        if (e.getKey() === e.ENTER) {
-            Ext.getCmp("editOrgName").focus();
-        }
-    },
-
-    onEditOrgNameSpecialKey: function (field, e) {
+    onLastEditSpecialKey: function (field, e) {
         if (e.getKey() === e.ENTER) {
             var f = Ext.getCmp("editForm");
             if (f.getForm().isValid()) {
