@@ -69,17 +69,7 @@ Ext.define("PSI.Customer.MainForm", {
             listeners: {
                 beforeload: {
                     fn: function () {
-                        var item = me.categoryGrid.getSelectionModel().getSelection();
-                        var categoryId;
-                        if (item == null || item.length != 1) {
-                            categoryId = null;
-                        }
-
-                        categoryId = item[0].get("id");
-
-                        Ext.apply(store.proxy.extraParams, {
-                            categoryId: categoryId
-                        });
+                        Ext.apply(store.proxy.extraParams, me.getQueryParam());
                     },
                     scope: me
                 },
@@ -191,47 +181,89 @@ Ext.define("PSI.Customer.MainForm", {
 					columns : 4
 				},
             	items: [{
+            		id: "editQueryCode",
 					labelWidth : 60,
 					labelAlign : "right",
 					labelSeparator : "",
 					fieldLabel : "客户编码",
 					margin: "5, 0, 0, 0",
-					xtype : "textfield"
+					xtype : "textfield",
+					listeners: {
+                        specialkey: {
+                            fn: me.onQueryEditSpecialKey,
+                            scope: me
+                        }
+                    }
 				},{
+					id: "editQueryName",
 					labelWidth : 60,
 					labelAlign : "right",
 					labelSeparator : "",
 					fieldLabel : "客户名称",
 					margin: "5, 0, 0, 0",
-					xtype : "textfield"
+					xtype : "textfield",
+					listeners: {
+                        specialkey: {
+                            fn: me.onQueryEditSpecialKey,
+                            scope: me
+                        }
+                    }
 				},{
+					id: "editQueryContact",
 					labelWidth : 60,
 					labelAlign : "right",
 					labelSeparator : "",
 					fieldLabel : "联系人",
 					margin: "5, 0, 0, 0",
-					xtype : "textfield"
+					xtype : "textfield",
+					listeners: {
+                        specialkey: {
+                            fn: me.onQueryEditSpecialKey,
+                            scope: me
+                        }
+                    }
 				},{
+					id: "editQueryMobile",
 					labelWidth : 60,
 					labelAlign : "right",
 					labelSeparator : "",
 					fieldLabel : "手机",
 					margin: "5, 0, 0, 0",
-					xtype : "textfield"
+					xtype : "textfield",
+					listeners: {
+                        specialkey: {
+                            fn: me.onQueryEditSpecialKey,
+                            scope: me
+                        }
+                    }
 				},{
+					id: "editQueryTel",
 					labelWidth : 60,
 					labelAlign : "right",
 					labelSeparator : "",
 					fieldLabel : "固话",
 					margin: "5, 0, 0, 0",
-					xtype : "textfield"
+					xtype : "textfield",
+					listeners: {
+                        specialkey: {
+                            fn: me.onQueryEditSpecialKey,
+                            scope: me
+                        }
+                    }
 				},{
+					id: "editQueryQQ",
 					labelWidth : 60,
 					labelAlign : "right",
 					labelSeparator : "",
 					fieldLabel : "QQ",
 					margin: "5, 0, 0, 0",
-					xtype : "textfield"
+					xtype : "textfield",
+					listeners: {
+                        specialkey: {
+                            fn: me.onLastQueryEditSpecialKey,
+                            scope: me
+                        }
+                    }
 				},{
 					xtype: "container",
 					items: [{
@@ -240,12 +272,16 @@ Ext.define("PSI.Customer.MainForm", {
 						width: 100,
 						iconCls: "PSI-button-refresh",
 						margin: "5, 0, 0, 20",
+						handler: me.onQuery,
+						scope: me
 					},{
 						xtype: "button",
 						text: "清空查询条件",
 						width: 100,
 						iconCls: "PSI-button-cancel",
 						margin: "5, 0, 0, 5",
+						handler: me.onClearQuery,
+						scope: me
 					}]
 				}]
             }, {
@@ -268,6 +304,9 @@ Ext.define("PSI.Customer.MainForm", {
         });
 
         me.callParent(arguments);
+        
+        me.__queryEditNameList = ["editQueryCode", "editQueryName", "editQueryContact", "editQueryMobile", 
+              	                "editQueryTel", "editQueryQQ"];
 
         me.freshCategoryGrid();
     },
@@ -502,6 +541,55 @@ Ext.define("PSI.Customer.MainForm", {
         var category = item[0];
         category.set("cnt", me.customerGrid.getStore().getTotalCount());
         me.categoryGrid.getStore().commitChanges();
-    }
+    },
+    
+    onQueryEditSpecialKey: function (field, e) {
+        if (e.getKey() === e.ENTER) {
+            var me = this;
+            var id = field.getId();
+            for (var i = 0; i < me.__queryEditNameList.length - 1; i++) {
+                var editorId = me.__queryEditNameList[i];
+                if (id === editorId) {
+                    var edit = Ext.getCmp(me.__queryEditNameList[i + 1]);
+                    edit.focus();
+                    edit.setValue(edit.getValue());
+                }
+            }
+        }
+    },
+    
+    onLastQueryEditSpecialKey: function (field, e) {
+        if (e.getKey() === e.ENTER) {
+        	this.onQuery();
+        }
+    },
+    
+    getQueryParam: function() {
+    	var me = this;
+        var item = me.categoryGrid.getSelectionModel().getSelection();
+        var categoryId;
+        if (item == null || item.length != 1) {
+            categoryId = null;
+        } else {
+        	categoryId = item[0].get("id");	
+        }
 
+        return {
+        	categoryId: categoryId
+        };
+    },
+    
+    onQuery: function() {
+    },
+    
+    onClearQuery: function() {
+    	var nameList = this.__queryEditNameList;
+    	for (var i = 0; i < nameList.length; i++) {
+    		var name = nameList[i];
+    		var edit = Ext.getCmp(name);
+    		if (edit) {
+    			edit.setValue(null);
+    		}
+    	}
+    }
 });
