@@ -9,14 +9,52 @@ namespace Home\Service;
  */
 class CustomerService extends PSIBaseService {
 
-	public function categoryList() {
-		$sql = "select c.id, c.code, c.name, count(u.id) as cnt "
-				. " from t_customer_category c "
-				. " left join t_customer u "
-				. " on c.id = u.category_id "
-				. " group by c.id "
-				. " order by c.code";
-		return M()->query($sql);
+	public function categoryList($params) {
+		$code = $params["code"];
+		$name = $params["name"];
+		$contact = $params["contact"];
+		$mobile = $params["mobile"];
+		$tel = $params["tel"];
+		$qq = $params["qq"];
+		
+		
+		$sql = "select c.id, c.code, c.name, count(u.id) as cnt 
+				 from t_customer_category c 
+				 left join t_customer u 
+				 on (c.id = u.category_id) ";
+		$queryParam = array();
+		if ($code) {
+			$sql .= " and (u.code like '%s') ";
+			$queryParam[] = "%{$code}%";
+		}
+			if ($name) {
+			$sql .= " and (u.name like '%s' or u.py like '%s' ) ";
+			$queryParam[] = "%{$name}%";
+			$queryParam[] = "%{$name}%";
+		}
+		if ($contact) {
+			$sql .= " and (u.contact01 like '%s' or u.contact02 like '%s' ) ";
+			$queryParam[] = "%{$contact}%";
+			$queryParam[] = "%{$contact}%";
+		}
+		if ($mobile) {
+			$sql .= " and (u.mobile01 like '%s' or u.mobile02 like '%s' ) ";
+			$queryParam[] = "%{$mobile}%";
+			$queryParam[] = "%{$mobile}";
+		}
+		if ($tel) {
+			$sql .= " and (u.tel01 like '%s' or u.tel02 like '%s' ) ";
+			$queryParam[] = "%{$tel}%";
+			$queryParam[] = "%{$tel}";
+		}
+		if ($qq) {
+			$sql .= " and (u.qq01 like '%s' or u.qq02 like '%s' ) ";
+			$queryParam[] = "%{$qq}%";
+			$queryParam[] = "%{$qq}";
+		}
+		$sql .= " group by c.id 
+				 order by c.code";
+		return M()->query($sql, $queryParam);
 	}
 
 	public function editCategory($params) {

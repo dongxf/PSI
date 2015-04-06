@@ -384,12 +384,14 @@ Ext.define("PSI.Customer.MainForm", {
         });
     },
     freshCategoryGrid: function (id) {
-        var grid = this.categoryGrid;
+    	var me = this;
+        var grid = me.categoryGrid;
         var el = grid.getEl() || Ext.getBody();
         el.mask(PSI.Const.LOADING);
         Ext.Ajax.request({
             url: PSI.Const.BASE_URL + "Home/Customer/categoryList",
             method: "POST",
+            params: me.getQueryParam(),
             callback: function (options, success, response) {
                 var store = grid.getStore();
 
@@ -612,7 +614,7 @@ Ext.define("PSI.Customer.MainForm", {
     },
     
     onQuery: function() {
-    	this.freshCustomerGrid();
+    	this.freshCategoryGrid();
     },
     
     onClearQuery: function() {

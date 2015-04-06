@@ -30,7 +30,16 @@ class CustomerController extends Controller {
 	public function categoryList() {
 		if (IS_POST) {
 			$cs = new CustomerService();
-			$this->ajaxReturn($cs->categoryList());
+			$params = array(
+					"code" => I("post.code"),
+					"name" => I("post.name"),
+					"contact" => I("post.contact"),
+					"mobile" => I("post.mobile"),
+					"tel" => I("post.tel"),
+					"qq" => I("post.qq")
+			);
+				
+			$this->ajaxReturn($cs->categoryList($params));
 		}
 	}
 
