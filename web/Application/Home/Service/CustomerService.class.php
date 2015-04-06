@@ -232,14 +232,52 @@ class CustomerService extends PSIBaseService {
 		$page = $params["page"];
 		$start = $params["start"];
 		$limit = $params["limit"];
-		$sql = "select id, category_id, code, name, contact01, qq01, tel01, mobile01, "
-				. " contact02, qq02, tel02, mobile02, init_receivables, init_receivables_dt "
-				. " from t_customer where category_id = '%s' "
-				. " order by code "
-				. " limit " . $start . ", " . $limit;
+		
+		$code = $params["code"];
+		$name = $params["name"];
+		$contact = $params["contact"];
+		$mobile = $params["mobile"];
+		$tel = $params["tel"];
+		$qq = $params["qq"];
+		
+		$sql = "select id, category_id, code, name, contact01, qq01, tel01, mobile01, 
+				 contact02, qq02, tel02, mobile02, init_receivables, init_receivables_dt 
+				 from t_customer where (category_id = '%s') ";
+		$queryParam = array();
+		$queryParam[] = $categoryId;
+		if ($code) {
+			$sql .= " and (code like '%s' ) ";
+			$queryParam[] = "%{$code}%";
+		}
+		if ($name) {
+			$sql .= " and (name like '%s' or py like '%s' ) ";
+			$queryParam[] = "%{$name}%";
+			$queryParam[] = "%{$name}%";
+		}
+		if ($contact) {
+			$sql .= " and (contact01 like '%s' or contact02 like '%s' ) ";
+			$queryParam[] = "%{$contact}%";
+			$queryParam[] = "%{$contact}%";
+		}
+		if ($mobile) {
+			$sql .= " and (mobile01 like '%s' or mobile02 like '%s' ) ";
+			$queryParam[] = "%{$mobile}%";
+			$queryParam[] = "%{$mobile}";
+		}
+		if ($tel) {
+			$sql .= " and (tel01 like '%s' or tel02 like '%s' ) ";
+			$queryParam[] = "%{$tel}%";
+			$queryParam[] = "%{$tel}";
+		}
+		if ($qq) {
+			$sql .= " and (qq01 like '%s' or qq02 like '%s' ) ";
+			$queryParam[] = "%{$qq}%";
+			$queryParam[] = "%{$qq}";
+		}
+		$sql .= " order by code limit " . $start . ", " . $limit;
 		$result = array();
 		$db = M();
-		$data = $db->query($sql, $categoryId);
+		$data = $db->query($sql, $queryParam);
 		foreach ($data as $i => $v) {
 			$result[$i]["id"] = $v["id"];
 			$result[$i]["categoryId"] = $v["category_id"];
@@ -259,8 +297,26 @@ class CustomerService extends PSIBaseService {
 			}
 		}
 
-		$sql = "select count(*) as cnt from t_customer where category_id  = '%s'";
-		$data = $db->query($sql, $categoryId);
+		$sql = "select count(*) as cnt from t_customer where (category_id  = '%s') ";
+		if ($code) {
+			$sql .= " and (code like '%s' ) ";
+		}
+		if ($name) {
+			$sql .= " and (name like '%s' or py like '%s' ) ";
+		}
+		if ($contact) {
+			$sql .= " and (contact01 like '%s' or contact02 like '%s' ) ";
+		}
+		if ($mobile) {
+			$sql .= " and (mobile01 like '%s' or mobile02 like '%s' ) ";
+		}
+		if ($tel) {
+			$sql .= " and (tel01 like '%s' or tel02 like '%s' ) ";
+		}
+		if ($qq) {
+			$sql .= " and (qq01 like '%s' or qq02 like '%s' ) ";
+		}
+		$data = $db->query($sql, $queryParam);
 
 		return array("customerList" => $result, "totalCount" => $data[0]["cnt"]);
 	}

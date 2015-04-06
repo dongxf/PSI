@@ -69,7 +69,7 @@ Ext.define("PSI.Customer.MainForm", {
             listeners: {
                 beforeload: {
                     fn: function () {
-                        Ext.apply(store.proxy.extraParams, me.getQueryParam());
+                    	store.proxy.extraParams = me.getQueryParam();
                     },
                     scope: me
                 },
@@ -574,12 +574,45 @@ Ext.define("PSI.Customer.MainForm", {
         	categoryId = item[0].get("id");	
         }
 
-        return {
+        var result = {
         	categoryId: categoryId
         };
+        
+        var code = Ext.getCmp("editQueryCode").getValue();
+        if (code) {
+        	result.code = code;
+        }
+        
+        var name = Ext.getCmp("editQueryName").getValue();
+        if (name) {
+        	result.name = name;
+        }
+        
+        var contact = Ext.getCmp("editQueryContact").getValue();
+        if (contact) {
+        	result.contact = contact;
+        }
+        
+        var mobile = Ext.getCmp("editQueryMobile").getValue();
+        if (mobile) {
+        	result.mobile = mobile;
+        }
+        
+        var tel = Ext.getCmp("editQueryTel").getValue();
+        if (tel) {
+        	result.tel = tel;
+        }
+        
+        var qq = Ext.getCmp("editQueryQQ").getValue();
+        if (qq) {
+        	result.qq = qq;
+        }
+        
+        return result;
     },
     
     onQuery: function() {
+    	this.freshCustomerGrid();
     },
     
     onClearQuery: function() {
@@ -591,5 +624,7 @@ Ext.define("PSI.Customer.MainForm", {
     			edit.setValue(null);
     		}
     	}
+    	
+    	this.onQuery();
     }
 });
