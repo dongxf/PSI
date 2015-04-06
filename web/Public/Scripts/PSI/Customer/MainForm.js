@@ -1,7 +1,6 @@
 Ext.define("PSI.Customer.MainForm", {
     extend: "Ext.panel.Panel",
     border: 0,
-    layout: "border",
     initComponent: function () {
         var me = this;
         Ext.define("PSICustomerCategory", {
@@ -182,12 +181,79 @@ Ext.define("PSI.Customer.MainForm", {
                     }
                 }
             ],
-            items: [
-                {
+            layout: "border",
+            items: [{
+            	region: "north", height: 90, border: 0,
+            	collapsible: true,
+            	title: "查询条件",
+            	layout : {
+					type : "table",
+					columns : 4
+				},
+            	items: [{
+					labelWidth : 60,
+					labelAlign : "right",
+					labelSeparator : "",
+					fieldLabel : "客户编码",
+					margin: "5, 0, 0, 0",
+					xtype : "textfield"
+				},{
+					labelWidth : 60,
+					labelAlign : "right",
+					labelSeparator : "",
+					fieldLabel : "客户名称",
+					margin: "5, 0, 0, 0",
+					xtype : "textfield"
+				},{
+					labelWidth : 60,
+					labelAlign : "right",
+					labelSeparator : "",
+					fieldLabel : "联系人",
+					margin: "5, 0, 0, 0",
+					xtype : "textfield"
+				},{
+					labelWidth : 60,
+					labelAlign : "right",
+					labelSeparator : "",
+					fieldLabel : "手机",
+					margin: "5, 0, 0, 0",
+					xtype : "textfield"
+				},{
+					labelWidth : 60,
+					labelAlign : "right",
+					labelSeparator : "",
+					fieldLabel : "固话",
+					margin: "5, 0, 0, 0",
+					xtype : "textfield"
+				},{
+					labelWidth : 60,
+					labelAlign : "right",
+					labelSeparator : "",
+					fieldLabel : "QQ",
+					margin: "5, 0, 0, 0",
+					xtype : "textfield"
+				},{
+					xtype: "container",
+					items: [{
+						xtype: "button",
+						text: "查询",
+						width: 100,
+						iconCls: "PSI-button-refresh",
+						margin: "5, 0, 0, 20",
+					},{
+						xtype: "button",
+						text: "清空查询条件",
+						width: 100,
+						iconCls: "PSI-button-cancel",
+						margin: "5, 0, 0, 5",
+					}]
+				}]
+            }, {
+            	region: "center", layout: "border",
+            	items: [{
                     region: "center", xtype: "panel", layout: "fit", border: 0,
                     items: [customerGrid]
-                },
-                {
+                },{
                     xtype: "panel",
                     region: "west",
                     layout: "fit",
@@ -197,7 +263,7 @@ Ext.define("PSI.Customer.MainForm", {
                     split: true,
                     border: 0,
                     items: [categoryGrid]
-                }
+                }]}
             ]
         });
 
