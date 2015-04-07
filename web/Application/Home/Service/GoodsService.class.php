@@ -87,15 +87,34 @@ class GoodsService extends PSIBaseService {
 		return $this->ok();
 	}
 
-	public function allCategories() {
-		$sql = "select c.id, c.code, c.name, count(g.id) as cnt "
-				. " from t_goods_category c"
-				. " left join t_goods g "
-				. " on c.id = g.category_id "
-				. " group by c.id "
-				. " order by c.code";
+	public function allCategories($params) {
+		$code = $params["code"];
+		$name = $params["name"];
+		$spec = $params["spec"];
 		
-		return M()->query($sql);
+		$sql = "select c.id, c.code, c.name, count(g.id) as cnt 
+				from t_goods_category c
+				left join t_goods g 
+				on (c.id = g.category_id) ";
+		$queryParam = array();
+		if ($code) {
+			$sql .= " and (g.code like '%s') ";
+			$queryParam[] = "%{$code}%";
+		}
+		if ($name) {
+			$sql .= " and (g.name like '%s' or g.py like '%s') ";
+			$queryParam[] = "%{$name}%";
+			$queryParam[] = "%{$name}%";
+		}
+		if ($spec) {
+			$sql .= " and (g.spec like '%s')";
+			$queryParam[] = "%{$spec}%";
+		}
+		
+		$sql .= " group by c.id 
+				  order by c.code";
+		
+		return M()->query($sql, $queryParam);
 	}
 
 	public function editCategory($params) {
@@ -177,18 +196,37 @@ class GoodsService extends PSIBaseService {
 
 	public function goodsList($params) {
 		$categoryId = $params["categoryId"];
+		$code = $params["code"];
+		$name = $params["name"];
+		$spec = $params["spec"];
+		
 		$page = $params["page"];
 		$start = $params["start"];
 		$limit = $params["limit"];
 
 		$db = M();
 		$result = array();
-		$sql = "select g.id, g.code, g.name, g.sale_price, g.spec,  g.unit_id, u.name as unit_name"
-				. " from t_goods g, t_goods_unit u "
-				. " where g.unit_id = u.id and category_id = '%s' "
-				. " order by g.code "
-				. " limit " . $start . ", " . $limit;
-		$data = $db->query($sql, $categoryId);
+		$sql = "select g.id, g.code, g.name, g.sale_price, g.spec,  g.unit_id, u.name as unit_name
+				from t_goods g, t_goods_unit u 
+				where (g.unit_id = u.id) and (g.category_id = '%s') ";
+		$queryParam = array();
+		$queryParam[] = $categoryId;
+		if ($code) {
+			$sql .= " and (g.code like '%s') ";
+			$queryParam[] = "%{$code}%";
+		}
+		if ($name) {
+			$sql .= " and (g.name like '%s' or g.py like '%s') ";
+			$queryParam[] = "%{$name}%";
+			$queryParam[] = "%{$name}%";
+		}
+		if ($spec) {
+			$sql .= " and (g.spec like '%s')";
+			$queryParam[] = "%{$spec}%";
+		}
+		
+		$sql .=  " order by g.code limit " . $start . ", " . $limit;
+		$data = $db->query($sql, $queryParam);
 
 		foreach ($data as $i => $v) {
 			$result[$i]["id"] = $v["id"];
@@ -200,8 +238,23 @@ class GoodsService extends PSIBaseService {
 			$result[$i]["unitName"] = $v["unit_name"];
 		}
 
-		$sql = "select count(*) as cnt from t_goods where category_id = '%s' ";
-		$data = $db->query($sql, $categoryId);
+		$sql = "select count(*) as cnt from t_goods g where (g.category_id = '%s') ";
+		$queryParam = array();
+		$queryParam[] = $categoryId;
+		if ($code) {
+			$sql .= " and (g.code like '%s') ";
+			$queryParam[] = "%{$code}%";
+		}
+		if ($name) {
+			$sql .= " and (g.name like '%s' or g.py like '%s') ";
+			$queryParam[] = "%{$name}%";
+			$queryParam[] = "%{$name}%";
+		}
+		if ($spec) {
+			$sql .= " and (g.spec like '%s')";
+			$queryParam[] = "%{$spec}%";
+		}
+		$data = $db->query($sql, $queryParam);
 		$totalCount = $data[0]["cnt"];
 		
 		return array("goodsList" => $result, "totalCount" => $totalCount);

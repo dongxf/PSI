@@ -326,12 +326,14 @@ Ext.define("PSI.Goods.MainForm", {
         });
     },
     freshCategoryGrid: function (id) {
-        var grid = this.categoryGrid;
+    	var me = this;
+        var grid = me.categoryGrid;
         var el = grid.getEl() || Ext.getBody();
         el.mask(PSI.Const.LOADING);
         Ext.Ajax.request({
             url: PSI.Const.BASE_URL + "Home/Goods/allCategories",
             method: "POST",
+            params: me.getQueryParam(),
             callback: function (options, success, response) {
                 var store = grid.getStore();
 

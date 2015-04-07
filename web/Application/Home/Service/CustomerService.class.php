@@ -336,23 +336,36 @@ class CustomerService extends PSIBaseService {
 		}
 
 		$sql = "select count(*) as cnt from t_customer where (category_id  = '%s') ";
+			$queryParam = array();
+		$queryParam[] = $categoryId;
 		if ($code) {
 			$sql .= " and (code like '%s' ) ";
+			$queryParam[] = "%{$code}%";
 		}
 		if ($name) {
 			$sql .= " and (name like '%s' or py like '%s' ) ";
+			$queryParam[] = "%{$name}%";
+			$queryParam[] = "%{$name}%";
 		}
 		if ($contact) {
 			$sql .= " and (contact01 like '%s' or contact02 like '%s' ) ";
+			$queryParam[] = "%{$contact}%";
+			$queryParam[] = "%{$contact}%";
 		}
 		if ($mobile) {
 			$sql .= " and (mobile01 like '%s' or mobile02 like '%s' ) ";
+			$queryParam[] = "%{$mobile}%";
+			$queryParam[] = "%{$mobile}";
 		}
 		if ($tel) {
 			$sql .= " and (tel01 like '%s' or tel02 like '%s' ) ";
+			$queryParam[] = "%{$tel}%";
+			$queryParam[] = "%{$tel}";
 		}
 		if ($qq) {
 			$sql .= " and (qq01 like '%s' or qq02 like '%s' ) ";
+			$queryParam[] = "%{$qq}%";
+			$queryParam[] = "%{$qq}";
 		}
 		$data = $db->query($sql, $queryParam);
 

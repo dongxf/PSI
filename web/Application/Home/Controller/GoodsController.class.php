@@ -79,7 +79,12 @@ class GoodsController extends Controller {
 	public function allCategories() {
 		if (IS_POST) {
 			$gs = new GoodsService();
-			$this->ajaxReturn($gs->allCategories());
+			$params = array(
+					"code" => I("post.code"),
+					"name" => I("post.name"),
+					"spec" => I("post.spec")
+			);
+			$this->ajaxReturn($gs->allCategories($params));
 		}
 	}
 
@@ -109,6 +114,9 @@ class GoodsController extends Controller {
 		if (IS_POST) {
 			$params = array(
 					"categoryId" => I("post.categoryId"),
+					"code" => I("post.code"),
+					"name" => I("post.name"),
+					"spec" => I("post.spec"),
 					"page" => I("post.page"),
 					"start" => I("post.start"),
 					"limit" => I("post.limit")
