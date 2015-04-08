@@ -519,12 +519,17 @@ class GoodsService extends PSIBaseService {
 	
 	public function goodsListTU($params) {
 		$categoryId = $params["categoryId"];
+		$code = $params["code"];
+		$name = $params["name"];
+		$spec = $params["spec"];
+		
 		$page = $params["page"];
 		$start = $params["start"];
 		$limit = $params["limit"];
 	
 		$db = M();
 		$result = array();
+		
 		$sql = "select g.id, g.code, g.name, g.sale_price, g.spec,  
 					g.unit_id, u.name as unit_name, u2.name as purchase_unit_name,
 				    u2.id as purchase_unit_id, g.purchase_price, g.ps_factor
@@ -533,10 +538,24 @@ class GoodsService extends PSIBaseService {
 				 on g.unit_id = u.id 
 				 left join t_goods_unit u2
 				 on g.purchase_unit_id = u2.id
-				 where g.category_id = '%s'
-				 order by g.code 
-				 limit " . $start . ", " . $limit;
-		$data = $db->query($sql, $categoryId);
+				 where (g.category_id = '%s') ";
+		$queryParam = array();
+		$queryParam[] = $categoryId;
+		if ($code) {
+			$sql .= " and (g.code like '%s') ";
+			$queryParam[] = "%{$code}%";
+		}
+		if ($name) {
+			$sql .= " and (g.name like '%s' or g.py like '%s') ";
+			$queryParam[] = "%{$name}%";
+			$queryParam[] = "%{$name}%";
+		}
+		if ($spec) {
+			$sql .= " and (g.spec like '%s')";
+			$queryParam[] = "%{$spec}%";
+		}
+		$sql .= " order by g.code limit " . $start . ", " . $limit;
+		$data = $db->query($sql, $queryParam);
 	
 		foreach ($data as $i => $v) {
 			$result[$i]["id"] = $v["id"];
@@ -552,8 +571,23 @@ class GoodsService extends PSIBaseService {
 			$result[$i]["psFactor"] = $v["ps_factor"];
 		}
 	
-		$sql = "select count(*) as cnt from t_goods where category_id = '%s' ";
-		$data = $db->query($sql, $categoryId);
+		$sql = "select count(*) as cnt from t_goods g where (g.category_id = '%s') ";
+		$queryParam = array();
+		$queryParam[] = $categoryId;
+		if ($code) {
+			$sql .= " and (g.code like '%s') ";
+			$queryParam[] = "%{$code}%";
+		}
+		if ($name) {
+			$sql .= " and (g.name like '%s' or g.py like '%s') ";
+			$queryParam[] = "%{$name}%";
+			$queryParam[] = "%{$name}%";
+		}
+		if ($spec) {
+			$sql .= " and (g.spec like '%s')";
+			$queryParam[] = "%{$spec}%";
+		}
+		$data = $db->query($sql, $queryParam);
 		$totalCount = $data[0]["cnt"];
 	
 		return array("goodsList" => $result, "totalCount" => $totalCount);

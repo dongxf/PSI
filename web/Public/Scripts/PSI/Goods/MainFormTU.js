@@ -67,17 +67,7 @@ Ext.define("PSI.Goods.MainFormTU", {
         });
 
         store.on("beforeload", function () {
-            var item = me.categoryGrid.getSelectionModel().getSelection();
-            var categoryId;
-            if (item == null || item.length != 1) {
-                categoryId = null;
-            } else {
-            	categoryId = item[0].get("id");	
-            }
-
-            Ext.apply(store.proxy.extraParams, {
-                categoryId: categoryId
-            });
+        	store.proxy.extraParams = me.getQueryParam();
         });
         store.on("load", function (e, records, successful) {
             if (successful) {
@@ -170,8 +160,80 @@ Ext.define("PSI.Goods.MainFormTU", {
                     }
                 }
             ],
-            items: [
-                {
+            items: [{
+            	region: "north", border: 0,
+            	height: 60,
+            	title: "查询条件",
+            	collapsible: true,
+            	layout : {
+					type : "table",
+					columns : 4
+				},
+            	items: [{
+            		id: "editQueryCode",
+					labelWidth : 60,
+					labelAlign : "right",
+					labelSeparator : "",
+					fieldLabel : "商品编码",
+					margin: "5, 0, 0, 0",
+					xtype : "textfield",
+					listeners: {
+                        specialkey: {
+                            fn: me.onQueryEditSpecialKey,
+                            scope: me
+                        }
+                    }
+				},{
+					id: "editQueryName",
+					labelWidth : 60,
+					labelAlign : "right",
+					labelSeparator : "",
+					fieldLabel : "品名",
+					margin: "5, 0, 0, 0",
+					xtype : "textfield",
+					listeners: {
+                        specialkey: {
+                            fn: me.onQueryEditSpecialKey,
+                            scope: me
+                        }
+                    }
+				},{
+					id: "editQuerySpec",
+					labelWidth : 60,
+					labelAlign : "right",
+					labelSeparator : "",
+					fieldLabel : "规格型号",
+					margin: "5, 0, 0, 0",
+					xtype : "textfield",
+					listeners: {
+                        specialkey: {
+                            fn: me.onLastQueryEditSpecialKey,
+                            scope: me
+                        }
+                    }
+				}, {
+					xtype: "container",
+					items: [{
+						xtype: "button",
+						text: "查询",
+						width: 100,
+						iconCls: "PSI-button-refresh",
+						margin: "5, 0, 0, 20",
+						handler: me.onQuery,
+						scope: me
+					},{
+						xtype: "button",
+						text: "清空查询条件",
+						width: 100,
+						iconCls: "PSI-button-cancel",
+						margin: "5, 0, 0, 5",
+						handler: me.onClearQuery,
+						scope: me
+					}]
+				}]
+            },{
+            	region: "center", layout: "border",
+            	items: [{
                     region: "center", xtype: "panel", layout: "fit", border: 0,
                     items: [goodsGrid]
                 },
@@ -185,11 +247,13 @@ Ext.define("PSI.Goods.MainFormTU", {
                     split: true,
                     border: 0,
                     items: [categoryGrid]
-                }
-            ]
+                }]
+            }]
         });
 
         me.callParent(arguments);
+        
+        me.__queryEditNameList = ["editQueryCode", "editQueryName", "editQuerySpec"];
 
         me.freshCategoryGrid(null, true);
     },
@@ -266,12 +330,14 @@ Ext.define("PSI.Goods.MainFormTU", {
         });
     },
     freshCategoryGrid: function (id) {
-        var grid = this.categoryGrid;
+    	var me = this;
+        var grid = me.categoryGrid;
         var el = grid.getEl() || Ext.getBody();
         el.mask(PSI.Const.LOADING);
         Ext.Ajax.request({
             url: PSI.Const.BASE_URL + "Home/Goods/allCategories",
             method: "POST",
+            params: me.getQueryParam(),
             callback: function (options, success, response) {
                 var store = grid.getStore();
 
@@ -435,5 +501,75 @@ Ext.define("PSI.Goods.MainFormTU", {
         var category = item[0];
         category.set("cnt", me.goodsGrid.getStore().getTotalCount());
         me.categoryGrid.getStore().commitChanges();
+    },
+    
+    onQueryEditSpecialKey: function (field, e) {
+        if (e.getKey() === e.ENTER) {
+            var me = this;
+            var id = field.getId();
+            for (var i = 0; i < me.__queryEditNameList.length - 1; i++) {
+                var editorId = me.__queryEditNameList[i];
+                if (id === editorId) {
+                    var edit = Ext.getCmp(me.__queryEditNameList[i + 1]);
+                    edit.focus();
+                    edit.setValue(edit.getValue());
+                }
+            }
+        }
+    },
+    
+    onLastQueryEditSpecialKey: function (field, e) {
+        if (e.getKey() === e.ENTER) {
+        	this.onQuery();
+        }
+    },
+
+    getQueryParam: function() {
+    	var me = this;
+        var item = me.categoryGrid.getSelectionModel().getSelection();
+        var categoryId;
+        if (item == null || item.length != 1) {
+            categoryId = null;
+        } else {
+        	categoryId = item[0].get("id");	
+        }
+
+        var result = {
+        	categoryId: categoryId
+        };
+        
+        var code = Ext.getCmp("editQueryCode").getValue();
+        if (code) {
+        	result.code = code;
+        }
+        
+        var name = Ext.getCmp("editQueryName").getValue();
+        if (name) {
+        	result.name = name;
+        }
+        
+        var spec = Ext.getCmp("editQuerySpec").getValue();
+        if (spec) {
+        	result.spec = spec;
+        }
+        
+        return result;
+    },
+
+    onQuery: function() {
+    	this.freshCategoryGrid();
+    },
+    
+    onClearQuery: function() {
+    	var nameList = this.__queryEditNameList;
+    	for (var i = 0; i < nameList.length; i++) {
+    		var name = nameList[i];
+    		var edit = Ext.getCmp(name);
+    		if (edit) {
+    			edit.setValue(null);
+    		}
+    	}
+    	
+    	this.onQuery();
     }
 });
