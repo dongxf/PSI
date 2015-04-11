@@ -51,6 +51,11 @@ PSI的开源协议
 -------------
 > 更多文档，请参考：http://my.oschina.net/u/134395
 
+PSI的安卓App
+-------------
+> 见：http://git.oschina.net/crm8000/PSI_Android
+
+
 如需要技术支持，请联系
 -------------
 - QQ：1569352868
