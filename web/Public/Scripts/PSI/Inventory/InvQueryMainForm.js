@@ -29,7 +29,51 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 		});
 
 		Ext.apply(me, {
-			tbar : [ {
+			tbar : [{
+				xtype: "displayfield",
+				value: "查询条件: 商品编码" 
+			},{
+				xtype: "textfield",
+				id: "editQueryCode",
+				listeners: {
+                    specialkey: {
+                        fn: me.onQueryEditSpecialKey,
+                        scope: me
+                    }
+                }
+			},{
+				xtype: "displayfield",
+				value: "品名"
+			},{
+				xtype: "textfield",
+				id: "editQueryName",
+				listeners: {
+                    specialkey: {
+                        fn: me.onQueryEditSpecialKey,
+                        scope: me
+                    }
+                }
+			},{
+				xtype: "displayfield",
+				value: "规格型号"
+			},{
+				xtype: "textfield",
+				id: "editQuerySpec",
+				listeners: {
+                    specialkey: {
+                        fn: me.onLastQueryEditSpecialKey,
+                        scope: me
+                    }
+                }
+			},{
+				text: "查询",
+				iconCls: "PSI-button-refresh"
+			},"-",{
+				text: "清空查询条件",
+				iconCls: "PSI-button-cancel",
+				handler: me.onClearQuery,
+				scope: me
+			},"-", {
 				text : "关闭",
 				iconCls : "PSI-button-exit",
 				handler : function() {
@@ -64,6 +108,8 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 		});
 
 		me.callParent(arguments);
+		
+		me.__queryEditNameList = ["editQueryCode", "editQueryName", "editQuerySpec"];
 
 		me.refreshWarehouseGrid();
 	},
@@ -514,5 +560,43 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 		}
 
 		this.getInventoryDetailGrid().getStore().loadPage(1);
-	}
+	},
+	
+    onQueryEditSpecialKey: function (field, e) {
+        if (e.getKey() === e.ENTER) {
+            var me = this;
+            var id = field.getId();
+            for (var i = 0; i < me.__queryEditNameList.length - 1; i++) {
+                var editorId = me.__queryEditNameList[i];
+                if (id === editorId) {
+                    var edit = Ext.getCmp(me.__queryEditNameList[i + 1]);
+                    edit.focus();
+                    edit.setValue(edit.getValue());
+                }
+            }
+        }
+    },
+    
+    onLastQueryEditSpecialKey: function (field, e) {
+        if (e.getKey() === e.ENTER) {
+        	this.onQueryGoods();
+        }
+    },
+    
+    onClearQuery: function() {
+    	var nameList = this.__queryEditNameList;
+    	for (var i = 0; i < nameList.length; i++) {
+    		var name = nameList[i];
+    		var edit = Ext.getCmp(name);
+    		if (edit) {
+    			edit.setValue(null);
+    		}
+    	}
+    	
+    	this.onQueryGoods();
+    },
+    
+    onQueryGoods: function() {
+    	
+    }
 });
