@@ -15,14 +15,34 @@ class InventoryService extends PSIBaseService {
 
 	public function inventoryList($params) {
 		$warehouseId = $params["warehouseId"];
+		$code = $params["code"];
+		$name = $params["name"];
+		$spec = $params["spec"];
+		
 		$db = M();
-		$sql = "select g.id, g.code, g.name, g.spec, u.name as unit_name,"
-				. " v.in_count, v.in_price, v.in_money, v.out_count, v.out_price, v.out_money,"
-				. "v.balance_count, v.balance_price, v.balance_money "
-				. " from t_inventory v, t_goods g, t_goods_unit u"
-				. " where v.warehouse_id = '%s' and v.goods_id = g.id and g.unit_id = u.id"
-				. " order by g.code";
-		$data = $db->query($sql, $warehouseId);
+		$queryParams = array();
+		$queryParams[] = $warehouseId;
+		
+		$sql = "select g.id, g.code, g.name, g.spec, u.name as unit_name,
+				 v.in_count, v.in_price, v.in_money, v.out_count, v.out_price, v.out_money,
+				 v.balance_count, v.balance_price, v.balance_money 
+				from t_inventory v, t_goods g, t_goods_unit u
+				where (v.warehouse_id = '%s') and (v.goods_id = g.id) and (g.unit_id = u.id) ";
+		if ($code) {
+			$sql .= " and (g.code like '%s')";
+			$queryParams[] = "%{$code}%";
+		}
+		if ($name) {
+			$sql .= " and (g.name like '%s' or g.py like '%s')";
+			$queryParams[] = "%{$name}%";
+			$queryParams[] = "%{$name}%";
+		}
+		if ($spec) {
+			$sql .= " and (g.spec like '%s')";
+			$queryParams[] = "%{$spec}%";
+		}
+		$sql .= " order by g.code";
+		$data = $db->query($sql, $queryParams);
 
 		$result = array();
 

@@ -67,7 +67,9 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
                 }
 			},{
 				text: "查询",
-				iconCls: "PSI-button-refresh"
+				iconCls: "PSI-button-refresh",
+				handler: me.onQueryGoods,
+				scope: me
 			},"-",{
 				text: "清空查询条件",
 				iconCls: "PSI-button-cancel",
@@ -501,26 +503,55 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 		this.refreshInventoryGrid()
 	},
 
-	refreshInventoryGrid : function() {
-        this.getInventoryDetailGrid().getStore().removeAll();
+	getInventoryGridParam: function () {
+		var me = this;
+		var item = me.getWarehouseGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			return {};
+		}
+
+		var warehouse = item[0];
+		var result = {
+			warehouseId : warehouse.get("id")
+		};
+		
+        var code = Ext.getCmp("editQueryCode").getValue();
+        if (code) {
+        	result.code = code;
+        }
         
-		var item = this.getWarehouseGrid().getSelectionModel().getSelection();
+        var name = Ext.getCmp("editQueryName").getValue();
+        if (name) {
+        	result.name = name;
+        }
+        
+        var spec = Ext.getCmp("editQuerySpec").getValue();
+        if (spec) {
+        	result.spec = spec;
+        }
+		
+		return result;
+	},
+	
+	refreshInventoryGrid : function() {
+		var me = this;
+        me.getInventoryDetailGrid().getStore().removeAll();
+        
+		var item = me.getWarehouseGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
 			return;
 		}
 
 		var warehouse = item[0];
 
-		var grid = this.getInventoryGrid();
+		var grid = me.getInventoryGrid();
 		grid.setTitle("仓库 [" + warehouse.get("name") + "] 的总账");
 
 		var el = grid.getEl();
 		el.mask(PSI.Const.LOADING);
 		Ext.Ajax.request({
 			url : PSI.Const.BASE_URL + "Home/Inventory/inventoryList",
-			params : {
-				warehouseId : warehouse.get("id")
-			},
+			params : me.getInventoryGridParam(),
 			method : "POST",
 			callback : function(options, success, response) {
 				var store = grid.getStore();
@@ -597,6 +628,6 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
     },
     
     onQueryGoods: function() {
-    	
+    	this.refreshInventoryGrid();
     }
 });
