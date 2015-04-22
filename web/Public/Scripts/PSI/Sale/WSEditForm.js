@@ -183,7 +183,7 @@ Ext.define("PSI.Sale.WSEditForm", {
                     if (data.canEditGoodsPrice) {
                         me.__canEditGoodsPrice = true;
                         Ext.getCmp("columnGoodsPrice").setEditor({xtype: "numberfield",
-                            allowDecimals: false,
+                            allowDecimals: true,
                             hideTrigger: true});
                     }
                     
