@@ -44,7 +44,7 @@ PSI的开源协议
 -------------
 >PSI的开源协议为GPL v3
 
->如果您有Sencha Ext JS的商业许可（参见： http://www.sencha.com/products/extjs/licensing/ ），那么PSI的开源协议为Apache License v2。
+>如果您有Sencha Ext JS的商业许可（参见： http://www.sencha.com/legal/#Sencha_Ext_JS ），那么PSI的开源协议为Apache License v2。
 >在Apache License协议下，您可以闭源并私有化PSI的代码，作为您自己的商业产品来销售。
 
 更多文档
