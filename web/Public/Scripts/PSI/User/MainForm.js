@@ -116,7 +116,7 @@ Ext.define("PSI.User.MainForm", {
                     text: "帮助",
                     iconCls: "PSI-help",
                     handler: function() {
-                        window.open("http://my.oschina.net/u/134395/blog/374303");
+                        window.open("http://www.kancloud.cn/crm8000/psi_help/users");
                     }
                 },
                 "-",
