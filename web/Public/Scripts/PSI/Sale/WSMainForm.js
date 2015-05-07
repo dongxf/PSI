@@ -42,7 +42,10 @@ Ext.define("PSI.Sale.WSMainForm", {
                     dataIndex: "billStatus",
                     menuDisabled: true,
                     sortable: false,
-                    width: 60
+                    width: 60,
+                    renderer: function (value) {
+                        return value == "待出库" ? "<span style='color:red'>" + value + "</span>" : value;
+                    }
                 }, {
                     header: "单号",
                     dataIndex: "ref",
@@ -57,7 +60,7 @@ Ext.define("PSI.Sale.WSMainForm", {
                 }, {
                     header: "客户",
                     dataIndex: "customerName",
-                    width: 200,
+                    width: 300,
                     menuDisabled: true,
                     sortable: false
                 }, {
@@ -67,7 +70,7 @@ Ext.define("PSI.Sale.WSMainForm", {
                     sortable: false,
                     align: "right",
                     xtype: "numbercolumn",
-                    width: 80
+                    width: 150
                 }, {
                     header: "出库仓库",
                     dataIndex: "warehouseName",
@@ -151,18 +154,19 @@ Ext.define("PSI.Sale.WSMainForm", {
                     dataIndex: "goodsCode",
                     menuDisabled: true,
                     sortable: false,
-                    width: 60
+                    width: 120
                 }, {
                     header: "商品名称",
                     dataIndex: "goodsName",
                     menuDisabled: true,
                     sortable: false,
-                    width: 120
+                    width: 200
                 }, {
                     header: "规格型号",
                     dataIndex: "goodsSpec",
                     menuDisabled: true,
-                    sortable: false
+                    sortable: false,
+                    width: 200
                 }, {
                     header: "数量",
                     dataIndex: "goodsCount",
@@ -182,7 +186,7 @@ Ext.define("PSI.Sale.WSMainForm", {
                     sortable: false,
                     align: "right",
                     xtype: "numbercolumn",
-                    width: 60
+                    width: 150
                 }, {
                     header: "销售金额",
                     dataIndex: "goodsMoney",
@@ -190,7 +194,7 @@ Ext.define("PSI.Sale.WSMainForm", {
                     sortable: false,
                     align: "right",
                     xtype: "numbercolumn",
-                    width: 80
+                    width: 150
                 }],
             store: storeWSBillDetail
         });
