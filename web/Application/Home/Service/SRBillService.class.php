@@ -102,6 +102,9 @@ class SRBillService extends PSIBaseService {
 		}
 	}
 
+	/**
+	 * 列出要选择的可以做退货入库的销售出库单
+	 */
 	public function selectWSBillList($params) {
 		$page = $params["page"];
 		$start = $params["start"];
@@ -147,6 +150,9 @@ class SRBillService extends PSIBaseService {
 		return $this->todo();
 	}
 
+	/**
+	 * 获得销售出库单的信息
+	 */
 	public function getWSBillInfoForSRBill($params) {
 		$result = array();
 
