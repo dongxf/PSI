@@ -38,11 +38,15 @@ Ext.define("PSI.Purchase.PWMainForm", {
             border: 0,
             columnLines: true,
             columns: [
-                {header: "状态", dataIndex: "billStatus", menuDisabled: true, sortable: false, width: 60},
+                {header: "状态", dataIndex: "billStatus", menuDisabled: true, sortable: false, width: 60,
+                	renderer: function (value) {
+                        return value == "待入库" ? "<span style='color:red'>" + value + "</span>" : value;
+                    }
+                },
                 {header: "入库单号", dataIndex: "ref", width: 110, menuDisabled: true, sortable: false},
                 {header: "业务日期", dataIndex: "bizDate", menuDisabled: true, sortable: false},
-                {header: "供应商", dataIndex: "supplierName", width: 200, menuDisabled: true, sortable: false},
-                {header: "采购金额", dataIndex: "amount", menuDisabled: true, sortable: false, align: "right", xtype: "numbercolumn", width: 100},
+                {header: "供应商", dataIndex: "supplierName", width: 300, menuDisabled: true, sortable: false},
+                {header: "采购金额", dataIndex: "amount", menuDisabled: true, sortable: false, align: "right", xtype: "numbercolumn", width: 150},
                 {header: "入库仓库", dataIndex: "warehouseName", menuDisabled: true, sortable: false},
                 {header: "业务员", dataIndex: "bizUserName", menuDisabled: true, sortable: false},
                 {header: "录单人", dataIndex: "inputUserName", menuDisabled: true, sortable: false}
@@ -109,12 +113,12 @@ Ext.define("PSI.Purchase.PWMainForm", {
             columns: [
                 Ext.create("Ext.grid.RowNumberer", {text: "序号", width: 30}),
                 {header: "商品编码", dataIndex: "goodsCode", menuDisabled: true, sortable: false, width: 120},
-                {header: "商品名称", dataIndex: "goodsName", menuDisabled: true, sortable: false, width: 120},
-                {header: "规格型号", dataIndex: "goodsSpec", menuDisabled: true, sortable: false},
+                {header: "商品名称", dataIndex: "goodsName", menuDisabled: true, sortable: false, width: 200},
+                {header: "规格型号", dataIndex: "goodsSpec", menuDisabled: true, sortable: false, width: 200},
                 {header: "采购数量", dataIndex: "goodsCount", menuDisabled: true, sortable: false, align: "right"},
                 {header: "单位", dataIndex: "unitName", menuDisabled: true, sortable: false, width: 60},
-                {header: "采购单价", dataIndex: "goodsPrice", menuDisabled: true, sortable: false, align: "right", xtype: "numbercolumn", width: 60},
-                {header: "采购金额", dataIndex: "goodsMoney", menuDisabled: true, sortable: false, align: "right", xtype: "numbercolumn", width: 80}
+                {header: "采购单价", dataIndex: "goodsPrice", menuDisabled: true, sortable: false, align: "right", xtype: "numbercolumn", width: 150},
+                {header: "采购金额", dataIndex: "goodsMoney", menuDisabled: true, sortable: false, align: "right", xtype: "numbercolumn", width: 150}
             ],
             store: storePWBillDetail,
             listeners: {
