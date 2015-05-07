@@ -79,7 +79,12 @@ class WSBillService extends PSIBaseService {
 		}
 	}
 
+	/**
+	 * 判断是否可以编辑商品销售单价
+	 * @return boolean true:可以编辑销售单价
+	 */
 	private function canEditGoodsPrice() {
+		// 首先判断业务设置中是否允许销售出库编辑销售单价（全局控制）
 		$db = M();
 		$sql = "select value from t_config where id = '2002-01' ";
 		$data = $db->query($sql);
@@ -93,10 +98,13 @@ class WSBillService extends PSIBaseService {
 		}
 		
 		$us = new UserService();
-		
+		// 在业务设置中启用编辑的前提下，还需要判断对应的权限（具体的用户）
 		return $us->hasPermission("2002-01");
 	}
 
+	/**
+	 * 新增或编辑销售出库单
+	 */
 	public function editWSBill($params) {
 		$json = $params["jsonStr"];
 		$bill = json_decode(html_entity_decode($json), true);
@@ -200,6 +208,10 @@ class WSBillService extends PSIBaseService {
 		return $this->ok($id);
 	}
 
+	/**
+	 * 生成新的销售出库单单号
+	 * @return string
+	 */
 	private function genNewBillRef() {
 		$pre = "WS";
 		$mid = date("Ymd");
@@ -302,6 +314,9 @@ class WSBillService extends PSIBaseService {
 		return $this->ok();
 	}
 
+	/**
+	 * 提交销售出库单
+	 */
 	public function commitWSBill($params) {
 		$id = $params["id"];
 		
