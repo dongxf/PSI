@@ -146,7 +146,24 @@ class SRBillService extends PSIBaseService {
 		return array("dataList" => $result, "totalCount" => $cnt);
 	}
 
+	/**
+	 * 新增或编辑销售退货入库单
+	 */
 	public function editSRBill($params) {
+		$json = $params["jsonStr"];
+		$bill = json_decode(html_entity_decode($json), true);
+		if ($bill == null) {
+			return $this->bad("传入的参数错误，不是正确的JSON格式");
+		}
+		
+		$id = $bill["id"];
+		
+		if ($id) {
+			// 编辑	
+		} else {
+			// 新增
+		}
+		
 		return $this->todo();
 	}
 
