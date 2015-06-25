@@ -118,7 +118,6 @@ class SaleController extends Controller {
 
         $rs = new SRBillService();
         $this->ajaxReturn($rs->srBillInfo($params));
-
 	}
 	
 	public function selectWSBillList() {
@@ -131,7 +130,10 @@ class SaleController extends Controller {
         $rs = new SRBillService();
         $this->ajaxReturn($rs->selectWSBillList($params));
     }
-	
+
+    /**
+     * 新增或者编辑销售退货入库单
+     */
 	public function editSRBill() {
         $params = array(
             "jsonStr" => I("post.jsonStr")
