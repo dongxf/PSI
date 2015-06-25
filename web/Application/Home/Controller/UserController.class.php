@@ -167,6 +167,9 @@ class UserController extends Controller {
 		}
 	}
 
+	/**
+	 * 删除用户
+	 */
 	public function deleteUser() {
 		if (IS_POST) {
 			$us = new UserService();
