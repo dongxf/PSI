@@ -15,14 +15,14 @@ class SRBillService extends PSIBaseService {
 		$limit = $params["limit"];
 
 		$db = M();
-		$sql = "select w.id, w.ref, w.bizdt, c.name as customer_name, u.name as biz_user_name,"
-				. " user.name as input_user_name, h.name as warehouse_name, w.rejection_sale_money,"
-				. " w.bill_status "
-				. " from t_sr_bill w, t_customer c, t_user u, t_user user, t_warehouse h "
-				. " where w.customer_id = c.id and w.biz_user_id = u.id "
-				. " and w.input_user_id = user.id and w.warehouse_id = h.id "
-				. " order by w.ref desc "
-				. " limit " . $start . ", " . $limit;
+		$sql = "select w.id, w.ref, w.bizdt, c.name as customer_name, u.name as biz_user_name,
+				 user.name as input_user_name, h.name as warehouse_name, w.rejection_sale_money,
+				 w.bill_status 
+				 from t_sr_bill w, t_customer c, t_user u, t_user user, t_warehouse h 
+				 where w.customer_id = c.id and w.biz_user_id = u.id 
+				 and w.input_user_id = user.id and w.warehouse_id = h.id 
+				 order by w.ref desc 
+				 limit " . $start . ", " . $limit;
 		$data = $db->query($sql);
 		$result = array();
 
@@ -38,10 +38,10 @@ class SRBillService extends PSIBaseService {
 			$result[$i]["amount"] = $v["rejection_sale_money"];
 		}
 
-		$sql = "select count(*) as cnt "
-				. " from t_sr_bill w, t_customer c, t_user u, t_user user, t_warehouse h "
-				. " where w.customer_id = c.id and w.biz_user_id = u.id "
-				. " and w.input_user_id = user.id and w.warehouse_id = h.id ";
+		$sql = "select count(*) as cnt 
+				 from t_sr_bill w, t_customer c, t_user u, t_user user, t_warehouse h 
+				 where w.customer_id = c.id and w.biz_user_id = u.id 
+				 and w.input_user_id = user.id and w.warehouse_id = h.id ";
 		$data = $db->query($sql);
 		$cnt = $data[0]["cnt"];
 
@@ -58,13 +58,13 @@ class SRBillService extends PSIBaseService {
 		} else {
 			$db = M();
 			$result = array();
-			$sql = "select w.id, w.ref, w.bizdt, c.id as customer_id, c.name as customer_name, "
-					. " u.id as biz_user_id, u.name as biz_user_name,"
-					. " h.id as warehouse_id, h.name as warehouse_name "
-					. " from t_sr_bill w, t_customer c, t_user u, t_warehouse h "
-					. " where w.customer_id = c.id and w.biz_user_id = u.id "
-					. " and w.warehouse_id = h.id "
-					. " and w.id = '%s' ";
+			$sql = "select w.id, w.ref, w.bizdt, c.id as customer_id, c.name as customer_name, 
+					 u.id as biz_user_id, u.name as biz_user_name,
+					 h.id as warehouse_id, h.name as warehouse_name 
+					 from t_sr_bill w, t_customer c, t_user u, t_warehouse h 
+					 where w.customer_id = c.id and w.biz_user_id = u.id 
+					 and w.warehouse_id = h.id 
+					 and w.id = '%s' ";
 			$data = $db->query($sql, $id);
 			if ($data) {
 				$result["ref"] = $data[0]["ref"];
@@ -77,11 +77,11 @@ class SRBillService extends PSIBaseService {
 				$result["bizUserName"] = $data[0]["biz_user_name"];
 			}
 
-			$sql = "select d.id, g.id as goods_id, g.code, g.name, g.spec, u.name as unit_name, d.goods_count, "
-					. "d.goods_price, d.goods_money "
-					. " from t_sr_bill_detail d, t_goods g, t_goods_unit u "
-					. " where d.srbill_id = '%s' and d.goods_id = g.id and g.unit_id = u.id"
-					. " order by d.show_order";
+			$sql = "select d.id, g.id as goods_id, g.code, g.name, g.spec, u.name as unit_name, d.goods_count, 
+					d.goods_price, d.goods_money 
+					 from t_sr_bill_detail d, t_goods g, t_goods_unit u 
+					 where d.srbill_id = '%s' and d.goods_id = g.id and g.unit_id = u.id
+					 order by d.show_order";
 			$data = $db->query($sql, $id);
 			$items = array();
 			foreach ($data as $i => $v) {
@@ -111,15 +111,15 @@ class SRBillService extends PSIBaseService {
 		$limit = $params["limit"];
 
 		$db = M();
-		$sql = "select w.id, w.ref, w.bizdt, c.name as customer_name, u.name as biz_user_name,"
-				. " user.name as input_user_name, h.name as warehouse_name, w.sale_money,"
-				. " w.bill_status "
-				. " from t_ws_bill w, t_customer c, t_user u, t_user user, t_warehouse h "
-				. " where w.customer_id = c.id and w.biz_user_id = u.id "
-				. " and w.input_user_id = user.id and w.warehouse_id = h.id "
-				. " and w.bill_status <> 0"
-				. " order by w.ref desc "
-				. " limit " . $start . ", " . $limit;
+		$sql = "select w.id, w.ref, w.bizdt, c.name as customer_name, u.name as biz_user_name,
+				 user.name as input_user_name, h.name as warehouse_name, w.sale_money,
+				 w.bill_status 
+				 from t_ws_bill w, t_customer c, t_user u, t_user user, t_warehouse h 
+				 where w.customer_id = c.id and w.biz_user_id = u.id 
+				 and w.input_user_id = user.id and w.warehouse_id = h.id 
+				 and w.bill_status <> 0
+				 order by w.ref desc 
+				 limit " . $start . ", " . $limit;
 		$data = $db->query($sql);
 		$result = array();
 
@@ -135,11 +135,11 @@ class SRBillService extends PSIBaseService {
 			$result[$i]["amount"] = $v["sale_money"];
 		}
 
-		$sql = "select count(*) as cnt "
-				. " from t_ws_bill w, t_customer c, t_user u, t_user user, t_warehouse h "
-				. " where w.customer_id = c.id and w.biz_user_id = u.id "
-				. " and w.input_user_id = user.id and w.warehouse_id = h.id "
-				. " and w.bill_status <> 0 ";
+		$sql = "select count(*) as cnt 
+				 from t_ws_bill w, t_customer c, t_user u, t_user user, t_warehouse h 
+				 where w.customer_id = c.id and w.biz_user_id = u.id 
+				 and w.input_user_id = user.id and w.warehouse_id = h.id 
+				 and w.bill_status <> 0 ";
 		$data = $db->query($sql);
 		$cnt = $data[0]["cnt"];
 
@@ -175,9 +175,9 @@ class SRBillService extends PSIBaseService {
 
 		$id = $params["id"];
 		$db = M();
-		$sql = "select c.name as customer_name, w.ref, h.id as warehouse_id, h.name as warehouse_name "
-				. " from t_ws_bill w, t_customer c, t_warehouse h"
-				. " where w.id = '%s' and w.customer_id = c.id and w.warehouse_id = h.id ";
+		$sql = "select c.name as customer_name, w.ref, h.id as warehouse_id, h.name as warehouse_name 
+				from t_ws_bill w, t_customer c, t_warehouse h
+				where w.id = '%s' and w.customer_id = c.id and w.warehouse_id = h.id ";
 		$data = $db->query($sql, $id);
 		if (!$data) {
 			return $result;
@@ -188,11 +188,11 @@ class SRBillService extends PSIBaseService {
 		$result["warehouseId"] = $data[0]["warehouse_id"];
 		$result["warehouseName"] = $data[0]["warehouse_name"];
 
-		$sql = "select d.id, g.code, g.name, g.spec, u.name as unit_name, d.goods_count, "
-				. "d.goods_price, d.goods_money "
-				. " from t_ws_bill_detail d, t_goods g, t_goods_unit u "
-				. " where d.wsbill_id = '%s' and d.goods_id = g.id and g.unit_id = u.id"
-				. " order by d.show_order";
+		$sql = "select d.id, g.code, g.name, g.spec, u.name as unit_name, d.goods_count, 
+					d.goods_price, d.goods_money 
+				from t_ws_bill_detail d, t_goods g, t_goods_unit u 
+				where d.wsbill_id = '%s' and d.goods_id = g.id and g.unit_id = u.id
+				order by d.show_order";
 		$data = $db->query($sql, $id);
 		$items = array();
 
