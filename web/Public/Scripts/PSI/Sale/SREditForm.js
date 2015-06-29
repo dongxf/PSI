@@ -370,16 +370,18 @@ Ext.define("PSI.Sale.SREditForm", {
         goods.set("goodsPrice", data.salePrice);
     },
     getSaveData: function () {
+    	var me = this;
         var result = {
             id: Ext.getCmp("hiddenId").getValue(),
             bizDT: Ext.Date.format(Ext.getCmp("editBizDT").getValue(), "Y-m-d"),
             customerId: Ext.getCmp("editCustomerId").getValue(),
             warehouseId: Ext.getCmp("editWarehouseId").getValue(),
             bizUserId: Ext.getCmp("editBizUserId").getValue(),
+            wsBillId: me.__wsBillId,
             items: []
         };
 
-        var store = this.getGoodsGrid().getStore();
+        var store = me.getGoodsGrid().getStore();
         for (var i = 0; i < store.getCount(); i++) {
             var item = store.getAt(i);
             result.items.push({
@@ -400,6 +402,7 @@ Ext.define("PSI.Sale.SREditForm", {
     },
     getWSBillInfo: function(id) {
         var me = this;
+        me.__wsBillId = id;
         var el = me.getEl() || Ext.getBody();
         el.mask(PSI.Const.LOADING);
         Ext.Ajax.request({
@@ -412,6 +415,7 @@ Ext.define("PSI.Sale.SREditForm", {
                 if (success) {
                     var data = Ext.JSON.decode(response.responseText);
                     Ext.getCmp("editCustomer").setValue(data.customerName + " 销售单号: " + data.ref);
+                    Ext.getCmp("editCustomerId").setValue(data.customerId);
                     Ext.getCmp("editWarehouseId").setValue(data.warehouseId);
                     Ext.getCmp("editWarehouse").setValue(data.warehouseName);
                     
