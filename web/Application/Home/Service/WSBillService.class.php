@@ -45,7 +45,12 @@ class WSBillService extends PSIBaseService {
 			return $result;
 		} else {
 			$db = M();
-			$sql = "select w.id, w.ref, w.bizdt, c.id as customer_id, c.name as customer_name, " . " u.id as biz_user_id, u.name as biz_user_name," . " h.id as warehouse_id, h.name as warehouse_name " . " from t_ws_bill w, t_customer c, t_user u, t_warehouse h " . " where w.customer_id = c.id and w.biz_user_id = u.id " . " and w.warehouse_id = h.id " . " and w.id = '%s' ";
+			$sql = "select w.id, w.ref, w.bizdt, c.id as customer_id, c.name as customer_name, 
+					  u.id as biz_user_id, u.name as biz_user_name, 
+					  h.id as warehouse_id, h.name as warehouse_name 
+					from t_ws_bill w, t_customer c, t_user u, t_warehouse h 
+					where w.customer_id = c.id and w.biz_user_id = u.id 
+					  and w.warehouse_id = h.id " . " and w.id = '%s' ";
 			$data = $db->query($sql, $id);
 			if ($data) {
 				$result["ref"] = $data[0]["ref"];
@@ -58,7 +63,11 @@ class WSBillService extends PSIBaseService {
 				$result["bizUserName"] = $data[0]["biz_user_name"];
 			}
 			
-			$sql = "select d.id, g.id as goods_id, g.code, g.name, g.spec, u.name as unit_name, d.goods_count, " . "d.goods_price, d.goods_money " . " from t_ws_bill_detail d, t_goods g, t_goods_unit u " . " where d.wsbill_id = '%s' and d.goods_id = g.id and g.unit_id = u.id" . " order by d.show_order";
+			$sql = "select d.id, g.id as goods_id, g.code, g.name, g.spec, u.name as unit_name, d.goods_count, 
+					d.goods_price, d.goods_money 
+					from t_ws_bill_detail d, t_goods g, t_goods_unit u 
+					where d.wsbill_id = '%s' and d.goods_id = g.id and g.unit_id = u.id
+					order by d.show_order";
 			$data = $db->query($sql, $id);
 			$items = array();
 			foreach ( $data as $i => $v ) {
@@ -81,6 +90,7 @@ class WSBillService extends PSIBaseService {
 
 	/**
 	 * 判断是否可以编辑商品销售单价
+	 *
 	 * @return boolean true:可以编辑销售单价
 	 */
 	private function canEditGoodsPrice() {
@@ -139,7 +149,9 @@ class WSBillService extends PSIBaseService {
 			try {
 				$sql = "delete from t_ws_bill_detail where wsbill_id = '%s' ";
 				$db->execute($sql, $id);
-				$sql = "insert into t_ws_bill_detail (id, date_created, goods_id, " . " goods_count, goods_price, goods_money," . " show_order, wsbill_id) values ('%s', now(), '%s', %d, %f, %f, %d, '%s')";
+				$sql = "insert into t_ws_bill_detail (id, date_created, goods_id, 
+						goods_count, goods_price, goods_money,
+						show_order, wsbill_id) values ('%s', now(), '%s', %d, %f, %f, %d, '%s')";
 				foreach ( $items as $i => $v ) {
 					$goodsId = $v["goodsId"];
 					if ($goodsId) {
@@ -154,7 +166,10 @@ class WSBillService extends PSIBaseService {
 				$data = $db->query($sql, $id);
 				$sumGoodsMoney = $data[0]["sum_goods_money"];
 				
-				$sql = "update t_ws_bill " . " set sale_money = %f, customer_id = '%s', warehouse_id = '%s', " . " biz_user_id = '%s', bizdt = '%s' " . " where id = '%s' ";
+				$sql = "update t_ws_bill 
+						set sale_money = %f, customer_id = '%s', warehouse_id = '%s', 
+						biz_user_id = '%s', bizdt = '%s' 
+						where id = '%s' ";
 				$db->execute($sql, $sumGoodsMoney, $customerId, $warehouseId, $bizUserId, $bizDT, $id);
 				
 				$log = "编辑销售出库单，单号 = {$ref}";
@@ -172,11 +187,15 @@ class WSBillService extends PSIBaseService {
 			try {
 				$id = $idGen->newId();
 				$ref = $this->genNewBillRef();
-				$sql = "insert into t_ws_bill(id, bill_status, bizdt, biz_user_id, customer_id,  date_created," . " input_user_id, ref, warehouse_id) " . " values ('%s', 0, '%s', '%s', '%s', now(), '%s', '%s', '%s')";
+				$sql = "insert into t_ws_bill(id, bill_status, bizdt, biz_user_id, customer_id,  date_created,
+						input_user_id, ref, warehouse_id) 
+						values ('%s', 0, '%s', '%s', '%s', now(), '%s', '%s', '%s')";
 				$us = new UserService();
 				$db->execute($sql, $id, $bizDT, $bizUserId, $customerId, $us->getLoginUserId(), $ref, $warehouseId);
 				
-				$sql = "insert into t_ws_bill_detail (id, date_created, goods_id, " . " goods_count, goods_price, goods_money," . " show_order, wsbill_id) values ('%s', now(), '%s', %d, %f, %f, %d, '%s')";
+				$sql = "insert into t_ws_bill_detail (id, date_created, goods_id, 
+						goods_count, goods_price, goods_money,
+						show_order, wsbill_id) values ('%s', now(), '%s', %d, %f, %f, %d, '%s')";
 				foreach ( $items as $i => $v ) {
 					$goodsId = $v["goodsId"];
 					if ($goodsId) {
@@ -210,6 +229,7 @@ class WSBillService extends PSIBaseService {
 
 	/**
 	 * 生成新的销售出库单单号
+	 *
 	 * @return string
 	 */
 	private function genNewBillRef() {
@@ -235,7 +255,13 @@ class WSBillService extends PSIBaseService {
 		$limit = $params["limit"];
 		
 		$db = M();
-		$sql = "select w.id, w.ref, w.bizdt, c.name as customer_name, u.name as biz_user_name," . " user.name as input_user_name, h.name as warehouse_name, w.sale_money," . " w.bill_status " . " from t_ws_bill w, t_customer c, t_user u, t_user user, t_warehouse h " . " where w.customer_id = c.id and w.biz_user_id = u.id " . " and w.input_user_id = user.id and w.warehouse_id = h.id " . " order by w.ref desc " . " limit " . $start . ", " . $limit;
+		$sql = "select w.id, w.ref, w.bizdt, c.name as customer_name, u.name as biz_user_name,
+				user.name as input_user_name, h.name as warehouse_name, w.sale_money,
+				w.bill_status 
+				from t_ws_bill w, t_customer c, t_user u, t_user user, t_warehouse h 
+				where w.customer_id = c.id and w.biz_user_id = u.id 
+				  and w.input_user_id = user.id and w.warehouse_id = h.id 
+				order by w.ref desc " . " limit " . $start . ", " . $limit;
 		$data = $db->query($sql);
 		$result = array();
 		
@@ -251,7 +277,10 @@ class WSBillService extends PSIBaseService {
 			$result[$i]["amount"] = $v["sale_money"];
 		}
 		
-		$sql = "select count(*) as cnt " . " from t_ws_bill w, t_customer c, t_user u, t_user user, t_warehouse h " . " where w.customer_id = c.id and w.biz_user_id = u.id " . " and w.input_user_id = user.id and w.warehouse_id = h.id ";
+		$sql = "select count(*) as cnt 
+				from t_ws_bill w, t_customer c, t_user u, t_user user, t_warehouse h 
+				where w.customer_id = c.id and w.biz_user_id = u.id 
+				  and w.input_user_id = user.id and w.warehouse_id = h.id ";
 		$data = $db->query($sql);
 		$cnt = $data[0]["cnt"];
 		
@@ -263,7 +292,11 @@ class WSBillService extends PSIBaseService {
 
 	public function wsBillDetailList($params) {
 		$billId = $params["billId"];
-		$sql = "select d.id, g.code, g.name, g.spec, u.name as unit_name, d.goods_count, " . "d.goods_price, d.goods_money " . " from t_ws_bill_detail d, t_goods g, t_goods_unit u " . " where d.wsbill_id = '%s' and d.goods_id = g.id and g.unit_id = u.id" . " order by d.show_order";
+		$sql = "select d.id, g.code, g.name, g.spec, u.name as unit_name, d.goods_count, 
+				d.goods_price, d.goods_money 
+				from t_ws_bill_detail d, t_goods g, t_goods_unit u 
+				where d.wsbill_id = '%s' and d.goods_id = g.id and g.unit_id = u.id 
+				order by d.show_order";
 		$data = M()->query($sql, $billId);
 		$result = array();
 		
@@ -321,7 +354,8 @@ class WSBillService extends PSIBaseService {
 		$id = $params["id"];
 		
 		$db = M();
-		$sql = "select ref, bill_status, customer_id, warehouse_id, biz_user_id, bizdt, sale_money " . " from t_ws_bill where id = '%s' ";
+		$sql = "select ref, bill_status, customer_id, warehouse_id, biz_user_id, bizdt, sale_money 
+				from t_ws_bill where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if (! data) {
 			return $this->bad("要提交的销售出库单不存在");
@@ -360,7 +394,10 @@ class WSBillService extends PSIBaseService {
 		
 		$db->startTrans();
 		try {
-			$sql = "select id, goods_id, goods_count,  goods_price " . " from t_ws_bill_detail " . " where wsbill_id = '%s' " . " order by show_order ";
+			$sql = "select id, goods_id, goods_count,  goods_price 
+					from t_ws_bill_detail 
+					where wsbill_id = '%s' 
+					order by show_order ";
 			$items = $db->query($sql, $id);
 			if (! $items) {
 				$db->rollback();
@@ -387,7 +424,9 @@ class WSBillService extends PSIBaseService {
 				}
 				
 				// 库存总账
-				$sql = "select out_count, out_money, balance_count, balance_price," . " balance_money from t_inventory " . " where warehouse_id = '%s' and goods_id = '%s' ";
+				$sql = "select out_count, out_money, balance_count, balance_price,
+						balance_money from t_inventory 
+						where warehouse_id = '%s' and goods_id = '%s' ";
 				$data = $db->query($sql, $warehouseId, $goodsId);
 				if (! $data) {
 					$db->rollback();
@@ -418,20 +457,30 @@ class WSBillService extends PSIBaseService {
 				$outCount += $goodsCount;
 				$outPrice = $outMoney / $outCount;
 				
-				$sql = "update t_inventory " . " set out_count = %d, out_price = %f, out_money = %f," . "       balance_count = %d, balance_money = %f " . " where warehouse_id = '%s' and goods_id = '%s' ";
+				$sql = "update t_inventory 
+						set out_count = %d, out_price = %f, out_money = %f,
+						    balance_count = %d, balance_money = %f 
+						where warehouse_id = '%s' and goods_id = '%s' ";
 				$db->execute($sql, $outCount, $outPrice, $outMoney, $balanceCount, $balanceMoney, $warehouseId, $goodsId);
 				
 				// 库存明细账
-				$sql = "insert into t_inventory_detail(out_count, out_price, out_money, " . " balance_count, balance_price, balance_money, warehouse_id," . " goods_id, biz_date, biz_user_id, date_created, ref_number, ref_type) " . " values(%d, %f, %f, %d, %f, %f, '%s', '%s', '%s', '%s', now(), '%s', '销售出库')";
+				$sql = "insert into t_inventory_detail(out_count, out_price, out_money, 
+						balance_count, balance_price, balance_money, warehouse_id,
+						goods_id, biz_date, biz_user_id, date_created, ref_number, ref_type) 
+						values(%d, %f, %f, %d, %f, %f, '%s', '%s', '%s', '%s', now(), '%s', '销售出库')";
 				$db->execute($sql, $goodsCount, $outPriceDetail, $outMoneyDetail, $balanceCount, $balancePrice, $balanceMoney, $warehouseId, $goodsId, $bizDT, $bizUserId, $ref);
 				
 				// 单据本身的记录
-				$sql = "update t_ws_bill_detail " . " set inventory_price = %f, inventory_money = %f" . " where id = '%s' ";
+				$sql = "update t_ws_bill_detail 
+						set inventory_price = %f, inventory_money = %f
+						where id = '%s' ";
 				$db->execute($sql, $outPriceDetail, $outMoneyDetail, $itemId);
 			}
 			
 			// 应收总账
-			$sql = "select rv_money, balance_money " . " from t_receivables " . " where ca_id = '%s' and ca_type = 'customer' ";
+			$sql = "select rv_money, balance_money 
+					from t_receivables 
+					where ca_id = '%s' and ca_type = 'customer' ";
 			$data = $db->query($sql, $customerId);
 			if ($data) {
 				$rvMoney = $data[0]["rv_money"];
@@ -440,27 +489,36 @@ class WSBillService extends PSIBaseService {
 				$rvMoney += $saleMoney;
 				$balanceMoney += $saleMoney;
 				
-				$sql = "update t_receivables" . " set rv_money = %f,  balance_money = %f " . " where ca_id = '%s' and ca_type = 'customer' ";
+				$sql = "update t_receivables
+						set rv_money = %f,  balance_money = %f 
+						where ca_id = '%s' and ca_type = 'customer' ";
 				$db->execute($sql, $rvMoney, $balanceMoney, $customerId);
 			} else {
-				$sql = "insert into t_receivables (id, rv_money, act_money, balance_money," . " ca_id, ca_type) values ('%s', %f, 0, %f, '%s', 'customer')";
+				$sql = "insert into t_receivables (id, rv_money, act_money, balance_money,
+						ca_id, ca_type) values ('%s', %f, 0, %f, '%s', 'customer')";
 				$idGen = new IdGenService();
 				$db->execute($sql, $idGen->newId(), $saleMoney, $saleMoney, $customerId);
 			}
 			
 			// 应收明细账
-			$sql = "insert into t_receivables_detail (id, rv_money, act_money, balance_money," . " ca_id, ca_type, date_created, ref_number, ref_type, biz_date) " . " values('%s', %f, 0, %f, '%s', 'customer', now(), '%s', '销售出库', '%s')";
+			$sql = "insert into t_receivables_detail (id, rv_money, act_money, balance_money,
+					ca_id, ca_type, date_created, ref_number, ref_type, biz_date) 
+					values('%s', %f, 0, %f, '%s', 'customer', now(), '%s', '销售出库', '%s')";
 			$idGen = new IdGenService();
 			$db->execute($sql, $idGen->newId(), $saleMoney, $saleMoney, $customerId, $ref, $bizDT);
 			
 			// 单据本身设置为已经提交出库
-			$sql = "select sum(inventory_money) as sum_inventory_money " . " from t_ws_bill_detail " . " where wsbill_id = '%s' ";
+			$sql = "select sum(inventory_money) as sum_inventory_money 
+					from t_ws_bill_detail 
+					where wsbill_id = '%s' ";
 			$data = $db->query($sql, $id);
 			$sumInventoryMoney = $data[0]["sum_inventory_money"];
 			
 			$profit = $saleMoney - $sumInventoryMoney;
 			
-			$sql = "update t_ws_bill " . " set bill_status = 1000, inventory_money = %f, profit = %f " . " where id = '%s' ";
+			$sql = "update t_ws_bill 
+					set bill_status = 1000, inventory_money = %f, profit = %f 
+					where id = '%s' ";
 			$db->execute($sql, $sumInventoryMoney, $profit, $id);
 			
 			$log = "提交销售出库单，单号 = {$ref}";
