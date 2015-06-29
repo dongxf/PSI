@@ -266,7 +266,7 @@ class SRBillService extends PSIBaseService {
 
 	/**
 	 * 生成新的销售退货入库单单号
-	 * 
+	 *
 	 * @return string
 	 */
 	private function genNewBillRef() {
