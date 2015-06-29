@@ -444,8 +444,7 @@ class UserService extends PSIBaseService {
 					    gender = '%s', birthday = '%s', id_card_number = '%s',
 					    tel = '%s', tel02 = '%s', address = '%s' 
 					where id = '%s' ";
-			$db->execute($sql, $loginName, $name, $orgCode, $orgId, $enabled, $py,
-					$gender, $birthday, $idCardNumber, $tel, $tel02, $address, $id);
+			$db->execute($sql, $loginName, $name, $orgCode, $orgId, $enabled, $py, $gender, $birthday, $idCardNumber, $tel, $tel02, $address, $id);
 			
 			$log = "编辑用户： 登录名 = {$loginName} 姓名 = {$name} 编码 = {$orgCode}";
 			$bs = new BizlogService();
@@ -479,8 +478,7 @@ class UserService extends PSIBaseService {
 					gender, birthday, id_card_number, tel, tel02, address) 
 					values ('%s', '%s', '%s', '%s', '%s', %d, '%s', '%s',
 					'%s', '%s', '%s', '%s', '%s', '%s') ";
-			$db->execute($sql, $id, $loginName, $name, $orgCode, $orgId, $enabled, $password, $py,
-					$gender, $birthday, $idCardNumber, $tel, $tel02, $address);
+			$db->execute($sql, $id, $loginName, $name, $orgCode, $orgId, $enabled, $password, $py, $gender, $birthday, $idCardNumber, $tel, $tel02, $address);
 			
 			$log = "新建用户： 登录名 = {$loginName} 姓名 = {$name} 编码 = {$orgCode}";
 			$bs = new BizlogService();

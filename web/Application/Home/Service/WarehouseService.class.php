@@ -35,7 +35,9 @@ class WarehouseService extends PSIBaseService {
 				return $this->bad("编码为 [$code] 的仓库已经存在");
 			}
 			
-			$sql = "update t_warehouse " . " set code = '%s', name = '%s', py = '%s' " . " where id = '%s' ";
+			$sql = "update t_warehouse 
+					set code = '%s', name = '%s', py = '%s' 
+					where id = '%s' ";
 			$db->execute($sql, $code, $name, $py, $id);
 			$log = "编辑仓库：编码 = $code,  名称 = $name";
 			$bs = new BizlogService();
@@ -53,7 +55,8 @@ class WarehouseService extends PSIBaseService {
 				return $this->bad("编码为 [$code] 的仓库已经存在");
 			}
 			
-			$sql = "insert into t_warehouse(id, code, name, inited, py) " . " values ('%s', '%s', '%s', 0, '%s' )";
+			$sql = "insert into t_warehouse(id, code, name, inited, py) 
+					values ('%s', '%s', '%s', 0, '%s' )";
 			$db->execute($sql, $id, $code, $name, $py);
 			
 			$log = "新增仓库：编码 = {$code},  名称 = {$name}";

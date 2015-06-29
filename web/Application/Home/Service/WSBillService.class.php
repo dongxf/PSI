@@ -50,7 +50,8 @@ class WSBillService extends PSIBaseService {
 					  h.id as warehouse_id, h.name as warehouse_name 
 					from t_ws_bill w, t_customer c, t_user u, t_warehouse h 
 					where w.customer_id = c.id and w.biz_user_id = u.id 
-					  and w.warehouse_id = h.id " . " and w.id = '%s' ";
+					  and w.warehouse_id = h.id 
+					  and w.id = '%s' ";
 			$data = $db->query($sql, $id);
 			if ($data) {
 				$result["ref"] = $data[0]["ref"];
@@ -261,7 +262,8 @@ class WSBillService extends PSIBaseService {
 				from t_ws_bill w, t_customer c, t_user u, t_user user, t_warehouse h 
 				where w.customer_id = c.id and w.biz_user_id = u.id 
 				  and w.input_user_id = user.id and w.warehouse_id = h.id 
-				order by w.ref desc " . " limit " . $start . ", " . $limit;
+				order by w.ref desc 
+				limit " . $start . ", " . $limit;
 		$data = $db->query($sql);
 		$result = array();
 		
