@@ -51,6 +51,30 @@ class SRBillService extends PSIBaseService {
 		);
 	}
 
+	public function srBillDetailList($params) {
+		$id = $params["id"];
+		$db = M();
+		
+		$sql = "select s.id, g.code, g.name, g.spec, u.name as unit_name,
+				   s.rejection_goods_count, s.rejection_goods_price, s.rejection_sale_money
+				from t_sr_bill_detail s, t_goods g, t_goods_unit u
+				where s.srbill_id = '%s' and s.goods_id = g.id and g.unit_id = u.id";
+		$data = $db->query($sql, $id);
+		
+		$result = array();
+		
+		foreach ( $data as $i => $v ) {
+			$result[$i]["id"] = $v["id"];
+			$result[$i]["goodsCode"] = $v["code"];
+			$result[$i]["goodsName"] = $v["name"];
+			$result[$i]["goodsSpec"] = $v["spec"];
+			$result[$i]["rejCount"] = $v["rejection_goods_count"];
+			$result[$i]["rejPrice"] = $v["rejection_goods_price"];
+			$result[$i]["rejSaleMoney"] = $v["rejection_sale_money"];
+		}
+		return $result;
+	}
+
 	public function srBillInfo($params) {
 		$id = $params["id"];
 		$us = new UserService();
@@ -217,7 +241,7 @@ class SRBillService extends PSIBaseService {
 							from t_ws_bill_detail 
 							where id = '%s' ";
 					$data = $db->query($sql, $wsBillDetailId);
-					if (!$data) {
+					if (! $data) {
 						continue;
 					}
 					$goodsCount = $data[0]["goods_count"];
@@ -226,7 +250,7 @@ class SRBillService extends PSIBaseService {
 					$inventoryPrice = $data[0]["inentory_price"];
 					$rejCount = $v["rejCount"];
 					$rejPrice = $v["rejPrice"];
-					if($rejCount == null) {
+					if ($rejCount == null) {
 						$rejCount = 0;
 					}
 					$rejSaleMoney = $rejCount * $rejPrice;
@@ -238,9 +262,9 @@ class SRBillService extends PSIBaseService {
 						rejection_goods_price, rejection_sale_money, show_order, srbill_id, wsbilldetail_id)
 						values('%s', now(), '%s', %d, %f, %f, %f, %f, %d,
 						%f, %f, %d, '%s', '%s') ";
-					$db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsMoney, $goodsPrice,
-							$inventoryMoney, $inventoryPrice, $rejCount, $rejPrice, $rejSaleMoney, $i,
-							$id, $wsBillDetailId);
+					$db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsMoney, 
+							$goodsPrice, $inventoryMoney, $inventoryPrice, $rejCount, $rejPrice, 
+							$rejSaleMoney, $i, $id, $wsBillDetailId);
 				}
 				
 				$db->commit();

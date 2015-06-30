@@ -221,7 +221,7 @@ Ext.define("PSI.Sale.SRMainForm", {
         Ext.define(modelName, {
             extend: "Ext.data.Model",
             fields: ["id", "goodsCode", "goodsName", "goodsSpec", "unitName",
-                "goodsCount", "goodsMoney", "goodsPrice"]
+                "goodsCount", "goodsMoney", "goodsPrice", "rejCount", "rejPrice", "rejSaleMoney"]
         });
         var store = Ext.create("Ext.data.Store", {
             autoLoad: false,
@@ -253,8 +253,8 @@ Ext.define("PSI.Sale.SRMainForm", {
                     menuDisabled: true,
                     sortable: false
                 }, {
-                    header: "数量",
-                    dataIndex: "goodsCount",
+                    header: "退货数量",
+                    dataIndex: "rejCount",
                     menuDisabled: true,
                     sortable: false,
                     align: "right"
@@ -266,7 +266,7 @@ Ext.define("PSI.Sale.SRMainForm", {
                     width: 60
                 }, {
                     header: "退货单价",
-                    dataIndex: "goodsPrice",
+                    dataIndex: "rejPrice",
                     menuDisabled: true,
                     sortable: false,
                     align: "right",
@@ -274,7 +274,7 @@ Ext.define("PSI.Sale.SRMainForm", {
                     width: 60
                 }, {
                     header: "退货金额",
-                    dataIndex: "goodsMoney",
+                    dataIndex: "rejSaleMoney",
                     menuDisabled: true,
                     sortable: false,
                     align: "right",
@@ -303,5 +303,51 @@ Ext.define("PSI.Sale.SRMainForm", {
         }
     },
     onSRBillGridSelect: function() {
+    	this.freshSRBillDetailGrid();
+    },
+    freshSRBillDetailGrid: function(id) {
+        var me = this;
+        me.getSRDetailGrid().setTitle("销售退货入库单明细");
+        var grid = me.getSRGrid();
+        var item = grid.getSelectionModel().getSelection();
+        if (item == null || item.length != 1) {
+            return;
+        }
+        var bill = item[0];
+
+        grid = me.getSRDetailGrid();
+        grid.setTitle("单号: " + bill.get("ref") + " 客户: "
+                + bill.get("customerName") + " 入库仓库: "
+                + bill.get("warehouseName"));
+        var el = grid.getEl();
+        el.mask(PSI.Const.LOADING);
+        Ext.Ajax.request({
+            url: PSI.Const.BASE_URL + "Home/Sale/srBillDetailList",
+            params: {
+                billId: bill.get("id")
+            },
+            method: "POST",
+            callback: function (options, success, response) {
+                var store = grid.getStore();
+
+                store.removeAll();
+
+                if (success) {
+                    var data = Ext.JSON.decode(response.responseText);
+                    store.add(data);
+
+                    if (store.getCount() > 0) {
+                        if (id) {
+                            var r = store.findExact("id", id);
+                            if (r != -1) {
+                                grid.getSelectionModel().select(r);
+                            }
+                        }
+                    }
+                }
+
+                el.unmask();
+            }
+        });
     }
 });
