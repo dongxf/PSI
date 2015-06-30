@@ -68,6 +68,7 @@ class SRBillService extends PSIBaseService {
 			$result[$i]["goodsCode"] = $v["code"];
 			$result[$i]["goodsName"] = $v["name"];
 			$result[$i]["goodsSpec"] = $v["spec"];
+			$result[$i]["unitName"] = $v["unit_name"];
 			$result[$i]["rejCount"] = $v["rejection_goods_count"];
 			$result[$i]["rejPrice"] = $v["rejection_goods_price"];
 			$result[$i]["rejSaleMoney"] = $v["rejection_sale_money"];
@@ -267,6 +268,10 @@ class SRBillService extends PSIBaseService {
 							$rejSaleMoney, $i, $id, $wsBillDetailId);
 				}
 				
+				$bs = new BizlogService();
+				$log = "新建销售退货入库单，单号：{$ref}";
+				$bs->insertBizlog($log, "销售退货入库");
+				
 				$db->commit();
 				
 				return $this->ok($id);
@@ -346,5 +351,41 @@ class SRBillService extends PSIBaseService {
 		}
 		
 		return $pre . $mid . $suf;
+	}
+	
+	public function deleteSRBill($params) {
+		$id = $params["id"];
+		
+		$db = M();
+		$sql = "select bill_status, ref from t_sr_bill where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if (!$data) {
+			return $this->bad("要删除的销售退货入库单不存在");
+		}
+		
+		$billStatus = $data[0]["bill_status"];
+		$ref = $data[0]["ref"];
+		if ($billStatus != 0) {
+			return $this->bad("销售退货入库单[单号: {$ref}]已经提交，不能删除");
+		}
+		
+		$db->startTrans();
+		try {
+			$sql = "delete from t_sr_bill_detail where srbill_id = '%s'";
+			$db->execute($sql, $id);
+			
+			$sql = "delete from t_sr_bill where id = '%s' ";
+			$db->execute($sql, $id);
+			
+			$bs = new BizlogService();
+			$log = "删除销售退货入库单，单号：{$ref}";
+			$bs->insertBizlog($log, "销售退货入库");
+			
+			$db->commit();
+			return $this->ok();
+		} catch (Exception $ex) {
+			$db->rollback();
+			return $this->bad("数据库操作失败，请联系管理员");
+		}
 	}
 }

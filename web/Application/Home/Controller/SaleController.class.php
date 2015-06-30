@@ -28,59 +28,71 @@ class SaleController extends Controller {
 	}
 
 	public function wsBillInfo() {
-		$params = array(
-				"id" => I("post.id")
-		);
-		
-		$ws = new WSBillService();
-		$this->ajaxReturn($ws->wsBillInfo($params));
+		if (IS_POST) {
+			$params = array(
+					"id" => I("post.id")
+			);
+			
+			$ws = new WSBillService();
+			$this->ajaxReturn($ws->wsBillInfo($params));
+		}
 	}
 
 	public function editWSBill() {
-		$params = array(
-				"jsonStr" => I("post.jsonStr")
-		);
-		
-		$ws = new WSBillService();
-		$this->ajaxReturn($ws->editWSBill($params));
+		if (IS_POST) {
+			$params = array(
+					"jsonStr" => I("post.jsonStr")
+			);
+			
+			$ws = new WSBillService();
+			$this->ajaxReturn($ws->editWSBill($params));
+		}
 	}
 
 	public function wsbillList() {
-		$params = array(
-				"page" => I("post.page"),
-				"start" => I("post.start"),
-				"limit" => I("post.limit")
-		);
-		
-		$ws = new WSBillService();
-		$this->ajaxReturn($ws->wsbillList($params));
+		if (IS_POST) {
+			$params = array(
+					"page" => I("post.page"),
+					"start" => I("post.start"),
+					"limit" => I("post.limit")
+			);
+			
+			$ws = new WSBillService();
+			$this->ajaxReturn($ws->wsbillList($params));
+		}
 	}
 
 	public function wsBillDetailList() {
-		$params = array(
-				"billId" => I("post.billId")
-		);
-		
-		$ws = new WSBillService();
-		$this->ajaxReturn($ws->wsBillDetailList($params));
+		if (IS_POST) {
+			$params = array(
+					"billId" => I("post.billId")
+			);
+			
+			$ws = new WSBillService();
+			$this->ajaxReturn($ws->wsBillDetailList($params));
+		}
 	}
 
 	public function deleteWSBill() {
-		$params = array(
-				"id" => I("post.id")
-		);
-		
-		$ws = new WSBillService();
-		$this->ajaxReturn($ws->deleteWSBill($params));
+		if (IS_POST) {
+			$params = array(
+					"id" => I("post.id")
+			);
+			
+			$ws = new WSBillService();
+			$this->ajaxReturn($ws->deleteWSBill($params));
+		}
 	}
 
 	public function commitWSBill() {
-		$params = array(
-				"id" => I("post.id")
-		);
-		
-		$ws = new WSBillService();
-		$this->ajaxReturn($ws->commitWSBill($params));
+		if (IS_POST) {
+			$params = array(
+					"id" => I("post.id")
+			);
+			
+			$ws = new WSBillService();
+			$this->ajaxReturn($ws->commitWSBill($params));
+		}
 	}
 
 	public function srIndex() {
@@ -101,63 +113,89 @@ class SaleController extends Controller {
 	}
 
 	public function srbillList() {
-		$params = array(
-				"page" => I("post.page"),
-				"start" => I("post.start"),
-				"limit" => I("post.limit")
-		);
-		
-		$sr = new SRBillService();
-		$this->ajaxReturn($sr->srbillList($params));
+		if (IS_POST) {
+			$params = array(
+					"page" => I("post.page"),
+					"start" => I("post.start"),
+					"limit" => I("post.limit")
+			);
+			
+			$sr = new SRBillService();
+			$this->ajaxReturn($sr->srbillList($params));
+		}
 	}
 
 	public function srBillDetailList() {
-		$params = array(
-				"id" => I("post.billId")
-		);
-		
-		$sr = new SRBillService();
-		$this->ajaxReturn($sr->srBillDetailList($params));
+		if (IS_POST) {
+			$params = array(
+					"id" => I("post.billId")
+			);
+			
+			$sr = new SRBillService();
+			$this->ajaxReturn($sr->srBillDetailList($params));
+		}
 	}
 
 	public function srBillInfo() {
-		$params = array(
-				"id" => I("post.id")
-		);
-		
-		$rs = new SRBillService();
-		$this->ajaxReturn($rs->srBillInfo($params));
+		if (IS_POST) {
+			$params = array(
+					"id" => I("post.id")
+			);
+			
+			$rs = new SRBillService();
+			$this->ajaxReturn($rs->srBillInfo($params));
+		}
 	}
 
 	public function selectWSBillList() {
-		$params = array(
-				"page" => I("post.page"),
-				"start" => I("post.start"),
-				"limit" => I("post.limit")
-		);
-		
-		$rs = new SRBillService();
-		$this->ajaxReturn($rs->selectWSBillList($params));
+		if (IS_POST) {
+			$params = array(
+					"page" => I("post.page"),
+					"start" => I("post.start"),
+					"limit" => I("post.limit")
+			);
+			
+			$rs = new SRBillService();
+			$this->ajaxReturn($rs->selectWSBillList($params));
+		}
 	}
 
 	/**
 	 * 新增或者编辑销售退货入库单
 	 */
 	public function editSRBill() {
-		$params = array(
-				"jsonStr" => I("post.jsonStr")
-		);
-		
-		$rs = new SRBillService();
-		$this->ajaxReturn($rs->editSRBill($params));
+		if (IS_POST) {
+			$params = array(
+					"jsonStr" => I("post.jsonStr")
+			);
+			
+			$rs = new SRBillService();
+			$this->ajaxReturn($rs->editSRBill($params));
+		}
 	}
 
 	public function getWSBillInfoForSRBill() {
-		$params = array(
-				"id" => I("post.id")
-		);
-		
-		$rs = new SRBillService();
-		$this->ajaxReturn($rs->getWSBillInfoForSRBill($params));
+		if (IS_POST) {
+			$params = array(
+					"id" => I("post.id")
+			);
+			
+			$rs = new SRBillService();
+			$this->ajaxReturn($rs->getWSBillInfoForSRBill($params));
+		}
+	}
+
+	/**
+	 * 删除销售退货入库单
+	 */
+	public function deleteSRBill() {
+		if (IS_POST) {
+			$params = array(
+					"id" => I("post.id")
+			);
+			
+			$rs = new SRBillService();
+			$this->ajaxReturn($rs->deleteSRBill($params));
+		}
 	}
 }
