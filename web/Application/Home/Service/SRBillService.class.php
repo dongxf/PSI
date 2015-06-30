@@ -34,7 +34,7 @@ class SRBillService extends PSIBaseService {
 			$result[$i]["warehouseName"] = $v["warehouse_name"];
 			$result[$i]["inputUserName"] = $v["input_user_name"];
 			$result[$i]["bizUserName"] = $v["biz_user_name"];
-			$result[$i]["billStatus"] = $v["bill_status"] == 0 ? "待出库" : "已出库";
+			$result[$i]["billStatus"] = $v["bill_status"] == 0 ? "待入库" : "已入库";
 			$result[$i]["amount"] = $v["rejection_sale_money"];
 		}
 		
@@ -196,6 +196,7 @@ class SRBillService extends PSIBaseService {
 		
 		if ($id) {
 			// 编辑
+			return $this->todo();
 		} else {
 			// 新增
 			$db->startTrans();
@@ -204,16 +205,52 @@ class SRBillService extends PSIBaseService {
 				$ref = $this->genNewBillRef();
 				$sql = "insert into t_sr_bill(id, bill_status, bizdt, biz_user_id, customer_id, 
 						  date_created, input_user_id, ref, warehouse_id, ws_bill_id)
-						values ('%s', 0, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')";
+						values ('%s', 0, '%s', '%s', '%s', 
+						  now(), '%s', '%s', '%s', '%s')";
+				$us = new UserService();
+				$db->execute($sql, $id, $bizDT, $bizUserId, $customerId, $us->getLoginUserId(), 
+						$ref, $warehouseId, $wsBillId);
+				
+				foreach ( $items as $i => $v ) {
+					$wsBillDetailId = $v["id"];
+					$sql = "select inventory_price, goods_count, goods_price, goods_money
+							from t_ws_bill_detail 
+							where id = '%s' ";
+					$data = $db->query($sql, $wsBillDetailId);
+					if (!$data) {
+						continue;
+					}
+					$goodsCount = $data[0]["goods_count"];
+					$goodsPrice = $data[0]["goods_price"];
+					$goodsMoney = $data[0]["goods_money"];
+					$inventoryPrice = $data[0]["inentory_price"];
+					$rejCount = $v["rejCount"];
+					$rejPrice = $v["rejPrice"];
+					if($rejCount == null) {
+						$rejCount = 0;
+					}
+					$rejSaleMoney = $rejCount * $rejPrice;
+					$inventoryMoney = $rejCount * $inventoryPrice;
+					$goodsId = $v["goodsId"];
+					
+					$sql = "insert into t_sr_bill_detail(id, date_created, goods_id, goods_count, goods_money,
+						goods_price, inventory_money, inventory_price, rejection_goods_count, 
+						rejection_goods_price, rejection_sale_money, show_order, srbill_id, wsbilldetail_id)
+						values('%s', now(), '%s', %d, %f, %f, %f, %f, %d,
+						%f, %f, %d, '%s', '%s') ";
+					$db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsMoney, $goodsPrice,
+							$inventoryMoney, $inventoryPrice, $rejCount, $rejPrice, $rejSaleMoney, $i,
+							$id, $wsBillDetailId);
+				}
 				
 				$db->commit();
+				
+				return $this->ok($id);
 			} catch ( Exception $ex ) {
 				$db->rollback();
 				return $this->bad("数据库错误，请联系管理员");
 			}
 		}
-		
-		return $this->todo();
 	}
 
 	/**
@@ -239,7 +276,7 @@ class SRBillService extends PSIBaseService {
 		$result["warehouseName"] = $data[0]["warehouse_name"];
 		$result["customerId"] = $data[0]["customer_id"];
 		
-		$sql = "select d.id, g.code, g.name, g.spec, u.name as unit_name, d.goods_count, 
+		$sql = "select d.id, g.id as goods_id, g.code, g.name, g.spec, u.name as unit_name, d.goods_count, 
 					d.goods_price, d.goods_money 
 				from t_ws_bill_detail d, t_goods g, t_goods_unit u 
 				where d.wsbill_id = '%s' and d.goods_id = g.id and g.unit_id = u.id
@@ -249,6 +286,7 @@ class SRBillService extends PSIBaseService {
 		
 		foreach ( $data as $i => $v ) {
 			$items[$i]["id"] = $v["id"];
+			$items[$i]["goodsId"] = $v["goods_id"];
 			$items[$i]["goodsCode"] = $v["code"];
 			$items[$i]["goodsName"] = $v["name"];
 			$items[$i]["goodsSpec"] = $v["spec"];

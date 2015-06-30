@@ -119,7 +119,10 @@ Ext.define("PSI.Sale.SRMainForm", {
                     dataIndex: "billStatus",
                     menuDisabled: true,
                     sortable: false,
-                    width: 60
+                    width: 60,
+                    renderer: function(value) {
+                    	return value == "待入库" ? "<span style='color:red'>" + value + "</span>" : value;
+                    }
                 }, {
                     header: "单号",
                     dataIndex: "ref",

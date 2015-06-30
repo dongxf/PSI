@@ -387,8 +387,8 @@ Ext.define("PSI.Sale.SREditForm", {
             result.items.push({
                 id: item.get("id"),
                 goodsId: item.get("goodsId"),
-                goodsCount: item.get("goodsCount"),
-                goodsPrice: item.get("goodsPrice")
+                rejCount: item.get("rejCount"),
+                rejPrice: item.get("rejPrice")
             });
         }
 
