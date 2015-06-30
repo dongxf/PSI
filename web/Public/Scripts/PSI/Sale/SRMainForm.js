@@ -166,11 +166,11 @@ Ext.define("PSI.Sale.SRMainForm", {
                 }],
             listeners: {
                 select: {
-                    fn: me.onWSBillGridSelect,
+                    fn: me.onSRBillGridSelect,
                     scope: me
                 },
                 itemdblclick: {
-                    fn: me.onEditWSBill,
+                    fn: me.onEditSRBill,
                     scope: me
                 }
             },
@@ -301,5 +301,7 @@ Ext.define("PSI.Sale.SRMainForm", {
         } else {
             grid.getSelectionModel().select(0);
         }
+    },
+    onSRBillGridSelect: function() {
     }
 });
