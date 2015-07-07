@@ -1,3 +1,4 @@
+// 采购退货入库 - 主界面
 Ext.define("PSI.Sale.SRMainForm", {
     extend: "Ext.panel.Panel",
     border: 0,
@@ -60,15 +61,21 @@ Ext.define("PSI.Sale.SRMainForm", {
         this.__lastId = id;
 
     },
+    
+    // 新增销售退货入库单
     onAddSRBill: function () {
         var form = Ext.create("PSI.Sale.SREditForm", {
             parentForm: this
         });
         form.show();
     },
+    
+    // 编辑销售退货入库单
     onEditSRBill: function () {
         PSI.MsgBox.showInfo("正在开发中...");
     },
+    
+    // 删除销售退货入库单
     onDeleteSRBill: function () {
     	var me = this;
         var item = me.getSRGrid().getSelectionModel().getSelection();
@@ -111,9 +118,12 @@ Ext.define("PSI.Sale.SRMainForm", {
             });
         });
     },
+    
+    // 提交销售退货入库单
     onCommit: function () {
         PSI.MsgBox.showInfo("正在开发中...");
     },
+    
     getSRGrid: function () {
         var me = this;
         if (me.__srGrid) {
@@ -148,7 +158,6 @@ Ext.define("PSI.Sale.SRMainForm", {
                 me.gotoSRBillGridRecord(me.__lastId);
             }
         });
-
 
         me.__srGrid = Ext.create("Ext.grid.Panel", {
             border: 0,
