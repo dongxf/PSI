@@ -1,9 +1,12 @@
+// 销售退货入库单
 Ext.define("PSI.Sale.SREditForm", {
     extend: "Ext.window.Window",
+    
     config: {
         parentForm: null,
         entity: null
     },
+    
     initComponent: function () {
         var me = this;
         var entity = me.getEntity();
@@ -19,7 +22,8 @@ Ext.define("PSI.Sale.SREditForm", {
                     text: "选择销售出库单",
                     iconCls: "PSI-button-add",
                     handler: me.onSelectWSBill,
-                    scope: me
+                    scope: me,
+                    disabled: me.entity != null
             }, "-"],
             defaultFocus: "editWarehouse",
             items: [{
