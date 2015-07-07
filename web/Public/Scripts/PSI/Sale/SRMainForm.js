@@ -72,7 +72,19 @@ Ext.define("PSI.Sale.SRMainForm", {
     
     // 编辑销售退货入库单
     onEditSRBill: function () {
-        PSI.MsgBox.showInfo("正在开发中...");
+    	var me = this;
+        var item = me.getSRGrid().getSelectionModel().getSelection();
+        if (item == null || item.length != 1) {
+            PSI.MsgBox.showInfo("请选择要编辑的销售退货入库单");
+            return;
+        }
+        var bill = item[0];
+
+        var form = Ext.create("PSI.Sale.SREditForm", {
+            parentForm: me,
+            entity: bill
+        });
+        form.show();
     },
     
     // 删除销售退货入库单
@@ -87,7 +99,6 @@ Ext.define("PSI.Sale.SRMainForm", {
 
         var info = "请确认是否删除销售退货入库单: <span style='color:red'>" + bill.get("ref")
                 + "</span>";
-        var me = this;
         PSI.MsgBox.confirm(info, function () {
             var el = Ext.getBody();
             el.mask("正在删除中...");
