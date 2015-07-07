@@ -53,7 +53,7 @@ Ext.define("PSI.App", {
             } else {
                 location.replace(PSI.Const.BASE_URL + "Home/MainMenu/navigateTo/fid/" + fid);
             }
-        }, this);
+        }, me);
 
         me.vp = Ext.create("Ext.container.Viewport", {
             layout: "fit",
