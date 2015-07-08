@@ -3,12 +3,15 @@
 namespace Home\Service;
 
 /**
- * 退货入库单Service
+ * 销售退货入库单Service
  *
  * @author 李静波
  */
 class SRBillService extends PSIBaseService {
 
+	/**
+	 * 销售退货入库单主表信息列表
+	 */
 	public function srbillList($params) {
 		$page = $params["page"];
 		$start = $params["start"];
@@ -51,6 +54,9 @@ class SRBillService extends PSIBaseService {
 		);
 	}
 
+	/**
+	 * 销售退货入库单明细信息列表
+	 */
 	public function srBillDetailList($params) {
 		$id = $params["id"];
 		$db = M();
@@ -76,23 +82,30 @@ class SRBillService extends PSIBaseService {
 		return $result;
 	}
 
+	/**
+	 * 获得退货入库单单据数据
+	 */
 	public function srBillInfo($params) {
 		$id = $params["id"];
+		
 		$us = new UserService();
+		
 		if (! $id) {
+			// 新增单据
 			$result["bizUserId"] = $us->getLoginUserId();
 			$result["bizUserName"] = $us->getLoginUserName();
 			return $result;
 		} else {
+			// 编辑单据
 			$db = M();
 			$result = array();
 			$sql = "select w.id, w.ref, w.bizdt, c.id as customer_id, c.name as customer_name, 
 					 u.id as biz_user_id, u.name as biz_user_name,
-					 h.id as warehouse_id, h.name as warehouse_name 
-					 from t_sr_bill w, t_customer c, t_user u, t_warehouse h 
+					 h.id as warehouse_id, h.name as warehouse_name, wsBill.ref as ws_bill_ref 
+					 from t_sr_bill w, t_customer c, t_user u, t_warehouse h, t_ws_bill wsBill 
 					 where w.customer_id = c.id and w.biz_user_id = u.id 
 					 and w.warehouse_id = h.id 
-					 and w.id = '%s' ";
+					 and w.id = '%s' and wsBill.id = w.ws_bill_id";
 			$data = $db->query($sql, $id);
 			if ($data) {
 				$result["ref"] = $data[0]["ref"];
@@ -103,10 +116,12 @@ class SRBillService extends PSIBaseService {
 				$result["warehouseName"] = $data[0]["warehouse_name"];
 				$result["bizUserId"] = $data[0]["biz_user_id"];
 				$result["bizUserName"] = $data[0]["biz_user_name"];
+				$result["wsBillRef"] = $data[0]["ws_bill_ref"];
 			}
 			
 			$sql = "select d.id, g.id as goods_id, g.code, g.name, g.spec, u.name as unit_name, d.goods_count, 
-					d.goods_price, d.goods_money 
+					d.goods_price, d.goods_money, 
+					d.rejection_goods_count, d.rejection_goods_price, d.rejection_sale_money 
 					 from t_sr_bill_detail d, t_goods g, t_goods_unit u 
 					 where d.srbill_id = '%s' and d.goods_id = g.id and g.unit_id = u.id
 					 order by d.show_order";
@@ -122,6 +137,9 @@ class SRBillService extends PSIBaseService {
 				$items[$i]["goodsCount"] = $v["goods_count"];
 				$items[$i]["goodsPrice"] = $v["goods_price"];
 				$items[$i]["goodsMoney"] = $v["goods_money"];
+				$items[$i]["rejCount"] = $v["rejection_goods_count"];
+				$items[$i]["rejPrice"] = $v["rejection_goods_price"];
+				$items[$i]["rejMoney"] = $v["rejection_sale_money"];
 			}
 			
 			$result["items"] = $items;
@@ -198,18 +216,20 @@ class SRBillService extends PSIBaseService {
 		$items = $bill["items"];
 		$wsBillId = $bill["wsBillId"];
 		
-		$sql = "select count(*) as cnt from t_ws_bill where id = '%s' ";
-		$data = $db->query($sql, $wsBillId);
-		$cnt = $data[0]["cnt"];
-		if ($cnt != 1) {
-			return $this->bad("选择的销售出库单不存在");
-		}
-		
-		$sql = "select count(*) as cnt from t_customer where id = '%s' ";
-		$data = $db->query($sql, $customerId);
-		$cnt = $data[0]["cnt"];
-		if ($cnt != 1) {
-			return $this->bad("选择的客户不存在");
+		if (! $id) {
+			$sql = "select count(*) as cnt from t_ws_bill where id = '%s' ";
+			$data = $db->query($sql, $wsBillId);
+			$cnt = $data[0]["cnt"];
+			if ($cnt != 1) {
+				return $this->bad("选择的销售出库单不存在");
+			}
+			
+			$sql = "select count(*) as cnt from t_customer where id = '%s' ";
+			$data = $db->query($sql, $customerId);
+			$cnt = $data[0]["cnt"];
+			if ($cnt != 1) {
+				return $this->bad("选择的客户不存在");
+			}
 		}
 		
 		$sql = "select count(*) as cnt from t_warehouse where id = '%s' ";
@@ -352,14 +372,14 @@ class SRBillService extends PSIBaseService {
 		
 		return $pre . $mid . $suf;
 	}
-	
+
 	public function deleteSRBill($params) {
 		$id = $params["id"];
 		
 		$db = M();
 		$sql = "select bill_status, ref from t_sr_bill where id = '%s' ";
 		$data = $db->query($sql, $id);
-		if (!$data) {
+		if (! $data) {
 			return $this->bad("要删除的销售退货入库单不存在");
 		}
 		
@@ -383,7 +403,7 @@ class SRBillService extends PSIBaseService {
 			
 			$db->commit();
 			return $this->ok();
-		} catch (Exception $ex) {
+		} catch ( Exception $ex ) {
 			$db->rollback();
 			return $this->bad("数据库操作失败，请联系管理员");
 		}
