@@ -299,18 +299,19 @@ Ext.define("PSI.Sale.SRMainForm", {
                     dataIndex: "goodsCode",
                     menuDisabled: true,
                     sortable: false,
-                    width: 60
+                    width: 120
                 }, {
                     header: "商品名称",
                     dataIndex: "goodsName",
                     menuDisabled: true,
                     sortable: false,
-                    width: 120
+                    width: 200
                 }, {
                     header: "规格型号",
                     dataIndex: "goodsSpec",
                     menuDisabled: true,
-                    sortable: false
+                    sortable: false,
+                    width: 200
                 }, {
                     header: "退货数量",
                     dataIndex: "rejCount",
@@ -330,7 +331,7 @@ Ext.define("PSI.Sale.SRMainForm", {
                     sortable: false,
                     align: "right",
                     xtype: "numbercolumn",
-                    width: 60
+                    width: 150
                 }, {
                     header: "退货金额",
                     dataIndex: "rejSaleMoney",
@@ -338,7 +339,7 @@ Ext.define("PSI.Sale.SRMainForm", {
                     sortable: false,
                     align: "right",
                     xtype: "numbercolumn",
-                    width: 80
+                    width: 150
                 }],
             store: store
         });

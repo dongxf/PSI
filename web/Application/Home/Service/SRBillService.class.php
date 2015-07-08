@@ -121,14 +121,15 @@ class SRBillService extends PSIBaseService {
 			
 			$sql = "select d.id, g.id as goods_id, g.code, g.name, g.spec, u.name as unit_name, d.goods_count, 
 					d.goods_price, d.goods_money, 
-					d.rejection_goods_count, d.rejection_goods_price, d.rejection_sale_money 
+					d.rejection_goods_count, d.rejection_goods_price, d.rejection_sale_money,
+					d.wsbilldetail_id
 					 from t_sr_bill_detail d, t_goods g, t_goods_unit u 
 					 where d.srbill_id = '%s' and d.goods_id = g.id and g.unit_id = u.id
 					 order by d.show_order";
 			$data = $db->query($sql, $id);
 			$items = array();
 			foreach ( $data as $i => $v ) {
-				$items[$i]["id"] = $v["id"];
+				$items[$i]["id"] = $v["wsbilldetail_id"];
 				$items[$i]["goodsId"] = $v["goods_id"];
 				$items[$i]["goodsCode"] = $v["code"];
 				$items[$i]["goodsName"] = $v["name"];
@@ -241,7 +242,84 @@ class SRBillService extends PSIBaseService {
 		
 		if ($id) {
 			// 编辑
-			return $this->todo();
+			$sql = "select bill_status, ref from t_sr_bill where id = '%s' ";
+			$data = $db->query($sql, $id);
+			if (! $data) {
+				return $this->bad("要编辑的销售退货入库单不存在");
+			}
+			$billStatus = $data[0]["bill_status"];
+			if ($billStatus != 0) {
+				return $this->bad("销售退货入库单已经提交，不能再编辑");
+			}
+			$ref = $data[0]["ref"];
+			
+			$db->startTrans();
+			try {
+				$sql = "update t_sr_bill
+						set bizdt = '%s', biz_user_id = '%s', date_created = now(),
+						   input_user_id = '%s', warehouse_id = '%s'
+						where id = '%s' ";
+				$us = new UserService();
+				$db->execute($sql, $bizDT, $bizUserId, $us->getLoginUserId(), $warehouseId, $id);
+				
+				// 退货明细
+				$sql = "delete from t_sr_bill_detail where srbill_id = '%s' ";
+				$db->execute($sql, $id);
+				
+				foreach ( $items as $i => $v ) {
+					$wsBillDetailId = $v["id"];
+					$sql = "select inventory_price, goods_count, goods_price, goods_money
+							from t_ws_bill_detail 
+							where id = '%s' ";
+					$data = $db->query($sql, $wsBillDetailId);
+					if (! $data) {
+						continue;
+					}
+					$goodsCount = $data[0]["goods_count"];
+					$goodsPrice = $data[0]["goods_price"];
+					$goodsMoney = $data[0]["goods_money"];
+					$inventoryPrice = $data[0]["inentory_price"];
+					$rejCount = $v["rejCount"];
+					$rejPrice = $v["rejPrice"];
+					if ($rejCount == null) {
+						$rejCount = 0;
+					}
+					$rejSaleMoney = $rejCount * $rejPrice;
+					$inventoryMoney = $rejCount * $inventoryPrice;
+					$goodsId = $v["goodsId"];
+					
+					$sql = "insert into t_sr_bill_detail(id, date_created, goods_id, goods_count, goods_money,
+						goods_price, inventory_money, inventory_price, rejection_goods_count, 
+						rejection_goods_price, rejection_sale_money, show_order, srbill_id, wsbilldetail_id)
+						values('%s', now(), '%s', %d, %f, %f, %f, %f, %d,
+						%f, %f, %d, '%s', '%s') ";
+					$db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsMoney, 
+							$goodsPrice, $inventoryMoney, $inventoryPrice, $rejCount, $rejPrice, 
+							$rejSaleMoney, $i, $id, $wsBillDetailId);
+				}
+
+				// 更新主表的汇总信息
+				$sql = "select sum(rejection_sale_money) as rej_money 
+						from t_sr_bill_detail 
+						where srbill_id = '%s' ";
+				$data = $db->query($sql, $id);
+				$rejMoney = $data[0]["rej_money"];
+				$sql = "update t_sr_bill
+						set rejection_sale_money = %f
+						where id = '%s' ";
+				$db->execute($sql, $rejMoney, $id);
+				
+				$bs = new BizlogService();
+				$log = "编辑销售退货入库单，单号：{$ref}";
+				$bs->insertBizlog($log, "销售退货入库");
+				
+				$db->commit();
+				
+				return $this->ok($id);
+			} catch ( Exception $ex ) {
+				$db->rollback();
+				return $this->bad("数据库错误，请联系管理员");
+			}
 		} else {
 			// 新增
 			$db->startTrans();
@@ -287,6 +365,17 @@ class SRBillService extends PSIBaseService {
 							$goodsPrice, $inventoryMoney, $inventoryPrice, $rejCount, $rejPrice, 
 							$rejSaleMoney, $i, $id, $wsBillDetailId);
 				}
+				
+				// 更新主表的汇总信息
+				$sql = "select sum(rejection_sale_money) as rej_money 
+						from t_sr_bill_detail 
+						where srbill_id = '%s' ";
+				$data = $db->query($sql, $id);
+				$rejMoney = $data[0]["rej_money"];
+				$sql = "update t_sr_bill
+						set rejection_sale_money = %f
+						where id = '%s' ";
+				$db->execute($sql, $rejMoney, $id);
 				
 				$bs = new BizlogService();
 				$log = "新建销售退货入库单，单号：{$ref}";
