@@ -198,4 +198,18 @@ class SaleController extends Controller {
 			$this->ajaxReturn($rs->deleteSRBill($params));
 		}
 	}
+
+	/**
+	 * 提交销售退货入库单
+	 */
+	public function commitSRBill() {
+		if (IS_POST) {
+			$params = array(
+					"id" => I("post.id")
+			);
+			
+			$rs = new SRBillService();
+			$this->ajaxReturn($rs->commitSRBill($params));
+		}
+	}
 }

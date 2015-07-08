@@ -497,4 +497,13 @@ class SRBillService extends PSIBaseService {
 			return $this->bad("数据库操作失败，请联系管理员");
 		}
 	}
+	
+	/**
+	 * 提交销售退货入库单
+	 */
+	public function commitSRBill($params) {
+		$id = $params["id"];
+		
+		return $this->todo();
+	}
 }

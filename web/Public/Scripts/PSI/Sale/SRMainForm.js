@@ -59,7 +59,6 @@ Ext.define("PSI.Sale.SRMainForm", {
         gridDetail.getStore().removeAll();
         Ext.getCmp("pagingToobar").doRefresh();
         this.__lastId = id;
-
     },
     
     // 新增销售退货入库单
@@ -132,7 +131,42 @@ Ext.define("PSI.Sale.SRMainForm", {
     
     // 提交销售退货入库单
     onCommit: function () {
-        PSI.MsgBox.showInfo("正在开发中...");
+        var me = this;
+        var item = me.getSRGrid().getSelectionModel().getSelection();
+        if (item == null || item.length != 1) {
+            PSI.MsgBox.showInfo("没有选择要提交的销售退货入库单");
+            return;
+        }
+        var bill = item[0];
+
+        var info = "请确认是否提交单号: <span style='color:red'>" + bill.get("ref") + "</span> 的销售退货入库单?";
+        PSI.MsgBox.confirm(info, function () {
+            var el = Ext.getBody();
+            el.mask("正在提交中...");
+            Ext.Ajax.request({
+                url: PSI.Const.BASE_URL + "Home/Sale/commitSRBill",
+                method: "POST",
+                params: {id: bill.get("id")},
+                callback: function (options, success, response) {
+                    el.unmask();
+
+                    if (success) {
+                        var data = Ext.JSON.decode(response.responseText);
+                        if (data.success) {
+                            PSI.MsgBox.showInfo("成功完成提交操作", function () {
+                                me.refreshSRBillGrid(data.id);
+                            });
+                        } else {
+                            PSI.MsgBox.showInfo(data.msg);
+                        }
+                    } else {
+                        PSI.MsgBox.showInfo("网络错误", function () {
+                            window.location.reload();
+                        });
+                    }
+                }
+            });
+        });
     },
     
     getSRGrid: function () {

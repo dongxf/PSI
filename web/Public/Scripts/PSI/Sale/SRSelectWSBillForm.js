@@ -1,3 +1,4 @@
+// 销售退货入库单-选择销售出库单界面
 Ext.define("PSI.Sale.SRSelectWSBillForm", {
     extend: "Ext.window.Window",
     config: {
