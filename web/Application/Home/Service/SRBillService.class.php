@@ -462,6 +462,9 @@ class SRBillService extends PSIBaseService {
 		return $pre . $mid . $suf;
 	}
 
+	/**
+	 * 删除销售退货入库单
+	 */
 	public function deleteSRBill($params) {
 		$id = $params["id"];
 		
@@ -504,6 +507,55 @@ class SRBillService extends PSIBaseService {
 	public function commitSRBill($params) {
 		$id = $params["id"];
 		
-		return $this->todo();
+		$db = M();
+		
+		$sql = "select ref, bill_status from t_sr_bill where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if (! $data) {
+			return $this->bad("要提交的销售退货入库单不存在");
+		}
+		$billStatus = $data[0]["bill_status"];
+		$ref = $data[0]["ref"];
+		if ($billStatus != 0) {
+			return $this->bad("销售退货入库单(单号:{$ref})已经提交，不能再次提交");
+		}
+		
+		// 检查退货数量
+		// 1、不能为负数和0
+		// 2、累计退货数量不能超过销售的数量
+		$sql = "select wsbilldetail_id, rejection_goods_count, goods_id
+				from t_sr_bill_detail
+				where srbill_id = '%s' 
+				order by show_order";
+		$data = $db->query($sql, $id);
+		if (! $data) {
+			return $this->bad("销售退货入库单(单号:{$ref})没有退货明细，无法提交");
+		}
+		
+		foreach ($data as $i => $v) {
+			$wsbillDetailId = $v[$i]["wsbilldetail_id"];
+			$rejCount = $v[$i]["rejection_goods_count"];
+			$goodsId = $v[$i]["goods_id"];
+			
+			if ($rejCount <= 0) {
+				$sql = "select code, name, spec
+						from t_goods
+						where id = '%s' ";
+				$data = $db->query($sql, $goodsId);
+				return $this->bad("");
+			}
+		}
+		
+		$db->startTrans();
+		try {
+			
+			
+			$db->commit();
+			
+			return $this->ok($id);
+		} catch (Exception $ex) {
+			$db->rollback();
+			return $this->bad("数据库错误，请联系管理员");
+		}
 	}
 }
