@@ -1,5 +1,7 @@
+// 信息提示框
 Ext.define("PSI.MsgBox", {
     statics: {
+    	// 显示提示信息
         showInfo: function (info, func) {
             Ext.Msg.show({
                 title: "提示",
@@ -14,6 +16,8 @@ Ext.define("PSI.MsgBox", {
                 }
             });
         },
+        
+        // 显示确认信息
         confirm: function (confirmInfo, funcOnYes) {
             Ext.Msg.show({
                 title: "提示",
@@ -29,6 +33,8 @@ Ext.define("PSI.MsgBox", {
                 }
             });
         },
+        
+        // 显示提示信息，提示信息会自动关闭
         tip: function (info) {
             var wnd = Ext.create("Ext.window.Window", {
                 modal: false,

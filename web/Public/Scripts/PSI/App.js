@@ -1,12 +1,15 @@
+//PSI的应用容器：承载主菜单、其他模块的UI
 Ext.define("PSI.App", {
     config: {
         userName: ""
     },
+    
     constructor: function (config) {
         this.initConfig(config);
 
         this.createMainUI();
     },
+    
     createMainUI: function () {
         var me = this;
 
@@ -110,7 +113,7 @@ Ext.define("PSI.App", {
             scope: me
         });
     },
-    // private
+    
     refreshRectFidGrid: function () {
         var me = this;
 
@@ -132,7 +135,7 @@ Ext.define("PSI.App", {
             scope: me
         });
     },
-    // private
+    
     createMainMenu: function (root) {
         var me = this;
 
@@ -194,6 +197,8 @@ Ext.define("PSI.App", {
 
         this.vp.getComponent(0).addDocked(mainToolbar);
     },
+    
+    // 设置模块的标题
     setAppHeader: function (header) {
         if (!header) {
             return;
@@ -202,15 +207,19 @@ Ext.define("PSI.App", {
         panel.setTitle(header.title + " - PSI");
         panel.setIconCls(header.iconCls);
     },
+    
     add: function (comp) {
         this.mainPanel.add(comp);
     },
+    
     onRecentFidPanelCollapse: function () {
         Ext.util.Cookies.set("PSI_RECENT_FID", "1", Ext.Date.add(new Date(), Ext.Date.YEAR, 1));
     },
+    
     onRecentFidPanelExpand: function () {
         Ext.util.Cookies.clear("PSI_RECENT_FID");
     },
+    
     getRecentFidPanelCollapsed: function () {
         var v = Ext.util.Cookies.get("PSI_RECENT_FID");
         return v === "1";
