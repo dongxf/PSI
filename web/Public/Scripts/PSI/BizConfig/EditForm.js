@@ -1,3 +1,4 @@
+// 业务设置 - 编辑设置项目
 Ext.define("PSI.BizConfig.EditForm", {
 	extend : "Ext.window.Window",
 	config : {

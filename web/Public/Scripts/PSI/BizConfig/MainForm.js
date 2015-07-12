@@ -1,5 +1,7 @@
+// 业务设置 - 主窗体
 Ext.define("PSI.BizConfig.MainForm", {
     extend: "Ext.panel.Panel",
+    
     initComponent: function () {
         var me = this;
 
@@ -34,6 +36,7 @@ Ext.define("PSI.BizConfig.MainForm", {
 
         me.refreshGrid();
     },
+    
     getGrid: function () {
         var me = this;
         if (me.__grid) {
@@ -76,6 +79,7 @@ Ext.define("PSI.BizConfig.MainForm", {
 
         return me.__grid;
     },
+    
     refreshGrid: function (id) {
         var me = this;
         var grid = me.getGrid();
@@ -107,6 +111,8 @@ Ext.define("PSI.BizConfig.MainForm", {
             }
         });
     },
+    
+    // 设置按钮被单击
     onEdit: function () {
         var form = Ext.create("PSI.BizConfig.EditForm", {
             parentForm: this
