@@ -1,3 +1,4 @@
+// 仓库需求设置组织机构的时候的主界面
 Ext.define("PSI.Warehouse.MainFormWithOrg", {
 	extend : "Ext.panel.Panel",
 	border : 0,

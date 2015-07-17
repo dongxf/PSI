@@ -1,3 +1,4 @@
+// 从组织结构查看仓库的使用情况
 Ext.define("PSI.Warehouse.OrgViewForm", {
 	extend : "Ext.window.Window",
 	config : {

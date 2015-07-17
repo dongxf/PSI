@@ -1,3 +1,4 @@
+// 当仓库需要设置组织机构的时候，编辑仓库所属组织机构的界面
 Ext.define("PSI.Warehouse.EditOrgForm", {
 	extend : "Ext.window.Window",
 	config : {

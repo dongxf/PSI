@@ -1,3 +1,4 @@
+// 仓库 - 主界面
 Ext.define("PSI.Warehouse.MainForm", {
     extend: "Ext.panel.Panel",
     border: 0,

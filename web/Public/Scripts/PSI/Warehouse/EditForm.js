@@ -1,3 +1,4 @@
+// 仓库 - 新增或编辑界面
 Ext.define("PSI.Warehouse.EditForm", {
     extend: "Ext.window.Window",
     config: {
