@@ -1,3 +1,4 @@
+// 自定义字段 - 客户
 Ext.define("PSI.Customer.CustomerField", {
     extend: "Ext.form.field.Trigger",
     alias: "widget.psi_customerfield",

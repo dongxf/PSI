@@ -1,3 +1,4 @@
+// 客户资料 - 新增或编辑界面
 Ext.define("PSI.Customer.CustomerEditForm", {
     extend: "Ext.window.Window",
     config: {

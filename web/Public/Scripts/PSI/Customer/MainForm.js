@@ -1,3 +1,4 @@
+// 客户资料 - 主界面
 Ext.define("PSI.Customer.MainForm", {
     extend: "Ext.panel.Panel",
     border: 0,
