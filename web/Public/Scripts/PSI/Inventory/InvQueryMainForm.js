@@ -1,3 +1,4 @@
+// 库存账查询 - 主界面
 Ext.define("PSI.Inventory.InvQueryMainForm", {
 	extend : "Ext.panel.Panel",
 

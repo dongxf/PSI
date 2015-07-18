@@ -1,3 +1,4 @@
+// 库存建账 - 主界面
 Ext.define("PSI.Inventory.InitInventoryMainForm", {
     extend: "Ext.panel.Panel",
     initComponent: function () {

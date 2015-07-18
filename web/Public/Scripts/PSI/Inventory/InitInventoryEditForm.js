@@ -1,3 +1,4 @@
+// 库存建账 - 编辑界面
 Ext.define("PSI.Inventory.InitInventoryEditForm", {
     extend: "Ext.window.Window",
     config: {
