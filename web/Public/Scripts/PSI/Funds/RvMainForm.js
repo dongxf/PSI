@@ -1,3 +1,4 @@
+// 应收账款 - 主界面
 Ext.define("PSI.Funds.RvMainForm", {
 	extend : "Ext.panel.Panel",
 

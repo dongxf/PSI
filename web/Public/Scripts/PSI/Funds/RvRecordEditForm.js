@@ -1,3 +1,4 @@
+// 应收账款 - 收款记录
 Ext.define("PSI.Funds.RvRecordEditForm", {
 	extend : "Ext.window.Window",
 

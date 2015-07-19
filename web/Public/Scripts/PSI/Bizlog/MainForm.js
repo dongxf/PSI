@@ -1,3 +1,4 @@
+// 业务日志 - 主界面
 Ext.define("PSI.Bizlog.MainForm", {
     extend: "Ext.panel.Panel",
     initComponent: function () {

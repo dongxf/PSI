@@ -1,3 +1,4 @@
+// 应付账款 - 付款记录
 Ext.define("PSI.Funds.PaymentEditForm", {
 	extend : "Ext.window.Window",
 

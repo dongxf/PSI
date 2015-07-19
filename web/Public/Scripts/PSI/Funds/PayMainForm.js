@@ -1,3 +1,4 @@
+// 应付账款 - 主界面
 Ext.define("PSI.Funds.PayMainForm", {
 	extend : "Ext.panel.Panel",
 
