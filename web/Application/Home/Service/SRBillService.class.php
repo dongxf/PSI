@@ -515,7 +515,8 @@ class SRBillService extends PSIBaseService {
 		
 		$db = M();
 		
-		$sql = "select ref, bill_status, warehouse_id, customer_id, bizdt, biz_user_id 
+		$sql = "select ref, bill_status, warehouse_id, customer_id, bizdt, 
+					biz_user_id, rejection_sale_money  
 				from t_sr_bill where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if (! $data) {
@@ -528,21 +529,23 @@ class SRBillService extends PSIBaseService {
 		}
 		
 		$warehouseId = $data[0]["warehouse_id"];
+		$customerId = $data[0]["customer_id"];
+		$bizDT = $data[0]["bizdt"];
+		$bizUserId = $data[0]["biz_user_id"];
+		$rejectionSaleMoney = $data[0]["rejection_sale_money"];
+		
 		$sql = "select name from t_warehouse where id = '%s' ";
 		$data = $db->query($sql, $warehouseId);
 		if (! $data) {
 			return $this->bad("仓库不存在，无法提交");
 		}
 		
-		$customerId = $data[0]["customer_id"];
 		$sql = "select name from t_customer where id = '%s' ";
 		$data = $db->query($sql, $customerId);
 		if (! $data) {
 			return $this->bad("客户不存在，无法提交");
 		}
 		
-		$bizDT = $data[0]["bizdt"];
-		$bizUserId = $data[0]["biz_user_id"];
 		$sql = "select name from t_user where id = '%s' ";
 		$data = $db->query($sql, $bizUserId);
 		if (! $data) {
@@ -614,11 +617,11 @@ class SRBillService extends PSIBaseService {
 				from t_sr_bill_detail
 				where srbill_id = '%s' 
 				order by show_order";
-			$data = $db->query($sql, $id);
-			foreach ( $data as $i => $v ) {
-				$goodsId = $v[$i]["goods_id"];
-				$rejCount = $v[$i]["rejection_goods_count"];
-				$rejMoney = $v[$i]["inventory_money"];
+			$items = $db->query($sql, $id);
+			foreach ( $items as $i => $v ) {
+				$goodsId = $v["goods_id"];
+				$rejCount = $v["rejection_goods_count"];
+				$rejMoney = $v["inventory_money"];
 				if ($rejCount == 0) {
 					continue;
 				}
@@ -663,10 +666,38 @@ class SRBillService extends PSIBaseService {
 						$totalBalancePrice, $totalBalanceMoney, $goodsId, $warehouseId);
 			}
 			
-			// 应付账款明细账
+			$idGen = new IdGenService();
 			
 			// 应付账款总账
+			$sql = "select pay_money, balance_money
+					from t_payables
+					where ca_id = '%s' and ca_type = 'customer' ";
+			$data = $db->query($sql, $customerId);
+			if ($data) {
+				$totalPayMoney = $data[0]["pay_money"];
+				$totalBalanceMoney = $data[0]["balance_money"];
+				
+				$totalPayMoney += $rejectionSaleMoney;
+				$totalBalanceMoney += $rejectionSaleMoney;
+				$sql = "update t_payables
+						set pay_money = %f, balance_money = %f
+						where ca_id = '%s' and ca_type = 'customer' ";
+				$db->execute($sql, $totalPayMoney, $totalBalanceMoney, $customerId);
+			} else {
+				
+				$sql = "insert into t_payables (id, ca_id, ca_type, pay_money, balance_money, act_money)
+						values ('%s', '%s', 'customer', %f, %f, %f)";
+				$db->execute($sql, $idGen->newId(), $customerId, $rejectionSaleMoney, 
+						$rejectionSaleMoney, 0);
+			}
 			
+			// 应付账款明细账
+			$sql = "insert into t_payables_detail(id, ca_id, ca_type, pay_money, balance_money,
+					biz_date, date_created, ref_number, ref_type, act_money)
+					values ('%s', '%s', 'customer', %f, %f,
+					 '%s', now(), '%s', '销售退货入库', 0)";
+			$db->execute($sql, $idGen->newId(), $customerId, $rejectionSaleMoney, 
+					$rejectionSaleMoney, $bizDT, $ref);
 			
 			// 把单据本身的状态修改为已经提交
 			$sql = "update t_sr_bill
