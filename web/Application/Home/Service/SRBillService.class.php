@@ -602,7 +602,27 @@ class SRBillService extends PSIBaseService {
 				order by show_order";
 			$data = $db->query($sql, $id);
 			foreach ( $data as $i => $v ) {
+				$goodsId = $v[$i]["goods_id"];
+				$rejCount = $v[$i]["rejection_goods_count"];
+				if ($rejCount == 0) {
+					continue;
+				}
+				
+				$sql = "select in_count, in_money, balance_count, balance_money
+						from t_inventory
+						where warehouse_id = '%s' and goods_id = '%s' ";
+				$data = $db->query($sql, $warehouseId, $goodsId);
+				if (! $data) {
+					continue;
+				}
+				$totalInCount = $data[0]["in_count"];
+				$totalInMoney = $data[0]["in_money"];
+				$totalBlanceCount = $data[0]["balance_count"];
+				$totalBalanceMoney = $data[0]["balance_money"];
+				
 				// 库存明细账
+				$sql = "insert into t_inventory_detail()
+						values ()";
 				
 				// 库存总账
 				
@@ -611,7 +631,9 @@ class SRBillService extends PSIBaseService {
 				// 应付账款总账
 			}
 			
-			// 单据本身的状态
+			// 把单据本身的状态修改为已经提交
+			
+			// 记录业务日志
 			
 			$db->commit();
 			
