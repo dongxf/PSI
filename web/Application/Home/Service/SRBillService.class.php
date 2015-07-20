@@ -299,15 +299,18 @@ class SRBillService extends PSIBaseService {
 				}
 				
 				// 更新主表的汇总信息
-				$sql = "select sum(rejection_sale_money) as rej_money 
+				$sql = "select sum(rejection_sale_money) as rej_money,
+						sum(inventory_money) as inv_money
 						from t_sr_bill_detail 
 						where srbill_id = '%s' ";
 				$data = $db->query($sql, $id);
 				$rejMoney = $data[0]["rej_money"];
+				$invMoney = $data[0]["inv_money"];
+				$profit = $invMoney - $rejMoney;
 				$sql = "update t_sr_bill
-						set rejection_sale_money = %f
+						set rejection_sale_money = %f, inventory_money = %f, profit = %f
 						where id = '%s' ";
-				$db->execute($sql, $rejMoney, $id);
+				$db->execute($sql, $rejMoney, $invMoney, $profit, $id);
 				
 				$bs = new BizlogService();
 				$log = "编辑销售退货入库单，单号：{$ref}";
@@ -367,15 +370,18 @@ class SRBillService extends PSIBaseService {
 				}
 				
 				// 更新主表的汇总信息
-				$sql = "select sum(rejection_sale_money) as rej_money 
+				$sql = "select sum(rejection_sale_money) as rej_money,
+						sum(inventory_money) as inv_money
 						from t_sr_bill_detail 
 						where srbill_id = '%s' ";
 				$data = $db->query($sql, $id);
 				$rejMoney = $data[0]["rej_money"];
+				$invMoney = $data[0]["inv_money"];
+				$profit = $invMoney - $rejMoney;
 				$sql = "update t_sr_bill
-						set rejection_sale_money = %f
+						set rejection_sale_money = %f, inventory_money = %f, profit = %f
 						where id = '%s' ";
-				$db->execute($sql, $rejMoney, $id);
+				$db->execute($sql, $rejMoney, $invMoney, $profit, $id);
 				
 				$bs = new BizlogService();
 				$log = "新建销售退货入库单，单号：{$ref}";
