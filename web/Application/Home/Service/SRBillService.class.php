@@ -278,7 +278,7 @@ class SRBillService extends PSIBaseService {
 					$goodsCount = $data[0]["goods_count"];
 					$goodsPrice = $data[0]["goods_price"];
 					$goodsMoney = $data[0]["goods_money"];
-					$inventoryPrice = $data[0]["inentory_price"];
+					$inventoryPrice = $data[0]["inventory_price"];
 					$rejCount = $v["rejCount"];
 					$rejPrice = $v["rejPrice"];
 					if ($rejCount == null) {
@@ -346,7 +346,7 @@ class SRBillService extends PSIBaseService {
 					$goodsCount = $data[0]["goods_count"];
 					$goodsPrice = $data[0]["goods_price"];
 					$goodsMoney = $data[0]["goods_money"];
-					$inventoryPrice = $data[0]["inentory_price"];
+					$inventoryPrice = $data[0]["inventory_price"];
 					$rejCount = $v["rejCount"];
 					$rejPrice = $v["rejPrice"];
 					if ($rejCount == null) {
@@ -604,7 +604,7 @@ class SRBillService extends PSIBaseService {
 		
 		$db->startTrans();
 		try {
-			$sql = "select goods_id, rejection_goods_count
+			$sql = "select goods_id, rejection_goods_count, inventory_money
 				from t_sr_bill_detail
 				where srbill_id = '%s' 
 				order by show_order";
@@ -612,9 +612,11 @@ class SRBillService extends PSIBaseService {
 			foreach ( $data as $i => $v ) {
 				$goodsId = $v[$i]["goods_id"];
 				$rejCount = $v[$i]["rejection_goods_count"];
+				$rejMoney = $v[$i]["inventory_money"];
 				if ($rejCount == 0) {
 					continue;
 				}
+				$rejPrice = $rejMoney / $rejCount;
 				
 				$sql = "select in_count, in_money, balance_count, balance_money
 						from t_inventory
@@ -625,8 +627,15 @@ class SRBillService extends PSIBaseService {
 				}
 				$totalInCount = $data[0]["in_count"];
 				$totalInMoney = $data[0]["in_money"];
-				$totalBlanceCount = $data[0]["balance_count"];
+				$totalBalanceCount = $data[0]["balance_count"];
 				$totalBalanceMoney = $data[0]["balance_money"];
+				
+				$totalInCount += $rejCount;
+				$totalInMoney += $rejMoney;
+				$totalInPrice = $totalInMoney / $totalInCount;
+				$totalBalanceCount += $rejCount;
+				$totalBalanceMoney += $rejMoney;
+				$totalBalancePrice = $totalBalanceMoney / $totalBalanceCount;
 				
 				// 库存明细账
 				$sql = "insert into t_inventory_detail(in_count, in_price, in_money,
@@ -635,17 +644,34 @@ class SRBillService extends PSIBaseService {
 						values (%d, %f, %f, 
 						%d, %f, %f, '%s', '销售退货入库',
 						'%s', '%s', now(), '%s', '%s')";
+				$db->execute($sql, $rejCount, $rejPrice, $rejMoney, $totalBalanceCount, 
+						$totalBalancePrice, $totalBalanceMoney, $ref, $bizDT, $bizUserId, $goodsId, 
+						$warehouseId);
 				
 				// 库存总账
-				
-				// 应付账款明细账
-				
-				// 应付账款总账
+				$sql = "update t_inventory
+						set in_count = %d, in_price = %f, in_money = %f,
+						  balance_count = %d, balance_price = %f, balance_money = %f
+						where goods_id = '%s' and warehouse_id = '%s' ";
+				$db->execute($sql, $totalInCount, $totalInPrice, $totalInMoney, $totalBalanceCount, 
+						$totalBalancePrice, $totalBalanceMoney, $goodsId, $warehouseId);
 			}
 			
+			// 应付账款明细账
+			
+			// 应付账款总账
+			
+			
 			// 把单据本身的状态修改为已经提交
+			$sql = "update t_sr_bill
+					set bill_status = 1000
+					where id = '%s' ";
+			$db->execute($sql, $id);
 			
 			// 记录业务日志
+			$log = "提交销售退货入库单，单号：{$ref}";
+			$bs = new BizlogService();
+			$bs->insertBizlog($log, "销售退货入库");
 			
 			$db->commit();
 			
