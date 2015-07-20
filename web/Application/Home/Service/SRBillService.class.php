@@ -509,7 +509,8 @@ class SRBillService extends PSIBaseService {
 		
 		$db = M();
 		
-		$sql = "select ref, bill_status from t_sr_bill where id = '%s' ";
+		$sql = "select ref, bill_status, warehouse_id, customer_id 
+				from t_sr_bill where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if (! $data) {
 			return $this->bad("要提交的销售退货入库单不存在");
@@ -518,6 +519,20 @@ class SRBillService extends PSIBaseService {
 		$ref = $data[0]["ref"];
 		if ($billStatus != 0) {
 			return $this->bad("销售退货入库单(单号:{$ref})已经提交，不能再次提交");
+		}
+		
+		$warehouseId = $data[0]["warehouse_id"];
+		$sql = "select name from t_warehouse where id = '%s' ";
+		$data = $db->query($sql, $warehouseId);
+		if (! $data) {
+			return $this->bad("仓库不存在，无法提交");
+		}
+		
+		$customerId = $data[0]["customer_id"];
+		$sql = "select name from t_customer where id = '%s' ";
+		$data = $db->query($sql, $customerId);
+		if (! $data) {
+			return $this->bad("客户不存在，无法提交");
 		}
 		
 		// 检查退货数量
@@ -537,23 +552,66 @@ class SRBillService extends PSIBaseService {
 			$rejCount = $v[$i]["rejection_goods_count"];
 			$goodsId = $v[$i]["goods_id"];
 			
+			// 退货数量为负数
 			if ($rejCount < 0) {
 				$sql = "select code, name, spec
 						from t_goods
 						where id = '%s' ";
 				$data = $db->query($sql, $goodsId);
 				if ($data) {
-					$goodsInfo = "编码：" . $data[0]["code"] . " 名称：" . $data[0]["name"] 
-						. " 规格：" . $data[0]["spec"];
+					$goodsInfo = "编码：" . $data[0]["code"] . " 名称：" . $data[0]["name"] . " 规格：" . $data[0]["spec"];
 					return $this->bad("商品({$goodsInfo})退货数量不能为负数");
 				} else {
 					return $this->bad("商品退货数量不能为负数");
+				}
+			}
+			
+			// 累计退货数量不能超过销售数量
+			$sql = "select goods_count from t_ws_bill_detail where id = '%s' ";
+			$data = $db->query($sql, $wsbillDetailId);
+			$saleGoodsCount = 0;
+			if ($data) {
+				$saleGoodsCount = $data[0]["goods_count"];
+			}
+			
+			$sql = "select sum(d.rejection_goods_count) as rej_count
+					from t_sr_bill s, t_sr_bill_detail d
+					where s.id = d.srbill_id and s.bill_status <> 0 
+					  and d.wsbilldetail_id = '%s' ";
+			$data = $db->query($sql, $wsbillDetailId);
+			$totalRejCount = $data[0]["rej_count"] + $rejCount;
+			if ($totalRejCount > $saleGoodsCount) {
+				$sql = "select code, name, spec
+						from t_goods
+						where id = '%s' ";
+				$data = $db->query($sql, $goodsId);
+				if ($data) {
+					$goodsInfo = "编码：" . $data[0]["code"] . " 名称：" . $data[0]["name"] . " 规格：" . $data[0]["spec"];
+					return $this->bad("商品({$goodsInfo})累计退货数量不超过销售量");
+				} else {
+					return $this->bad("商品累计退货数量不超过销售量");
 				}
 			}
 		}
 		
 		$db->startTrans();
 		try {
+			$sql = "select goods_id, rejection_goods_count
+				from t_sr_bill_detail
+				where srbill_id = '%s' 
+				order by show_order";
+			$data = $db->query($sql, $id);
+			foreach ( $data as $i => $v ) {
+				// 库存明细账
+				
+				// 库存总账
+				
+				// 应付账款明细账
+				
+				// 应付账款总账
+			}
+			
+			// 单据本身的状态
 			
 			$db->commit();
 			
