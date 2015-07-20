@@ -509,7 +509,7 @@ class SRBillService extends PSIBaseService {
 		
 		$db = M();
 		
-		$sql = "select ref, bill_status, warehouse_id, customer_id 
+		$sql = "select ref, bill_status, warehouse_id, customer_id, bizdt, biz_user_id 
 				from t_sr_bill where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if (! $data) {
@@ -533,6 +533,14 @@ class SRBillService extends PSIBaseService {
 		$data = $db->query($sql, $customerId);
 		if (! $data) {
 			return $this->bad("客户不存在，无法提交");
+		}
+		
+		$bizDT = $data[0]["bizdt"];
+		$bizUserId = $data[0]["biz_user_id"];
+		$sql = "select name from t_user where id = '%s' ";
+		$data = $db->query($sql, $bizUserId);
+		if (! $data) {
+			return $this->bad("业务人员不存在，无法提交");
 		}
 		
 		// 检查退货数量
@@ -621,8 +629,12 @@ class SRBillService extends PSIBaseService {
 				$totalBalanceMoney = $data[0]["balance_money"];
 				
 				// 库存明细账
-				$sql = "insert into t_inventory_detail()
-						values ()";
+				$sql = "insert into t_inventory_detail(in_count, in_price, in_money,
+						balance_count, balance_price, balance_money, ref_number, ref_type,
+						biz_date, biz_user_id, date_created, goods_id, warehouse_id)
+						values (%d, %f, %f, 
+						%d, %f, %f, '%s', '销售退货入库',
+						'%s', '%s', now(), '%s', '%s')";
 				
 				// 库存总账
 				
