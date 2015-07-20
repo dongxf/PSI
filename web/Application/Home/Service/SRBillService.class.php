@@ -297,7 +297,7 @@ class SRBillService extends PSIBaseService {
 							$goodsPrice, $inventoryMoney, $inventoryPrice, $rejCount, $rejPrice, 
 							$rejSaleMoney, $i, $id, $wsBillDetailId);
 				}
-
+				
 				// 更新主表的汇总信息
 				$sql = "select sum(rejection_sale_money) as rej_money 
 						from t_sr_bill_detail 
@@ -500,7 +500,7 @@ class SRBillService extends PSIBaseService {
 			return $this->bad("数据库操作失败，请联系管理员");
 		}
 	}
-	
+
 	/**
 	 * 提交销售退货入库单
 	 */
@@ -521,7 +521,7 @@ class SRBillService extends PSIBaseService {
 		}
 		
 		// 检查退货数量
-		// 1、不能为负数和0
+		// 1、不能为负数
 		// 2、累计退货数量不能超过销售的数量
 		$sql = "select wsbilldetail_id, rejection_goods_count, goods_id
 				from t_sr_bill_detail
@@ -532,28 +532,33 @@ class SRBillService extends PSIBaseService {
 			return $this->bad("销售退货入库单(单号:{$ref})没有退货明细，无法提交");
 		}
 		
-		foreach ($data as $i => $v) {
+		foreach ( $data as $i => $v ) {
 			$wsbillDetailId = $v[$i]["wsbilldetail_id"];
 			$rejCount = $v[$i]["rejection_goods_count"];
 			$goodsId = $v[$i]["goods_id"];
 			
-			if ($rejCount <= 0) {
+			if ($rejCount < 0) {
 				$sql = "select code, name, spec
 						from t_goods
 						where id = '%s' ";
 				$data = $db->query($sql, $goodsId);
-				return $this->bad("");
+				if ($data) {
+					$goodsInfo = "编码：" . $data[0]["code"] . " 名称：" . $data[0]["name"] 
+						. " 规格：" . $data[0]["spec"];
+					return $this->bad("商品({$goodsInfo})退货数量不能为负数");
+				} else {
+					return $this->bad("商品退货数量不能为负数");
+				}
 			}
 		}
 		
 		$db->startTrans();
 		try {
 			
-			
 			$db->commit();
 			
 			return $this->ok($id);
-		} catch (Exception $ex) {
+		} catch ( Exception $ex ) {
 			$db->rollback();
 			return $this->bad("数据库错误，请联系管理员");
 		}
