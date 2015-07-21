@@ -1,3 +1,4 @@
+// 选择用户
 Ext.define("PSI.Permission.SelectUserForm", {
     extend: "Ext.window.Window",
 

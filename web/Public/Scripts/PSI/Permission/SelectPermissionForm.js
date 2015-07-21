@@ -1,3 +1,4 @@
+// 选择权限
 Ext.define("PSI.Permission.SelectPermissionForm", {
     extend: "Ext.window.Window",
 

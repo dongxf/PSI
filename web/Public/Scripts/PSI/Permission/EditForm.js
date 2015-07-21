@@ -1,3 +1,4 @@
+// 权限 - 角色编辑界面
 Ext.define("PSI.Permission.EditForm", {
     extend: "Ext.window.Window",
     config: {

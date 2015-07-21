@@ -1,3 +1,4 @@
+// 权限管理 - 主界面
 Ext.define("PSI.Permission.MainForm", {
     extend: "Ext.panel.Panel",
 
