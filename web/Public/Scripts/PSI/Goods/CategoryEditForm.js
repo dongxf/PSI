@@ -1,3 +1,4 @@
+// 商品分类 - 编辑界面
 Ext.define("PSI.Goods.CategoryEditForm", {
     extend: "Ext.window.Window",
     config: {

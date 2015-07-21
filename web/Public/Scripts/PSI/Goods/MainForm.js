@@ -1,5 +1,7 @@
+// 商品 - 主界面
 Ext.define("PSI.Goods.MainForm", {
     extend: "Ext.panel.Panel",
+    
     initComponent: function () {
         var me = this;
 
