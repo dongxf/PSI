@@ -1,3 +1,4 @@
+// 采购入库 - 主界面
 Ext.define("PSI.Purchase.PWMainForm", {
     extend: "Ext.panel.Panel",
     border: 0,

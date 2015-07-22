@@ -1,3 +1,4 @@
+// 采购入库单 - 新增或编辑界面
 Ext.define("PSI.Purchase.PWEditForm", {
 	extend : "Ext.window.Window",
 	config : {

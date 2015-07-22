@@ -1,3 +1,4 @@
+// 销售出库 - 主界面
 Ext.define("PSI.Sale.WSMainForm", {
     extend: "Ext.panel.Panel",
     border: 0,
