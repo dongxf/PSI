@@ -5,6 +5,7 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8 */;
 
+TRUNCATE TABLE `t_fid`;
 INSERT INTO `t_fid` (`fid`, `name`) VALUES
 ('-9999', '重新登录'),
 ('-9997', '首页'),
@@ -29,8 +30,10 @@ INSERT INTO `t_fid` (`fid`, `name`) VALUES
 ('2005', '应付账款管理'),
 ('2006', '销售退货入库'),
 ('2007', '采购退货出库'),
-('2008', '业务设置');
+('2008', '业务设置'),
+('2009', '库间调拨');
 
+TRUNCATE TABLE `t_menu_item`;
 INSERT INTO `t_menu_item` (`id`, `caption`, `fid`, `parent_id`, `show_order`) VALUES
 ('01', '文件', NULL, NULL, 1),
 ('0101', '首页', '-9997', '01', 1),
@@ -41,7 +44,8 @@ INSERT INTO `t_menu_item` (`id`, `caption`, `fid`, `parent_id`, `show_order`) VA
 ('0202', '采购退货出库', '2007', '02', 2),
 ('03', '库存', NULL, NULL, 3),
 ('0301', '库存账查询', '2003', '03', 1),
-('0302', '库存建账', '2000', '03', 3),
+('0302', '库存建账', '2000', '03', 2),
+('0303', '库间调拨', '2009', '03', 3),
 ('04', '销售', NULL, NULL, 4),
 ('0401', '销售出库', '2002', '04', 1),
 ('0402', '销售退货入库', '2006', '04', 2),
@@ -65,10 +69,12 @@ INSERT INTO `t_menu_item` (`id`, `caption`, `fid`, `parent_id`, `show_order`) VA
 ('1002', '购买商业服务', '-9993', '10', 2),
 ('1003', '关于PSI', '-9994', '10', 3);
 
+TRUNCATE TABLE `t_org`;
 INSERT INTO `t_org` (`id`, `full_name`, `name`, `org_code`, `parent_id`) VALUES
 ('4D74E1E4-A129-11E4-9B6A-782BCBD7746B', '公司', '公司', '01', NULL),
 ('5EBDBE11-A129-11E4-9B6A-782BCBD7746B', '公司\\信息部', '信息部', '0199', '4D74E1E4-A129-11E4-9B6A-782BCBD7746B');
 
+TRUNCATE TABLE `t_permission`;
 INSERT INTO `t_permission` (`id`, `fid`, `name`, `note`) VALUES
 ('-8996', '-8996', '权限管理', '权限管理'),
 ('-8997', '-8997', '业务日志', '业务日志'),
@@ -86,11 +92,14 @@ INSERT INTO `t_permission` (`id`, `fid`, `name`, `note`) VALUES
 ('2004', '2004', '应收账款管理', '应收账款管理'),
 ('2005', '2005', '应付账款管理', '应付账款管理'),
 ('2006', '2006', '销售退货入库', '销售退货入库'),
-('2008', '2008', '业务设置', '业务设置');
+('2008', '2008', '业务设置', '业务设置'),
+('2009', '2009', '库间调拨', '库间调拨');
 
+TRUNCATE TABLE `t_role`;
 INSERT INTO `t_role` (`id`, `name`) VALUES
 ('A83F617E-A153-11E4-A9B8-782BCBD7746B', '系统管理');
 
+TRUNCATE TABLE `t_role_permission`;
 INSERT INTO `t_role_permission` (`role_id`, `permission_id`) VALUES
 ('A83F617E-A153-11E4-A9B8-782BCBD7746B', '-8999'),
 ('A83F617E-A153-11E4-A9B8-782BCBD7746B', '-8997'),
@@ -108,14 +117,18 @@ INSERT INTO `t_role_permission` (`role_id`, `permission_id`) VALUES
 ('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2004'),
 ('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2005'),
 ('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2006'),
-('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2008');
+('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2008'),
+('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2009');
 
+TRUNCATE TABLE `t_role_user`;
 INSERT INTO `t_role_user` (`role_id`, `user_id`) VALUES
 ('A83F617E-A153-11E4-A9B8-782BCBD7746B', '6C2A09CD-A129-11E4-9B6A-782BCBD7746B');
 
+TRUNCATE TABLE `t_user`;
 INSERT INTO `t_user` (`id`, `enabled`, `login_name`, `name`, `org_id`, `org_code`, `password`, `py`) VALUES
 ('6C2A09CD-A129-11E4-9B6A-782BCBD7746B', '1', 'admin', '系统管理员', '5EBDBE11-A129-11E4-9B6A-782BCBD7746B', '019901', '21232f297a57a5a743894a0e4a801fc3', 'XTGLY');
 
+TRUNCATE TABLE `t_config`;
 INSERT INTO `t_config` (`id`, `name`, `value`, `note`) VALUES
 ('2002-01', '销售出库单允许编辑销售单价', '0', '当允许编辑的时候，还需要给用户赋予权限[销售出库单允许编辑销售单价]'),
 ('2001-01', '采购入库默认仓库', '', ''),
