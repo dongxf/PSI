@@ -136,6 +136,10 @@ INSERT INTO `t_config` (`id`, `name`, `value`, `note`) VALUES
 ('1001-01', '商品采购和销售分别使用不同的计量单位', '0', ''),
 ('1003-01', '仓库需指定组织机构', '0', '当仓库需要指定组织机构的时候，就意味着可以控制仓库的使用人');
 
+TRUNCATE TABLE `t_psi_db_version`;
+INSERT INTO `t_psi_db_version` (`db_version`, `update_dt`) VALUES
+('20150723-001', '2015-07-23');
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

@@ -446,6 +446,30 @@ CREATE TABLE IF NOT EXISTS `t_sr_bill_detail` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `t_it_bill`;
+CREATE TABLE IF NOT EXISTS `t_it_bill` (
+  `id` varchar(255) NOT NULL,
+  `bill_status` int(11) NOT NULL,
+  `bizdt` datetime NOT NULL,
+  `biz_user_id` varchar(255) NOT NULL,
+  `date_created` datetime DEFAULT NULL,
+  `input_user_id` varchar(255) NOT NULL,
+  `ref` varchar(255) NOT NULL,
+  `from_warehouse_id` varchar(255) NOT NULL,
+  `to_warehouse_id` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `t_it_bill_detail`;
+CREATE TABLE IF NOT EXISTS `t_it_bill_detail` (
+  `id` varchar(255) NOT NULL,
+  `date_created` datetime DEFAULT NULL,
+  `goods_id` varchar(255) NOT NULL,
+  `goods_count` int(11) NOT NULL,
+  `show_order` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 DROP TABLE IF EXISTS `t_config`;
 CREATE TABLE IF NOT EXISTS `t_config` (
   `id` varchar(255) NOT NULL,
@@ -454,6 +478,11 @@ CREATE TABLE IF NOT EXISTS `t_config` (
   `note` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `t_psi_db_version`;
+CREATE TABLE IF NOT EXISTS `t_psi_db_version` (
+  `db_version` varchar(255) NOT NULL,
+  `update_dt` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
