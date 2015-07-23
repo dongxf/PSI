@@ -1,5 +1,5 @@
-// 库间调拨 - 主界面
-Ext.define("PSI.InvTransfer.InvTransferMainForm", {
+// 库存盘点 - 主界面
+Ext.define("PSI.InvCheck.InvCheckMainForm", {
     extend: "Ext.panel.Panel",
     border: 0,
     layout: "border",
@@ -8,22 +8,22 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
 
         Ext.apply(me, {
             tbar: [{
-                    text: "新建调拨单",
+                    text: "新建盘点单",
                     iconCls: "PSI-button-add",
                     scope: me,
                     handler: me.onAddBill
                 }, "-", {
-                    text: "编辑调拨单",
+                    text: "编辑盘点单",
                     iconCls: "PSI-button-edit",
                     scope: me,
                     handler: me.onEditBill
                 }, "-", {
-                    text: "删除调拨单",
+                    text: "删除盘点单",
                     iconCls: "PSI-button-delete",
                     scope: me,
                     handler: me.onDeleteBill
                 }, "-", {
-                    text: "提交调拨单",
+                    text: "提交盘点单",
                     iconCls: "PSI-button-commit",
                     scope: me,
                     handler: me.onCommit
@@ -53,22 +53,22 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
 
     },
     
-    // 新增调拨单
+    // 新增盘点单
     onAddBill: function () {
     	PSI.MsgBox.showInfo("TODO");
     },
     
-    // 编辑调拨单
+    // 编辑盘点单
     onEditBill: function () {
     	PSI.MsgBox.showInfo("TODO");
     },
     
-    // 删除调拨单
+    // 删除盘点单
     onDeleteBill: function () {
     	PSI.MsgBox.showInfo("TODO");
     },
     
-    // 提交调拨单
+    // 提交盘点单
     onCommit: function () {
     	PSI.MsgBox.showInfo("TODO");
     },
@@ -82,7 +82,7 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
         var modelName = "PSIITBill";
         Ext.define(modelName, {
             extend: "Ext.data.Model",
-            fields: ["id", "ref", "bizDate",  "fromWarehouseName", "toWarehouseName",
+            fields: ["id", "ref", "bizDate",  "warehouseName",
                 "inputUserName", "bizUserName", "billStatus"]
         });
         var store = Ext.create("Ext.data.Store", {
@@ -132,14 +132,8 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
                     menuDisabled: true,
                     sortable: false
                 }, {
-                    header: "调出仓库",
-                    dataIndex: "fromWarehouseName",
-                    menuDisabled: true,
-                    sortable: false,
-                    width: 150
-                }, {
-                    header: "调入仓库",
-                    dataIndex: "toWarehouseName",
+                    header: "盘点仓库",
+                    dataIndex: "warehouseName",
                     menuDisabled: true,
                     sortable: false,
                     width: 150
@@ -211,7 +205,8 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
         var modelName = "PSIITBillDetail";
         Ext.define(modelName, {
             extend: "Ext.data.Model",
-            fields: ["id", "goodsCode", "goodsName", "goodsSpec", "unitName", "goodsCount"]
+            fields: ["id", "goodsCode", "goodsName", "goodsSpec", "unitName", 
+                     "goodsCount", "goodsMoney"]
         });
         var store = Ext.create("Ext.data.Store", {
             autoLoad: false,
@@ -220,7 +215,7 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
         });
 
         me.__detailGrid = Ext.create("Ext.grid.Panel", {
-            title: "调拨单明细",
+            title: "盘点单明细",
             columnLines: true,
             columns: [Ext.create("Ext.grid.RowNumberer", {
                     text: "序号",
@@ -244,7 +239,7 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
                     sortable: false,
                     width: 200
                 }, {
-                    header: "调拨数量",
+                    header: "盘点后库存数量",
                     dataIndex: "goodsCount",
                     menuDisabled: true,
                     sortable: false,
@@ -255,6 +250,12 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
                     menuDisabled: true,
                     sortable: false,
                     width: 60
+                }, {
+                    header: "盘点后库存金额",
+                    dataIndex: "goodsMoney",
+                    menuDisabled: true,
+                    sortable: false,
+                    align: "right"
                 }],
             store: store
         });
