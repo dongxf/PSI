@@ -123,4 +123,9 @@ class FIdConst {
 	 * 库间调拨
 	 */
 	const INVENTORY_TRANSFER = "2009";
+	
+	/**
+	 * 库存盘点
+	 */
+	const INVENTORY_CHECK = "2010";
 }
