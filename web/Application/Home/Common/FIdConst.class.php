@@ -118,4 +118,9 @@ class FIdConst {
 	 * 业务设置
 	 */
 	const BIZ_CONFIG = "2008";
+	
+	/**
+	 * 库间调拨
+	 */
+	const INVENTORY_TRANSFER = "2009";
 }

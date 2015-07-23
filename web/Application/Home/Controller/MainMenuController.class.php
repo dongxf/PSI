@@ -107,6 +107,10 @@ class MainMenuController extends Controller {
 				// 业务设置
 				redirect(__ROOT__ . "/Home/BizConfig");
 				break;
+			case FIdConst::INVENTORY_TRANSFER:
+				// 库间调拨
+				redirect(__ROOT__ . "/Home/InvTransfer");
+				break;
 			default:
 				redirect(__ROOT__ . "/Home");
 		}
