@@ -51,6 +51,16 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
 
         me.callParent(arguments);
 
+        me.refreshMainGrid();
+    },
+    
+    refreshMainGrid: function (id) {
+    	var me = this;
+        var gridDetail = me.getDetailGrid();
+        gridDetail.setTitle("调拨单明细");
+        gridDetail.getStore().removeAll();
+        Ext.getCmp("pagingToobar").doRefresh();
+        me.__lastId = id;
     },
     
     // 新增调拨单

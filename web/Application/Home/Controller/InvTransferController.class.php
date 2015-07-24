@@ -6,6 +6,7 @@ use Think\Controller;
 use Home\Service\UserService;
 use Home\Service\InventoryService;
 use Home\Common\FIdConst;
+use Home\Service\ITBillService;
 
 /**
  * 库间调拨
@@ -33,7 +34,15 @@ class InvTransferController extends Controller {
 
 	public function itbillList() {
 		if (IS_POST) {
-			return array("dataList" => array(), "totalCount" => 0);
+			$params = array(
+					"page" => I("post.page"),
+					"start" => I("post.start"),
+					"limit" => I("post.limit")
+			);
+				
+			$is = new ITBillService();
+			
+			return $this->ajaxReturn($is->itbillList($params));
 		}
 	}
 }
