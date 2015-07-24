@@ -128,4 +128,9 @@ class FIdConst {
 	 * 库存盘点
 	 */
 	const INVENTORY_CHECK = "2010";
+	
+	/**
+	 * 采购退货出库
+	 */
+	const PURCHASE_REJECTION = "2007";
 }

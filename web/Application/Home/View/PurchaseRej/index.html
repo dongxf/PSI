@@ -1,0 +1,17 @@
+<layout name="layout" />
+
+<script src="{$uri}Public/Scripts/PSI/PurchaseRej/PurchaseRejMainForm.js?dt={$dtFlag}" type="text/javascript"></script>
+
+<script>
+    Ext.onReady(function(){
+        var app = Ext.create("PSI.App", {
+            userName: "{$loginUserName}"
+        });
+
+        app.add(Ext.create("PSI.PurchaseRej.PurchaseRejMainForm"));
+        app.setAppHeader({
+            title: "{$title}",
+            iconCls: "PSI-fid2007"
+            });
+    });
+</script>

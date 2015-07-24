@@ -115,6 +115,10 @@ class MainMenuController extends Controller {
 				// 库存盘点
 				redirect(__ROOT__ . "/Home/InvCheck");
 				break;
+			case FIdConst::PURCHASE_REJECTION:
+				// 采购退货出库
+				redirect(__ROOT__ . "/Home/PurchaseRej");
+				break;
 			default:
 				redirect(__ROOT__ . "/Home");
 		}
