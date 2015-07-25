@@ -1,3 +1,4 @@
+// 新增或编辑用户界面
 Ext.define("PSI.User.UserEditForm", {
     extend: "Ext.window.Window",
 

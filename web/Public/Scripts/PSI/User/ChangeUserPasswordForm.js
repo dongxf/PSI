@@ -1,3 +1,4 @@
+// 修改用户密码
 Ext.define("PSI.User.ChangeUserPasswordForm", {
     extend: "Ext.window.Window",
 

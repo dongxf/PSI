@@ -1,3 +1,4 @@
+// 新增或编辑组织机构
 Ext.define("PSI.User.OrgEditForm", {
     extend: "Ext.window.Window",
     config: {

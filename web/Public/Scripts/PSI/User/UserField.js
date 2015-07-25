@@ -1,3 +1,4 @@
+// 自定义字段 - 用户字段
 Ext.define("PSI.User.UserField", {
     extend: "Ext.form.field.Trigger",
     alias: "widget.psi_userfield",

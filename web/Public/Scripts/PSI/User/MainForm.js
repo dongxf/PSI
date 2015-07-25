@@ -1,3 +1,4 @@
+// 用户管理 - 主界面
 Ext.define("PSI.User.MainForm", {
     extend: "Ext.panel.Panel",
     getBaseURL: function () {

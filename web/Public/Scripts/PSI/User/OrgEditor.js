@@ -1,3 +1,4 @@
+// 自定义字段 - 组织机构字段
 Ext.define("PSI.User.OrgEditor", {
     extend: "Ext.form.field.Trigger",
     alias: "widget.PSI_org_editor",

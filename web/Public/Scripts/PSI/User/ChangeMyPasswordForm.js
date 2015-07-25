@@ -1,4 +1,5 @@
-﻿Ext.define("PSI.User.ChangeMyPasswordForm", {
+﻿// 修改我的密码
+Ext.define("PSI.User.ChangeMyPasswordForm", {
     extend: "Ext.panel.Panel",
 
     config: {
