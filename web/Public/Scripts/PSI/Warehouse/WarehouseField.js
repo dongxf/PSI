@@ -5,6 +5,7 @@ Ext.define("PSI.Warehouse.WarehouseField", {
     
     config: {
     	parentCmp: null,
+    	callbackFunc: null,
     	fid: null
     },
 
@@ -197,6 +198,14 @@ Ext.define("PSI.Warehouse.WarehouseField", {
         
         if (me.getParentCmp() && me.getParentCmp().__setWarehouseInfo) {
         	me.getParentCmp().__setWarehouseInfo(data);
+        }
+        
+        // 原来的回调函数用的是固定名称 __setWarehouseInfo,
+        // 现在改为可以动态指定
+        // 原因：在调拨单上会有两个仓库字段，需要各自指定回调函数
+        var callbackFunc = me.getCallbackFunc();
+        if (callbackFunc) {
+        	callbackFunc(data);
         }
     }
 });
