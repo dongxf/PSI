@@ -18,7 +18,7 @@ Ext.define("PSI.InvTransfer.ITEditForm", {
             width: 1000,
             height: 600,
             layout: "border",
-            defaultFocus: "editCustomer",
+            defaultFocus: "editFromWarehouse",
             items: [{
                     region: "center",
                     border: 0,
@@ -90,7 +90,7 @@ Ext.define("PSI.InvTransfer.ITEditForm", {
                             beforeLabelTextTpl: PSI.Const.REQUIRED,
                             listeners: {
                                 specialkey: {
-                                    fn: me.onEditWarehouseSpecialKey,
+                                    fn: me.onEditFromWarehouseSpecialKey,
                                     scope: me
                                 }
                             }
@@ -113,7 +113,7 @@ Ext.define("PSI.InvTransfer.ITEditForm", {
                             beforeLabelTextTpl: PSI.Const.REQUIRED,
                             listeners: {
                                 specialkey: {
-                                    fn: me.onEditWarehouseSpecialKey,
+                                    fn: me.onEditToWarehouseSpecialKey,
                                     scope: me
                                 }
                             }
@@ -164,13 +164,14 @@ Ext.define("PSI.InvTransfer.ITEditForm", {
 
         me.callParent(arguments);
     },
+    
     onWndShow: function () {
         var me = this;
         me.__canEditGoodsPrice = false;
         var el = me.getEl() || Ext.getBody();
         el.mask(PSI.Const.LOADING);
         Ext.Ajax.request({
-            url: PSI.Const.BASE_URL + "Home/Sale/wsBillInfo",
+            url: PSI.Const.BASE_URL + "Home/InvTransfer/itBillInfo",
             params: {
                 id: Ext.getCmp("hiddenId").getValue()
             },
@@ -181,13 +182,6 @@ Ext.define("PSI.InvTransfer.ITEditForm", {
                 if (success) {
                     var data = Ext.JSON.decode(response.responseText);
 
-                    if (data.canEditGoodsPrice) {
-                        me.__canEditGoodsPrice = true;
-                        Ext.getCmp("columnGoodsPrice").setEditor({xtype: "numberfield",
-                            allowDecimals: true,
-                            hideTrigger: true});
-                    }
-                    
                     if (data.ref) {
                         Ext.getCmp("editRef").setValue(data.ref);
                     }
@@ -213,7 +207,7 @@ Ext.define("PSI.InvTransfer.ITEditForm", {
             }
         });
     },
-    // private
+    
     onOK: function () {
         var me = this;
         Ext.getBody().mask("正在保存中...");
@@ -238,17 +232,19 @@ Ext.define("PSI.InvTransfer.ITEditForm", {
             }
         });
     },
+
     onEditBizDTSpecialKey: function (field, e) {
         if (e.getKey() == e.ENTER) {
-            Ext.getCmp("editCustomer").focus();
+            Ext.getCmp("editFromWarehouse").focus();
         }
     },
-    onEditCustomerSpecialKey: function (field, e) {
+    
+    onEditFromWarehouseSpecialKey: function (field, e) {
         if (e.getKey() == e.ENTER) {
-            Ext.getCmp("editWarehouse").focus();
+            Ext.getCmp("editToWarehouse").focus();
         }
     },
-    onEditWarehouseSpecialKey: function (field, e) {
+    onEditToWarehouseSpecialKey: function (field, e) {
         if (e.getKey() == e.ENTER) {
             Ext.getCmp("editBizUser").focus();
         }
