@@ -65,7 +65,11 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
     
     // 新增调拨单
     onAddBill: function () {
-    	PSI.MsgBox.showInfo("TODO");
+    	var form = Ext.create("PSI.InvTransfer.ITEditForm", {
+    		parentForm: this
+    	});
+    	
+    	form.show();
     },
     
     // 编辑调拨单
