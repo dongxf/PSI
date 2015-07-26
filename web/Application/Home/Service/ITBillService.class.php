@@ -82,4 +82,14 @@ class ITBillService extends PSIBaseService {
 		
 		return array("dataList" => $result, "totalCount" => $cnt);
 	}
+	
+	public function editITBill() {
+// 		$json = $params["jsonStr"];
+// 		$bill = json_decode(html_entity_decode($json), true);
+// 		if ($bill == null) {
+// 			return $this->bad("传入的参数错误，不是正确的JSON格式");
+// 		}
+		
+		return $this->todo();
+	}
 }

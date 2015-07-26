@@ -45,4 +45,16 @@ class InvTransferController extends Controller {
 			return $this->ajaxReturn($is->itbillList($params));
 		}
 	}
+	
+	public function editITBill() {
+		if (IS_POST) {
+			$params = array(
+					"jsonStr" => I("post.jsonStr")
+			);
+			
+			$is = new ITBillService();
+			
+			return $this->ajaxReturn($is->editITBill($params));
+		}
+	}
 }
