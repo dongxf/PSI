@@ -3,6 +3,7 @@
 namespace Home\Service;
 
 use Think\Model\AdvModel;
+
 /**
  * 库间调拨Service
  *
@@ -31,7 +32,7 @@ class ITBillService extends PSIBaseService {
 		
 		return $pre . $mid . $suf;
 	}
-	
+
 	/**
 	 * 调拨单主表列表信息
 	 */
@@ -58,7 +59,7 @@ class ITBillService extends PSIBaseService {
 				";
 		$data = $db->query($sql);
 		$result = array();
-		foreach ($data as $i => $v) {
+		foreach ( $data as $i => $v ) {
 			$result[$i]["id"] = $v["id"];
 			$result[$i]["ref"] = $v["ref"];
 			$result[$i]["bizDate"] = date("Y-m-d", strtotime($v["bizdt"]));
@@ -80,9 +81,12 @@ class ITBillService extends PSIBaseService {
 		$data = $db->query($sql);
 		$cnt = $data[0]["cnt"];
 		
-		return array("dataList" => $result, "totalCount" => $cnt);
+		return array(
+				"dataList" => $result,
+				"totalCount" => $cnt
+		);
 	}
-	
+
 	public function editITBill($params) {
 		$json = $params["jsonStr"];
 		$bill = json_decode(html_entity_decode($json), true);
@@ -90,9 +94,96 @@ class ITBillService extends PSIBaseService {
 			return $this->bad("传入的参数错误，不是正确的JSON格式");
 		}
 		
-		return $this->todo();
+		$id = $bill["id"];
+		$bizDT = $bill["bizDT"];
+		$fromWarehouseId = $bill["fromWarehouseId"];
+		$toWarehouseId = $bill["toWarehouseId"];
+		$bizUserId = $bill["bizUserId"];
+		
+		$items = $bill["items"];
+		
+		$idGen = new IdGenService();
+		$us = new UserService();
+		
+		$db = M();
+		
+		if ($id) {
+			// 编辑
+			$sql = "select ref from t_it_bill where id = '%s' ";
+			$data = $db->query($sql, $id);
+			if (! $data) {
+				return $this->bad("要编辑的调拨单不存在");
+			}
+			
+			$db->startTrans();
+			try {
+				$sql = "update t_it_bill
+						set bizdt = '%s', biz_user_id = '%s', date_created = now(),
+						    input_user_id = '%s', from_warehouse_id = '%s', to_warehouse_id = '%s'
+						where id = '%s' ";
+				$id = $idGen->newId();
+				$ref = $this->genNewBillRef();
+				
+				$db->execute($sql, $bizDT, $bizUserId, $us->getLoginUserId(), $fromWarehouseId, 
+						$toWarehouseId, $id);
+				
+				$sql = "delete from t_it_bill_detail where itbill_id = '%s' ";
+				$db->execute($sql, $id);
+				
+				$sql = "insert into t_it_bill_detail(id, date_created, goods_id, goods_count, show_order, itbill_id)
+						values ('%s', now(), '%s', %d, %d, '%s')";
+				foreach ( $items as $i => $v ) {
+					$goodsId = $v["goodsId"];
+					$goodsCount = $v["goodsCount"];
+					
+					$db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $i, $id);
+				}
+				
+				$bs = new BizlogService();
+				$log = "编辑调拨单，单号：$ref";
+				$bs->insertBizlog($log, "库间调拨");
+				
+				$db->commit();
+			} catch ( Exception $ex ) {
+				$db->rollback();
+				return $this->bad("数据库错误，请联系系统管理员");
+			}
+		} else {
+			// 新增
+			$db->startTrans();
+			try {
+				$sql = "insert into t_it_bill(id, bill_status, bizdt, biz_user_id,
+						date_created, input_user_id, ref, from_warehouse_id, to_warehouse_id)
+						values ('%s', 0, '%s', '%s', now(), '%s', '%s', '%s', '%s')";
+				$id = $idGen->newId();
+				$ref = $this->genNewBillRef();
+				
+				$db->execute($sql, $id, $bizDT, $bizUserId, $us->getLoginUserId(), $ref, 
+						$fromWarehouseId, $toWarehouseId);
+				
+				$sql = "insert into t_it_bill_detail(id, date_created, goods_id, goods_count, show_order, itbill_id)
+						values ('%s', now(), '%s', %d, %d, '%s')";
+				foreach ( $items as $i => $v ) {
+					$goodsId = $v["goodsId"];
+					$goodsCount = $v["goodsCount"];
+					
+					$db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $i, $id);
+				}
+				
+				$bs = new BizlogService();
+				$log = "新建调拨单，单号：$ref";
+				$bs->insertBizlog($log, "库间调拨");
+				
+				$db->commit();
+			} catch ( Exception $ex ) {
+				$db->rollback();
+				return $this->bad("数据库错误，请联系系统管理员");
+			}
+		}
+		
+		return $this->ok($id);
 	}
-	
+
 	public function itBillInfo($parmas) {
 		return array();
 	}
