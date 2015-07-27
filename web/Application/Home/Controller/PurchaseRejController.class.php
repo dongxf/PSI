@@ -8,7 +8,7 @@ use Home\Service\InventoryService;
 use Home\Common\FIdConst;
 
 /**
- * 采购退货出库
+ * 采购退货出库Controller
  * @author 李静波
  *
  */

@@ -7,6 +7,11 @@ use Home\Service\UserService;
 use Home\Service\InventoryService;
 use Home\Common\FIdConst;
 
+/**
+ * 库存Controller
+ * @author 李静波
+ *
+ */
 class InventoryController extends Controller {
 
 	public function initIndex() {

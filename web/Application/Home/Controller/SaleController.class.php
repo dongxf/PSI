@@ -8,6 +8,11 @@ use Home\Common\FIdConst;
 use Home\Service\WSBillService;
 use Home\Service\SRBillService;
 
+/**
+ * 销售Controller
+ * @author 李静波
+ *
+ */
 class SaleController extends Controller {
 
 	public function wsIndex() {

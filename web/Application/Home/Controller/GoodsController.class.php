@@ -9,6 +9,11 @@ use Home\Common\FIdConst;
 use Home\Service\BizConfigService;
 use Home\Service\Home\Service;
 
+/**
+ * 商品Controller
+ * @author 李静波
+ *
+ */
 class GoodsController extends Controller {
 
 	public function index() {

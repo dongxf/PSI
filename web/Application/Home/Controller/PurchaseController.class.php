@@ -6,6 +6,11 @@ use Home\Service\UserService;
 use Home\Service\PWBillService;
 use Home\Common\FIdConst;
 
+/**
+ * 采购Controller
+ * @author 李静波
+ *
+ */
 class PurchaseController extends Controller {
     public function pwbillIndex(){
 		$us = new UserService();

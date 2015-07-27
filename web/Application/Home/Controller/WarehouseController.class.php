@@ -8,6 +8,11 @@ use Home\Service\WarehouseService;
 use Home\Common\FIdConst;
 use Home\Service\BizConfigService;
 
+/**
+ * 仓库Controller
+ * @author 李静波
+ *
+ */
 class WarehouseController extends Controller {
 
 	public function index() {

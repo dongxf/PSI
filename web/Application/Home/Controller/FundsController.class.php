@@ -8,6 +8,11 @@ use Home\Service\PayablesService;
 use Home\Service\ReceivablesService;
 use Home\Common\FIdConst;
 
+/**
+ * 资金Controller
+ * @author 李静波
+ *
+ */
 class FundsController extends Controller {
 
 	public function payIndex() {

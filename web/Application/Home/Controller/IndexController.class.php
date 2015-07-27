@@ -4,6 +4,11 @@ use Think\Controller;
 
 use Home\Service\UserService;
 
+/**
+ * 首页Controller
+ * @author 李静波
+ *
+ */
 class IndexController extends Controller {
     public function index(){
 		$us = new UserService();

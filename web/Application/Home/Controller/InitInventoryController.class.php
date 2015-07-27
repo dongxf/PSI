@@ -5,6 +5,11 @@ namespace Home\Controller;
 use Think\Controller;
 use Home\Service\InitInventoryService;
 
+/**
+ * 库存建账Controller
+ * @author 李静波
+ *
+ */
 class InitInventoryController extends Controller {
 
     public function warehouseList() {

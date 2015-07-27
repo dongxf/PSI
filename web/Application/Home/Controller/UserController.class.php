@@ -6,6 +6,11 @@ use Think\Controller;
 use Home\Service\UserService;
 use Home\Common\FIdConst;
 
+/**
+ * 用户管理Controller
+ * @author 李静波
+ *
+ */
 class UserController extends Controller {
 
 	/**

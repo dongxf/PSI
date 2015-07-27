@@ -7,6 +7,11 @@ use Home\Service\UserService;
 use Home\Service\SupplierService;
 use Home\Common\FIdConst;
 
+/**
+ * 供应商档案Controller
+ * @author 李静波
+ *
+ */
 class SupplierController extends Controller {
 
 	public function index() {

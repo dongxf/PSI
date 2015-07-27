@@ -7,6 +7,11 @@ use Home\Service\UserService;
 use Home\Service\CustomerService;
 use Home\Common\FIdConst;
 
+/**
+ * 客户资料Controller
+ * @author 李静波
+ *
+ */
 class CustomerController extends Controller {
 
 	public function index() {
