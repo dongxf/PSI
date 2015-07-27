@@ -42,7 +42,7 @@ class InvTransferController extends Controller {
 				
 			$is = new ITBillService();
 			
-			return $this->ajaxReturn($is->itbillList($params));
+			$this->ajaxReturn($is->itbillList($params));
 		}
 	}
 	
@@ -54,7 +54,7 @@ class InvTransferController extends Controller {
 			
 			$is = new ITBillService();
 			
-			return $this->ajaxReturn($is->editITBill($params));
+			$this->ajaxReturn($is->editITBill($params));
 		}
 	}
 	
@@ -66,7 +66,7 @@ class InvTransferController extends Controller {
 			
 			$is = new ITBillService();
 				
-			return $this->ajaxReturn($is->itBillInfo($params));
+			$this->ajaxReturn($is->itBillInfo($params));
 		}
 	}
 }
