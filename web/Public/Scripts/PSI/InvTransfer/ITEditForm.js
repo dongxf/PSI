@@ -83,7 +83,7 @@ Ext.define("PSI.InvTransfer.ITEditForm", {
                             labelAlign: "right",
                             labelSeparator: "",
                             xtype: "psi_warehousefield",
-                            parentCmp: me,
+                            callbackFunc: me.__setFromWarehouseId,
                             fid: "2009",
                             allowBlank: false,
                             blankText: "没有输入调出仓库",
@@ -106,7 +106,7 @@ Ext.define("PSI.InvTransfer.ITEditForm", {
                             labelAlign: "right",
                             labelSeparator: "",
                             xtype: "psi_warehousefield",
-                            parentCmp: me,
+                            callbackFunc: me.__setToWarehouseId,
                             fid: "2009",
                             allowBlank: false,
                             blankText: "没有输入调入仓库",
@@ -380,6 +380,14 @@ Ext.define("PSI.InvTransfer.ITEditForm", {
         goods.set("goodsSpec", data.spec);
     },
     
+    __setFromWarehouseId: function (data) {
+    	Ext.getCmp("editFromWarehouseId").setValue(data.id);
+    },
+    
+    __setToWarehouseId: function (data) {
+    	Ext.getCmp("editToWarehouseId").setValue(data.id);
+    },
+
     getSaveData: function () {
         var result = {
             id: Ext.getCmp("hiddenId").getValue(),

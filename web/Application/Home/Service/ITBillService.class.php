@@ -94,18 +94,39 @@ class ITBillService extends PSIBaseService {
 			return $this->bad("传入的参数错误，不是正确的JSON格式");
 		}
 		
+		$db = M();
+		
 		$id = $bill["id"];
 		$bizDT = $bill["bizDT"];
 		$fromWarehouseId = $bill["fromWarehouseId"];
+		$sql = "select name from t_warehouse where id = '%s' ";
+		$data = $db->query($sql, $fromWarehouseId);
+		if (! $data) {
+			return $this->bad("调出仓库不存在，无法保存");
+		}
+		
 		$toWarehouseId = $bill["toWarehouseId"];
+		$sql = "select name from t_warehouse where id = '%s' ";
+		$data = $db->query($sql, $toWarehouseId);
+		if (! $data) {
+			return $this->bad("调入仓库不存在，无法保存");
+		}
+		
 		$bizUserId = $bill["bizUserId"];
+		$sql = "select name from t_user where id = '%s' ";
+		$data = $db->query($sql, $bizUserId);
+		if (! $data) {
+			return $this->bad("业务人员不存在，无法保存");
+		}
+		
+		if ($fromWarehouseId == $toWarehouseId) {
+			return $this->bad("调出仓库和调入调查不能是同一个仓库");
+		}
 		
 		$items = $bill["items"];
 		
 		$idGen = new IdGenService();
 		$us = new UserService();
-		
-		$db = M();
 		
 		if ($id) {
 			// 编辑
@@ -134,6 +155,10 @@ class ITBillService extends PSIBaseService {
 						values ('%s', now(), '%s', %d, %d, '%s')";
 				foreach ( $items as $i => $v ) {
 					$goodsId = $v["goodsId"];
+					if (! $goodsId) {
+						continue;
+					}
+					
 					$goodsCount = $v["goodsCount"];
 					
 					$db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $i, $id);
@@ -165,6 +190,10 @@ class ITBillService extends PSIBaseService {
 						values ('%s', now(), '%s', %d, %d, '%s')";
 				foreach ( $items as $i => $v ) {
 					$goodsId = $v["goodsId"];
+					if (! $goodsId) {
+						continue;
+					}
+					
 					$goodsCount = $v["goodsCount"];
 					
 					$db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $i, $id);
