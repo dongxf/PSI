@@ -112,4 +112,19 @@ class InvTransferController extends Controller {
 			$this->ajaxReturn($is->deleteITBill($params));
 		}
 	}
+
+	/**
+	 * 提交调拨单
+	 */
+	public function commitITBill() {
+		if (IS_POST) {
+			$params = array(
+					"id" => I("post.id")
+			);
+			
+			$is = new ITBillService();
+			
+			$this->ajaxReturn($is->commitITBill($params));
+		}
+	}
 }

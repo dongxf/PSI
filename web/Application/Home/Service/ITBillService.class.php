@@ -331,4 +331,22 @@ class ITBillService extends PSIBaseService {
 		
 		return $this->ok();
 	}
+	
+	public function commitITBill($params) {
+		$id = $params["id"];
+		
+		$db = M();
+		$sql = "select ref, bill_status from t_it_bill where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if (! $data) {
+			return $this->bad("要提交的调拨单不存在，无法提交");
+		}
+		$ref = $data[0]["ref"];
+		$billStatus = $data[0]["bill_status"];
+		if ($billStatus != 0) {
+			return $this->bad("调拨单(单号：$ref)已经提交，不能再次提交");
+		}
+		
+		return $this->todo();
+	}
 }
