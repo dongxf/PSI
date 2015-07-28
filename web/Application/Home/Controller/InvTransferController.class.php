@@ -10,7 +10,7 @@ use Home\Service\ITBillService;
 
 /**
  * 库间调拨
- * 
+ *
  * @author 李静波
  *        
  */
@@ -95,6 +95,21 @@ class InvTransferController extends Controller {
 			$is = new ITBillService();
 			
 			$this->ajaxReturn($is->itBillDetailList($params));
+		}
+	}
+
+	/**
+	 * 删除调拨单
+	 */
+	public function deleteITBill() {
+		if (IS_POST) {
+			$params = array(
+					"id" => I("post.id")
+			);
+			
+			$is = new ITBillService();
+			
+			$this->ajaxReturn($is->deleteITBill($params));
 		}
 	}
 }

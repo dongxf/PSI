@@ -230,7 +230,7 @@ class ITBillService extends PSIBaseService {
 		
 		return $result;
 	}
-	
+
 	public function itBillDetailList($params) {
 		$id = $params["id"];
 		
@@ -243,7 +243,7 @@ class ITBillService extends PSIBaseService {
 				order by t.show_order ";
 		
 		$data = $db->query($sql, $id);
-		foreach ($data as $i => $v) {
+		foreach ( $data as $i => $v ) {
 			$result[$i]["id"] = $v["id"];
 			$result[$i]["goodsCode"] = $v["code"];
 			$result[$i]["goodsName"] = $v["name"];
@@ -253,5 +253,44 @@ class ITBillService extends PSIBaseService {
 		}
 		
 		return $result;
+	}
+
+	public function deleteITBill($params) {
+		$id = $params["id"];
+		
+		$db = M();
+		$sql = "select ref, bill_status from t_it_bill where id = '%s' ";
+		$data = $db->query($sql, $id);
+		
+		if (! $data) {
+			return $this->bad("要删除的调拨单不存在");
+		}
+		
+		$ref = $data[0]["ref"];
+		$billStatus = $data[0]["bill_status"];
+		
+		if ($billStatus != 0) {
+			return $this->bad("调拨单已经提交，不能被删除");
+		}
+		
+		$db->startTrans();
+		try {
+			$sql = "delete from t_it_bill_detail where itbill_id = '%s' ";
+			$db->execute($sql, $id);
+			
+			$sql = "delete from t_it_bill where id = '%s' ";
+			$db->execute($sql, $id);
+			
+			$bs = new BizlogService();
+			$log = "删除调拨单，单号：$ref";
+			$bs->insertBizlog($log, "库间调拨");
+			
+			$db->commit();
+		} catch (Exception $e) {
+			$db->rollback();
+			return $this->bad("数据库错误，请联系系统管理员");
+		}
+		
+		return $this->ok();
 	}
 }
