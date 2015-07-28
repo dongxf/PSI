@@ -182,6 +182,7 @@ Ext.define("PSI.Sale.SREditForm", {
                     	// 编辑单据
                         Ext.getCmp("editRef").setValue(data.ref);
                         Ext.getCmp("editCustomer").setValue(data.customerName + " 销售单号: " + data.wsBillRef);
+                        Ext.getCmp("editCustomerId").setValue(data.customerId);
                     } else {
                         // 这是：新建退货入库单
                         // 第一步就是选中销售出库单
