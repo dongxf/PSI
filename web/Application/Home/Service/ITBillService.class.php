@@ -135,6 +135,7 @@ class ITBillService extends PSIBaseService {
 			if (! $data) {
 				return $this->bad("要编辑的调拨单不存在");
 			}
+			$ref = $data[0]["ref"];
 			
 			$db->startTrans();
 			try {
@@ -142,8 +143,6 @@ class ITBillService extends PSIBaseService {
 						set bizdt = '%s', biz_user_id = '%s', date_created = now(),
 						    input_user_id = '%s', from_warehouse_id = '%s', to_warehouse_id = '%s'
 						where id = '%s' ";
-				$id = $idGen->newId();
-				$ref = $this->genNewBillRef();
 				
 				$db->execute($sql, $bizDT, $bizUserId, $us->getLoginUserId(), $fromWarehouseId, 
 						$toWarehouseId, $id);
@@ -213,17 +212,56 @@ class ITBillService extends PSIBaseService {
 		return $this->ok($id);
 	}
 
-	public function itBillInfo($parmas) {
+	public function itBillInfo($params) {
 		$id = $params["id"];
 		
 		$result = array();
 		
-		$us = new UserService();
-		
 		if ($id) {
 			// 编辑
+			$db = M();
+			$sql = "select t.ref, t.bizdt, t.biz_user_id, u.name as biz_user_name,
+						wf.id as from_warehouse_id, wf.name as from_warehouse_name,
+						wt.id as to_warehouse_id, wt.name as to_warehouse_name
+					from t_it_bill t, t_user u, t_warehouse wf, t_warehouse wt
+					where t.id = '%s' and t.biz_user_id = u.id
+					      and t.from_warehouse_id = wf.id
+					      and t.to_warehouse_id = wt.id";
+			$data = $db->query($sql, $id);
+			if (! $data) {
+				return $result;
+			}
+			
+			$result["bizUserId"] = $data[0]["biz_user_id"];
+			$result["bizUserName"] = $data[0]["biz_user_name"];
+			$result["ref"] = $data[0]["ref"];
+			$result["bizDT"] = date("Y-m-d", strtotime($data[0]["bizdt"]));
+			$result["fromWarehouseId"] = $data[0]["from_warehouse_id"];
+			$result["fromWarehouseName"] = $data[0]["from_warehouse_name"];
+			$result["toWarehouseId"] = $data[0]["to_warehouse_id"];
+			$result["toWarehouseName"] = $data[0]["to_warehouse_name"];
+			
+			$items = array();
+			$sql = "select t.id, g.id as goods_id, g.code, g.name, g.spec, u.name as unit_name, t.goods_count 
+				from t_it_bill_detail t, t_goods g, t_goods_unit u
+				where t.itbill_id = '%s' and t.goods_id = g.id and g.unit_id = u.id
+				order by t.show_order ";
+			
+			$data = $db->query($sql, $id);
+			foreach ( $data as $i => $v ) {
+				$items[$i]["id"] = $v["id"];
+				$items[$i]["goodsId"] = $v["goods_id"];
+				$items[$i]["goodsCode"] = $v["code"];
+				$items[$i]["goodsName"] = $v["name"];
+				$items[$i]["goodsSpec"] = $v["spec"];
+				$items[$i]["unitName"] = $v["unit_name"];
+				$items[$i]["goodsCount"] = $v["goods_count"];
+			}
+			
+			$result["items"] = $items;
 		} else {
 			// 新建
+			$us = new UserService();
 			$result["bizUserId"] = $us->getLoginUserId();
 			$result["bizUserName"] = $us->getLoginUserName();
 		}
@@ -286,7 +324,7 @@ class ITBillService extends PSIBaseService {
 			$bs->insertBizlog($log, "库间调拨");
 			
 			$db->commit();
-		} catch (Exception $e) {
+		} catch ( Exception $e ) {
 			$db->rollback();
 			return $this->bad("数据库错误，请联系系统管理员");
 		}

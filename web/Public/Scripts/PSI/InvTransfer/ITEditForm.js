@@ -191,6 +191,14 @@ Ext.define("PSI.InvTransfer.ITEditForm", {
                     if (data.bizDT) {
                         Ext.getCmp("editBizDT").setValue(data.bizDT);
                     }
+                    if (data.fromWarehouseId) {
+                    	Ext.getCmp("editFromWarehouseId").setValue(data.fromWarehouseId);
+                    	Ext.getCmp("editFromWarehouse").setValue(data.fromWarehouseName);
+                    }
+                    if (data.toWarehouseId) {
+                    	Ext.getCmp("editToWarehouseId").setValue(data.toWarehouseId);
+                    	Ext.getCmp("editToWarehouse").setValue(data.toWarehouseName);
+                    }
 
                     var store = me.getGoodsGrid().getStore();
                     store.removeAll();
