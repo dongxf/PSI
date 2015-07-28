@@ -16,6 +16,9 @@ use Home\Service\ITBillService;
  */
 class InvTransferController extends Controller {
 
+	/**
+	 * 库间调拨 - 首页
+	 */
 	public function index() {
 		$us = new UserService();
 		
@@ -33,6 +36,9 @@ class InvTransferController extends Controller {
 		}
 	}
 
+	/**
+	 * 调拨单主表信息列表
+	 */
 	public function itbillList() {
 		if (IS_POST) {
 			$params = array(
@@ -47,6 +53,9 @@ class InvTransferController extends Controller {
 		}
 	}
 
+	/**
+	 * 新建或编辑调拨单
+	 */
 	public function editITBill() {
 		if (IS_POST) {
 			$params = array(
@@ -59,6 +68,9 @@ class InvTransferController extends Controller {
 		}
 	}
 
+	/**
+	 * 获取单个调拨单的信息
+	 */
 	public function itBillInfo() {
 		if (IS_POST) {
 			$params = array(
@@ -71,6 +83,9 @@ class InvTransferController extends Controller {
 		}
 	}
 
+	/**
+	 * 调拨单明细信息
+	 */
 	public function itBillDetailList() {
 		if (IS_POST) {
 			$params = array(

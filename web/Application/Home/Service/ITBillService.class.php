@@ -214,7 +214,21 @@ class ITBillService extends PSIBaseService {
 	}
 
 	public function itBillInfo($parmas) {
-		return array();
+		$id = $params["id"];
+		
+		$result = array();
+		
+		$us = new UserService();
+		
+		if ($id) {
+			// 编辑
+		} else {
+			// 新建
+			$result["bizUserId"] = $us->getLoginUserId();
+			$result["bizUserName"] = $us->getLoginUserName();
+		}
+		
+		return $result;
 	}
 	
 	public function itBillDetailList($params) {
