@@ -565,9 +565,9 @@ class SRBillService extends PSIBaseService {
 		}
 		
 		foreach ( $data as $i => $v ) {
-			$wsbillDetailId = $v[$i]["wsbilldetail_id"];
-			$rejCount = $v[$i]["rejection_goods_count"];
-			$goodsId = $v[$i]["goods_id"];
+			$wsbillDetailId = $v["wsbilldetail_id"];
+			$rejCount = $v["rejection_goods_count"];
+			$goodsId = $v["goods_id"];
 			
 			// 退货数量为负数
 			if ($rejCount < 0) {
