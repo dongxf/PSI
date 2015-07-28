@@ -130,12 +130,16 @@ class ITBillService extends PSIBaseService {
 		
 		if ($id) {
 			// 编辑
-			$sql = "select ref from t_it_bill where id = '%s' ";
+			$sql = "select ref, bill_status from t_it_bill where id = '%s' ";
 			$data = $db->query($sql, $id);
 			if (! $data) {
 				return $this->bad("要编辑的调拨单不存在");
 			}
 			$ref = $data[0]["ref"];
+			$billStatus = $data[0]["bill_status"];
+			if ($billStatus != 0) {
+				return $this->bad("调拨单(单号：$ref)已经提交，不能被编辑");
+			}
 			
 			$db->startTrans();
 			try {
@@ -428,16 +432,24 @@ class ITBillService extends PSIBaseService {
 					return $this->bad("商品[$goodsCode $goodsName $goodsSpec]库存不足，无法调拨");
 				}
 				
-				// 调出 - 明细账
+				// 调出库 - 明细账
 				
-				// 调出 - 总账
+				// 调出库 - 总账
 				
-				// 调入 - 明细账
+				// 调入库 - 明细账
 				
-				// 调入 - 总账
+				// 调入库 - 总账
 			}
 			
 			// 修改调拨单单据状态为已调拨
+			$sql = "update t_it_bill
+					set bill_status = 1000
+					where id = '%s' ";
+			$rc = $db->execute($sql, $id);
+			if (! $rc) {
+				$db->rollback();
+				return $this->bad("数据库错误，请联系管理员");
+			}
 			
 			// 记录业务日志
 			$bs = new BizlogService();
