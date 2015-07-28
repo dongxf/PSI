@@ -36,4 +36,8 @@ class PSIBaseService {
 			return array("success" => false, "msg" => "TODO: 功能还没开发");
 		}
 	}
+	
+	protected function sqlError() {
+		return $this->bad("数据库错误，请联系管理员");
+	}
 }
