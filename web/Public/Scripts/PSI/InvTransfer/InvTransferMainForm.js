@@ -170,11 +170,11 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
                 }],
             listeners: {
                 select: {
-                    fn: me.onSRBillGridSelect,
+                    fn: me.onDetailGridSelect,
                     scope: me
                 },
                 itemdblclick: {
-                    fn: me.onEditSRBill,
+                    fn: me.onEditBill,
                     scope: me
                 }
             },
@@ -200,8 +200,8 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
                     listeners: {
                         change: {
                             fn: function () {
-                                storeWSBill.pageSize = Ext.getCmp("comboCountPerPage").getValue();
-                                storeWSBill.currentPage = 1;
+                                store.pageSize = Ext.getCmp("comboCountPerPage").getValue();
+                                store.currentPage = 1;
                                 Ext.getCmp("pagingToobar").doRefresh();
                             },
                             scope: me
@@ -291,5 +291,54 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
         } else {
             grid.getSelectionModel().select(0);
         }
+    },
+    
+    onDetailGridSelect: function() {
+    	this.refreshDetailGrid();
+    },
+    
+    refreshDetailGrid: function (id) {
+        var me = this;
+        me.getDetailGrid().setTitle("调拨单明细");
+        var grid = me.getMainGrid();
+        var item = grid.getSelectionModel().getSelection();
+        if (item == null || item.length != 1) {
+            return;
+        }
+        var bill = item[0];
+
+        grid = me.getDetailGrid();
+        grid.setTitle("单号: " + bill.get("ref")  + " 调出仓库: "
+                + bill.get("fromWarehouseName") + " 调入仓库: " + bill.get("toWarehouseName"));
+        var el = grid.getEl();
+        el.mask(PSI.Const.LOADING);
+        Ext.Ajax.request({
+            url: PSI.Const.BASE_URL + "Home/InvTransfer/itBillDetailList",
+            params: {
+                id: bill.get("id")
+            },
+            method: "POST",
+            callback: function (options, success, response) {
+                var store = grid.getStore();
+
+                store.removeAll();
+
+                if (success) {
+                    var data = Ext.JSON.decode(response.responseText);
+                    store.add(data);
+
+                    if (store.getCount() > 0) {
+                        if (id) {
+                            var r = store.findExact("id", id);
+                            if (r != -1) {
+                                grid.getSelectionModel().select(r);
+                            }
+                        }
+                    }
+                }
+
+                el.unmask();
+            }
+        });
     }
 });

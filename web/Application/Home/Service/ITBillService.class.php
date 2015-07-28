@@ -54,7 +54,7 @@ class ITBillService extends PSIBaseService {
 				  and t.to_warehouse_id = tw.id
 				  and t.biz_user_id = u.id
 				  and t.input_user_id = u1.id
-				order by t.ref
+				order by t.ref desc
 				limit $start , $limit
 				";
 		$data = $db->query($sql);
@@ -215,5 +215,29 @@ class ITBillService extends PSIBaseService {
 
 	public function itBillInfo($parmas) {
 		return array();
+	}
+	
+	public function itBillDetailList($params) {
+		$id = $params["id"];
+		
+		$result = array();
+		
+		$db = M();
+		$sql = "select t.id, g.code, g.name, g.spec, u.name as unit_name, t.goods_count 
+				from t_it_bill_detail t, t_goods g, t_goods_unit u
+				where t.itbill_id = '%s' and t.goods_id = g.id and g.unit_id = u.id
+				order by t.show_order ";
+		
+		$data = $db->query($sql, $id);
+		foreach ($data as $i => $v) {
+			$result[$i]["id"] = $v["id"];
+			$result[$i]["goodsCode"] = $v["code"];
+			$result[$i]["goodsName"] = $v["name"];
+			$result[$i]["goodsSpec"] = $v["spec"];
+			$result[$i]["unitName"] = $v["unit_name"];
+			$result[$i]["goodsCount"] = $v["goods_count"];
+		}
+		
+		return $result;
 	}
 }
