@@ -364,12 +364,19 @@ class ICBillService extends PSIBaseService {
 			$bizDT = date("Y-m-d", strtotime($data[0]["bizdt"]));
 			$bizUserId = $data[0]["biz_user_id"];
 			
-			$sql = "select name from t_warehouse where id = '%s' ";
+			$sql = "select name, inited from t_warehouse where id = '%s' ";
 			$data = $db->query($sql, $warehouseId);
 			if (! $data) {
 				$db->rollback();
 				return $this->bad("要盘点的仓库不存在");
 			}
+			$inited = $data[0]["inited"];
+			$warehouseName = $data[0]["name"];
+			if ($inited != 1) {
+				$db->rollback();
+				return $this->bad("仓库[$warehouseName]还没有建账，无法做盘点操作");
+			}
+			
 			$sql = "select name from t_user where id = '%s' ";
 			$data = $db->query($sql, $bizUserId);
 			if (! $data) {
@@ -416,6 +423,51 @@ class ICBillService extends PSIBaseService {
 						$db->rollback();
 						$index = $i + 1;
 						return $this->bad("第{$index}条记录的商品盘点后库存数量为0的时候，库存金额也必须为0");
+					}
+				}
+				
+				$sql = "select balance_count, balance_money 
+						from t_inventory
+						where warehouse_id = '%s' and goods_id = '%s' ";
+				$data = $db->query($sql, $warehouseId, $goodsId);
+				if (! $data) {
+					// 这种情况是：没有库存，做盘盈入库
+					$inCount = $goodsCount;
+					$inMoney = $goodsMoney;
+					$inPrice = 0;
+					if ($inCount != 0) {
+						$inPrice = $inMoney / $inCount;
+					}
+					
+					// 库存总账
+					$sql = "insert into t_inventory(in_count, in_price, in_money, balance_count, balance_price,
+							balance_money, warehouse_id, goods_id)
+							values (%d, %f, %f, %d, %f, %f, '%s', '%s')";
+					$rc = $db->execute($sql, $inCount, $inPrice, $inMoney, $inCount, $inPrice, 
+							$inMoney, $warehouseId, $goodsId);
+					if (! $rc) {
+						$db->rollback();
+						return $this->sqlError();
+					}
+					
+					// 库存明细账
+					$sql = "insert into t_inventory_detail(in_count, in_price, in_money, balance_count, balance_price,
+							balance_money, warehouse_id, goods_id, biz_date, biz_user_id, date_created, ref_number,
+							ref_type)
+							values (%d, %f, %f, %d, %f, %f, '%s', '%s', '%s', '%s', now(), '%s', '库存盘点-盘盈入库')";
+					$rc = $db->execute($sql, $inCount, $inPrice, $inMoney, $inCount, $inPrice, $inMoney, $warehouseId,
+							$goodsId, $bizDT, $bizUserId, $ref);
+					if (! $rc) {
+						$db->rollback();
+						return $this->sqlError();
+					}
+				} else {
+					$balanceCount = $data[0]["balance_count"];
+					$balanceMoney = $data[0]["balance_money"];
+					if ($goodsCount > $balanceCount) {
+						// 盘盈入库
+					} else {
+						// 盘亏出库
 					}
 				}
 			}
