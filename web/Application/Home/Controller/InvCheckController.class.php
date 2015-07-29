@@ -93,4 +93,16 @@ class InvCheckController extends Controller {
 			$this->ajaxReturn($ic->deleteICBill($params));
 		}
 	}
+	
+	public function commitICBill() {
+		if (IS_POST) {
+			$params = array(
+					"id" => I("post.id")
+			);
+				
+			$ic = new ICBillService();
+				
+			$this->ajaxReturn($ic->commitICBill($params));
+		}
+	}
 }

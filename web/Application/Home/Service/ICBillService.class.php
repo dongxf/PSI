@@ -340,4 +340,10 @@ class ICBillService extends PSIBaseService {
 		
 		return $this->ok();
 	}
+	
+	public function commitICBill($params) {
+		$id = $params["id"];
+		
+		return $this->todo();
+	}
 }
