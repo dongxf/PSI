@@ -10,8 +10,9 @@ use Home\Service\ICBillService;
 
 /**
  * 库存盘点Controller
+ * 
  * @author 李静波
- *
+ *        
  */
 class InvCheckController extends Controller {
 
@@ -44,7 +45,7 @@ class InvCheckController extends Controller {
 			$this->ajaxReturn($ic->icbillList($params));
 		}
 	}
-	
+
 	public function icBillInfo() {
 		if (IS_POST) {
 			$params = array(
@@ -56,28 +57,40 @@ class InvCheckController extends Controller {
 			$this->ajaxReturn($ic->icBillInfo($params));
 		}
 	}
-	
+
 	public function editICBill() {
 		if (IS_POST) {
 			$params = array(
 					"jsonStr" => I("post.jsonStr")
 			);
-				
+			
 			$ic = new ICBillService();
-				
+			
 			$this->ajaxReturn($ic->editICBill($params));
 		}
 	}
-	
+
 	public function icBillDetailList() {
 		if (IS_POST) {
 			$params = array(
 					"id" => I("post.id")
 			);
-				
+			
 			$ic = new ICBillService();
-				
+			
 			$this->ajaxReturn($ic->icBillDetailList($params));
+		}
+	}
+
+	public function deleteICBill() {
+		if (IS_POST) {
+			$params = array(
+					"id" => I("post.id")
+			);
+			
+			$ic = new ICBillService();
+			
+			$this->ajaxReturn($ic->deleteICBill($params));
 		}
 	}
 }

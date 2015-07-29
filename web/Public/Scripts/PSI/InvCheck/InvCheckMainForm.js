@@ -79,7 +79,45 @@ Ext.define("PSI.InvCheck.InvCheckMainForm", {
     
     // 删除盘点单
     onDeleteBill: function () {
-    	PSI.MsgBox.showInfo("TODO");
+    	var me = this;
+        var item = me.getMainGrid().getSelectionModel().getSelection();
+        if (item == null || item.length != 1) {
+            PSI.MsgBox.showInfo("请选择要删除的盘点单");
+            return;
+        }
+        var bill = item[0];
+
+        var info = "请确认是否删除盘点单: <span style='color:red'>" + bill.get("ref")
+                + "</span>";
+        
+        PSI.MsgBox.confirm(info, function () {
+            var el = Ext.getBody();
+            el.mask("正在删除中...");
+            Ext.Ajax.request({
+                url: PSI.Const.BASE_URL + "Home/InvCheck/deleteICBill",
+                method: "POST",
+                params: {
+                    id: bill.get("id")
+                },
+                callback: function (options, success, response) {
+                    el.unmask();
+
+                    if (success) {
+                        var data = Ext.JSON.decode(response.responseText);
+                        if (data.success) {
+                            PSI.MsgBox.showInfo("成功完成删除操作", function () {
+                                me.refreshMainGrid();
+                            });
+                        } else {
+                            PSI.MsgBox.showInfo(data.msg);
+                        }
+                    } else {
+                        PSI.MsgBox.showInfo("网络错误");
+                    }
+                }
+
+            });
+        });
     },
     
     // 提交盘点单

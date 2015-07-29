@@ -134,7 +134,7 @@ class ICBillService extends PSIBaseService {
 			}
 		}
 	}
-	
+
 	public function icbillList($params) {
 		$page = $params["page"];
 		$start = $params["start"];
@@ -179,7 +179,7 @@ class ICBillService extends PSIBaseService {
 				"totalCount" => $cnt
 		);
 	}
-	
+
 	public function icBillDetailList($params) {
 		$id = $params["id"];
 		
@@ -203,6 +203,44 @@ class ICBillService extends PSIBaseService {
 		}
 		
 		return $result;
+	}
+
+	public function deleteICBill($params) {
+		$id = $params["id"];
 		
+		$db = M();
+		$sql = "select ref, bill_status from t_ic_bill where id = '%s' ";
+		$data = $db->query($sql, $id);
+		
+		if (! $data) {
+			return $this->bad("要删除的盘点单不存在");
+		}
+		
+		$ref = $data[0]["ref"];
+		$billStatus = $data[0]["bill_status"];
+		
+		if ($billStatus != 0) {
+			return $this->bad("盘点单(单号：$ref)已经提交，不能被删除");
+		}
+		
+		$db->startTrans();
+		try {
+			$sql = "delete from t_ic_bill_detail where icbill_id = '%s' ";
+			$db->execute($sql, $id);
+			
+			$sql = "delete from t_ic_bill where id = '%s' ";
+			$db->execute($sql, $id);
+			
+			$bs = new BizlogService();
+			$log = "删除盘点单，单号：$ref";
+			$bs->insertBizlog($log, "库存盘点");
+			
+			$db->commit();
+		} catch ( Exception $e ) {
+			$db->rollback();
+			return $this->sqlError();
+		}
+		
+		return $this->ok();
 	}
 }
