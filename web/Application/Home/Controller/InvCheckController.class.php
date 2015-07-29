@@ -6,9 +6,10 @@ use Think\Controller;
 use Home\Service\UserService;
 use Home\Service\InventoryService;
 use Home\Common\FIdConst;
+use Home\Service\ICBillService;
 
 /**
- * 库存盘点
+ * 库存盘点Controller
  * @author 李静波
  *
  */
@@ -34,6 +35,30 @@ class InvCheckController extends Controller {
 	public function icbillList() {
 		if (IS_POST) {
 			return array("dataList" => array(), "totalCount" => 0);
+		}
+	}
+	
+	public function icBillInfo() {
+		if (IS_POST) {
+			$params = array(
+					"id" => I("post.id")
+			);
+			
+			$ic = new ICBillService();
+			
+			$this->ajaxReturn($ic->icBillInfo($params));
+		}
+	}
+	
+	public function editICBill() {
+		if (IS_POST) {
+			$params = array(
+					"jsonStr" => I("post.jsonStr")
+			);
+				
+			$ic = new ICBillService();
+				
+			$this->ajaxReturn($ic->editICBill($params));
 		}
 	}
 }

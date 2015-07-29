@@ -55,7 +55,10 @@ Ext.define("PSI.InvCheck.InvCheckMainForm", {
     
     // 新增盘点单
     onAddBill: function () {
-    	PSI.MsgBox.showInfo("TODO");
+    	var form = Ext.create("PSI.InvCheck.ICEditForm",{
+    		parentForm: this
+    	});
+    	form.show();
     },
     
     // 编辑盘点单
