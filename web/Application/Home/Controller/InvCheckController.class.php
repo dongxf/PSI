@@ -34,7 +34,14 @@ class InvCheckController extends Controller {
 
 	public function icbillList() {
 		if (IS_POST) {
-			return array("dataList" => array(), "totalCount" => 0);
+			$params = array(
+					"page" => I("post.page"),
+					"start" => I("post.start"),
+					"limit" => I("post.limit")
+			);
+			
+			$ic = new ICBillService();
+			$this->ajaxReturn($ic->icbillList($params));
 		}
 	}
 	
@@ -59,6 +66,18 @@ class InvCheckController extends Controller {
 			$ic = new ICBillService();
 				
 			$this->ajaxReturn($ic->editICBill($params));
+		}
+	}
+	
+	public function icBillDetailList() {
+		if (IS_POST) {
+			$params = array(
+					"id" => I("post.id")
+			);
+				
+			$ic = new ICBillService();
+				
+			$this->ajaxReturn($ic->icBillDetailList($params));
 		}
 	}
 }

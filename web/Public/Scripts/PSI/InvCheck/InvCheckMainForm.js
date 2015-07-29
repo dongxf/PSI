@@ -51,7 +51,18 @@ Ext.define("PSI.InvCheck.InvCheckMainForm", {
 
         me.callParent(arguments);
 
+        me.refreshMainGrid();
     },
+    
+    refreshMainGrid: function (id) {
+    	var me = this;
+        var gridDetail = me.getDetailGrid();
+        gridDetail.setTitle("盘点单明细");
+        gridDetail.getStore().removeAll();
+        Ext.getCmp("pagingToobar").doRefresh();
+        me.__lastId = id;
+    },
+
     
     // 新增盘点单
     onAddBill: function () {
@@ -98,7 +109,7 @@ Ext.define("PSI.InvCheck.InvCheckMainForm", {
                 actionMethods: {
                     read: "POST"
                 },
-                url: PSI.Const.BASE_URL + "Home/InvTransfer/itbillList",
+                url: PSI.Const.BASE_URL + "Home/InvCheck/icbillList",
                 reader: {
                     root: 'dataList',
                     totalProperty: 'totalCount'
@@ -121,7 +132,7 @@ Ext.define("PSI.InvCheck.InvCheckMainForm", {
                     sortable: false,
                     width: 60,
                     renderer: function(value) {
-                    	return value == "待调拨" ? "<span style='color:red'>" + value + "</span>" : value;
+                    	return value == "待盘点" ? "<span style='color:red'>" + value + "</span>" : value;
                     }
                 }, {
                     header: "单号",
@@ -153,11 +164,11 @@ Ext.define("PSI.InvCheck.InvCheckMainForm", {
                 }],
             listeners: {
                 select: {
-                    fn: me.onSRBillGridSelect,
+                    fn: me.onMainGridSelect,
                     scope: me
                 },
                 itemdblclick: {
-                    fn: me.onEditSRBill,
+                    fn: me.onEditBill,
                     scope: me
                 }
             },
@@ -246,7 +257,8 @@ Ext.define("PSI.InvCheck.InvCheckMainForm", {
                     dataIndex: "goodsCount",
                     menuDisabled: true,
                     sortable: false,
-                    align: "right"
+                    align: "right",
+                    width: 150
                 }, {
                     header: "单位",
                     dataIndex: "unitName",
@@ -258,7 +270,9 @@ Ext.define("PSI.InvCheck.InvCheckMainForm", {
                     dataIndex: "goodsMoney",
                     menuDisabled: true,
                     sortable: false,
-                    align: "right"
+                    align: "right",
+                    xtype: "numbercolumn",
+                    width: 150
                 }],
             store: store
         });
@@ -281,5 +295,54 @@ Ext.define("PSI.InvCheck.InvCheckMainForm", {
         } else {
             grid.getSelectionModel().select(0);
         }
+    },
+    
+    onMainGridSelect: function() {
+    	this.refreshDetailGrid();
+    },
+    
+    refreshDetailGrid: function (id) {
+        var me = this;
+        me.getDetailGrid().setTitle("盘点单明细");
+        var grid = me.getMainGrid();
+        var item = grid.getSelectionModel().getSelection();
+        if (item == null || item.length != 1) {
+            return;
+        }
+        var bill = item[0];
+
+        grid = me.getDetailGrid();
+        grid.setTitle("单号: " + bill.get("ref")  + " 盘点仓库: "
+                + bill.get("warehouseName"));
+        var el = grid.getEl();
+        el.mask(PSI.Const.LOADING);
+        Ext.Ajax.request({
+            url: PSI.Const.BASE_URL + "Home/InvCheck/icBillDetailList",
+            params: {
+                id: bill.get("id")
+            },
+            method: "POST",
+            callback: function (options, success, response) {
+                var store = grid.getStore();
+
+                store.removeAll();
+
+                if (success) {
+                    var data = Ext.JSON.decode(response.responseText);
+                    store.add(data);
+
+                    if (store.getCount() > 0) {
+                        if (id) {
+                            var r = store.findExact("id", id);
+                            if (r != -1) {
+                                grid.getSelectionModel().select(r);
+                            }
+                        }
+                    }
+                }
+
+                el.unmask();
+            }
+        });
     }
 });

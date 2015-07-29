@@ -259,7 +259,7 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
                 }],
             listeners: {
                 select: {
-                    fn: me.onDetailGridSelect,
+                    fn: me.onMainGridSelect,
                     scope: me
                 },
                 itemdblclick: {
@@ -382,7 +382,7 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
         }
     },
     
-    onDetailGridSelect: function() {
+    onMainGridSelect: function() {
     	this.refreshDetailGrid();
     },
     

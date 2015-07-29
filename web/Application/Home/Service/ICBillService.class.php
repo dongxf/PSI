@@ -134,4 +134,75 @@ class ICBillService extends PSIBaseService {
 			}
 		}
 	}
+	
+	public function icbillList($params) {
+		$page = $params["page"];
+		$start = $params["start"];
+		$limit = $params["limit"];
+		
+		$db = M();
+		
+		$sql = "select t.id, t.ref, t.bizdt, t.bill_status,
+		w.name as warehouse_name,
+		u.name as biz_user_name,
+		u1.name as input_user_name
+		from t_ic_bill t, t_warehouse w, t_user u, t_user u1
+		where t.warehouse_id = w.id
+		and t.biz_user_id = u.id
+		and t.input_user_id = u1.id
+		order by t.ref desc
+		limit $start , $limit
+		";
+		$data = $db->query($sql);
+		$result = array();
+		foreach ( $data as $i => $v ) {
+			$result[$i]["id"] = $v["id"];
+			$result[$i]["ref"] = $v["ref"];
+			$result[$i]["bizDate"] = date("Y-m-d", strtotime($v["bizdt"]));
+			$result[$i]["billStatus"] = $v["bill_status"] == 0 ? "待盘点" : "已盘点";
+			$result[$i]["warehouseName"] = $v["warehouse_name"];
+			$result[$i]["bizUserName"] = $v["biz_user_name"];
+			$result[$i]["inputUserName"] = $v["input_user_name"];
+		}
+		
+		$sql = "select count(*) as cnt
+				from t_ic_bill t, t_warehouse w, t_user u, t_user u1
+				where t.warehouse_id = w.id
+				  and t.biz_user_id = u.id
+				  and t.input_user_id = u1.id
+				";
+		$data = $db->query($sql);
+		$cnt = $data[0]["cnt"];
+		
+		return array(
+				"dataList" => $result,
+				"totalCount" => $cnt
+		);
+	}
+	
+	public function icBillDetailList($params) {
+		$id = $params["id"];
+		
+		$result = array();
+		
+		$db = M();
+		$sql = "select t.id, g.code, g.name, g.spec, u.name as unit_name, t.goods_count, t.goods_money
+				from t_ic_bill_detail t, t_goods g, t_goods_unit u
+				where t.icbill_id = '%s' and t.goods_id = g.id and g.unit_id = u.id
+				order by t.show_order ";
+		
+		$data = $db->query($sql, $id);
+		foreach ( $data as $i => $v ) {
+			$result[$i]["id"] = $v["id"];
+			$result[$i]["goodsCode"] = $v["code"];
+			$result[$i]["goodsName"] = $v["name"];
+			$result[$i]["goodsSpec"] = $v["spec"];
+			$result[$i]["unitName"] = $v["unit_name"];
+			$result[$i]["goodsCount"] = $v["goods_count"];
+			$result[$i]["goodsMoney"] = $v["goods_money"];
+		}
+		
+		return $result;
+		
+	}
 }
