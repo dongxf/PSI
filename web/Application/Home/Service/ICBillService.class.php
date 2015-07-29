@@ -426,7 +426,7 @@ class ICBillService extends PSIBaseService {
 					}
 				}
 				
-				$sql = "select balance_count, balance_money 
+				$sql = "select balance_count, balance_money, in_count, in_money, out_count, out_money 
 						from t_inventory
 						where warehouse_id = '%s' and goods_id = '%s' ";
 				$data = $db->query($sql, $warehouseId, $goodsId);
@@ -455,8 +455,8 @@ class ICBillService extends PSIBaseService {
 							balance_money, warehouse_id, goods_id, biz_date, biz_user_id, date_created, ref_number,
 							ref_type)
 							values (%d, %f, %f, %d, %f, %f, '%s', '%s', '%s', '%s', now(), '%s', '库存盘点-盘盈入库')";
-					$rc = $db->execute($sql, $inCount, $inPrice, $inMoney, $inCount, $inPrice, $inMoney, $warehouseId,
-							$goodsId, $bizDT, $bizUserId, $ref);
+					$rc = $db->execute($sql, $inCount, $inPrice, $inMoney, $inCount, $inPrice, 
+							$inMoney, $warehouseId, $goodsId, $bizDT, $bizUserId, $ref);
 					if (! $rc) {
 						$db->rollback();
 						return $this->sqlError();
@@ -464,10 +464,88 @@ class ICBillService extends PSIBaseService {
 				} else {
 					$balanceCount = $data[0]["balance_count"];
 					$balanceMoney = $data[0]["balance_money"];
+					
 					if ($goodsCount > $balanceCount) {
 						// 盘盈入库
+						$inCount = $goodsCount - $balanceCount;
+						$inMoney = $goodsMoney - $balanceMoney;
+						$inPrice = $inMoney / $inCount;
+						$balanceCount = $goodsCount;
+						$balanceMoney = $goodsMoney;
+						$balancePrice = $balanceMoney / $balanceCount;
+						$totalInCount = $data[0]["in_count"] + $inCount;
+						$totalInMoney = $data[0]["in_money"] + $inMoney;
+						$totalInPrice = $totalInMoney / $totalInCount;
+						
+						// 库存总账
+						$sql = "update t_inventory
+								set in_count = %d, in_price = %f, in_money = %f, 
+								    balance_count = %d, balance_price = %f,
+							        balance_money = %f
+								where warehouse_id = '%s' and goods_id = '%s' ";
+						$rc = $db->execute($sql, $totalInCount, $totalInPrice, $totalInMoney, $balanceCount, 
+								$balancePrice, $balanceMoney, $warehouseId, $goodsId);
+						if (! $rc) {
+							$db->rollback();
+							return $this->sqlError();
+						}
+						
+						// 库存明细账
+						$sql = "insert into t_inventory_detail(in_count, in_price, in_money, balance_count, balance_price,
+							balance_money, warehouse_id, goods_id, biz_date, biz_user_id, date_created, ref_number,
+							ref_type)
+							values (%d, %f, %f, %d, %f, %f, '%s', '%s', '%s', '%s', now(), '%s', '库存盘点-盘盈入库')";
+						$rc = $db->execute($sql, $inCount, $inPrice, $inMoney, $balanceCount, 
+								$balancePrice, $balanceMoney, $warehouseId, $goodsId, $bizDT, 
+								$bizUserId, $ref);
+						if (! $rc) {
+							$db->rollback();
+							return $this->sqlError();
+						}
 					} else {
 						// 盘亏出库
+						$outCount = $balanceCount - $goodsCount;
+						$outMoney = $balanceMoney - $goodsMoney;
+						$outPrice = 0;
+						if ($outCount != 0) {
+							$outPrice = $outMoney / $outCount;
+						}
+						$balanceCount = $goodsCount;
+						$balanceMoney = $goodsMoney;
+						$balancePrice = 0;
+						if ($balanceCount != 0) {
+							$balancePrice = $balanceMoney / $balanceCount;
+						}
+						
+						$totalOutCount = $data[0]["out_count"] + $outCount;
+						$totalOutMoney = $data[0]["out_money"] + $outMoney;
+						$totalOutPrice = $totalOutMoney / $totalOutCount;
+						
+						// 库存总账
+						$sql = "update t_inventory
+								set out_count = %d, out_price = %f, out_money = %f, 
+								    balance_count = %d, balance_price = %f,
+							        balance_money = %f
+								where warehouse_id = '%s' and goods_id = '%s' ";
+						$rc = $db->execute($sql, $totalOutCount, $totalOutPrice, $totalOutMoney, $balanceCount, 
+								$balancePrice, $balanceMoney, $warehouseId, $goodsId);
+						if (! $rc) {
+							$db->rollback();
+							return $this->sqlError();
+						}
+						
+						// 库存明细账
+						$sql = "insert into t_inventory_detail(out_count, out_price, out_money, balance_count, balance_price,
+							balance_money, warehouse_id, goods_id, biz_date, biz_user_id, date_created, ref_number,
+							ref_type)
+							values (%d, %f, %f, %d, %f, %f, '%s', '%s', '%s', '%s', now(), '%s', '库存盘点-盘亏出库')";
+						$rc = $db->execute($sql, $outCount, $outPrice, $outMoney, $balanceCount, 
+								$balancePrice, $balanceMoney, $warehouseId, $goodsId, $bizDT, 
+								$bizUserId, $ref);
+						if (! $rc) {
+							$db->rollback();
+							return $this->sqlError();
+						}
 					}
 				}
 			}
