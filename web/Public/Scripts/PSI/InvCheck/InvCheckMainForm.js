@@ -74,7 +74,19 @@ Ext.define("PSI.InvCheck.InvCheckMainForm", {
     
     // 编辑盘点单
     onEditBill: function () {
-    	PSI.MsgBox.showInfo("TODO");
+    	var me = this;
+        var item = me.getMainGrid().getSelectionModel().getSelection();
+        if (item == null || item.length != 1) {
+            PSI.MsgBox.showInfo("请选择要编辑的盘点单");
+            return;
+        }
+        var bill = item[0];
+        
+        var form = Ext.create("PSI.InvCheck.ICEditForm",{
+    		parentForm: me,
+    		entity: bill
+    	});
+    	form.show();
     },
     
     // 删除盘点单
