@@ -120,7 +120,66 @@ class ICBillService extends PSIBaseService {
 		
 		if ($id) {
 			// 编辑单据
-			return $this->todo();
+			$db->startTrans();
+			try {
+				$sql = "select ref, bill_status from t_ic_bill where id = '%s' ";
+				$data = $db->query($sql, $id);
+				if (! $data) {
+					$db->rollback();
+					return $this->bad("要编辑的盘点点不存在，无法保存");
+				}
+				
+				$ref = $data[0]["ref"];
+				$billStatus = $data[0]["bill_status"];
+				if ($billStatus != 0) {
+					$db->rollback();
+					return $this->bad("盘点单(单号：$ref)已经提交，不能再编辑");
+				}
+				
+				// 主表
+				$sql = "update t_ic_bill
+						set bizdt = '%s', biz_user_id = '%s', date_created = now(), 
+							input_user_id = '%s', warehouse_id = '%s'
+						where id = '%s' ";
+				$rc = $db->execute($sql, $bizDT, $bizUserId, $us->getLoginUserId(), $warehouseId, 
+						$id);
+				if (! $rc) {
+					$db->rollback();
+					return $this->sqlError();
+				}
+				
+				// 明细表
+				$sql = "delete from t_ic_bill_detail where icbill_id = '%s' ";
+				$db->execute($sql, $id);
+				
+				$sql = "insert into t_ic_bill_detail(id, date_created, goods_id, goods_count, goods_money,
+							show_order, icbill_id)
+						values ('%s', now(), '%s', %d, %f, %d, '%s')";
+				foreach ( $items as $i => $v ) {
+					$goodsId = $v["goodsId"];
+					if (! $goodsId) {
+						continue;
+					}
+					$goodsCount = $v["goodsCount"];
+					$goodsMoney = $v["goodsMoney"];
+					
+					$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsMoney, 
+							$i, $id);
+					if (! $rc) {
+						$db->rollback();
+						return $this->sqlError();
+					}
+				}
+				
+				$bs = new BizlogService();
+				$log = "编辑盘点单，单号：$ref";
+				$bs->insertBizlog($log, "库存盘点");
+				
+				$db->commit();
+			} catch ( Exception $e ) {
+				$db->rollback();
+				return $this->sqlError();
+			}
 		} else {
 			// 新建单据
 			$db->startTrans();
@@ -164,13 +223,13 @@ class ICBillService extends PSIBaseService {
 				$bs->insertBizlog($log, "库存盘点");
 				
 				$db->commit();
-				
-				return $this->ok($id);
 			} catch ( Exception $e ) {
 				$db->rollback();
 				return $this->sqlError();
 			}
 		}
+		
+		return $this->ok($id);
 	}
 
 	public function icbillList($params) {
