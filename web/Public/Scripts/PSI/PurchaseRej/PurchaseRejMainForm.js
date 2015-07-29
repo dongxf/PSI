@@ -55,7 +55,11 @@ Ext.define("PSI.PurchaseRej.PurchaseRejMainForm", {
     
     // 新增采购退货出库单
     onAddBill: function () {
-    	PSI.MsgBox.showInfo("TODO");
+    	var me = this;
+    	var form = Ext.create("PSI.PurchaseRej.PREditForm", {
+    		parentForm: me
+    	});
+    	form.show();
     },
     
     // 编辑采购退货出库单
@@ -95,7 +99,7 @@ Ext.define("PSI.PurchaseRej.PurchaseRejMainForm", {
                 actionMethods: {
                     read: "POST"
                 },
-                url: PSI.Const.BASE_URL + "Home/InvTransfer/itbillList",
+                url: PSI.Const.BASE_URL + "Home/PurchaseRej/prbillList",
                 reader: {
                     root: 'dataList',
                     totalProperty: 'totalCount'
