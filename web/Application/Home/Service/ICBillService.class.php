@@ -340,10 +340,88 @@ class ICBillService extends PSIBaseService {
 		
 		return $this->ok();
 	}
-	
+
 	public function commitICBill($params) {
 		$id = $params["id"];
+		$db = M();
+		$db->startTrans();
+		try {
+			$sql = "select ref, bill_status, warehouse_id, bizdt, biz_user_id 
+					from t_ic_bill 
+					where id = '%s' ";
+			$data = $db->query($sql, $id);
+			if (! $data) {
+				$db->rollback();
+				return $this->bad("要提交的盘点单不存在");
+			}
+			$ref = $data[0]["ref"];
+			$billStatus = $data[0]["bill_status"];
+			if ($billStatus != 0) {
+				$db->rollback();
+				return $this->bad("盘点单(单号：$ref)已经提交，不能再次提交");
+			}
+			$warehouseId = $data[0]["warehouse_id"];
+			$sql = "select name from t_warehouse where id = '%s' ";
+			$data = $db->query($sql, $warehouseId);
+			if (! $data) {
+				$db->rollback();
+				return $this->bad("要盘点的仓库不存在");
+			}
+			$bizDT = date("Y-m-d", strtotime($data[0]["bizdt"]));
+			$bizUserId = $data[0]["biz_user_id"];
+			$sql = "select name from t_user where id = '%s' ";
+			$data = $db->query($sql, $bizUserId);
+			if (! $data) {
+				$db->rollback();
+				return $this->bad("业务人员不存在，无法完成提交");
+			}
+			
+			$sql = "select goods_id, goods_count, goods_money
+					from t_ic_bill_detail
+					where icbill_id = '%s' 
+					order by show_order ";
+			$items = $db->query($sql, $id);
+			if (! $items) {
+				$db->rollback();
+				return $this->bad("盘点单没有明细信息，无法完成提交");
+			}
+			
+			foreach ( $items as $i => $v ) {
+				$goodsId = $v["goods_id"];
+				$goodsCount = $v["goods_count"];
+				$goodsMoney = $v["goods_money"];
+				
+				// 检查商品是否存在
+				$sql = "select code, name, spec from t_goods where id = '%s' ";
+				$data = $db->query($sql, $goodsId);
+				if (! $data) {
+					$db->rollback();
+					$index = $i + 1;
+					return $this->bad("第{$index}条记录的商品不存在，无法完成提交");
+				}
+			}
+			
+			// 修改单据本身状态
+			$sql = "update t_ic_bill
+					set bill_status = 1000
+					where id = '%s' ";
+			$rc = $db->execute($sql, $id);
+			if (! $rc) {
+				$db->rollback();
+				return $this->sqlError();
+			}
+			
+			// 记录业务日志
+			$bs = new BizlogService();
+			$log = "提交盘点单，单号：$ref";
+			$bs->insertBizlog($log, "库存盘点");
+			
+			$db->commit();
+		} catch ( Exception $e ) {
+			$db->rollback();
+			return $this->sqlError();
+		}
 		
-		return $this->todo();
+		return $this->ok($id);
 	}
 }
