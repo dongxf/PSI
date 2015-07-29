@@ -361,14 +361,15 @@ class ICBillService extends PSIBaseService {
 				return $this->bad("盘点单(单号：$ref)已经提交，不能再次提交");
 			}
 			$warehouseId = $data[0]["warehouse_id"];
+			$bizDT = date("Y-m-d", strtotime($data[0]["bizdt"]));
+			$bizUserId = $data[0]["biz_user_id"];
+			
 			$sql = "select name from t_warehouse where id = '%s' ";
 			$data = $db->query($sql, $warehouseId);
 			if (! $data) {
 				$db->rollback();
 				return $this->bad("要盘点的仓库不存在");
 			}
-			$bizDT = date("Y-m-d", strtotime($data[0]["bizdt"]));
-			$bizUserId = $data[0]["biz_user_id"];
 			$sql = "select name from t_user where id = '%s' ";
 			$data = $db->query($sql, $bizUserId);
 			if (! $data) {
@@ -398,6 +399,24 @@ class ICBillService extends PSIBaseService {
 					$db->rollback();
 					$index = $i + 1;
 					return $this->bad("第{$index}条记录的商品不存在，无法完成提交");
+				}
+				
+				if ($goodsCount < 0) {
+					$db->rollback();
+					$index = $i + 1;
+					return $this->bad("第{$index}条记录的商品盘点后库存数量不能为负数");
+				}
+				if ($goodsMoney < 0) {
+					$db->rollback();
+					$index = $i + 1;
+					return $this->bad("第{$index}条记录的商品盘点后库存金额不能为负数");
+				}
+				if ($goodsCount == 0) {
+					if ($goodsMoney != 0) {
+						$db->rollback();
+						$index = $i + 1;
+						return $this->bad("第{$index}条记录的商品盘点后库存数量为0的时候，库存金额也必须为0");
+					}
 				}
 			}
 			
