@@ -2,8 +2,6 @@
 
 namespace Home\Service;
 
-use Think\Model\AdvModel;
-
 /**
  * 库存盘点Service
  *
