@@ -14,7 +14,8 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 			title : entity == null ? "新建采购退货出库单" : "编辑采购退货出库单",
 			modal : true,
 			onEsc : Ext.emptyFn,
-			width : 1000,
+			maximized: true,
+			width : 1200,
 			height : 600,
 			tbar:["-",{
                 text: "选择采购入库单",
@@ -268,7 +269,8 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 		Ext.define(modelName, {
 			extend : "Ext.data.Model",
 			fields : [ "id", "goodsId", "goodsCode", "goodsName", "goodsSpec",
-					"unitName", "goodsCount", "goodsMoney", "goodsPrice" ]
+					"unitName", "goodsCount", "goodsMoney", "goodsPrice", "rejCount",
+					"rejPrice", "rejMoney"]
 		});
 		var store = Ext.create("Ext.data.Store", {
 			autoLoad : false,
@@ -315,11 +317,7 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 						header : "商品编码",
 						dataIndex : "goodsCode",
 						menuDisabled : true,
-						sortable : false,
-						editor : {
-							xtype : "psi_goodsfield",
-							parentCmp : me
-						}
+						sortable : false
 					},
 					{
 						header : "商品名称",
@@ -336,8 +334,8 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 						width : 200
 					},
 					{
-						header : "采购数量",
-						dataIndex : "goodsCount",
+						header : "退货数量",
+						dataIndex : "rejCount",
 						menuDisabled : true,
 						sortable : false,
 						align : "right",
@@ -356,8 +354,8 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 						width : 60
 					},
 					{
-						header : "采购单价",
-						dataIndex : "goodsPrice",
+						header : "退货单价",
+						dataIndex : "rejPrice",
 						menuDisabled : true,
 						sortable : false,
 						align : "right",
@@ -369,7 +367,31 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 						}
 					},
 					{
-						header : "采购金额",
+						header : "退货金额",
+						dataIndex : "rejMoney",
+						menuDisabled : true,
+						sortable : false,
+						align : "right",
+						xtype : "numbercolumn",
+						width : 120
+					},{
+						header : "原采购数量",
+						dataIndex : "goodsCount",
+						menuDisabled : true,
+						sortable : false,
+						align : "right",
+						xtype : "numbercolumn",
+						width : 120
+					},{
+						header : "原采购单价",
+						dataIndex : "goodsPrice",
+						menuDisabled : true,
+						sortable : false,
+						align : "right",
+						xtype : "numbercolumn",
+						width : 120
+					},{
+						header : "原采购金额",
 						dataIndex : "goodsMoney",
 						menuDisabled : true,
 						sortable : false,
@@ -383,29 +405,13 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 
 		return me.__goodsGrid;
 	},
-	__setGoodsInfo : function(data) {
-		var me = this;
-		var item = me.getGoodsGrid().getSelectionModel().getSelection();
-		if (item == null || item.length != 1) {
-			return;
-		}
-		var goods = item[0];
 
-		goods.set("goodsId", data.id);
-		goods.set("goodsCode", data.code);
-		goods.set("goodsName", data.name);
-		goods.set("unitName", data.unitName);
-		goods.set("goodsSpec", data.spec);
-	},
 	cellEditingAfterEdit : function(editor, e) {
 		var me = this;
 		if (e.colIdx == 6) {
 			me.calcMoney();
 
 			var store = me.getGoodsGrid().getStore();
-			if (e.rowIdx == store.getCount() - 1) {
-				store.add({});
-			}
 			e.rowIdx += 1;
 			me.getGoodsGrid().getSelectionModel().select(e.rowIdx);
 			me.__cellEditing.startEdit(e.rowIdx, 1);
@@ -420,8 +426,7 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 			return;
 		}
 		var goods = item[0];
-		goods.set("goodsMoney", goods.get("goodsCount")
-				* goods.get("goodsPrice"));
+		goods.set("rejMoney", goods.get("rejCount") * goods.get("rejPrice"));
 	},
 	getSaveData : function() {
 		var result = {

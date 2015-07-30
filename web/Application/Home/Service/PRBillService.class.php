@@ -202,6 +202,7 @@ class PRBillService extends PSIBaseService {
 			$items[$i]["goodsCount"] = $v["goods_count"];
 			$items[$i]["goodsPrice"] = $v["goods_price"];
 			$items[$i]["goodsMoney"] = $v["goods_money"];
+			$items[$i]["rejPrice"] = $v["goods_price"];
 		}
 		
 		$result["items"] = $items;
