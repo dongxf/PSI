@@ -2,8 +2,6 @@
 
 namespace Home\Service;
 
-use Think\Model\AdvModel;
-
 /**
  * 采购退货出库单Service
  *
@@ -124,7 +122,7 @@ class PRBillService extends PSIBaseService {
 					and p.pwbill_id = '%s'
 				order by p.show_order ";
 		$data = $db->query($sql, $id);
-		foreach ($data as $i => $v) {
+		foreach ( $data as $i => $v ) {
 			$items[$i]["id"] = $v["id"];
 			$items[$i]["goodsId"] = $v["goods_id"];
 			$items[$i]["goodsCode"] = $v["goods_code"];

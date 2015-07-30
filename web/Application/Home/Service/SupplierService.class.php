@@ -33,10 +33,10 @@ class SupplierService extends PSIBaseService {
 				from t_supplier 
 				where category_id = '%s' 
 				order by code 
-				limit " . $start . ", " . $limit;
+				limit %d, %d";
 		$result = array();
 		$db = M();
-		$data = $db->query($sql, $categoryId);
+		$data = $db->query($sql, $categoryId, $start, $limit);
 		foreach ( $data as $i => $v ) {
 			$result[$i]["id"] = $v["id"];
 			$result[$i]["categoryId"] = $v["category_id"];

@@ -310,7 +310,9 @@ class CustomerService extends PSIBaseService {
 			$queryParam[] = "%{$qq}%";
 			$queryParam[] = "%{$qq}";
 		}
-		$sql .= " order by code limit " . $start . ", " . $limit;
+		$sql .= " order by code limit %d, %d";
+		$queryParam[] = $start;
+		$queryParam[] = $limit;
 		$result = array();
 		$db = M();
 		$data = $db->query($sql, $queryParam);
