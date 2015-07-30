@@ -59,6 +59,16 @@ class PRBillService extends PSIBaseService {
 	}
 
 	public function selectPWBillList($params) {
+		$page = $params["page"];
+		$start = $params["start"];
+		$limit = $params["limit"];
+		
+		$ref = $params["ref"];
+		$supplierId = $params["supplierId"];
+		$warehouseId = $params["warehouseId"];
+		$fromDT = $params["fromDT"];
+		$toDT = $params["toDT"];
+		
 		$result = array();
 		
 		$db = M();
@@ -66,13 +76,38 @@ class PRBillService extends PSIBaseService {
 		$sql = "select p.id, p.ref, p.biz_dt, s.name as supplier_name, p.goods_money,
 					w.name as warehouse_name, u1.name as biz_user_name, u2.name as input_user_name
 				from t_pw_bill p, t_supplier s, t_warehouse w, t_user u1, t_user u2
-				where p.supplier_id = s.id 
-					and p.warehouse_id = w.id
-					and p.biz_user_id = u1.id 
-					and p.input_user_id = u2.id
-				order by p.ref desc";
+				where (p.supplier_id = s.id) 
+					and (p.warehouse_id = w.id)
+					and (p.biz_user_id = u1.id) 
+					and (p.input_user_id = u2.id)";
+		$queryParamas = array();
 		
-		$data = $db->query($sql);
+		if ($ref) {
+			$sql .= " and (p.ref like '%s') ";
+			$queryParamas[] = "%$ref%";
+		}
+		if ($supplierId) {
+			$sql .= " and (p.supplier_id = '%s') ";
+			$queryParamas[] = $supplierId;
+		}
+		if ($warehouseId) {
+			$sql .= " and (p.warehouse_id = '%s') ";
+			$queryParamas[] = $warehouseId;
+		}
+		if ($fromDT) {
+			$sql .= " and (p.biz_dt >= '%s') ";
+			$queryParamas[] = $fromDT;
+		}
+		if ($toDT) {
+			$sql .= " and (p.biz_dt <= '%s') ";
+			$queryParamas[] = $toDT;
+		}
+		
+		$sql .= " order by p.ref desc limit %d, %d";
+		$queryParamas[] = $start;
+		$queryParamas[] = $limit;
+		
+		$data = $db->query($sql, $queryParamas);
 		foreach ( $data as $i => $v ) {
 			$result[$i]["id"] = $v["id"];
 			$result[$i]["ref"] = $v["ref"];
@@ -84,7 +119,42 @@ class PRBillService extends PSIBaseService {
 			$result[$i]["inputUserName"] = $v["input_user_name"];
 		}
 		
-		return $result;
+		$sql = "select count(*) as cnt
+				from t_pw_bill p, t_supplier s, t_warehouse w, t_user u1, t_user u2
+				where (p.supplier_id = s.id)
+					and (p.warehouse_id = w.id)
+					and (p.biz_user_id = u1.id)
+					and (p.input_user_id = u2.id)";
+		$queryParamas = array();
+		
+		if ($ref) {
+			$sql .= " and (p.ref like '%s') ";
+			$queryParamas[] = "%$ref%";
+		}
+		if ($supplierId) {
+			$sql .= " and (p.supplier_id = '%s') ";
+			$queryParamas[] = $supplierId;
+		}
+		if ($warehouseId) {
+			$sql .= " and (p.warehouse_id = '%s') ";
+			$queryParamas[] = $warehouseId;
+		}
+		if ($fromDT) {
+			$sql .= " and (p.biz_dt >= '%s') ";
+			$queryParamas[] = $fromDT;
+		}
+		if ($toDT) {
+			$sql .= " and (p.biz_dt <= '%s') ";
+			$queryParamas[] = $toDT;
+		}
+		
+		$data = $db->query($sql, $queryParamas);
+		$cnt = $data[0]["cnt"];
+		
+		return array(
+				"dataList" => $result,
+				"totalCount" => $cnt
+		);
 	}
 
 	public function getPWBillInfoForPRBill($params) {

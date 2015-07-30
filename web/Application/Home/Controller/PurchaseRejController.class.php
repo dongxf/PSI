@@ -68,22 +68,31 @@ class PurchaseRejController extends Controller {
 
 	public function selectPWBillList() {
 		if (IS_POST) {
-			$params = array();
+			$params = array(
+					"ref" => I("post.ref"),
+					"supplierId" => I("post.supplierId"),
+					"warehouseId" => I("post.warehouseId"),
+					"fromDT" => I("post.fromDT"),
+					"toDT" => I("post.toDT"),
+					"page" => I("post.page"),
+					"start" => I("post.start"),
+					"limit" => I("post.limit")
+			);
 			
 			$pr = new PRBillService();
 			
 			$this->ajaxReturn($pr->selectPWBillList($params));
 		}
 	}
-	
+
 	public function getPWBillInfoForPRBill() {
 		if (IS_POST) {
 			$params = array(
 					"id" => I("post.id")
 			);
-				
+			
 			$pr = new PRBillService();
-				
+			
 			$this->ajaxReturn($pr->getPWBillInfoForPRBill($params));
 		}
 	}
