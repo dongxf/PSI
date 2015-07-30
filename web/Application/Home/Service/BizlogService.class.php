@@ -18,8 +18,8 @@ class BizlogService extends PSIBaseService {
 				from t_biz_log b, t_user u
 				where b.user_id = u.id
 				order by b.date_created desc
-				limit  $start , $limit ";
-		$data = M()->query($sql);
+				limit %d, %d ";
+		$data = M()->query($sql, $start , $limit);
 		$result = array();
 		
 		foreach ( $data as $i => $v ) {
