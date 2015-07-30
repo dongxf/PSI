@@ -157,17 +157,47 @@ class SRBillService extends PSIBaseService {
 		$start = $params["start"];
 		$limit = $params["limit"];
 		
+		$ref = $params["ref"];
+		$customerId = $params["customerId"];
+		$warehouseId = $params["warehouseId"];
+		$fromDT = $params["fromDT"];
+		$toDT = $params["toDT"];
+		
 		$db = M();
 		$sql = "select w.id, w.ref, w.bizdt, c.name as customer_name, u.name as biz_user_name,
 				 user.name as input_user_name, h.name as warehouse_name, w.sale_money,
 				 w.bill_status 
 				 from t_ws_bill w, t_customer c, t_user u, t_user user, t_warehouse h 
-				 where w.customer_id = c.id and w.biz_user_id = u.id 
-				 and w.input_user_id = user.id and w.warehouse_id = h.id 
-				 and w.bill_status <> 0
-				 order by w.ref desc 
-				 limit " . $start . ", " . $limit;
-		$data = $db->query($sql);
+				 where (w.customer_id = c.id) and (w.biz_user_id = u.id) 
+				 and (w.input_user_id = user.id) and (w.warehouse_id = h.id) 
+				 and (w.bill_status = 1000) ";
+		$queryParamas = array();
+		
+		if ($ref) {
+			$sql .= " and (w.ref like '%s') ";
+			$queryParamas[] = "%$ref%";
+		}
+		if ($customerId) {
+			$sql .= " and (w.customer_id = '%s') ";
+			$queryParamas[] = $customerId;
+		}
+		if ($warehouseId) {
+			$sql .= " and (w.warehouse_id = '%s') ";
+			$queryParamas[] = $warehouseId;
+		}
+		if ($fromDT) {
+			$sql .= " and (w.bizdt >= '%s') ";
+			$queryParamas[] = $fromDT;
+		}
+		if ($toDT) {
+			$sql .= " and (w.bizdt <= '%s') ";
+			$queryParamas[] = $toDT;
+		}
+		$sql .= " order by w.ref desc 
+				 limit %d, %d";
+		$queryParamas[] = $start;
+		$queryParamas[] = $limit;
+		$data = $db->query($sql, $queryParamas);
 		$result = array();
 		
 		foreach ( $data as $i => $v ) {
@@ -184,10 +214,33 @@ class SRBillService extends PSIBaseService {
 		
 		$sql = "select count(*) as cnt 
 				 from t_ws_bill w, t_customer c, t_user u, t_user user, t_warehouse h 
-				 where w.customer_id = c.id and w.biz_user_id = u.id 
-				 and w.input_user_id = user.id and w.warehouse_id = h.id 
-				 and w.bill_status <> 0 ";
-		$data = $db->query($sql);
+				 where (w.customer_id = c.id) and (w.biz_user_id = u.id) 
+				 and (w.input_user_id = user.id) and (w.warehouse_id = h.id) 
+				 and (w.bill_status = 1000) ";
+		$queryParamas = array();
+		
+		if ($ref) {
+			$sql .= " and (w.ref like '%s') ";
+			$queryParamas[] = "%$ref%";
+		}
+		if ($customerId) {
+			$sql .= " and (w.customer_id = '%s') ";
+			$queryParamas[] = $customerId;
+		}
+		if ($warehouseId) {
+			$sql .= " and (w.warehouse_id = '%s') ";
+			$queryParamas[] = $warehouseId;
+		}
+		if ($fromDT) {
+			$sql .= " and (w.bizdt >= '%s') ";
+			$queryParamas[] = $fromDT;
+		}
+		if ($toDT) {
+			$sql .= " and (w.bizdt <= '%s') ";
+			$queryParamas[] = $toDT;
+		}
+		
+		$data = $db->query($sql, $queryParamas);
 		$cnt = $data[0]["cnt"];
 		
 		return array(

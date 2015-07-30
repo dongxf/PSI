@@ -1,9 +1,11 @@
 // 销售退货入库单-选择销售出库单界面
 Ext.define("PSI.Sale.SRSelectWSBillForm", {
     extend: "Ext.window.Window",
+
     config: {
         parentForm: null
     },
+    
     initComponent: function () {
         var me = this;
         Ext.apply(me, {title: "选择销售出库单",
@@ -35,6 +37,7 @@ Ext.define("PSI.Sale.SRSelectWSBillForm", {
                             colspan: 2
                         },
                         {
+                        	id: "editWSRef",
                             xtype: "textfield",
                             labelAlign: "right",
                             labelSeparator: "",
@@ -43,14 +46,20 @@ Ext.define("PSI.Sale.SRSelectWSBillForm", {
                             xtype: "psi_customerfield",
                             labelAlign: "right",
                             labelSeparator: "",
+                            parentCmp: me,
                             fieldLabel: "客户"
                         },{
+                        	xtype: "hidden",
+                        	id: "editWSCustomerId"
+                        },{
+                        	id: "editFromDT",
                             xtype: "datefield",
                             format: "Y-m-d",
                             labelAlign: "right",
                             labelSeparator: "",
                             fieldLabel: "业务日期（起）"
                         },{
+                        	id: "editToDT",
                             xtype: "datefield",
                             format: "Y-m-d",
                             labelAlign: "right",
@@ -60,7 +69,11 @@ Ext.define("PSI.Sale.SRSelectWSBillForm", {
                             xtype: "psi_warehousefield",
                             labelAlign: "right",
                             labelSeparator: "",
+                            parentCmp: me,
                             fieldLabel: "仓库"
+                        },{
+                        	xtype: "hidden",
+                        	id: "editWSWarehouseId"
                         },{
                             xtype: "button",
                             text: "查询",
@@ -93,10 +106,11 @@ Ext.define("PSI.Sale.SRSelectWSBillForm", {
 
         me.callParent(arguments);
     },
+    
     onWndShow: function () {
         var me = this;
     },
-    // private
+    
     onOK: function () {
         var me = this;
         
@@ -109,6 +123,7 @@ Ext.define("PSI.Sale.SRSelectWSBillForm", {
         me.close();
         me.getParentForm().getWSBillInfo(wsBill.get("id"));
     },
+
     getWSBillGrid: function() {
         var me = this;
         
@@ -139,9 +154,8 @@ Ext.define("PSI.Sale.SRSelectWSBillForm", {
                 }
             }
         });
-        storeWSBill.on("load", function (e, records, successful) {
-            if (successful) {
-            }
+        storeWSBill.on("beforeload", function () {
+        	storeWSBill.proxy.extraParams = me.getQueryParam();
         });
 
 
@@ -239,7 +253,49 @@ Ext.define("PSI.Sale.SRSelectWSBillForm", {
         
         return me.__wsBillGrid;
     },
+    
     onQuery: function() {
         Ext.getCmp("srbill_selectform_pagingToobar").doRefresh();
+    },
+    
+    // CustomerField回调此方法
+    __setCustomerInfo: function (data) {
+        Ext.getCmp("editWSCustomerId").setValue(data.id);
+    },
+    
+    // WarehouseField回调此方法
+    __setWarehouseInfo: function (data) {
+        Ext.getCmp("editWSWarehouseId").setValue(data.id);
+    },
+    
+    getQueryParam: function() {
+    	var result = {};
+    	
+    	var ref = Ext.getCmp("editWSRef").getValue();
+    	if (ref) {
+    		result.ref = ref;
+    	}
+    	
+    	var customerId = Ext.getCmp("editWSCustomerId").getValue();
+    	if (customerId) {
+    		result.customerId = customerId;
+    	}
+    	
+    	var warehouseId = Ext.getCmp("editWSWarehouseId").getValue();
+    	if (warehouseId) {
+    		result.warehouseId = warehouseId;
+    	}
+    	
+    	var fromDT = Ext.getCmp("editFromDT").getValue();
+    	if (fromDT) {
+    		result.fromDT = Ext.Date.format(fromDT, "Y-m-d");
+    	}
+    	
+    	var toDT = Ext.getCmp("editToDT").getValue();
+    	if (toDT) {
+    		result.toDT = Ext.Date.format(toDT, "Y-m-d");
+    	}
+    	
+    	return result;
     }
 });
