@@ -225,7 +225,9 @@ class GoodsService extends PSIBaseService {
 			$queryParam[] = "%{$spec}%";
 		}
 		
-		$sql .= " order by g.code limit " . $start . ", " . $limit;
+		$sql .= " order by g.code limit %d, %d";
+		$queryParam[] = $start;
+		$queryParam[] = $limit;
 		$data = $db->query($sql, $queryParam);
 		
 		foreach ( $data as $i => $v ) {
