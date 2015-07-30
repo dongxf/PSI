@@ -22,8 +22,8 @@ class PWBillService extends PSIBaseService {
 				where p.warehouse_id = w.id and p.supplier_id = s.id 
 				and p.biz_user_id = u1.id and p.input_user_id = u2.id 
 				order by p.ref desc 
-				limit " . $start . ", " . $limit;
-		$data = $db->query($sql);
+				limit %d, %d";
+		$data = $db->query($sql, $start, $limit);
 		$result = array();
 		
 		foreach ( $data as $i => $v ) {
