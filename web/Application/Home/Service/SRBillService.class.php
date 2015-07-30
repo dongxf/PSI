@@ -165,8 +165,7 @@ class SRBillService extends PSIBaseService {
 		
 		$db = M();
 		$sql = "select w.id, w.ref, w.bizdt, c.name as customer_name, u.name as biz_user_name,
-				 user.name as input_user_name, h.name as warehouse_name, w.sale_money,
-				 w.bill_status 
+				 user.name as input_user_name, h.name as warehouse_name, w.sale_money
 				 from t_ws_bill w, t_customer c, t_user u, t_user user, t_warehouse h 
 				 where (w.customer_id = c.id) and (w.biz_user_id = u.id) 
 				 and (w.input_user_id = user.id) and (w.warehouse_id = h.id) 
@@ -208,7 +207,6 @@ class SRBillService extends PSIBaseService {
 			$result[$i]["warehouseName"] = $v["warehouse_name"];
 			$result[$i]["inputUserName"] = $v["input_user_name"];
 			$result[$i]["bizUserName"] = $v["biz_user_name"];
-			$result[$i]["billStatus"] = $v["bill_status"] == 0 ? "待出库" : "已出库";
 			$result[$i]["amount"] = $v["sale_money"];
 		}
 		

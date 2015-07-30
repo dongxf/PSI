@@ -44,6 +44,7 @@ Ext.define("PSI.Sale.SRSelectWSBillForm", {
                             fieldLabel: "销售出库单单号"
                         },{
                             xtype: "psi_customerfield",
+                            id: "editWSCustomer",
                             labelAlign: "right",
                             labelSeparator: "",
                             parentCmp: me,
@@ -67,6 +68,7 @@ Ext.define("PSI.Sale.SRSelectWSBillForm", {
                             fieldLabel: "业务日期（止）"
                         },{
                             xtype: "psi_warehousefield",
+                            id: "editWSWarehouse",
                             labelAlign: "right",
                             labelSeparator: "",
                             parentCmp: me,
@@ -75,13 +77,23 @@ Ext.define("PSI.Sale.SRSelectWSBillForm", {
                         	xtype: "hidden",
                         	id: "editWSWarehouseId"
                         },{
-                            xtype: "button",
-                            text: "查询",
-                            width: 100,
-                            margin: "0 0 0 10",
-                            iconCls: "PSI-button-refresh",
-                            handler: me.onQuery,
-                            scope: me
+                        	xtype: "container",
+                        	items: [{
+                                xtype: "button",
+                                text: "查询",
+                                width: 100,
+                                margin: "0 0 0 10",
+                                iconCls: "PSI-button-refresh",
+                                handler: me.onQuery,
+                                scope: me
+                            	},{
+                            	xtype: "button", 
+                            	text: "清空查询条件",
+                            	width: 100,
+                            	margin: "0, 0, 0, 10",
+                            	handler: me.onClearQuery,
+                            	scope: me
+                            	}]
                         }
                     ]
                 }],
@@ -135,7 +147,7 @@ Ext.define("PSI.Sale.SRSelectWSBillForm", {
         Ext.define(modelName, {
             extend: "Ext.data.Model",
             fields: ["id", "ref", "bizDate", "customerName", "warehouseName",
-                "inputUserName", "bizUserName", "billStatus", "amount"]
+                "inputUserName", "bizUserName", "amount"]
         });
         var storeWSBill = Ext.create("Ext.data.Store", {
             autoLoad: false,
@@ -164,12 +176,6 @@ Ext.define("PSI.Sale.SRSelectWSBillForm", {
             columns: [
                 Ext.create("Ext.grid.RowNumberer", {text: "序号", width: 50}),
                 {
-                    header: "状态",
-                    dataIndex: "billStatus",
-                    menuDisabled: true,
-                    sortable: false,
-                    width: 60
-                }, {
                     header: "单号",
                     dataIndex: "ref",
                     width: 110,
@@ -278,12 +284,16 @@ Ext.define("PSI.Sale.SRSelectWSBillForm", {
     	
     	var customerId = Ext.getCmp("editWSCustomerId").getValue();
     	if (customerId) {
-    		result.customerId = customerId;
+    		if (Ext.getCmp("editWSCustomer").getValue()) {
+    			result.customerId = customerId;	
+    		}
     	}
     	
     	var warehouseId = Ext.getCmp("editWSWarehouseId").getValue();
     	if (warehouseId) {
-    		result.warehouseId = warehouseId;
+    		if (Ext.getCmp("editWSWarehouse").getValue()) {
+    			result.warehouseId = warehouseId;	
+    		}
     	}
     	
     	var fromDT = Ext.getCmp("editFromDT").getValue();
@@ -297,5 +307,15 @@ Ext.define("PSI.Sale.SRSelectWSBillForm", {
     	}
     	
     	return result;
+    },
+    
+    onClearQuery: function() {
+    	Ext.getCmp("editWSRef").setValue(null);
+    	Ext.getCmp("editWSCustomer").setValue(null);
+    	Ext.getCmp("editWSCustomerId").setValue(null);
+    	Ext.getCmp("editWSWarehouse").setValue(null);
+    	Ext.getCmp("editWSWarehouseId").setValue(null);
+    	Ext.getCmp("editFromDT").setValue(null);
+    	Ext.getCmp("editToDT").setValue(null);
     }
 });
