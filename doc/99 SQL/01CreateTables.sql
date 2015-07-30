@@ -496,6 +496,43 @@ CREATE TABLE IF NOT EXISTS `t_ic_bill_detail` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `t_pr_bill`;
+CREATE TABLE IF NOT EXISTS `t_pr_bill` (
+  `id` varchar(255) NOT NULL,
+  `bill_status` int(11) NOT NULL,
+  `bizdt` datetime NOT NULL,
+  `biz_user_id` varchar(255) NOT NULL,
+  `supplier_id` varchar(255) NOT NULL,
+  `date_created` datetime DEFAULT NULL,
+  `input_user_id` varchar(255) NOT NULL,
+  `inventory_money` decimal(19,2) DEFAULT NULL,
+  `ref` varchar(255) NOT NULL,
+  `rejection_money` decimal(19,2) DEFAULT NULL,
+  `warehouse_id` varchar(255) NOT NULL,
+  `pw_bill_id` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `t_pr_bill_detail`;
+CREATE TABLE IF NOT EXISTS `t_pr_bill_detail` (
+  `id` varchar(255) NOT NULL,
+  `date_created` datetime DEFAULT NULL,
+  `goods_id` varchar(255) NOT NULL,
+  `goods_count` int(11) NOT NULL,
+  `goods_money` decimal(19,2) NOT NULL,
+  `goods_price` decimal(19,2) NOT NULL,
+  `inventory_money` decimal(19,2) NOT NULL,
+  `inventory_price` decimal(19,2) NOT NULL,
+  `rejection_goods_count` int(11) NOT NULL,
+  `rejection_goods_price` decimal(19,2) NOT NULL,
+  `rejection_money` decimal(19,2) NOT NULL,
+  `show_order` int(11) NOT NULL,
+  `prbill_id` varchar(255) NOT NULL,
+  `pwbilldetail_id` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
 DROP TABLE IF EXISTS `t_config`;
 CREATE TABLE IF NOT EXISTS `t_config` (
   `id` varchar(255) NOT NULL,
