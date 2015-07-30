@@ -87,7 +87,7 @@ Ext.define("PSI.PurchaseRej.PurchaseRejMainForm", {
         Ext.define(modelName, {
             extend: "Ext.data.Model",
             fields: ["id", "ref", "bizDate",  "warehouseName",
-                "inputUserName", "bizUserName", "billStatus"]
+                "inputUserName", "bizUserName", "billStatus", "goodsMoney"]
         });
         var store = Ext.create("Ext.data.Store", {
             autoLoad: false,
@@ -142,6 +142,14 @@ Ext.define("PSI.PurchaseRej.PurchaseRejMainForm", {
                     sortable: false,
                     width: 150
                 }, {
+                	header: "退货金额", 
+                	dataIndex: "goodsMoney", 
+                	menuDisabled: true, 
+                	sortable: false, 
+                	align: "right", 
+                	xtype: "numbercolumn", 
+                	width: 150
+                }, {
                     header: "业务员",
                     dataIndex: "bizUserName",
                     menuDisabled: true,
@@ -154,11 +162,11 @@ Ext.define("PSI.PurchaseRej.PurchaseRejMainForm", {
                 }],
             listeners: {
                 select: {
-                    fn: me.onSRBillGridSelect,
+                    fn: me.onMainGridSelect,
                     scope: me
                 },
                 itemdblclick: {
-                    fn: me.onEditSRBill,
+                    fn: me.onEditBill,
                     scope: me
                 }
             },
@@ -210,7 +218,7 @@ Ext.define("PSI.PurchaseRej.PurchaseRejMainForm", {
         Ext.define(modelName, {
             extend: "Ext.data.Model",
             fields: ["id", "goodsCode", "goodsName", "goodsSpec", "unitName", 
-                     "goodsCount", "goodsMoney"]
+                     "rejCount", "rejPrice", "rejMoney"]
         });
         var store = Ext.create("Ext.data.Store", {
             autoLoad: false,
@@ -244,10 +252,12 @@ Ext.define("PSI.PurchaseRej.PurchaseRejMainForm", {
                     width: 200
                 }, {
                     header: "退货数量",
-                    dataIndex: "goodsCount",
+                    dataIndex: "rejCount",
                     menuDisabled: true,
                     sortable: false,
-                    align: "right"
+                    align: "right",
+                    width: 150,
+                    xtype: "numbercolumn"
                 }, {
                     header: "单位",
                     dataIndex: "unitName",
@@ -255,11 +265,21 @@ Ext.define("PSI.PurchaseRej.PurchaseRejMainForm", {
                     sortable: false,
                     width: 60
                 }, {
-                    header: "退货金额",
-                    dataIndex: "goodsMoney",
+                    header: "退货单价",
+                    dataIndex: "rejPrice",
                     menuDisabled: true,
                     sortable: false,
-                    align: "right"
+                    align: "right",
+                    width: 150,
+                    xtype: "numbercolumn"
+                }, {
+                    header: "退货金额",
+                    dataIndex: "rejMoney",
+                    menuDisabled: true,
+                    sortable: false,
+                    align: "right",
+                    width: 150,
+                    xtype: "numbercolumn"
                 }],
             store: store
         });
@@ -282,5 +302,9 @@ Ext.define("PSI.PurchaseRej.PurchaseRejMainForm", {
         } else {
             grid.getSelectionModel().select(0);
         }
+    },
+    
+    onMainGridSelect: function() {
+    	
     }
 });
