@@ -40,4 +40,8 @@ class PSIBaseService {
 	protected function sqlError() {
 		return $this->bad("数据库错误，请联系管理员");
 	}
+	
+	protected function toYMD($d) {
+		return date("Y-m-d", strtotime($d));
+	}
 }

@@ -16,6 +16,13 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 			onEsc : Ext.emptyFn,
 			width : 1000,
 			height : 600,
+			tbar:["-",{
+                text: "选择采购入库单",
+                iconCls: "PSI-button-add",
+                handler: me.onSelectPWBill,
+                scope: me,
+                disabled: me.entity != null
+			}, "-"],
 			layout : "border",
 			defaultFocus : "editWarehouse",
 			items : [ {
@@ -40,6 +47,15 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 					name : "id",
 					value : entity == null ? null : entity.get("id")
 				}, {
+                    id: "editSupplier",
+                    xtype: "displayfield",
+                    fieldLabel: "供应商",
+                    labelWidth: 60,
+                    labelAlign: "right",
+                    labelSeparator: "",
+                    colspan: 2,
+                    width: 430
+                }, {
 					id : "editRef",
 					labelWidth : 60,
 					labelAlign : "right",
@@ -68,6 +84,9 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 					}
 				}, {
 					xtype : "hidden",
+					id : "editSupplierId"
+				}, {
+					xtype : "hidden",
 					id : "editWarehouseId",
 					name : "warehouseId"
 				}, {
@@ -78,7 +97,7 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 					fieldLabel : "出库仓库",
 					xtype : "psi_warehousefield",
 					parentCmp : me,
-					fid: "2001",
+					fid: "2007",
 					allowBlank : false,
 					blankText : "没有输入出库仓库",
 					beforeLabelTextTpl : PSI.Const.REQUIRED,
@@ -357,23 +376,7 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 						align : "right",
 						xtype : "numbercolumn",
 						width : 120
-					},
-					{
-						header : "",
-						align : "center",
-						menuDisabled : true,
-						width : 50,
-						xtype : "actioncolumn",
-						items : [ {
-							icon : PSI.Const.BASE_URL
-									+ "Public/Images/icons/delete.png",
-							handler : function(grid, row) {
-								var store = grid.getStore();
-								store.remove(store.getAt(row));
-							},
-							scope : me
-						} ]
-					} ],
+					}],
 			store : store,
 			listeners : {}
 		});
@@ -448,5 +451,34 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
             parentForm: this
         });
         form.show();
+	},
+	
+	getPWBillInfo: function(id) {
+		var me = this;
+        me.__billId = id;
+        var el = me.getEl() || Ext.getBody();
+        el.mask(PSI.Const.LOADING);
+        Ext.Ajax.request({
+            url: PSI.Const.BASE_URL + "Home/PurchaseRej/getPWBillInfoForPRBill",
+            params: {
+                id: id
+            },
+            method: "POST",
+            callback: function (options, success, response) {
+                if (success) {
+                    var data = Ext.JSON.decode(response.responseText);
+                    Ext.getCmp("editSupplier").setValue(data.supplierName + " 采购入库单单号: " + data.ref);
+                    Ext.getCmp("editSupplierId").setValue(data.supplierId);
+                    Ext.getCmp("editWarehouseId").setValue(data.warehouseId);
+                    Ext.getCmp("editWarehouse").setValue(data.warehouseName);
+                    
+                    var store = me.getGoodsGrid().getStore();
+                    store.removeAll();
+                    store.add(data.items);
+                }
+
+                el.unmask();
+            }
+        });
 	}
 });

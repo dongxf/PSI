@@ -100,7 +100,7 @@ Ext.define("PSI.PurchaseRej.PRSelectPWBillForm", {
     onOK: function () {
         var me = this;
         
-        var item = me.getWSBillGrid().getSelectionModel().getSelection();
+        var item = me.getPWBillGrid().getSelectionModel().getSelection();
         if (item == null || item.length != 1) {
             PSI.MsgBox.showInfo("请选择采购入库单");
             return;
@@ -120,7 +120,7 @@ Ext.define("PSI.PurchaseRej.PRSelectPWBillForm", {
         Ext.define(modelName, {
             extend: "Ext.data.Model",
             fields: ["id", "ref", "bizDate", "supplierName", "warehouseName",
-                "inputUserName", "bizUserName", "billStatus", "amount"]
+                "inputUserName", "bizUserName", "amount"]
         });
         var store = Ext.create("Ext.data.Store", {
             autoLoad: false,
@@ -150,12 +150,6 @@ Ext.define("PSI.PurchaseRej.PRSelectPWBillForm", {
             columns: [
                 Ext.create("Ext.grid.RowNumberer", {text: "序号", width: 50}),
                 {
-                    header: "状态",
-                    dataIndex: "billStatus",
-                    menuDisabled: true,
-                    sortable: false,
-                    width: 60
-                }, {
                     header: "单号",
                     dataIndex: "ref",
                     width: 110,

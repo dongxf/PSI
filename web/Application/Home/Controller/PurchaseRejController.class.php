@@ -10,7 +10,7 @@ use Home\Service\PRBillService;
 
 /**
  * 采购退货出库Controller
- * 
+ *
  * @author 李静波
  *        
  */
@@ -63,6 +63,28 @@ class PurchaseRejController extends Controller {
 			$pr = new PRBillService();
 			
 			$this->ajaxReturn($pr->editPRBill($params));
+		}
+	}
+
+	public function selectPWBillList() {
+		if (IS_POST) {
+			$params = array();
+			
+			$pr = new PRBillService();
+			
+			$this->ajaxReturn($pr->selectPWBillList($params));
+		}
+	}
+	
+	public function getPWBillInfoForPRBill() {
+		if (IS_POST) {
+			$params = array(
+					"id" => I("post.id")
+			);
+				
+			$pr = new PRBillService();
+				
+			$this->ajaxReturn($pr->getPWBillInfoForPRBill($params));
 		}
 	}
 }
