@@ -154,6 +154,9 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 
 					if (data.ref) {
 						Ext.getCmp("editRef").setValue(data.ref);
+					} else {
+						// 新建采购退货出库单，第一步就是选择采购入库单
+						me.onSelectPWBill();
 					}
 
 					Ext.getCmp("editWarehouseId").setValue(data.warehouseId);
@@ -438,5 +441,12 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 		}
 
 		return Ext.JSON.encode(result);
+	},
+	
+	onSelectPWBill: function() {
+		var form = Ext.create("PSI.PurchaseRej.PRSelectPWBillForm", {
+            parentForm: this
+        });
+        form.show();
 	}
 });

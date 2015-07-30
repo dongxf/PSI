@@ -120,7 +120,7 @@ class ITBillService extends PSIBaseService {
 		}
 		
 		if ($fromWarehouseId == $toWarehouseId) {
-			return $this->bad("调出仓库和调入调查不能是同一个仓库");
+			return $this->bad("调出仓库和调入仓库不能是同一个仓库");
 		}
 		
 		$items = $bill["items"];
