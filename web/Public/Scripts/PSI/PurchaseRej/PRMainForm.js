@@ -1,5 +1,5 @@
 // 采购退货出库 - 主界面
-Ext.define("PSI.PurchaseRej.PurchaseRejMainForm", {
+Ext.define("PSI.PurchaseRej.PRMainForm", {
     extend: "Ext.panel.Panel",
     border: 0,
     layout: "border",
