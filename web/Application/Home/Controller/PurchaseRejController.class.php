@@ -112,4 +112,16 @@ class PurchaseRejController extends Controller {
 			$this->ajaxReturn($pr->prBillDetailList($params));
 		}	
 	}
+	
+	public function deletePRBill() {
+		if (IS_POST) {
+			$params = array(
+					"id" => I("post.id")
+			);
+		
+			$pr = new PRBillService();
+		
+			$this->ajaxReturn($pr->deletePRBill($params));
+		}
+	}
 }

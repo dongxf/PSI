@@ -382,4 +382,43 @@ class PRBillService extends PSIBaseService {
 		
 		return $result;
 	}
+
+	public function deletePRBill($params) {
+		$id = $params["id"];
+		
+		$db = M();
+		
+		$db->startTrans();
+		try {
+			$sql = "select ref, bill_status from t_pr_bill where id = '%s' ";
+			$data = $db->query($sql, $id);
+			if (! $data) {
+				$db->rollback();
+				return $this->bad("要删除的采购退货出库单不存在");
+			}
+			$ref = $data[0]["ref"];
+			$billStatus = $data[0]["bill_status"];
+			if ($billStatus != 0) {
+				$db->rollback();
+				return $this->bad("采购退货出库单(单号：$ref)已经提交，不能被删除");
+			}
+			
+			$sql = "delete from t_pr_bill_detail where prbill_id = '%s'";
+			$db->execute($sql, $id);
+			
+			$sql = "delete from t_pr_bill where id = '%s' ";
+			$db->execute($sql, $id);
+			
+			$bs = new BizlogService();
+			$log = "删除采购退货出库单，单号：$ref";
+			$bs->insertBizlog($log, "采购退货出库");
+			
+			$db->commit();
+		} catch ( Exception $e ) {
+			$db->rollback();
+			return $this->sqlError();
+		}
+		
+		return $this->ok();
+	}
 }
