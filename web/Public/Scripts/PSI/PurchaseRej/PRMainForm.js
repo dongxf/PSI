@@ -96,7 +96,7 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
         var modelName = "PSIITBill";
         Ext.define(modelName, {
             extend: "Ext.data.Model",
-            fields: ["id", "ref", "bizDT",  "warehouseName",
+            fields: ["id", "ref", "bizDT",  "warehouseName", "supplierName",
                 "inputUserName", "bizUserName", "billStatus", "rejMoney"]
         });
         var store = Ext.create("Ext.data.Store", {
@@ -145,6 +145,12 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
                     dataIndex: "bizDT",
                     menuDisabled: true,
                     sortable: false
+                },{
+                    header: "供应商",
+                    dataIndex: "supplierName",
+                    menuDisabled: true,
+                    sortable: false,
+                    width: 150
                 }, {
                     header: "出库仓库",
                     dataIndex: "warehouseName",
@@ -266,8 +272,7 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
                     menuDisabled: true,
                     sortable: false,
                     align: "right",
-                    width: 150,
-                    xtype: "numbercolumn"
+                    width: 150
                 }, {
                     header: "单位",
                     dataIndex: "unitName",
@@ -315,7 +320,52 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
     },
     
     onMainGridSelect: function() {
-    	
+    	this.refreshDetailGrid();
+    },
+    
+    refreshDetailGrid: function (id) {
+        var me = this;
+        me.getDetailGrid().setTitle("采购退货出库单明细");
+        var grid = me.getMainGrid();
+        var item = grid.getSelectionModel().getSelection();
+        if (item == null || item.length != 1) {
+            return;
+        }
+        var bill = item[0];
+
+        grid = me.getDetailGrid();
+        grid.setTitle("单号: " + bill.get("ref")  + " 出库仓库: "
+                + bill.get("warehouseName"));
+        var el = grid.getEl();
+        el.mask(PSI.Const.LOADING);
+        Ext.Ajax.request({
+            url: PSI.Const.BASE_URL + "Home/PurchaseRej/prBillDetailList",
+            params: {
+                id: bill.get("id")
+            },
+            method: "POST",
+            callback: function (options, success, response) {
+                var store = grid.getStore();
+
+                store.removeAll();
+
+                if (success) {
+                    var data = Ext.JSON.decode(response.responseText);
+                    store.add(data);
+
+                    if (store.getCount() > 0) {
+                        if (id) {
+                            var r = store.findExact("id", id);
+                            if (r != -1) {
+                                grid.getSelectionModel().select(r);
+                            }
+                        }
+                    }
+                }
+
+                el.unmask();
+            }
+        });
     },
     
     gotoMainGridRecord: function (id) {

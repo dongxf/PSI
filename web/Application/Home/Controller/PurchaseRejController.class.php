@@ -100,4 +100,16 @@ class PurchaseRejController extends Controller {
 			$this->ajaxReturn($pr->getPWBillInfoForPRBill($params));
 		}
 	}
+	
+	public function prBillDetailList() {
+		if (IS_POST) {
+			$params = array(
+					"id" => I("post.id")
+			);
+				
+			$pr = new PRBillService();
+				
+			$this->ajaxReturn($pr->prBillDetailList($params));
+		}	
+	}
 }

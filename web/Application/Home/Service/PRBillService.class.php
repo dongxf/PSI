@@ -180,7 +180,8 @@ class PRBillService extends PSIBaseService {
 				where (p.supplier_id = s.id) 
 					and (p.warehouse_id = w.id)
 					and (p.biz_user_id = u1.id) 
-					and (p.input_user_id = u2.id)";
+					and (p.input_user_id = u2.id)
+					and (p.bill_status = 1000)";
 		$queryParamas = array();
 		
 		if ($ref) {
@@ -225,7 +226,8 @@ class PRBillService extends PSIBaseService {
 				where (p.supplier_id = s.id)
 					and (p.warehouse_id = w.id)
 					and (p.biz_user_id = u1.id)
-					and (p.input_user_id = u2.id)";
+					and (p.input_user_id = u2.id)
+					and (p.bill_status = 1000)";
 		$queryParamas = array();
 		
 		if ($ref) {
@@ -319,11 +321,13 @@ class PRBillService extends PSIBaseService {
 		$db = M();
 		$result = array();
 		$sql = "select p.id, p.ref, p.bill_status, w.name as warehouse_name, p.bizdt,
-					p.rejection_money, u1.name as biz_user_name, u2.name as input_user_name
-				from t_pr_bill p, t_warehouse w, t_user u1, t_user u2
+					p.rejection_money, u1.name as biz_user_name, u2.name as input_user_name,
+					s.name as supplier_name
+				from t_pr_bill p, t_warehouse w, t_user u1, t_user u2, t_supplier s
 				where p.warehouse_id = w.id
 					and p.biz_user_id = u1.id
 					and p.input_user_id = u2.id
+					and p.supplier_id = s.id
 				order by p.ref desc
 				limit %d, %d";
 		$data = $db->query($sql, $start, $limit);
@@ -332,6 +336,7 @@ class PRBillService extends PSIBaseService {
 			$result[$i]["ref"] = $v["ref"];
 			$result[$i]["billStatus"] = $v["bill_status"] == 0 ? "待出库" : "已出库";
 			$result[$i]["warehouseName"] = $v["warehouse_name"];
+			$result[$i]["supplierName"] = $v["supplier_name"];
 			$result[$i]["rejMoney"] = $v["rejection_money"];
 			$result[$i]["bizUserName"] = $v["biz_user_name"];
 			$result[$i]["inputUserName"] = $v["input_user_name"];
@@ -339,10 +344,11 @@ class PRBillService extends PSIBaseService {
 		}
 		
 		$sql = "select count(*) as cnt
-				from t_pr_bill p, t_warehouse w, t_user u1, t_user u2
+				from t_pr_bill p, t_warehouse w, t_user u1, t_user u2, t_supplier s
 				where p.warehouse_id = w.id
 					and p.biz_user_id = u1.id
-					and p.input_user_id = u2.id ";
+					and p.input_user_id = u2.id
+					and p.supplier_id = s.id ";
 		$data = $db->query($sql);
 		$cnt = $data[0]["cnt"];
 		
@@ -350,5 +356,30 @@ class PRBillService extends PSIBaseService {
 				"dataList" => $result,
 				"totalCount" => $cnt
 		);
+	}
+
+	public function prBillDetailList($params) {
+		$id = $params["id"];
+		
+		$db = M();
+		$sql = "select g.code, g.name, g.spec, u.name as unit_name, 
+					p.rejection_goods_count as rej_count, p.rejection_goods_price as rej_price, 
+					p.rejection_money as rej_money
+				from t_pr_bill_detail p, t_goods g, t_goods_unit u
+				where p.goods_id = g.id and g.unit_id = u.id and p.prbill_id = '%s'
+				order by p.show_order";
+		$result = array();
+		$data = $db->query($sql, $id);
+		foreach ( $data as $i => $v ) {
+			$result[$i]["goodsCode"] = $v["code"];
+			$result[$i]["goodsName"] = $v["name"];
+			$result[$i]["goodsSpec"] = $v["spec"];
+			$result[$i]["unitName"] = $v["unit_name"];
+			$result[$i]["rejCount"] = $v["rej_count"];
+			$result[$i]["rejPrice"] = $v["rej_price"];
+			$result[$i]["rejMoney"] = $v["rej_money"];
+		}
+		
+		return $result;
 	}
 }
