@@ -38,6 +38,59 @@ class PRBillService extends PSIBaseService {
 		
 		if ($id) {
 			// 编辑
+			$db = M();
+			$sql = "select p.ref, p.warehouse_id, w.name as warehouse_name,
+						p.biz_user_id, u.name as biz_user_name, pw.ref as pwbill_ref,
+						s.name as supplier_name, s.id as supplier_id,
+						p.pw_bill_id as pwbill_id
+					from t_pr_bill p, t_warehouse w, t_user u, t_pw_bill pw, t_supplier s
+					where p.id = '%s' 
+						and p.warehouse_id = w.id
+						and p.biz_user_id = u.id
+						and p.pw_bill_id = pw.id
+						and p.supplier_id = s.id ";
+			$data = $db->query($sql, $id);
+			if (! $data) {
+				return $result;
+			}
+			
+			$result["ref"] = $data[0]["ref"];
+			$result["bizUserId"] = $data[0]["biz_user_id"];
+			$result["bizUserName"] = $data[0]["biz_user_name"];
+			$result["warehouseId"] = $data[0]["warehouse_id"];
+			$result["warehouseName"] = $data[0]["warehouse_name"];
+			$result["pwbillRef"] = $data[0]["pwbill_ref"];
+			$result["supplierId"] = $data[0]["supplier_id"];
+			$result["supplierName"] = $data[0]["supplier_name"];
+			$result["pwbillId"] = $data[0]["pwbill_id"];
+			
+			$items = array();
+			$sql = "select p.id, p.goods_id, g.code as goods_code, g.name as goods_name,
+						g.spec as goods_spec, u.name as unit_name, p.goods_count,
+						p.goods_price, p.goods_money, p.rejection_goods_count as rej_count,
+						p.rejection_goods_price as rej_price, p.rejection_money as rej_money
+					from t_pr_bill_detail p, t_goods g, t_goods_unit u
+					where p.prbill_id = '%s'
+						and p.goods_id = g.id
+						and g.unit_id = u.id
+					order by p.show_order";
+			$data = $db->query($sql, $id);
+			foreach ($data as $i => $v) {
+				$items[$i]["id"] = $v["id"];
+				$items[$i]["goodsId"] = $v["goods_id"];
+				$items[$i]["goodsCode"] = $v["goods_code"];
+				$items[$i]["goodsName"] = $v["goods_name"];
+				$items[$i]["goodsSpec"] = $v["goods_spec"];
+				$items[$i]["unitName"] = $v["unit_name"];
+				$items[$i]["goodsCount"] = $v["goods_count"];
+				$items[$i]["goodsPrice"] = $v["goods_price"];
+				$items[$i]["goodsMoney"] = $v["goods_money"];
+				$items[$i]["rejCount"] = $v["rej_count"];
+				$items[$i]["rejPrice"] = $v["rej_price"];
+				$items[$i]["rejMoney"] = $v["rej_money"];
+			}
+			
+			$result["items"] = $items;
 		} else {
 			// 新建
 			$us = new UserService();

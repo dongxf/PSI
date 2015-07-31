@@ -74,7 +74,18 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
     
     // 编辑采购退货出库单
     onEditBill: function () {
-    	PSI.MsgBox.showInfo("TODO");
+    	var me = this;
+        var item = me.getMainGrid().getSelectionModel().getSelection();
+        if (item == null || item.length != 1) {
+            PSI.MsgBox.showInfo("请选择要编辑的采购退货出库单");
+            return;
+        }
+        var bill = item[0];
+    	var form = Ext.create("PSI.PurchaseRej.PREditForm", {
+    		parentForm: me,
+    		entity: bill
+    	});
+    	form.show();
     },
     
     // 删除采购退货出库单

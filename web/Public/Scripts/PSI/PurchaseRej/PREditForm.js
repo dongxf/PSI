@@ -179,6 +179,9 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 						me.onSelectPWBill();
 					}
 
+					Ext.getCmp("editSupplierId").setValue(data.supplierId);
+					Ext.getCmp("editSupplier").setValue(data.supplierName + " 采购入库单单号：" + data.pwbillRef);
+
 					Ext.getCmp("editWarehouseId").setValue(data.warehouseId);
 					Ext.getCmp("editWarehouse").setValue(data.warehouseName);
 
@@ -187,14 +190,12 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 					if (data.bizDT) {
 						Ext.getCmp("editBizDT").setValue(data.bizDT);
 					}
+					me.__billId = data.pwbillId;
 
 					var store = me.getGoodsGrid().getStore();
 					store.removeAll();
 					if (data.items) {
 						store.add(data.items);
-					}
-					if (store.getCount() == 0) {
-						store.add({});
 					}
 				}
 			}
