@@ -133,7 +133,40 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
     
     // 提交采购退货出库单
     onCommit: function () {
-    	PSI.MsgBox.showInfo("TODO");
+        var me = this;
+        var item = me.getMainGrid().getSelectionModel().getSelection();
+        if (item == null || item.length != 1) {
+            PSI.MsgBox.showInfo("没有选择要提交的采购退货出库单");
+            return;
+        }
+        var bill = item[0];
+
+        var info = "请确认是否提交单号: <span style='color:red'>" + bill.get("ref") + "</span> 的采购退货出库单?";
+        PSI.MsgBox.confirm(info, function () {
+            var el = Ext.getBody();
+            el.mask("正在提交中...");
+            Ext.Ajax.request({
+                url: PSI.Const.BASE_URL + "Home/PurchaseRej/commitPRBill",
+                method: "POST",
+                params: {id: bill.get("id")},
+                callback: function (options, success, response) {
+                    el.unmask();
+
+                    if (success) {
+                        var data = Ext.JSON.decode(response.responseText);
+                        if (data.success) {
+                            PSI.MsgBox.showInfo("成功完成提交操作", function () {
+                                me.refreshMainGrid(data.id);
+                            });
+                        } else {
+                            PSI.MsgBox.showInfo(data.msg);
+                        }
+                    } else {
+                        PSI.MsgBox.showInfo("网络错误");
+                    }
+                }
+            });
+        });
     },
     
     getMainGrid: function() {

@@ -545,4 +545,10 @@ class PRBillService extends PSIBaseService {
 		
 		return $this->ok();
 	}
+	
+	public function commitPRBill($params){
+		$id = $params["id"];
+		
+		return $this->todo();
+	}
 }

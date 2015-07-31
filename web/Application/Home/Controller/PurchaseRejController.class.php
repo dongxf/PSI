@@ -124,4 +124,16 @@ class PurchaseRejController extends Controller {
 			$this->ajaxReturn($pr->deletePRBill($params));
 		}
 	}
+	
+	public function commitPRBill() {
+		if (IS_POST) {
+			$params = array(
+					"id" => I("post.id")
+			);
+		
+			$pr = new PRBillService();
+		
+			$this->ajaxReturn($pr->commitPRBill($params));
+		}
+	}
 }
