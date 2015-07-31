@@ -112,7 +112,7 @@ class PRBillService extends PSIBaseService {
 						goods_money, rejection_goods_count, rejection_goods_price, rejection_money, show_order,
 						prbill_id, pwbilldetail_id)
 						values ('%s', now(), '%s', %d, %f, %f, %d, %f, %f, %d, '%s', '%s')";
-				foreach ($items as $i => $v) {
+				foreach ( $items as $i => $v ) {
 					$pwbillDetailId = $v["id"];
 					$goodsId = $v["goodsId"];
 					$goodsCount = $v["goodsCount"];
@@ -122,13 +122,32 @@ class PRBillService extends PSIBaseService {
 					$rejPrice = $v["rejPrice"];
 					$rejMoney = $rejCount * $rejPrice;
 					
-					$rc = $db->execute($sql, $pwbillDetailId, $goodsId, $goodsCount, $goodsPrice, $goodsMoney,
-							$rejCount, $rejPrice, $rejMoney, $i, $id, $pwbillDetailId);
+					$rc = $db->execute($sql, $pwbillDetailId, $goodsId, $goodsCount, $goodsPrice, 
+							$goodsMoney, $rejCount, $rejPrice, $rejMoney, $i, $id, $pwbillDetailId);
 					if (! $rc) {
 						$db->rollback();
 						return $this->sqlError();
 					}
 				}
+				
+				$sql = "select sum(rejection_money) as rej_money 
+						from t_pr_bill_detail 
+						where prbill_id = '%s' ";
+				$data = $db->query($sql, $id);
+				$rejMoney = $data[0]["rej_money"];
+				
+				$sql = "update t_pr_bill
+						set rejection_money = %f
+						where id = '%s' ";
+				$rc = $db->execute($sql, $rejMoney, $id);
+				if (! $rc) {
+					$db->rollback();
+					return $this->sqlError();
+				}
+				
+				$bs = new BizlogService();
+				$log = "新建采购退货出库单，单号：$ref";
+				$bs->insertBizlog($log, "采购退货出库");
 				
 				$db->commit();
 			} catch ( Exception $e ) {
@@ -290,5 +309,46 @@ class PRBillService extends PSIBaseService {
 		$result["items"] = $items;
 		
 		return $result;
+	}
+
+	public function prbillList($params) {
+		$page = $params["page"];
+		$start = $params["start"];
+		$limit = $params["limit"];
+		
+		$db = M();
+		$result = array();
+		$sql = "select p.id, p.ref, p.bill_status, w.name as warehouse_name, p.bizdt,
+					p.rejection_money, u1.name as biz_user_name, u2.name as input_user_name
+				from t_pr_bill p, t_warehouse w, t_user u1, t_user u2
+				where p.warehouse_id = w.id
+					and p.biz_user_id = u1.id
+					and p.input_user_id = u2.id
+				order by p.ref desc
+				limit %d, %d";
+		$data = $db->query($sql, $start, $limit);
+		foreach ( $data as $i => $v ) {
+			$result[$i]["id"] = $v["id"];
+			$result[$i]["ref"] = $v["ref"];
+			$result[$i]["billStatus"] = $v["bill_status"] == 0 ? "待出库" : "已出库";
+			$result[$i]["warehouseName"] = $v["warehouse_name"];
+			$result[$i]["rejMoney"] = $v["rejection_money"];
+			$result[$i]["bizUserName"] = $v["biz_user_name"];
+			$result[$i]["inputUserName"] = $v["input_user_name"];
+			$result[$i]["bizDT"] = $this->toYMD($v["bizdt"]);
+		}
+		
+		$sql = "select count(*) as cnt
+				from t_pr_bill p, t_warehouse w, t_user u1, t_user u2
+				where p.warehouse_id = w.id
+					and p.biz_user_id = u1.id
+					and p.input_user_id = u2.id ";
+		$data = $db->query($sql);
+		$cnt = $data[0]["cnt"];
+		
+		return array(
+				"dataList" => $result,
+				"totalCount" => $cnt
+		);
 	}
 }

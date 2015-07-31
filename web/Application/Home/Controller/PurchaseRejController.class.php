@@ -35,10 +35,14 @@ class PurchaseRejController extends Controller {
 
 	public function prbillList() {
 		if (IS_POST) {
-			return array(
-					"dataList" => array(),
-					"totalCount" => 0
+			$params = array(
+				"page" => I("post.page"),
+				"start" => I("post.start"),
+				"limit" => I("post.limit")
 			);
+			
+			$pr = new PRBillService();
+			$this->ajaxReturn($pr->prbillList($params));
 		}
 	}
 

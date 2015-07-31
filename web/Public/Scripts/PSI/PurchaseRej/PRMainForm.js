@@ -51,6 +51,16 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
 
         me.callParent(arguments);
 
+        me.refreshMainGrid();
+    },
+    
+    refreshMainGrid: function (id) {
+    	var me = this;
+        var gridDetail = me.getDetailGrid();
+        gridDetail.setTitle("采购退货出库单明细");
+        gridDetail.getStore().removeAll();
+        Ext.getCmp("pagingToobar").doRefresh();
+        me.__lastId = id;
     },
     
     // 新增采购退货出库单
@@ -86,8 +96,8 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
         var modelName = "PSIITBill";
         Ext.define(modelName, {
             extend: "Ext.data.Model",
-            fields: ["id", "ref", "bizDate",  "warehouseName",
-                "inputUserName", "bizUserName", "billStatus", "goodsMoney"]
+            fields: ["id", "ref", "bizDT",  "warehouseName",
+                "inputUserName", "bizUserName", "billStatus", "rejMoney"]
         });
         var store = Ext.create("Ext.data.Store", {
             autoLoad: false,
@@ -122,7 +132,7 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
                     sortable: false,
                     width: 60,
                     renderer: function(value) {
-                    	return value == "待调拨" ? "<span style='color:red'>" + value + "</span>" : value;
+                    	return value == "待出库" ? "<span style='color:red'>" + value + "</span>" : value;
                     }
                 }, {
                     header: "单号",
@@ -132,7 +142,7 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
                     sortable: false
                 }, {
                     header: "业务日期",
-                    dataIndex: "bizDate",
+                    dataIndex: "bizDT",
                     menuDisabled: true,
                     sortable: false
                 }, {
@@ -143,7 +153,7 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
                     width: 150
                 }, {
                 	header: "退货金额", 
-                	dataIndex: "goodsMoney", 
+                	dataIndex: "rejMoney", 
                 	menuDisabled: true, 
                 	sortable: false, 
                 	align: "right", 
@@ -306,5 +316,22 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
     
     onMainGridSelect: function() {
     	
+    },
+    
+    gotoMainGridRecord: function (id) {
+        var me = this;
+        var grid = me.getMainGrid();
+        grid.getSelectionModel().deselectAll();
+        var store = grid.getStore();
+        if (id) {
+            var r = store.findExact("id", id);
+            if (r != -1) {
+                grid.getSelectionModel().select(r);
+            } else {
+                grid.getSelectionModel().select(0);
+            }
+        } else {
+            grid.getSelectionModel().select(0);
+        }
     }
 });
