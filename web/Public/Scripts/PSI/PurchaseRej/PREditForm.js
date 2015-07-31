@@ -428,23 +428,29 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 		var goods = item[0];
 		goods.set("rejMoney", goods.get("rejCount") * goods.get("rejPrice"));
 	},
+	
 	getSaveData : function() {
+		var me = this;
+		
 		var result = {
 			id : Ext.getCmp("hiddenId").getValue(),
 			bizDT : Ext.Date.format(Ext.getCmp("editBizDT").getValue(), "Y-m-d"),
 			warehouseId : Ext.getCmp("editWarehouseId").getValue(),
 			bizUserId : Ext.getCmp("editBizUserId").getValue(),
+			pwBillId: me.__billId,
 			items : []
 		};
 
-		var store = this.getGoodsGrid().getStore();
+		var store = me.getGoodsGrid().getStore();
 		for (var i = 0; i < store.getCount(); i++) {
 			var item = store.getAt(i);
 			result.items.push({
 				id : item.get("id"),
 				goodsId : item.get("goodsId"),
 				goodsCount : item.get("goodsCount"),
-				goodsPrice : item.get("goodsPrice")
+				goodsPrice : item.get("goodsPrice"),
+				rejCount: item.get("rejCount"),
+				rejPrice: item.get("rejPrice")
 			});
 		}
 
