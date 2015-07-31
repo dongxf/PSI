@@ -154,7 +154,7 @@ class ReceivablesService extends PSIBaseService {
 		$sql = "select count(*) as cnt 
 				from t_receiving 
 				where ref_type = '%s' and ref_number = '%s' ";
-		$data = $db->query($sql, $caType, $caId);
+		$data = $db->query($sql, $refType, $refNumber);
 		$cnt = $data[0]["cnt"];
 		
 		return array(
