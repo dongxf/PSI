@@ -55,7 +55,89 @@ class PRBillService extends PSIBaseService {
 			return $this->bad("传入的参数错误，不是正确的JSON格式");
 		}
 		
-		return $this->todo();
+		$db = M();
+		
+		$id = $bill["id"];
+		$bizDT = $bill["bizDT"];
+		$warehouseId = $bill["warehouseId"];
+		$sql = "select name from t_warehouse where id = '%s' ";
+		$data = $db->query($sql, $warehouseId);
+		if (! $data) {
+			return $this->bad("选择的仓库不存在，无法保存");
+		}
+		
+		$bizUserId = $bill["bizUserId"];
+		$sql = "select name from t_user where id = '%s' ";
+		$data = $db->query($sql, $bizUserId);
+		if (! $data) {
+			return $this->bad("选择的业务人员不存在，无法保存");
+		}
+		
+		$pwBillId = $bill["pwBillId"];
+		$sql = "select supplier_id from t_pw_bill where id = '%s' ";
+		$data = $db->query($sql, $pwBillId);
+		if (! $data) {
+			return $this->bad("选择采购入库单不存在，无法保存");
+		}
+		$supplierId = $data[0]["supplier_id"];
+		
+		$items = $bill["items"];
+		
+		$idGen = new IdGenService();
+		$us = new UserService();
+		
+		if ($id) {
+			// 编辑采购退货出库单
+			return $this->todo();
+		} else {
+			// 新增采购退货出库单
+			$db->startTrans();
+			try {
+				$id = $idGen->newId();
+				$ref = $this->genNewBillRef();
+				
+				// 主表
+				$sql = "insert into t_pr_bill(id, bill_status, bizdt, biz_user_id, supplier_id, date_created,
+							input_user_id, ref, warehouse_id, pw_bill_id)
+						values ('%s', 0, '%s', '%s', '%s', now(), '%s', '%s', '%s', '%s')";
+				$rc = $db->execute($sql, $id, $bizDT, $bizUserId, $supplierId, 
+						$us->getLoginUserId(), $ref, $warehouseId, $pwBillId);
+				if (! $rc) {
+					$db->rollback();
+					return $this->sqlError();
+				}
+				
+				// 明细表
+				$sql = "insert into t_pr_bill_detail(id, date_created, goods_id, goods_count, goods_price,
+						goods_money, rejection_goods_count, rejection_goods_price, rejection_money, show_order,
+						prbill_id, pwbilldetail_id)
+						values ('%s', now(), '%s', %d, %f, %f, %d, %f, %f, %d, '%s', '%s')";
+				foreach ($items as $i => $v) {
+					$pwbillDetailId = $v["id"];
+					$goodsId = $v["goodsId"];
+					$goodsCount = $v["goodsCount"];
+					$goodsPrice = $v["goodsPrice"];
+					$goodsMoney = $goodsCount * $goodsPrice;
+					$rejCount = $v["rejCount"];
+					$rejPrice = $v["rejPrice"];
+					$rejMoney = $rejCount * $rejPrice;
+					
+					$rc = $db->execute($sql, $pwbillDetailId, $goodsId, $goodsCount, $goodsPrice, $goodsMoney,
+							$rejCount, $rejPrice, $rejMoney, $i, $id, $pwbillDetailId);
+					if (! $rc) {
+						$db->rollback();
+						return $this->sqlError();
+					}
+				}
+				
+				$db->commit();
+			} catch ( Exception $e ) {
+				$db->rollback();
+				return $this->sqlError();
+			}
+		}
+		
+		return $this->ok($id);
 	}
 
 	public function selectPWBillList($params) {
