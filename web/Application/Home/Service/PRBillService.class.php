@@ -66,7 +66,7 @@ class PRBillService extends PSIBaseService {
 			$result["bizDT"] = $this->toYMD($data[0]["bizdt"]);
 			
 			$items = array();
-			$sql = "select p.id, p.goods_id, g.code as goods_code, g.name as goods_name,
+			$sql = "select p.pwbilldetail_id as id, p.goods_id, g.code as goods_code, g.name as goods_name,
 						g.spec as goods_spec, u.name as unit_name, p.goods_count,
 						p.goods_price, p.goods_money, p.rejection_goods_count as rej_count,
 						p.rejection_goods_price as rej_price, p.rejection_money as rej_money
@@ -177,7 +177,7 @@ class PRBillService extends PSIBaseService {
 					$rejPrice = $v["rejPrice"];
 					$rejMoney = $rejCount * $rejPrice;
 					
-					$rc = $db->execute($sql, $pwbillDetailId, $goodsId, $goodsCount, $goodsPrice, 
+					$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsPrice, 
 							$goodsMoney, $rejCount, $rejPrice, $rejMoney, $i, $id, $pwbillDetailId);
 					if (! $rc) {
 						$db->rollback();
@@ -246,7 +246,7 @@ class PRBillService extends PSIBaseService {
 					$rejPrice = $v["rejPrice"];
 					$rejMoney = $rejCount * $rejPrice;
 					
-					$rc = $db->execute($sql, $pwbillDetailId, $goodsId, $goodsCount, $goodsPrice, 
+					$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsPrice, 
 							$goodsMoney, $rejCount, $rejPrice, $rejMoney, $i, $id, $pwbillDetailId);
 					if (! $rc) {
 						$db->rollback();
@@ -552,7 +552,8 @@ class PRBillService extends PSIBaseService {
 		
 		$db->startTrans();
 		try {
-			$sql = "select ref, bill_status, warehouse_id 
+			$sql = "select ref, bill_status, warehouse_id, bizdt, biz_user_id, rejection_money,
+					supplier_id
 					from t_pr_bill 
 					where id = '%s' ";
 			$data = $db->query($sql, $id);
@@ -563,6 +564,11 @@ class PRBillService extends PSIBaseService {
 			$ref = $data[0]["ref"];
 			$billStatus = $data[0]["bill_status"];
 			$warehouseId = $data[0]["warehouse_id"];
+			$bizDT = $this->toYMD($data[0]["bizdt"]);
+			$bizUserId = $data[0]["biz_user_id"];
+			$allRejMoney = $data[0]["rejection_money"];
+			$supplierId = $data[0]["supplier_id"];
+			
 			if ($billStatus != 0) {
 				$db->rollback();
 				return $this->bad("采购退货出库单(单号：$ref)已经提交，不能再次提交");
@@ -578,6 +584,18 @@ class PRBillService extends PSIBaseService {
 			if ($inited != 1) {
 				$db->rollback();
 				return $this->bad("仓库[$warehouseName]还没有完成库存建账，不能进行出库操作");
+			}
+			$sql = "select name from t_user where id = '%s' ";
+			$data = $db->query($sql, $bizUserId);
+			if (! $data) {
+				$db->rollback();
+				return $this->bad("业务人员不存在，无法完成提交操作");
+			}
+			$sql = "select name from t_supplier where id = '%s' ";
+			$data = $db->query($sql, $supplierId);
+			if (! $data) {
+				$db->rollback();
+				return $this->bad("供应商不存在，无法完成提交操作");
 			}
 			
 			$sql = "select goods_id, rejection_goods_count as rej_count,
@@ -607,13 +625,106 @@ class PRBillService extends PSIBaseService {
 				}
 				
 				// 库存总账
+				$sql = "select balance_count, balance_price, balance_money,
+							out_count, out_money
+						from t_inventory
+						where warehouse_id = '%s' and goods_id = '%s' ";
+				$data = $db->query($sql, $warehouseId, $goodsId);
+				if (! $data) {
+					$db->rollback();
+					$index = $i + 1;
+					return $this->bad("第{$index}条商品库存不足，无法退货");
+				}
+				$balanceCount = $data[0]["balance_count"];
+				$balancePrice = $data[0]["balance_price"];
+				$balanceMoney = $data[0]["balance_money"];
+				if ($rejCount > $balanceCount) {
+					$db->rollback();
+					$index = $i + 1;
+					return $this->bad("第{$index}条商品库存不足，无法退货");
+				}
+				$totalOutCount = $data[0]["out_count"];
+				$totalOutMoney = $data[0]["out_money"];
+				
+				$outCount = $rejCount;
+				$outMoney = $balancePrice * $outCount;
+				if ($outCount == $balanceCount) {
+					$outMoney = $balanceMoney;
+				}
+				$outPrice = $outMoney / $outCount;
+				$totalOutCount += $outCount;
+				$totalOutMoney += $outMoney;
+				$totalOutPrice = $totalOutMoney / $totalOutCount;
+				$balanceCount -= $outCount;
+				if ($balanceCount == 0) {
+					$balanceMoney = 0;
+					$balancePrice = 0;
+				} else {
+					$balanceMoney -= $outMoney;
+					$balancePrice = $balanceMoney / $balanceCount;
+				}
+				
+				$sql = "update t_inventory
+						set out_count = %d, out_price = %f, out_money = %f,
+							balance_count = %d, balance_price = %f, balance_money = %f
+						where warehouse_id = '%s' and goods_id = '%s' ";
+				$rc = $db->execute($sql, $outCount, $outPrice, $outMoney, $balanceCount, 
+						$balancePrice, $balanceMoney, $warehouseId, $goodsId);
+				if (! $rc) {
+					$db->rollback();
+					return $this->sqlError();
+				}
 				
 				// 库存明细账
+				$sql = "insert into t_inventory_detail(out_count, out_price, out_money, balance_count,
+							balance_price, balance_money, warehouse_id, goods_id, biz_date, biz_user_id,
+							date_created, ref_number, ref_type)
+						values (%d, %f, %f, %d, %f, %f, '%s', '%s', '%s', '%s', now(), '%s', '采购退货出库')";
+				$rc = $db->execute($sql, $outCount, $outPrice, $outMoney, $balanceCount, 
+						$balancePrice, $balanceMoney, $warehouseId, $goodsId, $bizDT, $bizUserId, 
+						$ref);
+				if (! $rc) {
+					$db->rollback();
+					return $this->sqlError();
+				}
 			}
 			
+			$idGen = new IdGenService();
+			
 			// 应收总账
+			$sql = "select rv_money, balance_money
+					from t_receivables
+					where ca_id = '%s' and ca_type = 'supplier'";
+			$data = $db->query($sql, $supplierId);
+			if (! $data) {
+				$sql = "insert into t_receivables(id, rv_money, act_money, balance_money, ca_id, ca_type)
+						values ('%s', %f, 0, %f, '%s', 'supplier')";
+				$rc = $db->execute($sql, $idGen->newId(), $allRejMoney, $allRejMoney, $supplierId);
+				if (! $rc) {
+					$db->rollback();
+					return $this->sqlError();
+				}
+			} else {
+				$rvMoney = $data[0]["rv_money"];
+				$balanceMoney = $data[0]["balance_money"];
+				$rvMoney += $allRejMoney;
+				$balanceMoney += $allRejMoney;
+				$sql = "update t_receivables
+						set rv_money = %f, balance_money = %f
+						where ca_id = '%s' and ca_type = 'supplier' ";
+				$rc = $db->execute($sql, $rvMoney, $balanceMoney, $supplierId);
+				if (! $rc) {
+					$db->rollback();
+					return $this->sqlError();
+				}
+			}
 			
 			// 应收明细账
+			$sql = "insert into t_receivables_detail(id, rv_money, act_money, balance_money, ca_id, ca_type,
+						biz_date, date_created, ref_number, ref_type)
+					values ('%s', %f, 0, %f, '%s', 'supplier', '%s', now(), '%s', '采购退货出库')";
+			$rc = $db->execute($sql, $idGen->newId(), $allRejMoney, $allRejMoney, $supplierId, 
+					$bizDT, $ref);
 			
 			// 修改单据本身的状态
 			$sql = "update t_pr_bill
