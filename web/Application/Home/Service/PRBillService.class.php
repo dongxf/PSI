@@ -42,7 +42,7 @@ class PRBillService extends PSIBaseService {
 			$sql = "select p.ref, p.warehouse_id, w.name as warehouse_name,
 						p.biz_user_id, u.name as biz_user_name, pw.ref as pwbill_ref,
 						s.name as supplier_name, s.id as supplier_id,
-						p.pw_bill_id as pwbill_id
+						p.pw_bill_id as pwbill_id, p.bizdt
 					from t_pr_bill p, t_warehouse w, t_user u, t_pw_bill pw, t_supplier s
 					where p.id = '%s' 
 						and p.warehouse_id = w.id
@@ -63,6 +63,7 @@ class PRBillService extends PSIBaseService {
 			$result["supplierId"] = $data[0]["supplier_id"];
 			$result["supplierName"] = $data[0]["supplier_name"];
 			$result["pwbillId"] = $data[0]["pwbill_id"];
+			$result["bizDT"] = $this->toYMD($data[0]["bizdt"]);
 			
 			$items = array();
 			$sql = "select p.id, p.goods_id, g.code as goods_code, g.name as goods_name,
@@ -75,7 +76,7 @@ class PRBillService extends PSIBaseService {
 						and g.unit_id = u.id
 					order by p.show_order";
 			$data = $db->query($sql, $id);
-			foreach ($data as $i => $v) {
+			foreach ( $data as $i => $v ) {
 				$items[$i]["id"] = $v["id"];
 				$items[$i]["goodsId"] = $v["goods_id"];
 				$items[$i]["goodsCode"] = $v["goods_code"];
@@ -141,7 +142,77 @@ class PRBillService extends PSIBaseService {
 		
 		if ($id) {
 			// 编辑采购退货出库单
-			return $this->todo();
+			$db->startTrans();
+			try {
+				$sql = "select ref, bill_status
+						from t_pr_bill
+						where id = '%s' ";
+				$data = $db->query($sql, $id);
+				if (! $data) {
+					$db->rollback();
+					return $this->bad("要编辑的采购退货出库单不存在");
+				}
+				$ref = $data[0]["ref"];
+				$billStatus = $data[0]["bill_status"];
+				if ($billStatus != 0) {
+					$db->rollback();
+					return $this->bad("采购退货出库单(单号：$ref)已经提交，不能再被编辑");
+				}
+				
+				// 明细表
+				$sql = "delete from t_pr_bill_detail where prbill_id = '%s' ";
+				$db->execute($sql, $id);
+				
+				$sql = "insert into t_pr_bill_detail(id, date_created, goods_id, goods_count, goods_price,
+						goods_money, rejection_goods_count, rejection_goods_price, rejection_money, show_order,
+						prbill_id, pwbilldetail_id)
+						values ('%s', now(), '%s', %d, %f, %f, %d, %f, %f, %d, '%s', '%s')";
+				foreach ( $items as $i => $v ) {
+					$pwbillDetailId = $v["id"];
+					$goodsId = $v["goodsId"];
+					$goodsCount = $v["goodsCount"];
+					$goodsPrice = $v["goodsPrice"];
+					$goodsMoney = $goodsCount * $goodsPrice;
+					$rejCount = $v["rejCount"];
+					$rejPrice = $v["rejPrice"];
+					$rejMoney = $rejCount * $rejPrice;
+					
+					$rc = $db->execute($sql, $pwbillDetailId, $goodsId, $goodsCount, $goodsPrice, 
+							$goodsMoney, $rejCount, $rejPrice, $rejMoney, $i, $id, $pwbillDetailId);
+					if (! $rc) {
+						$db->rollback();
+						return $this->sqlError();
+					}
+				}
+				
+				$sql = "select sum(rejection_money) as rej_money 
+						from t_pr_bill_detail 
+						where prbill_id = '%s' ";
+				$data = $db->query($sql, $id);
+				$rejMoney = $data[0]["rej_money"];
+				
+				$sql = "update t_pr_bill
+						set rejection_money = %f,
+							bizdt = '%s', biz_user_id = '%s',
+							date_created = now(), input_user_id = '%s',
+							warehouse_id = '%s'
+						where id = '%s' ";
+				$rc = $db->execute($sql, $rejMoney, $bizDT, $bizUserId, $us->getLoginUserId(), 
+						$warehouseId, $id);
+				if (! $rc) {
+					$db->rollback();
+					return $this->sqlError();
+				}
+				
+				$bs = new BizlogService();
+				$log = "编辑采购退货出库单，单号：$ref";
+				$bs->insertBizlog($log, "采购退货出库");
+				
+				$db->commit();
+			} catch ( Exception $e ) {
+				$db->rollback();
+				return $this->sqlError();
+			}
 		} else {
 			// 新增采购退货出库单
 			$db->startTrans();
