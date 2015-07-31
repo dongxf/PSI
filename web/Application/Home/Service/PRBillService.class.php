@@ -545,10 +545,97 @@ class PRBillService extends PSIBaseService {
 		
 		return $this->ok();
 	}
-	
-	public function commitPRBill($params){
+
+	public function commitPRBill($params) {
 		$id = $params["id"];
+		$db = M();
 		
-		return $this->todo();
+		$db->startTrans();
+		try {
+			$sql = "select ref, bill_status, warehouse_id 
+					from t_pr_bill 
+					where id = '%s' ";
+			$data = $db->query($sql, $id);
+			if (! $data) {
+				$db->rollback();
+				return $this->bad("要提交的采购退货出库单不存在");
+			}
+			$ref = $data[0]["ref"];
+			$billStatus = $data[0]["bill_status"];
+			$warehouseId = $data[0]["warehouse_id"];
+			if ($billStatus != 0) {
+				$db->rollback();
+				return $this->bad("采购退货出库单(单号：$ref)已经提交，不能再次提交");
+			}
+			$sql = "select name, inited from t_warehouse where id = '%s' ";
+			$data = $db->query($sql, $warehouseId);
+			if (! $data) {
+				$db->rollback();
+				return $this->bad("要出库的仓库不存在");
+			}
+			$warehouseName = $data[0]["name"];
+			$inited = $data[0]["inited"];
+			if ($inited != 1) {
+				$db->rollback();
+				return $this->bad("仓库[$warehouseName]还没有完成库存建账，不能进行出库操作");
+			}
+			
+			$sql = "select goods_id, rejection_goods_count as rej_count,
+						goods_count
+					from t_pr_bill_detail
+					where prbill_id = '%s'
+					order by show_order";
+			$items = $db->query($sql, $id);
+			foreach ( $items as $i => $v ) {
+				$goodsId = $v["goods_id"];
+				$rejCount = $v["rej_count"];
+				$goodsCount = $v["goods_count"];
+				
+				if ($rejCount == 0) {
+					continue;
+				}
+				
+				if ($rejCount < 0) {
+					$db->rollback();
+					$index = $i + 1;
+					return $this->bad("第{$index}条记录的退货数量不能为负数");
+				}
+				if ($rejCount > $goodsCount) {
+					$db->rollback();
+					$index = $i + 1;
+					return $this->bad("第{$index}条记录的退货数量不能大于采购数量");
+				}
+				
+				// 库存总账
+				
+				// 库存明细账
+			}
+			
+			// 应收总账
+			
+			// 应收明细账
+			
+			// 修改单据本身的状态
+			$sql = "update t_pr_bill
+					set bill_status = 1000
+					where id = '%s' ";
+			$rc = $db->execute($sql, $id);
+			if (! $rc) {
+				$db->rollback();
+				return $this->sqlError();
+			}
+			
+			// 记录业务日志
+			$bs = new BizlogService();
+			$log = "提交采购退货出库单，单号：$ref";
+			$bs->insertBizlog($log, "采购退货出库");
+			
+			$db->commit();
+		} catch ( Exception $e ) {
+			$db->rollback();
+			return $this->sqlError();
+		}
+		
+		return $this->ok($id);
 	}
 }
