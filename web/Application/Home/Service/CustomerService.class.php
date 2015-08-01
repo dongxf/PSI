@@ -176,7 +176,8 @@ class CustomerService extends PSIBaseService {
 					contact02 = '%s', qq02 = '%s', tel02 = '%s', mobile02 = '%s' 
 					where id = '%s'  ";
 			
-			$db->execute($sql, $code, $name, $categoryId, $py, $contact01, $qq01, $tel01, $mobile01, $contact02, $qq02, $tel02, $mobile02, $id);
+			$db->execute($sql, $code, $name, $categoryId, $py, $contact01, $qq01, $tel01, $mobile01, 
+					$contact02, $qq02, $tel02, $mobile02, $id);
 			
 			$log = "编辑客户：编码 = {$code}, 名称 = {$name}";
 			$bs = new BizlogService();
@@ -198,7 +199,8 @@ class CustomerService extends PSIBaseService {
 					qq01, tel01, mobile01, contact02, qq02," . " tel02, mobile02)  
 					values ('%s', '%s', '%s', '%s', '%s', '%s', 
 							'%s', '%s', '%s', '%s', '%s', '%s', '%s')  ";
-			$db->execute($sql, $id, $categoryId, $code, $name, $py, $contact01, $qq01, $tel01, $mobile01, $contact02, $qq02, $tel02, $mobile02);
+			$db->execute($sql, $id, $categoryId, $code, $name, $py, $contact01, $qq01, $tel01, 
+					$mobile01, $contact02, $qq02, $tel02, $mobile02);
 			
 			$log = "新增客户：编码 = {$code}, 名称 = {$name}";
 			$bs = new BizlogService();
@@ -239,7 +241,8 @@ class CustomerService extends PSIBaseService {
 				$sql = "insert into t_receivables_detail (id, rv_money, act_money, balance_money,
 						biz_date, date_created, ca_id, ca_type, ref_number, ref_type)
 						values ('%s', %f, 0, %f, '%s', now(), '%s', 'customer', '%s', '应收账款期初建账') ";
-				$db->execute($sql, $rvId, $initReceivables, $initReceivables, $initReceivablesDT, $id, $id);
+				$db->execute($sql, $rvId, $initReceivables, $initReceivables, $initReceivablesDT, 
+						$id, $id);
 			}
 			
 			// 应收总账
@@ -271,12 +274,13 @@ class CustomerService extends PSIBaseService {
 		
 		$code = $params["code"];
 		$name = $params["name"];
+		$address = $params["address"];
 		$contact = $params["contact"];
 		$mobile = $params["mobile"];
 		$tel = $params["tel"];
 		$qq = $params["qq"];
 		
-		$sql = "select id, category_id, code, name, contact01, qq01, tel01, mobile01, 
+		$sql = "select id, category_id, code, name, address, contact01, qq01, tel01, mobile01, 
 				 contact02, qq02, tel02, mobile02, init_receivables, init_receivables_dt 
 				 from t_customer where (category_id = '%s') ";
 		$queryParam = array();
@@ -289,6 +293,10 @@ class CustomerService extends PSIBaseService {
 			$sql .= " and (name like '%s' or py like '%s' ) ";
 			$queryParam[] = "%{$name}%";
 			$queryParam[] = "%{$name}%";
+		}
+		if ($address) {
+			$sql .= " and (address like '%s') ";
+			$queryParam[] = "%$address%";
 		}
 		if ($contact) {
 			$sql .= " and (contact01 like '%s' or contact02 like '%s' ) ";
@@ -321,6 +329,7 @@ class CustomerService extends PSIBaseService {
 			$result[$i]["categoryId"] = $v["category_id"];
 			$result[$i]["code"] = $v["code"];
 			$result[$i]["name"] = $v["name"];
+			$result[$i]["address"] = $v["address"];
 			$result[$i]["contact01"] = $v["contact01"];
 			$result[$i]["qq01"] = $v["qq01"];
 			$result[$i]["tel01"] = $v["tel01"];
@@ -331,7 +340,8 @@ class CustomerService extends PSIBaseService {
 			$result[$i]["mobile02"] = $v["mobile02"];
 			$result[$i]["initReceivables"] = $v["init_receivables"];
 			if ($v["init_receivables_dt"]) {
-				$result[$i]["initReceivablesDT"] = date("Y-m-d", strtotime($v["init_receivables_dt"]));
+				$result[$i]["initReceivablesDT"] = date("Y-m-d", 
+						strtotime($v["init_receivables_dt"]));
 			}
 		}
 		
@@ -346,6 +356,10 @@ class CustomerService extends PSIBaseService {
 			$sql .= " and (name like '%s' or py like '%s' ) ";
 			$queryParam[] = "%{$name}%";
 			$queryParam[] = "%{$name}%";
+		}
+		if ($address) {
+			$sql .= " and (address like '%s') ";
+			$queryParam[] = "%$address%";
 		}
 		if ($contact) {
 			$sql .= " and (contact01 like '%s' or contact02 like '%s' ) ";

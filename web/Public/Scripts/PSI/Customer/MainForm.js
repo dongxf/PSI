@@ -48,7 +48,7 @@ Ext.define("PSI.Customer.MainForm", {
             extend: "Ext.data.Model",
             fields: ["id", "code", "name", "contact01", "tel01", "mobile01", "qq01",
                 "contact02", "tel02", "mobile02", "qq02", "categoryId", "initReceivables",
-                "initReceivablesDT"]
+                "initReceivablesDT", "address"]
         });
 
         var store = Ext.create("Ext.data.Store", {
@@ -96,6 +96,7 @@ Ext.define("PSI.Customer.MainForm", {
                 Ext.create("Ext.grid.RowNumberer", {text: "序号", width: 30}),
                 {header: "客户编码", dataIndex: "code", menuDisabled: true, sortable: false},
                 {header: "客户名称", dataIndex: "name", menuDisabled: true, sortable: false, width: 300},
+                {header: "地址", dataIndex: "address", menuDisabled: true, sortable: false, width: 300},
                 {header: "联系人", dataIndex: "contact01", menuDisabled: true, sortable: false},
                 {header: "手机", dataIndex: "mobile01", menuDisabled: true, sortable: false},
                 {header: "固话", dataIndex: "tel01", menuDisabled: true, sortable: false},
@@ -210,6 +211,20 @@ Ext.define("PSI.Customer.MainForm", {
                         }
                     }
 				},{
+					id: "editQueryAddress",
+					labelWidth : 60,
+					labelAlign : "right",
+					labelSeparator : "",
+					fieldLabel : "地址",
+					margin: "5, 0, 0, 0",
+					xtype : "textfield",
+					listeners: {
+                        specialkey: {
+                            fn: me.onQueryEditSpecialKey,
+                            scope: me
+                        }
+                    }
+				},{
 					id: "editQueryContact",
 					labelWidth : 60,
 					labelAlign : "right",
@@ -306,7 +321,7 @@ Ext.define("PSI.Customer.MainForm", {
 
         me.callParent(arguments);
         
-        me.__queryEditNameList = ["editQueryCode", "editQueryName", "editQueryContact", "editQueryMobile", 
+        me.__queryEditNameList = ["editQueryCode", "editQueryName", "editQueryAddress", "editQueryContact", "editQueryMobile", 
               	                "editQueryTel", "editQueryQQ"];
 
         me.freshCategoryGrid();
@@ -584,6 +599,11 @@ Ext.define("PSI.Customer.MainForm", {
         var code = Ext.getCmp("editQueryCode").getValue();
         if (code) {
         	result.code = code;
+        }
+        
+        var address = Ext.getCmp("editQueryAddress").getValue();
+        if (address) {
+        	result.address = address;
         }
         
         var name = Ext.getCmp("editQueryName").getValue();
