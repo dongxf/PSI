@@ -42,13 +42,12 @@ Ext.define("PSI.Customer.CustomerEditForm", {
             modal: true,
             onEsc: Ext.emptyFn,
             width: 550,
-            height: 270,
+            height: 290,
             layout: "fit",
             items: [
                 {
                     id: "editForm",
                     xtype: "form",
-                    //layout: "form",
                     layout : {
     					type : "table",
     					columns : 2
@@ -114,7 +113,9 @@ Ext.define("PSI.Customer.CustomerEditForm", {
                                     fn: me.onEditSpecialKey,
                                     scope: me
                                 }
-                            }
+                            },
+                            width: 490,
+                            colspan: 2
                         },{
                             id: "editAddress",
                             fieldLabel: "地址",
@@ -125,7 +126,9 @@ Ext.define("PSI.Customer.CustomerEditForm", {
                                     fn: me.onEditSpecialKey,
                                     scope: me
                                 }
-                            }
+                            },
+                            width: 490,
+                            colspan: 2
                         },{
                             id: "editContact01",
                             fieldLabel: "联系人",
