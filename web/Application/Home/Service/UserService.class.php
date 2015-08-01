@@ -617,8 +617,8 @@ class UserService extends PSIBaseService {
 	}
 
 	public function queryData($queryKey) {
-		if (! $queryKey) {
-			return array();
+		if ($queryKey == null) {
+			$queryKey = "";
 		}
 		
 		$sql = "select id, login_name, name from t_user 

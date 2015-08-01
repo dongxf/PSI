@@ -172,6 +172,7 @@ Ext.define("PSI.User.UserField", {
 
         me.wnd.on("show", function () {
             editName.focus();
+            editName.fireEvent("change");
         }, me);
         wnd.show();
     },
