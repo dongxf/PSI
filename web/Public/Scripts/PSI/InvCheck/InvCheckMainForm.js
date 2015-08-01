@@ -212,6 +212,9 @@ Ext.define("PSI.InvCheck.InvCheckMainForm", {
         });
 
         me.__mainGrid = Ext.create("Ext.grid.Panel", {
+        	viewConfig: {
+                enableTextSelection: true
+            },
             border: 0,
             columnLines: true,
             columns: [{
@@ -318,6 +321,9 @@ Ext.define("PSI.InvCheck.InvCheckMainForm", {
         });
 
         me.__detailGrid = Ext.create("Ext.grid.Panel", {
+        	viewConfig: {
+                enableTextSelection: true
+            },
             title: "盘点单明细",
             columnLines: true,
             columns: [Ext.create("Ext.grid.RowNumberer", {

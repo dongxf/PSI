@@ -36,6 +36,9 @@ Ext.define("PSI.Purchase.PWMainForm", {
 
 
         var gridPWBill = Ext.create("Ext.grid.Panel", {
+        	viewConfig: {
+                enableTextSelection: true
+            },
             border: 0,
             columnLines: true,
             columns: [
@@ -110,6 +113,9 @@ Ext.define("PSI.Purchase.PWMainForm", {
 
         var gridPWBillDetail = Ext.create("Ext.grid.Panel", {
             title: "采购入库单明细",
+            viewConfig: {
+                enableTextSelection: true
+            },
             columnLines: true,
             columns: [
                 Ext.create("Ext.grid.RowNumberer", {text: "序号", width: 30}),

@@ -64,7 +64,9 @@ class SRBillService extends PSIBaseService {
 		$sql = "select s.id, g.code, g.name, g.spec, u.name as unit_name,
 				   s.rejection_goods_count, s.rejection_goods_price, s.rejection_sale_money
 				from t_sr_bill_detail s, t_goods g, t_goods_unit u
-				where s.srbill_id = '%s' and s.goods_id = g.id and g.unit_id = u.id";
+				where s.srbill_id = '%s' and s.goods_id = g.id and g.unit_id = u.id
+					and s.rejection_goods_count > 0
+				order by s.show_order";
 		$data = $db->query($sql, $id);
 		
 		$result = array();

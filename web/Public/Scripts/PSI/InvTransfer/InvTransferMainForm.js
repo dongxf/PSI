@@ -212,6 +212,9 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
         });
 
         me.__mainGrid = Ext.create("Ext.grid.Panel", {
+        	viewConfig: {
+                enableTextSelection: true
+            },
             border: 0,
             columnLines: true,
             columns: [{
@@ -323,6 +326,9 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
         });
 
         me.__detailGrid = Ext.create("Ext.grid.Panel", {
+        	viewConfig: {
+                enableTextSelection: true
+            },
             title: "调拨单明细",
             columnLines: true,
             columns: [Ext.create("Ext.grid.RowNumberer", {

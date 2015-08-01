@@ -491,6 +491,7 @@ class PRBillService extends PSIBaseService {
 					p.rejection_money as rej_money
 				from t_pr_bill_detail p, t_goods g, t_goods_unit u
 				where p.goods_id = g.id and g.unit_id = u.id and p.prbill_id = '%s'
+					and p.rejection_goods_count > 0
 				order by p.show_order";
 		$result = array();
 		$data = $db->query($sql, $id);

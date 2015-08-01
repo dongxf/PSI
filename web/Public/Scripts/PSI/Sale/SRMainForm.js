@@ -205,6 +205,9 @@ Ext.define("PSI.Sale.SRMainForm", {
         });
 
         me.__srGrid = Ext.create("Ext.grid.Panel", {
+        	viewConfig: {
+                enableTextSelection: true
+            },
             border: 0,
             columnLines: true,
             columns: [{
@@ -323,6 +326,9 @@ Ext.define("PSI.Sale.SRMainForm", {
         });
 
         me.__srDetailGrid = Ext.create("Ext.grid.Panel", {
+        	viewConfig: {
+                enableTextSelection: true
+            },
             title: "销售退货入库单明细",
             columnLines: true,
             columns: [Ext.create("Ext.grid.RowNumberer", {
