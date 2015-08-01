@@ -43,14 +43,17 @@ Ext.define("PSI.Supplier.SupplierEditForm", {
             title: entity == null ? "新增供应商" : "编辑供应商",
             modal: true,
             onEsc: Ext.emptyFn,
-            width: 400,
-            height: 420,
+            width: 550,
+            height: 290,
             layout: "fit",
             items: [
                 {
                     id: "editForm",
                     xtype: "form",
-                    layout: "form",
+                    layout : {
+    					type : "table",
+    					columns : 2
+    				},
                     height: "100%",
                     bodyPadding: 5,
                     defaultType: 'textfield',
@@ -115,7 +118,9 @@ Ext.define("PSI.Supplier.SupplierEditForm", {
                                     fn: me.onEditSpecialKey,
                                     scope: me
                                 }
-                            }
+                            },
+                            colspan: 2,
+                            width: 490
                         },{
                             id: "editAddress",
                             fieldLabel: "地址",
@@ -126,7 +131,9 @@ Ext.define("PSI.Supplier.SupplierEditForm", {
                                     fn: me.onEditSpecialKey,
                                     scope: me
                                 }
-                            }
+                            },
+                            colspan: 2,
+                            width: 490
                         },
                         {
                             id: "editContact01",
