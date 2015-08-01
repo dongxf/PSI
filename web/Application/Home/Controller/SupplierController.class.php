@@ -9,7 +9,7 @@ use Home\Common\FIdConst;
 
 /**
  * 供应商档案Controller
- * 
+ *
  * @author 李静波
  *        
  */
@@ -34,8 +34,17 @@ class SupplierController extends Controller {
 
 	public function categoryList() {
 		if (IS_POST) {
+			$params = array(
+					"code" => I("post.code"),
+					"name" => I("post.name"),
+					"address" => I("post.address"),
+					"contact" => I("post.contact"),
+					"mobile" => I("post.mobile"),
+					"tel" => I("post.tel"),
+					"qq" => I("post.qq")
+			);
 			$ss = new SupplierService();
-			$this->ajaxReturn($ss->categoryList());
+			$this->ajaxReturn($ss->categoryList($params));
 		}
 	}
 
@@ -43,6 +52,13 @@ class SupplierController extends Controller {
 		if (IS_POST) {
 			$params = array(
 					"categoryId" => I("post.categoryId"),
+					"code" => I("post.code"),
+					"name" => I("post.name"),
+					"address" => I("post.address"),
+					"contact" => I("post.contact"),
+					"mobile" => I("post.mobile"),
+					"tel" => I("post.tel"),
+					"qq" => I("post.qq"),
 					"page" => I("post.page"),
 					"start" => I("post.start"),
 					"limit" => I("post.limit")

@@ -12,15 +12,57 @@ use Home\Service\BizlogService;
  */
 class SupplierService extends PSIBaseService {
 
-	public function categoryList() {
+	public function categoryList($params) {
+		$code = $params["code"];
+		$name = $params["name"];
+		$address = $params["address"];
+		$contact = $params["contact"];
+		$mobile = $params["mobile"];
+		$tel = $params["tel"];
+		$qq = $params["qq"];
+		
 		$sql = "select c.id, c.code, c.name, count(s.id) as cnt 
 				from t_supplier_category c 
 				left join t_supplier s 
-				on c.id = s.category_id 
-				group by c.id 
+				on (c.id = s.category_id)";
+		$queryParam = array();
+		if ($code) {
+			$sql .= " and (s.code like '%s') ";
+			$queryParam[] = "%{$code}%";
+		}
+		if ($name) {
+			$sql .= " and (s.name like '%s' or s.py like '%s' ) ";
+			$queryParam[] = "%{$name}%";
+			$queryParam[] = "%{$name}%";
+		}
+		if ($address) {
+			$sql .= " and (s.address like '%s') ";
+			$queryParam[] = "%{$address}%";
+		}
+		if ($contact) {
+			$sql .= " and (s.contact01 like '%s' or s.contact02 like '%s' ) ";
+			$queryParam[] = "%{$contact}%";
+			$queryParam[] = "%{$contact}%";
+		}
+		if ($mobile) {
+			$sql .= " and (s.mobile01 like '%s' or s.mobile02 like '%s' ) ";
+			$queryParam[] = "%{$mobile}%";
+			$queryParam[] = "%{$mobile}";
+		}
+		if ($tel) {
+			$sql .= " and (s.tel01 like '%s' or s.tel02 like '%s' ) ";
+			$queryParam[] = "%{$tel}%";
+			$queryParam[] = "%{$tel}";
+		}
+		if ($qq) {
+			$sql .= " and (s.qq01 like '%s' or s.qq02 like '%s' ) ";
+			$queryParam[] = "%{$qq}%";
+			$queryParam[] = "%{$qq}";
+		}
+		$sql .=	" group by c.id
 				order by c.code";
 		
-		return M()->query($sql);
+		return M()->query($sql, $queryParam);
 	}
 
 	public function supplierList($params) {
@@ -28,15 +70,61 @@ class SupplierService extends PSIBaseService {
 		$page = $params["page"];
 		$start = $params["start"];
 		$limit = $params["limit"];
+		
+		$code = $params["code"];
+		$name = $params["name"];
+		$address = $params["address"];
+		$contact = $params["contact"];
+		$mobile = $params["mobile"];
+		$tel = $params["tel"];
+		$qq = $params["qq"];
+		
 		$sql = "select id, category_id, code, name, contact01, qq01, tel01, mobile01, 
 				contact02, qq02, tel02, mobile02, init_payables, init_payables_dt, address 
 				from t_supplier 
-				where category_id = '%s' 
-				order by code 
+				where (category_id = '%s')"; 
+			$queryParam = array();
+		$queryParam[] = $categoryId;
+		if ($code) {
+			$sql .= " and (code like '%s' ) ";
+			$queryParam[] = "%{$code}%";
+		}
+		if ($name) {
+			$sql .= " and (name like '%s' or py like '%s' ) ";
+			$queryParam[] = "%{$name}%";
+			$queryParam[] = "%{$name}%";
+		}
+		if ($address) {
+			$sql .= " and (address like '%s') ";
+			$queryParam[] = "%$address%";
+		}
+		if ($contact) {
+			$sql .= " and (contact01 like '%s' or contact02 like '%s' ) ";
+			$queryParam[] = "%{$contact}%";
+			$queryParam[] = "%{$contact}%";
+		}
+		if ($mobile) {
+			$sql .= " and (mobile01 like '%s' or mobile02 like '%s' ) ";
+			$queryParam[] = "%{$mobile}%";
+			$queryParam[] = "%{$mobile}";
+		}
+		if ($tel) {
+			$sql .= " and (tel01 like '%s' or tel02 like '%s' ) ";
+			$queryParam[] = "%{$tel}%";
+			$queryParam[] = "%{$tel}";
+		}
+		if ($qq) {
+			$sql .= " and (qq01 like '%s' or qq02 like '%s' ) ";
+			$queryParam[] = "%{$qq}%";
+			$queryParam[] = "%{$qq}";
+		}
+		$queryParam[] = $start;
+		$queryParam[] = $limit;
+		$sql .= " order by code 
 				limit %d, %d";
 		$result = array();
 		$db = M();
-		$data = $db->query($sql, $categoryId, $start, $limit);
+		$data = $db->query($sql, $queryParam);
 		foreach ( $data as $i => $v ) {
 			$result[$i]["id"] = $v["id"];
 			$result[$i]["categoryId"] = $v["category_id"];
@@ -57,8 +145,43 @@ class SupplierService extends PSIBaseService {
 			}
 		}
 		
-		$sql = "select count(*) as cnt from t_supplier where category_id  = '%s'";
-		$data = $db->query($sql, $categoryId);
+		$sql = "select count(*) as cnt from t_supplier where (category_id  = '%s') ";
+			$queryParam = array();
+		$queryParam[] = $categoryId;
+		if ($code) {
+			$sql .= " and (code like '%s' ) ";
+			$queryParam[] = "%{$code}%";
+		}
+		if ($name) {
+			$sql .= " and (name like '%s' or py like '%s' ) ";
+			$queryParam[] = "%{$name}%";
+			$queryParam[] = "%{$name}%";
+		}
+		if ($address) {
+			$sql .= " and (address like '%s') ";
+			$queryParam[] = "%$address%";
+		}
+		if ($contact) {
+			$sql .= " and (contact01 like '%s' or contact02 like '%s' ) ";
+			$queryParam[] = "%{$contact}%";
+			$queryParam[] = "%{$contact}%";
+		}
+		if ($mobile) {
+			$sql .= " and (mobile01 like '%s' or mobile02 like '%s' ) ";
+			$queryParam[] = "%{$mobile}%";
+			$queryParam[] = "%{$mobile}";
+		}
+		if ($tel) {
+			$sql .= " and (tel01 like '%s' or tel02 like '%s' ) ";
+			$queryParam[] = "%{$tel}%";
+			$queryParam[] = "%{$tel}";
+		}
+		if ($qq) {
+			$sql .= " and (qq01 like '%s' or qq02 like '%s' ) ";
+			$queryParam[] = "%{$qq}%";
+			$queryParam[] = "%{$qq}";
+		}
+		$data = $db->query($sql, $queryParam);
 		
 		return array(
 				"supplierList" => $result,
