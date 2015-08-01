@@ -41,14 +41,18 @@ Ext.define("PSI.Customer.CustomerEditForm", {
             title: entity == null ? "新增客户" : "编辑客户",
             modal: true,
             onEsc: Ext.emptyFn,
-            width: 400,
-            height: 420,
+            width: 550,
+            height: 270,
             layout: "fit",
             items: [
                 {
                     id: "editForm",
                     xtype: "form",
-                    layout: "form",
+                    //layout: "form",
+                    layout : {
+    					type : "table",
+    					columns : 2
+    				},
                     height: "100%",
                     bodyPadding: 5,
                     defaultType: 'textfield',
@@ -111,8 +115,18 @@ Ext.define("PSI.Customer.CustomerEditForm", {
                                     scope: me
                                 }
                             }
-                        },
-                        {
+                        },{
+                            id: "editAddress",
+                            fieldLabel: "地址",
+                            name: "address",
+                            value: entity == null ? null : entity.get("address"),
+                            listeners: {
+                                specialkey: {
+                                    fn: me.onEditSpecialKey,
+                                    scope: me
+                                }
+                            }
+                        },{
                             id: "editContact01",
                             fieldLabel: "联系人",
                             name: "contact01",
@@ -251,7 +265,7 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 
         me.callParent(arguments);
 
-        me.__editorList = ["editCategory", "editCode", "editName", "editContact01",
+        me.__editorList = ["editCategory", "editCode", "editName", "editAddress", "editContact01",
             "editMobile01", "editTel01", "editQQ01", "editContact02",
             "editMobile02", "editTel02", "editQQ02", "editInitReceivables", "editInitReceivablesDT"];
 
@@ -332,7 +346,7 @@ Ext.define("PSI.Customer.CustomerEditForm", {
     clearEdit: function () {
         Ext.getCmp("editCode").focus();
 
-        var editors = ["editCode", "editName", "editContact01",
+        var editors = ["editCode", "editName", "editAddress", "editContact01",
             "editMobile01", "editTel01", "editQQ01", "editContact02",
             "editMobile02", "editTel02", "editQQ02", "editInitReceivables", "editInitReceivablesDT"];
         for (var i = 0; i < editors.length; i++) {

@@ -38,6 +38,7 @@ class CustomerController extends Controller {
 			$params = array(
 					"code" => I("post.code"),
 					"name" => I("post.name"),
+					"address" => I("post.address"),
 					"contact" => I("post.contact"),
 					"mobile" => I("post.mobile"),
 					"tel" => I("post.tel"),
@@ -76,6 +77,7 @@ class CustomerController extends Controller {
 					"id" => I("post.id"),
 					"code" => I("post.code"),
 					"name" => I("post.name"),
+					"address" => I("post.address"),
 					"contact01" => I("post.contact01"),
 					"mobile01" => I("post.mobile01"),
 					"tel01" => I("post.tel01"),

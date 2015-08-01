@@ -12,6 +12,7 @@ class CustomerService extends PSIBaseService {
 	public function categoryList($params) {
 		$code = $params["code"];
 		$name = $params["name"];
+		$address = $params["address"];
 		$contact = $params["contact"];
 		$mobile = $params["mobile"];
 		$tel = $params["tel"];
@@ -30,6 +31,10 @@ class CustomerService extends PSIBaseService {
 			$sql .= " and (u.name like '%s' or u.py like '%s' ) ";
 			$queryParam[] = "%{$name}%";
 			$queryParam[] = "%{$name}%";
+		}
+		if ($address) {
+			$sql .= " and (u.address like '%s') ";
+			$queryParam[] = "%{$address}%";
 		}
 		if ($contact) {
 			$sql .= " and (u.contact01 like '%s' or u.contact02 like '%s' ) ";
@@ -135,6 +140,7 @@ class CustomerService extends PSIBaseService {
 		$id = $params["id"];
 		$code = $params["code"];
 		$name = $params["name"];
+		$address = $params["address"];
 		$contact01 = $params["contact01"];
 		$mobile01 = $params["mobile01"];
 		$tel01 = $params["tel01"];
@@ -173,11 +179,12 @@ class CustomerService extends PSIBaseService {
 			$sql = "update t_customer 
 					set code = '%s', name = '%s', category_id = '%s', py = '%s', 
 					contact01 = '%s', qq01 = '%s', tel01 = '%s', mobile01 = '%s', 
-					contact02 = '%s', qq02 = '%s', tel02 = '%s', mobile02 = '%s' 
+					contact02 = '%s', qq02 = '%s', tel02 = '%s', mobile02 = '%s',
+					address = '%s'
 					where id = '%s'  ";
 			
 			$db->execute($sql, $code, $name, $categoryId, $py, $contact01, $qq01, $tel01, $mobile01, 
-					$contact02, $qq02, $tel02, $mobile02, $id);
+					$contact02, $qq02, $tel02, $mobile02, $address, $id);
 			
 			$log = "编辑客户：编码 = {$code}, 名称 = {$name}";
 			$bs = new BizlogService();
@@ -196,11 +203,11 @@ class CustomerService extends PSIBaseService {
 			}
 			
 			$sql = "insert into t_customer (id, category_id, code, name, py, contact01, 
-					qq01, tel01, mobile01, contact02, qq02," . " tel02, mobile02)  
+					qq01, tel01, mobile01, contact02, qq02, tel02, mobile02, address)  
 					values ('%s', '%s', '%s', '%s', '%s', '%s', 
-							'%s', '%s', '%s', '%s', '%s', '%s', '%s')  ";
+							'%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')  ";
 			$db->execute($sql, $id, $categoryId, $code, $name, $py, $contact01, $qq01, $tel01, 
-					$mobile01, $contact02, $qq02, $tel02, $mobile02);
+					$mobile01, $contact02, $qq02, $tel02, $mobile02, $address);
 			
 			$log = "新增客户：编码 = {$code}, 名称 = {$name}";
 			$bs = new BizlogService();
