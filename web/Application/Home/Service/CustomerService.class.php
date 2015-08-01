@@ -33,7 +33,8 @@ class CustomerService extends PSIBaseService {
 			$queryParam[] = "%{$name}%";
 		}
 		if ($address) {
-			$sql .= " and (u.address like '%s') ";
+			$sql .= " and (u.address like '%s' or u.address_receipt like '%s') ";
+			$queryParam[] = "%{$address}%";
 			$queryParam[] = "%{$address}%";
 		}
 		if ($contact) {
@@ -141,6 +142,7 @@ class CustomerService extends PSIBaseService {
 		$code = $params["code"];
 		$name = $params["name"];
 		$address = $params["address"];
+		$addressReceipt = $params["addressReceipt"];
 		$contact01 = $params["contact01"];
 		$mobile01 = $params["mobile01"];
 		$tel01 = $params["tel01"];
@@ -180,11 +182,11 @@ class CustomerService extends PSIBaseService {
 					set code = '%s', name = '%s', category_id = '%s', py = '%s', 
 					contact01 = '%s', qq01 = '%s', tel01 = '%s', mobile01 = '%s', 
 					contact02 = '%s', qq02 = '%s', tel02 = '%s', mobile02 = '%s',
-					address = '%s'
+					address = '%s', address_receipt = '%s'
 					where id = '%s'  ";
 			
 			$db->execute($sql, $code, $name, $categoryId, $py, $contact01, $qq01, $tel01, $mobile01, 
-					$contact02, $qq02, $tel02, $mobile02, $address, $id);
+					$contact02, $qq02, $tel02, $mobile02, $address, $addressReceipt, $id);
 			
 			$log = "编辑客户：编码 = {$code}, 名称 = {$name}";
 			$bs = new BizlogService();
@@ -203,11 +205,11 @@ class CustomerService extends PSIBaseService {
 			}
 			
 			$sql = "insert into t_customer (id, category_id, code, name, py, contact01, 
-					qq01, tel01, mobile01, contact02, qq02, tel02, mobile02, address)  
+					qq01, tel01, mobile01, contact02, qq02, tel02, mobile02, address, address_receipt)  
 					values ('%s', '%s', '%s', '%s', '%s', '%s', 
-							'%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')  ";
+							'%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')  ";
 			$db->execute($sql, $id, $categoryId, $code, $name, $py, $contact01, $qq01, $tel01, 
-					$mobile01, $contact02, $qq02, $tel02, $mobile02, $address);
+					$mobile01, $contact02, $qq02, $tel02, $mobile02, $address, $addressReceipt);
 			
 			$log = "新增客户：编码 = {$code}, 名称 = {$name}";
 			$bs = new BizlogService();
@@ -288,7 +290,8 @@ class CustomerService extends PSIBaseService {
 		$qq = $params["qq"];
 		
 		$sql = "select id, category_id, code, name, address, contact01, qq01, tel01, mobile01, 
-				 contact02, qq02, tel02, mobile02, init_receivables, init_receivables_dt 
+				 contact02, qq02, tel02, mobile02, init_receivables, init_receivables_dt,
+					address_receipt
 				 from t_customer where (category_id = '%s') ";
 		$queryParam = array();
 		$queryParam[] = $categoryId;
@@ -302,8 +305,9 @@ class CustomerService extends PSIBaseService {
 			$queryParam[] = "%{$name}%";
 		}
 		if ($address) {
-			$sql .= " and (address like '%s') ";
+			$sql .= " and (address like '%s' or address_receipt like '%s') ";
 			$queryParam[] = "%$address%";
+			$queryParam[] = "%{$address}%";
 		}
 		if ($contact) {
 			$sql .= " and (contact01 like '%s' or contact02 like '%s' ) ";
@@ -337,6 +341,7 @@ class CustomerService extends PSIBaseService {
 			$result[$i]["code"] = $v["code"];
 			$result[$i]["name"] = $v["name"];
 			$result[$i]["address"] = $v["address"];
+			$result[$i]["addressReceipt"] = $v["address_receipt"];
 			$result[$i]["contact01"] = $v["contact01"];
 			$result[$i]["qq01"] = $v["qq01"];
 			$result[$i]["tel01"] = $v["tel01"];
@@ -365,7 +370,8 @@ class CustomerService extends PSIBaseService {
 			$queryParam[] = "%{$name}%";
 		}
 		if ($address) {
-			$sql .= " and (address like '%s') ";
+			$sql .= " and (address like '%s' or address_receipt like '%s') ";
+			$queryParam[] = "%$address%";
 			$queryParam[] = "%$address%";
 		}
 		if ($contact) {

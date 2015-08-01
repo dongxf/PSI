@@ -78,6 +78,7 @@ class CustomerController extends Controller {
 					"code" => I("post.code"),
 					"name" => I("post.name"),
 					"address" => I("post.address"),
+					"addressReceipt" => I("post.addressReceipt"),
 					"contact01" => I("post.contact01"),
 					"mobile01" => I("post.mobile01"),
 					"tel01" => I("post.tel01"),

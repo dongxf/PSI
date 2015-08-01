@@ -48,7 +48,7 @@ Ext.define("PSI.Customer.MainForm", {
             extend: "Ext.data.Model",
             fields: ["id", "code", "name", "contact01", "tel01", "mobile01", "qq01",
                 "contact02", "tel02", "mobile02", "qq02", "categoryId", "initReceivables",
-                "initReceivablesDT", "address"]
+                "initReceivablesDT", "address", "addressReceipt"]
         });
 
         var store = Ext.create("Ext.data.Store", {
@@ -105,6 +105,7 @@ Ext.define("PSI.Customer.MainForm", {
                 {header: "备用联系人手机", dataIndex: "mobile02", menuDisabled: true, sortable: false},
                 {header: "备用联系人固话", dataIndex: "tel02", menuDisabled: true, sortable: false},
                 {header: "备用联系人QQ", dataIndex: "qq02", menuDisabled: true, sortable: false},
+                {header: "收货地址", dataIndex: "addressReceipt", menuDisabled: true, sortable: false, width: 300},
                 {header: "应收期初余额", dataIndex: "initReceivables", align: "right", xtype: "numbercolumn", menuDisabled: true, sortable: false},
                 {header: "应收期初余额日期", dataIndex: "initReceivablesDT", menuDisabled: true, sortable: false}
             ],

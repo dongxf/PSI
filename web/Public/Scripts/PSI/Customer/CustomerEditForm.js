@@ -42,7 +42,7 @@ Ext.define("PSI.Customer.CustomerEditForm", {
             modal: true,
             onEsc: Ext.emptyFn,
             width: 550,
-            height: 290,
+            height: 310,
             layout: "fit",
             items: [
                 {
@@ -225,6 +225,19 @@ Ext.define("PSI.Customer.CustomerEditForm", {
                                 }
                             }
                         },{
+                            id: "editAddressReceipt",
+                            fieldLabel: "收货地址",
+                            name: "addressReceipt",
+                            value: entity == null ? null : entity.get("addressReceipt"),
+                            listeners: {
+                                specialkey: {
+                                    fn: me.onEditSpecialKey,
+                                    scope: me
+                                }
+                            },
+                            width: 490,
+                            colspan: 2
+                        },{
                             id: "editInitReceivables",
                             fieldLabel: "应收期初余额",
                             name: "initReceivables",
@@ -270,7 +283,7 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 
         me.__editorList = ["editCategory", "editCode", "editName", "editAddress", "editContact01",
             "editMobile01", "editTel01", "editQQ01", "editContact02",
-            "editMobile02", "editTel02", "editQQ02", "editInitReceivables", "editInitReceivablesDT"];
+            "editMobile02", "editTel02", "editQQ02", "editAddressReceipt", "editInitReceivables", "editInitReceivablesDT"];
 
     },
     onWndShow: function () {
@@ -351,7 +364,7 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 
         var editors = ["editCode", "editName", "editAddress", "editContact01",
             "editMobile01", "editTel01", "editQQ01", "editContact02",
-            "editMobile02", "editTel02", "editQQ02", "editInitReceivables", "editInitReceivablesDT"];
+            "editMobile02", "editTel02", "editQQ02", "editAddressReceipt", "editInitReceivables", "editInitReceivablesDT"];
         for (var i = 0; i < editors.length; i++) {
             var edit = Ext.getCmp(editors[i]);
             if (edit) {
