@@ -1,9 +1,12 @@
+// 供应商档案 - 新建或编辑界面
 Ext.define("PSI.Supplier.SupplierEditForm", {
     extend: "Ext.window.Window",
+    
     config: {
         parentForm: null,
         entity: null
     },
+    
     initComponent: function () {
         var me = this;
         var entity = me.getEntity();
@@ -17,7 +20,7 @@ Ext.define("PSI.Supplier.SupplierEditForm", {
                 handler: function () {
                     me.onOK(true);
                 },
-                scope: this
+                scope: me
             });
         }
 
@@ -27,14 +30,14 @@ Ext.define("PSI.Supplier.SupplierEditForm", {
             iconCls: "PSI-button-ok",
             handler: function () {
                 me.onOK(false);
-            }, scope: this
+            }, scope: me
         }, {
             text: entity == null ? "关闭" : "取消", handler: function () {
                 me.close();
             }, scope: me
         });
 
-        var categoryStore = this.getParentForm().categoryGrid.getStore();
+        var categoryStore = me.getParentForm().categoryGrid.getStore();
 
         Ext.apply(me, {
             title: entity == null ? "新增供应商" : "编辑供应商",
@@ -107,6 +110,17 @@ Ext.define("PSI.Supplier.SupplierEditForm", {
                             beforeLabelTextTpl: PSI.Const.REQUIRED,
                             name: "name",
                             value: entity == null ? null : entity.get("name"),
+                            listeners: {
+                                specialkey: {
+                                    fn: me.onEditSpecialKey,
+                                    scope: me
+                                }
+                            }
+                        },{
+                            id: "editAddress",
+                            fieldLabel: "地址",
+                            name: "address",
+                            value: entity == null ? null : entity.get("address"),
                             listeners: {
                                 specialkey: {
                                     fn: me.onEditSpecialKey,
@@ -253,7 +267,7 @@ Ext.define("PSI.Supplier.SupplierEditForm", {
 
         me.callParent(arguments);
 
-        me.__editorList = ["editCategory", "editCode", "editName", "editContact01",
+        me.__editorList = ["editCategory", "editCode", "editName", "editAddress", "editContact01",
             "editMobile01", "editTel01", "editQQ01", "editContact02",
             "editMobile02", "editTel02", "editQQ02", "editInitPayables", "editInitPayablesDT"];
     },
@@ -329,7 +343,7 @@ Ext.define("PSI.Supplier.SupplierEditForm", {
     clearEdit: function () {
         Ext.getCmp("editCode").focus();
 
-        var editors = ["editCode", "editName", "editContact01",
+        var editors = ["editCode", "editName", "editAddress", "editContact01",
             "editMobile01", "editTel01", "editQQ01", "editContact02",
             "editMobile02", "editTel02", "editQQ02", "editInitPayables", "editInitPayablesDT"];
         for (var i = 0; i < editors.length; i++) {

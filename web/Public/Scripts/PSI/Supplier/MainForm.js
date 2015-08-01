@@ -32,22 +32,22 @@ Ext.define("PSI.Supplier.MainForm", {
             }),
             listeners: {
                 select: {
-                    fn: this.onCategoryGridSelect,
-                    scope: this
+                    fn: me.onCategoryGridSelect,
+                    scope: me
                 },
                 itemdblclick: {
-                    fn: this.onEditCategory,
-                    scope: this
+                    fn: me.onEditCategory,
+                    scope: me
                 }
             }
         });
-        this.categoryGrid = categoryGrid;
+        me.categoryGrid = categoryGrid;
 
         Ext.define("PSISupplier", {
             extend: "Ext.data.Model",
             fields: ["id", "code", "name", "contact01", "tel01", "mobile01", "qq01",
                 "contact02", "tel02", "mobile02", "qq02", "categoryId", "initPayables",
-                "initPayablesDT"]
+                "initPayablesDT", "address"]
         });
 
         var store = Ext.create("Ext.data.Store", {
@@ -105,6 +105,7 @@ Ext.define("PSI.Supplier.MainForm", {
                 Ext.create("Ext.grid.RowNumberer", {text: "序号", width: 30}),
                 {header: "供应商编码", dataIndex: "code", menuDisabled: true, sortable: false},
                 {header: "供应商名称", dataIndex: "name", menuDisabled: true, sortable: false, width: 300},
+                {header: "地址", dataIndex: "address", menuDisabled: true, sortable: false, width: 300},
                 {header: "联系人", dataIndex: "contact01", menuDisabled: true, sortable: false},
                 {header: "手机", dataIndex: "mobile01", menuDisabled: true, sortable: false},
                 {header: "固话", dataIndex: "tel01", menuDisabled: true, sortable: false},
@@ -151,14 +152,14 @@ Ext.define("PSI.Supplier.MainForm", {
                 }],
             listeners: {
                 itemdblclick: {
-                    fn: this.onEditSupplier,
-                    scope: this
+                    fn: me.onEditSupplier,
+                    scope: me
                 }
             }
         });
 
 
-        this.supplierGrid = supplierGrid;
+        me.supplierGrid = supplierGrid;
 
         Ext.apply(me, {
             border: 0,
@@ -205,7 +206,7 @@ Ext.define("PSI.Supplier.MainForm", {
 
         me.callParent(arguments);
 
-        this.freshCategoryGrid();
+        me.freshCategoryGrid();
     },
     onAddCategory: function () {
         var form = Ext.create("PSI.Supplier.CategoryEditForm", {

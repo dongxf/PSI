@@ -29,7 +29,7 @@ class SupplierService extends PSIBaseService {
 		$start = $params["start"];
 		$limit = $params["limit"];
 		$sql = "select id, category_id, code, name, contact01, qq01, tel01, mobile01, 
-				contact02, qq02, tel02, mobile02, init_payables, init_payables_dt 
+				contact02, qq02, tel02, mobile02, init_payables, init_payables_dt, address 
 				from t_supplier 
 				where category_id = '%s' 
 				order by code 
@@ -42,6 +42,7 @@ class SupplierService extends PSIBaseService {
 			$result[$i]["categoryId"] = $v["category_id"];
 			$result[$i]["code"] = $v["code"];
 			$result[$i]["name"] = $v["name"];
+			$result[$i]["address"] = $v["address"];
 			$result[$i]["contact01"] = $v["contact01"];
 			$result[$i]["qq01"] = $v["qq01"];
 			$result[$i]["tel01"] = $v["tel01"];
@@ -143,6 +144,7 @@ class SupplierService extends PSIBaseService {
 		$id = $params["id"];
 		$code = $params["code"];
 		$name = $params["name"];
+		$address = $params["address"];
 		$contact01 = $params["contact01"];
 		$mobile01 = $params["mobile01"];
 		$tel01 = $params["tel01"];
@@ -181,10 +183,12 @@ class SupplierService extends PSIBaseService {
 			$sql = "update t_supplier 
 					set code = '%s', name = '%s', category_id = '%s', py = '%s', 
 					contact01 = '%s', qq01 = '%s', tel01 = '%s', mobile01 = '%s', 
-					contact02 = '%s', qq02 = '%s', tel02 = '%s', mobile02 = '%s' 
+					contact02 = '%s', qq02 = '%s', tel02 = '%s', mobile02 = '%s',
+					address = '%s'
 					where id = '%s'  ";
 			
-			$db->execute($sql, $code, $name, $categoryId, $py, $contact01, $qq01, $tel01, $mobile01, $contact02, $qq02, $tel02, $mobile02, $id);
+			$db->execute($sql, $code, $name, $categoryId, $py, $contact01, $qq01, $tel01, $mobile01, 
+					$contact02, $qq02, $tel02, $mobile02, $address, $id);
 			
 			$log = "编辑供应商：编码 = $code, 名称 = $name";
 			$bs = new BizlogService();
@@ -204,10 +208,11 @@ class SupplierService extends PSIBaseService {
 			
 			$sql = "insert into t_supplier (id, category_id, code, name, py, contact01, 
 					qq01, tel01, mobile01, contact02, qq02,
-					tel02, mobile02) 
-					values ('%s', '%s', '%s', '%s', '%s', '%s', " . "  '%s', '%s', '%s', '%s', '%s',
-							'%s', '%s')  ";
-			$db->execute($sql, $id, $categoryId, $code, $name, $py, $contact01, $qq01, $tel01, $mobile01, $contact02, $qq02, $tel02, $mobile02);
+					tel02, mobile02, address) 
+					values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
+							'%s', '%s', '%s')  ";
+			$db->execute($sql, $id, $categoryId, $code, $name, $py, $contact01, $qq01, $tel01, 
+					$mobile01, $contact02, $qq02, $tel02, $mobile02, $address);
 			
 			$log = "新增供应商：编码 = {$code}, 名称 = {$name}";
 			$bs = new BizlogService();
