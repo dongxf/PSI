@@ -44,7 +44,7 @@ Ext.define("PSI.Supplier.SupplierEditForm", {
             modal: true,
             onEsc: Ext.emptyFn,
             width: 550,
-            height: 290,
+            height: 310,
             layout: "fit",
             items: [
                 {
@@ -231,6 +231,19 @@ Ext.define("PSI.Supplier.SupplierEditForm", {
                                 }
                             }
                         },{
+                            id: "editAddressShipping",
+                            fieldLabel: "发货地址",
+                            name: "addressShipping",
+                            value: entity == null ? null : entity.get("addressShipping"),
+                            listeners: {
+                                specialkey: {
+                                    fn: me.onEditSpecialKey,
+                                    scope: me
+                                }
+                            },
+                            colspan: 2,
+                            width: 490
+                        },{
                             id: "editInitPayables",
                             fieldLabel: "应付期初余额",
                             name: "initPayables",
@@ -276,7 +289,8 @@ Ext.define("PSI.Supplier.SupplierEditForm", {
 
         me.__editorList = ["editCategory", "editCode", "editName", "editAddress", "editContact01",
             "editMobile01", "editTel01", "editQQ01", "editContact02",
-            "editMobile02", "editTel02", "editQQ02", "editInitPayables", "editInitPayablesDT"];
+            "editMobile02", "editTel02", "editQQ02", "editAddressShipping",  
+            "editInitPayables", "editInitPayablesDT"];
     },
     onWndShow: function () {
         var me = this;
@@ -350,7 +364,7 @@ Ext.define("PSI.Supplier.SupplierEditForm", {
     clearEdit: function () {
         Ext.getCmp("editCode").focus();
 
-        var editors = ["editCode", "editName", "editAddress", "editContact01",
+        var editors = ["editCode", "editName", "editAddress", "editAddressShipping", "editContact01",
             "editMobile01", "editTel01", "editQQ01", "editContact02",
             "editMobile02", "editTel02", "editQQ02", "editInitPayables", "editInitPayablesDT"];
         for (var i = 0; i < editors.length; i++) {

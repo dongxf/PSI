@@ -36,7 +36,8 @@ class SupplierService extends PSIBaseService {
 			$queryParam[] = "%{$name}%";
 		}
 		if ($address) {
-			$sql .= " and (s.address like '%s') ";
+			$sql .= " and (s.address like '%s' or s.address_shipping like '%s') ";
+			$queryParam[] = "%{$address}%";
 			$queryParam[] = "%{$address}%";
 		}
 		if ($contact) {
@@ -80,7 +81,8 @@ class SupplierService extends PSIBaseService {
 		$qq = $params["qq"];
 		
 		$sql = "select id, category_id, code, name, contact01, qq01, tel01, mobile01, 
-				contact02, qq02, tel02, mobile02, init_payables, init_payables_dt, address 
+				contact02, qq02, tel02, mobile02, init_payables, init_payables_dt, 
+				address, address_shipping 
 				from t_supplier 
 				where (category_id = '%s')"; 
 			$queryParam = array();
@@ -95,7 +97,8 @@ class SupplierService extends PSIBaseService {
 			$queryParam[] = "%{$name}%";
 		}
 		if ($address) {
-			$sql .= " and (address like '%s') ";
+			$sql .= " and (address like '%s' or address_shipping like '%s') ";
+			$queryParam[] = "%$address%";
 			$queryParam[] = "%$address%";
 		}
 		if ($contact) {
@@ -131,6 +134,7 @@ class SupplierService extends PSIBaseService {
 			$result[$i]["code"] = $v["code"];
 			$result[$i]["name"] = $v["name"];
 			$result[$i]["address"] = $v["address"];
+			$result[$i]["addressShipping"] = $v["address_shipping"];
 			$result[$i]["contact01"] = $v["contact01"];
 			$result[$i]["qq01"] = $v["qq01"];
 			$result[$i]["tel01"] = $v["tel01"];
@@ -268,6 +272,7 @@ class SupplierService extends PSIBaseService {
 		$code = $params["code"];
 		$name = $params["name"];
 		$address = $params["address"];
+		$addressShipping = $params["addressShipping"];
 		$contact01 = $params["contact01"];
 		$mobile01 = $params["mobile01"];
 		$tel01 = $params["tel01"];
@@ -307,11 +312,11 @@ class SupplierService extends PSIBaseService {
 					set code = '%s', name = '%s', category_id = '%s', py = '%s', 
 					contact01 = '%s', qq01 = '%s', tel01 = '%s', mobile01 = '%s', 
 					contact02 = '%s', qq02 = '%s', tel02 = '%s', mobile02 = '%s',
-					address = '%s'
+					address = '%s', address_shipping = '%s'
 					where id = '%s'  ";
 			
 			$db->execute($sql, $code, $name, $categoryId, $py, $contact01, $qq01, $tel01, $mobile01, 
-					$contact02, $qq02, $tel02, $mobile02, $address, $id);
+					$contact02, $qq02, $tel02, $mobile02, $address, $addressShipping, $id);
 			
 			$log = "编辑供应商：编码 = $code, 名称 = $name";
 			$bs = new BizlogService();
@@ -331,11 +336,11 @@ class SupplierService extends PSIBaseService {
 			
 			$sql = "insert into t_supplier (id, category_id, code, name, py, contact01, 
 					qq01, tel01, mobile01, contact02, qq02,
-					tel02, mobile02, address) 
+					tel02, mobile02, address, address_shipping) 
 					values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
-							'%s', '%s', '%s')  ";
+							'%s', '%s', '%s', '%s')  ";
 			$db->execute($sql, $id, $categoryId, $code, $name, $py, $contact01, $qq01, $tel01, 
-					$mobile01, $contact02, $qq02, $tel02, $mobile02, $address);
+					$mobile01, $contact02, $qq02, $tel02, $mobile02, $address, $addressShipping);
 			
 			$log = "新增供应商：编码 = {$code}, 名称 = {$name}";
 			$bs = new BizlogService();
