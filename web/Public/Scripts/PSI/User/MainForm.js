@@ -162,7 +162,7 @@ Ext.define("PSI.User.MainForm", {
             return;
         }
 
-        var org = item[0].getData();
+        var org = item[0];
 
         var form = Ext.create("PSI.User.OrgEditForm", {
             parentForm: this,

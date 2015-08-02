@@ -38,7 +38,7 @@ Ext.define("PSI.User.OrgEditForm", {
                         {
                             xtype: "hidden",
                             name: "id",
-                            value: entity === null ? null : entity.id
+                            value: entity === null ? null : entity.get("id")
                         },
                         {
                             id: "editName",
@@ -47,7 +47,7 @@ Ext.define("PSI.User.OrgEditForm", {
                             blankText: "没有输入名称",
                             beforeLabelTextTpl: PSI.Const.REQUIRED,
                             name: "name",
-                            value: entity === null ? null : entity.text,
+                            value: entity === null ? null : entity.get("text"),
                             listeners: {
                                 specialkey: {
                                     fn: me.onEditNameSpecialKey,
@@ -71,7 +71,7 @@ Ext.define("PSI.User.OrgEditForm", {
                             id: "editParentOrgId",
                             xtype: "hidden",
                             name: "parentId",
-                            value: entity === null ? null : entity.parentId
+                            value: entity === null ? null : entity.get("parentId")
                         },
                         {
                             id: "editOrgCode",
@@ -80,7 +80,7 @@ Ext.define("PSI.User.OrgEditForm", {
                             blankText: "没有输入编码",
                             beforeLabelTextTpl: PSI.Const.REQUIRED,
                             name: "orgCode",
-                            value: entity === null ? null : entity.orgCode,
+                            value: entity === null ? null : entity.get("orgCode"),
                             listeners: {
                                 specialkey: {
                                     fn: me.onEditOrgCodeSpecialKey,
@@ -129,13 +129,15 @@ Ext.define("PSI.User.OrgEditForm", {
         Ext.Ajax.request({
             url: me.getBaseURL() + "Home/User/orgParentName",
             method: "POST",
-            params: {id: entity.id},
+            params: {id: entity.get("id")},
             callback: function (options, success, response) {
                 form.getEl().unmask();
                 if (success) {
                     var data = Ext.JSON.decode(response.responseText);
-                    var editParentOrg = Ext.getCmp("editParentOrg");
-                    editParentOrg.setValue(data.parentOrgName);
+                    Ext.getCmp("editParentOrg").setValue(data.parentOrgName);
+                    Ext.getCmp("editParentOrgId").setValue(data.parentOrgId);
+                    Ext.getCmp("editName").setValue(data.name);
+                    Ext.getCmp("editOrgCode").setValue(data.orgCode);
                 }
             }
         });
