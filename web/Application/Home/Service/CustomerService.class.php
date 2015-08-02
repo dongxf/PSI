@@ -241,7 +241,7 @@ class CustomerService extends PSIBaseService {
 			if ($data) {
 				$rvId = $data[0]["id"];
 				$sql = "update t_receivables_detail
-						set rv_money = %f, act_money = 0, balance_money = %f, biz_date ='%s' date_created = now() 
+						set rv_money = %f, act_money = 0, balance_money = %f, biz_date ='%s', date_created = now() 
 						where id = '%s' ";
 				$db->execute($sql, $initReceivables, $initReceivables, $initReceivablesDT, $rvId);
 			} else {
@@ -466,5 +466,41 @@ class CustomerService extends PSIBaseService {
 				limit 20";
 		$key = "%{$queryKey}%";
 		return M()->query($sql, $key, $key, $key);
+	}
+
+	public function customerInfo($params) {
+		$id = $params["id"];
+		
+		$result = array();
+		
+		$db = M();
+		$sql = "select category_id, code, name, contact01, qq01, mobile01, tel01,
+					contact02, qq02, mobile02, tel02, address, address_receipt,
+					init_receivables, init_receivables_dt
+				from t_customer
+				where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if ($data) {
+			$result["categoryId"] = $data[0]["category_id"];
+			$result["code"] = $data[0]["code"];
+			$result["name"] = $data[0]["name"];
+			$result["contact01"] = $data[0]["contact01"];
+			$result["qq01"] = $data[0]["qq01"];
+			$result["mobile01"] = $data[0]["mobile01"];
+			$result["tel01"] = $data[0]["tel01"];
+			$result["contact02"] = $data[0]["contact02"];
+			$result["qq02"] = $data[0]["qq02"];
+			$result["mobile02"] = $data[0]["mobile02"];
+			$result["tel02"] = $data[0]["tel02"];
+			$result["address"] = $data[0]["address"];
+			$result["addressReceipt"] = $data[0]["address_receipt"];
+			$result["initReceivables"] = $data[0]["init_receivables"];
+			$d = $data[0]["init_receivables_dt"]; 
+			if ($d) {
+				$result["initReceivablesDT"] = $this->toYMD($d);
+			}
+		}
+		
+		return $result;
 	}
 }

@@ -1,3 +1,4 @@
+// 商品 - 新建或编辑界面
 Ext.define("PSI.Goods.GoodsEditForm", {
     extend: "Ext.window.Window",
     config: {

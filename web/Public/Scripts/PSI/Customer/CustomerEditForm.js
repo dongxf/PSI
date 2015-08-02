@@ -286,11 +286,45 @@ Ext.define("PSI.Customer.CustomerEditForm", {
             "editMobile02", "editTel02", "editQQ02", "editAddressReceipt", "editInitReceivables", "editInitReceivablesDT"];
 
     },
+    
     onWndShow: function () {
-        if (!this.adding) {
-            Ext.getCmp("editCategory").setValue(this.getEntity().get("categoryId"));
+    	var me = this;
+        if (!me.adding) {
+        	// 编辑客户资料
+            var el = me.getEl();
+            el.mask(PSI.Const.LOADING);
+            Ext.Ajax.request({
+                url: PSI.Const.BASE_URL + "Home/Customer/customerInfo",
+                params: {
+                	id: me.getEntity().get("id")
+                },
+                method: "POST",
+                callback: function (options, success, response) {
+                    if (success) {
+                        var data = Ext.JSON.decode(response.responseText);
+                        Ext.getCmp("editCategory").setValue(data.categoryId);
+                        Ext.getCmp("editCode").setValue(data.code);
+                        Ext.getCmp("editName").setValue(data.name);
+                        Ext.getCmp("editAddress").setValue(data.address);
+                        Ext.getCmp("editContact01").setValue(data.contact01);
+                        Ext.getCmp("editMobile01").setValue(data.mobile01);
+                        Ext.getCmp("editTel01").setValue(data.tel01);
+                        Ext.getCmp("editQQ01").setValue(data.qq01);
+                        Ext.getCmp("editContact02").setValue(data.contact02);
+                        Ext.getCmp("editMobile02").setValue(data.mobile02);
+                        Ext.getCmp("editTel02").setValue(data.tel02);
+                        Ext.getCmp("editQQ02").setValue(data.qq02);
+                        Ext.getCmp("editAddressReceipt").setValue(data.addressReceipt);
+                        Ext.getCmp("editInitReceivables").setValue(data.initReceivables);
+                        Ext.getCmp("editInitReceivablesDT").setValue(data.initReceivablesDT);
+                    }
+
+                    el.unmask();
+                }
+            });
         } else {
-            var grid = this.getParentForm().categoryGrid;
+        	// 新建客户资料
+            var grid = me.getParentForm().categoryGrid;
             var item = grid.getSelectionModel().getSelection();
             if (item == null || item.length != 1) {
                 return;
@@ -303,6 +337,7 @@ Ext.define("PSI.Customer.CustomerEditForm", {
         editCode.focus();
         editCode.setValue(editCode.getValue());
     },
+    
     onWndClose: function () {
         var me = this;
         if (me.__lastId) {

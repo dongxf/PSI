@@ -135,4 +135,14 @@ class CustomerController extends Controller {
 			$this->ajaxReturn($cs->queryData($params));
 		}
 	}
+	
+	public function customerInfo() {
+		if (IS_POST) {
+			$params = array(
+					"id" => I("post.id")
+			);
+			$cs = new CustomerService();
+			$this->ajaxReturn($cs->customerInfo($params));
+		}
+	}
 }
