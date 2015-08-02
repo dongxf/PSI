@@ -60,7 +60,7 @@ class SupplierService extends PSIBaseService {
 			$queryParam[] = "%{$qq}%";
 			$queryParam[] = "%{$qq}";
 		}
-		$sql .=	" group by c.id
+		$sql .= " group by c.id
 				order by c.code";
 		
 		return M()->query($sql, $queryParam);
@@ -84,8 +84,8 @@ class SupplierService extends PSIBaseService {
 				contact02, qq02, tel02, mobile02, init_payables, init_payables_dt, 
 				address, address_shipping 
 				from t_supplier 
-				where (category_id = '%s')"; 
-			$queryParam = array();
+				where (category_id = '%s')";
+		$queryParam = array();
 		$queryParam[] = $categoryId;
 		if ($code) {
 			$sql .= " and (code like '%s' ) ";
@@ -150,7 +150,7 @@ class SupplierService extends PSIBaseService {
 		}
 		
 		$sql = "select count(*) as cnt from t_supplier where (category_id  = '%s') ";
-			$queryParam = array();
+		$queryParam = array();
 		$queryParam[] = $categoryId;
 		if ($code) {
 			$sql .= " and (code like '%s' ) ";
@@ -469,5 +469,41 @@ class SupplierService extends PSIBaseService {
 				limit 20";
 		$key = "%{$queryKey}%";
 		return M()->query($sql, $key, $key, $key);
+	}
+
+	public function supplierInfo($params) {
+		$id = $params["id"];
+		
+		$result = array();
+		
+		$db = M();
+		$sql = "select category_id, code, name, contact01, qq01, mobile01, tel01,
+					contact02, qq02, mobile02, tel02, address, address_shipping,
+					init_payables, init_payables_dt
+				from t_supplier
+				where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if ($data) {
+			$result["categoryId"] = $data[0]["category_id"];
+			$result["code"] = $data[0]["code"];
+			$result["name"] = $data[0]["name"];
+			$result["contact01"] = $data[0]["contact01"];
+			$result["qq01"] = $data[0]["qq01"];
+			$result["mobile01"] = $data[0]["mobile01"];
+			$result["tel01"] = $data[0]["tel01"];
+			$result["contact02"] = $data[0]["contact02"];
+			$result["qq02"] = $data[0]["qq02"];
+			$result["mobile02"] = $data[0]["mobile02"];
+			$result["tel02"] = $data[0]["tel02"];
+			$result["address"] = $data[0]["address"];
+			$result["addressShipping"] = $data[0]["address_shipping"];
+			$result["initPayables"] = $data[0]["init_payables"];
+			$d = $data[0]["init_payables_dt"]; 
+			if ($d) {
+				$result["initPayablesDT"] = $this->toYMD($d);
+			}
+		}
+		
+		return $result;
 	}
 }

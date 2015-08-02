@@ -132,4 +132,14 @@ class SupplierController extends Controller {
 			$this->ajaxReturn($ss->queryData($queryKey));
 		}
 	}
+	
+	public function supplierInfo() {
+		if (IS_POST) {
+			$params = array(
+					"id" => I("post.id")
+			);
+			$ss = new SupplierService();
+			$this->ajaxReturn($ss->supplierInfo($params));
+		}
+	}
 }
