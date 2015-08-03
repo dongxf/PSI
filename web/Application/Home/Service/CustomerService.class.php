@@ -430,14 +430,6 @@ class CustomerService extends PSIBaseService {
 			return $this->bad("客户资料 [{$code} {$name}] 已经有收款记录，不能删除");
 		}
 		
-		// 判断在销售出库单中是否使用了客户资料
-		$sql = "select count(*) as cnt from t_ws_bill where customer_id = '%s' ";
-		$data = $db->query($sql, $id);
-		$cnt = $data[0]["cnt"];
-		if ($cnt > 0) {
-			return $this->bad("客户资料 [{$code} {$name}]已经在销售出库单中使用了，不能删除");
-		}
-		
 		// 判断在销售退货入库单中是否使用了客户资料
 		$sql = "select count(*) as cnt from t_sr_bill where customer_id = '%s' ";
 		$data = $db->query($sql, $id);
