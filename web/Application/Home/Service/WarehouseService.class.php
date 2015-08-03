@@ -5,6 +5,7 @@ namespace Home\Service;
 use Home\Service\IdGenService;
 use Home\Service\BizlogService;
 use Org\Util\ArrayList;
+use Home\Common\FIdConst;
 
 /**
  * 基础数据仓库Service
@@ -322,6 +323,37 @@ class WarehouseService extends PSIBaseService {
 		return $result;
 	}
 
+	private function getFIdArray() {
+		return array(
+				FIdConst::PURCHASE_WAREHOUSE,
+				FIdConst::WAREHOUSING_SALE,
+				FIdConst::SALE_REJECTION,
+				FIdConst::PURCHASE_REJECTION,
+				FIdConst::INVENTORY_TRANSFER,
+				FIdConst::INVENTORY_CHECK
+		);
+	}
+
+	private function getFIdName($fid) {
+		$result = "";
+		
+		if ($fid == FIdConst::PURCHASE_WAREHOUSE) {
+			$result = "采购入库";
+		} else if ($fid == FIdConst::WAREHOUSING_SALE) {
+			$result = "销售出库";
+		} else if ($fid == FIdConst::SALE_REJECTION) {
+			$result = "销售退货入库";
+		} else if ($fid == FIdConst::PURCHASE_REJECTION) {
+			$result = "采购退货出库";
+		} else if ($fid == FIdConst::INVENTORY_TRANSFER) {
+			$result = "库间调拨";
+		} else if ($fid == FIdConst::INVENTORY_CHECK) {
+			$result = "库存盘点";
+		}
+		
+		return $result;
+	}
+
 	public function addOrg($params) {
 		$warehouseId = $params["warehouseId"];
 		$fid = $params["fid"];
@@ -335,10 +367,8 @@ class WarehouseService extends PSIBaseService {
 		}
 		$warehouseName = $data[0]["name"];
 		
-		$fidArray = array(
-				"2001",
-				"2002"
-		);
+		$fidArray = $this->getFIdArray();
+		
 		if (! in_array($fid, $fidArray)) {
 			return $this->bad("业务类型不存在");
 		}
@@ -373,13 +403,7 @@ class WarehouseService extends PSIBaseService {
 				values ('%s', '%s', '%s', '%s')";
 		$db->execute($sql, $warehouseId, $fid, $orgId, $orgType);
 		
-		$bizName = "";
-		if ($fid == "2001") {
-			$bizName = "采购入库";
-		} else if ($fid == "2002") {
-			$bizName = "销售出库";
-		}
-		
+		$bizName = $this->getFIdName($fid);
 		$log = "";
 		if ($orgType == "0") {
 			$log = "为仓库[{$warehouseName}]的业务类型[{$bizName}]添加组织机构[{$orgName}]";
@@ -406,10 +430,8 @@ class WarehouseService extends PSIBaseService {
 		}
 		$warehouseName = $data[0]["name"];
 		
-		$fidArray = array(
-				"2001",
-				"2002"
-		);
+		$fidArray = $this->getFIdArray();
+		
 		if (! in_array($fid, $fidArray)) {
 			return $this->bad("业务类型不存在");
 		}
@@ -436,13 +458,7 @@ class WarehouseService extends PSIBaseService {
 				where warehouse_id = '%s' and bill_fid = '%s' and org_id = '%s' ";
 		$db->execute($sql, $warehouseId, $fid, $orgId);
 		
-		$bizName = "";
-		if ($fid == "2001") {
-			$bizName = "采购入库";
-		} else if ($fid == "2002") {
-			$bizName = "销售出库";
-		}
-		
+		$bizName = $this->getFIdName($fid);
 		$log = "";
 		if ($orgType == "0") {
 			$log = "为仓库[{$warehouseName}]的业务类型[{$bizName}]移除组织机构[{$orgName}]";
@@ -507,8 +523,12 @@ class WarehouseService extends PSIBaseService {
 		}
 		
 		$billFidArray = array(
-				"2001" => "采购入库",
-				"2002" => "销售出库"
+				FIdConst::PURCHASE_WAREHOUSE => "采购入库",
+				FIdConst::WAREHOUSING_SALE => "销售出库",
+				FIdConst::SALE_REJECTION => "销售退货入库",
+				FIdConst::PURCHASE_REJECTION => "采购退货出库",
+				FIdConst::INVENTORY_TRANSFER => "库间盘点",
+				FIdConst::INVENTORY_CHECK => "库存盘点"
 		);
 		
 		$result["text"] = "root";

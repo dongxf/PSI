@@ -103,7 +103,7 @@ Ext.define("PSI.Warehouse.MainFormWithOrg", {
 				layout : "border",
 				items : [ {
 					region : "north",
-					height : 130,
+					height : 200,
 					split : true,
 					layout : "fit",
 					items : [ me.getBillGrid() ]
@@ -347,9 +347,27 @@ Ext.define("PSI.Warehouse.MainFormWithOrg", {
 			name : "采购入库"
 		});
 		store.add({
+			fid : "2007",
+			name : "采购退货出库"
+		});
+		store.add({
 			fid : "2002",
 			name : "销售出库"
 		});
+		store.add({
+			fid : "2006",
+			name : "销售退货入库"
+		});
+		store.add({
+			fid : "2009",
+			name : "库间调拨"
+		});
+		store.add({
+			fid : "2010",
+			name : "库存盘点"
+		});
+
+
 		me.getBillGrid().getSelectionModel().select(0);
 	},
 	onBillGridSelect : function() {
