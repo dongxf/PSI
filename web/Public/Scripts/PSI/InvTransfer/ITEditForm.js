@@ -15,6 +15,7 @@ Ext.define("PSI.InvTransfer.ITEditForm", {
         Ext.apply(me, {title: entity == null ? "新建调拨单" : "编辑调拨单",
             modal: true,
             onEsc: Ext.emptyFn,
+            maximized: true,
             width: 1000,
             height: 600,
             layout: "border",

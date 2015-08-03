@@ -15,6 +15,7 @@ Ext.define("PSI.InvCheck.ICEditForm", {
         Ext.apply(me, {title: entity == null ? "新建盘点单" : "编辑盘点单",
             modal: true,
             onEsc: Ext.emptyFn,
+            maximized: true,
             width: 1000,
             height: 600,
             layout: "border",

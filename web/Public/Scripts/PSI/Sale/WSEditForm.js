@@ -1,3 +1,4 @@
+// 销售出库 - 新建或编辑界面
 Ext.define("PSI.Sale.WSEditForm", {
     extend: "Ext.window.Window",
     config: {
@@ -12,6 +13,7 @@ Ext.define("PSI.Sale.WSEditForm", {
         Ext.apply(me, {title: entity == null ? "新建销售出库单" : "编辑销售出库单",
             modal: true,
             onEsc: Ext.emptyFn,
+            maximized: true,
             width: 1000,
             height: 600,
             layout: "border",

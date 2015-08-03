@@ -15,6 +15,7 @@ Ext.define("PSI.Sale.SREditForm", {
         Ext.apply(me, {title: entity == null ? "新建销售退货入库单" : "编辑销售退货入库单",
             modal: true,
             onEsc: Ext.emptyFn,
+            maximized: true,
             width: 900,
             height: 600,
             layout: "border",

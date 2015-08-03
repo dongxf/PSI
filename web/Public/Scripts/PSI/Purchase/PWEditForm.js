@@ -14,10 +14,30 @@ Ext.define("PSI.Purchase.PWEditForm", {
 			title : entity == null ? "新建采购入库单" : "编辑采购入库单",
 			modal : true,
 			onEsc : Ext.emptyFn,
+			maximized: true,
 			width : 1000,
 			height : 600,
 			layout : "border",
 			defaultFocus : "editSupplier",
+			tbar:["-",{
+                text: "保存",
+                iconCls: "PSI-button-ok",
+                handler: me.onOK,
+                scope: me
+			},  "-", {
+				text : "帮助",
+				iconCls : "PSI-help",
+				handler : function() {
+					window.open("http://my.oschina.net/u/134395/blog/379622");
+				}
+			}, "-", {
+				text : "取消",
+				iconCls: "PSI-button-cancel",
+				handler : function() {
+					me.close();
+				},
+				scope : me
+			}],
 			items : [ {
 				region : "center",
 				layout : "fit",
@@ -139,26 +159,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 					fn : me.onWndShow,
 					scope : me
 				}
-			},
-			buttons : [ {
-				text : "保存",
-				iconCls : "PSI-button-ok",
-				formBind : true,
-				handler : me.onOK,
-				scope : me
-			}, {
-				text : "取消",
-				handler : function() {
-					me.close();
-				},
-				scope : me
-			}, {
-				text : "帮助",
-				iconCls : "PSI-help",
-				handler : function() {
-					window.open("http://my.oschina.net/u/134395/blog/379622");
-				}
-			} ]
+			}
 		});
 
 		me.callParent(arguments);
