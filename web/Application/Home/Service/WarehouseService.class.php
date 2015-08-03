@@ -14,7 +14,7 @@ use Org\Util\ArrayList;
 class WarehouseService extends PSIBaseService {
 
 	/**
-	 * 所以仓库的列表信息
+	 * 所有仓库的列表信息
 	 */
 	public function warehouseList() {
 		return M()->query("select id, code, name, inited from t_warehouse order by code");
