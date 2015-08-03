@@ -23,7 +23,22 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
                 handler: me.onSelectPWBill,
                 scope: me,
                 disabled: me.entity != null
-			}, "-"],
+			}, "-",{
+				text : "保存",
+				iconCls : "PSI-button-ok",
+				formBind : true,
+				handler : me.onOK,
+				scope : me
+			}, "-", {
+				text : "取消",
+				iconCls: "PSI-button-cancel",
+				handler : function() {
+					PSI.MsgBox.confirm("请确认是否取消当前操作?", function() {
+						me.close();
+					});
+				},
+				scope : me
+			}],
 			layout : "border",
 			defaultFocus : "editWarehouse",
 			items : [ {
@@ -136,20 +151,7 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 					fn : me.onWndShow,
 					scope : me
 				}
-			},
-			buttons : [ {
-				text : "保存",
-				iconCls : "PSI-button-ok",
-				formBind : true,
-				handler : me.onOK,
-				scope : me
-			}, {
-				text : "取消",
-				handler : function() {
-					me.close();
-				},
-				scope : me
-			} ]
+			}
 		});
 
 		me.callParent(arguments);
@@ -174,16 +176,15 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 
 					if (data.ref) {
 						Ext.getCmp("editRef").setValue(data.ref);
+						Ext.getCmp("editSupplierId").setValue(data.supplierId);
+						Ext.getCmp("editSupplier").setValue(data.supplierName + " 采购入库单单号：" + data.pwbillRef);
+
+						Ext.getCmp("editWarehouseId").setValue(data.warehouseId);
+						Ext.getCmp("editWarehouse").setValue(data.warehouseName);
 					} else {
 						// 新建采购退货出库单，第一步就是选择采购入库单
 						me.onSelectPWBill();
 					}
-
-					Ext.getCmp("editSupplierId").setValue(data.supplierId);
-					Ext.getCmp("editSupplier").setValue(data.supplierName + " 采购入库单单号：" + data.pwbillRef);
-
-					Ext.getCmp("editWarehouseId").setValue(data.warehouseId);
-					Ext.getCmp("editWarehouse").setValue(data.warehouseName);
 
 					Ext.getCmp("editBizUserId").setValue(data.bizUserId);
 					Ext.getCmp("editBizUser").setValue(data.bizUserName);

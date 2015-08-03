@@ -18,6 +18,20 @@ Ext.define("PSI.Sale.WSEditForm", {
             height: 600,
             layout: "border",
             defaultFocus: "editCustomer",
+            tbar: ["-", {
+                text: "保存",
+                iconCls: "PSI-button-ok",
+                handler: me.onOK,
+                scope: me
+            },"-", {
+                text: "取消", 
+                iconCls: "PSI-button-cancel",
+                handler: function () {
+                	PSI.MsgBox.confirm("请确认是否取消当前操作？", function(){
+                		me.close();
+                	});
+                }, scope: me
+            }],
             items: [{
                     region: "center",
                     border: 0,
@@ -149,18 +163,7 @@ Ext.define("PSI.Sale.WSEditForm", {
                     fn: me.onWndShow,
                     scope: me
                 }
-            },
-            buttons: [{
-                    text: "保存",
-                    iconCls: "PSI-button-ok",
-                    formBind: true,
-                    handler: me.onOK,
-                    scope: me
-                }, {
-                    text: "取消", handler: function () {
-                        me.close();
-                    }, scope: me
-                }]
+            }
         });
 
         me.callParent(arguments);

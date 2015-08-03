@@ -34,7 +34,9 @@ Ext.define("PSI.Purchase.PWEditForm", {
 				text : "取消",
 				iconCls: "PSI-button-cancel",
 				handler : function() {
-					me.close();
+					PSI.MsgBox.confirm("请确认是否取消当前操作？", function(){
+						me.close();
+					});
 				},
 				scope : me
 			}],

@@ -25,7 +25,20 @@ Ext.define("PSI.Sale.SREditForm", {
                     handler: me.onSelectWSBill,
                     scope: me,
                     disabled: me.entity != null
-            }, "-"],
+            }, "-", {
+                text: "保存",
+                iconCls: "PSI-button-ok",
+                handler: me.onOK,
+                scope: me
+            }, "-", {
+                text: "取消", 
+                iconCls: "PSI-button-cancel",
+                handler: function () {
+                	PSI.MsgBox.confirm("请确认是否取消当前操作？", function() {
+                		me.close();
+                	});
+                }, scope: me
+            }],
             defaultFocus: "editWarehouse",
             items: [{
                     region: "center",
@@ -148,18 +161,7 @@ Ext.define("PSI.Sale.SREditForm", {
                     fn: me.onWndShow,
                     scope: me
                 }
-            },
-            buttons: [{
-                    text: "保存",
-                    iconCls: "PSI-button-ok",
-                    formBind: true,
-                    handler: me.onOK,
-                    scope: me
-                }, {
-                    text: "取消", handler: function () {
-                        me.close();
-                    }, scope: me
-                }]
+            }
         });
 
         me.callParent(arguments);
@@ -317,13 +319,13 @@ Ext.define("PSI.Sale.SREditForm", {
                 Ext.create("Ext.grid.RowNumberer", {text: "序号", width: 30}),
                 {header: "商品编码", dataIndex: "goodsCode", menuDisabled: true,
                     sortable: false},
-                {header: "商品名称", dataIndex: "goodsName", menuDisabled: true, sortable: false, width: 120},
-                {header: "规格型号", dataIndex: "goodsSpec", menuDisabled: true, sortable: false},
+                {header: "商品名称", dataIndex: "goodsName", menuDisabled: true, sortable: false, width: 200},
+                {header: "规格型号", dataIndex: "goodsSpec", menuDisabled: true, sortable: false, width: 200},
                 {header: "销售数量", dataIndex: "goodsCount", menuDisabled: true,
-                    sortable: false, align: "right"
+                    sortable: false, align: "right", width: 100
                 },
                 {header: "退货数量", dataIndex: "rejCount", menuDisabled: true,
-                    sortable: false, align: "right",
+                    sortable: false, align: "right", width: 100,
                     editor: {xtype: "numberfield",
                         allowDecimals: false,
                         hideTrigger: true}
@@ -331,12 +333,12 @@ Ext.define("PSI.Sale.SREditForm", {
                 {header: "单位", dataIndex: "unitName", menuDisabled: true, sortable: false, width: 60},
                 {header: "销售单价", dataIndex: "goodsPrice", menuDisabled: true,
                     sortable: false, align: "right", xtype: "numbercolumn",
-                    width: 60},
+                    width: 100},
                 {header: "退货单价", dataIndex: "rejPrice", menuDisabled: true,
                     sortable: false, align: "right", xtype: "numbercolumn",
-                    width: 60},
+                    width: 100},
                 {header: "退货金额", dataIndex: "rejMoney", menuDisabled: true,
-                    sortable: false, align: "right", xtype: "numbercolumn", width: 80}
+                    sortable: false, align: "right", xtype: "numbercolumn", width: 120}
             ],
             store: store,
             listeners: {
