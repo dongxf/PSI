@@ -487,13 +487,17 @@ class UserService extends PSIBaseService {
 		return $this->ok($id);
 	}
 
+	/**
+	 * 删除用户
+	 */
 	public function deleteUser($params) {
 		$id = $params["id"];
 		
 		if ($id == "6C2A09CD-A129-11E4-9B6A-782BCBD7746B") {
 			return $this->bad("不能删除系统管理员用户");
 		}
-		// TODO:　检查用户是否存在，以及是否能删除
+		
+		// 检查用户是否存在，以及是否能删除
 		$db = M();
 		$sql = "select name from t_user where id = '%s' ";
 		$data = $db->query($sql, $id);
@@ -524,6 +528,46 @@ class UserService extends PSIBaseService {
 		$cnt = $data[0]["cnt"];
 		if ($cnt > 0) {
 			return $this->bad("用户[{$userName}]已经在销售退货入库单中使用了，不能删除");
+		}
+		
+		// 判断在采购退货出库单中是否使用了该用户
+		$sql = "select count(*) as cnt from t_pr_bill where biz_user_id = '%s' or input_user_id = '%s' ";
+		$data = $db->query($sql, $id, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("用户[{$userName}]已经在采购退货出库单中使用了，不能删除");
+		}
+		
+		// 判断在调拨单中是否使用了该用户
+		$sql = "select count(*) as cnt from t_it_bill where biz_user_id = '%s' or input_user_id = '%s' ";
+		$data = $db->query($sql, $id, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("用户[{$userName}]已经在调拨单中使用了，不能删除");
+		}
+		
+		// 判断在盘点单中是否使用了该用户
+		$sql = "select count(*) as cnt from t_ic_bill where biz_user_id = '%s' or input_user_id = '%s' ";
+		$data = $db->query($sql, $id, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("用户[{$userName}]已经在盘点单中使用了，不能删除");
+		}
+		
+		// 判断在收款记录中是否使用了该用户
+		$sql = "select count(*) as cnt from t_receiving where rv_user_id = '%s' or input_user_id = '%s' ";
+		$data = $db->query($sql, $id, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("用户[{$userName}]已经在收款记录中使用了，不能删除");
+		}
+		
+		// 判断在付款记录中是否使用了该用户
+		$sql = "select count(*) as cnt from t_payment where pay_user_id = '%s' or input_user_id = '%s' ";
+		$data = $db->query($sql, $id, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("用户[{$userName}]已经在盘点单中使用了，不能删除");
 		}
 		
 		// TODO 如果增加了其他单据，同样需要做出判断是否使用了该用户
