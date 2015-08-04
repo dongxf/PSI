@@ -285,8 +285,7 @@ Ext.define("PSI.Sale.SREditForm", {
             data: []
         });
 
-        me.__cellEditing = Ext.create("Ext.grid.plugin.CellEditing", {
-            clicksToEdit: 1,
+        me.__cellEditing = Ext.create("PSI.UX.CellEditing", {
             listeners: {
                 edit: {
                     fn: me.cellEditingAfterEdit,
@@ -294,24 +293,7 @@ Ext.define("PSI.Sale.SREditForm", {
                 }
             }
         });
-        Ext.apply(me.__cellEditing, {
-            onSpecialKey: function (ed, field, e) {
-                var sm;
 
-                if (e.getKey() === e.TAB || e.getKey() == e.ENTER) {
-                    e.stopEvent();
-
-                    if (ed) {
-                        ed.onEditorTab(e);
-                    }
-
-                    sm = ed.up('tablepanel').getSelectionModel();
-                    if (sm.onEditorTab) {
-                        return sm.onEditorTab(ed.editingPlugin, e);
-                    }
-                }
-            }
-        });
         me.__goodsGrid = Ext.create("Ext.grid.Panel", {
             plugins: [me.__cellEditing],
             columnLines: true,
@@ -336,13 +318,15 @@ Ext.define("PSI.Sale.SREditForm", {
                     width: 100},
                 {header: "退货单价", dataIndex: "rejPrice", menuDisabled: true,
                     sortable: false, align: "right", xtype: "numbercolumn",
-                    width: 100},
+                    width: 100, 
+                    editor: {xtype: "numberfield",
+                        allowDecimals: false,
+                        hideTrigger: true}
+                },
                 {header: "退货金额", dataIndex: "rejMoney", menuDisabled: true,
                     sortable: false, align: "right", xtype: "numbercolumn", width: 120}
             ],
-            store: store,
-            listeners: {
-            }
+            store: store
         });
 
         return me.__goodsGrid;
