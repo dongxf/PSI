@@ -303,6 +303,7 @@ Ext.define("PSI.Sale.WSEditForm", {
         });
 
         me.__cellEditing = Ext.create("PSI.UX.CellEditing", {
+        	clicksToEdit: 1,
             listeners: {
                 edit: {
                     fn: me.cellEditingAfterEdit,

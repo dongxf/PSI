@@ -17,12 +17,5 @@ Ext.define("PSI.UX.CellEditing", {
                 return sm.onEditorTab(ed.editingPlugin, e);
             }
         }
-    },
-    
-    initComponent: function () {
-    	var me = this;
-    	me.clicksToEdit = 1;
-    	
-    	me.callParent(arguments);
     }
 });
