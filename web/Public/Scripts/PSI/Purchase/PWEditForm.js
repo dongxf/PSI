@@ -293,7 +293,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 			data : []
 		});
 
-		me.__cellEditing = Ext.create("Ext.grid.plugin.CellEditing", {
+		me.__cellEditing = Ext.create("PSI.UX.CellEditing", {
 			clicksToEdit : 1,
 			listeners : {
 				edit : {
@@ -302,24 +302,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 				}
 			}
 		});
-		Ext.apply(me.__cellEditing, {
-			onSpecialKey : function(ed, field, e) {
-				var sm;
 
-				if (e.getKey() === e.TAB || e.getKey() == e.ENTER) {
-					e.stopEvent();
-
-					if (ed) {
-						ed.onEditorTab(e);
-					}
-
-					sm = ed.up('tablepanel').getSelectionModel();
-					if (sm.onEditorTab) {
-						return sm.onEditorTab(ed.editingPlugin, e);
-					}
-				}
-			}
-		});
 		me.__goodsGrid = Ext.create("Ext.grid.Panel", {
 			plugins : [ me.__cellEditing ],
 			columnLines : true,
