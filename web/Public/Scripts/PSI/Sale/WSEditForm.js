@@ -362,6 +362,9 @@ Ext.define("PSI.Sale.WSEditForm", {
                             handler: function (grid, row) {
                                 var store = grid.getStore();
                                 store.remove(store.getAt(row));
+                                if (store.getCount() == 0) {
+									store.add({});
+								}
                             }, scope: me
                         }
                     ]

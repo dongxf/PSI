@@ -406,6 +406,9 @@ Ext.define("PSI.Purchase.PWEditForm", {
 							handler : function(grid, row) {
 								var store = grid.getStore();
 								store.remove(store.getAt(row));
+								if (store.getCount() == 0) {
+									store.add({});
+								}
 							},
 							scope : me
 						} ]
