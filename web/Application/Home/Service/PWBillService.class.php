@@ -249,7 +249,7 @@ class PWBillService extends PSIBaseService {
 		$result["id"] = $id;
 		
 		$db = M();
-		$sql = "select p.ref, p.supplier_id, s.name as supplier_name, 
+		$sql = "select p.ref, p.bill_status, p.supplier_id, s.name as supplier_name, 
 				p.warehouse_id, w.name as  warehouse_name, 
 				p.biz_user_id, u.name as biz_user_name, p.biz_dt 
 				from t_pw_bill p, t_supplier s, t_warehouse w, t_user u 
@@ -259,6 +259,7 @@ class PWBillService extends PSIBaseService {
 		if ($data) {
 			$v = $data[0];
 			$result["ref"] = $v["ref"];
+			$result["billStatus"] = $v["bill_status"];
 			$result["supplierId"] = $v["supplier_id"];
 			$result["supplierName"] = $v["supplier_name"];
 			$result["warehouseId"] = $v["warehouse_id"];

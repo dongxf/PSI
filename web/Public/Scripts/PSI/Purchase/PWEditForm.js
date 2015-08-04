@@ -7,6 +7,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 	},
 	initComponent : function() {
 		var me = this;
+		me.__readOnly = false;
 		var entity = me.getEntity();
 		this.adding = entity == null;
 
@@ -21,6 +22,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 			defaultFocus : "editSupplier",
 			tbar:["-",{
                 text: "保存",
+                id: "buttonSave",
                 iconCls: "PSI-button-ok",
                 handler: me.onOK,
                 scope: me
@@ -32,8 +34,14 @@ Ext.define("PSI.Purchase.PWEditForm", {
 				}
 			}, "-", {
 				text : "取消",
+				id: "buttonCancel",
 				iconCls: "PSI-button-cancel",
 				handler : function() {
+					if (me.__readonly) {
+						me.close();
+						return;
+					}
+					
 					PSI.MsgBox.confirm("请确认是否取消当前操作？", function(){
 						me.close();
 					});
@@ -207,6 +215,10 @@ Ext.define("PSI.Purchase.PWEditForm", {
 					if (store.getCount() == 0) {
 						store.add({});
 					}
+					
+					if (data.billStatus && data.billStatus !=0) {
+						me.setBillReadonly();
+					}
 				}
 			}
 		});
@@ -255,6 +267,10 @@ Ext.define("PSI.Purchase.PWEditForm", {
 		}
 	},
 	onEditBizUserSpecialKey : function(field, e) {
+		if (this.__readonly) {
+			return;
+		}
+		
 		if (e.getKey() == e.ENTER) {
 			var me = this;
 			var store = me.getGoodsGrid().getStore();
@@ -304,6 +320,9 @@ Ext.define("PSI.Purchase.PWEditForm", {
 		});
 
 		me.__goodsGrid = Ext.create("Ext.grid.Panel", {
+			viewConfig: {
+                enableTextSelection: true
+            },
 			plugins : [ me.__cellEditing ],
 			columnLines : true,
 			columns : [
@@ -379,6 +398,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 					},
 					{
 						header : "",
+						id: "columnActionDelete",
 						align : "center",
 						menuDisabled : true,
 						width : 50,
@@ -397,7 +417,11 @@ Ext.define("PSI.Purchase.PWEditForm", {
 						} ]
 					} ],
 			store : store,
-			listeners : {}
+			listeners : {
+				cellclick: function() {
+					return !me.__readonly;
+				}
+			}
 		});
 
 		return me.__goodsGrid;
@@ -418,6 +442,11 @@ Ext.define("PSI.Purchase.PWEditForm", {
 	},
 	cellEditingAfterEdit : function(editor, e) {
 		var me = this;
+		
+		if (me.__readonly) {
+			return;
+		}
+		
 		if (e.colIdx == 6) {
 			me.calcMoney();
 
@@ -465,5 +494,19 @@ Ext.define("PSI.Purchase.PWEditForm", {
 		}
 
 		return Ext.JSON.encode(result);
+	},
+	
+	setBillReadonly: function() {
+		var me = this;
+		me.__readonly = true;
+		me.setTitle("查看采购入库单");
+		Ext.getCmp("buttonSave").setDisabled(true);
+		Ext.getCmp("buttonCancel").setText("关闭");
+		Ext.getCmp("editBizDT").setReadOnly(true);
+		Ext.getCmp("editSupplier").setReadOnly(true);
+		Ext.getCmp("editWarehouse").setReadOnly(true);
+		Ext.getCmp("editBizUser").setReadOnly(true);
+		me.__cellEditing.editors.clear();
+		Ext.getCmp("columnActionDelete").hide();
 	}
 });
