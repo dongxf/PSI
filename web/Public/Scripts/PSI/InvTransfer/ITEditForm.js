@@ -273,6 +273,10 @@ Ext.define("PSI.InvTransfer.ITEditForm", {
         }
     },
     onEditBizUserSpecialKey: function (field, e) {
+    	if (this.__readonly) {
+    		return;
+    	}
+    	
         if (e.getKey() == e.ENTER) {
             var me = this;
             var store = me.getGoodsGrid().getStore();
