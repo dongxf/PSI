@@ -39,7 +39,7 @@ class PRBillService extends PSIBaseService {
 		if ($id) {
 			// 编辑
 			$db = M();
-			$sql = "select p.ref, p.warehouse_id, w.name as warehouse_name,
+			$sql = "select p.ref, p.bill_status, p.warehouse_id, w.name as warehouse_name,
 						p.biz_user_id, u.name as biz_user_name, pw.ref as pwbill_ref,
 						s.name as supplier_name, s.id as supplier_id,
 						p.pw_bill_id as pwbill_id, p.bizdt
@@ -55,6 +55,7 @@ class PRBillService extends PSIBaseService {
 			}
 			
 			$result["ref"] = $data[0]["ref"];
+			$result["billStatus"] = $data[0]["bill_status"];
 			$result["bizUserId"] = $data[0]["biz_user_id"];
 			$result["bizUserName"] = $data[0]["biz_user_name"];
 			$result["warehouseId"] = $data[0]["warehouse_id"];

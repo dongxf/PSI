@@ -7,6 +7,7 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 	},
 	initComponent : function() {
 		var me = this;
+		me.__readonly = false;
 		var entity = me.getEntity();
 		this.adding = entity == null;
 
@@ -26,18 +27,23 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 			}, "-",{
 				text : "保存",
 				iconCls : "PSI-button-ok",
-				formBind : true,
 				handler : me.onOK,
-				scope : me
+				scope : me,
+				id: "buttonSave"
 			}, "-", {
 				text : "取消",
 				iconCls: "PSI-button-cancel",
 				handler : function() {
+					if (me.__readonly) {
+						me.close();
+						return;
+					}
 					PSI.MsgBox.confirm("请确认是否取消当前操作?", function() {
 						me.close();
 					});
 				},
-				scope : me
+				scope : me,
+				id: "buttonCancel"
 			}],
 			layout : "border",
 			defaultFocus : "editWarehouse",
@@ -197,6 +203,10 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 					store.removeAll();
 					if (data.items) {
 						store.add(data.items);
+					}
+					
+					if (data.billStatus && data.billStatus !=0) {
+						me.setBillReadonly();
 					}
 				}
 			}
@@ -385,7 +395,11 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 						width : 120
 					}],
 			store : store,
-			listeners : {}
+			listeners : {
+				cellclick: function() {
+					return !me.__readonly;
+				}
+			}
 		});
 
 		return me.__goodsGrid;
@@ -476,5 +490,16 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
                 el.unmask();
             }
         });
+	},
+	
+	setBillReadonly: function() {
+		var me = this;
+		me.__readonly = true;
+		me.setTitle("查看采购退货出库单");
+		Ext.getCmp("buttonSave").setDisabled(true);
+		Ext.getCmp("buttonCancel").setText("关闭");
+		Ext.getCmp("editWarehouse").setReadOnly(true);
+		Ext.getCmp("editBizUser").setReadOnly(true);
+		Ext.getCmp("editBizDT").setReadOnly(true);
 	}
 });

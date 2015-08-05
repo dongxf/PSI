@@ -506,7 +506,6 @@ Ext.define("PSI.Purchase.PWEditForm", {
 		Ext.getCmp("editSupplier").setReadOnly(true);
 		Ext.getCmp("editWarehouse").setReadOnly(true);
 		Ext.getCmp("editBizUser").setReadOnly(true);
-		me.__cellEditing.editors.clear();
 		Ext.getCmp("columnActionDelete").hide();
 	}
 });
