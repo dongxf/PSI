@@ -301,6 +301,9 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 		});
 
 		me.__goodsGrid = Ext.create("Ext.grid.Panel", {
+			viewConfig: {
+                enableTextSelection: true
+            },
 			plugins : [ me.__cellEditing ],
 			columnLines : true,
 			columns : [
