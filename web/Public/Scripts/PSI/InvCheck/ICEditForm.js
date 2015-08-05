@@ -9,6 +9,7 @@ Ext.define("PSI.InvCheck.ICEditForm", {
     
     initComponent: function () {
         var me = this;
+        me.__readonly = false;
         var entity = me.getEntity();
         me.adding = entity == null;
 
@@ -24,15 +25,22 @@ Ext.define("PSI.InvCheck.ICEditForm", {
                 text: "保存",
                 iconCls: "PSI-button-ok",
                 handler: me.onOK,
-                scope: me
+                scope: me,
+                id: "buttonSave"
             }, "-", {
                 text: "取消", 
                 iconCls: "PSI-button-cancel",
                 handler: function () {
+                	if (me.__readonly) {
+                		me.close();
+                		return;
+                	}
+                	
                 	PSI.MsgBox.confirm("请确认是否取消当前操作？", function(){
                 		me.close();
                 	});
-                }, scope: me
+                }, scope: me,
+                id: "buttonCancel"
             }],
             items: [{
                     region: "center",
@@ -140,8 +148,7 @@ Ext.define("PSI.InvCheck.ICEditForm", {
                     fn: me.onWndShow,
                     scope: me
                 }
-            },
-            buttons: []
+            }
         });
 
         me.callParent(arguments);
@@ -187,6 +194,9 @@ Ext.define("PSI.InvCheck.ICEditForm", {
                         store.add({});
                     }
 
+                    if (data.billStatus && data.billStatus != 0) {
+                    	me.setBillReadonly();
+                    }
                 } else {
                     PSI.MsgBox.showInfo("网络错误")
                 }
@@ -232,6 +242,10 @@ Ext.define("PSI.InvCheck.ICEditForm", {
     },
 
     onEditBizUserSpecialKey: function (field, e) {
+    	if (this.__readonly) {
+    		return;
+    	}
+    	
         if (e.getKey() == e.ENTER) {
             var me = this;
             var store = me.getGoodsGrid().getStore();
@@ -308,6 +322,7 @@ Ext.define("PSI.InvCheck.ICEditForm", {
                     menuDisabled: true,
                     width: 50,
                     xtype: "actioncolumn",
+                    id: "columnActionDelete",
                     items: [
                         {
                             icon: PSI.Const.BASE_URL + "Public/Images/icons/delete.png",
@@ -324,6 +339,9 @@ Ext.define("PSI.InvCheck.ICEditForm", {
             ],
             store: store,
             listeners: {
+            	cellclick: function() {
+					return !me.__readonly;
+				}
             }
         });
 
@@ -385,6 +403,17 @@ Ext.define("PSI.InvCheck.ICEditForm", {
         }
 
         return Ext.JSON.encode(result);
-    }
+    },
 
+    setBillReadonly: function() {
+    	var me = this;
+    	me.__readonly = true;
+    	me.setTitle("查看盘点单");
+    	Ext.getCmp("buttonSave").setDisabled(true);
+    	Ext.getCmp("buttonCancel").setText("关闭");
+    	Ext.getCmp("editBizDT").setReadOnly(true);
+    	Ext.getCmp("editWarehouse").setReadOnly(true);
+    	Ext.getCmp("editBizUser").setReadOnly(true);
+    	Ext.getCmp("columnActionDelete").hide();
+    }
 });

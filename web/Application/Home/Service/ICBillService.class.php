@@ -39,7 +39,7 @@ class ICBillService extends PSIBaseService {
 		if ($id) {
 			// 编辑
 			$db = M();
-			$sql = "select t.ref, t.bizdt, t.biz_user_id, u.name as biz_user_name,
+			$sql = "select t.ref, t.bill_status, t.bizdt, t.biz_user_id, u.name as biz_user_name,
 						w.id as warehouse_id, w.name as warehouse_name
 					from t_ic_bill t, t_user u, t_warehouse w
 					where t.id = '%s' and t.biz_user_id = u.id
@@ -52,6 +52,7 @@ class ICBillService extends PSIBaseService {
 			$result["bizUserId"] = $data[0]["biz_user_id"];
 			$result["bizUserName"] = $data[0]["biz_user_name"];
 			$result["ref"] = $data[0]["ref"];
+			$result["billStatus"] = $data[0]["bill_status"];
 			$result["bizDT"] = date("Y-m-d", strtotime($data[0]["bizdt"]));
 			$result["warehouseId"] = $data[0]["warehouse_id"];
 			$result["warehouseName"] = $data[0]["warehouse_name"];
