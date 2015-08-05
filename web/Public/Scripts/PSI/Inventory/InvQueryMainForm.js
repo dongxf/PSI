@@ -183,8 +183,34 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 			return me.__inventoryGrid;
 		}
 
+		var store = Ext.create("Ext.data.Store", {
+			model : "PSIInventory",
+			pageSize: 20,
+			proxy : {
+				type : "ajax",
+				actionMethods : {
+					read : "POST"
+				},
+				url : PSI.Const.BASE_URL + "Home/Inventory/inventoryList",
+				reader : {
+					root : 'dataList',
+					totalProperty : 'totalCount'
+				}
+			},
+			autoLoad : false,
+			data : []
+		});
+
+		store.on("beforeload", function() {
+			store.proxy.extraParams = me.getInventoryGridParam();
+		});
+
 		me.__inventoryGrid = Ext.create("Ext.grid.Panel", {
 			border : 0,
+			bbar : [{
+				xtype : "pagingtoolbar",
+				store : store
+			}],
 			columnLines : true,
 			columns : [ {
 				header : "商品编码",
@@ -274,11 +300,7 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 				menuDisabled : true,
 				sortable : false
 			} ],
-			store : Ext.create("Ext.data.Store", {
-				model : "PSIInventory",
-				autoLoad : false,
-				data : []
-			}),
+			store : store,
 			listeners : {
 				select : {
 					fn : me.onInventoryGridSelect,
@@ -548,30 +570,7 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 		var grid = me.getInventoryGrid();
 		grid.setTitle("仓库 [" + warehouse.get("name") + "] 的总账");
 
-		var el = grid.getEl();
-		el.mask(PSI.Const.LOADING);
-		Ext.Ajax.request({
-			url : PSI.Const.BASE_URL + "Home/Inventory/inventoryList",
-			params : me.getInventoryGridParam(),
-			method : "POST",
-			callback : function(options, success, response) {
-				var store = grid.getStore();
-
-				store.removeAll();
-
-				if (success) {
-					var data = Ext.JSON.decode(response.responseText);
-
-					store.add(data);
-
-					if (store.getCount() > 0) {
-						grid.getSelectionModel().select(0);
-					}
-				}
-
-				el.unmask();
-			}
-		});
+		grid.getStore().loadPage(1);
 	},
 
 	onInventoryGridSelect : function() {

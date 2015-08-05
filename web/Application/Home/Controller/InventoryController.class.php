@@ -61,7 +61,10 @@ class InventoryController extends Controller {
 					"warehouseId" => I("post.warehouseId"),
 					"code" => I("post.code"),
 					"name" => I("post.name"),
-					"spec" => I("post.spec")
+					"spec" => I("post.spec"),
+					"page" => I("post.page"),
+					"start" => I("post.start"),
+					"limit" => I("post.limit")
 			);
 			$is = new InventoryService();
 			$this->ajaxReturn($is->inventoryList($params));
