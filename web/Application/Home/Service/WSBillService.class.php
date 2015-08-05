@@ -44,8 +44,9 @@ class WSBillService extends PSIBaseService {
 			}
 			return $result;
 		} else {
+			// 编辑
 			$db = M();
-			$sql = "select w.id, w.ref, w.bizdt, c.id as customer_id, c.name as customer_name, 
+			$sql = "select w.id, w.ref, w.bill_status, w.bizdt, c.id as customer_id, c.name as customer_name, 
 					  u.id as biz_user_id, u.name as biz_user_name, 
 					  h.id as warehouse_id, h.name as warehouse_name 
 					from t_ws_bill w, t_customer c, t_user u, t_warehouse h 
@@ -55,6 +56,7 @@ class WSBillService extends PSIBaseService {
 			$data = $db->query($sql, $id);
 			if ($data) {
 				$result["ref"] = $data[0]["ref"];
+				$result["billStatus"] = $data[0]["bill_status"];
 				$result["bizDT"] = date("Y-m-d", strtotime($data[0]["bizdt"]));
 				$result["customerId"] = $data[0]["customer_id"];
 				$result["customerName"] = $data[0]["customer_name"];
@@ -263,8 +265,8 @@ class WSBillService extends PSIBaseService {
 				where w.customer_id = c.id and w.biz_user_id = u.id 
 				  and w.input_user_id = user.id and w.warehouse_id = h.id 
 				order by w.ref desc 
-				limit " . $start . ", " . $limit;
-		$data = $db->query($sql);
+				limit %d, %d";
+		$data = $db->query($sql, $start, $limit);
 		$result = array();
 		
 		foreach ( $data as $i => $v ) {
