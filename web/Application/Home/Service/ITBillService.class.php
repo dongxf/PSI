@@ -222,7 +222,7 @@ class ITBillService extends PSIBaseService {
 		if ($id) {
 			// 编辑
 			$db = M();
-			$sql = "select t.ref, t.bizdt, t.biz_user_id, u.name as biz_user_name,
+			$sql = "select t.ref, t.bill_status, t.bizdt, t.biz_user_id, u.name as biz_user_name,
 						wf.id as from_warehouse_id, wf.name as from_warehouse_name,
 						wt.id as to_warehouse_id, wt.name as to_warehouse_name
 					from t_it_bill t, t_user u, t_warehouse wf, t_warehouse wt
@@ -237,6 +237,7 @@ class ITBillService extends PSIBaseService {
 			$result["bizUserId"] = $data[0]["biz_user_id"];
 			$result["bizUserName"] = $data[0]["biz_user_name"];
 			$result["ref"] = $data[0]["ref"];
+			$result["billStatus"] = $data[0]["bill_status"];
 			$result["bizDT"] = date("Y-m-d", strtotime($data[0]["bizdt"]));
 			$result["fromWarehouseId"] = $data[0]["from_warehouse_id"];
 			$result["fromWarehouseName"] = $data[0]["from_warehouse_name"];
