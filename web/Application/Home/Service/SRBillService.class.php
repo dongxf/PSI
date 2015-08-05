@@ -25,8 +25,8 @@ class SRBillService extends PSIBaseService {
 				 where w.customer_id = c.id and w.biz_user_id = u.id 
 				 and w.input_user_id = user.id and w.warehouse_id = h.id 
 				 order by w.ref desc 
-				 limit " . $start . ", " . $limit;
-		$data = $db->query($sql);
+				 limit %d, %d";
+		$data = $db->query($sql, $start, $limit);
 		$result = array();
 		
 		foreach ( $data as $i => $v ) {
@@ -101,7 +101,7 @@ class SRBillService extends PSIBaseService {
 			// 编辑单据
 			$db = M();
 			$result = array();
-			$sql = "select w.id, w.ref, w.bizdt, c.id as customer_id, c.name as customer_name, 
+			$sql = "select w.id, w.ref, w.bill_status, w.bizdt, c.id as customer_id, c.name as customer_name, 
 					 u.id as biz_user_id, u.name as biz_user_name,
 					 h.id as warehouse_id, h.name as warehouse_name, wsBill.ref as ws_bill_ref 
 					 from t_sr_bill w, t_customer c, t_user u, t_warehouse h, t_ws_bill wsBill 
@@ -111,6 +111,7 @@ class SRBillService extends PSIBaseService {
 			$data = $db->query($sql, $id);
 			if ($data) {
 				$result["ref"] = $data[0]["ref"];
+				$result["billStatus"] = $data[0]["bill_status"];
 				$result["bizDT"] = date("Y-m-d", strtotime($data[0]["bizdt"]));
 				$result["customerId"] = $data[0]["customer_id"];
 				$result["customerName"] = $data[0]["customer_name"];

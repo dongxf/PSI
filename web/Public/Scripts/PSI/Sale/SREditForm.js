@@ -9,6 +9,7 @@ Ext.define("PSI.Sale.SREditForm", {
     
     initComponent: function () {
         var me = this;
+        me.__readonly = false;
         var entity = me.getEntity();
         this.adding = entity == null;
 
@@ -29,15 +30,22 @@ Ext.define("PSI.Sale.SREditForm", {
                 text: "保存",
                 iconCls: "PSI-button-ok",
                 handler: me.onOK,
-                scope: me
+                scope: me,
+                id: "buttonSave"
             }, "-", {
                 text: "取消", 
                 iconCls: "PSI-button-cancel",
                 handler: function () {
+                	if (me.__readonly) {
+                		me.close();
+                		return;
+                	}
+                	
                 	PSI.MsgBox.confirm("请确认是否取消当前操作？", function() {
                 		me.close();
                 	});
-                }, scope: me
+                }, scope: me,
+                id: "buttonCancel"
             }],
             defaultFocus: "editWarehouse",
             items: [{
@@ -207,6 +215,10 @@ Ext.define("PSI.Sale.SREditForm", {
                     if (data.items) {
                         store.add(data.items);
                     }
+                    
+                    if (data.billStatus && data.billStatus != 0) {
+                    	me.setBillReadonly();
+                    }
                 } else {
                     PSI.MsgBox.showInfo("网络错误")
                 }
@@ -249,6 +261,10 @@ Ext.define("PSI.Sale.SREditForm", {
         }
     },
     onEditBizUserSpecialKey: function (field, e) {
+    	if (this.__readonly) {
+    		return;
+    	}
+    	
         if (e.getKey() == e.ENTER) {
             var me = this;
             me.getGoodsGrid().focus();
@@ -296,6 +312,9 @@ Ext.define("PSI.Sale.SREditForm", {
         });
 
         me.__goodsGrid = Ext.create("Ext.grid.Panel", {
+        	viewConfig: {
+                enableTextSelection: true
+            },
             plugins: [me.__cellEditing],
             columnLines: true,
             columns: [
@@ -327,7 +346,12 @@ Ext.define("PSI.Sale.SREditForm", {
                 {header: "退货金额", dataIndex: "rejMoney", menuDisabled: true,
                     sortable: false, align: "right", xtype: "numbercolumn", width: 120}
             ],
-            store: store
+            store: store,
+            listeners: {
+            	cellclick: function() {
+					return !me.__readonly;
+				}
+            }
         });
 
         return me.__goodsGrid;
@@ -423,6 +447,16 @@ Ext.define("PSI.Sale.SREditForm", {
                 el.unmask();
             }
         });
-
+    },
+    
+    setBillReadonly: function() {
+		var me = this;
+		me.__readonly = true;
+		me.setTitle("查看销售退货入库单");
+		Ext.getCmp("buttonSave").setDisabled(true);
+		Ext.getCmp("buttonCancel").setText("关闭");
+		Ext.getCmp("editBizDT").setReadOnly(true);
+		Ext.getCmp("editWarehouse").setReadOnly(true);
+		Ext.getCmp("editBizUser").setReadOnly(true);
     }
 });
