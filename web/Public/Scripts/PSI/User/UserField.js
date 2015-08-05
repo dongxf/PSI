@@ -8,11 +8,16 @@ Ext.define("PSI.User.UserField", {
     },
     
     initComponent: function () {
-        this.enableKeyEvents = true;
+    	var me = this;
+    	
+        me.enableKeyEvents = true;
 
-        this.callParent(arguments);
+        me.callParent(arguments);
 
-        this.on("keydown", function (field, e) {
+        me.on("keydown", function (field, e) {
+        	if (me.readOnly) {
+        		return;
+        	}
             if (e.getKey() == e.BACKSPACE) {
                 field.setValue(null);
                 e.preventDefault();
@@ -20,7 +25,7 @@ Ext.define("PSI.User.UserField", {
             }
 
             if (e.getKey() != e.ENTER && !e.isSpecialKey(e.getKey())) {
-                this.onTriggerClick(e);
+                me.onTriggerClick(e);
             }
         });
     },
