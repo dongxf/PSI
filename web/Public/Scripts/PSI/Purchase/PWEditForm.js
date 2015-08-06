@@ -223,7 +223,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 			}
 		});
 	},
-	// private
+	
 	onOK : function() {
 		var me = this;
 		Ext.getBody().mask("正在保存中...");
@@ -241,7 +241,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 					if (data.success) {
 						PSI.MsgBox.showInfo("成功保存数据", function() {
 							me.close();
-							me.getParentForm().refreshPWBillGrid(data.id);
+							me.getParentForm().refreshMainGrid(data.id);
 						});
 					} else {
 						PSI.MsgBox.showInfo(data.msg);
