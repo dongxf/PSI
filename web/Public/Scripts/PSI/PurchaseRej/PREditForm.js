@@ -253,12 +253,8 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 	onEditBizUserSpecialKey : function(field, e) {
 		if (e.getKey() == e.ENTER) {
 			var me = this;
-			var store = me.getGoodsGrid().getStore();
-			if (store.getCount() == 0) {
-				store.add({});
-			}
 			me.getGoodsGrid().focus();
-			me.__cellEditing.startEdit(0, 1);
+			me.__cellEditing.startEdit(0, 4);
 		}
 	},
 
