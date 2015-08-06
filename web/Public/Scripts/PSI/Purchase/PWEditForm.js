@@ -298,14 +298,15 @@ Ext.define("PSI.Purchase.PWEditForm", {
 		if (me.__goodsGrid) {
 			return me.__goodsGrid;
 		}
-		Ext.define("PSIPWBillDetail_EditForm", {
+		var modelName = "PSIPWBillDetail_EditForm";
+		Ext.define(modelName, {
 			extend : "Ext.data.Model",
 			fields : [ "id", "goodsId", "goodsCode", "goodsName", "goodsSpec",
 					"unitName", "goodsCount", "goodsMoney", "goodsPrice" ]
 		});
 		var store = Ext.create("Ext.data.Store", {
 			autoLoad : false,
-			model : "PSIPWBillDetail_EditForm",
+			model : modelName,
 			data : []
 		});
 
@@ -326,10 +327,9 @@ Ext.define("PSI.Purchase.PWEditForm", {
 			plugins : [ me.__cellEditing ],
 			columnLines : true,
 			columns : [
-					Ext.create("Ext.grid.RowNumberer", {
-						text : "序号",
-						width : 30
-					}),
+		           {
+		        	   xtype: "rownumberer"
+		           },
 					{
 						header : "商品编码",
 						dataIndex : "goodsCode",
@@ -415,7 +415,39 @@ Ext.define("PSI.Purchase.PWEditForm", {
 							},
 							scope : me
 						} ]
-					} ],
+					},{
+						header : "",
+						id: "columnActionAdd",
+						align : "center",
+						menuDisabled : true,
+						width : 50,
+						xtype : "actioncolumn",
+						items : [ {
+							icon : PSI.Const.BASE_URL
+									+ "Public/Images/icons/add.png",
+							handler : function(grid, row) {
+								var store = grid.getStore();
+								store.insert(row, [{}]);
+							},
+							scope : me
+						}]
+					}, {
+						header : "",
+						id: "columnActionAppend",
+						align : "center",
+						menuDisabled : true,
+						width : 50,
+						xtype : "actioncolumn",
+						items : [ {
+							icon : PSI.Const.BASE_URL
+									+ "Public/Images/icons/add_detail.png",
+							handler : function(grid, row) {
+								var store = grid.getStore();
+								store.insert(row + 1, [{}]);
+							},
+							scope : me
+						}]
+					}],
 			store : store,
 			listeners : {
 				cellclick: function() {
@@ -507,5 +539,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 		Ext.getCmp("editWarehouse").setReadOnly(true);
 		Ext.getCmp("editBizUser").setReadOnly(true);
 		Ext.getCmp("columnActionDelete").hide();
+		Ext.getCmp("columnActionAdd").hide();
+		Ext.getCmp("columnActionAppend").hide();
 	}
 });
