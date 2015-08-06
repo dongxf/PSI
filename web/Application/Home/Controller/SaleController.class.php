@@ -57,6 +57,12 @@ class SaleController extends Controller {
 	public function wsbillList() {
 		if (IS_POST) {
 			$params = array(
+					"billStatus" => I("post.billStatus"),
+					"ref" => I("post.ref"),
+					"fromDT" => I("post.fromDT"),
+					"toDT" => I("post.toDT"),
+					"warehouseId" => I("post.warehouseId"),
+					"customerId" => I("post.customerId"),
 					"page" => I("post.page"),
 					"start" => I("post.start"),
 					"limit" => I("post.limit")

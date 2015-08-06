@@ -6,14 +6,152 @@ Ext.define("PSI.Sale.WSMainForm", {
     initComponent: function () {
         var me = this;
 
-        Ext.define("PSIWSBill", {
+        Ext.apply(me, {
+            tbar: [{
+                    text: "新建销售出库单",
+                    iconCls: "PSI-button-add",
+                    scope: me,
+                    handler: me.onAddBill
+                }, "-", {
+                    text: "编辑销售出库单",
+                    iconCls: "PSI-button-edit",
+                    scope: me,
+                    handler: me.onEditBill
+                }, "-", {
+                    text: "删除销售出库单",
+                    iconCls: "PSI-button-delete",
+                    scope: me,
+                    handler: me.onDeleteBill
+                }, "-", {
+                    text: "提交出库",
+                    iconCls: "PSI-button-commit",
+                    scope: me,
+                    handler: me.onCommit
+                }, "-", {
+                    text: "关闭",
+                    iconCls: "PSI-button-exit",
+                    handler: function () {
+                        location.replace(PSI.Const.BASE_URL);
+                    }
+                }],
+                items: [{
+                    region: "north", height: 90,
+                    layout: "fit", border: 1, title: "查询条件",
+                    collapsible: true,
+                	layout : {
+    					type : "table",
+    					columns : 4
+    				},
+    				items: [{
+    					id : "editQueryBillStatus",
+    					xtype : "combo",
+    					queryMode : "local",
+    					editable : false,
+    					valueField : "id",
+    					labelWidth : 60,
+    					labelAlign : "right",
+    					labelSeparator : "",
+    					fieldLabel : "状态",
+    					margin: "5, 0, 0, 0",
+    					store : Ext.create("Ext.data.ArrayStore", {
+    						fields : [ "id", "text" ],
+    						data : [ [ -1, "所有销售出库单" ], [ 0, "待出库" ], [ 1000, "已出库" ] ]
+    					}),
+    					value: -1
+    				},{
+    					id: "editQueryRef",
+    					labelWidth : 60,
+    					labelAlign : "right",
+    					labelSeparator : "",
+    					fieldLabel : "单号",
+    					margin: "5, 0, 0, 0",
+    					xtype : "textfield"
+    				},{
+                    	id: "editQueryFromDT",
+                        xtype: "datefield",
+                        margin: "5, 0, 0, 0",
+                        format: "Y-m-d",
+                        labelAlign: "right",
+                        labelSeparator: "",
+                        fieldLabel: "业务日期（起）"
+                    },{
+                    	id: "editQueryToDT",
+                        xtype: "datefield",
+                        margin: "5, 0, 0, 0",
+                        format: "Y-m-d",
+                        labelAlign: "right",
+                        labelSeparator: "",
+                        fieldLabel: "业务日期（止）"
+                    },{
+                    	id: "editQueryCustomer",
+                        xtype: "psi_customerfield",
+                        parentCmp: me,
+                        labelAlign: "right",
+                        labelSeparator: "",
+                        labelWidth : 60,
+    					margin: "5, 0, 0, 0",
+                        fieldLabel: "客户"
+                    },{
+                    	id: "editQueryWarehouse",
+                        xtype: "psi_warehousefield",
+                        parentCmp: me,
+                        labelAlign: "right",
+                        labelSeparator: "",
+                        labelWidth : 60,
+    					margin: "5, 0, 0, 0",
+                        fieldLabel: "仓库"
+                    },{
+                    	xtype: "container",
+                    	items: [{
+                            xtype: "button",
+                            text: "查询",
+                            width: 100,
+                            margin: "5 0 0 10",
+                            iconCls: "PSI-button-refresh",
+                            handler: me.onQuery,
+                            scope: me
+                        },{
+                        	xtype: "button", 
+                        	text: "清空查询条件",
+                        	width: 100,
+                        	margin: "5, 0, 0, 10",
+                        	handler: me.onClearQuery,
+                        	scope: me
+                        }]
+                    }]
+                }, {
+                    region: "center", layout: "border", border: 0,
+                    items: [{
+                    	region: "north", height: "40%",
+                        split: true, layout: "fit", border: 0,
+                        items: [me.getMainGrid()]
+                    },{
+                    	region: "center", layout: "fit", border: 0,
+                    	items: [me.getDetailGrid()]
+                    }]
+                }]
+        });
+
+        me.callParent(arguments);
+
+        me.refreshMainGrid();
+    },
+    
+    getMainGrid: function() {
+    	var me = this;
+    	if (me.__mainGrid) {
+    		return me.__mainGrid;
+    	}
+    	
+    	var modelName = "PSIWSBill";
+        Ext.define(modelName, {
             extend: "Ext.data.Model",
             fields: ["id", "ref", "bizDate", "customerName", "warehouseName",
                 "inputUserName", "bizUserName", "billStatus", "amount"]
         });
-        var storeWSBill = Ext.create("Ext.data.Store", {
+        var store = Ext.create("Ext.data.Store", {
             autoLoad: false,
-            model: "PSIWSBill",
+            model: modelName,
             data: [],
             pageSize: 20,
             proxy: {
@@ -28,14 +166,17 @@ Ext.define("PSI.Sale.WSMainForm", {
                 }
             }
         });
-        storeWSBill.on("load", function (e, records, successful) {
+        store.on("beforeload", function () {
+        	store.proxy.extraParams = me.getQueryParam();
+        });
+        store.on("load", function (e, records, successful) {
             if (successful) {
-                me.gotoWSBillGridRecord(me.__lastId);
+                me.gotoMainGridRecord(me.__lastId);
             }
         });
 
 
-        var gridWSBill = Ext.create("Ext.grid.Panel", {
+        me.__mainGrid = Ext.create("Ext.grid.Panel", {
         	viewConfig: {
                 enableTextSelection: true
             },
@@ -94,20 +235,20 @@ Ext.define("PSI.Sale.WSMainForm", {
                 }],
             listeners: {
                 select: {
-                    fn: me.onWSBillGridSelect,
+                    fn: me.onMainGridSelect,
                     scope: me
                 },
                 itemdblclick: {
-                    fn: me.onEditWSBill,
+                    fn: me.onEditBill,
                     scope: me
                 }
             },
-            store: storeWSBill,
+            store: store,
             tbar: [{
                     id: "pagingToobar",
                     xtype: "pagingtoolbar",
                     border: 0,
-                    store: storeWSBill
+                    store: store
                 }, "-", {
                     xtype: "displayfield",
                     value: "每页显示"
@@ -124,8 +265,8 @@ Ext.define("PSI.Sale.WSMainForm", {
                     listeners: {
                         change: {
                             fn: function () {
-                                storeWSBill.pageSize = Ext.getCmp("comboCountPerPage").getValue();
-                                storeWSBill.currentPage = 1;
+                                store.pageSize = Ext.getCmp("comboCountPerPage").getValue();
+                                store.currentPage = 1;
                                 Ext.getCmp("pagingToobar").doRefresh();
                             },
                             scope: me
@@ -136,19 +277,30 @@ Ext.define("PSI.Sale.WSMainForm", {
                     value: "条记录"
                 }]
         });
+        
+        return me.__mainGrid;
+    },
+    
+    getDetailGrid: function() {
+    	var me = this;
 
-        Ext.define("PSIWSBillDetail", {
+    	if (me.__detailGrid) {
+    		return me.__detailGrid;
+    	}
+    	
+    	var modelName = "PSIWSBillDetail";
+        Ext.define(modelName, {
             extend: "Ext.data.Model",
             fields: ["id", "goodsCode", "goodsName", "goodsSpec", "unitName",
                 "goodsCount", "goodsMoney", "goodsPrice"]
         });
-        var storeWSBillDetail = Ext.create("Ext.data.Store", {
+        var store = Ext.create("Ext.data.Store", {
             autoLoad: false,
-            model: "PSIWSBillDetail",
+            model: modelName,
             data: []
         });
 
-        var gridWSBillDetail = Ext.create("Ext.grid.Panel", {
+        me.__detailGrid = Ext.create("Ext.grid.Panel", {
         	viewConfig: {
                 enableTextSelection: true
             },
@@ -204,97 +356,55 @@ Ext.define("PSI.Sale.WSMainForm", {
                     xtype: "numbercolumn",
                     width: 150
                 }],
-            store: storeWSBillDetail
+            store: store
         });
 
-        Ext.apply(me, {
-            tbar: [{
-                    text: "新建销售出库单",
-                    iconCls: "PSI-button-add",
-                    scope: me,
-                    handler: me.onAddWSBill
-                }, "-", {
-                    text: "编辑销售出库单",
-                    iconCls: "PSI-button-edit",
-                    scope: me,
-                    handler: me.onEditWSBill
-                }, "-", {
-                    text: "删除销售出库单",
-                    iconCls: "PSI-button-delete",
-                    scope: me,
-                    handler: me.onDeleteWSBill
-                }, "-", {
-                    text: "提交出库",
-                    iconCls: "PSI-button-commit",
-                    scope: me,
-                    handler: me.onCommit
-                }, "-", {
-                    text: "关闭",
-                    iconCls: "PSI-button-exit",
-                    handler: function () {
-                        location.replace(PSI.Const.BASE_URL);
-                    }
-                }],
-            items: [{
-                    region: "north",
-                    height: "30%",
-                    split: true,
-                    layout: "fit",
-                    border: 0,
-                    items: [gridWSBill]
-                }, {
-                    region: "center",
-                    layout: "fit",
-                    border: 0,
-                    items: [gridWSBillDetail]
-                }]
-        });
-
-        me.wsBillGrid = gridWSBill;
-        me.wsBillDetailGrid = gridWSBillDetail;
-
-        me.callParent(arguments);
-
-        me.refreshWSBillGrid();
+        return me.__detailGrid;
     },
-    refreshWSBillGrid: function (id) {
-        var gridDetail = this.wsBillDetailGrid;
+    
+    refreshMainGrid: function (id) {
+        var gridDetail = this.getDetailGrid();
         gridDetail.setTitle("销售出库单明细");
         gridDetail.getStore().removeAll();
         Ext.getCmp("pagingToobar").doRefresh();
         this.__lastId = id;
     },
-    onAddWSBill: function () {
+    
+    onAddBill: function () {
         var form = Ext.create("PSI.Sale.WSEditForm", {
             parentForm: this
         });
         form.show();
     },
-    onEditWSBill: function () {
-        var item = this.wsBillGrid.getSelectionModel().getSelection();
+    
+    onEditBill: function () {
+        var item = this.getMainGrid().getSelectionModel().getSelection();
         if (item == null || item.length != 1) {
             PSI.MsgBox.showInfo("请选择要编辑的销售出库单");
             return;
         }
-        var wsBill = item[0];
+        var bill = item[0];
 
         var form = Ext.create("PSI.Sale.WSEditForm", {
             parentForm: this,
-            entity: wsBill
+            entity: bill
         });
         form.show();
     },
-    onDeleteWSBill: function () {
-        var item = this.wsBillGrid.getSelectionModel().getSelection();
+    
+    onDeleteBill: function () {
+    	var me = this;
+        var item = me.getMainGrid().getSelectionModel().getSelection();
         if (item == null || item.length != 1) {
             PSI.MsgBox.showInfo("请选择要删除的销售出库单");
             return;
         }
-        var wsBill = item[0];
+        var bill = item[0];
 
-        var info = "请确认是否删除销售出库单: <span style='color:red'>" + wsBill.get("ref")
+        var info = "请确认是否删除销售出库单: <span style='color:red'>" + bill.get("ref")
                 + "</span>";
-        var me = this;
+        var id = bill.get("id");
+        
         PSI.MsgBox.confirm(info, function () {
             var el = Ext.getBody();
             el.mask("正在删除中...");
@@ -302,7 +412,7 @@ Ext.define("PSI.Sale.WSMainForm", {
                 url: PSI.Const.BASE_URL + "Home/Sale/deleteWSBill",
                 method: "POST",
                 params: {
-                    id: wsBill.get("id")
+                    id: id
                 },
                 callback: function (options, success, response) {
                     el.unmask();
@@ -311,7 +421,7 @@ Ext.define("PSI.Sale.WSMainForm", {
                         var data = Ext.JSON.decode(response.responseText);
                         if (data.success) {
                             PSI.MsgBox.showInfo("成功完成删除操作", function () {
-                                me.refreshWSBillGrid();
+                                me.refreshMainGrid();
                             });
                         } else {
                             PSI.MsgBox.showInfo(data.msg);
@@ -326,20 +436,22 @@ Ext.define("PSI.Sale.WSMainForm", {
             });
         });
     },
-    onWSBillGridSelect: function () {
-        this.refreshWSBillDetailGrid();
+    
+    onMainGridSelect: function () {
+        this.refreshDetailGrid();
     },
-    refreshWSBillDetailGrid: function (id) {
+    
+    refreshDetailGrid: function (id) {
         var me = this;
-        me.wsBillDetailGrid.setTitle("销售出库单明细");
-        var grid = me.wsBillGrid;
+        me.getDetailGrid().setTitle("销售出库单明细");
+        var grid = me.getMainGrid();
         var item = grid.getSelectionModel().getSelection();
         if (item == null || item.length != 1) {
             return;
         }
         var bill = item[0];
 
-        grid = me.wsBillDetailGrid;
+        grid = me.getDetailGrid();
         grid.setTitle("单号: " + bill.get("ref") + " 客户: "
                 + bill.get("customerName") + " 出库仓库: "
                 + bill.get("warehouseName"));
@@ -374,9 +486,10 @@ Ext.define("PSI.Sale.WSMainForm", {
             }
         });
     },
+    
     refreshWSBillInfo: function () {
         var me = this;
-        var item = me.wsBillGrid.getSelectionModel().getSelection();
+        var item = me.getMainGrid().getSelectionModel().getSelection();
         if (item == null || item.length != 1) {
             return;
         }
@@ -392,21 +505,22 @@ Ext.define("PSI.Sale.WSMainForm", {
                 if (success) {
                     var data = Ext.JSON.decode(response.responseText);
                     bill.set("amount", data.amount);
-                    me.wsBillGrid.getStore().commitChanges();
+                    me.getMainGrid().getStore().commitChanges();
                 }
             }
         });
     },
+    
     onCommit: function () {
         var me = this;
-        var item = me.wsBillGrid.getSelectionModel().getSelection();
+        var item = me.getMainGrid().getSelectionModel().getSelection();
         if (item == null || item.length != 1) {
             PSI.MsgBox.showInfo("没有选择要提交的销售出库单");
             return;
         }
         var bill = item[0];
 
-        var detailCount = this.wsBillDetailGrid.getStore().getCount();
+        var detailCount = this.getDetailGrid().getStore().getCount();
         if (detailCount == 0) {
             PSI.MsgBox.showInfo("当前销售出库单没有录入商品明细，不能提交");
             return;
@@ -427,7 +541,7 @@ Ext.define("PSI.Sale.WSMainForm", {
                         var data = Ext.JSON.decode(response.responseText);
                         if (data.success) {
                             PSI.MsgBox.showInfo("成功完成提交操作", function () {
-                                me.refreshWSBillGrid(data.id);
+                                me.refreshMainGrid(data.id);
                             });
                         } else {
                             PSI.MsgBox.showInfo(data.msg);
@@ -442,9 +556,9 @@ Ext.define("PSI.Sale.WSMainForm", {
         });
     },
     
-    gotoWSBillGridRecord: function(id) {
+    gotoMainGridRecord: function(id) {
         var me = this;
-        var grid = me.wsBillGrid;
+        var grid = me.getMainGrid();
         grid.getSelectionModel().deselectAll();
         var store = grid.getStore();
         if (id) {
@@ -457,5 +571,71 @@ Ext.define("PSI.Sale.WSMainForm", {
         } else {
             grid.getSelectionModel().select(0);
         }
-    }
+    },
+    
+    onQuery: function() {
+    	this.refreshMainGrid();
+    },
+    
+    onClearQuery: function() {
+    	var me = this;
+    	
+    	Ext.getCmp("editQueryBillStatus").setValue(-1);
+    	Ext.getCmp("editQueryRef").setValue(null);
+    	Ext.getCmp("editQueryFromDT").setValue(null);
+    	Ext.getCmp("editQueryToDT").setValue(null);
+    	Ext.getCmp("editQueryCustomer").setValue(null);
+    	me.__queryCustomerId = null;
+    	Ext.getCmp("editQueryWarehouse").setValue(null);
+    	me.__queryWarehouseId = null;
+    	
+    	me.onQuery();
+    },
+    
+    getQueryParam: function() {
+    	var me = this;
+    	
+    	var result = {
+    			billStatus: Ext.getCmp("editQueryBillStatus").getValue()
+    	};
+    	
+    	var ref = Ext.getCmp("editQueryRef").getValue();
+    	if (ref) {
+    		result.ref = ref;
+    	}
+    	
+    	if (me.__queryCustomerId) {
+    		if (Ext.getCmp("editQueryCustomer").getValue()) {
+    			result.customerId = me.__queryCustomerId;	
+    		}
+    	}
+    	
+    	if (me.__queryWarehouseId) {
+    		if (Ext.getCmp("editQueryWarehouse").getValue()) {
+    			result.warehouseId = me.__queryWarehouseId;	
+    		}
+    	}
+    	
+    	var fromDT = Ext.getCmp("editQueryFromDT").getValue();
+    	if (fromDT) {
+    		result.fromDT = Ext.Date.format(fromDT, "Y-m-d");
+    	}
+    	
+    	var toDT = Ext.getCmp("editQueryToDT").getValue();
+    	if (toDT) {
+    		result.toDT = Ext.Date.format(toDT, "Y-m-d");
+    	}
+    	
+    	return result;
+    },
+
+    // WarehouseField回调此方法
+    __setWarehouseInfo: function (data) {
+    	this.__queryWarehouseId = data.id;
+    },
+
+    // CustomerField回调此方法
+	__setCustomerInfo : function(data) {
+		this.__queryCustomerId = data.id;
+	}
 });
