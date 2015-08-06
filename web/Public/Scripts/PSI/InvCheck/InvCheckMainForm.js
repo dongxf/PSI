@@ -217,7 +217,8 @@ Ext.define("PSI.InvCheck.InvCheckMainForm", {
             },
             border: 0,
             columnLines: true,
-            columns: [{
+            columns: [
+               {xtype: "rownumberer"},{
                     header: "状态",
                     dataIndex: "billStatus",
                     menuDisabled: true,
