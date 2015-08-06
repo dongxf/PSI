@@ -11,17 +11,17 @@ Ext.define("PSI.Sale.SRMainForm", {
                     text: "新建销售退货入库单",
                     iconCls: "PSI-button-add",
                     scope: me,
-                    handler: me.onAddSRBill
+                    handler: me.onAddBill
                 }, "-", {
                     text: "编辑销售退货入库单",
                     iconCls: "PSI-button-edit",
                     scope: me,
-                    handler: me.onEditSRBill
+                    handler: me.onEditBill
                 }, "-", {
                     text: "删除销售退货入库单",
                     iconCls: "PSI-button-delete",
                     scope: me,
-                    handler: me.onDeleteSRBill
+                    handler: me.onDeleteBill
                 }, "-", {
                     text: "提交入库",
                     iconCls: "PSI-button-commit",
@@ -34,27 +34,111 @@ Ext.define("PSI.Sale.SRMainForm", {
                         location.replace(PSI.Const.BASE_URL);
                     }
                 }],
-            items: [{
-                    region: "north",
-                    height: "30%",
-                    split: true,
-                    layout: "fit",
-                    border: 0,
-                    items: [me.getSRGrid()]
+                items: [{
+                    region: "north", height: 90,
+                    layout: "fit", border: 1, title: "查询条件",
+                    collapsible: true,
+                	layout : {
+    					type : "table",
+    					columns : 4
+    				},
+    				items: [{
+    					id : "editQueryBillStatus",
+    					xtype : "combo",
+    					queryMode : "local",
+    					editable : false,
+    					valueField : "id",
+    					labelWidth : 60,
+    					labelAlign : "right",
+    					labelSeparator : "",
+    					fieldLabel : "状态",
+    					margin: "5, 0, 0, 0",
+    					store : Ext.create("Ext.data.ArrayStore", {
+    						fields : [ "id", "text" ],
+    						data : [ [ -1, "所有销售退货入库单" ], [ 0, "待入库" ], [ 1000, "已入库" ] ]
+    					}),
+    					value: -1
+    				},{
+    					id: "editQueryRef",
+    					labelWidth : 60,
+    					labelAlign : "right",
+    					labelSeparator : "",
+    					fieldLabel : "单号",
+    					margin: "5, 0, 0, 0",
+    					xtype : "textfield"
+    				},{
+                    	id: "editQueryFromDT",
+                        xtype: "datefield",
+                        margin: "5, 0, 0, 0",
+                        format: "Y-m-d",
+                        labelAlign: "right",
+                        labelSeparator: "",
+                        fieldLabel: "业务日期（起）"
+                    },{
+                    	id: "editQueryToDT",
+                        xtype: "datefield",
+                        margin: "5, 0, 0, 0",
+                        format: "Y-m-d",
+                        labelAlign: "right",
+                        labelSeparator: "",
+                        fieldLabel: "业务日期（止）"
+                    },{
+                    	id: "editQueryCustomer",
+                        xtype: "psi_customerfield",
+                        parentCmp: me,
+                        labelAlign: "right",
+                        labelSeparator: "",
+                        labelWidth : 60,
+    					margin: "5, 0, 0, 0",
+                        fieldLabel: "客户"
+                    },{
+                    	id: "editQueryWarehouse",
+                        xtype: "psi_warehousefield",
+                        parentCmp: me,
+                        labelAlign: "right",
+                        labelSeparator: "",
+                        labelWidth : 60,
+    					margin: "5, 0, 0, 0",
+                        fieldLabel: "仓库"
+                    },{
+                    	xtype: "container",
+                    	items: [{
+                            xtype: "button",
+                            text: "查询",
+                            width: 100,
+                            margin: "5 0 0 10",
+                            iconCls: "PSI-button-refresh",
+                            handler: me.onQuery,
+                            scope: me
+                        },{
+                        	xtype: "button", 
+                        	text: "清空查询条件",
+                        	width: 100,
+                        	margin: "5, 0, 0, 10",
+                        	handler: me.onClearQuery,
+                        	scope: me
+                        }]
+                    }]
                 }, {
-                    region: "center",
-                    layout: "fit",
-                    border: 0,
-                    items: [me.getSRDetailGrid()]
+                    region: "center", layout: "border", border: 0,
+                    items: [{
+                    	region: "north", height: "40%",
+                        split: true, layout: "fit", border: 0,
+                        items: [me.getMainGrid()]
+                    },{
+                    	region: "center", layout: "fit", border: 0,
+                    	items: [me.getDetailGrid()]
+                    }]
                 }]
         });
 
         me.callParent(arguments);
 
-        me.refreshSRBillGrid();
+        me.refreshMainGrid();
     },
-    refreshSRBillGrid: function (id) {
-        var gridDetail = this.getSRDetailGrid();
+    
+    refreshMainGrid: function (id) {
+        var gridDetail = this.getDetailGrid();
         gridDetail.setTitle("销售退货入库单明细");
         gridDetail.getStore().removeAll();
         Ext.getCmp("pagingToobar").doRefresh();
@@ -62,7 +146,7 @@ Ext.define("PSI.Sale.SRMainForm", {
     },
     
     // 新增销售退货入库单
-    onAddSRBill: function () {
+    onAddBill: function () {
         var form = Ext.create("PSI.Sale.SREditForm", {
             parentForm: this
         });
@@ -70,9 +154,9 @@ Ext.define("PSI.Sale.SRMainForm", {
     },
     
     // 编辑销售退货入库单
-    onEditSRBill: function () {
+    onEditBill: function () {
     	var me = this;
-        var item = me.getSRGrid().getSelectionModel().getSelection();
+        var item = me.getMainGrid().getSelectionModel().getSelection();
         if (item == null || item.length != 1) {
             PSI.MsgBox.showInfo("请选择要编辑的销售退货入库单");
             return;
@@ -87,9 +171,9 @@ Ext.define("PSI.Sale.SRMainForm", {
     },
     
     // 删除销售退货入库单
-    onDeleteSRBill: function () {
+    onDeleteBill: function () {
     	var me = this;
-        var item = me.getSRGrid().getSelectionModel().getSelection();
+        var item = me.getMainGrid().getSelectionModel().getSelection();
         if (item == null || item.length != 1) {
             PSI.MsgBox.showInfo("请选择要删除的销售退货入库单");
             return;
@@ -114,7 +198,7 @@ Ext.define("PSI.Sale.SRMainForm", {
                         var data = Ext.JSON.decode(response.responseText);
                         if (data.success) {
                             PSI.MsgBox.showInfo("成功完成删除操作", function () {
-                                me.refreshSRBillGrid();
+                                me.refreshMainGrid();
                             });
                         } else {
                             PSI.MsgBox.showInfo(data.msg);
@@ -132,7 +216,7 @@ Ext.define("PSI.Sale.SRMainForm", {
     // 提交销售退货入库单
     onCommit: function () {
         var me = this;
-        var item = me.getSRGrid().getSelectionModel().getSelection();
+        var item = me.getMainGrid().getSelectionModel().getSelection();
         if (item == null || item.length != 1) {
             PSI.MsgBox.showInfo("没有选择要提交的销售退货入库单");
             return;
@@ -154,7 +238,7 @@ Ext.define("PSI.Sale.SRMainForm", {
                         var data = Ext.JSON.decode(response.responseText);
                         if (data.success) {
                             PSI.MsgBox.showInfo("成功完成提交操作", function () {
-                                me.refreshSRBillGrid(data.id);
+                                me.refreshMainGrid(data.id);
                             });
                         } else {
                             PSI.MsgBox.showInfo(data.msg);
@@ -169,10 +253,10 @@ Ext.define("PSI.Sale.SRMainForm", {
         });
     },
     
-    getSRGrid: function () {
+    getMainGrid: function () {
         var me = this;
-        if (me.__srGrid) {
-            return me.__srGrid;
+        if (me.__mainGrid) {
+            return me.__mainGrid;
         }
 
         var modelName = "PSISRBill";
@@ -198,13 +282,16 @@ Ext.define("PSI.Sale.SRMainForm", {
                 }
             }
         });
+        store.on("beforeload", function () {
+        	store.proxy.extraParams = me.getQueryParam();
+        });
         store.on("load", function (e, records, successful) {
             if (successful) {
-                me.gotoSRBillGridRecord(me.__lastId);
+                me.gotoMainGridRecord(me.__lastId);
             }
         });
 
-        me.__srGrid = Ext.create("Ext.grid.Panel", {
+        me.__mainGrid = Ext.create("Ext.grid.Panel", {
         	viewConfig: {
                 enableTextSelection: true
             },
@@ -263,11 +350,11 @@ Ext.define("PSI.Sale.SRMainForm", {
                 }],
             listeners: {
                 select: {
-                    fn: me.onSRBillGridSelect,
+                    fn: me.onMainGridSelect,
                     scope: me
                 },
                 itemdblclick: {
-                    fn: me.onEditSRBill,
+                    fn: me.onEditBill,
                     scope: me
                 }
             },
@@ -306,12 +393,13 @@ Ext.define("PSI.Sale.SRMainForm", {
                 }]
         });
 
-        return me.__srGrid;
+        return me.__mainGrid;
     },
-    getSRDetailGrid: function() {
+    
+    getDetailGrid: function() {
         var me = this;
-        if (me.__srDetailGrid) {
-            return me.__srDetailGrid;
+        if (me.__detailGrid) {
+            return me.__detailGrid;
         }
         
         var modelName = "PSISRBillDetail";
@@ -326,7 +414,7 @@ Ext.define("PSI.Sale.SRMainForm", {
             data: []
         });
 
-        me.__srDetailGrid = Ext.create("Ext.grid.Panel", {
+        me.__detailGrid = Ext.create("Ext.grid.Panel", {
         	viewConfig: {
                 enableTextSelection: true
             },
@@ -385,11 +473,12 @@ Ext.define("PSI.Sale.SRMainForm", {
             store: store
         });
 
-        return me.__srDetailGrid;
+        return me.__detailGrid;
     },
-    gotoSRBillGridRecord: function (id) {
+    
+    gotoMainGridRecord: function (id) {
         var me = this;
-        var grid = me.getSRGrid();
+        var grid = me.getMainGrid();
         grid.getSelectionModel().deselectAll();
         var store = grid.getStore();
         if (id) {
@@ -403,20 +492,22 @@ Ext.define("PSI.Sale.SRMainForm", {
             grid.getSelectionModel().select(0);
         }
     },
-    onSRBillGridSelect: function() {
-    	this.freshSRBillDetailGrid();
+    
+    onMainGridSelect: function() {
+    	this.freshDetailGrid();
     },
-    freshSRBillDetailGrid: function(id) {
+    
+    freshDetailGrid: function(id) {
         var me = this;
-        me.getSRDetailGrid().setTitle("销售退货入库单明细");
-        var grid = me.getSRGrid();
+        me.getDetailGrid().setTitle("销售退货入库单明细");
+        var grid = me.getMainGrid();
         var item = grid.getSelectionModel().getSelection();
         if (item == null || item.length != 1) {
             return;
         }
         var bill = item[0];
 
-        grid = me.getSRDetailGrid();
+        grid = me.getDetailGrid();
         grid.setTitle("单号: " + bill.get("ref") + " 客户: "
                 + bill.get("customerName") + " 入库仓库: "
                 + bill.get("warehouseName"));
@@ -450,5 +541,71 @@ Ext.define("PSI.Sale.SRMainForm", {
                 el.unmask();
             }
         });
-    }
+    },
+    
+    onQuery: function() {
+    	this.refreshMainGrid();
+    },
+    
+    onClearQuery: function() {
+    	var me = this;
+    	
+    	Ext.getCmp("editQueryBillStatus").setValue(-1);
+    	Ext.getCmp("editQueryRef").setValue(null);
+    	Ext.getCmp("editQueryFromDT").setValue(null);
+    	Ext.getCmp("editQueryToDT").setValue(null);
+    	Ext.getCmp("editQueryCustomer").setValue(null);
+    	me.__queryCustomerId = null;
+    	Ext.getCmp("editQueryWarehouse").setValue(null);
+    	me.__queryWarehouseId = null;
+    	
+    	me.onQuery();
+    },
+    
+    getQueryParam: function() {
+    	var me = this;
+    	
+    	var result = {
+    			billStatus: Ext.getCmp("editQueryBillStatus").getValue()
+    	};
+    	
+    	var ref = Ext.getCmp("editQueryRef").getValue();
+    	if (ref) {
+    		result.ref = ref;
+    	}
+    	
+    	if (me.__queryCustomerId) {
+    		if (Ext.getCmp("editQueryCustomer").getValue()) {
+    			result.customerId = me.__queryCustomerId;	
+    		}
+    	}
+    	
+    	if (me.__queryWarehouseId) {
+    		if (Ext.getCmp("editQueryWarehouse").getValue()) {
+    			result.warehouseId = me.__queryWarehouseId;	
+    		}
+    	}
+    	
+    	var fromDT = Ext.getCmp("editQueryFromDT").getValue();
+    	if (fromDT) {
+    		result.fromDT = Ext.Date.format(fromDT, "Y-m-d");
+    	}
+    	
+    	var toDT = Ext.getCmp("editQueryToDT").getValue();
+    	if (toDT) {
+    		result.toDT = Ext.Date.format(toDT, "Y-m-d");
+    	}
+    	
+    	return result;
+    },
+
+    // WarehouseField回调此方法
+    __setWarehouseInfo: function (data) {
+    	this.__queryWarehouseId = data.id;
+    },
+
+    // CustomerField回调此方法
+	__setCustomerInfo : function(data) {
+		this.__queryCustomerId = data.id;
+	}
 });

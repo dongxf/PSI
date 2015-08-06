@@ -17,16 +17,51 @@ class SRBillService extends PSIBaseService {
 		$start = $params["start"];
 		$limit = $params["limit"];
 		
+		$billStatus = $params["billStatus"];
+		$ref = $params["ref"];
+		$fromDT = $params["fromDT"];
+		$toDT = $params["toDT"];
+		$warehouseId = $params["warehouseId"];
+		$customerId = $params["customerId"];
+		
 		$db = M();
 		$sql = "select w.id, w.ref, w.bizdt, c.name as customer_name, u.name as biz_user_name,
 				 user.name as input_user_name, h.name as warehouse_name, w.rejection_sale_money,
 				 w.bill_status 
 				 from t_sr_bill w, t_customer c, t_user u, t_user user, t_warehouse h 
-				 where w.customer_id = c.id and w.biz_user_id = u.id 
-				 and w.input_user_id = user.id and w.warehouse_id = h.id 
-				 order by w.ref desc 
+				 where (w.customer_id = c.id) and (w.biz_user_id = u.id) 
+				 and (w.input_user_id = user.id) and (w.warehouse_id = h.id) ";
+		$queryParams = array();
+		if ($billStatus != - 1) {
+			$sql .= " and (w.bill_status = %d) ";
+			$queryParams[] = $billStatus;
+		}
+		if ($ref) {
+			$sql .= " and (w.ref like '%s') ";
+			$queryParams[] = "%{$ref}%";
+		}
+		if ($fromDT) {
+			$sql .= " and (w.bizdt >= '%s') ";
+			$queryParams[] = $fromDT;
+		}
+		if ($toDT) {
+			$sql .= " and (w.bizdt <= '%s') ";
+			$queryParams[] = $toDT;
+		}
+		if ($customerId) {
+			$sql .= " and (w.customer_id = '%s') ";
+			$queryParams[] = $customerId;
+		}
+		if ($warehouseId) {
+			$sql .= " and (w.warehouse_id = '%s') ";
+			$queryParams[] = $warehouseId;
+		}
+		
+		$sql .= " order by w.ref desc 
 				 limit %d, %d";
-		$data = $db->query($sql, $start, $limit);
+		$queryParams[] = $start;
+		$queryParams[] = $limit;
+		$data = $db->query($sql, $queryParams);
 		$result = array();
 		
 		foreach ( $data as $i => $v ) {
@@ -43,9 +78,35 @@ class SRBillService extends PSIBaseService {
 		
 		$sql = "select count(*) as cnt 
 				 from t_sr_bill w, t_customer c, t_user u, t_user user, t_warehouse h 
-				 where w.customer_id = c.id and w.biz_user_id = u.id 
-				 and w.input_user_id = user.id and w.warehouse_id = h.id ";
-		$data = $db->query($sql);
+				 where (w.customer_id = c.id) and (w.biz_user_id = u.id) 
+				 and (w.input_user_id = user.id) and (w.warehouse_id = h.id) ";
+		$queryParams = array();
+		if ($billStatus != - 1) {
+			$sql .= " and (w.bill_status = %d) ";
+			$queryParams[] = $billStatus;
+		}
+		if ($ref) {
+			$sql .= " and (w.ref like '%s') ";
+			$queryParams[] = "%{$ref}%";
+		}
+		if ($fromDT) {
+			$sql .= " and (w.bizdt >= '%s') ";
+			$queryParams[] = $fromDT;
+		}
+		if ($toDT) {
+			$sql .= " and (w.bizdt <= '%s') ";
+			$queryParams[] = $toDT;
+		}
+		if ($customerId) {
+			$sql .= " and (w.customer_id = '%s') ";
+			$queryParams[] = $customerId;
+		}
+		if ($warehouseId) {
+			$sql .= " and (w.warehouse_id = '%s') ";
+			$queryParams[] = $warehouseId;
+		}
+		
+		$data = $db->query($sql, $queryParams);
 		$cnt = $data[0]["cnt"];
 		
 		return array(

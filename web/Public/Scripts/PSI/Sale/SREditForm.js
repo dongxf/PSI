@@ -241,7 +241,7 @@ Ext.define("PSI.Sale.SREditForm", {
                     if (data.success) {
                         PSI.MsgBox.showInfo("成功保存数据", function () {
                             me.close();
-                            me.getParentForm().refreshSRBillGrid(data.id);
+                            me.getParentForm().refreshMainGrid(data.id);
                         });
                     } else {
                         PSI.MsgBox.showInfo(data.msg);
