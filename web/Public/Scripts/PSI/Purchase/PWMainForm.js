@@ -42,7 +42,7 @@ Ext.define("PSI.Purchase.PWMainForm", {
             border: 0,
             columnLines: true,
             columns: [
-                {xtype: "rownumberer"},
+                {xtype: "rownumberer", width: 50},
                 {header: "状态", dataIndex: "billStatus", menuDisabled: true, sortable: false, width: 60,
                 	renderer: function (value) {
                         return value == "待入库" ? "<span style='color:red'>" + value + "</span>" : value;
