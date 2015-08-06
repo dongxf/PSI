@@ -128,6 +128,10 @@ Ext.define("PSI.Goods.MainForm", {
                 itemdblclick: {
                     fn: me.onEditGoods,
                     scope: me
+                },
+                select: {
+                	fn: me.onGoodsSelect,
+                	scope: me
                 }
             }
         });
@@ -144,6 +148,7 @@ Ext.define("PSI.Goods.MainForm", {
                 {text: "新增商品", iconCls: "PSI-button-add-detail", handler: me.onAddGoods, scope: me},
                 {text: "修改商品", iconCls: "PSI-button-edit-detail", handler: me.onEditGoods, scope: me},
                 {text: "删除商品", iconCls: "PSI-button-delete-detail", handler: me.onDeleteGoods, scope: me}, "-",
+                {text: "设置商品安全库存", iconCls: "PSI-button-view", handler: me.onSafetyInventory, scope: me}, "-",
                 {
                     text: "帮助",
                     iconCls: "PSI-help",
@@ -233,8 +238,15 @@ Ext.define("PSI.Goods.MainForm", {
                     },{
                     	region: "center", layout: "border",
                     	items: [{
-                            region: "center", xtype: "panel", layout: "fit", border: 0,
-                            items: [goodsGrid]
+                            region: "center", xtype: "panel", layout: "border", border: 0,
+                            items: [{
+                            	region: "center", layout: "fit", border: 0,
+                            	items: [goodsGrid]
+                            }, {
+                            	region: "south", layout: "fit", border: 0,
+                            	height: 200, split: true,
+                            	items: [me.getSIGrid()]
+                            }]
                         }, {
                             xtype: "panel",
                             region: "west",
@@ -569,6 +581,105 @@ Ext.define("PSI.Goods.MainForm", {
     	}
     	
     	this.onQuery();
-    }
+    },
+    
+    getSIGrid: function() {
+    	var me = this;
+    	if (me.__siGrid) {
+    		return me.__siGrid;
+    	}
 
+    	var modelName = "PSIGoodsSafetyInventory";
+        Ext.define(modelName, {
+            extend: "Ext.data.Model",
+            fields: ["id", "warehouseCode", "warehouseName", "safetyInventory", "inventoryCount", "unitName"]
+        });
+
+        me.__siGrid = Ext.create("Ext.grid.Panel", {
+            viewConfig: {
+                enableTextSelection: true
+            },
+            title: "商品安全库存",
+            columnLines: true,
+            columns: [
+                {header: "仓库编码", dataIndex: "warehouseCode", width: 80, menuDisabled: true, sortable: false},
+                {header: "仓库名称", dataIndex: "warehouseName", width: 100, menuDisabled: true, sortable: false},
+                {header: "安全库存量", dataIndex: "safetyInventory", width: 120, menuDisabled: true, 
+                	sortable: false, align: "right", xtype: "numbercolumn",
+    				format: "0"},
+                {header: "当前库存", dataIndex: "inventoryCount", width: 120, 
+                		menuDisabled: true, sortable: false, align: "right", xtype: "numbercolumn",
+        				format: "0"},
+                {header: "计量单位", dataIndex: "unitName", width: 80, menuDisabled: true, sortable: false}
+            ],
+            store: Ext.create("Ext.data.Store", {
+                model: modelName,
+                autoLoad: false,
+                data: []
+            }),
+            listeners: {
+            	itemdblclick: {
+            		fn: me.onSafetyInventory,
+            		scope: me
+            	}
+            }
+        });
+
+        return me.__siGrid;
+    },
+    
+    onGoodsSelect: function() {
+        var me = this;
+        var item = me.goodsGrid.getSelectionModel().getSelection();
+        if (item == null || item.length != 1) {
+        	me.getSIGrid().setTitle("商品安全库存");
+            return;
+        }
+
+        var goods = item[0];
+        var info = goods.get("code") + " " + goods.get("name") + " " + goods.get("spec");
+
+        var grid = me.getSIGrid();
+    	grid.setTitle("商品[" + info + "]的安全库存");
+    	
+        var el = grid.getEl() || Ext.getBody();
+        el.mask(PSI.Const.LOADING);
+        Ext.Ajax.request({
+            url: PSI.Const.BASE_URL + "Home/Goods/goodsSafetyInventoryList",
+            method: "POST",
+            params: {
+            	id: goods.get("id")
+            },
+            callback: function (options, success, response) {
+                var store = grid.getStore();
+
+                store.removeAll();
+
+                if (success) {
+                    var data = Ext.JSON.decode(response.responseText);
+                    store.add(data);
+                }
+
+                el.unmask();
+            }
+        });
+    },
+    
+    onSafetyInventory: function() {
+        var me = this;
+        var item = me.goodsGrid.getSelectionModel().getSelection();
+        if (item == null || item.length != 1) {
+        	PSI.MsgBox.showInfo("请选择要设置安全库存的商品");
+            return;
+        }
+
+        var goods = item[0];
+    	
+        var form = Ext.create("PSI.Goods.SafetyInventoryEditForm", {
+        	parentForm: me,
+        	entity: goods
+        });
+        
+        form.show();
+    }
 });

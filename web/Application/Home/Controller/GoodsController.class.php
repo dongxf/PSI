@@ -11,8 +11,9 @@ use Home\Service\Home\Service;
 
 /**
  * 商品Controller
- * @author 李静波
  *
+ * @author 李静波
+ *        
  */
 class GoodsController extends Controller {
 
@@ -226,6 +227,36 @@ class GoodsController extends Controller {
 			$data = $gs->getGoodsInfoTU($id);
 			$data["units"] = $gs->allUnits();
 			$this->ajaxReturn($data);
+		}
+	}
+
+	public function goodsSafetyInventoryList() {
+		if (IS_POST) {
+			$params = array(
+					"id" => I("post.id")
+			);
+			$gs = new GoodsService();
+			$this->ajaxReturn($gs->goodsSafetyInventoryList($params));
+		}
+	}
+	
+	public function siInfo() {
+		if (IS_POST) {
+			$params = array(
+					"id" => I("post.id")
+			);
+			$gs = new GoodsService();
+			$this->ajaxReturn($gs->siInfo($params));
+		}
+	}
+	
+	public function editSafetyInventory() {
+		if (IS_POST) {
+			$params = array(
+					"jsonStr" => I("post.jsonStr")
+			);
+			$gs = new GoodsService();
+			$this->ajaxReturn($gs->editSafetyInventory($params));
 		}
 	}
 }
