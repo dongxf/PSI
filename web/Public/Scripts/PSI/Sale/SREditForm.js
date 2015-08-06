@@ -268,7 +268,7 @@ Ext.define("PSI.Sale.SREditForm", {
         if (e.getKey() == e.ENTER) {
             var me = this;
             me.getGoodsGrid().focus();
-            me.__cellEditing.startEdit(0, 5);
+            me.__cellEditing.startEdit(0, 4);
         }
     },
     // CustomerField回调此方法
@@ -323,9 +323,6 @@ Ext.define("PSI.Sale.SREditForm", {
                     sortable: false},
                 {header: "商品名称", dataIndex: "goodsName", menuDisabled: true, sortable: false, width: 200},
                 {header: "规格型号", dataIndex: "goodsSpec", menuDisabled: true, sortable: false, width: 200},
-                {header: "销售数量", dataIndex: "goodsCount", menuDisabled: true,
-                    sortable: false, align: "right", width: 100
-                },
                 {header: "退货数量", dataIndex: "rejCount", menuDisabled: true,
                     sortable: false, align: "right", width: 100,
                     editor: {xtype: "numberfield",
@@ -333,9 +330,6 @@ Ext.define("PSI.Sale.SREditForm", {
                         hideTrigger: true}
                 },
                 {header: "单位", dataIndex: "unitName", menuDisabled: true, sortable: false, width: 60},
-                {header: "销售单价", dataIndex: "goodsPrice", menuDisabled: true,
-                    sortable: false, align: "right", xtype: "numbercolumn",
-                    width: 100},
                 {header: "退货单价", dataIndex: "rejPrice", menuDisabled: true,
                     sortable: false, align: "right", xtype: "numbercolumn",
                     width: 100, 
@@ -344,7 +338,15 @@ Ext.define("PSI.Sale.SREditForm", {
                         hideTrigger: true}
                 },
                 {header: "退货金额", dataIndex: "rejMoney", menuDisabled: true,
-                    sortable: false, align: "right", xtype: "numbercolumn", width: 120}
+                    sortable: false, align: "right", xtype: "numbercolumn", width: 120},
+                {header: "销售数量", dataIndex: "goodsCount", menuDisabled: true,
+                    sortable: false, align: "right", width: 100
+                },{header: "销售单价", dataIndex: "goodsPrice", menuDisabled: true,
+                    sortable: false, align: "right", xtype: "numbercolumn",
+                    width: 100},
+                {header: "销售金额", dataIndex: "goodsMoney", menuDisabled: true,
+                    sortable: false, align: "right", xtype: "numbercolumn",
+                    width: 120}
             ],
             store: store,
             listeners: {
@@ -358,11 +360,13 @@ Ext.define("PSI.Sale.SREditForm", {
     },
     cellEditingAfterEdit: function (editor, e) {
         var me = this;
-        if (e.colIdx == 5) {
+        if (e.colIdx == 6) {
             me.calcMoney();
             e.rowIdx += 1;
             me.getGoodsGrid().getSelectionModel().select(e.rowIdx);
             me.__cellEditing.startEdit(e.rowIdx, 4);
+        } else if (e.colIdx == 4) {
+        	me.calcMoney();
         }
     },
     calcMoney: function () {
@@ -372,23 +376,17 @@ Ext.define("PSI.Sale.SREditForm", {
             return;
         }
         var goods = item[0];
-        goods.set("rejMoney", goods.get("rejCount") * goods.get("rejPrice"));
-    },
-    __setGoodsInfo: function (data) {
-        var me = this;
-        var item = me.getGoodsGrid().getSelectionModel().getSelection();
-        if (item == null || item.length != 1) {
-            return;
+        var rejCount = goods.get("rejCount");
+        if (!rejCount) {
+        	rejCount = 0;
         }
-        var goods = item[0];
-
-        goods.set("goodsId", data.id);
-        goods.set("goodsCode", data.code);
-        goods.set("goodsName", data.name);
-        goods.set("unitName", data.unitName);
-        goods.set("goodsSpec", data.spec);
-        goods.set("goodsPrice", data.salePrice);
+        var rejPrice = goods.get("rejPrice");
+        if (!rejPrice) {
+        	rejPrice = 0;
+        }
+        goods.set("rejMoney", rejCount * rejPrice);
     },
+
     getSaveData: function () {
     	var me = this;
         var result = {
