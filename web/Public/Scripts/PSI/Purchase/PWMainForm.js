@@ -52,7 +52,7 @@ Ext.define("PSI.Purchase.PWMainForm", {
     					margin: "5, 0, 0, 0",
     					store : Ext.create("Ext.data.ArrayStore", {
     						fields : [ "id", "text" ],
-    						data : [ [ -1, "所有单据" ], [ 0, "待入库" ], [ 1000, "已入库" ] ]
+    						data : [ [ -1, "所有采购入库单" ], [ 0, "待入库" ], [ 1000, "已入库" ] ]
     					}),
     					value: -1
     				},{
