@@ -748,6 +748,16 @@ class GoodsService extends PSIBaseService {
 		
 		$db->startTrans();
 		try {
+			$sql = "select code, name, spec from t_goods where id = '%s'";
+			$data = $db->query($sql, $id);
+			if (!$data) {
+				$db->rollback();
+				return $this->bad("商品不存在，无法设置商品安全库存");
+			}
+			$goodsCode = $data[0]["code"];
+			$goodsName = $data[0]["name"];
+			$goodsSpec = $data[0]["spec"];
+			
 			$sql = "delete from t_goods_si where goods_id = '%s' ";
 			$db->execute($sql, $id);
 			
@@ -768,6 +778,10 @@ class GoodsService extends PSIBaseService {
 					return $this->sqlError();
 				}
 			}
+			
+			$bs = new BizlogService();
+			$log = "为商品[$goodsCode $goodsName $goodsSpec]设置安全库存。";
+			$bs->insertBizlog($log, "基础数据-商品");
 			
 			$db->commit();
 		} catch ( Exception $e ) {
