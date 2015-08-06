@@ -36,9 +36,15 @@ class PurchaseRejController extends Controller {
 	public function prbillList() {
 		if (IS_POST) {
 			$params = array(
-				"page" => I("post.page"),
-				"start" => I("post.start"),
-				"limit" => I("post.limit")
+					"billStatus" => I("post.billStatus"),
+					"ref" => I("post.ref"),
+					"fromDT" => I("post.fromDT"),
+					"toDT" => I("post.toDT"),
+					"warehouseId" => I("post.warehouseId"),
+					"supplierId" => I("post.supplierId"),
+					"page" => I("post.page"),
+					"start" => I("post.start"),
+					"limit" => I("post.limit")
 			);
 			
 			$pr = new PRBillService();
@@ -100,39 +106,39 @@ class PurchaseRejController extends Controller {
 			$this->ajaxReturn($pr->getPWBillInfoForPRBill($params));
 		}
 	}
-	
+
 	public function prBillDetailList() {
 		if (IS_POST) {
 			$params = array(
 					"id" => I("post.id")
 			);
-				
+			
 			$pr = new PRBillService();
-				
+			
 			$this->ajaxReturn($pr->prBillDetailList($params));
-		}	
+		}
 	}
-	
+
 	public function deletePRBill() {
 		if (IS_POST) {
 			$params = array(
 					"id" => I("post.id")
 			);
-		
+			
 			$pr = new PRBillService();
-		
+			
 			$this->ajaxReturn($pr->deletePRBill($params));
 		}
 	}
-	
+
 	public function commitPRBill() {
 		if (IS_POST) {
 			$params = array(
 					"id" => I("post.id")
 			);
-		
+			
 			$pr = new PRBillService();
-		
+			
 			$this->ajaxReturn($pr->commitPRBill($params));
 		}
 	}
