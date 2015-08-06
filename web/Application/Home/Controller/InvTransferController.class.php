@@ -42,6 +42,12 @@ class InvTransferController extends Controller {
 	public function itbillList() {
 		if (IS_POST) {
 			$params = array(
+					"billStatus" => I("post.billStatus"),
+					"ref" => I("post.ref"),
+					"fromDT" => I("post.fromDT"),
+					"toDT" => I("post.toDT"),
+					"fromWarehouseId" => I("post.fromWarehouseId"),
+					"toWarehouseId" => I("post.toWarehouseId"),
 					"page" => I("post.page"),
 					"start" => I("post.start"),
 					"limit" => I("post.limit")

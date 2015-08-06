@@ -39,6 +39,13 @@ class ITBillService extends PSIBaseService {
 		$start = $params["start"];
 		$limit = $params["limit"];
 		
+		$billStatus = $params["billStatus"];
+		$ref = $params["ref"];
+		$fromDT = $params["fromDT"];
+		$toDT = $params["toDT"];
+		$fromWarehouseId = $params["fromWarehouseId"];
+		$toWarehouseId = $params["toWarehouseId"];
+		
 		$db = M();
 		
 		$sql = "select t.id, t.ref, t.bizdt, t.bill_status,
@@ -48,14 +55,42 @@ class ITBillService extends PSIBaseService {
 					u1.name as input_user_name
 				from t_it_bill t, t_warehouse fw, t_warehouse tw,
 				   t_user u, t_user u1
-				where t.from_warehouse_id = fw.id 
-				  and t.to_warehouse_id = tw.id
-				  and t.biz_user_id = u.id
-				  and t.input_user_id = u1.id
-				order by t.ref desc
-				limit $start , $limit
+				where (t.from_warehouse_id = fw.id) 
+				  and (t.to_warehouse_id = tw.id)
+				  and (t.biz_user_id = u.id)
+				  and (t.input_user_id = u1.id) ";
+		$queryParams = array();
+		if ($billStatus != - 1) {
+			$sql .= " and (t.bill_status = %d) ";
+			$queryParams[] = $billStatus;
+		}
+		if ($ref) {
+			$sql .= " and (t.ref like '%s') ";
+			$queryParams[] = "%{$ref}%";
+		}
+		if ($fromDT) {
+			$sql .= " and (t.bizdt >= '%s') ";
+			$queryParams[] = $fromDT;
+		}
+		if ($toDT) {
+			$sql .= " and (t.bizdt <= '%s') ";
+			$queryParams[] = $toDT;
+		}
+		if ($fromWarehouseId) {
+			$sql .= " and (t.from_warehouse_id = '%s') ";
+			$queryParams[] = $fromWarehouseId;
+		}
+		if ($toWarehouseId) {
+			$sql .= " and (t.to_warehouse_id = '%s') ";
+			$queryParams[] = $toWarehouseId;
+		}
+		
+		$sql .= " order by t.ref desc
+				limit %d , %d
 				";
-		$data = $db->query($sql);
+		$queryParams[] = $start;
+		$queryParams[] = $limit;
+		$data = $db->query($sql, $queryParams);
 		$result = array();
 		foreach ( $data as $i => $v ) {
 			$result[$i]["id"] = $v["id"];
@@ -71,12 +106,37 @@ class ITBillService extends PSIBaseService {
 		$sql = "select count(*) as cnt
 				from t_it_bill t, t_warehouse fw, t_warehouse tw,
 				   t_user u, t_user u1
-				where t.from_warehouse_id = fw.id 
-				  and t.to_warehouse_id = tw.id
-				  and t.biz_user_id = u.id
-				  and t.input_user_id = u1.id
+				where (t.from_warehouse_id = fw.id) 
+				  and (t.to_warehouse_id = tw.id)
+				  and (t.biz_user_id = u.id)
+				  and (t.input_user_id = u1.id)
 				";
-		$data = $db->query($sql);
+		$queryParams = array();
+		if ($billStatus != - 1) {
+			$sql .= " and (t.bill_status = %d) ";
+			$queryParams[] = $billStatus;
+		}
+		if ($ref) {
+			$sql .= " and (t.ref like '%s') ";
+			$queryParams[] = "%{$ref}%";
+		}
+		if ($fromDT) {
+			$sql .= " and (t.bizdt >= '%s') ";
+			$queryParams[] = $fromDT;
+		}
+		if ($toDT) {
+			$sql .= " and (t.bizdt <= '%s') ";
+			$queryParams[] = $toDT;
+		}
+		if ($fromWarehouseId) {
+			$sql .= " and (t.from_warehouse_id = '%s') ";
+			$queryParams[] = $fromWarehouseId;
+		}
+		if ($toWarehouseId) {
+			$sql .= " and (t.to_warehouse_id = '%s') ";
+			$queryParams[] = $toWarehouseId;
+		}
+		$data = $db->query($sql, $queryParams);
 		$cnt = $data[0]["cnt"];
 		
 		return array(
@@ -459,7 +519,8 @@ class ITBillService extends PSIBaseService {
 						values (%d, %f, %f, %d, %f, %f, '%s', '%s', '%s', '%s', now(),
 						'%s', '调拨出库')";
 				$rc = $db->execute($sql, $outCount, $outPrice, $outMoney, $balanceCount, 
-						$balancePrice, $balanceMoney, $fromWarehouseId, $goodsId, $bizDT, $bizUserId, $ref);
+						$balancePrice, $balanceMoney, $fromWarehouseId, $goodsId, $bizDT, $bizUserId, 
+						$ref);
 				if (! $rc) {
 					$db->rollback();
 					return $this->sqlError();
@@ -497,14 +558,12 @@ class ITBillService extends PSIBaseService {
 					$sql = "insert into t_inventory(in_count, in_price, in_money, balance_count,
 							balance_price, balance_money, warehouse_id, goods_id)
 							values (%d, %f, %f, %d, %f, %f, '%s', '%s')";
-					$rc = $db->execute($sql, $inCount, $inPrice, $inMoney, $balanceCount, $balancePrice, 
-							$balanceMoney, $toWarehouseId, $goodsId);
+					$rc = $db->execute($sql, $inCount, $inPrice, $inMoney, $balanceCount, 
+							$balancePrice, $balanceMoney, $toWarehouseId, $goodsId);
 					if (! $rc) {
 						$db->rollback();
 						return $this->sqlError();
 					}
-					
-					
 				} else {
 					$balanceCount = $data[0]["balance_count"];
 					$balanceMoney = $data[0]["balance_money"];
@@ -535,7 +594,7 @@ class ITBillService extends PSIBaseService {
 						balance_price, balance_money, warehouse_id, goods_id, ref_number, ref_type,
 						biz_date, biz_user_id, date_created)
 						values (%d, %f, %f, %d, %f, %f, '%s', '%s', '%s', '调拨入库', '%s', '%s', now())";
-				$rc = $db->execute($sql, $inCount, $inPrice, $inMoney, $balanceCount, $balancePrice,
+				$rc = $db->execute($sql, $inCount, $inPrice, $inMoney, $balanceCount, $balancePrice, 
 						$balanceMoney, $toWarehouseId, $goodsId, $ref, $bizDT, $bizUserId);
 				if (! $rc) {
 					$db->rollback();

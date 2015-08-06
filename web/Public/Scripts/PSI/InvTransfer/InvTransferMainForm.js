@@ -34,18 +34,107 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
                         location.replace(PSI.Const.BASE_URL);
                     }
                 }],
-            items: [{
-                    region: "north",
-                    height: "30%",
-                    split: true,
-                    layout: "fit",
-                    border: 0,
-                    items: [me.getMainGrid()]
+                items: [{
+                    region: "north", height: 90,
+                    layout: "fit", border: 1, title: "查询条件",
+                    collapsible: true,
+                	layout : {
+    					type : "table",
+    					columns : 4
+    				},
+    				items: [{
+    					id : "editQueryBillStatus",
+    					xtype : "combo",
+    					queryMode : "local",
+    					editable : false,
+    					valueField : "id",
+    					labelWidth : 60,
+    					labelAlign : "right",
+    					labelSeparator : "",
+    					fieldLabel : "状态",
+    					margin: "5, 0, 0, 0",
+    					store : Ext.create("Ext.data.ArrayStore", {
+    						fields : [ "id", "text" ],
+    						data : [ [ -1, "所有调拨单" ], [ 0, "待调拨" ], [ 1000, "已调拨" ] ]
+    					}),
+    					value: -1
+    				},{
+    					id: "editQueryRef",
+    					labelWidth : 60,
+    					labelAlign : "right",
+    					labelSeparator : "",
+    					fieldLabel : "单号",
+    					margin: "5, 0, 0, 0",
+    					xtype : "textfield"
+    				},{
+                    	id: "editQueryFromDT",
+                        xtype: "datefield",
+                        margin: "5, 0, 0, 0",
+                        format: "Y-m-d",
+                        labelAlign: "right",
+                        labelSeparator: "",
+                        fieldLabel: "业务日期（起）"
+                    },{
+                    	id: "editQueryToDT",
+                        xtype: "datefield",
+                        margin: "5, 0, 0, 0",
+                        format: "Y-m-d",
+                        labelAlign: "right",
+                        labelSeparator: "",
+                        fieldLabel: "业务日期（止）"
+                    },{
+                    	id: "editQueryFromWarehouse",
+                        xtype: "psi_warehousefield",
+                        callbackFunc: me.__setFromWarehouseId,
+                        labelAlign: "right",
+                        labelSeparator: "",
+                        labelWidth : 60,
+    					margin: "5, 0, 0, 0",
+                        fieldLabel: "调出仓库"
+                    },{
+                    	id: "editQueryToWarehouse",
+                        xtype: "psi_warehousefield",
+                        callbackFunc: me.__setToWarehouseId,
+                        labelAlign: "right",
+                        labelSeparator: "",
+                        labelWidth : 60,
+    					margin: "5, 0, 0, 0",
+                        fieldLabel: "调入仓库"
+                    },{
+                    	id: "editQueryFromWarehouseId",
+                    	xtype: "hidden"
+                    },{
+                    	id: "editQueryToWarehouseId",
+                    	xtype: "hidden"
+                    },{
+                    	xtype: "container",
+                    	items: [{
+                            xtype: "button",
+                            text: "查询",
+                            width: 100,
+                            margin: "5 0 0 10",
+                            iconCls: "PSI-button-refresh",
+                            handler: me.onQuery,
+                            scope: me
+                        },{
+                        	xtype: "button", 
+                        	text: "清空查询条件",
+                        	width: 100,
+                        	margin: "5, 0, 0, 10",
+                        	handler: me.onClearQuery,
+                        	scope: me
+                        }]
+                    }]
                 }, {
-                    region: "center",
-                    layout: "fit",
-                    border: 0,
-                    items: [me.getDetailGrid()]
+                    region: "center", layout: "border", border: 0,
+                    items: [{
+                    	region: "north", height: "40%",
+                        split: true, layout: "fit", border: 0,
+                        items: [me.getMainGrid()]
+                    },{
+                    	region: "center", layout: "fit", border: 0,
+                    	items: [me.getDetailGrid()]
+                    }]
                 }]
         });
 
@@ -204,6 +293,9 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
                     totalProperty: 'totalCount'
                 }
             }
+        });
+        store.on("beforeload", function () {
+        	store.proxy.extraParams = me.getQueryParam();
         });
         store.on("load", function (e, records, successful) {
             if (successful) {
@@ -436,5 +528,71 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
                 el.unmask();
             }
         });
+    },
+    
+    __setFromWarehouseId: function (data) {
+    	Ext.getCmp("editQueryFromWarehouseId").setValue(data.id);
+    },
+    
+    __setToWarehouseId: function (data) {
+    	Ext.getCmp("editQueryToWarehouseId").setValue(data.id);
+    },
+
+    onQuery: function() {
+    	this.refreshMainGrid();
+    },
+    
+    onClearQuery: function() {
+    	var me = this;
+    	
+    	Ext.getCmp("editQueryBillStatus").setValue(-1);
+    	Ext.getCmp("editQueryRef").setValue(null);
+    	Ext.getCmp("editQueryFromDT").setValue(null);
+    	Ext.getCmp("editQueryToDT").setValue(null);
+    	Ext.getCmp("editQueryFromWarehouse").setValue(null);
+    	Ext.getCmp("editQueryFromWarehouseId").setValue(null);
+    	Ext.getCmp("editQueryToWarehouse").setValue(null);
+    	Ext.getCmp("editQueryToWarehouseId").setValue(null);
+    	
+    	me.onQuery();
+    },
+    
+    getQueryParam: function() {
+    	var me = this;
+    	
+    	var result = {
+    		billStatus: Ext.getCmp("editQueryBillStatus").getValue()
+    	};
+    	
+    	var ref = Ext.getCmp("editQueryRef").getValue();
+    	if (ref) {
+    		result.ref = ref;
+    	}
+    	
+    	var fromWarehouseId = Ext.getCmp("editQueryFromWarehouseId").getValue();
+    	if (fromWarehouseId) {
+    		if (Ext.getCmp("editQueryFromWarehouse").getValue()) {
+    			result.fromWarehouseId = fromWarehouseId;	
+    		}
+    	}
+    	
+    	var toWarehouseId = Ext.getCmp("editQueryToWarehouseId").getValue();
+    	if (toWarehouseId) {
+    		if (Ext.getCmp("editQueryToWarehouse").getValue()) {
+    			result.toWarehouseId = toWarehouseId;	
+    		}
+    	}
+    	
+    	var fromDT = Ext.getCmp("editQueryFromDT").getValue();
+    	if (fromDT) {
+    		result.fromDT = Ext.Date.format(fromDT, "Y-m-d");
+    	}
+    	
+    	var toDT = Ext.getCmp("editQueryToDT").getValue();
+    	if (toDT) {
+    		result.toDT = Ext.Date.format(toDT, "Y-m-d");
+    	}
+    	
+    	return result;
     }
 });
