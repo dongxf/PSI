@@ -357,7 +357,40 @@ Ext.define("PSI.InvTransfer.ITEditForm", {
                             }, scope: me
                         }
                     ]
-                }
+                },
+                {
+					header : "",
+					id: "columnActionAdd",
+					align : "center",
+					menuDisabled : true,
+					width : 50,
+					xtype : "actioncolumn",
+					items : [ {
+						icon : PSI.Const.BASE_URL
+								+ "Public/Images/icons/add.png",
+						handler : function(grid, row) {
+							var store = grid.getStore();
+							store.insert(row, [{}]);
+						},
+						scope : me
+					}]
+				}, {
+					header : "",
+					id: "columnActionAppend",
+					align : "center",
+					menuDisabled : true,
+					width : 50,
+					xtype : "actioncolumn",
+					items : [ {
+						icon : PSI.Const.BASE_URL
+								+ "Public/Images/icons/add_detail.png",
+						handler : function(grid, row) {
+							var store = grid.getStore();
+							store.insert(row + 1, [{}]);
+						},
+						scope : me
+					}]
+				}
             ],
             store: store,
             listeners: {
@@ -442,5 +475,7 @@ Ext.define("PSI.InvTransfer.ITEditForm", {
     	Ext.getCmp("editToWarehouse").setReadOnly(true);
     	Ext.getCmp("editBizUser").setReadOnly(true);
     	Ext.getCmp("columnActionDelete").hide();
+    	Ext.getCmp("columnActionAdd").hide();
+    	Ext.getCmp("columnActionAppend").hide();
     }
 });
