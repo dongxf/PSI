@@ -780,7 +780,7 @@ class GoodsService extends PSIBaseService {
 			}
 			
 			$bs = new BizlogService();
-			$log = "为商品[$goodsCode $goodsName $goodsSpec]设置安全库存。";
+			$log = "为商品[$goodsCode $goodsName $goodsSpec]设置安全库存";
 			$bs->insertBizlog($log, "基础数据-商品");
 			
 			$db->commit();
