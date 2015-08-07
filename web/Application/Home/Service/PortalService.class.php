@@ -23,7 +23,7 @@ class PortalService extends PSIBaseService {
 			$warehouseId = $v["id"];
 			
 			// 库存金额
-			$sql = "select sum(balance_money) as balance_money 
+			$sql = "select balance_money 
 					from t_inventory
 					where warehouse_id = '%s' ";
 			$d = $db->query($sql, $warehouseId);
