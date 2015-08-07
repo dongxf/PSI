@@ -80,6 +80,7 @@
         me.querySaleData();
         me.queryInventoryData();
         me.queryPurchaseData();
+        me.queryMoneyData();
     },
     
     getSaleGrid: function() {
@@ -211,11 +212,16 @@
             border: 0,
             columns: [
                 {header: "款项", dataIndex: "item", width: 80, menuDisabled: true, sortable: false},
-                {header: "当期余额", dataIndex: "balanceMoney", width: 120, menuDisabled: true, sortable: false},
-                {header: "账龄30天内", dataIndex: "money30", width: 120, menuDisabled: true, sortable: false},
-                {header: "账龄30-60天", dataIndex: "money30to60", menuDisabled: true, sortable: false},
-                {header: "账龄60-90天", dataIndex: "money60to90", menuDisabled: true, sortable: false},
-                {header: "账龄大于90天", dataIndex: "money90", menuDisabled: true, sortable: false}
+                {header: "当期余额", dataIndex: "balanceMoney", width: 120, menuDisabled: true, 
+                	sortable: false, align: "right", xtype: "numbercolumn"},
+                {header: "账龄30天内", dataIndex: "money30", width: 120, menuDisabled: true, 
+                		sortable: false, align: "right", xtype: "numbercolumn"},
+                {header: "账龄30-60天", dataIndex: "money30to60", menuDisabled: true, 
+                			sortable: false, align: "right", xtype: "numbercolumn"},
+                {header: "账龄60-90天", dataIndex: "money60to90", menuDisabled: true, 
+                				sortable: false, align: "right", xtype: "numbercolumn"},
+                {header: "账龄大于90天", dataIndex: "money90", menuDisabled: true, 
+                					sortable: false, align: "right", xtype: "numbercolumn"}
             ],
             store: Ext.create("Ext.data.Store", {
                 model: modelName,
@@ -278,6 +284,28 @@
         el.mask(PSI.Const.LOADING);
         Ext.Ajax.request({
             url: PSI.Const.BASE_URL + "Home/Portal/purchasePortal",
+            method: "POST",
+            callback: function (options, success, response) {
+                var store = grid.getStore();
+                store.removeAll();
+
+                if (success) {
+                    var data = Ext.JSON.decode(response.responseText);
+                    store.add(data);
+                }
+
+                el.unmask();
+            }
+        });
+    },
+    
+    queryMoneyData: function() {
+    	var me = this;
+        var grid = me.getMoneyGrid();
+        var el = grid.getEl() || Ext.getBody();
+        el.mask(PSI.Const.LOADING);
+        Ext.Ajax.request({
+            url: PSI.Const.BASE_URL + "Home/Portal/moneyPortal",
             method: "POST",
             callback: function (options, success, response) {
                 var store = grid.getStore();

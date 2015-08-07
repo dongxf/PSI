@@ -119,25 +119,25 @@ class PortalService extends PSIBaseService {
 		
 		return $result;
 	}
-	
+
 	public function purchasePortal() {
 		$result = array();
-	
+		
 		$db = M();
-	
+		
 		// 当月
 		$sql = "select year(now()) as y, month(now()) as m";
 		$data = $db->query($sql);
 		$year = $data[0]["y"];
 		$month = $data[0]["m"];
-	
+		
 		for($i = 0; $i < 6; $i ++) {
 			if ($month < 10) {
 				$result[$i]["month"] = "$year-0$month";
 			} else {
 				$result[$i]["month"] = "$year-$month";
 			}
-				
+			
 			$sql = "select sum(w.goods_money) as goods_money
 					from t_pw_bill w
 					where w.bill_status = 1000
@@ -148,7 +148,7 @@ class PortalService extends PSIBaseService {
 			if (! $goodsMoney) {
 				$goodsMoney = 0;
 			}
-				
+			
 			// 扣除退货
 			$sql = "select sum(s.rejection_money) as rej_money
 					from t_pr_bill s
@@ -160,11 +160,11 @@ class PortalService extends PSIBaseService {
 			if (! $rejMoney) {
 				$rejMoney = 0;
 			}
-				
+			
 			$goodsMoney -= $rejMoney;
-				
+			
 			$result[$i]["purchaseMoney"] = $goodsMoney;
-				
+			
 			// 获得上个月
 			if ($month == 1) {
 				$month = 12;
@@ -173,7 +173,129 @@ class PortalService extends PSIBaseService {
 				$month -= 1;
 			}
 		}
+		
+		return $result;
+	}
+
+	public function moneyPortal() {
+		$result = array();
+		
+		$db = M();
+		
+		// 应收账款
+		$result[0]["item"] = "应收账款";
+		$sql = "select sum(balance_money) as balance_money
+				from t_receivables";
+		$data = $db->query($sql);
+		$balance = $data[0]["balance_money"];
+		if (! $balance) {
+			$balance = 0;
+		}
+		$result[0]["balanceMoney"] = $balance;
+		
+		// 账龄30天内
+		$sql = "select sum(balance_money) as balance_money
+				from t_receivables_detail
+				where datediff(current_date(), biz_date) < 30";
+		$data = $db->query($sql);
+		$balance = $data[0]["balance_money"];
+		if (! $balance) {
+			$balance = 0;
+		}
+		$result[0]["money30"] = $balance;
 	
+		// 账龄30-60天
+		$sql = "select sum(balance_money) as balance_money
+				from t_receivables_detail
+				where datediff(current_date(), biz_date) <= 60
+					and datediff(current_date(), biz_date) >= 30";
+		$data = $db->query($sql);
+		$balance = $data[0]["balance_money"];
+		if (! $balance) {
+			$balance = 0;
+		}
+		$result[0]["money30to60"] = $balance;
+		
+		// 账龄60-90天
+		$sql = "select sum(balance_money) as balance_money
+				from t_receivables_detail
+				where datediff(current_date(), biz_date) <= 90
+					and datediff(current_date(), biz_date) > 60";
+		$data = $db->query($sql);
+		$balance = $data[0]["balance_money"];
+		if (! $balance) {
+			$balance = 0;
+		}
+		$result[0]["money60to90"] = $balance;
+		
+		// 账龄大于90天
+		$sql = "select sum(balance_money) as balance_money
+				from t_receivables_detail
+				where datediff(current_date(), biz_date) > 90";
+		$data = $db->query($sql);
+		$balance = $data[0]["balance_money"];
+		if (! $balance) {
+			$balance = 0;
+		}
+		$result[0]["money90"] = $balance;
+		
+		// 应付账款
+		$result[1]["item"] = "应付账款";
+		$sql = "select sum(balance_money) as balance_money
+				from t_payables";
+		$data = $db->query($sql);
+		$balance = $data[0]["balance_money"];
+		if (! $balance) {
+			$balance = 0;
+		}
+		$result[1]["balanceMoney"] = $balance;
+		
+		// 账龄30天内
+		$sql = "select sum(balance_money) as balance_money
+				from t_payables_detail
+				where datediff(current_date(), biz_date) < 30";
+		$data = $db->query($sql);
+		$balance = $data[0]["balance_money"];
+		if (! $balance) {
+			$balance = 0;
+		}
+		$result[1]["money30"] = $balance;
+	
+		// 账龄30-60天
+		$sql = "select sum(balance_money) as balance_money
+				from t_payables_detail
+				where datediff(current_date(), biz_date) <= 60
+					and datediff(current_date(), biz_date) >= 30";
+		$data = $db->query($sql);
+		$balance = $data[0]["balance_money"];
+		if (! $balance) {
+			$balance = 0;
+		}
+		$result[1]["money30to60"] = $balance;
+		
+		// 账龄60-90天
+		$sql = "select sum(balance_money) as balance_money
+				from t_payables_detail
+				where datediff(current_date(), biz_date) <= 90
+					and datediff(current_date(), biz_date) > 60";
+		$data = $db->query($sql);
+		$balance = $data[0]["balance_money"];
+		if (! $balance) {
+			$balance = 0;
+		}
+		$result[1]["money60to90"] = $balance;
+		
+		// 账龄大于90天
+		$sql = "select sum(balance_money) as balance_money
+				from t_payables_detail
+				where datediff(current_date(), biz_date) > 90";
+		$data = $db->query($sql);
+		$balance = $data[0]["balance_money"];
+		if (! $balance) {
+			$balance = 0;
+		}
+		$result[1]["money90"] = $balance;
+		
 		return $result;
 	}
 }
