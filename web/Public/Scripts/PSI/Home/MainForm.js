@@ -169,7 +169,12 @@
                 {header: "存货金额", dataIndex: "inventoryMoney", width: 160, 
                 	menuDisabled: true, sortable: false, align: "right", xtype: "numbercolumn"},
                 {header: "库存低于安全库存量商品种类数", dataIndex: "siCount", width: 180, 
-                		menuDisabled: true, sortable: false, align: "right", xtype: "numbercolumn", format: "0"}
+                		menuDisabled: true, sortable: false, align: "right", 
+                		xtype: "numbercolumn", format: "0",
+                		renderer: function (value) {
+                            return value > 0 ? "<span style='color:red'>" + value + "</span>" : value;
+                        }
+                }
             ],
             store: Ext.create("Ext.data.Store", {
                 model: modelName,
