@@ -119,4 +119,61 @@ class PortalService extends PSIBaseService {
 		
 		return $result;
 	}
+	
+	public function purchasePortal() {
+		$result = array();
+	
+		$db = M();
+	
+		// 当月
+		$sql = "select year(now()) as y, month(now()) as m";
+		$data = $db->query($sql);
+		$year = $data[0]["y"];
+		$month = $data[0]["m"];
+	
+		for($i = 0; $i < 6; $i ++) {
+			if ($month < 10) {
+				$result[$i]["month"] = "$year-0$month";
+			} else {
+				$result[$i]["month"] = "$year-$month";
+			}
+				
+			$sql = "select sum(w.goods_money) as goods_money
+					from t_pw_bill w
+					where w.bill_status = 1000
+						and year(w.biz_dt) = %d
+						and month(w.biz_dt) = %d";
+			$data = $db->query($sql, $year, $month);
+			$goodsMoney = $data[0]["goods_money"];
+			if (! $goodsMoney) {
+				$goodsMoney = 0;
+			}
+				
+			// 扣除退货
+			$sql = "select sum(s.rejection_money) as rej_money
+					from t_pr_bill s
+					where s.bill_status = 1000
+						and year(s.bizdt) = %d
+						and month(s.bizdt) = %d";
+			$data = $db->query($sql, $year, $month);
+			$rejMoney = $data[0]["rej_money"];
+			if (! $rejMoney) {
+				$rejMoney = 0;
+			}
+				
+			$goodsMoney -= $rejMoney;
+				
+			$result[$i]["purchaseMoney"] = $goodsMoney;
+				
+			// 获得上个月
+			if ($month == 1) {
+				$month = 12;
+				$year -= 1;
+			} else {
+				$month -= 1;
+			}
+		}
+	
+		return $result;
+	}
 }

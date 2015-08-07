@@ -28,4 +28,12 @@ class PortalController extends Controller {
 			$this->ajaxReturn($ps->salePortal());
 		}
 	}
+
+	public function purchasePortal() {
+		if (IS_POST) {
+			$ps = new PortalService();
+			
+			$this->ajaxReturn($ps->purchasePortal());
+		}
+	}
 }

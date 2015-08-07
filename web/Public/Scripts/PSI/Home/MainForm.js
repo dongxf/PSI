@@ -79,6 +79,7 @@
 
         me.querySaleData();
         me.queryInventoryData();
+        me.queryPurchaseData();
     },
     
     getSaleGrid: function() {
@@ -137,7 +138,8 @@
             border: 0,
             columns: [
                 {header: "月份", dataIndex: "month", width: 80, menuDisabled: true, sortable: false},
-                {header: "采购额", dataIndex: "purchaseMoney", width: 120, menuDisabled: true, sortable: false}
+                {header: "采购额", dataIndex: "purchaseMoney", width: 120, menuDisabled: true, 
+                	sortable: false, align: "right", xtype: "numbercolumn"}
             ],
             store: Ext.create("Ext.data.Store", {
                 model: modelName,
@@ -254,6 +256,28 @@
         el.mask(PSI.Const.LOADING);
         Ext.Ajax.request({
             url: PSI.Const.BASE_URL + "Home/Portal/salePortal",
+            method: "POST",
+            callback: function (options, success, response) {
+                var store = grid.getStore();
+                store.removeAll();
+
+                if (success) {
+                    var data = Ext.JSON.decode(response.responseText);
+                    store.add(data);
+                }
+
+                el.unmask();
+            }
+        });
+    },
+    
+    queryPurchaseData: function() {
+    	var me = this;
+        var grid = me.getPurchaseGrid();
+        var el = grid.getEl() || Ext.getBody();
+        el.mask(PSI.Const.LOADING);
+        Ext.Ajax.request({
+            url: PSI.Const.BASE_URL + "Home/Portal/purchasePortal",
             method: "POST",
             callback: function (options, success, response) {
                 var store = grid.getStore();
