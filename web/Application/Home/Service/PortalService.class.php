@@ -27,8 +27,11 @@ class PortalService extends PSIBaseService {
 					from t_inventory
 					where warehouse_id = '%s' ";
 			$d = $db->query($sql, $warehouseId);
-			$result[$i]["inventoryMoney"] = $d[0]["balance_money"];
-			
+			if ($d) {
+				$result[$i]["inventoryMoney"] = $d[0]["balance_money"];
+			} else {
+				$result[$i]["inventoryMoney"] = 0;
+			}
 			//低于安全库存数量的商品种类
 			$sql = "select count(*) as cnt
 					from t_inventory i, t_goods_si s
