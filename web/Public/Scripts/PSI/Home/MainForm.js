@@ -157,7 +157,7 @@
     	var modelName = "PSIPortalInventory";
         Ext.define(modelName, {
             extend: "Ext.data.Model",
-            fields: ["warehouseName", "inventoryMoney"]
+            fields: ["warehouseName", "inventoryMoney", "siCount"]
         });
 
         me.__inventoryGrid = Ext.create("Ext.grid.Panel", {
@@ -168,7 +168,8 @@
             border: 0,
             columns: [
                 {header: "仓库", dataIndex: "warehouseName", width: 80, menuDisabled: true, sortable: false},
-                {header: "存货金额", dataIndex: "inventoryMoney", width: 120, menuDisabled: true, sortable: false}
+                {header: "存货金额", dataIndex: "inventoryMoney", width: 120, menuDisabled: true, sortable: false},
+                {header: "库存低于安全库存量商品种类数", dataIndex: "siCount", width: 180, menuDisabled: true, sortable: false}
             ],
             store: Ext.create("Ext.data.Store", {
                 model: modelName,
