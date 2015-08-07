@@ -18,6 +18,7 @@ Ext.define("PSI.Warehouse.MainForm", {
             },
             columnLines: true,
             columns: [
+                {xtype: "rownumberer"},
                 {header: "仓库编码", dataIndex: "code", menuDisabled: true, sortable: false, width: 60},
                 {header: "仓库名称", dataIndex: "name", menuDisabled: true, sortable: false, width: 200},
                 {header: "建账完毕", dataIndex: "inited", menuDisabled: true, sortable: false, width: 60,
