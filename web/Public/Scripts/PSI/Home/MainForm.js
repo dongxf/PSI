@@ -76,10 +76,8 @@
         });
 
         me.callParent(arguments);
-    },
-    
-    getSaleHtml: function() {
-    	return "<p>本月销售金额&nbsp;&nbsp;20000.00元</p><p>本月毛利&nbsp;&nbsp;1800元, 毛利率 18%</p>";
+        
+        me.queryInventoryData();
     },
     
     getSaleGrid: function() {
@@ -167,9 +165,11 @@
             columnLines: true,
             border: 0,
             columns: [
-                {header: "仓库", dataIndex: "warehouseName", width: 80, menuDisabled: true, sortable: false},
-                {header: "存货金额", dataIndex: "inventoryMoney", width: 120, menuDisabled: true, sortable: false},
-                {header: "库存低于安全库存量商品种类数", dataIndex: "siCount", width: 180, menuDisabled: true, sortable: false}
+                {header: "仓库", dataIndex: "warehouseName", width: 160, menuDisabled: true, sortable: false},
+                {header: "存货金额", dataIndex: "inventoryMoney", width: 160, 
+                	menuDisabled: true, sortable: false, align: "right", xtype: "numbercolumn"},
+                {header: "库存低于安全库存量商品种类数", dataIndex: "siCount", width: 180, 
+                		menuDisabled: true, sortable: false, align: "right", xtype: "numbercolumn", format: "0"}
             ],
             store: Ext.create("Ext.data.Store", {
                 model: modelName,
@@ -215,5 +215,27 @@
         });
 
         return me.__moneyGrid;
+    },
+    
+    queryInventoryData: function() {
+    	var me = this;
+        var grid = me.getInventoryGrid();
+        var el = grid.getEl() || Ext.getBody();
+        el.mask(PSI.Const.LOADING);
+        Ext.Ajax.request({
+            url: PSI.Const.BASE_URL + "Home/Portal/inventoryPortal",
+            method: "POST",
+            callback: function (options, success, response) {
+                var store = grid.getStore();
+                store.removeAll();
+
+                if (success) {
+                    var data = Ext.JSON.decode(response.responseText);
+                    store.add(data);
+                }
+
+                el.unmask();
+            }
+        });
     }
 });
