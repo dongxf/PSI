@@ -11,6 +11,7 @@ Ext.define("PSI.Goods.UnitMainForm", {
         var grid = Ext.create("Ext.grid.Panel", {
             columnLines: true,
             columns: [
+                {xtype: "rownumberer"},
                 {header: "商品计量单位", dataIndex: "name", menuDisabled: true, sortable: false, width: 200}
             ],
             store: Ext.create("Ext.data.Store", {
