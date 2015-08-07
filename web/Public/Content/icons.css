@@ -186,6 +186,22 @@
     background-image:url(../Images/login.png) !important;
 }
 
+.PSI-portal-money {
+    background-image:url(../Images/portal_money.png) !important;
+}
+
+.PSI-portal-inventory {
+    background-image:url(../Images/portal_inventory.png) !important;
+}
+
+.PSI-portal-purchase {
+    background-image:url(../Images/portal_purchase.png) !important;
+}
+
+.PSI-portal-sale {
+    background-image:url(../Images/portal_sale.png) !important;
+}
+
 .PSI-help {
     background-image:url(../Images/icons/help.png) !important;
 }
