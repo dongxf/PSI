@@ -148,28 +148,32 @@ Ext.define("PSI.Funds.PayMainForm", {
 				header : "名称",
 				dataIndex : "name",
 				menuDisabled : true,
-				sortable : false
+				sortable : false,
+				width: 200
 			}, {
 				header : "应付金额",
 				dataIndex : "payMoney",
 				menuDisabled : true,
 				sortable : false,
 				align : "right",
-				xtype : "numbercolumn"
+				xtype : "numbercolumn",
+				width: 160
 			}, {
 				header : "已付金额",
 				dataIndex : "actMoney",
 				menuDisabled : true,
 				sortable : false,
 				align : "right",
-				xtype : "numbercolumn"
+				xtype : "numbercolumn",
+				width: 160
 			}, {
 				header : "未付金额",
 				dataIndex : "balanceMoney",
 				menuDisabled : true,
 				sortable : false,
 				align : "right",
-				xtype : "numbercolumn"
+				xtype : "numbercolumn",
+				width: 160
 			} ],
 			store : store,
 			listeners : {
@@ -240,7 +244,8 @@ Ext.define("PSI.Funds.PayMainForm", {
 				header : "业务类型",
 				dataIndex : "refType",
 				menuDisabled : true,
-				sortable : false
+				sortable : false,
+				width: 120
 			}, {
 				header : "单号",
 				dataIndex : "refNumber",
@@ -277,7 +282,8 @@ Ext.define("PSI.Funds.PayMainForm", {
 				header : "创建时间",
 				dataIndex : "dateCreated",
 				menuDisabled : true,
-				sortable : false
+				sortable : false,
+				width: 140
 			} ],
 			store : store,
 			listeners : {
@@ -374,7 +380,7 @@ Ext.define("PSI.Funds.PayMainForm", {
 				dataIndex : "dateCreated",
 				menuDisabled : true,
 				sortable : false,
-				width: 120
+				width: 140
 			}, {
 				header : "录入人",
 				dataIndex : "inputUserName",

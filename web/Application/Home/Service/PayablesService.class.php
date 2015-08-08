@@ -133,15 +133,16 @@ class PayablesService extends PSIBaseService {
 				p.act_money, p.biz_date, p.date_created, p.remark 
 				from t_payment p, t_user u, t_user bu 
 				where p.ref_type = '%s' and p.ref_number = '%s' 
-				and  p.pay_user_id = u.id and p.input_user_id = bu.id 
-				limit " . $start . ", " . $limit;
-		$data = $db->query($sql, $refType, $refNumber);
+				and  p.pay_user_id = u.id and p.input_user_id = bu.id
+				order by p.date_created desc
+				limit %d, %d ";
+		$data = $db->query($sql, $refType, $refNumber, $start, $limit);
 		$result = array();
 		foreach ( $data as $i => $v ) {
 			$result[$i]["id"] = $v["id"];
 			$result[$i]["actMoney"] = $v["act_money"];
 			$result[$i]["bizDate"] = date("Y-m-d", strtotime($v["biz_date"]));
-			$result[$i]["dateCreated"] = date("Y-m-d", strtotime($v["date_created"]));
+			$result[$i]["dateCreated"] = $v["date_created"];
 			$result[$i]["bizUserName"] = $v["biz_user_name"];
 			$result[$i]["inputUserName"] = $v["input_user_name"];
 			$result[$i]["remark"] = $v["remark"];

@@ -137,15 +137,16 @@ class ReceivablesService extends PSIBaseService {
 				user.name as input_user_name 
 				from t_receiving r, t_user u, t_user user 
 				where r.rv_user_id = u.id and r.input_user_id = user.id 
-				  and r.ref_type = '%s' and r.ref_number = '%s' 
-				limit " . $start . ", " . $limit;
-		$data = $db->query($sql, $refType, $refNumber);
+				  and r.ref_type = '%s' and r.ref_number = '%s'
+				order by r.date_created desc
+				limit %d , %d ";
+		$data = $db->query($sql, $refType, $refNumber, $start, $limit);
 		$result = array();
 		foreach ( $data as $i => $v ) {
 			$result[$i]["id"] = $v["id"];
 			$result[$i]["actMoney"] = $v["act_money"];
 			$result[$i]["bizDate"] = date("Y-m-d", strtotime($v["biz_date"]));
-			$result[$i]["dateCreated"] = date("Y-m-d", strtotime($v["date_created"]));
+			$result[$i]["dateCreated"] = $v["date_created"];
 			$result[$i]["bizUserName"] = $v["rv_user_name"];
 			$result[$i]["inputUserName"] = $v["input_user_name"];
 			$result[$i]["remark"] = $v["remark"];

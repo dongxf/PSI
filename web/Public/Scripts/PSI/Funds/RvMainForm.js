@@ -133,6 +133,9 @@ Ext.define("PSI.Funds.RvMainForm", {
 		});
 
 		me.__rvGrid = Ext.create("Ext.grid.Panel", {
+			viewConfig: {
+                enableTextSelection: true
+            },
 			bbar : [ {
 				xtype : "pagingtoolbar",
 				store : store
@@ -147,28 +150,32 @@ Ext.define("PSI.Funds.RvMainForm", {
 				header : "名称",
 				dataIndex : "name",
 				menuDisabled : true,
-				sortable : false
+				sortable : false,
+				width: 200
 			}, {
 				header : "应收金额",
 				dataIndex : "rvMoney",
 				menuDisabled : true,
 				sortable : false,
 				align : "right",
-				xtype : "numbercolumn"
+				xtype : "numbercolumn",
+				width: 160
 			}, {
 				header : "已收金额",
 				dataIndex : "actMoney",
 				menuDisabled : true,
 				sortable : false,
 				align : "right",
-				xtype : "numbercolumn"
+				xtype : "numbercolumn",
+				width: 160
 			}, {
 				header : "未收金额",
 				dataIndex : "balanceMoney",
 				menuDisabled : true,
 				sortable : false,
 				align : "right",
-				xtype : "numbercolumn"
+				xtype : "numbercolumn",
+				width: 160
 			} ],
 			store : store,
 			listeners : {
@@ -237,6 +244,9 @@ Ext.define("PSI.Funds.RvMainForm", {
 		});
 
 		me.__rvDetailGrid = Ext.create("Ext.grid.Panel", {
+			viewConfig: {
+                enableTextSelection: true
+            },
 			title : "业务单据",
 			bbar : [ {
 				xtype : "pagingtoolbar",
@@ -247,7 +257,8 @@ Ext.define("PSI.Funds.RvMainForm", {
 				header : "业务类型",
 				dataIndex : "refType",
 				menuDisabled : true,
-				sortable : false
+				sortable : false,
+				width: 120
 			}, {
 				header : "单号",
 				dataIndex : "refNumber",
@@ -284,7 +295,8 @@ Ext.define("PSI.Funds.RvMainForm", {
 				header : "创建时间",
 				dataIndex : "dateCreated",
 				menuDisabled : true,
-				sortable : false
+				sortable : false,
+				width: 140
 			} ],
 			store : store,
 			listeners : {
@@ -359,6 +371,9 @@ Ext.define("PSI.Funds.RvMainForm", {
 		});
 
 		me.__rvRecordGrid = Ext.create("Ext.grid.Panel", {
+			viewConfig: {
+                enableTextSelection: true
+            },
 			title : "收款记录",
 			tbar : [ {
 				text : "录入收款记录",
@@ -395,7 +410,7 @@ Ext.define("PSI.Funds.RvMainForm", {
 				dataIndex : "dateCreated",
 				menuDisabled : true,
 				sortable : false,
-				width: 120
+				width: 140
 			}, {
 				header : "录入人",
 				dataIndex : "inputUserName",
