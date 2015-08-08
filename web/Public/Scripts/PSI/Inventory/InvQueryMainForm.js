@@ -89,6 +89,8 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 				border : 0,
 				width : 200,
 				split : true,
+				collapsible: true,
+				header: false,
 				items : [ me.getWarehouseGrid() ]
 			}, {
 				region : "center",
