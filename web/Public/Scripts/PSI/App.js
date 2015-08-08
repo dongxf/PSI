@@ -195,7 +195,7 @@ Ext.define("PSI.App", {
         });
         mainToolbar.add(mainMenu);
 
-        this.vp.getComponent(0).addDocked(mainToolbar);
+        me.vp.getComponent(0).addDocked(mainToolbar);
     },
     
     // 设置模块的标题

@@ -497,5 +497,7 @@ Ext.define("PSI.Sale.WSEditForm", {
 		Ext.getCmp("editWarehouse").setReadOnly(true);
 		Ext.getCmp("editBizUser").setReadOnly(true);
 		Ext.getCmp("columnActionDelete").hide();
+		Ext.getCmp("columnActionAdd").hide();
+		Ext.getCmp("columnActionAppend").hide();
     }
 });
