@@ -54,7 +54,11 @@ INSERT INTO `t_fid` (`fid`, `name`) VALUES
 ('2007', '采购退货出库'),
 ('2008', '业务设置'),
 ('2009', '库间调拨'),
-('2010', '库存盘点');
+('2010', '库存盘点'),
+('2011-01', '首页-销售看板'),
+('2011-02', '首页-库存看板'),
+('2011-03', '首页-采购看板'),
+('2011-04', '首页-资金看板');
 
 TRUNCATE TABLE `t_goods`;
 INSERT INTO `t_goods` (`id`, `category_id`, `code`, `name`, `sale_price`, `spec`, `unit_id`, `purchase_unit_id`, `purchase_price`, `ps_factor`, `py`) VALUES
@@ -169,6 +173,7 @@ INSERT INTO `t_payables_detail` (`id`, `act_money`, `balance_money`, `ca_id`, `c
 ('8800479E-B80F-11E4-8FC9-782BCBD7746B', '0.00', '5000.00', '87D62652-B80F-11E4-8FC9-782BCBD7746B', 'supplier', '2015-01-01 00:00:00', '2015-02-19 16:15:57', '5000.00', '87D62652-B80F-11E4-8FC9-782BCBD7746B', '应付账款期初建账');
 
 TRUNCATE TABLE `t_payment`;
+
 TRUNCATE TABLE `t_permission`;
 INSERT INTO `t_permission` (`id`, `fid`, `name`, `note`) VALUES
 ('-8996', '-8996', '权限管理', '权限管理'),
@@ -190,7 +195,11 @@ INSERT INTO `t_permission` (`id`, `fid`, `name`, `note`) VALUES
 ('2007', '2007', '采购退货出库', '采购退货出库'),
 ('2008', '2008', '业务设置', '业务设置'),
 ('2009', '2009', '库间调拨', '库间调拨'),
-('2010', '2010', '库存盘点', '库存盘点');
+('2010', '2010', '库存盘点', '库存盘点'),
+('2011-01', '2011-01', '首页-销售看板', '首页-销售看板'),
+('2011-02', '2011-02', '首页-库存看板', '首页-库存看板'),
+('2011-03', '2011-03', '首页-采购看板', '首页-采购看板'),
+('2011-04', '2011-04', '首页-资金看板', '首页-资金看板');
 
 TRUNCATE TABLE `t_pw_bill`;
 TRUNCATE TABLE `t_pw_bill_detail`;
@@ -257,7 +266,12 @@ INSERT INTO `t_role_permission` (`role_id`, `permission_id`) VALUES
 ('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2006'),
 ('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2007'),
 ('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2009'),
-('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2010');
+('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2010'),
+('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2011-01'),
+('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2011-02'),
+('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2011-03'),
+('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2011-04');
+
 
 TRUNCATE TABLE `t_role_user`;
 INSERT INTO `t_role_user` (`role_id`, `user_id`) VALUES

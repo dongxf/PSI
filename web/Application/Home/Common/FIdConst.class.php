@@ -133,4 +133,24 @@ class FIdConst {
 	 * 采购退货出库
 	 */
 	const PURCHASE_REJECTION = "2007";
+	
+	/**
+	 * 首页-销售看板
+	 */
+	const PORTAL_SALE = "2011-01";
+
+	/**
+	 * 首页-库存看板
+	 */
+	const PORTAL_INVENTORY = "2011-02";
+
+	/**
+	 * 首页-采购看板
+	 */
+	const PORTAL_PURCHASE = "2011-03";
+
+	/**
+	 * 首页-资金看板
+	 */
+	const PORTAL_MONEY = "2011-04";
 }

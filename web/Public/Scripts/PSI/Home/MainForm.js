@@ -1,8 +1,53 @@
 ﻿Ext.define("PSI.Home.MainForm", {
     extend: "Ext.panel.Panel",
 
+    config: {
+        pSale: "",
+        pInventory: "",
+        pPurchase: "",
+        pMoney: ""
+    },
+    
     border: 0,
     bodyPadding: 5,
+    
+    getPortal: function(index) {
+    	var me = this;
+    	if (!me.__portalList) {
+    		me.__portalList = [];
+	    	var pSale = me.getPSale() == "1";
+	    	if (pSale) {
+	    		me.__portalList.push(me.getSalePortal());
+	    	}
+	    	
+	    	var pInventory = me.getPInventory() == "1";
+	    	if (pInventory) {
+	    		me.__portalList.push(me.getInventoryPortal());
+	    	}
+	    	
+	    	var pPurchase = me.getPPurchase() == "1";
+	    	if (pPurchase) {
+	    		me.__portalList.push(me.getPurchasePortal());
+	    	}
+	    	
+	    	var pMoney = me.getPMoney() == "1";
+	    	if (pMoney) {
+	    		me.__portalList.push(me.getMoneyPortal());
+	    	}
+    	}
+    	
+    	if (index == 0 && me.__portalList.length == 0) {
+    		return me.getInfoPortal();
+    	}
+    	
+    	if (index >= me.__portalList.length || index < 0) {
+    		return {
+    			border: 0
+    		};
+    	}
+    	
+    	return me.__portalList[index];
+    },
     
     initComponent: function () {
         var me = this;
@@ -12,66 +57,14 @@
             items: [{
             	region: "west", flex: 1, layout: "vbox", border: 0,
             	items: [
-            	        {
-            	        	flex: 1,
-            	        	width: "100%",
-            	        	height: 240,
-            	        	margin: "5",
-            	        	header: {
-            	                title: "<span style='font-size:120%'>销售看板</span>",
-            	                iconCls: "PSI-portal-sale",
-            	                height: 40
-            	            },
-        	                layout: "fit",
-        	                items: [
-    	                        me.getSaleGrid()
-        	                ]
-            	        },
-            	        {
-            	        	header: {
-            	                title: "<span style='font-size:120%'>采购看板</span>",
-            	                iconCls: "PSI-portal-purchase",
-            	                height: 40
-            	            },
-            	        	flex: 1,
-            	        	width: "100%",
-            	        	height: 240,
-            	        	margin: "5",
-            	        	layout: "fit",
-            	        	items: [me.getPurchaseGrid()]
-            	        }
+            	        me.getPortal(0),
+            	        me.getPortal(2)
             	]
             },{
             	flex: 1, layout: "vbox", border: 0,
-            	items: [
-            	        {
-            	        	header: {
-            	                title: "<span style='font-size:120%'>库存看板</span>",
-            	                iconCls: "PSI-portal-inventory",
-            	                height: 40
-            	            },
-            	        	flex: 1,
-            	        	width: "100%",
-            	        	height: 240,
-            	        	margin: "5",
-            	        	layout: "fit",
-            	        	items: [me.getInventoryGrid()]
-            	        },
-            	        {
-            	        	header: {
-            	                title: "<span style='font-size:120%'>资金看板</span>",
-            	                iconCls: "PSI-portal-money",
-            	                height: 40
-            	            },
-            	        	flex: 1,
-            	        	width: "100%",
-            	        	height: 240,
-            	        	margin: "5",
-            	        	layout: "fit",
-            	        	items: [
-            	        	        me.getMoneyGrid()
-            	        	]
-            	        }]
+            	items: [ me.getPortal(1),
+            	         me.getPortal(3)
+            	]
             }]
         });
 
@@ -233,6 +226,78 @@
         return me.__moneyGrid;
     },
     
+    getSalePortal: function() {
+    	var me = this;
+    	return {
+        	flex: 1,
+        	width: "100%",
+        	height: 240,
+        	margin: "5",
+        	header: {
+                title: "<span style='font-size:120%'>销售看板</span>",
+                iconCls: "PSI-portal-sale",
+                height: 40
+            },
+            layout: "fit",
+            items: [
+                me.getSaleGrid()
+            ]
+        };
+    },
+    
+    getPurchasePortal: function() {
+    	var me = this;
+    	return {
+        	header: {
+                title: "<span style='font-size:120%'>采购看板</span>",
+                iconCls: "PSI-portal-purchase",
+                height: 40
+            },
+        	flex: 1,
+        	width: "100%",
+        	height: 240,
+        	margin: "5",
+        	layout: "fit",
+        	items: [me.getPurchaseGrid()]
+        };
+    },
+    
+    getInventoryPortal: function() {
+    	var me = this;
+    	return {
+        	header: {
+                title: "<span style='font-size:120%'>库存看板</span>",
+                iconCls: "PSI-portal-inventory",
+                height: 40
+            },
+        	flex: 1,
+        	width: "100%",
+        	height: 240,
+        	margin: "5",
+        	layout: "fit",
+        	items: [me.getInventoryGrid()]
+        };
+    },
+    
+    getMoneyPortal: function() {
+    	var me = this;
+    	return {
+        	header: {
+                title: "<span style='font-size:120%'>资金看板</span>",
+                iconCls: "PSI-portal-money",
+                height: 40
+            },
+        	flex: 1,
+        	width: "100%",
+        	height: 240,
+        	margin: "5",
+        	layout: "fit",
+        	items: [
+        	        me.getMoneyGrid()
+        	]
+        };
+    },
+    
     queryInventoryData: function() {
     	var me = this;
         var grid = me.getInventoryGrid();
@@ -319,5 +384,12 @@
                 el.unmask();
             }
         });
+    },
+    
+    getInfoPortal: function() {
+    	return {
+    		border: 0,
+    		html: "<h1>欢迎使用开源进销存PSI</h1>"
+    	}
     }
 });

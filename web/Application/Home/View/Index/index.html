@@ -7,7 +7,12 @@
             userName: "{$loginUserName}"
         });
 
-        app.add(Ext.create("PSI.Home.MainForm"));
+        app.add(Ext.create("PSI.Home.MainForm", {
+        	pSale: "{$pSale}",
+        	pInventory: "{$pInventory}",
+        	pPurchase: "{$pPurchase}",
+        	pMoney: "{$pMoney}"
+        }));
         app.setAppHeader({
             title: "{$title}",
             iconCls: "PSI-fid-9997"
