@@ -3,7 +3,7 @@
 namespace Home\Service;
 
 /**
- * 应收Service
+ * 应收账款Service
  *
  * @author 李静波
  */
@@ -32,8 +32,8 @@ class ReceivablesService extends PSIBaseService {
 					from t_receivables r, t_customer c 
 					where r.ca_type = '%s'  and c.category_id = '%s' and r.ca_id = c.id 
 					order by c.code 
-					limit " . $start . ", " . $limit;
-			$data = $db->query($sql, $caType, $categoryId);
+					limit %d , %d ";
+			$data = $db->query($sql, $caType, $categoryId, $start, $limit);
 			$result = array();
 			
 			foreach ( $data as $i => $v ) {
@@ -61,8 +61,8 @@ class ReceivablesService extends PSIBaseService {
 					from t_receivables r, t_supplier c 
 					where r.ca_type = '%s'  and c.category_id = '%s' and r.ca_id = c.id 
 					order by c.code 
-					limit " . $start . ", " . $limit;
-			$data = $db->query($sql, $caType, $categoryId);
+					limit %d , %d ";
+			$data = $db->query($sql, $caType, $categoryId, $start, $limit);
 			$result = array();
 			
 			foreach ( $data as $i => $v ) {
@@ -98,9 +98,10 @@ class ReceivablesService extends PSIBaseService {
 		$db = M();
 		$sql = "select id, rv_money, act_money, balance_money, ref_type, ref_number, date_created, biz_date 
 				from t_receivables_detail 
-				where ca_type = '%s' and ca_id = '%s' 
-				limit " . $start . ", " . $limit;
-		$data = $db->query($sql, $caType, $caId);
+				where ca_type = '%s' and ca_id = '%s'
+				order by biz_date desc, date_created desc
+				limit %d , %d ";
+		$data = $db->query($sql, $caType, $caId, $start, $limit);
 		$result = array();
 		foreach ( $data as $i => $v ) {
 			$result[$i]["id"] = $v["id"];

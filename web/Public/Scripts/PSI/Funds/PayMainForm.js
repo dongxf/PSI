@@ -149,7 +149,7 @@ Ext.define("PSI.Funds.PayMainForm", {
 				dataIndex : "name",
 				menuDisabled : true,
 				sortable : false,
-				width: 200
+				width: 300
 			}, {
 				header : "应付金额",
 				dataIndex : "payMoney",

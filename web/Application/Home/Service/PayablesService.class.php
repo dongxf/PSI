@@ -31,8 +31,8 @@ class PayablesService extends PSIBaseService {
 					from t_payables p, t_supplier s 
 					where p.ca_id = s.id and p.ca_type = 'supplier' and s.category_id = '%s' 
 					order by s.code 
-					limit " . $start . ", " . $limit;
-			$data = $db->query($sql, $categoryId);
+					limit %d , %d ";
+			$data = $db->query($sql, $categoryId, $start, $limit);
 			$result = array();
 			foreach ( $data as $i => $v ) {
 				$result[$i]["id"] = $v["id"];
@@ -58,8 +58,8 @@ class PayablesService extends PSIBaseService {
 					from t_payables p, t_customer s 
 					where p.ca_id = s.id and p.ca_type = 'customer' and s.category_id = '%s' 
 					order by s.code 
-					limit " . $start . ", " . $limit;
-			$data = $db->query($sql, $categoryId);
+					limit %d , %d";
+			$data = $db->query($sql, $categoryId, $start, $limit);
 			$result = array();
 			foreach ( $data as $i => $v ) {
 				$result[$i]["id"] = $v["id"];
@@ -94,9 +94,10 @@ class PayablesService extends PSIBaseService {
 		
 		$sql = "select id, ref_type, ref_number, pay_money, act_money, balance_money, date_created, biz_date 
 				from t_payables_detail 
-				where ca_type = '%s' and ca_id = '%s' 
-				limit " . $start . ", " . $limit;
-		$data = $db->query($sql, $caType, $caId);
+				where ca_type = '%s' and ca_id = '%s'
+				order by biz_date desc, date_created desc
+				limit %d , %d ";
+		$data = $db->query($sql, $caType, $caId, $start, $limit);
 		$result = array();
 		foreach ( $data as $i => $v ) {
 			$result[$i]["id"] = $v["id"];

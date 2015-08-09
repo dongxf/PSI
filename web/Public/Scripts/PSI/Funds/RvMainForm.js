@@ -151,7 +151,7 @@ Ext.define("PSI.Funds.RvMainForm", {
 				dataIndex : "name",
 				menuDisabled : true,
 				sortable : false,
-				width: 200
+				width: 300
 			}, {
 				header : "应收金额",
 				dataIndex : "rvMoney",
