@@ -571,7 +571,7 @@ class PWBillService extends PSIBaseService {
 			}
 			
 			// 日志
-			$log = "提交采购入库: 单号 = {$ref}";
+			$log = "提交采购入库单: 单号 = {$ref}";
 			$bs = new BizlogService();
 			$bs->insertBizlog($log, "采购入库");
 			
