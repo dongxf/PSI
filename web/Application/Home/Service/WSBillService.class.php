@@ -168,6 +168,9 @@ class WSBillService extends PSIBaseService {
 				$sql = "select sum(goods_money) as sum_goods_money from t_ws_bill_detail where wsbill_id = '%s' ";
 				$data = $db->query($sql, $id);
 				$sumGoodsMoney = $data[0]["sum_goods_money"];
+				if (! $sumGoodsMoney) {
+					$sumGoodsMoney = 0;
+				}
 				
 				$sql = "update t_ws_bill 
 						set sale_money = %f, customer_id = '%s', warehouse_id = '%s', 
@@ -212,6 +215,9 @@ class WSBillService extends PSIBaseService {
 				$sql = "select sum(goods_money) as sum_goods_money from t_ws_bill_detail where wsbill_id = '%s' ";
 				$data = $db->query($sql, $id);
 				$sumGoodsMoney = $data[0]["sum_goods_money"];
+				if (! $sumGoodsMoney) {
+					$sumGoodsMoney = 0;
+				}
 				
 				$sql = "update t_ws_bill set sale_money = %f where id = '%s' ";
 				$db->execute($sql, $sumGoodsMoney, $id);
@@ -579,6 +585,9 @@ class WSBillService extends PSIBaseService {
 					where wsbill_id = '%s' ";
 			$data = $db->query($sql, $id);
 			$sumInventoryMoney = $data[0]["sum_inventory_money"];
+			if (! $sumInventoryMoney) {
+				$sumInventoryMoney = 0;
+			}
 			
 			$profit = $saleMoney - $sumInventoryMoney;
 			

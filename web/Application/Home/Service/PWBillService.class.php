@@ -218,6 +218,9 @@ class PWBillService extends PSIBaseService {
 						where pwbill_id = '%s' ";
 				$data = $db->query($sql, $id);
 				$totalMoney = $data[0]["goods_money"];
+				if (! $totalMoney) {
+					$totalMoney = 0;
+				}
 				$sql = "update t_pw_bill 
 						set goods_money = %f, warehouse_id = '%s', " . " supplier_id = '%s', biz_dt = '%s' 
 						where id = '%s' ";
@@ -274,6 +277,9 @@ class PWBillService extends PSIBaseService {
 						where pwbill_id = '%s' ";
 				$data = $db->query($sql, $id);
 				$totalMoney = $data[0]["goods_money"];
+				if (! $totalMoney) {
+					$totalMoney = 0;
+				}
 				$sql = "update t_pw_bill
 						set goods_money = %f 
 						where id = '%s' ";

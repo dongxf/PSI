@@ -420,7 +420,13 @@ class SRBillService extends PSIBaseService {
 						where srbill_id = '%s' ";
 				$data = $db->query($sql, $id);
 				$rejMoney = $data[0]["rej_money"];
+				if (! $rejMoney) {
+					$rejMoney = 0;
+				}
 				$invMoney = $data[0]["inv_money"];
+				if (! $invMoney) {
+					$invMoney = 0;
+				}
 				$profit = $invMoney - $rejMoney;
 				$sql = "update t_sr_bill
 						set rejection_sale_money = %f, inventory_money = %f, profit = %f

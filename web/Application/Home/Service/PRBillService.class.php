@@ -191,6 +191,9 @@ class PRBillService extends PSIBaseService {
 						where prbill_id = '%s' ";
 				$data = $db->query($sql, $id);
 				$rejMoney = $data[0]["rej_money"];
+				if (! $rejMoney) {
+					$rejMoney = 0;
+				}
 				
 				$sql = "update t_pr_bill
 						set rejection_money = %f,
@@ -449,7 +452,6 @@ class PRBillService extends PSIBaseService {
 		$toDT = $params["toDT"];
 		$warehouseId = $params["warehouseId"];
 		$supplierId = $params["supplierId"];
-		
 		
 		$db = M();
 		$result = array();
