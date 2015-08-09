@@ -153,4 +153,9 @@ class FIdConst {
 	 * 首页-资金看板
 	 */
 	const PORTAL_MONEY = "2011-04";
+	
+	/**
+	 * 销售日报表(按商品汇总)
+	 */
+	const REPORT_SALE_DAY_BY_GOODS = "2012";
 }

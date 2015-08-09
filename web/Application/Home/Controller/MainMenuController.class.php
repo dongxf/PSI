@@ -119,6 +119,10 @@ class MainMenuController extends Controller {
 				// 采购退货出库
 				redirect(__ROOT__ . "/Home/PurchaseRej");
 				break;
+			case FIdConst::REPORT_SALE_DAY_BY_GOODS:
+				// 销售日报表(按商品汇总)
+				redirect(__ROOT__ . "/Home/Report/SaleDayByGoods");
+				break;
 			default:
 				redirect(__ROOT__ . "/Home");
 		}
