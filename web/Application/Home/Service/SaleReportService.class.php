@@ -44,7 +44,8 @@ class SaleReportService extends PSIBaseService {
 			$sql = "select sum(d.goods_money) as goods_money, sum(d.inventory_money) as inventory_money,
 						sum(d.goods_count) as goods_count
 					from t_ws_bill w, t_ws_bill_detail d
-					where w.id = d.wsbill_id and w.bizdt = '%s' and d.goods_id = '%s' ";
+					where w.id = d.wsbill_id and w.bizdt = '%s' and d.goods_id = '%s' 
+						and w.bill_status = 1000";
 			$data = $db->query($sql, $dt, $goodsId);
 			$saleCount = $data[0]["goods_count"];
 			if (! $saleCount) {
@@ -65,7 +66,8 @@ class SaleReportService extends PSIBaseService {
 						sum(d.rejection_sale_money) as rej_money,
 						sum(d.inventory_money) as rej_inventory_money
 					from t_sr_bill s, t_sr_bill_detail d
-					where s.id = d.srbill_id and s.bizdt = '%s' and d.goods_id = '%s' ";
+					where s.id = d.srbill_id and s.bizdt = '%s' and d.goods_id = '%s' 
+						and s.bill_status = 1000 ";
 			$data = $db->query($sql, $dt, $goodsId);
 			$rejCount = $data[0]["rej_count"];
 			if (! $rejCount) {
@@ -125,7 +127,8 @@ class SaleReportService extends PSIBaseService {
 		$sql = "select sum(d.goods_money) as goods_money, sum(d.inventory_money) as inventory_money,
 						sum(d.goods_count) as goods_count
 					from t_ws_bill w, t_ws_bill_detail d
-					where w.id = d.wsbill_id and w.bizdt = '%s' ";
+					where w.id = d.wsbill_id and w.bizdt = '%s' 
+						and w.bill_status = 1000";
 		$data = $db->query($sql, $dt);
 		$saleCount = $data[0]["goods_count"];
 		if (! $saleCount) {
@@ -146,7 +149,8 @@ class SaleReportService extends PSIBaseService {
 						sum(d.rejection_sale_money) as rej_money,
 						sum(d.inventory_money) as rej_inventory_money
 					from t_sr_bill s, t_sr_bill_detail d
-					where s.id = d.srbill_id and s.bizdt = '%s' ";
+					where s.id = d.srbill_id and s.bizdt = '%s' 
+						and s.bill_status = 1000 ";
 		$data = $db->query($sql, $dt);
 		$rejCount = $data[0]["rej_count"];
 		if (! $rejCount) {
