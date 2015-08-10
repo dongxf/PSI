@@ -49,4 +49,16 @@ class ReportController extends Controller {
 			$this->ajaxReturn($rs->saleDayByGoodsQueryData($params));
 		}
 	}
+
+	public function saleDayByGoodsSummaryQueryData() {
+		if (IS_POST) {
+			$params = array(
+					"dt" => I("post.dt")
+			);
+			
+			$rs = new SaleReportService();
+			
+			$this->ajaxReturn($rs->saleDayByGoodsSummaryQueryData($params));
+		}
+	}
 }

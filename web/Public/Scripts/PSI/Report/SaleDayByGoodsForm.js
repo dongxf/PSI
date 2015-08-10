@@ -56,8 +56,14 @@ Ext.define("PSI.Report.SaleDayByGoodsForm", {
                     }
     				]
                 }, {
-                    region: "center", layout: "fit", border: 0,
-                    items: [me.getMainGrid()]
+                    region: "center", layout: "border", border: 0,
+                    items: [{
+                    	region: "center", layout: "fit", border: 0,
+                    	items: [me.getMainGrid()]
+                    },{
+                    	region: "south", layout: "fit", height: 100,
+                    	items: [me.getSummaryGrid()]
+                    }]
                 }]
         });
 
@@ -160,22 +166,88 @@ Ext.define("PSI.Report.SaleDayByGoodsForm", {
                     value: "条记录"
                 }],
             listeners: {
-                select: {
-                    fn: me.onMainGridSelect,
-                    scope: me
-                },
-                itemdblclick: {
-                    fn: me.onEditBill,
-                    scope: me
-                }
             }
         });
         
         return me.__mainGrid;
     },
     
+    getSummaryGrid: function() {
+    	var me = this;
+    	if (me.__summaryGrid) {
+    		return me.__summaryGrid;
+    	}
+    	
+    	var modelName = "PSIReportSaleDayByGoodsSummary";
+        Ext.define(modelName, {
+            extend: "Ext.data.Model",
+            fields: ["bizDT", "saleCount", "saleMoney",
+                "rejCount", "rejMoney", "c", "m", "profit", "rate"]
+        });
+        var store = Ext.create("Ext.data.Store", {
+            autoLoad: false,
+            model: modelName,
+            data: []
+        });
+
+        me.__summaryGrid = Ext.create("Ext.grid.Panel", {
+        	title: "日销售汇总",
+        	viewConfig: {
+                enableTextSelection: true
+            },
+            border: 0,
+            columnLines: true,
+            columns: [
+                {header: "业务日期", dataIndex: "bizDT", menuDisabled: true, sortable: false, width: 80},
+                {header: "销售出库数量", dataIndex: "saleCount", menuDisabled: true, sortable: false, 
+                	align: "right", xtype: "numbercolumn", format: "0"},
+                {header: "销售出库金额", dataIndex: "saleMoney", menuDisabled: true, sortable: false,
+                	align: "right", xtype: "numbercolumn"},
+                {header: "退货入库数量", dataIndex: "rejCount", menuDisabled: true, sortable: false,
+                	align: "right", xtype: "numbercolumn", format: "0"},
+                {header: "退货入库金额", dataIndex: "rejMoney", menuDisabled: true, sortable: false,
+                	align: "right", xtype: "numbercolumn"},
+                {header: "净销售数量", dataIndex: "c", menuDisabled: true, sortable: false,
+                	align: "right", xtype: "numbercolumn", format: "0"},
+                {header: "净销售金额", dataIndex: "m", menuDisabled: true, sortable: false,
+                	align: "right", xtype: "numbercolumn"},
+                {header: "毛利", dataIndex: "profit", menuDisabled: true, sortable: false,
+                	align: "right", xtype: "numbercolumn"},
+                {header: "毛利率", dataIndex: "rate", menuDisabled: true, sortable: false, align: "right"}
+            ],
+            store: store
+        });
+        
+        return me.__summaryGrid;
+    },
+
     onQuery: function() {
     	this.refreshMainGrid();
+    	this.refreshSummaryGrid();
+    },
+    
+    refreshSummaryGrid: function() {
+        var me = this;
+        var grid = me.getSummaryGrid();
+        var el = grid.getEl() || Ext.getBody();
+        el.mask(PSI.Const.LOADING);
+        Ext.Ajax.request({
+            url: PSI.Const.BASE_URL + "Home/Report/saleDayByGoodsSummaryQueryData",
+            params: me.getQueryParam(),
+            method: "POST",
+            callback: function (options, success, response) {
+                var store = grid.getStore();
+
+                store.removeAll();
+
+                if (success) {
+                    var data = Ext.JSON.decode(response.responseText);
+                    store.add(data);
+                }
+
+                el.unmask();
+            }
+        });
     },
     
     onClearQuery: function() {

@@ -114,4 +114,66 @@ class SaleReportService extends PSIBaseService {
 				"totalCount" => $cnt
 		);
 	}
+
+	public function saleDayByGoodsSummaryQueryData($params) {
+		$dt = $params["dt"];
+		
+		$result = array();
+		$result[0]["bizDT"] = $dt;
+		
+		$db = M();
+		$sql = "select sum(d.goods_money) as goods_money, sum(d.inventory_money) as inventory_money,
+						sum(d.goods_count) as goods_count
+					from t_ws_bill w, t_ws_bill_detail d
+					where w.id = d.wsbill_id and w.bizdt = '%s' ";
+		$data = $db->query($sql, $dt);
+		$saleCount = $data[0]["goods_count"];
+		if (! $saleCount) {
+			$saleCount = 0;
+		}
+		$saleMoney = $data[0]["goods_money"];
+		if (! $saleMoney) {
+			$saleMoney = 0;
+		}
+		$saleInventoryMoney = $data[0]["inventory_money"];
+		if (! $saleInventoryMoney) {
+			$saleInventoryMoney = 0;
+		}
+		$result[0]["saleMoney"] = $saleMoney;
+		$result[0]["saleCount"] = $saleCount;
+		
+		$sql = "select sum(d.rejection_goods_count) as rej_count, 
+						sum(d.rejection_sale_money) as rej_money,
+						sum(d.inventory_money) as rej_inventory_money
+					from t_sr_bill s, t_sr_bill_detail d
+					where s.id = d.srbill_id and s.bizdt = '%s' ";
+		$data = $db->query($sql, $dt);
+		$rejCount = $data[0]["rej_count"];
+		if (! $rejCount) {
+			$rejCount = 0;
+		}
+		$rejSaleMoney = $data[0]["rej_money"];
+		if (! $rejSaleMoney) {
+			$rejSaleMoney = 0;
+		}
+		$rejInventoryMoney = $data[0]["rej_inventory_money"];
+		if (! $rejInventoryMoney) {
+			$rejInventoryMoney = 0;
+		}
+		
+		$result[0]["rejCount"] = $rejCount;
+		$result[0]["rejMoney"] = $rejSaleMoney;
+		
+		$c = $saleCount - $rejCount;
+		$m = $saleMoney - $rejSaleMoney;
+		$result[0]["c"] = $c;
+		$result[0]["m"] = $m;
+		$profit = $saleMoney - $rejSaleMoney - $saleInventoryMoney + $rejInventoryMoney;
+		$result[0]["profit"] = $profit;
+		if ($m > 0) {
+			$result[0]["rate"] = sprintf("%0.2f", $profit / $m * 100) . "%";
+		}
+		
+		return $result;
+	}
 }
