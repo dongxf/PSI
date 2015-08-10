@@ -9,7 +9,7 @@ use Home\Service\SaleReportService;
 
 /**
  * 报表Controller
- * 
+ *
  * @author 李静波
  *        
  */
@@ -28,17 +28,20 @@ class ReportController extends Controller {
 			$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
 			$dtFlag = getdate();
 			$this->assign("dtFlag", $dtFlag[0]);
-				
+			
 			$this->display();
 		} else {
 			redirect(__ROOT__ . "/Home/User/login");
 		}
 	}
-	
+
 	public function saleDayByGoodsQueryData() {
 		if (IS_POST) {
 			$params = array(
-					"dt" => I("post.dt")
+					"dt" => I("post.dt"),
+					"page" => I("post.page"),
+					"start" => I("post.start"),
+					"limit" => I("post.limit")
 			);
 			
 			$rs = new SaleReportService();
