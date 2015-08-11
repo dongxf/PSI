@@ -27,14 +27,35 @@ Ext.define("PSI.Report.SaleMonthByGoodsForm", {
     					columns : 4
     				},
     				items: [{
-                    	id: "editQueryDT",
-                        xtype: "datefield",
+                    	id: "editQueryYear",
+                        xtype: "numberfield",
                         margin: "5, 0, 0, 0",
-                        format: "Y-m-d",
                         labelAlign: "right",
                         labelSeparator: "",
-                        fieldLabel: "业务日期",
-                        value: new Date()
+                        fieldLabel: "年",
+                        labelWidth: 20,
+                        width: 100,
+                        value: (new Date()).getFullYear()
+                    },{
+                    	id: "editQueryMonth",
+                    	xtype: "combobox",
+                        margin: "5, 0, 0, 0",
+                        labelAlign: "right",
+                        labelSeparator: "",
+                        labelWidth: 20,
+                        fieldLabel: " ",
+                        store: Ext.create("Ext.data.ArrayStore", {
+                            fields: ["id", "text"],
+                            data: [[1, "一月"], [2, "二月"], [3, "三月"], [4, "四月"], [5, "五月"],
+                                   [6, "六月"], [7, "七月"], [8, "八月"], [9, "九月"], [10, "十月"],
+                                   [11, "十一月"], [12, "十二月"]]
+                        }),
+                        valueField: "id",
+                        displayFIeld: "text",
+                        queryMode : "local",
+    					editable : false,
+                        value: (new Date()).getMonth() + 1,
+                        width: 90
                     },{
                     	xtype: "container",
                     	items: [{
@@ -76,7 +97,7 @@ Ext.define("PSI.Report.SaleMonthByGoodsForm", {
     		return me.__mainGrid;
     	}
     	
-    	var modelName = "PSIReportSaleDayByGoods";
+    	var modelName = "PSIReportSaleMonthByGoods";
         Ext.define(modelName, {
             extend: "Ext.data.Model",
             fields: ["bizDT", "goodsCode", "goodsName", "goodsSpec", "saleCount", "unitName", "saleMoney",
@@ -92,7 +113,7 @@ Ext.define("PSI.Report.SaleMonthByGoodsForm", {
                 actionMethods: {
                     read: "POST"
                 },
-                url: PSI.Const.BASE_URL + "Home/Report/saleDayByGoodsQueryData",
+                url: PSI.Const.BASE_URL + "Home/Report/saleMonthByGoodsQueryData",
                 reader: {
                     root: 'dataList',
                     totalProperty: 'totalCount'
@@ -178,7 +199,7 @@ Ext.define("PSI.Report.SaleMonthByGoodsForm", {
     		return me.__summaryGrid;
     	}
     	
-    	var modelName = "PSIReportSaleDayByGoodsSummary";
+    	var modelName = "PSIReportSaleMonthByGoodsSummary";
         Ext.define(modelName, {
             extend: "Ext.data.Model",
             fields: ["bizDT", "saleMoney", "rejMoney", "m", "profit", "rate"]
@@ -190,14 +211,14 @@ Ext.define("PSI.Report.SaleMonthByGoodsForm", {
         });
 
         me.__summaryGrid = Ext.create("Ext.grid.Panel", {
-        	title: "日销售汇总",
+        	title: "月销售汇总",
         	viewConfig: {
                 enableTextSelection: true
             },
             border: 0,
             columnLines: true,
             columns: [
-                {header: "业务日期", dataIndex: "bizDT", menuDisabled: true, sortable: false, width: 80},
+                {header: "月份", dataIndex: "bizDT", menuDisabled: true, sortable: false, width: 80},
                 {header: "销售出库金额", dataIndex: "saleMoney", menuDisabled: true, sortable: false,
                 	align: "right", xtype: "numbercolumn"},
                 {header: "退货入库金额", dataIndex: "rejMoney", menuDisabled: true, sortable: false,
@@ -225,7 +246,7 @@ Ext.define("PSI.Report.SaleMonthByGoodsForm", {
         var el = grid.getEl() || Ext.getBody();
         el.mask(PSI.Const.LOADING);
         Ext.Ajax.request({
-            url: PSI.Const.BASE_URL + "Home/Report/saleDayByGoodsSummaryQueryData",
+            url: PSI.Const.BASE_URL + "Home/Report/saleMonthByGoodsSummaryQueryData",
             params: me.getQueryParam(),
             method: "POST",
             callback: function (options, success, response) {
@@ -246,7 +267,8 @@ Ext.define("PSI.Report.SaleMonthByGoodsForm", {
     onClearQuery: function() {
     	var me = this;
     	
-    	Ext.getCmp("editQueryDT").setValue(new Date());
+    	Ext.getCmp("editQueryYear").setValue((new Date()).getFullYear());
+    	Ext.getCmp("editQueryMonth").setValue((new Date()).getMonth() + 1);
     	
     	me.onQuery();
     },
@@ -257,9 +279,22 @@ Ext.define("PSI.Report.SaleMonthByGoodsForm", {
     	var result = {
     	};
     	
-    	var dt = Ext.getCmp("editQueryDT").getValue();
-    	if (dt) {
-    		result.dt = Ext.Date.format(dt, "Y-m-d");
+    	var year = Ext.getCmp("editQueryYear").getValue();
+    	if (year) {
+    		result.year = year;
+    	} else {
+    		year = (new Date()).getFullYear();
+    		Ext.getCmp("editQueryYear").setValue(year);
+    		result.year = year;
+    	}
+    	
+    	var month = Ext.getCmp("editQueryMonth").getValue();
+    	if (month) {
+    		result.month = month;
+    	} else {
+    		month = (new Date()).getMonth() + 1;
+    		Ext.getCmp("editQueryMonth").setValue(month);
+    		result.month = month;
     	}
     	
     	return result;

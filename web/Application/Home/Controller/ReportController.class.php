@@ -246,4 +246,39 @@ class ReportController extends Controller {
 			redirect(__ROOT__ . "/Home/User/login");
 		}
 	}
+
+	/**
+	 * 销售月报表(按商品汇总) - 查询数据
+	 */
+	public function saleMonthByGoodsQueryData() {
+		if (IS_POST) {
+			$params = array(
+					"year" => I("post.year"),
+					"month" => I("post.month"),
+					"page" => I("post.page"),
+					"start" => I("post.start"),
+					"limit" => I("post.limit")
+			);
+			
+			$rs = new SaleReportService();
+			
+			$this->ajaxReturn($rs->saleMonthByGoodsQueryData($params));
+		}
+	}
+
+	/**
+	 * 销售月报表(按商品汇总) - 查询汇总数据
+	 */
+	public function saleMonthByGoodsSummaryQueryData() {
+		if (IS_POST) {
+			$params = array(
+					"year" => I("post.year"),
+					"month" => I("post.month")
+			);
+			
+			$rs = new SaleReportService();
+			
+			$this->ajaxReturn($rs->saleMonthByGoodsSummaryQueryData($params));
+		}
+	}
 }
