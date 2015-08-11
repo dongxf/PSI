@@ -120,10 +120,7 @@ class SaleReportService extends PSIBaseService {
 		);
 	}
 
-	/**
-	 * 销售日报表(按商品汇总) - 查询汇总数据
-	 */
-	public function saleDayByGoodsSummaryQueryData($params) {
+	private function saleDaySummaryQueryData($params) {
 		$dt = $params["dt"];
 		
 		$result = array();
@@ -132,7 +129,7 @@ class SaleReportService extends PSIBaseService {
 		$db = M();
 		$sql = "select sum(d.goods_money) as goods_money, sum(d.inventory_money) as inventory_money
 					from t_ws_bill w, t_ws_bill_detail d
-					where w.id = d.wsbill_id and w.bizdt = '%s' 
+					where w.id = d.wsbill_id and w.bizdt = '%s'
 						and w.bill_status = 1000";
 		$data = $db->query($sql, $dt);
 		$saleMoney = $data[0]["goods_money"];
@@ -148,7 +145,7 @@ class SaleReportService extends PSIBaseService {
 		$sql = "select  sum(d.rejection_sale_money) as rej_money,
 						sum(d.inventory_money) as rej_inventory_money
 					from t_sr_bill s, t_sr_bill_detail d
-					where s.id = d.srbill_id and s.bizdt = '%s' 
+					where s.id = d.srbill_id and s.bizdt = '%s'
 						and s.bill_status = 1000 ";
 		$data = $db->query($sql, $dt);
 		$rejSaleMoney = $data[0]["rej_money"];
@@ -171,5 +168,113 @@ class SaleReportService extends PSIBaseService {
 		}
 		
 		return $result;
+	}
+
+	/**
+	 * 销售日报表(按商品汇总) - 查询汇总数据
+	 */
+	public function saleDayByGoodsSummaryQueryData($params) {
+		return $this->saleDaySummaryQueryData($params);
+	}
+
+	/**
+	 * 销售日报表(按客户汇总) - 查询数据
+	 */
+	public function saleDayByCustomerQueryData($params) {
+		$page = $params["page"];
+		$start = $params["start"];
+		$limit = $params["limit"];
+		
+		$dt = $params["dt"];
+		
+		$result = array();
+		
+		$db = M();
+		$sql = "select c.id, c.code, c.name
+				from t_customer c
+				where c.id in(
+					select distinct w.customer_id
+					from t_ws_bill w
+					where w.bizdt = '%s' and w.bill_status = 1000
+					union
+					select distinct s.customer_id
+					from t_sr_bill s
+					where s.bizdt = '%s' and s.bill_status = 1000
+					)
+				order by c.code
+				limit %d, %d";
+		$items = $db->query($sql, $dt, $dt, $start, $limit);
+		foreach ( $items as $i => $v ) {
+			$result[$i]["bizDT"] = $dt;
+			$result[$i]["customerCode"] = $v["code"];
+			$result[$i]["customerName"] = $v["name"];
+			
+			$customerId = $v["id"];
+			$sql = "select sum(w.sale_money) as goods_money, sum(w.inventory_money) as inventory_money
+					from t_ws_bill w
+					where w.bizdt = '%s' and w.customer_id = '%s'
+						and w.bill_status = 1000";
+			$data = $db->query($sql, $dt, $customerId);
+			$saleMoney = $data[0]["goods_money"];
+			if (! $saleMoney) {
+				$saleMoney = 0;
+			}
+			$saleInventoryMoney = $data[0]["inventory_money"];
+			if (! $saleInventoryMoney) {
+				$saleInventoryMoney = 0;
+			}
+			$result[$i]["saleMoney"] = $saleMoney;
+			
+			$sql = "select sum(s.rejection_sale_money) as rej_money,
+						sum(s.inventory_money) as rej_inventory_money
+					from t_sr_bill s
+					where s.bizdt = '%s' and s.customer_id = '%s'
+						and s.bill_status = 1000 ";
+			$data = $db->query($sql, $dt, $customerId);
+			$rejSaleMoney = $data[0]["rej_money"];
+			if (! $rejSaleMoney) {
+				$rejSaleMoney = 0;
+			}
+			$rejInventoryMoney = $data[0]["rej_inventory_money"];
+			if (! $rejInventoryMoney) {
+				$rejInventoryMoney = 0;
+			}
+			
+			$result[$i]["rejMoney"] = $rejSaleMoney;
+			
+			$m = $saleMoney - $rejSaleMoney;
+			$result[$i]["m"] = $m;
+			$profit = $saleMoney - $rejSaleMoney - $saleInventoryMoney + $rejInventoryMoney;
+			$result[$i]["profit"] = $profit;
+			if ($m > 0) {
+				$result[$i]["rate"] = sprintf("%0.2f", $profit / $m * 100) . "%";
+			}
+		}
+		
+		$sql = "select count(*) as cnt
+				from t_customer c
+				where c.id in(
+					select distinct w.customer_id
+					from t_ws_bill w
+					where w.bizdt = '%s' and w.bill_status = 1000
+					union
+					select distinct s.customer_id
+					from t_sr_bill s
+					where s.bizdt = '%s' and s.bill_status = 1000
+					)";
+		$data = $db->query($sql, $dt, $dt);
+		$cnt = $data[0]["cnt"];
+		
+		return array(
+				"dataList" => $result,
+				"totalCount" => $cnt
+		);
+	}
+
+	/**
+	 * 销售日报表(按客户汇总) - 查询汇总数据
+	 */
+	public function saleDayByCustomerSummaryQueryData($params) {
+		return $this->saleDaySummaryQueryData($params);
 	}
 }

@@ -87,5 +87,38 @@ class ReportController extends Controller {
 			redirect(__ROOT__ . "/Home/User/login");
 		}
 	}
+
+	/**
+	 * 销售日报表(按客户汇总) - 查询数据
+	 */
+	public function saleDayByCustomerQueryData() {
+		if (IS_POST) {
+			$params = array(
+					"dt" => I("post.dt"),
+					"page" => I("post.page"),
+					"start" => I("post.start"),
+					"limit" => I("post.limit")
+			);
+			
+			$rs = new SaleReportService();
+			
+			$this->ajaxReturn($rs->saleDayByCustomerQueryData($params));
+		}
+	}
+	
+	/**
+	 * 销售日报表(按客户汇总) - 查询汇总数据
+	 */
+	public function saleDayByCustomerSummaryQueryData() {
+		if (IS_POST) {
+			$params = array(
+					"dt" => I("post.dt")
+			);
+				
+			$rs = new SaleReportService();
+				
+			$this->ajaxReturn($rs->saleDayByCustomerSummaryQueryData($params));
+		}
+	}
 	
 }
