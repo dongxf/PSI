@@ -120,5 +120,58 @@ class ReportController extends Controller {
 			$this->ajaxReturn($rs->saleDayByCustomerSummaryQueryData($params));
 		}
 	}
+
+	/**
+	 * 销售日报表(按仓库汇总)
+	 */
+	public function saleDayByWarehouse() {
+		$us = new UserService();
+	
+		if ($us->hasPermission(FIdConst::REPORT_SALE_DAY_BY_WAREHOUSE)) {
+			$this->assign("title", "销售日报表(按仓库汇总)");
+			$this->assign("uri", __ROOT__ . "/");
+	
+			$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
+			$dtFlag = getdate();
+			$this->assign("dtFlag", $dtFlag[0]);
+	
+			$this->display();
+		} else {
+			redirect(__ROOT__ . "/Home/User/login");
+		}
+	}
+	
+	/**
+	 * 销售日报表(按仓库汇总) - 查询数据
+	 */
+	public function saleDayByWarehouseQueryData() {
+		if (IS_POST) {
+			$params = array(
+					"dt" => I("post.dt"),
+					"page" => I("post.page"),
+					"start" => I("post.start"),
+					"limit" => I("post.limit")
+			);
+				
+			$rs = new SaleReportService();
+				
+			$this->ajaxReturn($rs->saleDayByWarehouseQueryData($params));
+		}
+	}
+	
+	/**
+	 * 销售日报表(按仓库汇总) - 查询汇总数据
+	 */
+	public function saleDayByWarehouseSummaryQueryData() {
+		if (IS_POST) {
+			$params = array(
+					"dt" => I("post.dt")
+			);
+	
+			$rs = new SaleReportService();
+	
+			$this->ajaxReturn($rs->saleDayByWarehouseSummaryQueryData($params));
+		}
+	}
 	
 }

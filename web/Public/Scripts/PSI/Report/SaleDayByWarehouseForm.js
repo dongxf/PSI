@@ -1,5 +1,5 @@
-// 销售日报表(按客户汇总)
-Ext.define("PSI.Report.SaleDayByCustomerForm", {
+// 销售日报表(按仓库汇总)
+Ext.define("PSI.Report.SaleDayByWarehouseForm", {
     extend: "Ext.panel.Panel",
     
     border: 0,
@@ -76,10 +76,10 @@ Ext.define("PSI.Report.SaleDayByCustomerForm", {
     		return me.__mainGrid;
     	}
     	
-    	var modelName = "PSIReportSaleDayByCustomer";
+    	var modelName = "PSIReportSaleDayByWarehouse";
         Ext.define(modelName, {
             extend: "Ext.data.Model",
-            fields: ["bizDT", "customerCode", "customerName", "saleMoney",
+            fields: ["bizDT", "warehouseCode", "warehouseName", "saleMoney",
                 "rejMoney", "m", "profit", "rate"]
         });
         var store = Ext.create("Ext.data.Store", {
@@ -92,7 +92,7 @@ Ext.define("PSI.Report.SaleDayByCustomerForm", {
                 actionMethods: {
                     read: "POST"
                 },
-                url: PSI.Const.BASE_URL + "Home/Report/saleDayByCustomerQueryData",
+                url: PSI.Const.BASE_URL + "Home/Report/saleDayByWarehouseQueryData",
                 reader: {
                     root: 'dataList',
                     totalProperty: 'totalCount'
@@ -112,8 +112,8 @@ Ext.define("PSI.Report.SaleDayByCustomerForm", {
             columns: [
                 {xtype: "rownumberer"},
                 {header: "业务日期", dataIndex: "bizDT", menuDisabled: true, sortable: false, width: 80},
-                {header: "客户编码", dataIndex: "customerCode", menuDisabled: true, sortable: false},
-                {header: "客户名称", dataIndex: "customerName", menuDisabled: true, sortable: false, width: 200},
+                {header: "仓库编码", dataIndex: "warehouseCode", menuDisabled: true, sortable: false},
+                {header: "仓库名称", dataIndex: "warehouseName", menuDisabled: true, sortable: false, width: 200},
                 {header: "销售出库金额", dataIndex: "saleMoney", menuDisabled: true, sortable: false,
                 	align: "right", xtype: "numbercolumn"},
                 {header: "退货入库金额", dataIndex: "rejMoney", menuDisabled: true, sortable: false,
@@ -170,7 +170,7 @@ Ext.define("PSI.Report.SaleDayByCustomerForm", {
     		return me.__summaryGrid;
     	}
     	
-    	var modelName = "PSIReportSaleDayByCustomerSummary";
+    	var modelName = "PSIReportSaleDayByWarehouseSummary";
         Ext.define(modelName, {
             extend: "Ext.data.Model",
             fields: ["bizDT", "saleMoney", "rejMoney", "m", "profit", "rate"]
@@ -217,7 +217,7 @@ Ext.define("PSI.Report.SaleDayByCustomerForm", {
         var el = grid.getEl() || Ext.getBody();
         el.mask(PSI.Const.LOADING);
         Ext.Ajax.request({
-            url: PSI.Const.BASE_URL + "Home/Report/saleDayByCustomerSummaryQueryData",
+            url: PSI.Const.BASE_URL + "Home/Report/saleDayByWarehouseSummaryQueryData",
             params: me.getQueryParam(),
             method: "POST",
             callback: function (options, success, response) {

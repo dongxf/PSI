@@ -10,7 +10,7 @@ use Home\Common\FIdConst;
 
 /**
  * 主菜单Controller
- * 
+ *
  * @author 李静波
  *        
  */
@@ -126,6 +126,10 @@ class MainMenuController extends Controller {
 			case FIdConst::REPORT_SALE_DAY_BY_CUSTOMER :
 				// 销售日报表(按客户汇总)
 				redirect(__ROOT__ . "/Home/Report/saleDayByCustomer");
+				break;
+			case FIdConst::REPORT_SALE_DAY_BY_WAREHOUSE :
+				// 销售日报表(按仓库汇总)
+				redirect(__ROOT__ . "/Home/Report/saleDayByWarehouse");
 				break;
 			default :
 				redirect(__ROOT__ . "/Home");

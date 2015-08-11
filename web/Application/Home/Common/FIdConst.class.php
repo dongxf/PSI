@@ -163,4 +163,9 @@ class FIdConst {
 	 * 销售日报表(按客户汇总)
 	 */
 	const REPORT_SALE_DAY_BY_CUSTOMER = "2013";
+	
+	/**
+	 * 销售日报表(按仓库汇总)
+	 */
+	const REPORT_SALE_DAY_BY_WAREHOUSE = "2014";
 }

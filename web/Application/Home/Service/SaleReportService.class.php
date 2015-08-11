@@ -277,4 +277,105 @@ class SaleReportService extends PSIBaseService {
 	public function saleDayByCustomerSummaryQueryData($params) {
 		return $this->saleDaySummaryQueryData($params);
 	}
+	
+	/**
+	 * 销售日报表(按仓库汇总) - 查询数据
+	 */
+	public function saleDayByWarehouseQueryData($params) {
+		$page = $params["page"];
+		$start = $params["start"];
+		$limit = $params["limit"];
+	
+		$dt = $params["dt"];
+	
+		$result = array();
+	
+		$db = M();
+		$sql = "select w.id, w.code, w.name
+				from t_warehouse w
+				where w.id in(
+					select distinct w.warehouse_id
+					from t_ws_bill w
+					where w.bizdt = '%s' and w.bill_status = 1000
+					union
+					select distinct s.warehouse_id
+					from t_sr_bill s
+					where s.bizdt = '%s' and s.bill_status = 1000
+					)
+				order by w.code
+				limit %d, %d";
+		$items = $db->query($sql, $dt, $dt, $start, $limit);
+		foreach ( $items as $i => $v ) {
+			$result[$i]["bizDT"] = $dt;
+			$result[$i]["warehouseCode"] = $v["code"];
+			$result[$i]["warehouseName"] = $v["name"];
+				
+			$warehouseId = $v["id"];
+			$sql = "select sum(w.sale_money) as goods_money, sum(w.inventory_money) as inventory_money
+					from t_ws_bill w
+					where w.bizdt = '%s' and w.warehouse_id = '%s'
+						and w.bill_status = 1000";
+			$data = $db->query($sql, $dt, $warehouseId);
+			$saleMoney = $data[0]["goods_money"];
+			if (! $saleMoney) {
+				$saleMoney = 0;
+			}
+			$saleInventoryMoney = $data[0]["inventory_money"];
+			if (! $saleInventoryMoney) {
+				$saleInventoryMoney = 0;
+			}
+			$result[$i]["saleMoney"] = $saleMoney;
+				
+			$sql = "select sum(s.rejection_sale_money) as rej_money,
+						sum(s.inventory_money) as rej_inventory_money
+					from t_sr_bill s
+					where s.bizdt = '%s' and s.warehouse_id = '%s'
+						and s.bill_status = 1000 ";
+			$data = $db->query($sql, $dt, $warehouseId);
+			$rejSaleMoney = $data[0]["rej_money"];
+			if (! $rejSaleMoney) {
+				$rejSaleMoney = 0;
+			}
+			$rejInventoryMoney = $data[0]["rej_inventory_money"];
+			if (! $rejInventoryMoney) {
+				$rejInventoryMoney = 0;
+			}
+				
+			$result[$i]["rejMoney"] = $rejSaleMoney;
+				
+			$m = $saleMoney - $rejSaleMoney;
+			$result[$i]["m"] = $m;
+			$profit = $saleMoney - $rejSaleMoney - $saleInventoryMoney + $rejInventoryMoney;
+			$result[$i]["profit"] = $profit;
+			if ($m > 0) {
+				$result[$i]["rate"] = sprintf("%0.2f", $profit / $m * 100) . "%";
+			}
+		}
+	
+		$sql = "select count(*) as cnt
+				from t_warehouse c
+				where c.id in(
+					select distinct w.warehouse_id
+					from t_ws_bill w
+					where w.bizdt = '%s' and w.bill_status = 1000
+					union
+					select distinct s.warehouse_id
+					from t_sr_bill s
+					where s.bizdt = '%s' and s.bill_status = 1000
+					)";
+		$data = $db->query($sql, $dt, $dt);
+		$cnt = $data[0]["cnt"];
+	
+		return array(
+				"dataList" => $result,
+				"totalCount" => $cnt
+		);
+	}
+	
+	/**
+	 * 销售日报表(按仓库汇总) - 查询汇总数据
+	 */
+	public function saleDayByWarehouseSummaryQueryData($params) {
+		return $this->saleDaySummaryQueryData($params);
+	}
 }
