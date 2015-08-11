@@ -79,7 +79,7 @@ Ext.define("PSI.Report.SaleDayByBizuserForm", {
     	var modelName = "PSIReportSaleDayByBizuser";
         Ext.define(modelName, {
             extend: "Ext.data.Model",
-            fields: ["bizDT", "userName", "saleMoney",
+            fields: ["bizDT", "userCode", "userName", "saleMoney",
                 "rejMoney", "m", "profit", "rate"]
         });
         var store = Ext.create("Ext.data.Store", {
@@ -112,6 +112,7 @@ Ext.define("PSI.Report.SaleDayByBizuserForm", {
             columns: [
                 {xtype: "rownumberer"},
                 {header: "业务日期", dataIndex: "bizDT", menuDisabled: true, sortable: false, width: 80},
+                {header: "业务员编码", dataIndex: "userCode", menuDisabled: true, sortable: false, width: 100},
                 {header: "业务员", dataIndex: "userName", menuDisabled: true, sortable: false, width: 100},
                 {header: "销售出库金额", dataIndex: "saleMoney", menuDisabled: true, sortable: false,
                 	align: "right", xtype: "numbercolumn"},
