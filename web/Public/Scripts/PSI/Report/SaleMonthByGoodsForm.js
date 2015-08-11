@@ -132,7 +132,7 @@ Ext.define("PSI.Report.SaleMonthByGoodsForm", {
             columnLines: true,
             columns: [
                 {xtype: "rownumberer"},
-                {header: "业务日期", dataIndex: "bizDT", menuDisabled: true, sortable: false, width: 80},
+                {header: "月份", dataIndex: "bizDT", menuDisabled: true, sortable: false, width: 80},
                 {header: "商品编码", dataIndex: "goodsCode", menuDisabled: true, sortable: false},
                 {header: "商品名称", dataIndex: "goodsName", menuDisabled: true, sortable: false},
                 {header: "规格型号", dataIndex: "goodsSpec", menuDisabled: true, sortable: false},
