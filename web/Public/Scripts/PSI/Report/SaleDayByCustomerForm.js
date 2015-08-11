@@ -1,5 +1,5 @@
-// 销售日报表(按商品汇总)
-Ext.define("PSI.Report.SaleDayByGoodsForm", {
+// 销售日报表(按客户汇总)
+Ext.define("PSI.Report.SaleDayByCustomerForm", {
     extend: "Ext.panel.Panel",
     
     border: 0,
@@ -79,8 +79,8 @@ Ext.define("PSI.Report.SaleDayByGoodsForm", {
     	var modelName = "PSIReportSaleDayByGoods";
         Ext.define(modelName, {
             extend: "Ext.data.Model",
-            fields: ["bizDT", "goodsCode", "goodsName", "goodsSpec", "saleCount", "unitName", "saleMoney",
-                "rejCount", "rejMoney", "c", "m", "profit", "rate"]
+            fields: ["bizDT", "customerCode", "customerName", "saleMoney",
+                "rejMoney", "m", "profit", "rate"]
         });
         var store = Ext.create("Ext.data.Store", {
             autoLoad: false,
@@ -92,7 +92,7 @@ Ext.define("PSI.Report.SaleDayByGoodsForm", {
                 actionMethods: {
                     read: "POST"
                 },
-                url: PSI.Const.BASE_URL + "Home/Report/saleDayByGoodsQueryData",
+                url: PSI.Const.BASE_URL + "Home/Report/saleDayByCustomerQueryData",
                 reader: {
                     root: 'dataList',
                     totalProperty: 'totalCount'
@@ -112,20 +112,12 @@ Ext.define("PSI.Report.SaleDayByGoodsForm", {
             columns: [
                 {xtype: "rownumberer"},
                 {header: "业务日期", dataIndex: "bizDT", menuDisabled: true, sortable: false, width: 80},
-                {header: "商品编码", dataIndex: "goodsCode", menuDisabled: true, sortable: false},
-                {header: "商品名称", dataIndex: "goodsName", menuDisabled: true, sortable: false},
-                {header: "规格型号", dataIndex: "goodsSpec", menuDisabled: true, sortable: false},
-                {header: "销售出库数量", dataIndex: "saleCount", menuDisabled: true, sortable: false, 
-                	align: "right", xtype: "numbercolumn", format: "0"},
-                {header: "计量单位", dataIndex: "unitName", menuDisabled: true, sortable: false, width: 60},
+                {header: "客户编码", dataIndex: "customerCode", menuDisabled: true, sortable: false},
+                {header: "客户名称", dataIndex: "customerName", menuDisabled: true, sortable: false},
                 {header: "销售出库金额", dataIndex: "saleMoney", menuDisabled: true, sortable: false,
                 	align: "right", xtype: "numbercolumn"},
-                {header: "退货入库数量", dataIndex: "rejCount", menuDisabled: true, sortable: false,
-                	align: "right", xtype: "numbercolumn", format: "0"},
                 {header: "退货入库金额", dataIndex: "rejMoney", menuDisabled: true, sortable: false,
                 	align: "right", xtype: "numbercolumn"},
-                {header: "净销售数量", dataIndex: "c", menuDisabled: true, sortable: false,
-                	align: "right", xtype: "numbercolumn", format: "0"},
                 {header: "净销售金额", dataIndex: "m", menuDisabled: true, sortable: false,
                 	align: "right", xtype: "numbercolumn"},
                 {header: "毛利", dataIndex: "profit", menuDisabled: true, sortable: false,
@@ -225,7 +217,7 @@ Ext.define("PSI.Report.SaleDayByGoodsForm", {
         var el = grid.getEl() || Ext.getBody();
         el.mask(PSI.Const.LOADING);
         Ext.Ajax.request({
-            url: PSI.Const.BASE_URL + "Home/Report/saleDayByGoodsSummaryQueryData",
+            url: PSI.Const.BASE_URL + "Home/Report/saleDayByCustomerSummaryQueryData",
             params: me.getQueryParam(),
             method: "POST",
             callback: function (options, success, response) {

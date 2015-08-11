@@ -9,6 +9,9 @@ namespace Home\Service;
  */
 class SaleReportService extends PSIBaseService {
 
+	/**
+	 * 销售日报表(按商品汇总) - 查询数据
+	 */
 	public function saleDayByGoodsQueryData($params) {
 		$page = $params["page"];
 		$start = $params["start"];
@@ -117,6 +120,9 @@ class SaleReportService extends PSIBaseService {
 		);
 	}
 
+	/**
+	 * 销售日报表(按商品汇总) - 查询汇总数据
+	 */
 	public function saleDayByGoodsSummaryQueryData($params) {
 		$dt = $params["dt"];
 		

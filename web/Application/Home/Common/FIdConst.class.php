@@ -138,17 +138,17 @@ class FIdConst {
 	 * 首页-销售看板
 	 */
 	const PORTAL_SALE = "2011-01";
-
+	
 	/**
 	 * 首页-库存看板
 	 */
 	const PORTAL_INVENTORY = "2011-02";
-
+	
 	/**
 	 * 首页-采购看板
 	 */
 	const PORTAL_PURCHASE = "2011-03";
-
+	
 	/**
 	 * 首页-资金看板
 	 */
@@ -158,4 +158,9 @@ class FIdConst {
 	 * 销售日报表(按商品汇总)
 	 */
 	const REPORT_SALE_DAY_BY_GOODS = "2012";
+	
+	/**
+	 * 销售日报表(按客户汇总)
+	 */
+	const REPORT_SALE_DAY_BY_CUSTOMER = "2013";
 }
