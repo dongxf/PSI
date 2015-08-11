@@ -131,6 +131,10 @@ class MainMenuController extends Controller {
 				// 销售日报表(按仓库汇总)
 				redirect(__ROOT__ . "/Home/Report/saleDayByWarehouse");
 				break;
+			case FIdConst::REPORT_SALE_DAY_BY_BIZUSER :
+				// 销售日报表(按业务员汇总)
+				redirect(__ROOT__ . "/Home/Report/saleDayByBizuser");
+				break;
 			default :
 				redirect(__ROOT__ . "/Home");
 		}
