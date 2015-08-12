@@ -155,6 +155,10 @@ class MainMenuController extends Controller {
 				// 安全库存明细表
 				redirect(__ROOT__ . "/Home/Report/safetyInventory");
 				break;
+			case FIdConst::REPORT_RECEIVABLES_AGE :
+				// 应收账款账龄分析表
+				redirect(__ROOT__ . "/Home/Report/receivablesAge");
+				break;
 			default :
 				redirect(__ROOT__ . "/Home");
 		}

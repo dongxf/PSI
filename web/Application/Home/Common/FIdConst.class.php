@@ -198,4 +198,9 @@ class FIdConst {
 	 * 安全库存明细表
 	 */
 	const REPORT_SAFETY_INVENTORY = "2020";
+	
+	/**
+	 * 应收账款账龄分析表
+	 */
+	const REPORT_RECEIVABLES_AGE = "2021";
 }
