@@ -44,6 +44,18 @@ class InventoryReportService extends PSIBaseService {
 			$result[$i]["delta"] = $v["safety_inventory"] - $v["balance_count"];
 		}
 		
-		return $result;
+		$sql = "select count(*) as cnt
+				from t_inventory i, t_goods g, t_goods_unit u, t_goods_si s, t_warehouse w
+				where i.warehouse_id = w.id and i.goods_id = g.id and g.unit_id = u.id
+					and s.warehouse_id = i.warehouse_id and s.goods_id = g.id
+					and s.safety_inventory > i.balance_count";
+		
+		$data = $db->query($sql);
+		$cnt = $data[0]["cnt"];
+		
+		return array(
+				"dataList" => $result,
+				"totalCount" => $cnt
+		);
 	}
 }
