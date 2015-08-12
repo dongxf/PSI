@@ -533,4 +533,25 @@ class ReportController extends Controller {
 			$this->ajaxReturn($rs->receivablesSummaryQueryData());
 		}
 	}
+	
+	/**
+	 * 应付账款账龄分析表
+	 */
+	public function payablesAge() {
+		$us = new UserService();
+	
+		if ($us->hasPermission(FIdConst::REPORT_PAYABLES_AGE)) {
+			$this->assign("title", "应付账款账龄分析表");
+			$this->assign("uri", __ROOT__ . "/");
+				
+			$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
+			$dtFlag = getdate();
+			$this->assign("dtFlag", $dtFlag[0]);
+				
+			$this->display();
+		} else {
+			redirect(__ROOT__ . "/Home/User/login");
+		}
+	}
+	
 }

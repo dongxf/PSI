@@ -203,4 +203,9 @@ class FIdConst {
 	 * 应收账款账龄分析表
 	 */
 	const REPORT_RECEIVABLES_AGE = "2021";
+	
+	/**
+	 * 应付账款账龄分析表
+	 */
+	const REPORT_PAYABLES_AGE = "2022";
 }
