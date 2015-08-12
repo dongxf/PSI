@@ -151,6 +151,10 @@ class MainMenuController extends Controller {
 				// 销售月报表(按业务员汇总)
 				redirect(__ROOT__ . "/Home/Report/saleMonthByBizuser");
 				break;
+			case FIdConst::REPORT_SAFETY_INVENTORY :
+				// 安全库存明细表
+				redirect(__ROOT__ . "/Home/Report/safetyInventory");
+				break;
 			default :
 				redirect(__ROOT__ . "/Home");
 		}

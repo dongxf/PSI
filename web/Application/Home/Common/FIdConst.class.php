@@ -193,4 +193,9 @@ class FIdConst {
 	 * 销售月报表(按业务员汇总)
 	 */
 	const REPORT_SALE_MONTH_BY_BIZUSER = "2019";
+	
+	/**
+	 * 安全库存明细表
+	 */
+	const REPORT_SAFETY_INVENTORY = "2020";
 }

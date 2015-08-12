@@ -446,4 +446,24 @@ class ReportController extends Controller {
 			$this->ajaxReturn($rs->saleMonthByBizuserSummaryQueryData($params));
 		}
 	}
+
+	/**
+	 * 安全库存明细表
+	 */
+	public function safetyInventory() {
+		$us = new UserService();
+		
+		if ($us->hasPermission(FIdConst::REPORT_SAFETY_INVENTORY)) {
+			$this->assign("title", "安全库存明细表");
+			$this->assign("uri", __ROOT__ . "/");
+			
+			$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
+			$dtFlag = getdate();
+			$this->assign("dtFlag", $dtFlag[0]);
+			
+			$this->display();
+		} else {
+			redirect(__ROOT__ . "/Home/User/login");
+		}
+	}
 }
