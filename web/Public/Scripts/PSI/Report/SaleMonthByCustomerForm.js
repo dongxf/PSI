@@ -134,7 +134,7 @@ Ext.define("PSI.Report.SaleMonthByCustomerForm", {
                 {xtype: "rownumberer"},
                 {header: "月份", dataIndex: "bizDT", menuDisabled: true, sortable: false, width: 80},
                 {header: "客户编码", dataIndex: "customerCode", menuDisabled: true, sortable: false},
-                {header: "客户", dataIndex: "customerName", menuDisabled: true, sortable: false},
+                {header: "客户", dataIndex: "customerName", menuDisabled: true, sortable: false, width: 200},
                 {header: "销售出库金额", dataIndex: "saleMoney", menuDisabled: true, sortable: false,
                 	align: "right", xtype: "numbercolumn"},
                 {header: "退货入库金额", dataIndex: "rejMoney", menuDisabled: true, sortable: false,

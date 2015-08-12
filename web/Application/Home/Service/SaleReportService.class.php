@@ -516,7 +516,7 @@ class SaleReportService extends PSIBaseService {
 			} else {
 				$result[$i]["bizDT"] = "$year-$month";
 			}
-
+			
 			$result[$i]["goodsCode"] = $v["code"];
 			$result[$i]["goodsName"] = $v["name"];
 			$result[$i]["goodsSpec"] = $v["spec"];
@@ -660,6 +660,120 @@ class SaleReportService extends PSIBaseService {
 	 * 销售月报表(按商品汇总) - 查询汇总数据
 	 */
 	public function saleMonthByGoodsSummaryQueryData($params) {
+		return $this->saleMonthSummaryQueryData($params);
+	}
+
+	/**
+	 * 销售月报表(按客户汇总) - 查询数据
+	 */
+	public function saleMonthByCustomerQueryData($params) {
+		$page = $params["page"];
+		$start = $params["start"];
+		$limit = $params["limit"];
+		
+		$year = $params["year"];
+		$month = $params["month"];
+		
+		$result = array();
+		
+		$db = M();
+		$sql = "select c.id, c.code, c.name
+				from t_customer c
+				where c.id in(
+					select distinct w.customer_id
+					from t_ws_bill w
+					where year(w.bizdt) = %d and month(w.bizdt) = %d
+						and w.bill_status = 1000
+					union
+					select distinct s.customer_id
+					from t_sr_bill s
+					where year(s.bizdt) = %d and month(s.bizdt) = %d 
+						and s.bill_status = 1000
+					)
+				order by c.code
+				limit %d, %d";
+		$items = $db->query($sql, $year, $month, $year, $month, $start, $limit);
+		foreach ( $items as $i => $v ) {
+			if ($month < 10) {
+				$result[$i]["bizDT"] = "$year-0$month";
+			} else {
+				$result[$i]["bizDT"] = "$year-$month";
+			}
+			
+			$result[$i]["customerCode"] = $v["code"];
+			$result[$i]["customerName"] = $v["name"];
+			
+			$customerId = $v["id"];
+			$sql = "select sum(w.sale_money) as goods_money, sum(w.inventory_money) as inventory_money
+					from t_ws_bill w
+					where year(w.bizdt) = %d and month(w.bizdt) = %d 
+						and w.customer_id = '%s'
+						and w.bill_status = 1000";
+			$data = $db->query($sql, $year, $month, $customerId);
+			$saleMoney = $data[0]["goods_money"];
+			if (! $saleMoney) {
+				$saleMoney = 0;
+			}
+			$saleInventoryMoney = $data[0]["inventory_money"];
+			if (! $saleInventoryMoney) {
+				$saleInventoryMoney = 0;
+			}
+			$result[$i]["saleMoney"] = $saleMoney;
+			
+			$sql = "select sum(s.rejection_sale_money) as rej_money,
+						sum(s.inventory_money) as rej_inventory_money
+					from t_sr_bill s
+					where year(s.bizdt) = %d and month(s.bizdt) = %d 
+						and s.customer_id = '%s'
+						and s.bill_status = 1000 ";
+			$data = $db->query($sql, $year, $month, $goodsId);
+			$rejSaleMoney = $data[0]["rej_money"];
+			if (! $rejSaleMoney) {
+				$rejSaleMoney = 0;
+			}
+			$rejInventoryMoney = $data[0]["rej_inventory_money"];
+			if (! $rejInventoryMoney) {
+				$rejInventoryMoney = 0;
+			}
+			
+			$result[$i]["rejMoney"] = $rejSaleMoney;
+			
+			$m = $saleMoney - $rejSaleMoney;
+			$result[$i]["m"] = $m;
+			$profit = $saleMoney - $rejSaleMoney - $saleInventoryMoney + $rejInventoryMoney;
+			$result[$i]["profit"] = $profit;
+			if ($m > 0) {
+				$result[$i]["rate"] = sprintf("%0.2f", $profit / $m * 100) . "%";
+			}
+		}
+		
+		$sql = "select count(*) as cnt
+				from t_customer c
+				where c.id in(
+					select distinct w.customer_id
+					from t_ws_bill w
+					where year(w.bizdt) = %d and month(w.bizdt) = %d
+						and w.bill_status = 1000
+					union
+					select distinct s.customer_id
+					from t_sr_bill s
+					where year(s.bizdt) = %d and month(s.bizdt) = %d 
+						and s.bill_status = 1000
+					)
+				";
+		$data = $db->query($sql, $year, $month, $year, $month);
+		$cnt = $data[0]["cnt"];
+		
+		return array(
+				"dataList" => $result,
+				"totalCount" => $cnt
+		);
+	}
+
+	/**
+	 * 销售月报表(按客户汇总) - 查询汇总数据
+	 */
+	public function saleMonthByCustomerSummaryQueryData($params) {
 		return $this->saleMonthSummaryQueryData($params);
 	}
 }

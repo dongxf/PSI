@@ -303,6 +303,41 @@ class ReportController extends Controller {
 	}
 
 	/**
+	 * 销售月报表(按客户汇总) - 查询数据
+	 */
+	public function saleMonthByCustomerQueryData() {
+		if (IS_POST) {
+			$params = array(
+					"year" => I("post.year"),
+					"month" => I("post.month"),
+					"page" => I("post.page"),
+					"start" => I("post.start"),
+					"limit" => I("post.limit")
+			);
+			
+			$rs = new SaleReportService();
+			
+			$this->ajaxReturn($rs->saleMonthByCustomerQueryData($params));
+		}
+	}
+
+	/**
+	 * 销售月报表(按客户汇总) - 查询汇总数据
+	 */
+	public function saleMonthByCustomerSummaryQueryData() {
+		if (IS_POST) {
+			$params = array(
+					"year" => I("post.year"),
+					"month" => I("post.month")
+			);
+			
+			$rs = new SaleReportService();
+			
+			$this->ajaxReturn($rs->saleMonthByCustomerSummaryQueryData($params));
+		}
+	}
+
+	/**
 	 * 销售月报表(按仓库汇总)
 	 */
 	public function saleMonthByWarehouse() {
