@@ -1,5 +1,5 @@
-// 销售月报表(按客户汇总)
-Ext.define("PSI.Report.SaleMonthByCustomerForm", {
+// 销售月报表(按业务员汇总)
+Ext.define("PSI.Report.SaleMonthByBizuserForm", {
     extend: "Ext.panel.Panel",
     
     border: 0,
@@ -97,10 +97,10 @@ Ext.define("PSI.Report.SaleMonthByCustomerForm", {
     		return me.__mainGrid;
     	}
     	
-    	var modelName = "PSIReportSaleMonthByCustomer";
+    	var modelName = "PSIReportSaleMonthByBizuser";
         Ext.define(modelName, {
             extend: "Ext.data.Model",
-            fields: ["bizDT", "customerCode", "customerName", "saleMoney",
+            fields: ["bizDT", "userCode", "userName", "saleMoney",
                 "rejMoney", "m", "profit", "rate"]
         });
         var store = Ext.create("Ext.data.Store", {
@@ -113,7 +113,7 @@ Ext.define("PSI.Report.SaleMonthByCustomerForm", {
                 actionMethods: {
                     read: "POST"
                 },
-                url: PSI.Const.BASE_URL + "Home/Report/saleMonthByCustomerQueryData",
+                url: PSI.Const.BASE_URL + "Home/Report/saleMonthByBizuserQueryData",
                 reader: {
                     root: 'dataList',
                     totalProperty: 'totalCount'
@@ -133,8 +133,8 @@ Ext.define("PSI.Report.SaleMonthByCustomerForm", {
             columns: [
                 {xtype: "rownumberer"},
                 {header: "月份", dataIndex: "bizDT", menuDisabled: true, sortable: false, width: 80},
-                {header: "客户编码", dataIndex: "customerCode", menuDisabled: true, sortable: false},
-                {header: "客户", dataIndex: "customerName", menuDisabled: true, sortable: false},
+                {header: "业务员编码", dataIndex: "userCode", menuDisabled: true, sortable: false},
+                {header: "业务员", dataIndex: "userName", menuDisabled: true, sortable: false},
                 {header: "销售出库金额", dataIndex: "saleMoney", menuDisabled: true, sortable: false,
                 	align: "right", xtype: "numbercolumn"},
                 {header: "退货入库金额", dataIndex: "rejMoney", menuDisabled: true, sortable: false,
@@ -191,7 +191,7 @@ Ext.define("PSI.Report.SaleMonthByCustomerForm", {
     		return me.__summaryGrid;
     	}
     	
-    	var modelName = "PSIReportSaleMonthByCustomerSummary";
+    	var modelName = "PSIReportSaleMonthByBizuserSummary";
         Ext.define(modelName, {
             extend: "Ext.data.Model",
             fields: ["bizDT", "saleMoney", "rejMoney", "m", "profit", "rate"]
@@ -238,7 +238,7 @@ Ext.define("PSI.Report.SaleMonthByCustomerForm", {
         var el = grid.getEl() || Ext.getBody();
         el.mask(PSI.Const.LOADING);
         Ext.Ajax.request({
-            url: PSI.Const.BASE_URL + "Home/Report/saleMonthByCustomerSummaryQueryData",
+            url: PSI.Const.BASE_URL + "Home/Report/saleMonthByBizuserSummaryQueryData",
             params: me.getQueryParam(),
             method: "POST",
             callback: function (options, success, response) {
