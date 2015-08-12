@@ -159,6 +159,10 @@ class MainMenuController extends Controller {
 				// 应收账款账龄分析表
 				redirect(__ROOT__ . "/Home/Report/receivablesAge");
 				break;
+			case FIdConst::REPORT_PAYABLES_AGE :
+				// 应付账款账龄分析表
+				redirect(__ROOT__ . "/Home/Report/payablesAge");
+				break;
 			default :
 				redirect(__ROOT__ . "/Home");
 		}

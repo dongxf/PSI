@@ -68,7 +68,8 @@ INSERT INTO `t_fid` (`fid`, `name`) VALUES
 ('2018', '报表-销售月报表(按仓库汇总)'),
 ('2019', '报表-销售月报表(按业务员汇总)'),
 ('2020', '报表-安全库存明细表'),
-('2021', '报表-应收账款账龄分析表');
+('2021', '报表-应收账款账龄分析表'),
+('2022', '报表-应付账款账龄分析表');
 
 TRUNCATE TABLE `t_goods`;
 INSERT INTO `t_goods` (`id`, `category_id`, `code`, `name`, `sale_price`, `spec`, `unit_id`, `purchase_unit_id`, `purchase_price`, `ps_factor`, `py`) VALUES
@@ -164,6 +165,7 @@ INSERT INTO `t_menu_item` (`id`, `caption`, `fid`, `parent_id`, `show_order`) VA
 ('070301', '安全库存明细表', '2020', '0703', 1),
 ('0706', '资金报表', NULL, '07', 6),
 ('070601', '应收账款账龄分析表', '2021', '0706', 1),
+('070602', '应付账款账龄分析表', '2022', '0706', 2),
 ('08', '基础数据', NULL, NULL, 8),
 ('0801', '商品', '1001', '08', 1),
 ('0802', '商品计量单位', '1002', '08', 2),
@@ -234,7 +236,8 @@ INSERT INTO `t_permission` (`id`, `fid`, `name`, `note`) VALUES
 ('2018', '2018', '报表-销售月报表(按仓库汇总)', '报表-销售月报表(按仓库汇总)'),
 ('2019', '2019', '报表-销售月报表(按业务员汇总)', '报表-销售月报表(按业务员汇总)'),
 ('2020', '2020', '报表-安全库存明细表', '报表-安全库存明细表'),
-('2021', '2021', '报表-应收账款账龄分析表', '报表-应收账款账龄分析表');
+('2021', '2021', '报表-应收账款账龄分析表', '报表-应收账款账龄分析表'),
+('2022', '2022', '报表-应付账款账龄分析表', '报表-应付账款账龄分析表');
 
 TRUNCATE TABLE `t_pw_bill`;
 TRUNCATE TABLE `t_pw_bill_detail`;
@@ -315,8 +318,8 @@ INSERT INTO `t_role_permission` (`role_id`, `permission_id`) VALUES
 ('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2018'),
 ('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2019'),
 ('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2020'),
-('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2021');
-
+('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2021'),
+('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2022');
 
 TRUNCATE TABLE `t_role_user`;
 INSERT INTO `t_role_user` (`role_id`, `user_id`) VALUES
