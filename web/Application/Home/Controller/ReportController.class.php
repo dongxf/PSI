@@ -6,6 +6,7 @@ use Think\Controller;
 use Home\Service\UserService;
 use Home\Common\FIdConst;
 use Home\Service\SaleReportService;
+use Home\Service\InventoryReportService;
 
 /**
  * 报表Controller

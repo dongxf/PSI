@@ -41,7 +41,7 @@ Ext.define("PSI.Report.SafetyInventoryForm", {
         Ext.define(modelName, {
             extend: "Ext.data.Model",
             fields: ["warehouseCode", "warehouseName", "siCount",
-                "invCount", "goodsCode", "goodsName", "goodsSpec", "unitName"]
+                "invCount", "goodsCode", "goodsName", "goodsSpec", "unitName", "delta"]
         });
         var store = Ext.create("Ext.data.Store", {
             autoLoad: false,
@@ -78,6 +78,11 @@ Ext.define("PSI.Report.SafetyInventoryForm", {
                 	align: "right", xtype: "numbercolumn", format: "0"},
                 {header: "当前库存", dataIndex: "invCount", menuDisabled: true, sortable: false,
                 	align: "right", xtype: "numbercolumn", format: "0"},
+                {header: "存货缺口", dataIndex: "delta", menuDisabled: true, sortable: false,
+                    align: "right", xtype: "numbercolumn", format: "0",
+                    renderer: function (value) {
+                        return "<span style='color:red'>" + value + "</span>";
+                    }},
                 {header: "计量单位", dataIndex: "unitName", menuDisabled: true, sortable: false}
             ],
             store: store,
