@@ -726,7 +726,7 @@ class SaleReportService extends PSIBaseService {
 					where year(s.bizdt) = %d and month(s.bizdt) = %d 
 						and s.customer_id = '%s'
 						and s.bill_status = 1000 ";
-			$data = $db->query($sql, $year, $month, $goodsId);
+			$data = $db->query($sql, $year, $month, $customerId);
 			$rejSaleMoney = $data[0]["rej_money"];
 			if (! $rejSaleMoney) {
 				$rejSaleMoney = 0;
@@ -774,6 +774,234 @@ class SaleReportService extends PSIBaseService {
 	 * 销售月报表(按客户汇总) - 查询汇总数据
 	 */
 	public function saleMonthByCustomerSummaryQueryData($params) {
+		return $this->saleMonthSummaryQueryData($params);
+	}
+
+	/**
+	 * 销售月报表(按仓库汇总) - 查询数据
+	 */
+	public function saleMonthByWarehouseQueryData($params) {
+		$page = $params["page"];
+		$start = $params["start"];
+		$limit = $params["limit"];
+		
+		$year = $params["year"];
+		$month = $params["month"];
+		
+		$result = array();
+		
+		$db = M();
+		$sql = "select w.id, w.code, w.name
+				from t_warehouse w
+				where w.id in(
+					select distinct w.warehouse_id
+					from t_ws_bill w
+					where year(w.bizdt) = %d and month(w.bizdt) = %d
+						and w.bill_status = 1000
+					union
+					select distinct s.warehouse_id
+					from t_sr_bill s
+					where year(s.bizdt) = %d and month(s.bizdt) = %d
+						and s.bill_status = 1000
+					)
+				order by w.code
+				limit %d, %d";
+		$items = $db->query($sql, $year, $month, $year, $month, $start, $limit);
+		foreach ( $items as $i => $v ) {
+			if ($month < 10) {
+				$result[$i]["bizDT"] = "$year-0$month";
+			} else {
+				$result[$i]["bizDT"] = "$year-$month";
+			}
+			
+			$result[$i]["warehouseCode"] = $v["code"];
+			$result[$i]["warehouseName"] = $v["name"];
+			
+			$warehouseId = $v["id"];
+			$sql = "select sum(w.sale_money) as goods_money, sum(w.inventory_money) as inventory_money
+					from t_ws_bill w
+					where year(w.bizdt) = %d and month(w.bizdt) = %d
+						and w.warehouse_id = '%s'
+						and w.bill_status = 1000";
+			$data = $db->query($sql, $year, $month, $warehouseId);
+			$saleMoney = $data[0]["goods_money"];
+			if (! $saleMoney) {
+				$saleMoney = 0;
+			}
+			$saleInventoryMoney = $data[0]["inventory_money"];
+			if (! $saleInventoryMoney) {
+				$saleInventoryMoney = 0;
+			}
+			$result[$i]["saleMoney"] = $saleMoney;
+			
+			$sql = "select sum(s.rejection_sale_money) as rej_money,
+						sum(s.inventory_money) as rej_inventory_money
+					from t_sr_bill s
+					where year(s.bizdt) = %d and month(s.bizdt) = %d
+						and s.warehouse_id = '%s'
+						and s.bill_status = 1000 ";
+			$data = $db->query($sql, $year, $month, $warehouseId);
+			$rejSaleMoney = $data[0]["rej_money"];
+			if (! $rejSaleMoney) {
+				$rejSaleMoney = 0;
+			}
+			$rejInventoryMoney = $data[0]["rej_inventory_money"];
+			if (! $rejInventoryMoney) {
+				$rejInventoryMoney = 0;
+			}
+			
+			$result[$i]["rejMoney"] = $rejSaleMoney;
+			
+			$m = $saleMoney - $rejSaleMoney;
+			$result[$i]["m"] = $m;
+			$profit = $saleMoney - $rejSaleMoney - $saleInventoryMoney + $rejInventoryMoney;
+			$result[$i]["profit"] = $profit;
+			if ($m > 0) {
+				$result[$i]["rate"] = sprintf("%0.2f", $profit / $m * 100) . "%";
+			}
+		}
+		
+		$sql = "select count(*) as cnt
+				from t_warehouse w
+				where w.id in(
+					select distinct w.warehouse_id
+					from t_ws_bill w
+					where year(w.bizdt) = %d and month(w.bizdt) = %d
+						and w.bill_status = 1000
+					union
+					select distinct s.warehouse_id
+					from t_sr_bill s
+					where year(s.bizdt) = %d and month(s.bizdt) = %d
+						and s.bill_status = 1000
+					)
+				";
+		$data = $db->query($sql, $year, $month, $year, $month);
+		$cnt = $data[0]["cnt"];
+		
+		return array(
+				"dataList" => $result,
+				"totalCount" => $cnt
+		);
+	}
+
+	/**
+	 * 销售月报表(按仓库汇总) - 查询汇总数据
+	 */
+	public function saleMonthByWarehouseSummaryQueryData($params) {
+		return $this->saleMonthSummaryQueryData($params);
+	}
+	
+	/**
+	 * 销售月报表(按业务员汇总) - 查询数据
+	 */
+	public function saleMonthByBizuserQueryData($params) {
+		$page = $params["page"];
+		$start = $params["start"];
+		$limit = $params["limit"];
+	
+		$year = $params["year"];
+		$month = $params["month"];
+	
+		$result = array();
+	
+		$db = M();
+		$sql = "select u.id, u.org_code as code, u.name
+				from t_user u
+				where u.id in(
+					select distinct w.biz_user_id
+					from t_ws_bill w
+					where year(w.bizdt) = %d and month(w.bizdt) = %d
+						and w.bill_status = 1000
+					union
+					select distinct s.biz_user_id
+					from t_sr_bill s
+					where year(s.bizdt) = %d and month(s.bizdt) = %d
+						and s.bill_status = 1000
+					)
+				order by u.org_code
+				limit %d, %d";
+		$items = $db->query($sql, $year, $month, $year, $month, $start, $limit);
+		foreach ( $items as $i => $v ) {
+			if ($month < 10) {
+				$result[$i]["bizDT"] = "$year-0$month";
+			} else {
+				$result[$i]["bizDT"] = "$year-$month";
+			}
+				
+			$result[$i]["userCode"] = $v["code"];
+			$result[$i]["userName"] = $v["name"];
+				
+			$userId = $v["id"];
+			$sql = "select sum(w.sale_money) as goods_money, sum(w.inventory_money) as inventory_money
+					from t_ws_bill w
+					where year(w.bizdt) = %d and month(w.bizdt) = %d
+						and w.biz_user_id = '%s'
+						and w.bill_status = 1000";
+			$data = $db->query($sql, $year, $month, $userId);
+			$saleMoney = $data[0]["goods_money"];
+			if (! $saleMoney) {
+				$saleMoney = 0;
+			}
+			$saleInventoryMoney = $data[0]["inventory_money"];
+			if (! $saleInventoryMoney) {
+				$saleInventoryMoney = 0;
+			}
+			$result[$i]["saleMoney"] = $saleMoney;
+				
+			$sql = "select sum(s.rejection_sale_money) as rej_money,
+						sum(s.inventory_money) as rej_inventory_money
+					from t_sr_bill s
+					where year(s.bizdt) = %d and month(s.bizdt) = %d
+						and s.biz_user_id = '%s'
+						and s.bill_status = 1000 ";
+			$data = $db->query($sql, $year, $month, $userId);
+			$rejSaleMoney = $data[0]["rej_money"];
+			if (! $rejSaleMoney) {
+				$rejSaleMoney = 0;
+			}
+			$rejInventoryMoney = $data[0]["rej_inventory_money"];
+			if (! $rejInventoryMoney) {
+				$rejInventoryMoney = 0;
+			}
+				
+			$result[$i]["rejMoney"] = $rejSaleMoney;
+				
+			$m = $saleMoney - $rejSaleMoney;
+			$result[$i]["m"] = $m;
+			$profit = $saleMoney - $rejSaleMoney - $saleInventoryMoney + $rejInventoryMoney;
+			$result[$i]["profit"] = $profit;
+			if ($m > 0) {
+				$result[$i]["rate"] = sprintf("%0.2f", $profit / $m * 100) . "%";
+			}
+		}
+	
+		$sql = "select count(*) as cnt
+				from t_user u
+				where u.id in(
+					select distinct w.biz_user_id
+					from t_ws_bill w
+					where year(w.bizdt) = %d and month(w.bizdt) = %d
+						and w.bill_status = 1000
+					union
+					select distinct s.biz_user_id
+					from t_sr_bill s
+					where year(s.bizdt) = %d and month(s.bizdt) = %d
+						and s.bill_status = 1000
+					)
+				";
+		$data = $db->query($sql, $year, $month, $year, $month);
+		$cnt = $data[0]["cnt"];
+	
+		return array(
+				"dataList" => $result,
+				"totalCount" => $cnt
+		);
+	}
+	
+	/**
+	 * 销售月报表(按业务员汇总) - 查询汇总数据
+	 */
+	public function saleMonthByBizuserSummaryQueryData($params) {
 		return $this->saleMonthSummaryQueryData($params);
 	}
 }

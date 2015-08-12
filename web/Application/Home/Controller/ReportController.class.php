@@ -358,6 +358,41 @@ class ReportController extends Controller {
 	}
 
 	/**
+	 * 销售月报表(按仓库汇总) - 查询数据
+	 */
+	public function saleMonthByWarehouseQueryData() {
+		if (IS_POST) {
+			$params = array(
+					"year" => I("post.year"),
+					"month" => I("post.month"),
+					"page" => I("post.page"),
+					"start" => I("post.start"),
+					"limit" => I("post.limit")
+			);
+			
+			$rs = new SaleReportService();
+			
+			$this->ajaxReturn($rs->saleMonthByWarehouseQueryData($params));
+		}
+	}
+
+	/**
+	 * 销售月报表(按仓库汇总) - 查询汇总数据
+	 */
+	public function saleMonthByWarehouseSummaryQueryData() {
+		if (IS_POST) {
+			$params = array(
+					"year" => I("post.year"),
+					"month" => I("post.month")
+			);
+			
+			$rs = new SaleReportService();
+			
+			$this->ajaxReturn($rs->saleMonthByWarehouseSummaryQueryData($params));
+		}
+	}
+
+	/**
 	 * 销售月报表(按业务员汇总)
 	 */
 	public function saleMonthByBizuser() {
@@ -374,6 +409,41 @@ class ReportController extends Controller {
 			$this->display();
 		} else {
 			redirect(__ROOT__ . "/Home/User/login");
+		}
+	}
+
+	/**
+	 * 销售月报表(按业务员汇总) - 查询数据
+	 */
+	public function saleMonthByBizuserQueryData() {
+		if (IS_POST) {
+			$params = array(
+					"year" => I("post.year"),
+					"month" => I("post.month"),
+					"page" => I("post.page"),
+					"start" => I("post.start"),
+					"limit" => I("post.limit")
+			);
+			
+			$rs = new SaleReportService();
+			
+			$this->ajaxReturn($rs->saleMonthByBizuserQueryData($params));
+		}
+	}
+
+	/**
+	 * 销售月报表(按业务员汇总) - 查询汇总数据
+	 */
+	public function saleMonthByBizuserSummaryQueryData() {
+		if (IS_POST) {
+			$params = array(
+					"year" => I("post.year"),
+					"month" => I("post.month")
+			);
+			
+			$rs = new SaleReportService();
+			
+			$this->ajaxReturn($rs->saleMonthByBizuserSummaryQueryData($params));
 		}
 	}
 }
