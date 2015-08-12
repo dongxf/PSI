@@ -178,4 +178,9 @@ class FIdConst {
 	 * 销售月报表(按商品汇总)
 	 */
 	const REPORT_SALE_MONTH_BY_GOODS = "2016";
+
+	/**
+	 * 销售月报表(按客户汇总)
+	 */
+	const REPORT_SALE_MONTH_BY_CUSTOMER = "2017";
 }

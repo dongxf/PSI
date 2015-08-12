@@ -139,6 +139,10 @@ class MainMenuController extends Controller {
 				// 销售月报表(按商品汇总)
 				redirect(__ROOT__ . "/Home/Report/saleMonthByGoods");
 				break;
+			case FIdConst::REPORT_SALE_MONTH_BY_CUSTOMER :
+				// 销售月报表(按客户汇总)
+				redirect(__ROOT__ . "/Home/Report/saleMonthByCustomer");
+				break;
 			default :
 				redirect(__ROOT__ . "/Home");
 		}

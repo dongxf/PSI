@@ -281,4 +281,24 @@ class ReportController extends Controller {
 			$this->ajaxReturn($rs->saleMonthByGoodsSummaryQueryData($params));
 		}
 	}
+
+	/**
+	 * 销售月报表(按客户汇总)
+	 */
+	public function saleMonthByCustomer() {
+		$us = new UserService();
+		
+		if ($us->hasPermission(FIdConst::REPORT_SALE_MONTH_BY_CUSTOMER)) {
+			$this->assign("title", "销售月报表(按客户汇总)");
+			$this->assign("uri", __ROOT__ . "/");
+			
+			$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
+			$dtFlag = getdate();
+			$this->assign("dtFlag", $dtFlag[0]);
+			
+			$this->display();
+		} else {
+			redirect(__ROOT__ . "/Home/User/login");
+		}
+	}
 }
