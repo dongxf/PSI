@@ -25,6 +25,10 @@ Ext.define("PSI.Report.ReceivablesAgeForm", {
             items: [{
                     	region: "center", layout: "fit", border: 0,
                     	items: [me.getMainGrid()]
+            },{
+            	region: "south", layout: "fit", border: 0,
+            	height: 90,
+            	items: [me.getSummaryGrid()]
             }]
         });
 
@@ -123,11 +127,75 @@ Ext.define("PSI.Report.ReceivablesAgeForm", {
         return me.__mainGrid;
     },
     
+    getSummaryGrid: function() {
+    	var me = this;
+    	if (me.__summaryGrid) {
+    		return me.__summaryGrid;
+    	}
+    	
+    	var modelName = "PSIReceivablesSummary";
+        Ext.define(modelName, {
+            extend: "Ext.data.Model",
+            fields: ["balanceMoney", "money30", "money30to60", "money60to90", "money90"]
+        });
+
+        me.__summaryGrid = Ext.create("Ext.grid.Panel", {
+        	title: "应收账款汇总",
+            viewConfig: {
+                enableTextSelection: true
+            },
+            columnLines: true,
+            border: 0,
+            columns: [
+                {header: "当期余额", dataIndex: "balanceMoney", width: 120, menuDisabled: true, 
+                	sortable: false, align: "right", xtype: "numbercolumn"},
+                {header: "账龄30天内", dataIndex: "money30", width: 120, menuDisabled: true, 
+                		sortable: false, align: "right", xtype: "numbercolumn"},
+                {header: "账龄30-60天", dataIndex: "money30to60", menuDisabled: true, 
+                			sortable: false, align: "right", xtype: "numbercolumn"},
+                {header: "账龄60-90天", dataIndex: "money60to90", menuDisabled: true, 
+                				sortable: false, align: "right", xtype: "numbercolumn"},
+                {header: "账龄大于90天", dataIndex: "money90", menuDisabled: true, 
+                					sortable: false, align: "right", xtype: "numbercolumn"}
+            ],
+            store: Ext.create("Ext.data.Store", {
+                model: modelName,
+                autoLoad: false,
+                data: []
+            })
+        });
+
+        return me.__summaryGrid;
+    },
+    
     onQuery: function() {
     	this.refreshMainGrid();
+    	this.querySummaryData();
     },
     
     refreshMainGrid: function (id) {
         Ext.getCmp("pagingToobar").doRefresh();
+    },
+    
+    querySummaryData: function() {
+    	var me = this;
+        var grid = me.getSummaryGrid();
+        var el = grid.getEl() || Ext.getBody();
+        el.mask(PSI.Const.LOADING);
+        Ext.Ajax.request({
+            url: PSI.Const.BASE_URL + "Home/Report/receivablesSummaryQueryData",
+            method: "POST",
+            callback: function (options, success, response) {
+                var store = grid.getStore();
+                store.removeAll();
+
+                if (success) {
+                    var data = Ext.JSON.decode(response.responseText);
+                    store.add(data);
+                }
+
+                el.unmask();
+            }
+        });
     }
 });

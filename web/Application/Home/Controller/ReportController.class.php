@@ -7,6 +7,7 @@ use Home\Service\UserService;
 use Home\Common\FIdConst;
 use Home\Service\SaleReportService;
 use Home\Service\InventoryReportService;
+use Home\Service\ReceivablesReportService;
 
 /**
  * 报表Controller
@@ -502,6 +503,34 @@ class ReportController extends Controller {
 			$this->display();
 		} else {
 			redirect(__ROOT__ . "/Home/User/login");
+		}
+	}
+
+	/**
+	 * 应收账款账龄分析表 - 数据查询
+	 */
+	public function receivablesAgeQueryData() {
+		if (IS_POST) {
+			$params = array(
+					"page" => I("post.page"),
+					"start" => I("post.start"),
+					"limit" => I("post.limit")
+			);
+			
+			$rs = new ReceivablesReportService();
+			
+			$this->ajaxReturn($rs->receivablesAgeQueryData($params));
+		}
+	}
+
+	/**
+	 * 应收账款账龄分析表 - 当期汇总数据查询
+	 */
+	public function receivablesSummaryQueryData() {
+		if (IS_POST) {
+			$rs = new ReceivablesReportService();
+			
+			$this->ajaxReturn($rs->receivablesSummaryQueryData());
 		}
 	}
 }
