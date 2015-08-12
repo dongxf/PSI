@@ -15,7 +15,7 @@ Ext.define("PSI.Report.SafetyInventoryForm", {
             	iconCls: "PSI-button-refresh",
             	handler: me.onQuery,
             	scope: me
-            	},
+            	}, "-",
                 {
                     text: "关闭", iconCls: "PSI-button-exit", handler: function () {
                         location.replace(PSI.Const.BASE_URL);
