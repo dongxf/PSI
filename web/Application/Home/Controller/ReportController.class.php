@@ -8,6 +8,7 @@ use Home\Common\FIdConst;
 use Home\Service\SaleReportService;
 use Home\Service\InventoryReportService;
 use Home\Service\ReceivablesReportService;
+use Home\Service\PayablesReportService;
 
 /**
  * 报表Controller
@@ -554,4 +555,31 @@ class ReportController extends Controller {
 		}
 	}
 	
+	/**
+	 * 应付账款账龄分析表 - 数据查询
+	 */
+	public function payablesAgeQueryData() {
+		if (IS_POST) {
+			$params = array(
+					"page" => I("post.page"),
+					"start" => I("post.start"),
+					"limit" => I("post.limit")
+			);
+			
+			$ps = new PayablesReportService();
+			
+			$this->ajaxReturn($ps->payablesAgeQueryData($params));
+		}
+	}
+
+	/**
+	 * 应付账款账龄分析表 - 当期汇总数据查询
+	 */
+	public function payablesSummaryQueryData() {
+		if (IS_POST) {
+			$ps = new PayablesReportService();
+			
+			$this->ajaxReturn($ps->payablesSummaryQueryData());
+		}
+	}
 }
