@@ -301,4 +301,44 @@ class ReportController extends Controller {
 			redirect(__ROOT__ . "/Home/User/login");
 		}
 	}
+
+	/**
+	 * 销售月报表(按仓库汇总)
+	 */
+	public function saleMonthByWarehouse() {
+		$us = new UserService();
+		
+		if ($us->hasPermission(FIdConst::REPORT_SALE_MONTH_BY_WAREHOUSE)) {
+			$this->assign("title", "销售月报表(按仓库汇总)");
+			$this->assign("uri", __ROOT__ . "/");
+			
+			$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
+			$dtFlag = getdate();
+			$this->assign("dtFlag", $dtFlag[0]);
+			
+			$this->display();
+		} else {
+			redirect(__ROOT__ . "/Home/User/login");
+		}
+	}
+
+	/**
+	 * 销售月报表(按业务员汇总)
+	 */
+	public function saleMonthByBizuser() {
+		$us = new UserService();
+		
+		if ($us->hasPermission(FIdConst::REPORT_SALE_MONTH_BY_BIZUSER)) {
+			$this->assign("title", "销售月报表(按业务员汇总)");
+			$this->assign("uri", __ROOT__ . "/");
+			
+			$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
+			$dtFlag = getdate();
+			$this->assign("dtFlag", $dtFlag[0]);
+			
+			$this->display();
+		} else {
+			redirect(__ROOT__ . "/Home/User/login");
+		}
+	}
 }
