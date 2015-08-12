@@ -168,19 +168,29 @@ class FIdConst {
 	 * 销售日报表(按仓库汇总)
 	 */
 	const REPORT_SALE_DAY_BY_WAREHOUSE = "2014";
-
+	
 	/**
 	 * 销售日报表(按业务员汇总)
 	 */
 	const REPORT_SALE_DAY_BY_BIZUSER = "2015";
-
+	
 	/**
 	 * 销售月报表(按商品汇总)
 	 */
 	const REPORT_SALE_MONTH_BY_GOODS = "2016";
-
+	
 	/**
 	 * 销售月报表(按客户汇总)
 	 */
 	const REPORT_SALE_MONTH_BY_CUSTOMER = "2017";
+	
+	/**
+	 * 销售月报表(按仓库汇总)
+	 */
+	const REPORT_SALE_MONTH_BY_WAREHOUSE = "2018";
+	
+	/**
+	 * 销售月报表(按业务员汇总)
+	 */
+	const REPORT_SALE_MONTH_BY_BIZUSER = "2019";
 }
