@@ -1,4 +1,4 @@
-// 销售月报表(按仓库汇总)
+// 安全库存明细表
 Ext.define("PSI.Report.SafetyInventoryForm", {
     extend: "Ext.panel.Panel",
     
@@ -40,8 +40,8 @@ Ext.define("PSI.Report.SafetyInventoryForm", {
     	var modelName = "PSIReportSafetyInventory";
         Ext.define(modelName, {
             extend: "Ext.data.Model",
-            fields: ["bizDT", "warehouseCode", "warehouseName", "saleMoney",
-                "rejMoney", "m", "profit", "rate"]
+            fields: ["warehouseCode", "warehouseName", "siCount",
+                "invCount", "goodsCode", "goodsName", "goodsSpec", "unitName"]
         });
         var store = Ext.create("Ext.data.Store", {
             autoLoad: false,
@@ -69,18 +69,16 @@ Ext.define("PSI.Report.SafetyInventoryForm", {
             columnLines: true,
             columns: [
                 {xtype: "rownumberer"},
-                {header: "月份", dataIndex: "bizDT", menuDisabled: true, sortable: false, width: 80},
                 {header: "仓库编码", dataIndex: "warehouseCode", menuDisabled: true, sortable: false},
                 {header: "仓库", dataIndex: "warehouseName", menuDisabled: true, sortable: false, width: 200},
-                {header: "销售出库金额", dataIndex: "saleMoney", menuDisabled: true, sortable: false,
-                	align: "right", xtype: "numbercolumn"},
-                {header: "退货入库金额", dataIndex: "rejMoney", menuDisabled: true, sortable: false,
-                	align: "right", xtype: "numbercolumn"},
-                {header: "净销售金额", dataIndex: "m", menuDisabled: true, sortable: false,
-                	align: "right", xtype: "numbercolumn"},
-                {header: "毛利", dataIndex: "profit", menuDisabled: true, sortable: false,
-                	align: "right", xtype: "numbercolumn"},
-                {header: "毛利率", dataIndex: "rate", menuDisabled: true, sortable: false, align: "right"}
+                {header: "商品编码", dataIndex: "goodsCode", menuDisabled: true, sortable: false},
+                {header: "商品名称", dataIndex: "goodsName", menuDisabled: true, sortable: false, width: 200},
+                {header: "规格型号", dataIndex: "goodsSpec", menuDisabled: true, sortable: false, width: 160},
+                {header: "安全库存", dataIndex: "siCount", menuDisabled: true, sortable: false,
+                	align: "right", xtype: "numbercolumn", format: "0"},
+                {header: "当前库存", dataIndex: "invCount", menuDisabled: true, sortable: false,
+                	align: "right", xtype: "numbercolumn", format: "0"},
+                {header: "计量单位", dataIndex: "unitName", menuDisabled: true, sortable: false}
             ],
             store: store,
             tbar: [{

@@ -466,4 +466,21 @@ class ReportController extends Controller {
 			redirect(__ROOT__ . "/Home/User/login");
 		}
 	}
+
+	/**
+	 * 安全库存明细表 - 查询数据
+	 */
+	public function safetyInventoryQueryData() {
+		if (IS_POST) {
+			$params = array(
+					"page" => I("post.page"),
+					"start" => I("post.start"),
+					"limit" => I("post.limit")
+			);
+			
+			$is = new InventoryReportService();
+			
+			$this->ajaxReturn($is->safetyInventoryQueryData($params));
+		}
+	}
 }
