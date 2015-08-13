@@ -85,7 +85,6 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
                 },{
                 	id: "editQuerySupplier",
                     xtype: "psi_supplierfield",
-                    parentCmp: me,
                     labelAlign: "right",
                     labelSeparator: "",
                     labelWidth : 60,
@@ -94,7 +93,6 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
                 },{
                 	id: "editQueryWarehouse",
                     xtype: "psi_warehousefield",
-                    parentCmp: me,
                     labelAlign: "right",
                     labelSeparator: "",
                     labelWidth : 60,
@@ -572,10 +570,8 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
     	Ext.getCmp("editQueryRef").setValue(null);
     	Ext.getCmp("editQueryFromDT").setValue(null);
     	Ext.getCmp("editQueryToDT").setValue(null);
-    	Ext.getCmp("editQuerySupplier").setValue(null);
-    	me.__querySupplierId = null;
-    	Ext.getCmp("editQueryWarehouse").setValue(null);
-    	me.__queryWarehouseId = null;
+    	Ext.getCmp("editQuerySupplier").clearIdValue();
+    	Ext.getCmp("editQueryWarehouse").clearIdValue();
     	
     	me.onQuery();
     },
@@ -592,16 +588,14 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
     		result.ref = ref;
     	}
     	
-    	if (me.__querySupplierId) {
-    		if (Ext.getCmp("editQuerySupplier").getValue()) {
-    			result.supplierId = me.__querySupplierId;	
-    		}
+    	var supplierId = Ext.getCmp("editQuerySupplier").getIdValue();
+    	if (supplierId) {
+    		result.supplierId = supplierId;	
     	}
     	
-    	if (me.__queryWarehouseId) {
-    		if (Ext.getCmp("editQueryWarehouse").getValue()) {
-    			result.warehouseId = me.__queryWarehouseId;	
-    		}
+    	var warehouseId = Ext.getCmp("editQueryWarehouse").getIdValue();
+    	if (warehouseId) {
+    		result.warehouseId = warehouseId;	
     	}
     	
     	var fromDT = Ext.getCmp("editQueryFromDT").getValue();
@@ -615,15 +609,5 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
     	}
     	
     	return result;
-    },
-
-    // WarehouseField回调此方法
-    __setWarehouseInfo: function (data) {
-    	this.__queryWarehouseId = data.id;
-    },
-
-    // SupplierField回调此方法
-	__setSupplierInfo : function(data) {
-		this.__querySupplierId = data.id;
-	}
+    }
 });

@@ -5,6 +5,7 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 		parentForm : null,
 		entity : null
 	},
+
 	initComponent : function() {
 		var me = this;
 		me.__readonly = false;
@@ -78,6 +79,9 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
                     colspan: 2,
                     width: 430
                 }, {
+                	id: "editSupplierId",
+                	xtype: "hidden"
+                },{
 					id : "editRef",
 					labelWidth : 60,
 					labelAlign : "right",
@@ -105,20 +109,12 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 						}
 					}
 				}, {
-					xtype : "hidden",
-					id : "editSupplierId"
-				}, {
-					xtype : "hidden",
-					id : "editWarehouseId",
-					name : "warehouseId"
-				}, {
 					id : "editWarehouse",
 					labelWidth : 60,
 					labelAlign : "right",
 					labelSeparator : "",
 					fieldLabel : "出库仓库",
 					xtype : "psi_warehousefield",
-					parentCmp : me,
 					fid: "2007",
 					allowBlank : false,
 					blankText : "没有输入出库仓库",
@@ -130,17 +126,12 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 						}
 					}
 				}, {
-					xtype : "hidden",
-					id : "editBizUserId",
-					name : "bizUserId"
-				}, {
 					id : "editBizUser",
 					labelWidth : 60,
 					labelAlign : "right",
 					labelSeparator : "",
 					fieldLabel : "业务员",
 					xtype : "psi_userfield",
-					parentCmp : me,
 					allowBlank : false,
 					blankText : "没有输入业务员",
 					beforeLabelTextTpl : PSI.Const.REQUIRED,
@@ -185,14 +176,14 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 						Ext.getCmp("editSupplierId").setValue(data.supplierId);
 						Ext.getCmp("editSupplier").setValue(data.supplierName + " 采购入库单单号：" + data.pwbillRef);
 
-						Ext.getCmp("editWarehouseId").setValue(data.warehouseId);
+						Ext.getCmp("editWarehouse").setIdValue(data.warehouseId);
 						Ext.getCmp("editWarehouse").setValue(data.warehouseName);
 					} else {
 						// 新建采购退货出库单，第一步就是选择采购入库单
 						me.onSelectPWBill();
 					}
 
-					Ext.getCmp("editBizUserId").setValue(data.bizUserId);
+					Ext.getCmp("editBizUser").setIdValue(data.bizUserId);
 					Ext.getCmp("editBizUser").setValue(data.bizUserName);
 					if (data.bizDT) {
 						Ext.getCmp("editBizDT").setValue(data.bizDT);
@@ -258,16 +249,6 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 		}
 	},
 
-	// WarehouseField回调此方法
-	__setWarehouseInfo : function(data) {
-		Ext.getCmp("editWarehouseId").setValue(data.id);
-	},
-	
-	// UserField回调此方法
-	__setUserInfo : function(data) {
-		Ext.getCmp("editBizUserId").setValue(data.id);
-	},
-	
 	getGoodsGrid : function() {
 		var me = this;
 		if (me.__goodsGrid) {
@@ -375,7 +356,8 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 						sortable : false,
 						align : "right",
 						xtype : "numbercolumn",
-						width : 120
+						width : 120,
+						format: "0"
 					},{
 						header : "原采购单价",
 						dataIndex : "goodsPrice",
@@ -433,8 +415,8 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 		var result = {
 			id : Ext.getCmp("hiddenId").getValue(),
 			bizDT : Ext.Date.format(Ext.getCmp("editBizDT").getValue(), "Y-m-d"),
-			warehouseId : Ext.getCmp("editWarehouseId").getValue(),
-			bizUserId : Ext.getCmp("editBizUserId").getValue(),
+			warehouseId : Ext.getCmp("editWarehouse").getIdValue(),
+			bizUserId : Ext.getCmp("editBizUser").getIdValue(),
 			pwBillId: me.__billId,
 			items : []
 		};
@@ -478,7 +460,7 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
                     var data = Ext.JSON.decode(response.responseText);
                     Ext.getCmp("editSupplier").setValue(data.supplierName + " 采购入库单单号: " + data.ref);
                     Ext.getCmp("editSupplierId").setValue(data.supplierId);
-                    Ext.getCmp("editWarehouseId").setValue(data.warehouseId);
+                    Ext.getCmp("editWarehouse").setIdValue(data.warehouseId);
                     Ext.getCmp("editWarehouse").setValue(data.warehouseName);
                     
                     var store = me.getGoodsGrid().getStore();

@@ -43,13 +43,9 @@ Ext.define("PSI.PurchaseRej.PRSelectPWBillForm", {
                         },{
                         	id: "editPWSupplier",
                             xtype: "psi_supplierfield",
-                            parentCmp: me,
                             labelAlign: "right",
                             labelSeparator: "",
                             fieldLabel: "供应商"
-                        },{
-                        	xtype: "hidden",
-                        	id: "editPWSupplierId"
                         },{
                         	id: "editPWFromDT",
                             xtype: "datefield",
@@ -67,13 +63,9 @@ Ext.define("PSI.PurchaseRej.PRSelectPWBillForm", {
                         },{
                         	id: "editPWWarehouse",
                             xtype: "psi_warehousefield",
-                            parentCmp: me,
                             labelAlign: "right",
                             labelSeparator: "",
                             fieldLabel: "仓库"
-                        },{
-                        	xtype: "hidden",
-                        	id: "editPWWarehouseId"
                         },{
                         	xtype: "container",
                         	items: [{
@@ -119,7 +111,7 @@ Ext.define("PSI.PurchaseRej.PRSelectPWBillForm", {
     onWndShow: function () {
         var me = this;
     },
-    // private
+    
     onOK: function () {
         var me = this;
         
@@ -259,16 +251,6 @@ Ext.define("PSI.PurchaseRej.PRSelectPWBillForm", {
         Ext.getCmp("prbill_selectform_pagingToobar").doRefresh();
     },
     
-    // WarehouseField回调此方法
-    __setWarehouseInfo: function (data) {
-        Ext.getCmp("editPWWarehouseId").setValue(data.id);
-    },
-
-    // SupplierField回调此方法
-	__setSupplierInfo : function(data) {
-		Ext.getCmp("editPWSupplierId").setValue(data.id);
-	},
-	
     getQueryParam: function() {
     	var result = {};
     	
@@ -277,18 +259,14 @@ Ext.define("PSI.PurchaseRej.PRSelectPWBillForm", {
     		result.ref = ref;
     	}
     	
-    	var supplierId = Ext.getCmp("editPWSupplierId").getValue();
+    	var supplierId = Ext.getCmp("editPWSupplier").getIdValue();
     	if (supplierId) {
-    		if (Ext.getCmp("editPWSupplier").getValue()) {
-    			result.supplierId = supplierId;	
-    		}
+    		result.supplierId = supplierId;	
     	}
     	
-    	var warehouseId = Ext.getCmp("editPWWarehouseId").getValue();
+    	var warehouseId = Ext.getCmp("editPWWarehouse").getIdValue();
     	if (warehouseId) {
-    		if (Ext.getCmp("editPWWarehouse").getValue()) {
-    			result.warehouseId = warehouseId;	
-    		}
+    		result.warehouseId = warehouseId;	
     	}
     	
     	var fromDT = Ext.getCmp("editPWFromDT").getValue();
@@ -306,11 +284,11 @@ Ext.define("PSI.PurchaseRej.PRSelectPWBillForm", {
     
     onClearQuery: function() {
     	Ext.getCmp("editPWRef").setValue(null);
-    	Ext.getCmp("editPWSupplier").setValue(null);
-    	Ext.getCmp("editPWSupplierId").setValue(null);
-    	Ext.getCmp("editPWWarehouse").setValue(null);
-    	Ext.getCmp("editPWWarehouseId").setValue(null);
+    	Ext.getCmp("editPWSupplier").clearIdValue();
+    	Ext.getCmp("editPWWarehouse").clearIdValue();
     	Ext.getCmp("editPWFromDT").setValue(null);
     	Ext.getCmp("editPWToDT").setValue(null);
+    	
+    	this.onQuery();
     }
 });

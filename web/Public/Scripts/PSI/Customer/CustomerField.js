@@ -9,6 +9,8 @@ Ext.define("PSI.Customer.CustomerField", {
 
     initComponent: function () {
     	var me = this;
+    	me.__idValue = null;
+    	
         me.enableKeyEvents = true;
 
         me.callParent(arguments);
@@ -20,6 +22,7 @@ Ext.define("PSI.Customer.CustomerField", {
         	
             if (e.getKey() == e.BACKSPACE) {
                 field.setValue(null);
+                me.setIdValue(null);
                 e.preventDefault();
                 return false;
             }
@@ -32,7 +35,7 @@ Ext.define("PSI.Customer.CustomerField", {
 
     onTriggerClick: function (e) {
         var me = this;
-        var modelName = "PSICustomer";
+        var modelName = "PSICustomerField";
         Ext.define(modelName, {
             extend: "Ext.data.Model",
             fields: ["id", "code", "name"]
@@ -199,5 +202,20 @@ Ext.define("PSI.Customer.CustomerField", {
         if (me.getParentCmp() && me.getParentCmp().__setCustomerInfo) {
         	me.getParentCmp().__setCustomerInfo(data);
         }
+        
+        me.setIdValue(data.id);
+    },
+    
+    setIdValue: function(id) {
+    	this.__idValue = id;
+    },
+    
+    getIdValue: function() {
+    	return this.__idValue;
+    },
+    
+    clearIdValue: function() {
+    	this.setValue(null);
+    	this.__idValue = null;
     }
 });
