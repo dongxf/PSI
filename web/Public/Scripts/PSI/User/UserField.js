@@ -9,6 +9,7 @@ Ext.define("PSI.User.UserField", {
     
     initComponent: function () {
     	var me = this;
+    	me.__idValue = null;
     	
         me.enableKeyEvents = true;
 
@@ -20,6 +21,7 @@ Ext.define("PSI.User.UserField", {
         	}
             if (e.getKey() == e.BACKSPACE) {
                 field.setValue(null);
+                me.setIdValue(null);
                 e.preventDefault();
                 return false;
             }
@@ -182,7 +184,6 @@ Ext.define("PSI.User.UserField", {
         wnd.show();
     },
 
-    // private
     onOK: function () {
         var me = this;
         var grid = me.lookupGrid;
@@ -201,5 +202,20 @@ Ext.define("PSI.User.UserField", {
         if (me.getParentCmp() && me.getParentCmp().__setUserInfo) {
         	me.getParentCmp().__setUserInfo(data);
         }
+        
+        me.setIdValue(data.id);
+    },
+    
+    setIdValue: function(id) {
+    	this.__idValue = id;
+    },
+    
+    getIdValue: function() {
+    	return this.__idValue;
+    },
+    
+    clearIdValue: function() {
+    	this.setValue(null);
+    	this.__idValue = null;
     }
 });

@@ -222,9 +222,11 @@ class PWBillService extends PSIBaseService {
 					$totalMoney = 0;
 				}
 				$sql = "update t_pw_bill 
-						set goods_money = %f, warehouse_id = '%s', " . " supplier_id = '%s', biz_dt = '%s' 
+						set goods_money = %f, warehouse_id = '%s', 
+							supplier_id = '%s', biz_dt = '%s',
+							biz_user_id = '%s'
 						where id = '%s' ";
-				$db->execute($sql, $totalMoney, $warehouseId, $supplierId, $bizDT, $id);
+				$db->execute($sql, $totalMoney, $warehouseId, $supplierId, $bizDT, $bizUserId, $id);
 				
 				$log = "编辑采购入库单: 单号 = {$ref}";
 				$bs = new BizlogService();
