@@ -3,48 +3,16 @@ Ext.define("PSI.Warehouse.MainForm", {
     extend: "Ext.panel.Panel",
     border: 0,
     layout: "border",
+
     initComponent: function () {
         var me = this;
 
-        Ext.define("PSIWarehouse", {
-            extend: "Ext.data.Model",
-            fields: ["id", "code", "name", "inited"]
-        });
-
-        var grid = Ext.create("Ext.grid.Panel", {
-        	border: 0,
-            viewConfig: {
-                enableTextSelection: true
-            },
-            columnLines: true,
-            columns: [
-                {xtype: "rownumberer"},
-                {header: "仓库编码", dataIndex: "code", menuDisabled: true, sortable: false, width: 60},
-                {header: "仓库名称", dataIndex: "name", menuDisabled: true, sortable: false, width: 200},
-                {header: "建账完毕", dataIndex: "inited", menuDisabled: true, sortable: false, width: 60,
-                    renderer: function (value) {
-                        return value == 1 ? "完毕" : "<span style='color:red'>未完</span>";
-                    }}
-            ],
-            store: Ext.create("Ext.data.Store", {
-                model: "PSIWarehouse",
-                autoLoad: false,
-                data: []
-            }),
-            listeners: {
-                itemdblclick: {
-                    fn: me.onEditWarehouse,
-                    scope: me
-                }
-            }
-        });
-        me.grid = grid;
-
         Ext.apply(me, {
             tbar: [
-                {text: "新增仓库", iconCls: "PSI-button-add", handler: this.onAddWarehouse, scope: this},
-                {text: "编辑仓库", iconCls: "PSI-button-edit", handler: this.onEditWarehouse, scope: this},
-                {text: "删除仓库", iconCls: "PSI-button-delete", handler: this.onDeleteWarehouse, scope: this}, "-",
+                {text: "新增仓库", iconCls: "PSI-button-add", handler: me.onAddWarehouse, scope: me},
+                {text: "编辑仓库", iconCls: "PSI-button-edit", handler: me.onEditWarehouse, scope: me},
+                {text: "删除仓库", iconCls: "PSI-button-delete", handler: me.onDeleteWarehouse, scope: me}, 
+                "-",
                 {
                     text: "帮助",
                     iconCls: "PSI-help",
@@ -62,7 +30,7 @@ Ext.define("PSI.Warehouse.MainForm", {
             items: [
                 {
                     region: "center", xtype: "panel", layout: "fit", border: 0,
-                    items: [grid]
+                    items: [me.getMainGrid()]
                 }
             ]
         });
@@ -71,6 +39,7 @@ Ext.define("PSI.Warehouse.MainForm", {
 
         me.freshGrid();
     },
+    
     onAddWarehouse: function () {
         var form = Ext.create("PSI.Warehouse.EditForm", {
             parentForm: this
@@ -78,8 +47,10 @@ Ext.define("PSI.Warehouse.MainForm", {
 
         form.show();
     },
+    
     onEditWarehouse: function () {
-        var item = this.grid.getSelectionModel().getSelection();
+    	var me = this;
+        var item = me.getMainGrid().getSelectionModel().getSelection();
         if (item == null || item.length != 1) {
             PSI.MsgBox.showInfo("请选择要编辑的仓库");
             return;
@@ -88,24 +59,25 @@ Ext.define("PSI.Warehouse.MainForm", {
         var warehouse = item[0];
 
         var form = Ext.create("PSI.Warehouse.EditForm", {
-            parentForm: this,
+            parentForm: me,
             entity: warehouse
         });
 
         form.show();
     },
+    
     onDeleteWarehouse: function () {
-        var item = this.grid.getSelectionModel().getSelection();
+    	var me = this;
+        var item = me.getMainGrid().getSelectionModel().getSelection();
         if (item == null || item.length != 1) {
             PSI.MsgBox.showInfo("请选择要删除的仓库");
             return;
         }
 
-        var me = this;
         var warehouse = item[0];
         var info = "请确认是否删除仓库 <span style='color:red'>" + warehouse.get("name") + "</span> ?";
 
-        var store = me.grid.getStore();
+        var store = me.getMainGrid().getStore();
         var index = store.findExact("id", warehouse.get("id"));
         index--;
         var preIndex = null;
@@ -138,9 +110,10 @@ Ext.define("PSI.Warehouse.MainForm", {
             });
         });
     },
+    
     freshGrid: function (id) {
         var me = this;
-        var grid = this.grid;
+        var grid = me.getMainGrid();
         var el = grid.getEl() || Ext.getBody();
         el.mask(PSI.Const.LOADING);
         Ext.Ajax.request({
@@ -162,9 +135,10 @@ Ext.define("PSI.Warehouse.MainForm", {
             }
         });
     },
+    
     gotoGridRecord: function (id) {
         var me = this;
-        var grid = me.grid;
+        var grid = me.getMainGrid();
         var store = grid.getStore();
         if (id) {
             var r = store.findExact("id", id);
@@ -174,5 +148,48 @@ Ext.define("PSI.Warehouse.MainForm", {
                 grid.getSelectionModel().select(0);
             }
         }
+    },
+    
+    getMainGrid: function() {
+    	var me = this;
+    	if (me.__mainGrid) {
+    		return me.__mainGrid;
+    	}
+    	
+    	var modelName = "PSIWarehouse";
+        Ext.define(modelName, {
+            extend: "Ext.data.Model",
+            fields: ["id", "code", "name", "inited"]
+        });
+
+        me.__mainGrid = Ext.create("Ext.grid.Panel", {
+        	border: 0,
+            viewConfig: {
+                enableTextSelection: true
+            },
+            columnLines: true,
+            columns: [
+                {xtype: "rownumberer"},
+                {header: "仓库编码", dataIndex: "code", menuDisabled: true, sortable: false, width: 60},
+                {header: "仓库名称", dataIndex: "name", menuDisabled: true, sortable: false, width: 200},
+                {header: "建账完毕", dataIndex: "inited", menuDisabled: true, sortable: false, width: 60,
+                    renderer: function (value) {
+                        return value == 1 ? "完毕" : "<span style='color:red'>未完</span>";
+                    }}
+            ],
+            store: Ext.create("Ext.data.Store", {
+                model: modelName,
+                autoLoad: false,
+                data: []
+            }),
+            listeners: {
+                itemdblclick: {
+                    fn: me.onEditWarehouse,
+                    scope: me
+                }
+            }
+        });
+
+        return me.__mainGrid;
     }
 });
