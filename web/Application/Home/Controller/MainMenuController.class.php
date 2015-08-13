@@ -187,14 +187,16 @@ class MainMenuController extends Controller {
 				
 				$children1 = array();
 				
-				$sql = "select id, caption, fid from t_menu_item " . " where parent_id = '%s' order by show_order ";
+				$sql = "select id, caption, fid from t_menu_item 
+						where parent_id = '%s' order by show_order ";
 				$m2 = $db->query($sql, $menuItem1["id"]);
 				
 				// 第二级菜单
 				$index2 = 0;
 				foreach ( $m2 as $menuItem2 ) {
 					$children2 = array();
-					$sql = "select id, caption, fid from t_menu_item " . " where parent_id = '%s' order by show_order ";
+					$sql = "select id, caption, fid from t_menu_item  
+							where parent_id = '%s' order by show_order ";
 					$m3 = $db->query($sql, $menuItem2["id"]);
 					
 					// 第三级菜单
@@ -209,12 +211,25 @@ class MainMenuController extends Controller {
 						}
 					}
 					
-					if ($us->hasPermission($menuItem2["fid"])) {
-						$children1[$index2]["id"] = $menuItem2["id"];
-						$children1[$index2]["caption"] = $menuItem2["caption"];
-						$children1[$index2]["fid"] = $menuItem2["fid"];
-						$children1[$index2]["children"] = $children2;
-						$index2 ++;
+					$fid = $menuItem2["fid"];
+					if ($us->hasPermission($fid)) {
+						if ($fid) {
+							// 仅有二级菜单
+							$children1[$index2]["id"] = $menuItem2["id"];
+							$children1[$index2]["caption"] = $menuItem2["caption"];
+							$children1[$index2]["fid"] = $menuItem2["fid"];
+							$children1[$index2]["children"] = $children2;
+							$index2 ++;
+						} else {
+							if (count($children2) > 0) {
+								// 二级菜单还有三级菜单
+								$children1[$index2]["id"] = $menuItem2["id"];
+								$children1[$index2]["caption"] = $menuItem2["caption"];
+								$children1[$index2]["fid"] = $menuItem2["fid"];
+								$children1[$index2]["children"] = $children2;
+								$index2 ++;
+							}
+						}
 					}
 				}
 				

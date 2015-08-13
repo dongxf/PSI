@@ -167,10 +167,12 @@ Ext.define("PSI.App", {
 
                 if (m2.children.length === 0) {
                     // 只有二级菜单
-                    menuItem.add({
-                        text: m2.caption, fid: m2.fid, handler: menuItemClick,
-                        iconCls: "PSI-fid" + m2.fid
-                    });
+                	if (m2.fid) {
+                        menuItem.add({
+                            text: m2.caption, fid: m2.fid, handler: menuItemClick,
+                            iconCls: "PSI-fid" + m2.fid
+                        });
+                	}
                 } else {
                     var menuItem2 = Ext.create("Ext.menu.Menu");
 
@@ -187,7 +189,9 @@ Ext.define("PSI.App", {
                 }
             }
 
-            mainMenu.push({text: m1.caption, menu: menuItem});
+            if (m1.children.length > 0) {
+                mainMenu.push({text: m1.caption, menu: menuItem});
+            }
         }
 
         var mainToolbar = Ext.create("Ext.toolbar.Toolbar", {
