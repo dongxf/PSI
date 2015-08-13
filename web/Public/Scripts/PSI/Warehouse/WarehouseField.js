@@ -34,7 +34,7 @@ Ext.define("PSI.Warehouse.WarehouseField", {
 
     onTriggerClick: function (e) {
         var me = this;
-        var modelName = "PSIWarehouse";
+        var modelName = "PSIWarehouseField";
         Ext.define(modelName, {
             extend: "Ext.data.Model",
             fields: ["id", "code", "name"]
