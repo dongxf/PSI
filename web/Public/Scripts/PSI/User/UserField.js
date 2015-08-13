@@ -3,10 +3,6 @@ Ext.define("PSI.User.UserField", {
     extend: "Ext.form.field.Trigger",
     alias: "widget.psi_userfield",
 
-    config: {
-    	parentCmp: null
-    },
-    
     initComponent: function () {
     	var me = this;
     	me.__idValue = null;
@@ -198,10 +194,6 @@ Ext.define("PSI.User.UserField", {
         me.focus();
         me.setValue(data.name);
         me.focus();
-        
-        if (me.getParentCmp() && me.getParentCmp().__setUserInfo) {
-        	me.getParentCmp().__setUserInfo(data);
-        }
         
         me.setIdValue(data.id);
     },

@@ -3,10 +3,6 @@ Ext.define("PSI.Customer.CustomerField", {
     extend: "Ext.form.field.Trigger",
     alias: "widget.psi_customerfield",
     
-    config: {
-    	parentCmp: null
-    },
-
     initComponent: function () {
     	var me = this;
     	me.__idValue = null;
@@ -198,10 +194,6 @@ Ext.define("PSI.Customer.CustomerField", {
         me.focus();
         me.setValue(data.name);
         me.focus();
-        
-        if (me.getParentCmp() && me.getParentCmp().__setCustomerInfo) {
-        	me.getParentCmp().__setCustomerInfo(data);
-        }
         
         me.setIdValue(data.id);
     },

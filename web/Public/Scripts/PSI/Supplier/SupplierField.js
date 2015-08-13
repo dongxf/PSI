@@ -3,10 +3,6 @@ Ext.define("PSI.Supplier.SupplierField", {
     extend: "Ext.form.field.Trigger",
     alias: "widget.psi_supplierfield",
     
-    config: {
-    	parentCmp: null
-    },
-
     initComponent: function () {
     	var me = this;
     	
@@ -199,10 +195,6 @@ Ext.define("PSI.Supplier.SupplierField", {
         me.focus();
         me.setValue(data.name);
         me.focus();
-        
-        if (me.getParentCmp() && me.getParentCmp().__setSupplierInfo) {
-        	me.getParentCmp().__setSupplierInfo(data);
-        }
         
         me.setIdValue(data.id);
     },
