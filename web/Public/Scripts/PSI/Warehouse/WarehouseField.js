@@ -11,6 +11,8 @@ Ext.define("PSI.Warehouse.WarehouseField", {
 
     initComponent: function () {
     	var me = this;
+    	me.__idValue = null;
+    	
         me.enableKeyEvents = true;
 
         me.callParent(arguments);
@@ -22,6 +24,7 @@ Ext.define("PSI.Warehouse.WarehouseField", {
         	
             if (e.getKey() == e.BACKSPACE) {
                 field.setValue(null);
+                me.__idValue = null;
                 e.preventDefault();
                 return false;
             }
@@ -185,7 +188,6 @@ Ext.define("PSI.Warehouse.WarehouseField", {
         wnd.show();
     },
 
-    // private
     onOK: function () {
         var me = this;
         var grid = me.lookupGrid;
@@ -212,5 +214,16 @@ Ext.define("PSI.Warehouse.WarehouseField", {
         if (callbackFunc) {
         	callbackFunc(data);
         }
+        
+        me.__idValue = data.id;
+    },
+    
+    getIdValue: function() {
+    	return this.__idValue;
+    },
+    
+    clearIdValue: function() {
+    	this.setValue(null);
+    	this.__idValue = null;
     }
 });
