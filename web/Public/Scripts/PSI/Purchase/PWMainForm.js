@@ -493,8 +493,7 @@ Ext.define("PSI.Purchase.PWMainForm", {
     	Ext.getCmp("editQueryRef").setValue(null);
     	Ext.getCmp("editQueryFromDT").setValue(null);
     	Ext.getCmp("editQueryToDT").setValue(null);
-    	Ext.getCmp("editQuerySupplier").setValue(null);
-    	me.__querySupplierId = null;
+    	Ext.getCmp("editQuerySupplier").clearIdValue();
     	Ext.getCmp("editQueryWarehouse").setValue(null);
     	me.__queryWarehouseId = null;
     	
@@ -505,7 +504,7 @@ Ext.define("PSI.Purchase.PWMainForm", {
     	var me = this;
     	
     	var result = {
-    			billStatus: Ext.getCmp("editQueryBillStatus").getValue()
+    		billStatus: Ext.getCmp("editQueryBillStatus").getValue()
     	};
     	
     	var ref = Ext.getCmp("editQueryRef").getValue();
@@ -513,10 +512,9 @@ Ext.define("PSI.Purchase.PWMainForm", {
     		result.ref = ref;
     	}
     	
-    	if (me.__querySupplierId) {
-    		if (Ext.getCmp("editQuerySupplier").getValue()) {
-    			result.supplierId = me.__querySupplierId;	
-    		}
+    	var supplierId = Ext.getCmp("editQuerySupplier").getIdValue();
+    	if (supplierId) {
+    		result.supplierId = supplierId;	
     	}
     	
     	if (me.__queryWarehouseId) {
@@ -541,10 +539,5 @@ Ext.define("PSI.Purchase.PWMainForm", {
     // WarehouseField回调此方法
     __setWarehouseInfo: function (data) {
     	this.__queryWarehouseId = data.id;
-    },
-
-    // SupplierField回调此方法
-	__setSupplierInfo : function(data) {
-		this.__querySupplierId = data.id;
-	}
+    }
 });

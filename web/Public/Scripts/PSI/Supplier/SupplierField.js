@@ -1,3 +1,4 @@
+// 供应商自定义字段
 Ext.define("PSI.Supplier.SupplierField", {
     extend: "Ext.form.field.Trigger",
     alias: "widget.psi_supplierfield",
@@ -8,6 +9,8 @@ Ext.define("PSI.Supplier.SupplierField", {
 
     initComponent: function () {
     	var me = this;
+    	
+    	me.__idValue = null;
     	
         me.enableKeyEvents = true;
 
@@ -20,6 +23,7 @@ Ext.define("PSI.Supplier.SupplierField", {
         	
             if (e.getKey() == e.BACKSPACE) {
                 field.setValue(null);
+                me.__idValue = null;
                 e.preventDefault();
                 return false;
             }
@@ -32,7 +36,7 @@ Ext.define("PSI.Supplier.SupplierField", {
 
     onTriggerClick: function (e) {
         var me = this;
-        var modelName = "PSISupplier";
+        var modelName = "PSISupplierField";
         Ext.define(modelName, {
             extend: "Ext.data.Model",
             fields: ["id", "code", "name"]
@@ -199,5 +203,16 @@ Ext.define("PSI.Supplier.SupplierField", {
         if (me.getParentCmp() && me.getParentCmp().__setSupplierInfo) {
         	me.getParentCmp().__setSupplierInfo(data);
         }
+        
+        me.__idValue = data.id;
+    },
+    
+    getIdValue: function() {
+    	return this.__idValue;
+    },
+    
+    clearIdValue: function() {
+    	this.setValue(null);
+    	this.__idValue = null;
     }
 });
