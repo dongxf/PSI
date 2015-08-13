@@ -23,7 +23,7 @@ Ext.define("PSI.Supplier.SupplierField", {
         	
             if (e.getKey() == e.BACKSPACE) {
                 field.setValue(null);
-                me.__idValue = null;
+                me.setIdValue(null);
                 e.preventDefault();
                 return false;
             }
@@ -204,7 +204,11 @@ Ext.define("PSI.Supplier.SupplierField", {
         	me.getParentCmp().__setSupplierInfo(data);
         }
         
-        me.__idValue = data.id;
+        me.setIdValue(data.id);
+    },
+    
+    setIdValue: function(id) {
+    	this.__idValue = id;
     },
     
     getIdValue: function() {

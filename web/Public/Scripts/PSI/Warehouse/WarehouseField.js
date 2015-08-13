@@ -24,7 +24,7 @@ Ext.define("PSI.Warehouse.WarehouseField", {
         	
             if (e.getKey() == e.BACKSPACE) {
                 field.setValue(null);
-                me.__idValue = null;
+                me.setIdValue(null);
                 e.preventDefault();
                 return false;
             }
@@ -215,7 +215,11 @@ Ext.define("PSI.Warehouse.WarehouseField", {
         	callbackFunc(data);
         }
         
-        me.__idValue = data.id;
+        me.setIdValue(data.id);
+    },
+    
+    setIdValue: function(id) {
+    	this.__idValue = id;
     },
     
     getIdValue: function() {
