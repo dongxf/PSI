@@ -95,18 +95,12 @@ Ext.define("PSI.InvCheck.ICEditForm", {
                             }
                         },
                         {
-                            xtype: "hidden",
-                            id: "editWarehouseId",
-                            name: "warehouseId"
-                        },
-                        {
                             id: "editWarehouse",
                             fieldLabel: "盘点仓库",
                             labelWidth: 60,
                             labelAlign: "right",
                             labelSeparator: "",
                             xtype: "psi_warehousefield",
-                            callbackFunc: me.__setWarehouseId,
                             fid: "2010",
                             allowBlank: false,
                             blankText: "没有输入盘点仓库",
@@ -119,18 +113,12 @@ Ext.define("PSI.InvCheck.ICEditForm", {
                             }
                         },
                         {
-                            xtype: "hidden",
-                            id: "editBizUserId",
-                            name: "bizUserId"
-                        },
-                        {
                             id: "editBizUser",
                             fieldLabel: "业务员",
                             xtype: "psi_userfield",
                             labelWidth: 60,
                             labelAlign: "right",
                             labelSeparator: "",
-                            parentCmp: me,
                             allowBlank: false,
                             blankText: "没有输入业务员",
                             beforeLabelTextTpl: PSI.Const.REQUIRED,
@@ -175,13 +163,13 @@ Ext.define("PSI.InvCheck.ICEditForm", {
                         Ext.getCmp("editRef").setValue(data.ref);
                     }
 
-                    Ext.getCmp("editBizUserId").setValue(data.bizUserId);
+                    Ext.getCmp("editBizUser").setIdValue(data.bizUserId);
                     Ext.getCmp("editBizUser").setValue(data.bizUserName);
                     if (data.bizDT) {
                         Ext.getCmp("editBizDT").setValue(data.bizDT);
                     }
                     if (data.warehouseId) {
-                    	Ext.getCmp("editWarehouseId").setValue(data.warehouseId);
+                    	Ext.getCmp("editWarehouse").setIdValue(data.warehouseId);
                     	Ext.getCmp("editWarehouse").setValue(data.warehouseName);
                     }
 
@@ -255,11 +243,6 @@ Ext.define("PSI.InvCheck.ICEditForm", {
             me.getGoodsGrid().focus();
             me.__cellEditing.startEdit(0, 1);
         }
-    },
-    
-    // UserField回调此方法
-    __setUserInfo: function (data) {
-        Ext.getCmp("editBizUserId").setValue(data.id);
     },
     
     getGoodsGrid: function () {
@@ -413,16 +396,12 @@ Ext.define("PSI.InvCheck.ICEditForm", {
         goods.set("goodsSpec", data.spec);
     },
     
-    __setWarehouseId: function (data) {
-    	Ext.getCmp("editWarehouseId").setValue(data.id);
-    },
-    
     getSaveData: function () {
         var result = {
             id: Ext.getCmp("hiddenId").getValue(),
             bizDT: Ext.Date.format(Ext.getCmp("editBizDT").getValue(), "Y-m-d"),
-            warehouseId: Ext.getCmp("editWarehouseId").getValue(),
-            bizUserId: Ext.getCmp("editBizUserId").getValue(),
+            warehouseId: Ext.getCmp("editWarehouse").getIdValue(),
+            bizUserId: Ext.getCmp("editBizUser").getIdValue(),
             items: []
         };
 
