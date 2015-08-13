@@ -94,18 +94,12 @@ Ext.define("PSI.InvTransfer.ITEditForm", {
                             }
                         },
                         {
-                            xtype: "hidden",
-                            id: "editFromWarehouseId",
-                            name: "warehouseId"
-                        },
-                        {
                             id: "editFromWarehouse",
                             fieldLabel: "调出仓库",
                             labelWidth: 60,
                             labelAlign: "right",
                             labelSeparator: "",
                             xtype: "psi_warehousefield",
-                            callbackFunc: me.__setFromWarehouseId,
                             fid: "2009",
                             allowBlank: false,
                             blankText: "没有输入调出仓库",
@@ -116,10 +110,6 @@ Ext.define("PSI.InvTransfer.ITEditForm", {
                                     scope: me
                                 }
                             }
-                        },{
-                            xtype: "hidden",
-                            id: "editToWarehouseId",
-                            name: "warehouseId"
                         },
                         {
                             id: "editToWarehouse",
@@ -128,7 +118,6 @@ Ext.define("PSI.InvTransfer.ITEditForm", {
                             labelAlign: "right",
                             labelSeparator: "",
                             xtype: "psi_warehousefield",
-                            callbackFunc: me.__setToWarehouseId,
                             fid: "2009",
                             allowBlank: false,
                             blankText: "没有输入调入仓库",
@@ -141,18 +130,12 @@ Ext.define("PSI.InvTransfer.ITEditForm", {
                             }
                         },
                         {
-                            xtype: "hidden",
-                            id: "editBizUserId",
-                            name: "bizUserId"
-                        },
-                        {
                             id: "editBizUser",
                             fieldLabel: "业务员",
                             xtype: "psi_userfield",
                             labelWidth: 60,
                             labelAlign: "right",
                             labelSeparator: "",
-                            parentCmp: me,
                             allowBlank: false,
                             blankText: "没有输入业务员",
                             beforeLabelTextTpl: PSI.Const.REQUIRED,
@@ -197,17 +180,17 @@ Ext.define("PSI.InvTransfer.ITEditForm", {
                         Ext.getCmp("editRef").setValue(data.ref);
                     }
 
-                    Ext.getCmp("editBizUserId").setValue(data.bizUserId);
+                    Ext.getCmp("editBizUser").setIdValue(data.bizUserId);
                     Ext.getCmp("editBizUser").setValue(data.bizUserName);
                     if (data.bizDT) {
                         Ext.getCmp("editBizDT").setValue(data.bizDT);
                     }
                     if (data.fromWarehouseId) {
-                    	Ext.getCmp("editFromWarehouseId").setValue(data.fromWarehouseId);
+                    	Ext.getCmp("editFromWarehouse").setIdValue(data.fromWarehouseId);
                     	Ext.getCmp("editFromWarehouse").setValue(data.fromWarehouseName);
                     }
                     if (data.toWarehouseId) {
-                    	Ext.getCmp("editToWarehouseId").setValue(data.toWarehouseId);
+                    	Ext.getCmp("editToWarehouse").setIdValue(data.toWarehouseId);
                     	Ext.getCmp("editToWarehouse").setValue(data.toWarehouseName);
                     }
 
@@ -286,11 +269,6 @@ Ext.define("PSI.InvTransfer.ITEditForm", {
             me.getGoodsGrid().focus();
             me.__cellEditing.startEdit(0, 1);
         }
-    },
-    
-    // UserField回调此方法
-    __setUserInfo: function (data) {
-        Ext.getCmp("editBizUserId").setValue(data.id);
     },
     
     getGoodsGrid: function () {
@@ -433,21 +411,13 @@ Ext.define("PSI.InvTransfer.ITEditForm", {
         goods.set("goodsSpec", data.spec);
     },
     
-    __setFromWarehouseId: function (data) {
-    	Ext.getCmp("editFromWarehouseId").setValue(data.id);
-    },
-    
-    __setToWarehouseId: function (data) {
-    	Ext.getCmp("editToWarehouseId").setValue(data.id);
-    },
-
     getSaveData: function () {
         var result = {
             id: Ext.getCmp("hiddenId").getValue(),
             bizDT: Ext.Date.format(Ext.getCmp("editBizDT").getValue(), "Y-m-d"),
-            fromWarehouseId: Ext.getCmp("editFromWarehouseId").getValue(),
-            toWarehouseId: Ext.getCmp("editToWarehouseId").getValue(),
-            bizUserId: Ext.getCmp("editBizUserId").getValue(),
+            fromWarehouseId: Ext.getCmp("editFromWarehouse").getIdValue(),
+            toWarehouseId: Ext.getCmp("editToWarehouse").getIdValue(),
+            bizUserId: Ext.getCmp("editBizUser").getIdValue(),
             items: []
         };
 

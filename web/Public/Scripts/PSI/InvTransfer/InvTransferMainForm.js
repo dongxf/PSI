@@ -85,7 +85,6 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
                     },{
                     	id: "editQueryFromWarehouse",
                         xtype: "psi_warehousefield",
-                        callbackFunc: me.__setFromWarehouseId,
                         labelAlign: "right",
                         labelSeparator: "",
                         labelWidth : 60,
@@ -94,18 +93,11 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
                     },{
                     	id: "editQueryToWarehouse",
                         xtype: "psi_warehousefield",
-                        callbackFunc: me.__setToWarehouseId,
                         labelAlign: "right",
                         labelSeparator: "",
                         labelWidth : 60,
     					margin: "5, 0, 0, 0",
                         fieldLabel: "调入仓库"
-                    },{
-                    	id: "editQueryFromWarehouseId",
-                    	xtype: "hidden"
-                    },{
-                    	id: "editQueryToWarehouseId",
-                    	xtype: "hidden"
                     },{
                     	xtype: "container",
                     	items: [{
@@ -530,14 +522,6 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
         });
     },
     
-    __setFromWarehouseId: function (data) {
-    	Ext.getCmp("editQueryFromWarehouseId").setValue(data.id);
-    },
-    
-    __setToWarehouseId: function (data) {
-    	Ext.getCmp("editQueryToWarehouseId").setValue(data.id);
-    },
-
     onQuery: function() {
     	this.refreshMainGrid();
     },
@@ -549,10 +533,8 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
     	Ext.getCmp("editQueryRef").setValue(null);
     	Ext.getCmp("editQueryFromDT").setValue(null);
     	Ext.getCmp("editQueryToDT").setValue(null);
-    	Ext.getCmp("editQueryFromWarehouse").setValue(null);
-    	Ext.getCmp("editQueryFromWarehouseId").setValue(null);
-    	Ext.getCmp("editQueryToWarehouse").setValue(null);
-    	Ext.getCmp("editQueryToWarehouseId").setValue(null);
+    	Ext.getCmp("editQueryFromWarehouse").clearIdValue();
+    	Ext.getCmp("editQueryToWarehouse").clearIdValue();
     	
     	me.onQuery();
     },
@@ -569,18 +551,14 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
     		result.ref = ref;
     	}
     	
-    	var fromWarehouseId = Ext.getCmp("editQueryFromWarehouseId").getValue();
+    	var fromWarehouseId = Ext.getCmp("editQueryFromWarehouse").getIdValue();
     	if (fromWarehouseId) {
-    		if (Ext.getCmp("editQueryFromWarehouse").getValue()) {
-    			result.fromWarehouseId = fromWarehouseId;	
-    		}
+    		result.fromWarehouseId = fromWarehouseId;	
     	}
     	
-    	var toWarehouseId = Ext.getCmp("editQueryToWarehouseId").getValue();
+    	var toWarehouseId = Ext.getCmp("editQueryToWarehouse").getIdValue();
     	if (toWarehouseId) {
-    		if (Ext.getCmp("editQueryToWarehouse").getValue()) {
-    			result.toWarehouseId = toWarehouseId;	
-    		}
+    		result.toWarehouseId = toWarehouseId;	
     	}
     	
     	var fromDT = Ext.getCmp("editQueryFromDT").getValue();
