@@ -47,11 +47,7 @@ Ext.define("PSI.Sale.SRSelectWSBillForm", {
                             id: "editWSCustomer",
                             labelAlign: "right",
                             labelSeparator: "",
-                            parentCmp: me,
                             fieldLabel: "客户"
-                        },{
-                        	xtype: "hidden",
-                        	id: "editWSCustomerId"
                         },{
                         	id: "editFromDT",
                             xtype: "datefield",
@@ -71,11 +67,7 @@ Ext.define("PSI.Sale.SRSelectWSBillForm", {
                             id: "editWSWarehouse",
                             labelAlign: "right",
                             labelSeparator: "",
-                            parentCmp: me,
                             fieldLabel: "仓库"
-                        },{
-                        	xtype: "hidden",
-                        	id: "editWSWarehouseId"
                         },{
                         	xtype: "container",
                         	items: [{
@@ -264,16 +256,6 @@ Ext.define("PSI.Sale.SRSelectWSBillForm", {
         Ext.getCmp("srbill_selectform_pagingToobar").doRefresh();
     },
     
-    // CustomerField回调此方法
-    __setCustomerInfo: function (data) {
-        Ext.getCmp("editWSCustomerId").setValue(data.id);
-    },
-    
-    // WarehouseField回调此方法
-    __setWarehouseInfo: function (data) {
-        Ext.getCmp("editWSWarehouseId").setValue(data.id);
-    },
-    
     getQueryParam: function() {
     	var result = {};
     	
@@ -282,18 +264,14 @@ Ext.define("PSI.Sale.SRSelectWSBillForm", {
     		result.ref = ref;
     	}
     	
-    	var customerId = Ext.getCmp("editWSCustomerId").getValue();
+    	var customerId = Ext.getCmp("editWSCustomer").getIdValue();
     	if (customerId) {
-    		if (Ext.getCmp("editWSCustomer").getValue()) {
-    			result.customerId = customerId;	
-    		}
+    		result.customerId = customerId;	
     	}
     	
-    	var warehouseId = Ext.getCmp("editWSWarehouseId").getValue();
+    	var warehouseId = Ext.getCmp("editWSWarehouse").getIdValue();
     	if (warehouseId) {
-    		if (Ext.getCmp("editWSWarehouse").getValue()) {
-    			result.warehouseId = warehouseId;	
-    		}
+    		result.warehouseId = warehouseId;	
     	}
     	
     	var fromDT = Ext.getCmp("editFromDT").getValue();
@@ -311,10 +289,8 @@ Ext.define("PSI.Sale.SRSelectWSBillForm", {
     
     onClearQuery: function() {
     	Ext.getCmp("editWSRef").setValue(null);
-    	Ext.getCmp("editWSCustomer").setValue(null);
-    	Ext.getCmp("editWSCustomerId").setValue(null);
-    	Ext.getCmp("editWSWarehouse").setValue(null);
-    	Ext.getCmp("editWSWarehouseId").setValue(null);
+    	Ext.getCmp("editWSCustomer").clearIdValue();
+    	Ext.getCmp("editWSWarehouse").clearIdValue();
     	Ext.getCmp("editFromDT").setValue(null);
     	Ext.getCmp("editToDT").setValue(null);
     }

@@ -85,7 +85,6 @@ Ext.define("PSI.Sale.SRMainForm", {
                     },{
                     	id: "editQueryCustomer",
                         xtype: "psi_customerfield",
-                        parentCmp: me,
                         labelAlign: "right",
                         labelSeparator: "",
                         labelWidth : 60,
@@ -94,7 +93,6 @@ Ext.define("PSI.Sale.SRMainForm", {
                     },{
                     	id: "editQueryWarehouse",
                         xtype: "psi_warehousefield",
-                        parentCmp: me,
                         labelAlign: "right",
                         labelSeparator: "",
                         labelWidth : 60,
@@ -554,10 +552,8 @@ Ext.define("PSI.Sale.SRMainForm", {
     	Ext.getCmp("editQueryRef").setValue(null);
     	Ext.getCmp("editQueryFromDT").setValue(null);
     	Ext.getCmp("editQueryToDT").setValue(null);
-    	Ext.getCmp("editQueryCustomer").setValue(null);
-    	me.__queryCustomerId = null;
-    	Ext.getCmp("editQueryWarehouse").setValue(null);
-    	me.__queryWarehouseId = null;
+    	Ext.getCmp("editQueryCustomer").clearIdValue();
+    	Ext.getCmp("editQueryWarehouse").clearIdValue();
     	
     	me.onQuery();
     },
@@ -566,7 +562,7 @@ Ext.define("PSI.Sale.SRMainForm", {
     	var me = this;
     	
     	var result = {
-    			billStatus: Ext.getCmp("editQueryBillStatus").getValue()
+    		billStatus: Ext.getCmp("editQueryBillStatus").getValue()
     	};
     	
     	var ref = Ext.getCmp("editQueryRef").getValue();
@@ -574,16 +570,14 @@ Ext.define("PSI.Sale.SRMainForm", {
     		result.ref = ref;
     	}
     	
-    	if (me.__queryCustomerId) {
-    		if (Ext.getCmp("editQueryCustomer").getValue()) {
-    			result.customerId = me.__queryCustomerId;	
-    		}
+    	var customerId = Ext.getCmp("editQueryCustomer").getIdValue();
+    	if (customerId) {
+    		result.customerId = customerId;	
     	}
     	
-    	if (me.__queryWarehouseId) {
-    		if (Ext.getCmp("editQueryWarehouse").getValue()) {
-    			result.warehouseId = me.__queryWarehouseId;	
-    		}
+    	var warehouseId = Ext.getCmp("editQueryWarehouse").getIdValue();
+    	if (warehouseId) {
+    		result.warehouseId = warehouseId;	
     	}
     	
     	var fromDT = Ext.getCmp("editQueryFromDT").getValue();
@@ -597,15 +591,5 @@ Ext.define("PSI.Sale.SRMainForm", {
     	}
     	
     	return result;
-    },
-
-    // WarehouseField回调此方法
-    __setWarehouseInfo: function (data) {
-    	this.__queryWarehouseId = data.id;
-    },
-
-    // CustomerField回调此方法
-	__setCustomerInfo : function(data) {
-		this.__queryCustomerId = data.id;
-	}
+    }
 });

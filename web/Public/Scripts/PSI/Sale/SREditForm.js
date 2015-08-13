@@ -116,18 +116,12 @@ Ext.define("PSI.Sale.SREditForm", {
                             name: "customerId"
                         },
                         {
-                            xtype: "hidden",
-                            id: "editWarehouseId",
-                            name: "warehouseId"
-                        },
-                        {
                             id: "editWarehouse",
                             fieldLabel: "入库仓库",
                             labelWidth: 60,
                             labelAlign: "right",
                             labelSeparator: "",
                             xtype: "psi_warehousefield",
-                            parentCmp: me,
                             fid: "2006",
                             allowBlank: false,
                             blankText: "没有输入入库仓库",
@@ -140,18 +134,12 @@ Ext.define("PSI.Sale.SREditForm", {
                             }
                         },
                         {
-                            xtype: "hidden",
-                            id: "editBizUserId",
-                            name: "bizUserId"
-                        },
-                        {
                             id: "editBizUser",
                             fieldLabel: "业务员",
                             xtype: "psi_userfield",
                             labelWidth: 60,
                             labelAlign: "right",
                             labelSeparator: "",
-                            parentCmp: me,
                             allowBlank: false,
                             blankText: "没有输入业务员",
                             beforeLabelTextTpl: PSI.Const.REQUIRED,
@@ -174,6 +162,7 @@ Ext.define("PSI.Sale.SREditForm", {
 
         me.callParent(arguments);
     },
+
     onWndShow: function () {
         var me = this;
         var el = me.getEl() || Ext.getBody();
@@ -201,10 +190,10 @@ Ext.define("PSI.Sale.SREditForm", {
                         me.onSelectWSBill();
                     }
 
-                    Ext.getCmp("editWarehouseId").setValue(data.warehouseId);
+                    Ext.getCmp("editWarehouse").setIdValue(data.warehouseId);
                     Ext.getCmp("editWarehouse").setValue(data.warehouseName);
 
-                    Ext.getCmp("editBizUserId").setValue(data.bizUserId);
+                    Ext.getCmp("editBizUser").setIdValue(data.bizUserId);
                     Ext.getCmp("editBizUser").setValue(data.bizUserName);
                     if (data.bizDT) {
                         Ext.getCmp("editBizDT").setValue(data.bizDT);
@@ -225,7 +214,7 @@ Ext.define("PSI.Sale.SREditForm", {
             }
         });
     },
-    // private
+    
     onOK: function () {
         var me = this;
         Ext.getBody().mask("正在保存中...");
@@ -271,18 +260,7 @@ Ext.define("PSI.Sale.SREditForm", {
             me.__cellEditing.startEdit(0, 4);
         }
     },
-    // CustomerField回调此方法
-    __setCustomerInfo: function (data) {
-        Ext.getCmp("editCustomerId").setValue(data.id);
-    },
-    // WarehouseField回调此方法
-    __setWarehouseInfo: function (data) {
-        Ext.getCmp("editWarehouseId").setValue(data.id);
-    },
-    // UserField回调此方法
-    __setUserInfo: function (data) {
-        Ext.getCmp("editBizUserId").setValue(data.id);
-    },
+
     getGoodsGrid: function () {
         var me = this;
         if (me.__goodsGrid) {
@@ -393,8 +371,8 @@ Ext.define("PSI.Sale.SREditForm", {
             id: Ext.getCmp("hiddenId").getValue(),
             bizDT: Ext.Date.format(Ext.getCmp("editBizDT").getValue(), "Y-m-d"),
             customerId: Ext.getCmp("editCustomerId").getValue(),
-            warehouseId: Ext.getCmp("editWarehouseId").getValue(),
-            bizUserId: Ext.getCmp("editBizUserId").getValue(),
+            warehouseId: Ext.getCmp("editWarehouse").getIdValue(),
+            bizUserId: Ext.getCmp("editBizUser").getIdValue(),
             wsBillId: me.__wsBillId,
             items: []
         };
@@ -412,12 +390,14 @@ Ext.define("PSI.Sale.SREditForm", {
 
         return Ext.JSON.encode(result);
     },
+    
     onSelectWSBill: function() {
         var form = Ext.create("PSI.Sale.SRSelectWSBillForm", {
             parentForm: this
         });
         form.show();
     },
+    
     getWSBillInfo: function(id) {
         var me = this;
         me.__wsBillId = id;
@@ -434,7 +414,7 @@ Ext.define("PSI.Sale.SREditForm", {
                     var data = Ext.JSON.decode(response.responseText);
                     Ext.getCmp("editCustomer").setValue(data.customerName + " 销售单号: " + data.ref);
                     Ext.getCmp("editCustomerId").setValue(data.customerId);
-                    Ext.getCmp("editWarehouseId").setValue(data.warehouseId);
+                    Ext.getCmp("editWarehouse").setIdValue(data.warehouseId);
                     Ext.getCmp("editWarehouse").setValue(data.warehouseName);
                     
                     var store = me.getGoodsGrid().getStore();
