@@ -92,7 +92,6 @@ Ext.define("PSI.User.LoginForm", {
         me.callParent(arguments);
     },
 
-    // private
     onOK: function () {
         var me = this;
 
