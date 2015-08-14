@@ -99,6 +99,13 @@ Ext.define("PSI.Sale.SRMainForm", {
     					margin: "5, 0, 0, 0",
                         fieldLabel: "仓库"
                     },{
+    					id: "editQuerySN",
+    					labelAlign : "right",
+    					labelSeparator : "",
+    					fieldLabel : "序列号",
+    					margin: "5, 0, 0, 0",
+    					xtype : "textfield"
+    				},{
                     	xtype: "container",
                     	items: [{
                             xtype: "button",
@@ -559,6 +566,7 @@ Ext.define("PSI.Sale.SRMainForm", {
     	Ext.getCmp("editQueryToDT").setValue(null);
     	Ext.getCmp("editQueryCustomer").clearIdValue();
     	Ext.getCmp("editQueryWarehouse").clearIdValue();
+    	Ext.getCmp("editQuerySN").setValue(null);
     	
     	me.onQuery();
     },
@@ -593,6 +601,11 @@ Ext.define("PSI.Sale.SRMainForm", {
     	var toDT = Ext.getCmp("editQueryToDT").getValue();
     	if (toDT) {
     		result.toDT = Ext.Date.format(toDT, "Y-m-d");
+    	}
+    	
+    	var sn = Ext.getCmp("editQuerySN").getValue();
+    	if (sn) {
+    		result.sn = sn;
     	}
     	
     	return result;

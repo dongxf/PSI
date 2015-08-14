@@ -23,6 +23,7 @@ class SRBillService extends PSIBaseService {
 		$toDT = $params["toDT"];
 		$warehouseId = $params["warehouseId"];
 		$customerId = $params["customerId"];
+		$sn = $params["sn"];
 		
 		$db = M();
 		$sql = "select w.id, w.ref, w.bizdt, c.name as customer_name, u.name as biz_user_name,
@@ -55,6 +56,13 @@ class SRBillService extends PSIBaseService {
 		if ($warehouseId) {
 			$sql .= " and (w.warehouse_id = '%s') ";
 			$queryParams[] = $warehouseId;
+		}
+		if ($sn) {
+			$sql .= " and (w.id in (
+					  select d.srbill_id 
+					  from t_sr_bill_detail d
+					  where d.sn_note like '%s')) ";
+			$queryParams[] = "%$sn%";
 		}
 		
 		$sql .= " order by w.ref desc 
@@ -104,6 +112,13 @@ class SRBillService extends PSIBaseService {
 		if ($warehouseId) {
 			$sql .= " and (w.warehouse_id = '%s') ";
 			$queryParams[] = $warehouseId;
+		}
+		if ($sn) {
+			$sql .= " and (w.id in (
+					  select d.srbill_id
+					  from t_sr_bill_detail d
+					  where d.sn_note like '%s')) ";
+			$queryParams[] = "%$sn%";
 		}
 		
 		$data = $db->query($sql, $queryParams);
