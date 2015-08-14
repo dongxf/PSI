@@ -100,11 +100,18 @@ Ext.define("PSI.Sale.WSMainForm", {
     					margin: "5, 0, 0, 0",
                         fieldLabel: "仓库"
                     },{
+    					id: "editQuerySN",
+    					labelAlign : "right",
+    					labelSeparator : "",
+    					fieldLabel : "序列号",
+    					margin: "5, 0, 0, 0",
+    					xtype : "textfield"
+    				},{
                     	xtype: "container",
                     	items: [{
                             xtype: "button",
                             text: "查询",
-                            width: 100,
+                            width: 90,
                             margin: "5 0 0 10",
                             iconCls: "PSI-button-refresh",
                             handler: me.onQuery,
@@ -112,7 +119,7 @@ Ext.define("PSI.Sale.WSMainForm", {
                         },{
                         	xtype: "button", 
                         	text: "清空查询条件",
-                        	width: 100,
+                        	width: 90,
                         	margin: "5, 0, 0, 10",
                         	handler: me.onClearQuery,
                         	scope: me
@@ -291,7 +298,7 @@ Ext.define("PSI.Sale.WSMainForm", {
         Ext.define(modelName, {
             extend: "Ext.data.Model",
             fields: ["id", "goodsCode", "goodsName", "goodsSpec", "unitName",
-                "goodsCount", "goodsMoney", "goodsPrice"]
+                "goodsCount", "goodsMoney", "goodsPrice", "sn"]
         });
         var store = Ext.create("Ext.data.Store", {
             autoLoad: false,
@@ -354,6 +361,11 @@ Ext.define("PSI.Sale.WSMainForm", {
                     align: "right",
                     xtype: "numbercolumn",
                     width: 150
+                }, {
+                    header: "序列号",
+                    dataIndex: "sn",
+                    menuDisabled: true,
+                    sortable: false
                 }],
             store: store
         });
@@ -585,6 +597,7 @@ Ext.define("PSI.Sale.WSMainForm", {
     	Ext.getCmp("editQueryToDT").setValue(null);
     	Ext.getCmp("editQueryCustomer").clearIdValue();
     	Ext.getCmp("editQueryWarehouse").clearIdValue();
+    	Ext.getCmp("editQuerySN").setValue(null);
     	
     	me.onQuery();
     },
@@ -619,6 +632,11 @@ Ext.define("PSI.Sale.WSMainForm", {
     	var toDT = Ext.getCmp("editQueryToDT").getValue();
     	if (toDT) {
     		result.toDT = Ext.Date.format(toDT, "Y-m-d");
+    	}
+    	
+    	var sn = Ext.getCmp("editQuerySN").getValue();
+    	if (sn) {
+    		result.sn = sn;
     	}
     	
     	return result;

@@ -63,6 +63,7 @@ class SaleController extends Controller {
 					"toDT" => I("post.toDT"),
 					"warehouseId" => I("post.warehouseId"),
 					"customerId" => I("post.customerId"),
+					"sn" => I("post.sn"),
 					"page" => I("post.page"),
 					"start" => I("post.start"),
 					"limit" => I("post.limit")

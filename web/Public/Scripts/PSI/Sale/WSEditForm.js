@@ -282,7 +282,7 @@ Ext.define("PSI.Sale.WSEditForm", {
         Ext.define("PSIWSBillDetail_EditForm", {
             extend: "Ext.data.Model",
             fields: ["id", "goodsId", "goodsCode", "goodsName", "goodsSpec", "unitName", "goodsCount",
-                "goodsMoney", "goodsPrice"]
+                "goodsMoney", "goodsPrice", "sn"]
         });
         var store = Ext.create("Ext.data.Store", {
             autoLoad: false,
@@ -325,6 +325,11 @@ Ext.define("PSI.Sale.WSEditForm", {
                 {header: "销售金额", dataIndex: "goodsMoney", menuDisabled: true,
                     sortable: false, align: "right", xtype: "numbercolumn", width: 120},
                 {
+                	header: "序列号", dataIndex: "sn", menuDisabled: true, sortable: false, 
+                	editor: {
+                		xtype: "textfield"
+                	}
+                },{
                     header: "",
                     align: "center",
                     menuDisabled: true,
@@ -389,19 +394,9 @@ Ext.define("PSI.Sale.WSEditForm", {
     },
     cellEditingAfterEdit: function (editor, e) {
         var me = this;
-        if (e.colIdx == 4) {
+        if (e.colIdx == 4 || e.colIdx == 6) {
             me.calcMoney();
-            if (!me.__canEditGoodsPrice) {
-                var store = me.getGoodsGrid().getStore();
-                if (e.rowIdx == store.getCount() - 1) {
-                    store.add({});
-                }
-                e.rowIdx += 1;
-                me.getGoodsGrid().getSelectionModel().select(e.rowIdx);
-                me.__cellEditing.startEdit(e.rowIdx, 1);
-            }
-        } else if (e.colIdx == 6) {
-            me.calcMoney();
+        } else if (e.colIdx == 8) {
             var store = me.getGoodsGrid().getStore();
             if (e.rowIdx == store.getCount() - 1) {
                 store.add({});
@@ -453,7 +448,8 @@ Ext.define("PSI.Sale.WSEditForm", {
                 id: item.get("id"),
                 goodsId: item.get("goodsId"),
                 goodsCount: item.get("goodsCount"),
-                goodsPrice: item.get("goodsPrice")
+                goodsPrice: item.get("goodsPrice"),
+                sn: item.get("sn")
             });
         }
 
