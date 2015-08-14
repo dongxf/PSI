@@ -395,6 +395,7 @@ CREATE TABLE IF NOT EXISTS `t_ws_bill_detail` (
   `inventory_price` decimal(19,2) DEFAULT NULL,
   `show_order` int(11) NOT NULL,
   `wsbill_id` varchar(255) NOT NULL,
+  `sn_note` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
