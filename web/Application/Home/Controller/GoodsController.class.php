@@ -17,17 +17,20 @@ use Home\Service\Home\Service;
  */
 class GoodsController extends Controller {
 
+	/**
+	 * 商品主页面
+	 */
 	public function index() {
 		$us = new UserService();
 		
-		$this->assign("title", "商品");
-		$this->assign("uri", __ROOT__ . "/");
-		
-		$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
-		$dtFlag = getdate();
-		$this->assign("dtFlag", $dtFlag[0]);
-		
 		if ($us->hasPermission(FIdConst::GOODS)) {
+			$this->assign("title", "商品");
+			$this->assign("uri", __ROOT__ . "/");
+			
+			$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
+			$dtFlag = getdate();
+			$this->assign("dtFlag", $dtFlag[0]);
+			
 			$ts = new BizConfigService();
 			$this->assign("useTU", $ts->goodsUsesTwoUnits());
 			
@@ -37,23 +40,29 @@ class GoodsController extends Controller {
 		}
 	}
 
+	/**
+	 * 商品计量单位主页面
+	 */
 	public function unitIndex() {
 		$us = new UserService();
 		
-		$this->assign("title", "商品计量单位");
-		$this->assign("uri", __ROOT__ . "/");
-		
-		$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
-		$dtFlag = getdate();
-		$this->assign("dtFlag", $dtFlag[0]);
-		
 		if ($us->hasPermission(FIdConst::GOODS_UNIT)) {
+			$this->assign("title", "商品计量单位");
+			$this->assign("uri", __ROOT__ . "/");
+			
+			$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
+			$dtFlag = getdate();
+			$this->assign("dtFlag", $dtFlag[0]);
+			
 			$this->display();
 		} else {
 			redirect("Home/User/login");
 		}
 	}
 
+	/**
+	 * 获得所有的商品计量单位列表
+	 */
 	public function allUnits() {
 		if (IS_POST) {
 			$gs = new GoodsService();
@@ -61,6 +70,9 @@ class GoodsController extends Controller {
 		}
 	}
 
+	/**
+	 * 新增或编辑商品单位
+	 */
 	public function editUnit() {
 		if (IS_POST) {
 			$params = array(
@@ -72,6 +84,9 @@ class GoodsController extends Controller {
 		}
 	}
 
+	/**
+	 * 删除商品计量单位
+	 */
 	public function deleteUnit() {
 		if (IS_POST) {
 			$params = array(
@@ -239,7 +254,7 @@ class GoodsController extends Controller {
 			$this->ajaxReturn($gs->goodsSafetyInventoryList($params));
 		}
 	}
-	
+
 	public function siInfo() {
 		if (IS_POST) {
 			$params = array(
@@ -249,7 +264,7 @@ class GoodsController extends Controller {
 			$this->ajaxReturn($gs->siInfo($params));
 		}
 	}
-	
+
 	public function editSafetyInventory() {
 		if (IS_POST) {
 			$params = array(
