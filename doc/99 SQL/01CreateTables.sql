@@ -450,6 +450,7 @@ CREATE TABLE IF NOT EXISTS `t_sr_bill_detail` (
   `show_order` int(11) NOT NULL,
   `srbill_id` varchar(255) NOT NULL,
   `wsbilldetail_id` varchar(255) NOT NULL,
+  `sn_note` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
