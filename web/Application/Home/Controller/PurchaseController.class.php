@@ -15,6 +15,9 @@ use Home\Common\FIdConst;
  */
 class PurchaseController extends Controller {
 
+	/**
+	 * 采购入库单主页面
+	 */
 	public function pwbillIndex() {
 		$us = new UserService();
 		
@@ -32,6 +35,9 @@ class PurchaseController extends Controller {
 		}
 	}
 
+	/**
+	 * 获得采购入库单主表列表
+	 */
 	public function pwbillList() {
 		if (IS_POST) {
 			$ps = new PWBillService();
@@ -50,6 +56,9 @@ class PurchaseController extends Controller {
 		}
 	}
 
+	/**
+	 * 获得采购入库单的商品明细记录
+	 */
 	public function pwBillDetailList() {
 		if (IS_POST) {
 			$pwbillId = I("post.pwBillId");
@@ -58,6 +67,9 @@ class PurchaseController extends Controller {
 		}
 	}
 
+	/**
+	 * 新增或编辑采购入库单
+	 */
 	public function editPWBill() {
 		if (IS_POST) {
 			$json = I("post.jsonStr");
@@ -66,6 +78,9 @@ class PurchaseController extends Controller {
 		}
 	}
 
+	/**
+	 * 获得采购入库单的信息
+	 */
 	public function pwBillInfo() {
 		if (IS_POST) {
 			$id = I("post.id");
@@ -74,6 +89,9 @@ class PurchaseController extends Controller {
 		}
 	}
 
+	/**
+	 * 删除采购入库单
+	 */
 	public function deletePWBill() {
 		if (IS_POST) {
 			$id = I("post.id");
@@ -82,6 +100,9 @@ class PurchaseController extends Controller {
 		}
 	}
 
+	/**
+	 * 提交采购入库单
+	 */
 	public function commitPWBill() {
 		if (IS_POST) {
 			$id = I("post.id");
