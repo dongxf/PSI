@@ -271,7 +271,7 @@ Ext.define("PSI.Sale.SREditForm", {
         Ext.define(modelName, {
             extend: "Ext.data.Model",
             fields: ["id", "goodsId", "goodsCode", "goodsName", "goodsSpec", "unitName", "goodsCount",
-                "goodsMoney", "goodsPrice", "rejCount", "rejPrice", "rejMoney"]
+                "goodsMoney", "goodsPrice", "rejCount", "rejPrice", "rejMoney", "sn"]
         });
         var store = Ext.create("Ext.data.Store", {
             autoLoad: false,
@@ -324,7 +324,9 @@ Ext.define("PSI.Sale.SREditForm", {
                     width: 100},
                 {header: "销售金额", dataIndex: "goodsMoney", menuDisabled: true,
                     sortable: false, align: "right", xtype: "numbercolumn",
-                    width: 120}
+                    width: 120},
+                {header: "序列号", dataIndex: "sn", menuDisabled: true,
+                    sortable: false}
             ],
             store: store,
             listeners: {
@@ -384,7 +386,8 @@ Ext.define("PSI.Sale.SREditForm", {
                 id: item.get("id"),
                 goodsId: item.get("goodsId"),
                 rejCount: item.get("rejCount"),
-                rejPrice: item.get("rejPrice")
+                rejPrice: item.get("rejPrice"),
+                sn: item.get("sn")
             });
         }
 

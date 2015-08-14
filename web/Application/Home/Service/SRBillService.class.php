@@ -123,7 +123,8 @@ class SRBillService extends PSIBaseService {
 		$db = M();
 		
 		$sql = "select s.id, g.code, g.name, g.spec, u.name as unit_name,
-				   s.rejection_goods_count, s.rejection_goods_price, s.rejection_sale_money
+				   s.rejection_goods_count, s.rejection_goods_price, s.rejection_sale_money,
+					s.sn_note
 				from t_sr_bill_detail s, t_goods g, t_goods_unit u
 				where s.srbill_id = '%s' and s.goods_id = g.id and g.unit_id = u.id
 					and s.rejection_goods_count > 0
@@ -141,6 +142,7 @@ class SRBillService extends PSIBaseService {
 			$result[$i]["rejCount"] = $v["rejection_goods_count"];
 			$result[$i]["rejPrice"] = $v["rejection_goods_price"];
 			$result[$i]["rejSaleMoney"] = $v["rejection_sale_money"];
+			$result[$i]["sn"] = $v["sn_note"];
 		}
 		return $result;
 	}
@@ -186,7 +188,7 @@ class SRBillService extends PSIBaseService {
 			$sql = "select d.id, g.id as goods_id, g.code, g.name, g.spec, u.name as unit_name, d.goods_count, 
 					d.goods_price, d.goods_money, 
 					d.rejection_goods_count, d.rejection_goods_price, d.rejection_sale_money,
-					d.wsbilldetail_id
+					d.wsbilldetail_id, d.sn_note
 					 from t_sr_bill_detail d, t_goods g, t_goods_unit u 
 					 where d.srbill_id = '%s' and d.goods_id = g.id and g.unit_id = u.id
 					 order by d.show_order";
@@ -205,6 +207,7 @@ class SRBillService extends PSIBaseService {
 				$items[$i]["rejCount"] = $v["rejection_goods_count"];
 				$items[$i]["rejPrice"] = $v["rejection_goods_price"];
 				$items[$i]["rejMoney"] = $v["rejection_sale_money"];
+				$items[$i]["sn"] = $v["sn_note"];
 			}
 			
 			$result["items"] = $items;
@@ -226,6 +229,7 @@ class SRBillService extends PSIBaseService {
 		$warehouseId = $params["warehouseId"];
 		$fromDT = $params["fromDT"];
 		$toDT = $params["toDT"];
+		$sn = $params["sn"];
 		
 		$db = M();
 		$sql = "select w.id, w.ref, w.bizdt, c.name as customer_name, u.name as biz_user_name,
@@ -255,6 +259,14 @@ class SRBillService extends PSIBaseService {
 		if ($toDT) {
 			$sql .= " and (w.bizdt <= '%s') ";
 			$queryParamas[] = $toDT;
+		}
+		if ($sn) {
+			$sql .= " and (w.id in (
+						select wsbill_id
+						from t_ws_bill_detail d
+						where d.sn_note like '%s'
+					))";
+			$queryParamas[] = "%$sn%";
 		}
 		$sql .= " order by w.ref desc 
 				 limit %d, %d";
@@ -300,6 +312,14 @@ class SRBillService extends PSIBaseService {
 		if ($toDT) {
 			$sql .= " and (w.bizdt <= '%s') ";
 			$queryParamas[] = $toDT;
+		}
+		if ($sn) {
+			$sql .= " and (w.id in (
+						select wsbill_id
+						from t_ws_bill_detail d
+						where d.sn_note like '%s'
+					))";
+			$queryParamas[] = "%$sn%";
 		}
 		
 		$data = $db->query($sql, $queryParamas);
@@ -402,15 +422,17 @@ class SRBillService extends PSIBaseService {
 					$rejSaleMoney = $rejCount * $rejPrice;
 					$inventoryMoney = $rejCount * $inventoryPrice;
 					$goodsId = $v["goodsId"];
+					$sn = $v["sn"];
 					
 					$sql = "insert into t_sr_bill_detail(id, date_created, goods_id, goods_count, goods_money,
 						goods_price, inventory_money, inventory_price, rejection_goods_count, 
-						rejection_goods_price, rejection_sale_money, show_order, srbill_id, wsbilldetail_id)
+						rejection_goods_price, rejection_sale_money, show_order, srbill_id, wsbilldetail_id,
+							sn_note)
 						values('%s', now(), '%s', %d, %f, %f, %f, %f, %d,
-						%f, %f, %d, '%s', '%s') ";
+						%f, %f, %d, '%s', '%s', '%s') ";
 					$db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsMoney, 
 							$goodsPrice, $inventoryMoney, $inventoryPrice, $rejCount, $rejPrice, 
-							$rejSaleMoney, $i, $id, $wsBillDetailId);
+							$rejSaleMoney, $i, $id, $wsBillDetailId, $sn);
 				}
 				
 				// 更新主表的汇总信息
@@ -479,15 +501,17 @@ class SRBillService extends PSIBaseService {
 					$rejSaleMoney = $rejCount * $rejPrice;
 					$inventoryMoney = $rejCount * $inventoryPrice;
 					$goodsId = $v["goodsId"];
+					$sn = $v["sn"];
 					
 					$sql = "insert into t_sr_bill_detail(id, date_created, goods_id, goods_count, goods_money,
 						goods_price, inventory_money, inventory_price, rejection_goods_count, 
-						rejection_goods_price, rejection_sale_money, show_order, srbill_id, wsbilldetail_id)
+						rejection_goods_price, rejection_sale_money, show_order, srbill_id, wsbilldetail_id,
+							sn_note)
 						values('%s', now(), '%s', %d, %f, %f, %f, %f, %d,
-						%f, %f, %d, '%s', '%s') ";
+						%f, %f, %d, '%s', '%s', '%s') ";
 					$db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsMoney, 
 							$goodsPrice, $inventoryMoney, $inventoryPrice, $rejCount, $rejPrice, 
-							$rejSaleMoney, $i, $id, $wsBillDetailId);
+							$rejSaleMoney, $i, $id, $wsBillDetailId, $sn);
 				}
 				
 				// 更新主表的汇总信息
@@ -542,7 +566,7 @@ class SRBillService extends PSIBaseService {
 		$result["customerId"] = $data[0]["customer_id"];
 		
 		$sql = "select d.id, g.id as goods_id, g.code, g.name, g.spec, u.name as unit_name, d.goods_count, 
-					d.goods_price, d.goods_money 
+					d.goods_price, d.goods_money, d.sn_note 
 				from t_ws_bill_detail d, t_goods g, t_goods_unit u 
 				where d.wsbill_id = '%s' and d.goods_id = g.id and g.unit_id = u.id
 				order by d.show_order";
@@ -560,6 +584,7 @@ class SRBillService extends PSIBaseService {
 			$items[$i]["goodsPrice"] = $v["goods_price"];
 			$items[$i]["goodsMoney"] = $v["goods_money"];
 			$items[$i]["rejPrice"] = $v["goods_price"];
+			$items[$i]["sn"] = $v["sn_note"];
 		}
 		
 		$result["items"] = $items;

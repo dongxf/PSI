@@ -404,7 +404,7 @@ Ext.define("PSI.Sale.SRMainForm", {
         Ext.define(modelName, {
             extend: "Ext.data.Model",
             fields: ["id", "goodsCode", "goodsName", "goodsSpec", "unitName",
-                "goodsCount", "goodsMoney", "goodsPrice", "rejCount", "rejPrice", "rejSaleMoney"]
+                "goodsCount", "goodsMoney", "goodsPrice", "rejCount", "rejPrice", "rejSaleMoney", "sn"]
         });
         var store = Ext.create("Ext.data.Store", {
             autoLoad: false,
@@ -467,6 +467,11 @@ Ext.define("PSI.Sale.SRMainForm", {
                     align: "right",
                     xtype: "numbercolumn",
                     width: 150
+                }, {
+                    header: "序列号",
+                    dataIndex: "sn",
+                    menuDisabled: true,
+                    sortable: false
                 }],
             store: store
         });

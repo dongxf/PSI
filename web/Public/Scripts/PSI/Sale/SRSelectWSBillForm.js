@@ -28,7 +28,7 @@ Ext.define("PSI.Sale.SRSelectWSBillForm", {
                         type: "table",
                         columns: 2
                     },
-                    height: 150,
+                    height: 180,
                     bodyPadding: 10,
                     items: [
                         {
@@ -68,6 +68,12 @@ Ext.define("PSI.Sale.SRSelectWSBillForm", {
                             labelAlign: "right",
                             labelSeparator: "",
                             fieldLabel: "仓库"
+                        },{
+                        	id: "editWSSN",
+                            xtype: "textfield",
+                            labelAlign: "right",
+                            labelSeparator: "",
+                            fieldLabel: "序列号"
                         },{
                         	xtype: "container",
                         	items: [{
@@ -284,6 +290,11 @@ Ext.define("PSI.Sale.SRSelectWSBillForm", {
     		result.toDT = Ext.Date.format(toDT, "Y-m-d");
     	}
     	
+    	var sn = Ext.getCmp("editWSSN").getValue();
+    	if (sn) {
+    		result.sn = sn;
+    	}
+    	
     	return result;
     },
     
@@ -293,5 +304,9 @@ Ext.define("PSI.Sale.SRSelectWSBillForm", {
     	Ext.getCmp("editWSWarehouse").clearIdValue();
     	Ext.getCmp("editFromDT").setValue(null);
     	Ext.getCmp("editToDT").setValue(null);
+    	Ext.getCmp("editWSSN").setValue(null);
+    	
+    	
+    	this.onQuery();
     }
 });
