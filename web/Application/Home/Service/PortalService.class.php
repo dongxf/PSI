@@ -46,7 +46,8 @@ class PortalService extends PSIBaseService {
 			$sql = "select count(*) as cnt
 					from t_inventory i, t_goods_si s
 					where i.goods_id = s.goods_id and i.warehouse_id = s.warehouse_id
-						and s.inventory_upper < i.balance_count
+						and s.inventory_upper < i.balance_count 
+						and (s.inventory_upper <> 0 and s.inventory_upper is not null)
 						and i.warehouse_id = '%s' ";
 			$d = $db->query($sql, $warehouseId);
 			$result[$i]["iuCount"] = $d[0]["cnt"];
