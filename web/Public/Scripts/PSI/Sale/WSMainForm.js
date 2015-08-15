@@ -1,13 +1,13 @@
 // 销售出库 - 主界面
 Ext.define("PSI.Sale.WSMainForm", {
     extend: "Ext.panel.Panel",
-    border: 0,
-    layout: "border",
 
     initComponent: function () {
         var me = this;
 
         Ext.apply(me, {
+        	border: 0,
+        	layout: "border",
             tbar: me.getToolbarCmp(),
             items: [{
                 region: "north", height: 90,
