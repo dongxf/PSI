@@ -561,6 +561,7 @@ CREATE TABLE IF NOT EXISTS `t_goods_si` (
   `goods_id` varchar(255) NOT NULL,
   `warehouse_id` varchar(255) NOT NULL,
   `safety_inventory` decimal(19,2) NOT NULL,
+  `inventory_upper` decimal(19,2) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
