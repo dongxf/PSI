@@ -432,14 +432,14 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 				xtype: "numbercolumn",
 				format: "0"
 			}, {
-				header : "平均入库单价",
+				header : "入库单价",
 				dataIndex : "inPrice",
 				align : "right",
 				xtype : "numbercolumn",
 				menuDisabled : true,
 				sortable : false
 			}, {
-				header : "入库总金额",
+				header : "入库金额",
 				dataIndex : "inMoney",
 				align : "right",
 				xtype : "numbercolumn",
@@ -454,14 +454,14 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 				xtype: "numbercolumn",
 				format: "0"
 			}, {
-				header : "平均出库单价",
+				header : "出库单价",
 				dataIndex : "outPrice",
 				align : "right",
 				xtype : "numbercolumn",
 				menuDisabled : true,
 				sortable : false
 			}, {
-				header : "出库总金额",
+				header : "出库金额",
 				dataIndex : "outMoney",
 				align : "right",
 				xtype : "numbercolumn",
@@ -476,14 +476,14 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 				xtype: "numbercolumn",
 				format: "0"
 			}, {
-				header : "余额平均单价",
+				header : "余额单价",
 				dataIndex : "balancePrice",
 				align : "right",
 				xtype : "numbercolumn",
 				menuDisabled : true,
 				sortable : false
 			}, {
-				header : "余额总金额",
+				header : "余额金额",
 				dataIndex : "balanceMoney",
 				align : "right",
 				xtype : "numbercolumn",
@@ -506,7 +506,7 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 				dataIndex : "refType",
 				menuDisabled : true,
 				sortable : false,
-				width: 80
+				width: 120
 			}, {
 				header : "业务单号",
 				dataIndex : "refNumber",
