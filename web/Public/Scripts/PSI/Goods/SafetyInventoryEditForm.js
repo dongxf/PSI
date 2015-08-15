@@ -12,7 +12,7 @@ Ext.define("PSI.Goods.SafetyInventoryEditForm", {
         Ext.apply(me, {title: "设置商品安全库存",
             modal: true,
             onEsc: Ext.emptyFn,
-            width: 500,
+            width: 580,
             height: 400,
             layout: "border",
             items: [{
@@ -135,7 +135,8 @@ Ext.define("PSI.Goods.SafetyInventoryEditForm", {
         var modelName = "PSIGoodsSafetyInventory_EditForm";
         Ext.define(modelName, {
             extend: "Ext.data.Model",
-            fields: ["warehouseId", "warehouseCode", "warehouseName", "safetyInventory", "unitName"]
+            fields: ["warehouseId", "warehouseCode", "warehouseName", "safetyInventory", "unitName",
+                     "inventoryUpper"]
         });
         var store = Ext.create("Ext.data.Store", {
             autoLoad: false,
@@ -162,6 +163,11 @@ Ext.define("PSI.Goods.SafetyInventoryEditForm", {
             columns: [
             {header: "仓库编码", dataIndex: "warehouseCode", width: 100, menuDisabled: true, sortable: false},
             {header: "仓库名称", dataIndex: "warehouseName", width: 120, menuDisabled: true, sortable: false},
+            {header: "库存上限", dataIndex: "inventoryUpper", width: 120, menuDisabled: true, 
+            	sortable: false, align: "right", xtype: "numbercolumn",
+				format: "0", editor: {xtype: "numberfield",
+                    allowDecimals: false,
+                    hideTrigger: true}},
             {header: "安全库存量", dataIndex: "safetyInventory", width: 120, menuDisabled: true, 
             	sortable: false, align: "right", xtype: "numbercolumn",
 				format: "0", editor: {xtype: "numberfield",
@@ -189,7 +195,8 @@ Ext.define("PSI.Goods.SafetyInventoryEditForm", {
             var item = store.getAt(i);
             result.items.push({
                 warehouseId: item.get("warehouseId"),
-                si: item.get("safetyInventory"),
+                invUpper: item.get("inventoryUpper"),
+                si: item.get("safetyInventory")
             });
         }
 

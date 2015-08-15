@@ -592,7 +592,8 @@ Ext.define("PSI.Goods.MainForm", {
     	var modelName = "PSIGoodsSafetyInventory";
         Ext.define(modelName, {
             extend: "Ext.data.Model",
-            fields: ["id", "warehouseCode", "warehouseName", "safetyInventory", "inventoryCount", "unitName"]
+            fields: ["id", "warehouseCode", "warehouseName", "safetyInventory", "inventoryCount", "unitName",
+                     "inventoryUpper"]
         });
 
         me.__siGrid = Ext.create("Ext.grid.Panel", {
@@ -604,6 +605,9 @@ Ext.define("PSI.Goods.MainForm", {
             columns: [
                 {header: "仓库编码", dataIndex: "warehouseCode", width: 80, menuDisabled: true, sortable: false},
                 {header: "仓库名称", dataIndex: "warehouseName", width: 100, menuDisabled: true, sortable: false},
+                {header: "库存上限", dataIndex: "inventoryUpper", width: 120, menuDisabled: true, 
+                	sortable: false, align: "right", xtype: "numbercolumn",
+    				format: "0"},
                 {header: "安全库存量", dataIndex: "safetyInventory", width: 120, menuDisabled: true, 
                 	sortable: false, align: "right", xtype: "numbercolumn",
     				format: "0"},

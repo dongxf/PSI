@@ -662,7 +662,7 @@ class GoodsService extends PSIBaseService {
 		$goodsUnitName = $data[0]["name"];
 		
 		$sql = "select w.id as warehouse_id, w.code as warehouse_code, w.name as warehouse_name,
-					s.safety_inventory
+					s.safety_inventory, s.inventory_upper
 				from t_warehouse w
 				left join t_goods_si s
 				on w.id = s.warehouse_id and s.goods_id = '%s'
@@ -674,7 +674,8 @@ class GoodsService extends PSIBaseService {
 			$r[$i]["warehouseId"] = $v["warehouse_id"];
 			$r[$i]["warehouseCode"] = $v["warehouse_code"];
 			$r[$i]["warehouseName"] = $v["warehouse_name"];
-			$r[$i]["safetyInventory"] = $v["safety_inventory"] ? $v["safety_inventory"] : 0;
+			$r[$i]["safetyInventory"] = $v["safety_inventory"];
+			$r[$i]["inventoryUpper"] = $v["inventory_upper"];
 			$r[$i]["unitName"] = $goodsUnitName;
 		}
 		
@@ -691,7 +692,8 @@ class GoodsService extends PSIBaseService {
 			
 			$result[$i]["warehouseCode"] = $v["warehouseCode"];
 			$result[$i]["warehouseName"] = $v["warehouseName"];
-			$result[$i]["safetyInventory"] = $v["safetyInventory"] ? $v["safetyInventory"] : 0;
+			$result[$i]["safetyInventory"] = $v["safetyInventory"];
+			$result[$i]["inventoryUpper"] = $v["inventoryUpper"];
 			$result[$i]["unitName"] = $goodsUnitName;
 		}
 		
@@ -714,7 +716,7 @@ class GoodsService extends PSIBaseService {
 		$goodsUnitName = $data[0]["name"];
 		
 		$sql = "select w.id as warehouse_id, w.code as warehouse_code, w.name as warehouse_name,
-					s.safety_inventory
+					s.safety_inventory, s.inventory_upper
 				from t_warehouse w
 				left join t_goods_si s
 				on w.id = s.warehouse_id and s.goods_id = '%s'
@@ -726,6 +728,7 @@ class GoodsService extends PSIBaseService {
 			$result[$i]["warehouseCode"] = $v["warehouse_code"];
 			$result[$i]["warehouseName"] = $v["warehouse_name"];
 			$result[$i]["safetyInventory"] = $v["safety_inventory"] ? $v["safety_inventory"] : 0;
+			$result[$i]["inventoryUpper"] = $v["inventory_upper"] ? $v["inventory_upper"] : 0;
 			$result[$i]["unitName"] = $goodsUnitName;
 		}
 		
@@ -770,9 +773,16 @@ class GoodsService extends PSIBaseService {
 				if ($si < 0) {
 					$si = 0;
 				}
-				$sql = "insert into t_goods_si(id, goods_id, warehouse_id, safety_inventory)
-						values ('%s', '%s', '%s', %d)";
-				$rc = $db->execute($sql, $idGen->newId(), $id, $warehouseId, $si);
+				$upper = $v["invUpper"];
+				if (! $upper) {
+					$upper = 0;
+				}
+				if ($upper < 0) {
+					$upper = 0;
+				}
+				$sql = "insert into t_goods_si(id, goods_id, warehouse_id, safety_inventory, inventory_upper)
+						values ('%s', '%s', '%s', %d, %d)";
+				$rc = $db->execute($sql, $idGen->newId(), $id, $warehouseId, $si, $upper);
 				if (! $rc) {
 					$db->rollback();
 					return $this->sqlError();
