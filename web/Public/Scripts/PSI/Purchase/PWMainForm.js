@@ -2,120 +2,22 @@
 Ext.define("PSI.Purchase.PWMainForm", {
     extend: "Ext.panel.Panel",
     
-    border: 0,
-    
-    layout: "border",
-
     initComponent: function () {
         var me = this;
 
         Ext.apply(me, {
-            tbar: [
-                {
-                    text: "新建采购入库单", iconCls: "PSI-button-add", scope: me, handler: me.onAddBill
-                }, "-", {
-                    text: "编辑采购入库单", iconCls: "PSI-button-edit", scope: me, handler: me.onEditBill
-                }, "-", {
-                    text: "删除采购入库单", iconCls: "PSI-button-delete", scope: me, handler: me.onDeleteBill
-                }, "-", {
-                    text: "提交入库", iconCls: "PSI-button-commit", scope: me, handler: me.onCommit
-                },"-",{
-    				text : "帮助",
-    				iconCls : "PSI-help",
-    				handler : function() {
-    					window.open("http://my.oschina.net/u/134395/blog/379622");
-    				}
-    			}, "-", {
-                    text: "关闭", iconCls: "PSI-button-exit", handler: function () {
-                        location.replace(PSI.Const.BASE_URL);
-                    }
-                }
-            ],
+        	border: 0,
+        	layout: "border",
+            tbar: me.getToolbarCmp(),
             items: [{
                     region: "north", height: 90,
-                    layout: "fit", border: 1, title: "查询条件",
+                    layout: "fit", border: 0, title: "查询条件",
                     collapsible: true,
                 	layout : {
     					type : "table",
     					columns : 4
     				},
-    				items: [{
-    					id : "editQueryBillStatus",
-    					xtype : "combo",
-    					queryMode : "local",
-    					editable : false,
-    					valueField : "id",
-    					labelWidth : 60,
-    					labelAlign : "right",
-    					labelSeparator : "",
-    					fieldLabel : "状态",
-    					margin: "5, 0, 0, 0",
-    					store : Ext.create("Ext.data.ArrayStore", {
-    						fields : [ "id", "text" ],
-    						data : [ [ -1, "所有采购入库单" ], [ 0, "待入库" ], [ 1000, "已入库" ] ]
-    					}),
-    					value: -1
-    				},{
-    					id: "editQueryRef",
-    					labelWidth : 60,
-    					labelAlign : "right",
-    					labelSeparator : "",
-    					fieldLabel : "单号",
-    					margin: "5, 0, 0, 0",
-    					xtype : "textfield"
-    				},{
-                    	id: "editQueryFromDT",
-                        xtype: "datefield",
-                        margin: "5, 0, 0, 0",
-                        format: "Y-m-d",
-                        labelAlign: "right",
-                        labelSeparator: "",
-                        fieldLabel: "业务日期（起）"
-                    },{
-                    	id: "editQueryToDT",
-                        xtype: "datefield",
-                        margin: "5, 0, 0, 0",
-                        format: "Y-m-d",
-                        labelAlign: "right",
-                        labelSeparator: "",
-                        fieldLabel: "业务日期（止）"
-                    },{
-                    	id: "editQuerySupplier",
-                        xtype: "psi_supplierfield",
-                        parentCmp: me,
-                        labelAlign: "right",
-                        labelSeparator: "",
-                        labelWidth : 60,
-    					margin: "5, 0, 0, 0",
-                        fieldLabel: "供应商"
-                    },{
-                    	id: "editQueryWarehouse",
-                        xtype: "psi_warehousefield",
-                        parentCmp: me,
-                        labelAlign: "right",
-                        labelSeparator: "",
-                        labelWidth : 60,
-    					margin: "5, 0, 0, 0",
-                        fieldLabel: "仓库"
-                    },{
-                    	xtype: "container",
-                    	items: [{
-                            xtype: "button",
-                            text: "查询",
-                            width: 100,
-                            margin: "5 0 0 10",
-                            iconCls: "PSI-button-refresh",
-                            handler: me.onQuery,
-                            scope: me
-                        },{
-                        	xtype: "button", 
-                        	text: "清空查询条件",
-                        	width: 100,
-                        	margin: "5, 0, 0, 10",
-                        	handler: me.onClearQuery,
-                        	scope: me
-                        }]
-                    }]
+    				items: me.getQueryCmp()
                 }, {
                     region: "center", layout: "border", border: 0,
                     items: [{
@@ -132,6 +34,110 @@ Ext.define("PSI.Purchase.PWMainForm", {
         me.callParent(arguments);
 
         me.refreshMainGrid();
+    },
+    
+    getToolbarCmp: function() {
+    	var me = this;
+    	return [{
+            text: "新建采购入库单", iconCls: "PSI-button-add", scope: me, handler: me.onAddBill
+        }, "-", {
+            text: "编辑采购入库单", iconCls: "PSI-button-edit", scope: me, handler: me.onEditBill
+        }, "-", {
+            text: "删除采购入库单", iconCls: "PSI-button-delete", scope: me, handler: me.onDeleteBill
+        }, "-", {
+            text: "提交入库", iconCls: "PSI-button-commit", scope: me, handler: me.onCommit
+        },"-",{
+			text : "帮助",
+			iconCls : "PSI-help",
+			handler : function() {
+				window.open("http://my.oschina.net/u/134395/blog/379622");
+			}
+		}, "-", {
+            text: "关闭", iconCls: "PSI-button-exit", handler: function () {
+                location.replace(PSI.Const.BASE_URL);
+            }
+        }];
+    },
+    
+    getQueryCmp: function() {
+    	var me = this;
+    	return [{
+			id : "editQueryBillStatus",
+			xtype : "combo",
+			queryMode : "local",
+			editable : false,
+			valueField : "id",
+			labelWidth : 60,
+			labelAlign : "right",
+			labelSeparator : "",
+			fieldLabel : "状态",
+			margin: "5, 0, 0, 0",
+			store : Ext.create("Ext.data.ArrayStore", {
+				fields : [ "id", "text" ],
+				data : [ [ -1, "所有采购入库单" ], [ 0, "待入库" ], [ 1000, "已入库" ] ]
+			}),
+			value: -1
+		},{
+			id: "editQueryRef",
+			labelWidth : 60,
+			labelAlign : "right",
+			labelSeparator : "",
+			fieldLabel : "单号",
+			margin: "5, 0, 0, 0",
+			xtype : "textfield"
+		},{
+        	id: "editQueryFromDT",
+            xtype: "datefield",
+            margin: "5, 0, 0, 0",
+            format: "Y-m-d",
+            labelAlign: "right",
+            labelSeparator: "",
+            fieldLabel: "业务日期（起）"
+        },{
+        	id: "editQueryToDT",
+            xtype: "datefield",
+            margin: "5, 0, 0, 0",
+            format: "Y-m-d",
+            labelAlign: "right",
+            labelSeparator: "",
+            fieldLabel: "业务日期（止）"
+        },{
+        	id: "editQuerySupplier",
+            xtype: "psi_supplierfield",
+            parentCmp: me,
+            labelAlign: "right",
+            labelSeparator: "",
+            labelWidth : 60,
+			margin: "5, 0, 0, 0",
+            fieldLabel: "供应商"
+        },{
+        	id: "editQueryWarehouse",
+            xtype: "psi_warehousefield",
+            parentCmp: me,
+            labelAlign: "right",
+            labelSeparator: "",
+            labelWidth : 60,
+			margin: "5, 0, 0, 0",
+            fieldLabel: "仓库"
+        },{
+        	xtype: "container",
+        	items: [{
+                xtype: "button",
+                text: "查询",
+                width: 100,
+                margin: "5 0 0 10",
+                iconCls: "PSI-button-refresh",
+                handler: me.onQuery,
+                scope: me
+            },{
+            	xtype: "button", 
+            	text: "清空查询条件",
+            	width: 100,
+            	margin: "5, 0, 0, 10",
+            	handler: me.onClearQuery,
+            	scope: me
+            }]
+        }];
     },
     
     getMainGrid: function() {
