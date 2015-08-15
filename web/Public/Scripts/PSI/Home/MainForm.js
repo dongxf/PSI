@@ -154,7 +154,7 @@
     	var modelName = "PSIPortalInventory";
         Ext.define(modelName, {
             extend: "Ext.data.Model",
-            fields: ["warehouseName", "inventoryMoney", "siCount"]
+            fields: ["warehouseName", "inventoryMoney", "siCount", "iuCount"]
         });
 
         me.__inventoryGrid = Ext.create("Ext.grid.Panel", {
@@ -165,9 +165,16 @@
             border: 0,
             columns: [
                 {header: "仓库", dataIndex: "warehouseName", width: 160, menuDisabled: true, sortable: false},
-                {header: "存货金额", dataIndex: "inventoryMoney", width: 160, 
+                {header: "存货金额", dataIndex: "inventoryMoney", width: 140, 
                 	menuDisabled: true, sortable: false, align: "right", xtype: "numbercolumn"},
-                {header: "库存低于安全库存量商品种类数", dataIndex: "siCount", width: 180, 
+                {header: "低于安全库存商品种类数", dataIndex: "siCount", width: 160, 
+                		menuDisabled: true, sortable: false, align: "right", 
+                		xtype: "numbercolumn", format: "0",
+                		renderer: function (value) {
+                            return value > 0 ? "<span style='color:red'>" + value + "</span>" : value;
+                        }
+                },
+                {header: "超过库存上限的商品种类数", dataIndex: "iuCount", width: 160, 
                 		menuDisabled: true, sortable: false, align: "right", 
                 		xtype: "numbercolumn", format: "0",
                 		renderer: function (value) {
