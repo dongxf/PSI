@@ -612,6 +612,9 @@ class PRBillService extends PSIBaseService {
 		return $this->ok();
 	}
 
+	/**
+	 * 提交采购退货出库单
+	 */
 	public function commitPRBill($params) {
 		$id = $params["id"];
 		$db = M();
@@ -665,7 +668,7 @@ class PRBillService extends PSIBaseService {
 			}
 			
 			$sql = "select goods_id, rejection_goods_count as rej_count,
-						goods_count
+						goods_count, goods_price
 					from t_pr_bill_detail
 					where prbill_id = '%s'
 					order by show_order";
@@ -674,6 +677,7 @@ class PRBillService extends PSIBaseService {
 				$goodsId = $v["goods_id"];
 				$rejCount = $v["rej_count"];
 				$goodsCount = $v["goods_count"];
+				$goodsPricePurchase = $v["goods_price"];
 				
 				if ($rejCount == 0) {
 					continue;
@@ -713,17 +717,15 @@ class PRBillService extends PSIBaseService {
 				$totalOutMoney = $data[0]["out_money"];
 				
 				$outCount = $rejCount;
-				$outMoney = $balancePrice * $outCount;
-				if ($outCount == $balanceCount) {
-					$outMoney = $balanceMoney;
-				}
-				$outPrice = $outMoney / $outCount;
+				$outMoney = $goodsPricePurchase * $outCount;
+				$outPrice = $goodsPricePurchase;
+				
 				$totalOutCount += $outCount;
 				$totalOutMoney += $outMoney;
 				$totalOutPrice = $totalOutMoney / $totalOutCount;
 				$balanceCount -= $outCount;
 				if ($balanceCount == 0) {
-					$balanceMoney = 0;
+					$balanceMoney -= $outMoney;
 					$balancePrice = 0;
 				} else {
 					$balanceMoney -= $outMoney;
@@ -791,6 +793,10 @@ class PRBillService extends PSIBaseService {
 					values ('%s', %f, 0, %f, '%s', 'supplier', '%s', now(), '%s', '采购退货出库')";
 			$rc = $db->execute($sql, $idGen->newId(), $allRejMoney, $allRejMoney, $supplierId, 
 					$bizDT, $ref);
+			if (! $rc) {
+				$db->rollback();
+				return $this->sqlError();
+			}
 			
 			// 修改单据本身的状态
 			$sql = "update t_pr_bill
