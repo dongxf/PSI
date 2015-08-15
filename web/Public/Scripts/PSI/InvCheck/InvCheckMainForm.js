@@ -7,124 +7,134 @@ Ext.define("PSI.InvCheck.InvCheckMainForm", {
         var me = this;
 
         Ext.apply(me, {
-            tbar: [{
-                    text: "新建盘点单",
-                    iconCls: "PSI-button-add",
-                    scope: me,
-                    handler: me.onAddBill
-                }, "-", {
-                    text: "编辑盘点单",
-                    iconCls: "PSI-button-edit",
-                    scope: me,
-                    handler: me.onEditBill
-                }, "-", {
-                    text: "删除盘点单",
-                    iconCls: "PSI-button-delete",
-                    scope: me,
-                    handler: me.onDeleteBill
-                }, "-", {
-                    text: "提交盘点单",
-                    iconCls: "PSI-button-commit",
-                    scope: me,
-                    handler: me.onCommit
-                }, "-", {
-                    text: "关闭",
-                    iconCls: "PSI-button-exit",
-                    handler: function () {
-                        location.replace(PSI.Const.BASE_URL);
-                    }
-                }],
+            tbar: me.getToolbarCmp(),
+            items: [{
+                region: "north", height: 90,
+                layout: "fit", border: 1, title: "查询条件",
+                collapsible: true,
+            	layout : {
+					type : "table",
+					columns : 4
+				},
+				items: me.getQueryCmp()
+            }, {
+                region: "center", layout: "border", border: 0,
                 items: [{
-                    region: "north", height: 90,
-                    layout: "fit", border: 1, title: "查询条件",
-                    collapsible: true,
-                	layout : {
-    					type : "table",
-    					columns : 4
-    				},
-    				items: [{
-    					id : "editQueryBillStatus",
-    					xtype : "combo",
-    					queryMode : "local",
-    					editable : false,
-    					valueField : "id",
-    					labelWidth : 60,
-    					labelAlign : "right",
-    					labelSeparator : "",
-    					fieldLabel : "状态",
-    					margin: "5, 0, 0, 0",
-    					store : Ext.create("Ext.data.ArrayStore", {
-    						fields : [ "id", "text" ],
-    						data : [ [ -1, "所有盘点单" ], [ 0, "待盘点" ], [ 1000, "已盘点" ] ]
-    					}),
-    					value: -1
-    				},{
-    					id: "editQueryRef",
-    					labelWidth : 60,
-    					labelAlign : "right",
-    					labelSeparator : "",
-    					fieldLabel : "单号",
-    					margin: "5, 0, 0, 0",
-    					xtype : "textfield"
-    				},{
-                    	id: "editQueryFromDT",
-                        xtype: "datefield",
-                        margin: "5, 0, 0, 0",
-                        format: "Y-m-d",
-                        labelAlign: "right",
-                        labelSeparator: "",
-                        fieldLabel: "业务日期（起）"
-                    },{
-                    	id: "editQueryToDT",
-                        xtype: "datefield",
-                        margin: "5, 0, 0, 0",
-                        format: "Y-m-d",
-                        labelAlign: "right",
-                        labelSeparator: "",
-                        fieldLabel: "业务日期（止）"
-                    },{
-                    	id: "editQueryWarehouse",
-                        xtype: "psi_warehousefield",
-                        labelAlign: "right",
-                        labelSeparator: "",
-                        labelWidth : 60,
-    					margin: "5, 0, 0, 0",
-                        fieldLabel: "仓库"
-                    },{
-                    	xtype: "container",
-                    	items: [{
-                            xtype: "button",
-                            text: "查询",
-                            width: 100,
-                            margin: "5 0 0 10",
-                            iconCls: "PSI-button-refresh",
-                            handler: me.onQuery,
-                            scope: me
-                        },{
-                        	xtype: "button", 
-                        	text: "清空查询条件",
-                        	width: 100,
-                        	margin: "5, 0, 0, 10",
-                        	handler: me.onClearQuery,
-                        	scope: me
-                        }]
-                    }]
-                }, {
-                    region: "center", layout: "border", border: 0,
-                    items: [{
-                    	region: "north", height: "40%",
-                        split: true, layout: "fit", border: 0,
-                        items: [me.getMainGrid()]
-                    },{
-                    	region: "center", layout: "fit", border: 0,
-                    	items: [me.getDetailGrid()]
-                    }]
+                	region: "north", height: "40%",
+                    split: true, layout: "fit", border: 0,
+                    items: [me.getMainGrid()]
+                },{
+                	region: "center", layout: "fit", border: 0,
+                	items: [me.getDetailGrid()]
                 }]
+            }]
         });
 
         me.callParent(arguments);
 
         me.refreshMainGrid();
+    },
+
+    getToolbarCmp: function() {
+    	var me = this;
+    	return [{
+            text: "新建盘点单",
+            iconCls: "PSI-button-add",
+            scope: me,
+            handler: me.onAddBill
+        }, "-", {
+            text: "编辑盘点单",
+            iconCls: "PSI-button-edit",
+            scope: me,
+            handler: me.onEditBill
+        }, "-", {
+            text: "删除盘点单",
+            iconCls: "PSI-button-delete",
+            scope: me,
+            handler: me.onDeleteBill
+        }, "-", {
+            text: "提交盘点单",
+            iconCls: "PSI-button-commit",
+            scope: me,
+            handler: me.onCommit
+        }, "-", {
+            text: "关闭",
+            iconCls: "PSI-button-exit",
+            handler: function () {
+                location.replace(PSI.Const.BASE_URL);
+            }
+        }];
+    },
+    
+    getQueryCmp: function() {
+    	var me = this;
+    	return [{
+			id : "editQueryBillStatus",
+			xtype : "combo",
+			queryMode : "local",
+			editable : false,
+			valueField : "id",
+			labelWidth : 60,
+			labelAlign : "right",
+			labelSeparator : "",
+			fieldLabel : "状态",
+			margin: "5, 0, 0, 0",
+			store : Ext.create("Ext.data.ArrayStore", {
+				fields : [ "id", "text" ],
+				data : [ [ -1, "所有盘点单" ], [ 0, "待盘点" ], [ 1000, "已盘点" ] ]
+			}),
+			value: -1
+		},{
+			id: "editQueryRef",
+			labelWidth : 60,
+			labelAlign : "right",
+			labelSeparator : "",
+			fieldLabel : "单号",
+			margin: "5, 0, 0, 0",
+			xtype : "textfield"
+		},{
+        	id: "editQueryFromDT",
+            xtype: "datefield",
+            margin: "5, 0, 0, 0",
+            format: "Y-m-d",
+            labelAlign: "right",
+            labelSeparator: "",
+            fieldLabel: "业务日期（起）"
+        },{
+        	id: "editQueryToDT",
+            xtype: "datefield",
+            margin: "5, 0, 0, 0",
+            format: "Y-m-d",
+            labelAlign: "right",
+            labelSeparator: "",
+            fieldLabel: "业务日期（止）"
+        },{
+        	id: "editQueryWarehouse",
+            xtype: "psi_warehousefield",
+            labelAlign: "right",
+            labelSeparator: "",
+            labelWidth : 60,
+			margin: "5, 0, 0, 0",
+            fieldLabel: "仓库"
+        },{
+        	xtype: "container",
+        	items: [{
+                xtype: "button",
+                text: "查询",
+                width: 100,
+                margin: "5 0 0 10",
+                iconCls: "PSI-button-refresh",
+                handler: me.onQuery,
+                scope: me
+            },{
+            	xtype: "button", 
+            	text: "清空查询条件",
+            	width: 100,
+            	margin: "5, 0, 0, 10",
+            	handler: me.onClearQuery,
+            	scope: me
+            }]
+        }];
     },
     
     refreshMainGrid: function (id) {
