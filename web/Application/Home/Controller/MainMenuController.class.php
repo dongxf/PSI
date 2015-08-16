@@ -163,6 +163,10 @@ class MainMenuController extends Controller {
 				// 应付账款账龄分析表
 				redirect(__ROOT__ . "/Home/Report/payablesAge");
 				break;
+			case FIdConst::REPORT_INVENTORY_UPPER :
+				// 库存超上限明细表
+				redirect(__ROOT__ . "/Home/Report/inventoryUpper");
+				break;
 			default :
 				redirect(__ROOT__ . "/Home");
 		}

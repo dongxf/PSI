@@ -582,4 +582,22 @@ class ReportController extends Controller {
 			$this->ajaxReturn($ps->payablesSummaryQueryData());
 		}
 	}
+	
+	public function inventoryUpper() {
+		$us = new UserService();
+		
+		if ($us->hasPermission(FIdConst::REPORT_INVENTORY_UPPER)) {
+			$this->assign("title", "库存超上限明细表");
+			$this->assign("uri", __ROOT__ . "/");
+		
+			$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
+			$dtFlag = getdate();
+			$this->assign("dtFlag", $dtFlag[0]);
+		
+			$this->display();
+		} else {
+			redirect(__ROOT__ . "/Home/User/login");
+		}
+		
+	}
 }
