@@ -534,27 +534,27 @@ class ReportController extends Controller {
 			$this->ajaxReturn($rs->receivablesSummaryQueryData());
 		}
 	}
-	
+
 	/**
 	 * 应付账款账龄分析表
 	 */
 	public function payablesAge() {
 		$us = new UserService();
-	
+		
 		if ($us->hasPermission(FIdConst::REPORT_PAYABLES_AGE)) {
 			$this->assign("title", "应付账款账龄分析表");
 			$this->assign("uri", __ROOT__ . "/");
-				
+			
 			$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
 			$dtFlag = getdate();
 			$this->assign("dtFlag", $dtFlag[0]);
-				
+			
 			$this->display();
 		} else {
 			redirect(__ROOT__ . "/Home/User/login");
 		}
 	}
-	
+
 	/**
 	 * 应付账款账龄分析表 - 数据查询
 	 */
@@ -582,22 +582,41 @@ class ReportController extends Controller {
 			$this->ajaxReturn($ps->payablesSummaryQueryData());
 		}
 	}
-	
+
+	/**
+	 * 库存超上限明细表
+	 */
 	public function inventoryUpper() {
 		$us = new UserService();
 		
 		if ($us->hasPermission(FIdConst::REPORT_INVENTORY_UPPER)) {
 			$this->assign("title", "库存超上限明细表");
 			$this->assign("uri", __ROOT__ . "/");
-		
+			
 			$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
 			$dtFlag = getdate();
 			$this->assign("dtFlag", $dtFlag[0]);
-		
+			
 			$this->display();
 		} else {
 			redirect(__ROOT__ . "/Home/User/login");
 		}
-		
+	}
+
+	/**
+	 * 库存超上限明细表 - 查询数据
+	 */
+	public function inventoryUpperQueryData() {
+		if (IS_POST) {
+			$params = array(
+					"page" => I("post.page"),
+					"start" => I("post.start"),
+					"limit" => I("post.limit")
+			);
+			
+			$is = new InventoryReportService();
+			
+			$this->ajaxReturn($is->inventoryUpperQueryData($params));
+		}
 	}
 }
