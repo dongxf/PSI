@@ -18,6 +18,12 @@
    	<if condition="$refType eq '调拨入库'">
 	<script src="{$uri}Public/Scripts/PSI/Bill/ITViewForm.js?dt={$dtFlag}" type="text/javascript"></script>
    	</if>
+   	<if condition="$refType eq '库存盘点-盘亏出库'">
+	<script src="{$uri}Public/Scripts/PSI/Bill/ICViewForm.js?dt={$dtFlag}" type="text/javascript"></script>
+   	</if>
+   	<if condition="$refType eq '库存盘点-盘盈入库'">
+	<script src="{$uri}Public/Scripts/PSI/Bill/ICViewForm.js?dt={$dtFlag}" type="text/javascript"></script>
+   	</if>
 </if>
 
 <script>
@@ -60,6 +66,20 @@
 		
 		<if condition="$refType eq '调拨入库'">
 			var form = Ext.create("PSI.Bill.ITViewForm", {
+				ref: "{$ref}"
+			});
+			form.show();
+		</if>
+
+		<if condition="$refType eq '库存盘点-盘亏出库'">
+			var form = Ext.create("PSI.Bill.ICViewForm", {
+				ref: "{$ref}"
+			});
+			form.show();
+		</if>
+		
+		<if condition="$refType eq '库存盘点-盘盈入库'">
+			var form = Ext.create("PSI.Bill.ICViewForm", {
 				ref: "{$ref}"
 			});
 			form.show();

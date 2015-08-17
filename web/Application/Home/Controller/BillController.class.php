@@ -96,4 +96,15 @@ class BillController extends Controller {
 			$this->ajaxReturn($bs->itBillInfo($params));
 		}
 	}
+
+	public function icBillInfo() {
+		if (IS_POST) {
+			$params = array(
+					"ref" => I("post.ref")
+			);
+			
+			$bs = new BillViewService();
+			$this->ajaxReturn($bs->icBillInfo($params));
+		}
+	}
 }

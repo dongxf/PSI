@@ -263,4 +263,49 @@ class BillViewService extends PSIBaseService {
 		
 		return $result;
 	}
+
+	public function icBillInfo($params) {
+		$ref = $params["ref"];
+		
+		$result = array();
+		
+		$db = M();
+		$sql = "select t.id, t.bizdt, u.name as biz_user_name,
+						w.name as warehouse_name
+					from t_ic_bill t, t_user u, t_warehouse w
+					where t.ref = '%s' and t.biz_user_id = u.id
+					      and t.warehouse_id = w.id";
+		$data = $db->query($sql, $ref);
+		if (! $data) {
+			return $result;
+		}
+		
+		$id = $data[0]["id"];
+		$result["bizUserName"] = $data[0]["biz_user_name"];
+		$result["bizDT"] = $this->toYMD($data[0]["bizdt"]);
+		$result["warehouseName"] = $data[0]["warehouse_name"];
+		
+		$items = array();
+		$sql = "select t.id, g.id as goods_id, g.code, g.name, g.spec, u.name as unit_name,
+						t.goods_count, t.goods_money
+				from t_ic_bill_detail t, t_goods g, t_goods_unit u
+				where t.icbill_id = '%s' and t.goods_id = g.id and g.unit_id = u.id
+				order by t.show_order ";
+		
+		$data = $db->query($sql, $id);
+		foreach ( $data as $i => $v ) {
+			$items[$i]["id"] = $v["id"];
+			$items[$i]["goodsId"] = $v["goods_id"];
+			$items[$i]["goodsCode"] = $v["code"];
+			$items[$i]["goodsName"] = $v["name"];
+			$items[$i]["goodsSpec"] = $v["spec"];
+			$items[$i]["unitName"] = $v["unit_name"];
+			$items[$i]["goodsCount"] = $v["goods_count"];
+			$items[$i]["goodsMoney"] = $v["goods_money"];
+		}
+		
+		$result["items"] = $items;
+		
+		return $result;
+	}
 }

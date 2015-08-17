@@ -208,6 +208,9 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 		});
 
 		me.__inventoryGrid = Ext.create("Ext.grid.Panel", {
+			viewConfig: {
+		        enableTextSelection: true
+		    },
 			border : 0,
 			bbar : [{
 				xtype : "pagingtoolbar",
