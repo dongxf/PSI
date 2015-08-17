@@ -1,11 +1,18 @@
 <layout name="layout" />
 <if condition="$pm eq '1'">
+   	<if condition="$refType eq '采购入库'">
+	<script src="{$uri}Public/Scripts/PSI/Bill/PWViewForm.js?dt={$dtFlag}" type="text/javascript"></script>
+   	</if>
 </if>
 
 <script>
 <if condition="$pm eq '1'">
     Ext.onReady(function(){
     	<if condition="$refType eq '采购入库'">
+    		var form = Ext.create("PSI.Bill.PWViewForm", {
+    			ref: "{$ref}"
+    		});
+    		form.show();
     	</if>
     	
     	<if condition="$refType eq '采购退货出库'">
