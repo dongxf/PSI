@@ -1,7 +1,22 @@
 <layout name="layout" />
+<if condition="$pm eq '1'">
+</if>
 
 <script>
+<if condition="$pm eq '1'">
     Ext.onReady(function(){
-    	PSI.MsgBox.showInfo("{$fid} - {$refType} - {$ref}");
+    	<if condition="$refType eq '采购入库'">
+    	</if>
+    	
+    	<if condition="$refType eq '采购退货出库'">
+    	</if>
+    	
+    	<if condition="$refType eq '销售出库'">
+    	</if>
+    	
+    	<if condition="$refType eq '销售退货入库'">
+    	</if>
+
     });
+</if>
 </script>
