@@ -74,4 +74,15 @@ class BillController extends Controller {
 			$this->ajaxReturn($bs->wsBillInfo($params));
 		}
 	}
+
+	public function srBillInfo() {
+		if (IS_POST) {
+			$params = array(
+					"ref" => I("post.ref")
+			);
+			
+			$bs = new BillViewService();
+			$this->ajaxReturn($bs->srBillInfo($params));
+		}
+	}
 }

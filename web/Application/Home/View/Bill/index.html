@@ -9,6 +9,9 @@
    	<if condition="$refType eq '销售出库'">
 	<script src="{$uri}Public/Scripts/PSI/Bill/WSViewForm.js?dt={$dtFlag}" type="text/javascript"></script>
    	</if>
+   	<if condition="$refType eq '销售退货入库'">
+	<script src="{$uri}Public/Scripts/PSI/Bill/SRViewForm.js?dt={$dtFlag}" type="text/javascript"></script>
+   	</if>
 </if>
 
 <script>
@@ -36,6 +39,10 @@
     	</if>
     	
     	<if condition="$refType eq '销售退货入库'">
+			var form = Ext.create("PSI.Bill.SRViewForm", {
+				ref: "{$ref}"
+			});
+			form.show();
     	</if>
 
     });
