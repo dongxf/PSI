@@ -443,7 +443,12 @@ Ext.define("PSI.Funds.PayMainForm", {
 	},
 
 	onQuery : function() {
-		this.getPayGrid().getStore().loadPage(1);
+		var me = this;
+		me.getPayDetailGrid().getStore().removeAll();
+		me.getPayRecordGrid().getStore().removeAll();
+		me.getPayRecordGrid().setTitle("付款记录");
+		
+		me.getPayGrid().getStore().loadPage(1);
 	},
 	
 	onPayGridSelect: function() {

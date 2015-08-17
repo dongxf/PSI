@@ -473,7 +473,12 @@ Ext.define("PSI.Funds.RvMainForm", {
 	},
 
 	onQuery : function() {
-		this.getRvGrid().getStore().loadPage(1);
+		var me = this;
+		me.getRvDetailGrid().getStore().removeAll();
+		me.getRvRecordGrid().getStore().removeAll();
+		me.getRvRecordGrid().setTitle("收款记录");
+		
+		me.getRvGrid().getStore().loadPage(1);
 	},
 	
 	onAddRvRecord: function() {
