@@ -512,7 +512,11 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 				dataIndex : "refNumber",
 				menuDisabled : true,
 				sortable : false,
-				width: 120
+				width: 120,
+				renderer: function(value, md, record) {
+					return "<a href='" + PSI.Const.BASE_URL + "Home/Bill/index?fid=2003&refType=" + record.get("refType") 
+						+ "&ref=" + record.get("refNumber") + "' target='_blank'>" + value + "</a>";
+				}
 			} ],
 			store : store
 		});
