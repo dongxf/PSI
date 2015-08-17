@@ -6,6 +6,7 @@ use Think\Controller;
 use Home\Service\UserService;
 use Home\Service\BizConfigService;
 use Home\Common\FIdConst;
+use Home\Service\BillViewService;
 
 /**
  * 查看单据Controller
@@ -39,5 +40,16 @@ class BillController extends Controller {
 		$this->assign("pm", $pm);
 		
 		$this->display();
+	}
+	
+	public function pwBillInfo() {
+		if (IS_POST) {
+			$params = array(
+					"ref" => I("post.ref")
+			);
+			
+			$bs = new BillViewService();
+			$this->ajaxReturn($bs->pwBillInfo($params));
+		}
 	}
 }

@@ -37,7 +37,7 @@ Ext.define("PSI.Bill.PWViewForm", {
 					id : "editRef",
 					labelWidth : 60,
 					labelAlign : "right",
-					labelSeparator : "",
+					labelSeparator : ":",
 					fieldLabel : "单号",
 					xtype : "displayfield",
 					value : me.getRef()
@@ -46,7 +46,7 @@ Ext.define("PSI.Bill.PWViewForm", {
 					fieldLabel : "业务日期",
 					labelWidth : 60,
 					labelAlign : "right",
-					labelSeparator : "",
+					labelSeparator : ":",
 					xtype : "displayfield"
 				}, {
 					id : "editSupplier",
@@ -54,21 +54,21 @@ Ext.define("PSI.Bill.PWViewForm", {
 					width : 430,
 					labelWidth : 60,
 					labelAlign : "right",
-					labelSeparator : "",
+					labelSeparator : ":",
 					xtype : "displayfield",
 					fieldLabel : "供应商"
 				}, {
 					id : "editWarehouse",
 					labelWidth : 60,
 					labelAlign : "right",
-					labelSeparator : "",
+					labelSeparator : ":",
 					fieldLabel : "入库仓库",
 					xtype : "displayfield"
 				}, {
 					id : "editBizUser",
 					labelWidth : 60,
 					labelAlign : "right",
-					labelSeparator : "",
+					labelSeparator : ":",
 					fieldLabel : "业务员",
 					xtype : "displayfield"
 				} ]
@@ -100,18 +100,10 @@ Ext.define("PSI.Bill.PWViewForm", {
 				if (success) {
 					var data = Ext.JSON.decode(response.responseText);
 
-					if (data.ref) {
-						Ext.getCmp("editRef").setValue(data.ref);
-					}
-
 					Ext.getCmp("editSupplier").setValue(data.supplierName);
-
 					Ext.getCmp("editWarehouse").setValue(data.warehouseName);
-
 					Ext.getCmp("editBizUser").setValue(data.bizUserName);
-					if (data.bizDT) {
-						Ext.getCmp("editBizDT").setValue(data.bizDT);
-					}
+					Ext.getCmp("editBizDT").setValue(data.bizDT);
 
 					var store = me.getGoodsGrid().getStore();
 					store.removeAll();
@@ -128,7 +120,7 @@ Ext.define("PSI.Bill.PWViewForm", {
 		if (me.__goodsGrid) {
 			return me.__goodsGrid;
 		}
-		var modelName = "PSIPWBillDetail_EditForm";
+		var modelName = "PSIPWBillDetail_ViewForm";
 		Ext.define(modelName, {
 			extend : "Ext.data.Model",
 			fields : [ "id", "goodsId", "goodsCode", "goodsName", "goodsSpec",
