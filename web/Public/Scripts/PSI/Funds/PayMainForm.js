@@ -251,7 +251,15 @@ Ext.define("PSI.Funds.PayMainForm", {
 				dataIndex : "refNumber",
 				menuDisabled : true,
 				sortable : false,
-				width : 120
+				width : 120,
+				renderer: function(value, md, record) {
+					if (record.get("refType") == "应付账款期初建账") {
+						return value;
+					}
+					
+					return "<a href='" + PSI.Const.BASE_URL + "Home/Bill/index?fid=2005&refType=" + record.get("refType") 
+						+ "&ref=" + record.get("refNumber") + "' target='_blank'>" + value + "</a>";
+				}
 			}, {
 				header : "业务日期",
 				dataIndex : "bizDT",

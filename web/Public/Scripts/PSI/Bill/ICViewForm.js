@@ -14,6 +14,7 @@ Ext.define("PSI.Bill.ICViewForm", {
             modal: true,
             onEsc: Ext.emptyFn,
             maximized: true,
+			closable: false,
             width: 1000,
             height: 600,
             layout: "border",

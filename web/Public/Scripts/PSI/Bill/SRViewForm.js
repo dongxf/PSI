@@ -14,6 +14,7 @@ Ext.define("PSI.Bill.SRViewForm", {
             modal: true,
             onEsc: Ext.emptyFn,
             maximized: true,
+			closable: false,
             width: 900,
             height: 600,
             layout: "border",

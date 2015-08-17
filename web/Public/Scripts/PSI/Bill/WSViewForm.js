@@ -12,6 +12,7 @@ Ext.define("PSI.Bill.WSViewForm", {
         	title: "查看销售出库单",
             modal: true,
             onEsc: Ext.emptyFn,
+			closable: false,
             maximized: true,
             width: 1000,
             height: 600,

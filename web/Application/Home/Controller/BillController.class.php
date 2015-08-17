@@ -34,7 +34,7 @@ class BillController extends Controller {
 		$us = new UserService();
 		
 		$pm = "0";
-		if ($fid == FIdConst::INVENTORY_QUERY) {
+		if ($fid == FIdConst::INVENTORY_QUERY || $fid == FIdConst::PAYABLES || $fid == FIdConst::RECEIVING) {
 			$pm = $us->hasPermission($fid) ? "1" : "0";
 		}
 		$this->assign("pm", $pm);

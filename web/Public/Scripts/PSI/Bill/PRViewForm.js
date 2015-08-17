@@ -13,6 +13,7 @@ Ext.define("PSI.Bill.PRViewForm", {
 			modal : true,
 			onEsc : Ext.emptyFn,
 			maximized: true,
+			closable: false,
 			width : 1200,
 			height : 600,
 			layout : "border",
