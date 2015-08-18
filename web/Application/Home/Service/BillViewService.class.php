@@ -61,7 +61,6 @@ class BillViewService extends PSIBaseService {
 		
 		$result = array();
 		
-		// 编辑
 		$db = M();
 		$sql = "select w.id, w.bizdt, c.name as customer_name,
 					  u.name as biz_user_name,
