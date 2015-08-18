@@ -237,4 +237,16 @@ class SaleController extends Controller {
 			$this->ajaxReturn($rs->commitSRBill($params));
 		}
 	}
+	
+	/**
+	 * 生成pdf文件
+	 */
+	public function pdf() {
+		$params = array(
+				"ref" => I("get.ref")
+		);
+		
+		$ws = new WSBillService();
+		$ws->pdf($params);
+	}
 }

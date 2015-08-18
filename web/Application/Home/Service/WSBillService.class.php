@@ -636,4 +636,18 @@ class WSBillService extends PSIBaseService {
 		
 		return $this->ok($id);
 	}
+	
+	public function pdf($params) {
+		$ref = $params["ref"];
+		
+		$ps = new PDFService();
+		$pdf = $ps->getInstance();
+		$pdf->SetTitle("销售出库单，单号：{$ref}");
+		
+		$pdf->SetFont("stsongstdlight", "", 20);
+		$pdf->AddPage();
+		$t = "销售出库单：{$ref}";
+		$pdf->Write(0, $t, '', 0, 'L', true, 0, false, false, 0);
+		$pdf->Output("$ref.pdf", "I");
+	}
 }
