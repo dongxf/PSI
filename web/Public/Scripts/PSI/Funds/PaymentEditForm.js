@@ -144,6 +144,7 @@ Ext.define("PSI.Funds.PaymentEditForm", {
 
                     Ext.getCmp("editBizUserId").setValue(data.bizUserId);
                     Ext.getCmp("editBizUser").setValue(data.bizUserName);
+                    Ext.getCmp("editBizUser").setIdValue(data.bizUserId);
                 } else {
                     PSI.MsgBox.showInfo("网络错误")
                 }
@@ -154,7 +155,9 @@ Ext.define("PSI.Funds.PaymentEditForm", {
 	// private
 	onOK : function() {
 		var me = this;
-		var f = Ext.getCmp("editForm");
+    	Ext.getCmp("editBizUserId").setValue(Ext.getCmp("editBizUser").getIdValue());
+
+    	var f = Ext.getCmp("editForm");
 		var el = f.getEl();
 		el.mask(PSI.Const.SAVING);
 		f.submit({
@@ -178,11 +181,6 @@ Ext.define("PSI.Funds.PaymentEditForm", {
 		});
 	},
 	
-    // UserField回调此方法
-    __setUserInfo: function(data) {
-    	Ext.getCmp("editBizUserId").setValue(data.id);
-    },
-    
     onEditBizDTSpecialKey: function (field, e) {
         if (e.getKey() == e.ENTER) {
             Ext.getCmp("editActMoney").focus();
