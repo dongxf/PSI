@@ -149,12 +149,16 @@ class BizConfigService extends PSIBaseService {
 	 * @return true: 启用双单位
 	 */
 	public function goodsUsesTwoUnits() {
-		$sql = "select value from t_config where id = '1001-01' ";
-		$data = M()->query($sql);
-		if ($data) {
-			return $data[0]["value"] == "1";
-		} else {
-			return false;
-		}
+		// 2015-08-20 为了发布PSI2015 beta2
+		// PSI2015 beta2中不实现双单位
+		return false;
+		
+// 		$sql = "select value from t_config where id = '1001-01' ";
+// 		$data = M()->query($sql);
+// 		if ($data) {
+// 			return $data[0]["value"] == "1";
+// 		} else {
+// 			return false;
+// 		}
 	}
 }
