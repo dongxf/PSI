@@ -26,9 +26,9 @@ PSI演示
     <img src="http://static.oschina.net/uploads/space/2015/0302/215612_fu1s_134395.jpg"/>
 </p>
 
-PSI 2015 beta1下载地址
+PSI 2015 beta2下载地址
 -------------
->PSI 2015 beta1下载地址见：http://pan.baidu.com/s/18krym
+>PSI 2015 beta2下载地址见：http://pan.baidu.com/s/1qWkQByk
 >
 >源码下载地址：http://git.oschina.net/crm8000/PSI/repository/archive?ref=master
 
