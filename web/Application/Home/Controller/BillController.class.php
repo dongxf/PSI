@@ -16,6 +16,9 @@ use Home\Service\BillViewService;
  */
 class BillController extends Controller {
 
+	/**
+	 * 查看单据页面
+	 */
 	public function index() {
 		$fid = I("get.fid");
 		$refType = I("get.refType");
@@ -42,6 +45,9 @@ class BillController extends Controller {
 		$this->display();
 	}
 
+	/**
+	 * 采购入库单
+	 */
 	public function pwBillInfo() {
 		if (IS_POST) {
 			$params = array(
@@ -53,6 +59,9 @@ class BillController extends Controller {
 		}
 	}
 
+	/**
+	 * 采购退货出库单
+	 */
 	public function prBillInfo() {
 		if (IS_POST) {
 			$params = array(
@@ -64,6 +73,9 @@ class BillController extends Controller {
 		}
 	}
 
+	/**
+	 * 销售出库单
+	 */
 	public function wsBillInfo() {
 		if (IS_POST) {
 			$params = array(
@@ -75,6 +87,9 @@ class BillController extends Controller {
 		}
 	}
 
+	/**
+	 * 销售退货入库单
+	 */
 	public function srBillInfo() {
 		if (IS_POST) {
 			$params = array(
@@ -86,6 +101,9 @@ class BillController extends Controller {
 		}
 	}
 
+	/**
+	 * 调拨单
+	 */
 	public function itBillInfo() {
 		if (IS_POST) {
 			$params = array(
@@ -97,6 +115,9 @@ class BillController extends Controller {
 		}
 	}
 
+	/**
+	 * 盘点单
+	 */
 	public function icBillInfo() {
 		if (IS_POST) {
 			$params = array(
