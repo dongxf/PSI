@@ -10,10 +10,18 @@ namespace Home\Service;
 class InventoryService extends PSIBaseService {
 
 	public function warehouseList() {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		return M()->query("select id, code, name from t_warehouse order by code");
 	}
 
 	public function inventoryList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$warehouseId = $params["warehouseId"];
 		$code = $params["code"];
 		$name = $params["name"];
@@ -99,6 +107,10 @@ class InventoryService extends PSIBaseService {
 	}
 
 	public function inventoryDetailList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$warehouseId = $params["warehouseId"];
 		$goodsId = $params["goodsId"];
 		$dtFrom = $params["dtFrom"];
