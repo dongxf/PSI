@@ -73,20 +73,6 @@ Ext.define("PSI.BizConfig.EditForm", {
 					msgTarget : 'side'
 				},
 				items : [ {
-					id : "editName1001-01",
-					xtype : "displayfield"
-				}, {
-					id : "editValue1001-01",
-					xtype : "combo",
-					queryMode : "local",
-					editable : false,
-					valueField : "id",
-					store : Ext.create("Ext.data.ArrayStore", {
-						fields : [ "id", "text" ],
-						data : [ [ "0", "使用同一个计量单位" ], [ "1", "使用不同计量单位" ] ]
-					}),
-					name : "value1001-01"
-				},{
 					id : "editName1003-01",
 					xtype : "displayfield"
 				}, {

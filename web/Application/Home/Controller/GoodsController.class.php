@@ -31,9 +31,6 @@ class GoodsController extends Controller {
 			$dtFlag = getdate();
 			$this->assign("dtFlag", $dtFlag[0]);
 			
-			$ts = new BizConfigService();
-			$this->assign("useTU", $ts->goodsUsesTwoUnits());
-			
 			$this->display();
 		} else {
 			redirect(__ROOT__ . "/Home/User/login");

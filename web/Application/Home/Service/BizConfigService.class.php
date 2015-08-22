@@ -63,6 +63,10 @@ class BizConfigService extends PSIBaseService {
 	}
 
 	public function edit($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();	
+		}
+		
 		// 临时代码
 		if ($this->isDemo()) {
 			$value = $params["1001-01"];
@@ -153,12 +157,12 @@ class BizConfigService extends PSIBaseService {
 		// PSI2015 beta2中不实现双单位
 		return false;
 		
-// 		$sql = "select value from t_config where id = '1001-01' ";
-// 		$data = M()->query($sql);
-// 		if ($data) {
-// 			return $data[0]["value"] == "1";
-// 		} else {
-// 			return false;
-// 		}
+		// $sql = "select value from t_config where id = '1001-01' ";
+		// $data = M()->query($sql);
+		// if ($data) {
+		// return $data[0]["value"] == "1";
+		// } else {
+		// return false;
+		// }
 	}
 }

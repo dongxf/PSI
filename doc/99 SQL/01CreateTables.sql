@@ -224,15 +224,6 @@ CREATE TABLE IF NOT EXISTS `t_inventory` (
   `out_count` decimal(19,2) DEFAULT NULL,
   `out_money` decimal(19,2) DEFAULT NULL,
   `out_price` decimal(19,2) DEFAULT NULL,
-  `in_count_2` decimal(19,2) DEFAULT NULL,
-  `in_money_2` decimal(19,2) DEFAULT NULL,
-  `in_price_2` decimal(19,2) DEFAULT NULL,
-  `out_count_2` decimal(19,2) DEFAULT NULL,
-  `out_money_2` decimal(19,2) DEFAULT NULL,
-  `out_price_2` decimal(19,2) DEFAULT NULL,
-  `balance_count_2` decimal(19,2) DEFAULT NULL,
-  `balance_money_2` decimal(19,2) DEFAULT NULL,
-  `balance_price_2` decimal(19,2) DEFAULT NULL,
   `warehouse_id` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
@@ -255,15 +246,6 @@ CREATE TABLE IF NOT EXISTS `t_inventory_detail` (
   `out_price` decimal(19,2) DEFAULT NULL,
   `ref_number` varchar(255) DEFAULT NULL,
   `ref_type` varchar(255) NOT NULL,
-  `in_count_2` decimal(19,2) DEFAULT NULL,
-  `in_money_2` decimal(19,2) DEFAULT NULL,
-  `in_price_2` decimal(19,2) DEFAULT NULL,
-  `out_count_2` decimal(19,2) DEFAULT NULL,
-  `out_money_2` decimal(19,2) DEFAULT NULL,
-  `out_price_2` decimal(19,2) DEFAULT NULL,
-  `balance_count_2` decimal(19,2) DEFAULT NULL,
-  `balance_money_2` decimal(19,2) DEFAULT NULL,
-  `balance_price_2` decimal(19,2) DEFAULT NULL,
   `warehouse_id` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
