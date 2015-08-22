@@ -279,7 +279,7 @@ Ext.define("PSI.Sale.SRMainForm", {
         Ext.define(modelName, {
             extend: "Ext.data.Model",
             fields: ["id", "ref", "bizDate", "customerName", "warehouseName",
-                "inputUserName", "bizUserName", "billStatus", "amount"]
+                "inputUserName", "bizUserName", "billStatus", "amount", "dateCreated"]
         });
         var store = Ext.create("Ext.data.Store", {
             autoLoad: false,
@@ -359,8 +359,14 @@ Ext.define("PSI.Sale.SRMainForm", {
                     menuDisabled: true,
                     sortable: false
                 }, {
-                    header: "录单人",
+                    header: "制单人",
                     dataIndex: "inputUserName",
+                    menuDisabled: true,
+                    sortable: false
+                }, {
+                    header: "制单时间",
+                    dataIndex: "dateCreated",
+                    width: 140,
                     menuDisabled: true,
                     sortable: false
                 }],

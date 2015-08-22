@@ -31,8 +31,8 @@ class SRBillService extends PSIBaseService {
 		
 		$db = M();
 		$sql = "select w.id, w.ref, w.bizdt, c.name as customer_name, u.name as biz_user_name,
-				 user.name as input_user_name, h.name as warehouse_name, w.rejection_sale_money,
-				 w.bill_status 
+				 	user.name as input_user_name, h.name as warehouse_name, w.rejection_sale_money,
+				 	w.bill_status, w.date_created
 				 from t_sr_bill w, t_customer c, t_user u, t_user user, t_warehouse h 
 				 where (w.customer_id = c.id) and (w.biz_user_id = u.id) 
 				 and (w.input_user_id = user.id) and (w.warehouse_id = h.id) ";
@@ -86,6 +86,7 @@ class SRBillService extends PSIBaseService {
 			$result[$i]["bizUserName"] = $v["biz_user_name"];
 			$result[$i]["billStatus"] = $v["bill_status"] == 0 ? "待入库" : "已入库";
 			$result[$i]["amount"] = $v["rejection_sale_money"];
+			$result[$i]["dateCreated"] = $v["date_created"];
 		}
 		
 		$sql = "select count(*) as cnt 
