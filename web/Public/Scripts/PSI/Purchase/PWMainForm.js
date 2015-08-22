@@ -304,7 +304,8 @@ Ext.define("PSI.Purchase.PWMainForm", {
         Ext.getCmp("pagingToobar").doRefresh();
         me.__lastId = id;
     },
-    
+
+    // 新增采购入库单
     onAddBill: function () {
         var form = Ext.create("PSI.Purchase.PWEditForm", {
             parentForm: this
@@ -312,6 +313,7 @@ Ext.define("PSI.Purchase.PWMainForm", {
         form.show();
     },
     
+    // 编辑采购入库单
     onEditBill: function () {
     	var me = this;
         var item = me.getMainGrid().getSelectionModel().getSelection();
@@ -328,6 +330,7 @@ Ext.define("PSI.Purchase.PWMainForm", {
         form.show();
     },
     
+    // 删除采购入库单
     onDeleteBill: function () {
         var me = this;
         var item = me.getMainGrid().getSelectionModel().getSelection();
@@ -337,6 +340,12 @@ Ext.define("PSI.Purchase.PWMainForm", {
         }
         
         var bill = item[0];
+        
+        if (bill.get("billStatus") == "已入库") {
+        	PSI.MsgBox.showInfo("当前采购入库单已经提交入库，不能删除");
+        	return;
+        }
+        
         var store = me.getMainGrid().getStore();
         var index = store.findExact("id", bill.get("id"));
         index--;
@@ -424,7 +433,8 @@ Ext.define("PSI.Purchase.PWMainForm", {
             }
         });
     },
-    
+
+    // 提交采购入库单
     onCommit: function () {
     	var me = this;
         var item = me.getMainGrid().getSelectionModel().getSelection();
@@ -434,6 +444,11 @@ Ext.define("PSI.Purchase.PWMainForm", {
         }
         var bill = item[0];
 
+        if (bill.get("billStatus") == "已入库") {
+        	PSI.MsgBox.showInfo("当前采购入库单已经提交入库，不能再次提交");
+        	return;
+        }
+        
         var detailCount = me.getDetailGrid().getStore().getCount();
         if (detailCount == 0) {
             PSI.MsgBox.showInfo("当前采购入库单没有录入商品明细，不能提交");
