@@ -10,6 +10,10 @@ namespace Home\Service;
 class ReceivablesService extends PSIBaseService {
 
 	public function rvCategoryList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$id = $params["id"];
 		if ($id == "customer") {
 			return M()->query("select id,  code, name from t_customer_category order by code");
@@ -19,6 +23,10 @@ class ReceivablesService extends PSIBaseService {
 	}
 
 	public function rvList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$caType = $params["caType"];
 		$categoryId = $params["categoryId"];
 		$page = $params["page"];
@@ -89,6 +97,10 @@ class ReceivablesService extends PSIBaseService {
 	}
 
 	public function rvDetailList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$caType = $params["caType"];
 		$caId = $params["caId"];
 		$page = $params["page"];
@@ -127,6 +139,10 @@ class ReceivablesService extends PSIBaseService {
 	}
 
 	public function rvRecordList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$refType = $params["refType"];
 		$refNumber = $params["refNumber"];
 		$page = $params["page"];
@@ -166,6 +182,10 @@ class ReceivablesService extends PSIBaseService {
 	}
 
 	public function addRvRecord($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
 		$refType = $params["refType"];
 		$refNumber = $params["refNumber"];
 		$bizDT = $params["bizDT"];
@@ -195,7 +215,8 @@ class ReceivablesService extends PSIBaseService {
 					values ('%s', %f, '%s', now(), '%s', '%s', '%s', '%s', '%s', '%s')";
 			$idGen = new IdGenService();
 			$us = new UserService();
-			$db->execute($sql, $idGen->newId(), $actMoney, $bizDT, $us->getLoginUserId(), $bizUserId, $remark, $refNumber, $refType, $billId);
+			$db->execute($sql, $idGen->newId(), $actMoney, $bizDT, $us->getLoginUserId(), 
+					$bizUserId, $remark, $refNumber, $refType, $billId);
 			
 			$log = "为 {$refType} - 单号：{$refNumber} 收款：{$actMoney}元";
 			$bs = new BizlogService();
@@ -220,7 +241,8 @@ class ReceivablesService extends PSIBaseService {
 					set act_money = %f, balance_money = %f 
 					where ref_number = '%s' and ref_type = '%s' 
 					  and ca_id = '%s' and ca_type = '%s' ";
-			$db->execute($sql, $actMoneyDetail, $balanceMoneyDetail, $refNumber, $refType, $caId, $caType);
+			$db->execute($sql, $actMoneyDetail, $balanceMoneyDetail, $refNumber, $refType, $caId, 
+					$caType);
 			
 			// 应收总账
 			$sql = "select act_money, balance_money 
@@ -251,6 +273,10 @@ class ReceivablesService extends PSIBaseService {
 	}
 
 	public function refreshRvInfo($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$id = $params["id"];
 		$sql = "select act_money, balance_money from t_receivables where id = '%s' ";
 		$data = M()->query($sql, $id);
@@ -265,6 +291,10 @@ class ReceivablesService extends PSIBaseService {
 	}
 
 	public function refreshRvDetailInfo($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$id = $params["id"];
 		$sql = "select act_money, balance_money from t_receivables_detail where id = '%s' ";
 		$data = M()->query($sql, $id);

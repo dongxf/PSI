@@ -10,6 +10,10 @@ namespace Home\Service;
 class PayablesService extends PSIBaseService {
 
 	public function payCategoryList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$id = $params["id"];
 		if ($id == "supplier") {
 			return M()->query("select id,  code, name from t_supplier_category order by code");
@@ -19,6 +23,10 @@ class PayablesService extends PSIBaseService {
 	}
 
 	public function payList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$caType = $params["caType"];
 		$categoryId = $params["categoryId"];
 		$page = $params["page"];
@@ -84,6 +92,10 @@ class PayablesService extends PSIBaseService {
 	}
 
 	public function payDetailList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$caType = $params["caType"];
 		$caId = $params["caId"];
 		$page = $params["page"];
@@ -122,6 +134,10 @@ class PayablesService extends PSIBaseService {
 	}
 
 	public function payRecordList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$refType = $params["refType"];
 		$refNumber = $params["refNumber"];
 		$page = $params["page"];
@@ -161,6 +177,10 @@ class PayablesService extends PSIBaseService {
 	}
 
 	public function addPayment($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
 		$refType = $params["refType"];
 		$refNumber = $params["refNumber"];
 		$bizDT = $params["bizDT"];
@@ -189,7 +209,8 @@ class PayablesService extends PSIBaseService {
 					values ('%s', %f, '%s', now(), '%s', '%s', '%s', '%s', '%s', '%s')";
 			$idGen = new IdGenService();
 			$us = new UserService();
-			$db->execute($sql, $idGen->newId(), $actMoney, $bizDT, $us->getLoginUserId(), $bizUserId, $billId, $refType, $refNumber, $remark);
+			$db->execute($sql, $idGen->newId(), $actMoney, $bizDT, $us->getLoginUserId(), 
+					$bizUserId, $billId, $refType, $refNumber, $remark);
 			
 			$log = "为 {$refType} - 单号：{$refNumber} 付款：{$actMoney}元";
 			$bs = new BizlogService();
@@ -236,6 +257,10 @@ class PayablesService extends PSIBaseService {
 	}
 
 	public function refreshPayInfo($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$id = $params["id"];
 		$data = M()->query("select act_money, balance_money from t_payables  where id = '%s' ", $id);
 		return array(
@@ -245,8 +270,13 @@ class PayablesService extends PSIBaseService {
 	}
 
 	public function refreshPayDetailInfo($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$id = $params["id"];
-		$data = M()->query("select act_money, balance_money from t_payables_detail  where id = '%s' ", $id);
+		$data = M()->query(
+				"select act_money, balance_money from t_payables_detail  where id = '%s' ", $id);
 		return array(
 				"actMoney" => $data[0]["act_money"],
 				"balanceMoney" => $data[0]["balance_money"]
