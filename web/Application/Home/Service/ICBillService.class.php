@@ -256,10 +256,12 @@ class ICBillService extends PSIBaseService {
 		
 		$db = M();
 		
-		$sql = "select t.id, t.ref, t.bizdt, t.bill_status,
-			w.name as warehouse_name,
-			u.name as biz_user_name,
-			u1.name as input_user_name
+		$sql = "
+			select t.id, t.ref, t.bizdt, t.bill_status,
+				w.name as warehouse_name,
+				u.name as biz_user_name,
+				u1.name as input_user_name,
+				t.date_created
 			from t_ic_bill t, t_warehouse w, t_user u, t_user u1
 			where (t.warehouse_id = w.id)
 			and (t.biz_user_id = u.id)
@@ -301,6 +303,7 @@ class ICBillService extends PSIBaseService {
 			$result[$i]["warehouseName"] = $v["warehouse_name"];
 			$result[$i]["bizUserName"] = $v["biz_user_name"];
 			$result[$i]["inputUserName"] = $v["input_user_name"];
+			$result[$i]["dateCreated"] = $v["date_created"];
 		}
 		
 		$sql = "select count(*) as cnt
