@@ -13,6 +13,10 @@ class SRBillService extends PSIBaseService {
 	 * 销售退货入库单主表信息列表
 	 */
 	public function srbillList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$page = $params["page"];
 		$start = $params["start"];
 		$limit = $params["limit"];
@@ -134,6 +138,10 @@ class SRBillService extends PSIBaseService {
 	 * 销售退货入库单明细信息列表
 	 */
 	public function srBillDetailList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$id = $params["id"];
 		$db = M();
 		
@@ -166,6 +174,10 @@ class SRBillService extends PSIBaseService {
 	 * 获得退货入库单单据数据
 	 */
 	public function srBillInfo($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$id = $params["id"];
 		
 		$us = new UserService();
@@ -235,6 +247,10 @@ class SRBillService extends PSIBaseService {
 	 * 列出要选择的可以做退货入库的销售出库单
 	 */
 	public function selectWSBillList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$page = $params["page"];
 		$start = $params["start"];
 		$limit = $params["limit"];
@@ -350,6 +366,10 @@ class SRBillService extends PSIBaseService {
 	 * 新增或编辑销售退货入库单
 	 */
 	public function editSRBill($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
 		$json = $params["jsonStr"];
 		$bill = json_decode(html_entity_decode($json), true);
 		if ($bill == null) {
@@ -561,6 +581,10 @@ class SRBillService extends PSIBaseService {
 	 * 获得销售出库单的信息
 	 */
 	public function getWSBillInfoForSRBill($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$result = array();
 		
 		$id = $params["id"];
@@ -633,6 +657,10 @@ class SRBillService extends PSIBaseService {
 	 * 删除销售退货入库单
 	 */
 	public function deleteSRBill($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
 		$id = $params["id"];
 		
 		$db = M();
@@ -672,6 +700,10 @@ class SRBillService extends PSIBaseService {
 	 * 提交销售退货入库单
 	 */
 	public function commitSRBill($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
 		$id = $params["id"];
 		
 		$db = M();
