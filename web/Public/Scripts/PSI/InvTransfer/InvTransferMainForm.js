@@ -45,16 +45,19 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
             handler: me.onAddBill
         }, "-", {
             text: "编辑调拨单",
+            id: "buttonEdit",
             iconCls: "PSI-button-edit",
             scope: me,
             handler: me.onEditBill
         }, "-", {
             text: "删除调拨单",
+            id: "buttonDelete",
             iconCls: "PSI-button-delete",
             scope: me,
             handler: me.onDeleteBill
         }, "-", {
             text: "提交调拨单",
+            id: "buttonCommit",
             iconCls: "PSI-button-commit",
             scope: me,
             handler: me.onCommit
@@ -147,6 +150,10 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
     },
     
     refreshMainGrid: function (id) {
+    	Ext.getCmp("buttonEdit").setDisabled(true);
+    	Ext.getCmp("buttonDelete").setDisabled(true);
+    	Ext.getCmp("buttonCommit").setDisabled(true);
+
     	var me = this;
         var gridDetail = me.getDetailGrid();
         gridDetail.setTitle("调拨单明细");
@@ -491,7 +498,32 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
     },
     
     onMainGridSelect: function() {
-    	this.refreshDetailGrid();
+        var me = this;
+        me.getDetailGrid().setTitle("调拨单明细");
+        var grid = me.getMainGrid();
+        var item = grid.getSelectionModel().getSelection();
+        if (item == null || item.length != 1) {
+            Ext.getCmp("buttonEdit").setDisabled(true);
+            Ext.getCmp("buttonDelete").setDisabled(true);
+            Ext.getCmp("buttonCommit").setDisabled(true);
+            return;
+        }
+        var bill = item[0];
+
+        var commited = bill.get("billStatus") == "已调拨";
+
+        var buttonEdit = Ext.getCmp("buttonEdit");
+        buttonEdit.setDisabled(false);
+        if (commited) {
+        	buttonEdit.setText("查看调拨单");
+        } else {
+        	buttonEdit.setText("编辑调拨单");
+        }
+
+        Ext.getCmp("buttonDelete").setDisabled(commited);
+        Ext.getCmp("buttonCommit").setDisabled(commited);
+
+        me.refreshDetailGrid();
     },
     
     refreshDetailGrid: function (id) {
