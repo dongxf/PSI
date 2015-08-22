@@ -56,7 +56,8 @@ class ITBillService extends PSIBaseService {
 					fw.name as from_warehouse_name,
 					tw.name as to_warehouse_name,
 					u.name as biz_user_name,
-					u1.name as input_user_name
+					u1.name as input_user_name,
+					t.date_created
 				from t_it_bill t, t_warehouse fw, t_warehouse tw,
 				   t_user u, t_user u1
 				where (t.from_warehouse_id = fw.id) 
@@ -105,6 +106,7 @@ class ITBillService extends PSIBaseService {
 			$result[$i]["toWarehouseName"] = $v["to_warehouse_name"];
 			$result[$i]["bizUserName"] = $v["biz_user_name"];
 			$result[$i]["inputUserName"] = $v["input_user_name"];
+			$result[$i]["dateCreated"] = $v["date_created"];
 		}
 		
 		$sql = "select count(*) as cnt
