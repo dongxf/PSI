@@ -44,16 +44,19 @@ Ext.define("PSI.InvCheck.InvCheckMainForm", {
             handler: me.onAddBill
         }, "-", {
             text: "编辑盘点单",
+            id: "buttonEdit",
             iconCls: "PSI-button-edit",
             scope: me,
             handler: me.onEditBill
         }, "-", {
             text: "删除盘点单",
+            id: "buttonDelete",
             iconCls: "PSI-button-delete",
             scope: me,
             handler: me.onDeleteBill
         }, "-", {
             text: "提交盘点单",
+            id: "buttonCommit",
             iconCls: "PSI-button-commit",
             scope: me,
             handler: me.onCommit
@@ -138,6 +141,10 @@ Ext.define("PSI.InvCheck.InvCheckMainForm", {
     },
     
     refreshMainGrid: function (id) {
+    	Ext.getCmp("buttonEdit").setDisabled(true);
+    	Ext.getCmp("buttonDelete").setDisabled(true);
+    	Ext.getCmp("buttonCommit").setDisabled(true);
+
     	var me = this;
         var gridDetail = me.getDetailGrid();
         gridDetail.setTitle("盘点单明细");
@@ -486,7 +493,31 @@ Ext.define("PSI.InvCheck.InvCheckMainForm", {
     },
     
     onMainGridSelect: function() {
-    	this.refreshDetailGrid();
+        var me = this;
+        me.getDetailGrid().setTitle("盘点单明细");
+        var grid = me.getMainGrid();
+        var item = grid.getSelectionModel().getSelection();
+        if (item == null || item.length != 1) {
+        	Ext.getCmp("buttonEdit").setDisabled(true);
+        	Ext.getCmp("buttonDelete").setDisabled(true);
+        	Ext.getCmp("buttonCommit").setDisabled(true);
+            return;
+        }
+        var bill = item[0];
+        var commited = bill.get("billStatus") == "已盘点";
+
+        var buttonEdit = Ext.getCmp("buttonEdit");
+        buttonEdit.setDisabled(false);
+        if (commited) {
+        	buttonEdit.setText("查看盘点单");
+        } else {
+        	buttonEdit.setText("编辑盘点单");
+        }
+
+        Ext.getCmp("buttonDelete").setDisabled(commited);
+        Ext.getCmp("buttonCommit").setDisabled(commited);
+
+        me.refreshDetailGrid();
     },
     
     refreshDetailGrid: function (id) {
