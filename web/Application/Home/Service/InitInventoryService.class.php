@@ -10,10 +10,18 @@ namespace Home\Service;
 class InitInventoryService extends PSIBaseService {
 
 	public function warehouseList() {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		return M()->query("select id, code, name, inited from t_warehouse order by code");
 	}
 
 	public function initInfoList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$warehouseId = $params["warehouseId"];
 		$page = $params["page"];
 		$start = $params["start"];
@@ -52,10 +60,18 @@ class InitInventoryService extends PSIBaseService {
 	}
 
 	public function goodsCategoryList() {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		return M()->query("select id, code, name from t_goods_category order by code");
 	}
 
 	public function goodsList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$warehouseId = $params["warehouseId"];
 		$categoryId = $params["categoryId"];
 		$page = $params["page"];
@@ -96,6 +112,10 @@ class InitInventoryService extends PSIBaseService {
 	}
 
 	public function commitInitInventoryGoods($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
 		$warehouseId = $params["warehouseId"];
 		$goodsId = $params["goodsId"];
 		$goodsCount = intval($params["goodsCount"]);
@@ -143,14 +163,16 @@ class InitInventoryService extends PSIBaseService {
 				$sql = "insert into t_inventory (warehouse_id, goods_id, in_count, in_price, 
 						in_money, balance_count, balance_price, balance_money) 
 						values ('%s', '%s', %d, %f, %f, %d, %f, %f) ";
-				$db->execute($sql, $warehouseId, $goodsId, $goodsCount, $goodsPrice, $goodsMoney, $goodsCount, $goodsPrice, $goodsMoney);
+				$db->execute($sql, $warehouseId, $goodsId, $goodsCount, $goodsPrice, $goodsMoney, 
+						$goodsCount, $goodsPrice, $goodsMoney);
 			} else {
 				$id = $data[0]["id"];
 				$sql = "update t_inventory  
 						set in_count = %d, in_price = %f, in_money = %f, 
 						balance_count = %d, balance_price = %f, balance_money = %f 
 						where id = %d ";
-				$db->execute($sql, $goodsCount, $goodsPrice, $goodsMoney, $goodsCount, $goodsPrice, $goodsMoney, $id);
+				$db->execute($sql, $goodsCount, $goodsPrice, $goodsMoney, $goodsCount, $goodsPrice, 
+						$goodsMoney, $id);
 			}
 			
 			// 明细账
@@ -163,7 +185,8 @@ class InitInventoryService extends PSIBaseService {
 						biz_date, biz_user_id, date_created,  ref_number, ref_type)
 						values ('%s', '%s', %d, %f, %f, %d, %f, %f, curdate(), '%s', now(), '', '库存建账')";
 				$us = new UserService();
-				$db->execute($sql, $warehouseId, $goodsId, $goodsCount, $goodsPrice, $goodsMoney, $goodsCount, $goodsPrice, $goodsMoney, $us->getLoginUserId());
+				$db->execute($sql, $warehouseId, $goodsId, $goodsCount, $goodsPrice, $goodsMoney, 
+						$goodsCount, $goodsPrice, $goodsMoney, $us->getLoginUserId());
 			} else {
 				$id = $data[0]["id"];
 				$sql = "update t_inventory_detail 
@@ -171,7 +194,8 @@ class InitInventoryService extends PSIBaseService {
 						balance_count = %d, balance_price = %f, balance_money = %f,
 						biz_date = curdate()  
 						where id = %d ";
-				$db->execute($sql, $goodsCount, $goodsPrice, $goodsMoney, $goodsCount, $goodsPrice, $goodsMoney, $id);
+				$db->execute($sql, $goodsCount, $goodsPrice, $goodsMoney, $goodsCount, $goodsPrice, 
+						$goodsMoney, $id);
 			}
 			
 			$db->commit();
@@ -185,6 +209,10 @@ class InitInventoryService extends PSIBaseService {
 	}
 
 	public function finish($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
 		$warehouseId = $params["warehouseId"];
 		$db = M();
 		$sql = "select name, inited from t_warehouse where id = '%s' ";
@@ -222,6 +250,10 @@ class InitInventoryService extends PSIBaseService {
 	}
 
 	public function cancel($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
 		$warehouseId = $params["warehouseId"];
 		$db = M();
 		$sql = "select name, inited from t_warehouse where id = '%s' ";
