@@ -32,6 +32,10 @@ class ICBillService extends PSIBaseService {
 	}
 
 	public function icBillInfo($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$id = $params["id"];
 		
 		$result = array();
@@ -88,6 +92,10 @@ class ICBillService extends PSIBaseService {
 	}
 
 	public function editICBill($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
 		$json = $params["jsonStr"];
 		$bill = json_decode(html_entity_decode($json), true);
 		if ($bill == null) {
@@ -232,6 +240,10 @@ class ICBillService extends PSIBaseService {
 	}
 
 	public function icbillList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$page = $params["page"];
 		$start = $params["start"];
 		$limit = $params["limit"];
@@ -329,6 +341,10 @@ class ICBillService extends PSIBaseService {
 	}
 
 	public function icBillDetailList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$id = $params["id"];
 		
 		$result = array();
@@ -354,6 +370,10 @@ class ICBillService extends PSIBaseService {
 	}
 
 	public function deleteICBill($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
 		$id = $params["id"];
 		
 		$db = M();
@@ -393,6 +413,10 @@ class ICBillService extends PSIBaseService {
 	}
 
 	public function commitICBill($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
 		$id = $params["id"];
 		$db = M();
 		$db->startTrans();
