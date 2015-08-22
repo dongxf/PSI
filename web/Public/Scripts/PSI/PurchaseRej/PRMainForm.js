@@ -44,16 +44,19 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
             handler: me.onAddBill
         }, "-", {
             text: "编辑采购退货出库单",
+            id: "buttonEdit",
             iconCls: "PSI-button-edit",
             scope: me,
             handler: me.onEditBill
         }, "-", {
             text: "删除采购退货出库单",
+            id: "buttonDelete",
             iconCls: "PSI-button-delete",
             scope: me,
             handler: me.onDeleteBill
         }, "-", {
             text: "提交采购退货出库单",
+            id: "buttonCommit",
             iconCls: "PSI-button-commit",
             scope: me,
             handler: me.onCommit
@@ -147,6 +150,11 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
     
     refreshMainGrid: function (id) {
     	var me = this;
+
+    	Ext.getCmp("buttonEdit").setDisabled(true);
+    	Ext.getCmp("buttonDelete").setDisabled(true);
+    	Ext.getCmp("buttonCommit").setDisabled(true);
+
         var gridDetail = me.getDetailGrid();
         gridDetail.setTitle("采购退货出库单明细");
         gridDetail.getStore().removeAll();
@@ -188,6 +196,11 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
             return;
         }
         var bill = item[0];
+        
+        if (bill.get("billStatus") == "已出库") {
+        	PSI.MsgBox.showInfo("当前采购退货出库单已经提交出库，不能删除");
+        	return;
+        }
 
         var info = "请确认是否删除采购退货出库单: <span style='color:red'>" + bill.get("ref")
                 + "</span>";
@@ -231,6 +244,11 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
             return;
         }
         var bill = item[0];
+
+        if (bill.get("billStatus") == "已出库") {
+        	PSI.MsgBox.showInfo("当前采购退货出库单已经提交出库，不能再次提交");
+        	return;
+        }
 
         var info = "请确认是否提交单号: <span style='color:red'>" + bill.get("ref") + "</span> 的采购退货出库单?";
         PSI.MsgBox.confirm(info, function () {
@@ -510,7 +528,31 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
     },
     
     onMainGridSelect: function() {
-    	this.refreshDetailGrid();
+    	var me = this;
+        me.getDetailGrid().setTitle("采购退货出库单明细");
+        var item = me.getMainGrid().getSelectionModel().getSelection();
+        if (item == null || item.length != 1) {
+        	Ext.getCmp("buttonEdit").setDisabled(true);
+        	Ext.getCmp("buttonDelete").setDisabled(true);
+        	Ext.getCmp("buttonCommit").setDisabled(true);
+
+        	return;
+        }
+        var bill = item[0];
+        
+        var commited = bill.get("billStatus") == "已出库";
+    	Ext.getCmp("buttonDelete").setDisabled(commited);
+    	Ext.getCmp("buttonCommit").setDisabled(commited);
+        
+    	var buttonEdit = Ext.getCmp("buttonEdit");
+    	buttonEdit.setDisabled(false);
+    	if (commited) {
+        	buttonEdit.setText("查看采购退货出库单");
+    	} else {
+        	buttonEdit.setText("编辑采购退货出库单");
+    	}
+
+        me.refreshDetailGrid();
     },
     
     refreshDetailGrid: function (id) {
