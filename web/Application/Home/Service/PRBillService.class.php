@@ -32,6 +32,10 @@ class PRBillService extends PSIBaseService {
 	}
 
 	public function prBillInfo($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$id = $params["id"];
 		
 		$result = array();
@@ -104,6 +108,10 @@ class PRBillService extends PSIBaseService {
 	}
 
 	public function editPRBill($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
 		$json = $params["jsonStr"];
 		$bill = json_decode(html_entity_decode($json), true);
 		if ($bill == null) {
@@ -288,6 +296,10 @@ class PRBillService extends PSIBaseService {
 	}
 
 	public function selectPWBillList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();	
+		}
+		
 		$page = $params["page"];
 		$start = $params["start"];
 		$limit = $params["limit"];
@@ -389,6 +401,10 @@ class PRBillService extends PSIBaseService {
 	}
 
 	public function getPWBillInfoForPRBill($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$id = $params["id"];
 		$result = array();
 		
@@ -442,6 +458,10 @@ class PRBillService extends PSIBaseService {
 	}
 
 	public function prbillList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$page = $params["page"];
 		$start = $params["start"];
 		$limit = $params["limit"];
@@ -458,7 +478,7 @@ class PRBillService extends PSIBaseService {
 		$queryParams = array();
 		$sql = "select p.id, p.ref, p.bill_status, w.name as warehouse_name, p.bizdt,
 					p.rejection_money, u1.name as biz_user_name, u2.name as input_user_name,
-					s.name as supplier_name
+					s.name as supplier_name, p.date_created
 				from t_pr_bill p, t_warehouse w, t_user u1, t_user u2, t_supplier s
 				where (p.warehouse_id = w.id)
 					and (p.biz_user_id = u1.id)
@@ -504,6 +524,7 @@ class PRBillService extends PSIBaseService {
 			$result[$i]["bizUserName"] = $v["biz_user_name"];
 			$result[$i]["inputUserName"] = $v["input_user_name"];
 			$result[$i]["bizDT"] = $this->toYMD($v["bizdt"]);
+			$result[$i]["dateCreated"] = $v["date_created"];
 		}
 		
 		$sql = "select count(*) as cnt
@@ -548,6 +569,10 @@ class PRBillService extends PSIBaseService {
 	}
 
 	public function prBillDetailList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();	
+		}
+		
 		$id = $params["id"];
 		
 		$db = M();
@@ -574,6 +599,10 @@ class PRBillService extends PSIBaseService {
 	}
 
 	public function deletePRBill($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
 		$id = $params["id"];
 		
 		$db = M();
@@ -616,6 +645,10 @@ class PRBillService extends PSIBaseService {
 	 * 提交采购退货出库单
 	 */
 	public function commitPRBill($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
 		$id = $params["id"];
 		$db = M();
 		

@@ -266,11 +266,11 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
             return me.__mainGrid;
         }
 
-        var modelName = "PSIITBill";
+        var modelName = "PSIPRBill";
         Ext.define(modelName, {
             extend: "Ext.data.Model",
             fields: ["id", "ref", "bizDT",  "warehouseName", "supplierName",
-                "inputUserName", "bizUserName", "billStatus", "rejMoney"]
+                "inputUserName", "bizUserName", "billStatus", "rejMoney", "dateCreated"]
         });
         var store = Ext.create("Ext.data.Store", {
             autoLoad: false,
@@ -352,8 +352,14 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
                     menuDisabled: true,
                     sortable: false
                 }, {
-                    header: "录单人",
+                    header: "制单人",
                     dataIndex: "inputUserName",
+                    menuDisabled: true,
+                    sortable: false
+                }, {
+                    header: "制单时间",
+                    dataIndex: "dateCreated",
+                    width: 140,
                     menuDisabled: true,
                     sortable: false
                 }],
