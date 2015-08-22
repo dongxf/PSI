@@ -10,6 +10,10 @@ namespace Home\Service;
 class BizConfigService extends PSIBaseService {
 
 	public function allConfigs($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$sql = "select id, name, value, note  
 				from t_config  
 				order by id";
@@ -40,6 +44,10 @@ class BizConfigService extends PSIBaseService {
 	}
 
 	public function allConfigsWithExtData() {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$sql = "select id, name, value from t_config order by id";
 		$db = M();
 		$result = $db->query($sql);
