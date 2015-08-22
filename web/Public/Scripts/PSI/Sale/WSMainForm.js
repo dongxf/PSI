@@ -498,9 +498,9 @@ Ext.define("PSI.Sale.WSMainForm", {
         var buttonEdit = Ext.getCmp("buttonEdit");
         buttonEdit.setDisabled(false);
         if (commited) {
-        	buttonEdit.setText("查看采购入库单");
+        	buttonEdit.setText("查看销售出库单");
         } else {
-        	buttonEdit.setText("编辑采购入库单");
+        	buttonEdit.setText("编辑销售出库单");
         }
 
         Ext.getCmp("buttonDelete").setDisabled(commited);

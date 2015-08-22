@@ -45,16 +45,19 @@ Ext.define("PSI.Sale.SRMainForm", {
             handler: me.onAddBill
         }, "-", {
             text: "编辑销售退货入库单",
+            id: "buttonEdit",
             iconCls: "PSI-button-edit",
             scope: me,
             handler: me.onEditBill
         }, "-", {
             text: "删除销售退货入库单",
+            id: "buttonDelete",
             iconCls: "PSI-button-delete",
             scope: me,
             handler: me.onDeleteBill
         }, "-", {
             text: "提交入库",
+            id: "buttonCommit",
             iconCls: "PSI-button-commit",
             scope: me,
             handler: me.onCommit
@@ -154,6 +157,10 @@ Ext.define("PSI.Sale.SRMainForm", {
     },
     
     refreshMainGrid: function (id) {
+    	Ext.getCmp("buttonEdit").setDisabled(true);
+    	Ext.getCmp("buttonDelete").setDisabled(true);
+    	Ext.getCmp("buttonCommit").setDisabled(true);
+    	
         var gridDetail = this.getDetailGrid();
         gridDetail.setTitle("销售退货入库单明细");
         gridDetail.getStore().removeAll();
@@ -195,6 +202,11 @@ Ext.define("PSI.Sale.SRMainForm", {
             return;
         }
         var bill = item[0];
+        
+        if (bill.get("billStatus") == "已入库") {
+        	PSI.MsgBox.showInfo("当前销售退货入库单已经提交入库，不能删除");
+        	return;
+        }
 
         var info = "请确认是否删除销售退货入库单: <span style='color:red'>" + bill.get("ref")
                 + "</span>";
@@ -238,6 +250,11 @@ Ext.define("PSI.Sale.SRMainForm", {
             return;
         }
         var bill = item[0];
+
+        if (bill.get("billStatus") == "已入库") {
+        	PSI.MsgBox.showInfo("当前销售退货入库单已经提交入库，不能再次提交");
+        	return;
+        }
 
         var info = "请确认是否提交单号: <span style='color:red'>" + bill.get("ref") + "</span> 的销售退货入库单?";
         PSI.MsgBox.confirm(info, function () {
@@ -521,7 +538,32 @@ Ext.define("PSI.Sale.SRMainForm", {
     },
     
     onMainGridSelect: function() {
-    	this.freshDetailGrid();
+        var me = this;
+        me.getDetailGrid().setTitle("销售退货入库单明细");
+        var grid = me.getMainGrid();
+        var item = grid.getSelectionModel().getSelection();
+        if (item == null || item.length != 1) {
+            Ext.getCmp("buttonEdit").setDisabled(true);
+            Ext.getCmp("buttonDelete").setDisabled(true);
+            Ext.getCmp("buttonCommit").setDisabled(true);
+            return;
+        }
+        var bill = item[0];
+    	
+        var commited = bill.get("billStatus") == "已入库";
+
+        var buttonEdit = Ext.getCmp("buttonEdit");
+        buttonEdit.setDisabled(false);
+        if (commited) {
+        	buttonEdit.setText("查看销售退货入库单");
+        } else {
+        	buttonEdit.setText("编辑销售退货入库单");
+        }
+
+        Ext.getCmp("buttonDelete").setDisabled(commited);
+        Ext.getCmp("buttonCommit").setDisabled(commited);
+
+        me.freshDetailGrid();
     },
     
     freshDetailGrid: function(id) {
