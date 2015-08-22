@@ -10,6 +10,10 @@ namespace Home\Service;
 class CustomerService extends PSIBaseService {
 
 	public function categoryList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$code = $params["code"];
 		$name = $params["name"];
 		$address = $params["address"];
@@ -63,6 +67,10 @@ class CustomerService extends PSIBaseService {
 	}
 
 	public function editCategory($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
 		$id = $params["id"];
 		$code = $params["code"];
 		$name = $params["name"];
@@ -112,6 +120,10 @@ class CustomerService extends PSIBaseService {
 	}
 
 	public function deleteCategory($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+			
 		$id = $params["id"];
 		
 		$db = M();
@@ -138,6 +150,10 @@ class CustomerService extends PSIBaseService {
 	}
 
 	public function editCustomer($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
 		$id = $params["id"];
 		$code = $params["code"];
 		$name = $params["name"];
@@ -276,6 +292,10 @@ class CustomerService extends PSIBaseService {
 	}
 
 	public function customerList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$categoryId = $params["categoryId"];
 		$page = $params["page"];
 		$start = $params["start"];
@@ -403,6 +423,10 @@ class CustomerService extends PSIBaseService {
 	}
 
 	public function deleteCustomer($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
 		$id = $params["id"];
 		$db = M();
 		$sql = "select code, name from t_customer where id = '%s' ";
@@ -463,6 +487,10 @@ class CustomerService extends PSIBaseService {
 	}
 
 	public function queryData($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$queryKey = $params["queryKey"];
 		if ($queryKey == null) {
 			$queryKey = "";
@@ -477,6 +505,10 @@ class CustomerService extends PSIBaseService {
 	}
 
 	public function customerInfo($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$id = $params["id"];
 		
 		$result = array();
@@ -503,7 +535,7 @@ class CustomerService extends PSIBaseService {
 			$result["address"] = $data[0]["address"];
 			$result["addressReceipt"] = $data[0]["address_receipt"];
 			$result["initReceivables"] = $data[0]["init_receivables"];
-			$d = $data[0]["init_receivables_dt"]; 
+			$d = $data[0]["init_receivables_dt"];
 			if ($d) {
 				$result["initReceivablesDT"] = $this->toYMD($d);
 			}
