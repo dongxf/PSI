@@ -10,6 +10,10 @@ namespace Home\Service;
 class BizlogService extends PSIBaseService {
 
 	public function logList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$page = $params["page"];
 		$start = $params["start"];
 		$limit = $params["limit"];
@@ -36,6 +40,10 @@ class BizlogService extends PSIBaseService {
 	}
 
 	public function logTotalCount() {
+		if ($this->isNotOnline()) {
+			return 0;
+		}
+		
 		$sql = "select count(*) as cnt 
 				from t_biz_log b, t_user u
 				where b.user_id = u.id";
