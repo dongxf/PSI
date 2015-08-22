@@ -18,6 +18,10 @@ class WarehouseService extends PSIBaseService {
 	 * 所有仓库的列表信息
 	 */
 	public function warehouseList() {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		return M()->query("select id, code, name, inited from t_warehouse order by code");
 	}
 
@@ -25,6 +29,10 @@ class WarehouseService extends PSIBaseService {
 	 * 新建或编辑仓库
 	 */
 	public function editWarehouse($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
 		$id = $params["id"];
 		$code = $params["code"];
 		$name = $params["name"];
@@ -78,6 +86,10 @@ class WarehouseService extends PSIBaseService {
 	 * 删除仓库
 	 */
 	public function deleteWarehouse($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
 		$id = $params["id"];
 		
 		$db = M();
@@ -154,6 +166,10 @@ class WarehouseService extends PSIBaseService {
 	}
 
 	public function queryData($queryKey, $fid) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		if ($queryKey == null) {
 			$queryKey = "";
 		}
@@ -188,6 +204,10 @@ class WarehouseService extends PSIBaseService {
 	}
 
 	public function warehouseOrgList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$warehouseId = $params["warehouseId"];
 		$fid = $params["fid"];
 		$db = M();
@@ -225,6 +245,10 @@ class WarehouseService extends PSIBaseService {
 	}
 
 	public function allOrgs() {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$sql = "select id, name, org_code, full_name 
 				from t_org where parent_id is null order by org_code";
 		$db = M();
@@ -355,6 +379,10 @@ class WarehouseService extends PSIBaseService {
 	}
 
 	public function addOrg($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
 		$warehouseId = $params["warehouseId"];
 		$fid = $params["fid"];
 		$orgId = $params["orgId"];
@@ -418,6 +446,10 @@ class WarehouseService extends PSIBaseService {
 	}
 
 	public function deleteOrg($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
 		$warehouseId = $params["warehouseId"];
 		$fid = $params["fid"];
 		$orgId = $params["orgId"];
@@ -476,6 +508,10 @@ class WarehouseService extends PSIBaseService {
 	 * 在仓库启用的组织机构绑定的前提，查询当前登录用户的操作的仓库
 	 */
 	public function getWarehouseListForLoginUser($fid) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$us = new UserService();
 		$userId = $us->getLoginUserId();
 		$result = array();
@@ -497,6 +533,10 @@ class WarehouseService extends PSIBaseService {
 	}
 
 	public function orgViewWarehouseList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$orgId = $params["orgId"];
 		$result = array();
 		if ($orgId == null) {
