@@ -62,4 +62,26 @@ class PSIBaseService {
 	protected function toYMD($d) {
 		return date("Y-m-d", strtotime($d));
 	}
+
+	/**
+	 * 盘点当前用户的session是否已经失效
+	 * true: 已经不在线
+	 */
+	protected function isNotOnline() {
+		return session("loginUserId") == null;
+	}
+	
+	/**
+	 * 当用户不在线的时候，返回的提示信息
+	 */
+	protected function notOnlineError() {
+		return $this->bad("当前用户已经退出系统，请重新登录PSI");
+	}
+	
+	/**
+	 * 返回空列表
+	 */
+	protected  function emptyResult() {
+		return array();
+	}
 }

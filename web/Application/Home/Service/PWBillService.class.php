@@ -10,6 +10,10 @@ namespace Home\Service;
 class PWBillService extends PSIBaseService {
 
 	public function pwbillList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$page = $params["page"];
 		$start = $params["start"];
 		$limit = $params["limit"];
@@ -114,6 +118,10 @@ class PWBillService extends PSIBaseService {
 	}
 
 	public function pwBillDetailList($pwbillId) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$sql = "select p.id, g.code, g.name, g.spec, u.name as unit_name, p.goods_count, p.goods_price, p.goods_money 
 				from t_pw_bill_detail p, t_goods g, t_goods_unit u 
 				where p.pwbill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id 
@@ -136,6 +144,10 @@ class PWBillService extends PSIBaseService {
 	}
 
 	public function editPWBill($json) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
 		$bill = json_decode(html_entity_decode($json), true);
 		if ($bill == null) {
 			return $this->bad("传入的参数错误，不是正确的JSON格式");
@@ -319,6 +331,10 @@ class PWBillService extends PSIBaseService {
 	}
 
 	public function pwBillInfo($id) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$result["id"] = $id;
 		
 		$db = M();
@@ -394,6 +410,10 @@ class PWBillService extends PSIBaseService {
 	}
 
 	public function deletePWBill($id) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
 		$db = M();
 		$sql = "select ref, bill_status from t_pw_bill where id = '%s' ";
 		$data = $db->query($sql, $id);
@@ -428,6 +448,10 @@ class PWBillService extends PSIBaseService {
 	}
 
 	public function commitPWBill($id) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
 		$db = M();
 		$sql = "select ref, warehouse_id, bill_status, biz_dt, biz_user_id,  goods_money, supplier_id 
 				from t_pw_bill 
