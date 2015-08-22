@@ -16,6 +16,9 @@ class FIdService {
 		
 		$us = new UserService();
 		$userId = $us->getLoginUserId();
+		if (! $userId) {
+			return;
+		}
 		
 		$db = M();
 		

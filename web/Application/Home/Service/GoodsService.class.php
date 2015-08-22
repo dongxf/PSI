@@ -10,10 +10,18 @@ namespace Home\Service;
 class GoodsService extends PSIBaseService {
 
 	public function allUnits() {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		return M()->query("select id, name from t_goods_unit order by name");
 	}
 
 	public function editUnit($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
 		$id = $params["id"];
 		$name = $params["name"];
 		
@@ -59,6 +67,10 @@ class GoodsService extends PSIBaseService {
 	}
 
 	public function deleteUnit($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
 		$id = $params["id"];
 		
 		$db = M();
@@ -88,6 +100,10 @@ class GoodsService extends PSIBaseService {
 	}
 
 	public function allCategories($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$code = $params["code"];
 		$name = $params["name"];
 		$spec = $params["spec"];
@@ -118,6 +134,10 @@ class GoodsService extends PSIBaseService {
 	}
 
 	public function editCategory($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
 		$id = $params["id"];
 		$code = $params["code"];
 		$name = $params["name"];
@@ -166,6 +186,10 @@ class GoodsService extends PSIBaseService {
 	}
 
 	public function deleteCategory($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
 		$id = $params["id"];
 		
 		$db = M();
@@ -195,6 +219,10 @@ class GoodsService extends PSIBaseService {
 	}
 
 	public function goodsList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$categoryId = $params["categoryId"];
 		$code = $params["code"];
 		$name = $params["name"];
@@ -266,6 +294,10 @@ class GoodsService extends PSIBaseService {
 	}
 
 	public function editGoods($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
 		$id = $params["id"];
 		$code = $params["code"];
 		$name = $params["name"];
@@ -336,98 +368,11 @@ class GoodsService extends PSIBaseService {
 		return $this->ok($id);
 	}
 
-	/**
-	 * 编辑商品（双单位，TU : Two Units)
-	 */
-	public function editGoodsTU($params) {
-		$id = $params["id"];
-		$code = $params["code"];
-		$name = $params["name"];
-		$spec = $params["spec"];
-		$categoryId = $params["categoryId"];
-		$unitId = $params["unitId"];
-		$salePrice = $params["salePrice"];
-		$purchaseUnitId = $params["purchaseUnitId"];
-		$purchasePrice = $params["purchasePrice"];
-		$psFactor = $params["psFactor"];
-		
-		if (floatval($psFactor) <= 0) {
-			return $this->bad("采购/销售计量单位转换比例必须大于0");
-		}
-		
-		$db = M();
-		$sql = "select name from t_goods_unit where id = '%s' ";
-		$data = $db->query($sql, $purchaseUnitId);
-		if (! $data) {
-			return $this->bad("采购计量单位不存在");
-		}
-		
-		$sql = "select name from t_goods_unit where id = '%s' ";
-		$data = $db->query($sql, $unitId);
-		if (! $data) {
-			return $this->bad("销售计量单位不存在");
-		}
-		$sql = "select name from t_goods_category where id = '%s' ";
-		$data = $db->query($sql, $categoryId);
-		if (! $data) {
-			return $this->bad("商品分类不存在");
-		}
-		
-		if ($id) {
-			// 编辑
-			// 检查商品编码是否唯一
-			$sql = "select count(*) as cnt from t_goods where code = '%s' and id <> '%s' ";
-			$data = $db->query($sql, $code, $id);
-			$cnt = $data[0]["cnt"];
-			if ($cnt > 0) {
-				return $this->bad("编码为 [{$code}]的商品已经存在");
-			}
-			
-			$ps = new PinyinService();
-			$py = $ps->toPY($name);
-			
-			$sql = "update t_goods
-					set code = '%s', name = '%s', spec = '%s', category_id = '%s', 
-					unit_id = '%s', sale_price = %f, py = '%s',
-					purchase_unit_id = '%s', purchase_price = %f, ps_factor = %f 
-					where id = '%s' ";
-			
-			$db->execute($sql, $code, $name, $spec, $categoryId, $unitId, $salePrice, $py, 
-					$purchaseUnitId, $purchasePrice, $psFactor, $id);
-			
-			$log = "编辑商品: 商品编码 = {$code}, 品名 = {$name}, 规格型号 = {$spec}";
-			$bs = new BizlogService();
-			$bs->insertBizlog($log, "基础数据-商品");
-		} else {
-			// 新增
-			// 检查商品编码是否唯一
-			$sql = "select count(*) as cnt from t_goods where code = '%s' ";
-			$data = $db->query($sql, $code);
-			$cnt = $data[0]["cnt"];
-			if ($cnt > 0) {
-				return $this->bad("编码为 [{$code}]的商品已经存在");
-			}
-			
-			$idGen = new IdGenService();
-			$id = $idGen->newId();
-			$ps = new PinyinService();
-			$py = $ps->toPY($name);
-			
-			$sql = "insert into t_goods (id, code, name, spec, category_id, unit_id, sale_price, py,
-					  purchase_unit_id, purchase_price, ps_factor)
-					values ('%s', '%s', '%s', '%s', '%s', '%s', %f, '%s', '%s', %f, %f)";
-			$db->execute($sql, $id, $code, $name, $spec, $categoryId, $unitId, $salePrice, $py, 
-					$purchaseUnitId, $purchasePrice, $psFactor);
-			
-			$log = "新增商品: 商品编码 = {$code}, 品名 = {$name}, 规格型号 = {$spec}";
-			$bs = new BizlogService();
-			$bs->insertBizlog($log, "基础数据-商品");
-		}
-		
-		return $this->ok($id);
-	}
-
 	public function deleteGoods($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
 		$id = $params["id"];
 		
 		$db = M();
@@ -473,6 +418,10 @@ class GoodsService extends PSIBaseService {
 	}
 
 	public function queryData($queryKey) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		if ($queryKey == null) {
 			$queryKey = "";
 		}
@@ -498,6 +447,10 @@ class GoodsService extends PSIBaseService {
 	}
 
 	public function queryDataWithSalePrice($queryKey) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		if ($queryKey == null) {
 			$queryKey = "";
 		}
@@ -523,86 +476,11 @@ class GoodsService extends PSIBaseService {
 		return $result;
 	}
 
-	public function goodsListTU($params) {
-		$categoryId = $params["categoryId"];
-		$code = $params["code"];
-		$name = $params["name"];
-		$spec = $params["spec"];
-		
-		$page = $params["page"];
-		$start = $params["start"];
-		$limit = $params["limit"];
-		
-		$db = M();
-		$result = array();
-		
-		$sql = "select g.id, g.code, g.name, g.sale_price, g.spec,  
-					g.unit_id, u.name as unit_name, u2.name as purchase_unit_name,
-				    u2.id as purchase_unit_id, g.purchase_price, g.ps_factor
-				 from t_goods g
-				 left join t_goods_unit u
-				 on g.unit_id = u.id 
-				 left join t_goods_unit u2
-				 on g.purchase_unit_id = u2.id
-				 where (g.category_id = '%s') ";
-		$queryParam = array();
-		$queryParam[] = $categoryId;
-		if ($code) {
-			$sql .= " and (g.code like '%s') ";
-			$queryParam[] = "%{$code}%";
-		}
-		if ($name) {
-			$sql .= " and (g.name like '%s' or g.py like '%s') ";
-			$queryParam[] = "%{$name}%";
-			$queryParam[] = "%{$name}%";
-		}
-		if ($spec) {
-			$sql .= " and (g.spec like '%s')";
-			$queryParam[] = "%{$spec}%";
-		}
-		$sql .= " order by g.code limit " . $start . ", " . $limit;
-		$data = $db->query($sql, $queryParam);
-		
-		foreach ( $data as $i => $v ) {
-			$result[$i]["id"] = $v["id"];
-			$result[$i]["code"] = $v["code"];
-			$result[$i]["name"] = $v["name"];
-			$result[$i]["salePrice"] = $v["sale_price"];
-			$result[$i]["spec"] = $v["spec"];
-			$result[$i]["unitId"] = $v["unit_id"];
-			$result[$i]["unitName"] = $v["unit_name"];
-			$result[$i]["purchaseUnitId"] = $v["purchase_unit_id"];
-			$result[$i]["purchaseUnitName"] = $v["purchase_unit_name"];
-			$result[$i]["purchasePrice"] = $v["purchase_price"];
-			$result[$i]["psFactor"] = $v["ps_factor"];
-		}
-		
-		$sql = "select count(*) as cnt from t_goods g where (g.category_id = '%s') ";
-		$queryParam = array();
-		$queryParam[] = $categoryId;
-		if ($code) {
-			$sql .= " and (g.code like '%s') ";
-			$queryParam[] = "%{$code}%";
-		}
-		if ($name) {
-			$sql .= " and (g.name like '%s' or g.py like '%s') ";
-			$queryParam[] = "%{$name}%";
-			$queryParam[] = "%{$name}%";
-		}
-		if ($spec) {
-			$sql .= " and (g.spec like '%s')";
-			$queryParam[] = "%{$spec}%";
-		}
-		$data = $db->query($sql, $queryParam);
-		$totalCount = $data[0]["cnt"];
-		
-		return array(
-				"goodsList" => $result,
-				"totalCount" => $totalCount
-		);
-	}
-
 	public function getGoodsInfo($id) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$sql = "select category_id, code, name, spec, unit_id, sale_price
 				from t_goods
 				where id = '%s' ";
@@ -622,31 +500,11 @@ class GoodsService extends PSIBaseService {
 		}
 	}
 
-	public function getGoodsInfoTU($id) {
-		$sql = "select category_id, code, name, spec, unit_id, sale_price, 
-				   purchase_unit_id, purchase_price, ps_factor
-				from t_goods
-				where id = '%s' ";
-		$data = M()->query($sql, $id);
-		if ($data) {
-			$result = array();
-			$result["categoryId"] = $data[0]["category_id"];
-			$result["code"] = $data[0]["code"];
-			$result["name"] = $data[0]["name"];
-			$result["spec"] = $data[0]["spec"];
-			$result["unitId"] = $data[0]["unit_id"];
-			$result["salePrice"] = $data[0]["sale_price"];
-			$result["purchaseUnitId"] = $data[0]["purchase_unit_id"];
-			$result["purchasePrice"] = $data[0]["purchase_price"];
-			$result["psFactor"] = $data[0]["ps_factor"];
-			
-			return $result;
-		} else {
-			return array();
-		}
-	}
-
 	public function goodsSafetyInventoryList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$id = $params["id"];
 		
 		$result = array();
@@ -701,6 +559,10 @@ class GoodsService extends PSIBaseService {
 	}
 
 	public function siInfo($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$id = $params["id"];
 		
 		$result = array();
@@ -736,6 +598,10 @@ class GoodsService extends PSIBaseService {
 	}
 
 	public function editSafetyInventory($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
 		$json = $params["jsonStr"];
 		$bill = json_decode(html_entity_decode($json), true);
 		if ($bill == null) {
@@ -753,7 +619,7 @@ class GoodsService extends PSIBaseService {
 		try {
 			$sql = "select code, name, spec from t_goods where id = '%s'";
 			$data = $db->query($sql, $id);
-			if (!$data) {
+			if (! $data) {
 				$db->rollback();
 				return $this->bad("商品不存在，无法设置商品安全库存");
 			}
