@@ -10,6 +10,10 @@ namespace Home\Service;
 class BillViewService extends PSIBaseService {
 
 	public function pwBillInfo($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$ref = $params["ref"];
 		
 		$result = array();
@@ -57,6 +61,10 @@ class BillViewService extends PSIBaseService {
 	}
 
 	public function wsBillInfo($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$ref = $params["ref"];
 		
 		$result = array();
@@ -106,6 +114,10 @@ class BillViewService extends PSIBaseService {
 	}
 
 	public function prBillInfo($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$ref = $params["ref"];
 		
 		$result = array();
@@ -165,6 +177,10 @@ class BillViewService extends PSIBaseService {
 	}
 
 	public function srBillInfo($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$ref = $params["ref"];
 		
 		$db = M();
@@ -218,6 +234,10 @@ class BillViewService extends PSIBaseService {
 	}
 
 	public function itBillInfo($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$ref = $params["ref"];
 		
 		$result = array();
@@ -264,6 +284,10 @@ class BillViewService extends PSIBaseService {
 	}
 
 	public function icBillInfo($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$ref = $params["ref"];
 		
 		$result = array();
