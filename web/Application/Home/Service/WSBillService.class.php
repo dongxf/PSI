@@ -10,6 +10,10 @@ namespace Home\Service;
 class WSBillService extends PSIBaseService {
 
 	public function wsBillInfo($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$id = $params["id"];
 		$us = new UserService();
 		$result = array();
@@ -120,6 +124,10 @@ class WSBillService extends PSIBaseService {
 	 * 新增或编辑销售出库单
 	 */
 	public function editWSBill($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
 		$json = $params["jsonStr"];
 		$bill = json_decode(html_entity_decode($json), true);
 		if ($bill == null) {
@@ -270,6 +278,10 @@ class WSBillService extends PSIBaseService {
 	}
 
 	public function wsbillList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$page = $params["page"];
 		$start = $params["start"];
 		$limit = $params["limit"];
@@ -386,6 +398,10 @@ class WSBillService extends PSIBaseService {
 	}
 
 	public function wsBillDetailList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$billId = $params["billId"];
 		$sql = "select d.id, g.code, g.name, g.spec, u.name as unit_name, d.goods_count, 
 				d.goods_price, d.goods_money, d.sn_note 
@@ -411,6 +427,10 @@ class WSBillService extends PSIBaseService {
 	}
 
 	public function deleteWSBill($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
 		$id = $params["id"];
 		$db = M();
 		$sql = "select ref, bill_status from t_ws_bill where id = '%s' ";
@@ -447,6 +467,10 @@ class WSBillService extends PSIBaseService {
 	 * 提交销售出库单
 	 */
 	public function commitWSBill($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
 		$id = $params["id"];
 		
 		$db = M();
@@ -638,6 +662,10 @@ class WSBillService extends PSIBaseService {
 	}
 
 	public function pdf($params) {
+		if ($this->isNotOnline()) {
+			return;
+		}
+		
 		$ref = $params["ref"];
 		$db = M();
 		$sql = "select w.id, w.bizdt, c.name as customer_name,
