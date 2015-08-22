@@ -59,14 +59,17 @@ Ext.define("PSI.Goods.GoodsEditForm", {
             title: entity == null ? "新增商品" : "编辑商品",
             modal: true,
             onEsc: Ext.emptyFn,
-            width: 400,
-            height: 230,
+            width: 460,
+            height: 180,
             layout: "fit",
             items: [
                 {
                     id: "editForm",
                     xtype: "form",
-                    layout: "form",
+                    layout: {
+    					type : "table",
+    					columns : 2
+    				},
                     height: "100%",
                     bodyPadding: 5,
                     defaultType: 'textfield',
@@ -121,6 +124,8 @@ Ext.define("PSI.Goods.GoodsEditForm", {
                         {
                             id: "editName",
                             fieldLabel: "品名",
+                            colspan: 2,
+                            width: 430,
                             allowBlank: false,
                             blankText: "没有输入品名",
                             beforeLabelTextTpl: PSI.Const.REQUIRED,
@@ -136,6 +141,8 @@ Ext.define("PSI.Goods.GoodsEditForm", {
                         {
                             id: "editSpec",
                             fieldLabel: "规格型号",
+                            colspan: 2,
+                            width: 430,
                             name: "spec",
                             value: entity == null ? null : entity.get("spec"),
                             listeners: {
