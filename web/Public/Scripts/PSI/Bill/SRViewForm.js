@@ -107,7 +107,6 @@ Ext.define("PSI.Bill.SRViewForm", {
                 if (success) {
                     var data = Ext.JSON.decode(response.responseText);
 
-                    Ext.getCmp("editRef").setValue(data.ref);
                     Ext.getCmp("editCustomer").setValue(data.customerName + " 销售单号: " + data.wsBillRef);
 
                     Ext.getCmp("editWarehouse").setValue(data.warehouseName);

@@ -270,8 +270,9 @@ Ext.define("PSI.Funds.RvMainForm", {
 						return value;
 					}
 					
-					return "<a href='" + PSI.Const.BASE_URL + "Home/Bill/index?fid=2004&refType=" + record.get("refType") 
-						+ "&ref=" + record.get("refNumber") + "' target='_blank'>" + value + "</a>";
+					return "<a href='" + PSI.Const.BASE_URL + "Home/Bill/viewIndex?fid=2004&refType=" 
+						+ encodeURIComponent(record.get("refType")) 
+						+ "&ref=" + encodeURIComponent(record.get("refNumber")) + "' target='_blank'>" + value + "</a>";
 				}
 			}, {
 				header : "业务日期",
