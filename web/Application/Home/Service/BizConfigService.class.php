@@ -64,15 +64,7 @@ class BizConfigService extends PSIBaseService {
 
 	public function edit($params) {
 		if ($this->isNotOnline()) {
-			return $this->notOnlineError();	
-		}
-		
-		// 临时代码
-		if ($this->isDemo()) {
-			$value = $params["1001-01"];
-			if ($value == 1) {
-				return $this->bad("当前版本还不支持修改[商品采购和销售分别使用不同的计量单位]的值，该功能牵涉很多处代码修改，还没有开发完成");
-			}
+			return $this->notOnlineError();
 		}
 		
 		$db = M();
@@ -92,12 +84,7 @@ class BizConfigService extends PSIBaseService {
 				where id = '%s' ";
 			$db->execute($sql, $value, $key);
 			
-			if ($key == "1001-01") {
-				$v = $value == 1 ? "使用不同计量单位" : "使用同一个计量单位";
-				$log = "把[商品采购和销售分别使用不同的计量单位]设置为[{$v}]";
-				$bs = new BizlogService();
-				$bs->insertBizlog($log, "业务设置");
-			} else if ($key == "1003-01") {
+			if ($key == "1003-01") {
 				$v = $value == 1 ? "仓库需指定组织机构" : "仓库不需指定组织机构";
 				$log = "把[仓库需指定组织机构]设置为[{$v}]";
 				$bs = new BizlogService();
@@ -145,24 +132,5 @@ class BizConfigService extends PSIBaseService {
 		} else {
 			return false;
 		}
-	}
-
-	/**
-	 * 商品是否启用双单位
-	 *
-	 * @return true: 启用双单位
-	 */
-	public function goodsUsesTwoUnits() {
-		// 2015-08-20 为了发布PSI2015 beta2
-		// PSI2015 beta2中不实现双单位
-		return false;
-		
-		// $sql = "select value from t_config where id = '1001-01' ";
-		// $data = M()->query($sql);
-		// if ($data) {
-		// return $data[0]["value"] == "1";
-		// } else {
-		// return false;
-		// }
 	}
 }
