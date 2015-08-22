@@ -35,6 +35,10 @@ class ITBillService extends PSIBaseService {
 	 * 调拨单主表列表信息
 	 */
 	public function itbillList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$page = $params["page"];
 		$start = $params["start"];
 		$limit = $params["limit"];
@@ -146,6 +150,10 @@ class ITBillService extends PSIBaseService {
 	}
 
 	public function editITBill($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
 		$json = $params["jsonStr"];
 		$bill = json_decode(html_entity_decode($json), true);
 		if ($bill == null) {
@@ -275,6 +283,10 @@ class ITBillService extends PSIBaseService {
 	}
 
 	public function itBillInfo($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$id = $params["id"];
 		
 		$result = array();
@@ -333,6 +345,10 @@ class ITBillService extends PSIBaseService {
 	}
 
 	public function itBillDetailList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$id = $params["id"];
 		
 		$result = array();
@@ -357,6 +373,10 @@ class ITBillService extends PSIBaseService {
 	}
 
 	public function deleteITBill($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
 		$id = $params["id"];
 		
 		$db = M();
@@ -399,6 +419,10 @@ class ITBillService extends PSIBaseService {
 	 * 提交调拨单
 	 */
 	public function commitITBill($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
 		$id = $params["id"];
 		
 		$db = M();
