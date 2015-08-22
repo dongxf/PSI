@@ -41,11 +41,14 @@ Ext.define("PSI.Purchase.PWMainForm", {
     	return [{
             text: "新建采购入库单", iconCls: "PSI-button-add", scope: me, handler: me.onAddBill
         }, "-", {
-            text: "编辑采购入库单", iconCls: "PSI-button-edit", scope: me, handler: me.onEditBill
+            text: "编辑采购入库单", iconCls: "PSI-button-edit", scope: me, handler: me.onEditBill,
+            id: "buttonEdit"
         }, "-", {
-            text: "删除采购入库单", iconCls: "PSI-button-delete", scope: me, handler: me.onDeleteBill
+            text: "删除采购入库单", iconCls: "PSI-button-delete", scope: me, handler: me.onDeleteBill,
+            id: "buttonDelete"
         }, "-", {
-            text: "提交入库", iconCls: "PSI-button-commit", scope: me, handler: me.onCommit
+            text: "提交入库", iconCls: "PSI-button-commit", scope: me, handler: me.onCommit,
+            id: "buttonCommit"
         },"-",{
 			text : "帮助",
 			iconCls : "PSI-help",
@@ -150,7 +153,7 @@ Ext.define("PSI.Purchase.PWMainForm", {
         Ext.define(modelName, {
             extend: "Ext.data.Model",
             fields: ["id", "ref", "bizDate", "supplierName", "warehouseName", "inputUserName",
-                "bizUserName", "billStatus", "amount"]
+                "bizUserName", "billStatus", "amount", "dateCreated"]
         });
         var store = Ext.create("Ext.data.Store", {
             autoLoad: false,
@@ -198,7 +201,8 @@ Ext.define("PSI.Purchase.PWMainForm", {
                 {header: "采购金额", dataIndex: "amount", menuDisabled: true, sortable: false, align: "right", xtype: "numbercolumn", width: 150},
                 {header: "入库仓库", dataIndex: "warehouseName", menuDisabled: true, sortable: false},
                 {header: "业务员", dataIndex: "bizUserName", menuDisabled: true, sortable: false},
-                {header: "录单人", dataIndex: "inputUserName", menuDisabled: true, sortable: false}
+                {header: "制单人", dataIndex: "inputUserName", menuDisabled: true, sortable: false},
+                {header: "制单时间", dataIndex: "dateCreated", menuDisabled: true, sortable: false, width: 140}
             ],
             store: store,
             tbar: [{
@@ -297,6 +301,10 @@ Ext.define("PSI.Purchase.PWMainForm", {
     refreshMainGrid: function (id) {
     	var me = this;
     	
+    	Ext.getCmp("buttonEdit").setDisabled(true);
+    	Ext.getCmp("buttonDelete").setDisabled(true);
+    	Ext.getCmp("buttonCommit").setDisabled(true);
+    	
         var gridDetail = me.getDetailGrid();
         gridDetail.setTitle("采购入库单明细");
         gridDetail.getStore().removeAll();
@@ -387,6 +395,30 @@ Ext.define("PSI.Purchase.PWMainForm", {
     },
     
     onMainGridSelect: function () {
+        var me = this;
+        me.getDetailGrid().setTitle("采购入库单明细");
+        var item = me.getMainGrid().getSelectionModel().getSelection();
+        if (item == null || item.length != 1) {
+            Ext.getCmp("buttonEdit").setDisabled(true);
+            Ext.getCmp("buttonDelete").setDisabled(true);
+            Ext.getCmp("buttonCommit").setDisabled(true);
+        	
+            return;
+        }
+        var bill = item[0];
+        var commited = bill.get("billStatus") == "已入库";
+
+        var buttonEdit = Ext.getCmp("buttonEdit");
+        buttonEdit.setDisabled(false);
+        if (commited) {
+        	buttonEdit.setText("查看采购入库单");
+        } else {
+        	buttonEdit.setText("编辑采购入库单");
+        }
+
+        Ext.getCmp("buttonDelete").setDisabled(commited);
+        Ext.getCmp("buttonCommit").setDisabled(commited);
+
         this.refreshDetailGrid();
     },
     
