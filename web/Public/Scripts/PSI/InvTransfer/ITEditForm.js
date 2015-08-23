@@ -305,21 +305,22 @@ Ext.define("PSI.InvTransfer.ITEditForm", {
             columnLines: true,
             columns: [
                 Ext.create("Ext.grid.RowNumberer", {text: "序号", width: 30}),
-                {header: "商品编码", dataIndex: "goodsCode", menuDisabled: true,
+                {header: "商品编码", dataIndex: "goodsCode", menuDisabled: true, draggable: false,
                     sortable: false, editor: {xtype: "psi_goodsfield", parentCmp: me}},
-                {header: "商品名称", dataIndex: "goodsName", menuDisabled: true, sortable: false, width: 200},
-                {header: "规格型号", dataIndex: "goodsSpec", menuDisabled: true, sortable: false, width: 200},
-                {header: "调拨数量", dataIndex: "goodsCount", menuDisabled: true,
+                {header: "商品名称", dataIndex: "goodsName", menuDisabled: true, sortable: false, draggable: false, width: 200},
+                {header: "规格型号", dataIndex: "goodsSpec", menuDisabled: true, sortable: false, draggable: false, width: 200},
+                {header: "调拨数量", dataIndex: "goodsCount", menuDisabled: true, draggable: false,
                     sortable: false, align: "right", width: 100,
                     editor: {xtype: "numberfield",
                         allowDecimals: false,
                         hideTrigger: true}
                 },
-                {header: "单位", dataIndex: "unitName", menuDisabled: true, sortable: false, width: 60},
+                {header: "单位", dataIndex: "unitName", menuDisabled: true, sortable: false, draggable: false, width: 60},
                 {
                     header: "",
                     align: "center",
                     menuDisabled: true,
+                    draggable: false,
                     width: 50,
                     xtype: "actioncolumn",
                     id: "columnActionDelete",
@@ -341,6 +342,7 @@ Ext.define("PSI.InvTransfer.ITEditForm", {
 					id: "columnActionAdd",
 					align : "center",
 					menuDisabled : true,
+					draggable: false,
 					width : 50,
 					xtype : "actioncolumn",
 					items : [ {
@@ -357,6 +359,7 @@ Ext.define("PSI.InvTransfer.ITEditForm", {
 					id: "columnActionAppend",
 					align : "center",
 					menuDisabled : true,
+					draggable: false,
 					width : 50,
 					xtype : "actioncolumn",
 					items : [ {
