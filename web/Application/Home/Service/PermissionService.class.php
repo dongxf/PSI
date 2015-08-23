@@ -12,6 +12,10 @@ use Home\Common\DemoConst;
 class PermissionService extends PSIBaseService {
 
 	public function roleList() {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$sql = "select id, name from t_role order by name";
 		$data = M()->query($sql);
 		
@@ -19,6 +23,10 @@ class PermissionService extends PSIBaseService {
 	}
 
 	public function permissionList($roleId) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$sql = "select p.id, p.name
 				from t_role r, t_role_permission rp, t_permission p 
 				where r.id = rp.role_id and r.id = '%s' and rp.permission_id = p.id 
@@ -29,6 +37,10 @@ class PermissionService extends PSIBaseService {
 	}
 
 	public function userList($roleId) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$sql = "select u.id, u.login_name, u.name, org.full_name 
 				from t_role r, t_role_user ru, t_user u, t_org org 
 				where r.id = ru.role_id and r.id = '%s' and ru.user_id = u.id and u.org_id = org.id 
@@ -47,6 +59,10 @@ class PermissionService extends PSIBaseService {
 	}
 
 	public function editRole($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
 		$id = $params["id"];
 		$name = $params["name"];
 		$permissionIdList = $params["permissionIdList"];
@@ -142,6 +158,10 @@ class PermissionService extends PSIBaseService {
 	}
 
 	public function selectPermission($idList) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$list = explode(",", $idList);
 		if (! $list) {
 			return array();
@@ -167,6 +187,10 @@ class PermissionService extends PSIBaseService {
 	}
 
 	public function selectUsers($idList) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$list = explode(",", $idList);
 		if (! $list) {
 			return array();
@@ -197,6 +221,10 @@ class PermissionService extends PSIBaseService {
 	}
 
 	public function deleteRole($id) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
 		if ($this->isDemo() && $id == DemoConst::ADMIN_ROLE_ID) {
 			return $this->bad("在演示环境下，系统管理角色不希望被您删除，请见谅");
 		}
