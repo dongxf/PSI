@@ -303,22 +303,22 @@ Ext.define("PSI.Purchase.PWEditForm", {
 			columns : [
 		           {
 		        	   xtype: "rownumberer"
-		           },
-					{
+		           }, {
 						header : "商品编码",
 						dataIndex : "goodsCode",
 						menuDisabled : true,
 						sortable : false,
+						draggable: false,
 						editor : {
 							xtype : "psi_goodsfield",
 							parentCmp : me
 						}
-					},
-					{
+		           }, {
 						header : "商品名称",
 						dataIndex : "goodsName",
 						menuDisabled : true,
 						sortable : false,
+						draggable: false,
 						width : 200
 					},
 					{
@@ -326,6 +326,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 						dataIndex : "goodsSpec",
 						menuDisabled : true,
 						sortable : false,
+						draggable: false,
 						width : 200
 					},
 					{
@@ -333,6 +334,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 						dataIndex : "goodsCount",
 						menuDisabled : true,
 						sortable : false,
+						draggable: false,
 						align : "right",
 						width : 100,
 						editor : {
@@ -346,6 +348,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 						dataIndex : "unitName",
 						menuDisabled : true,
 						sortable : false,
+						draggable: false,
 						width : 60
 					},
 					{
@@ -353,6 +356,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 						dataIndex : "goodsPrice",
 						menuDisabled : true,
 						sortable : false,
+						draggable: false,
 						align : "right",
 						xtype : "numbercolumn",
 						width : 100,
@@ -366,6 +370,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 						dataIndex : "goodsMoney",
 						menuDisabled : true,
 						sortable : false,
+						draggable: false,
 						align : "right",
 						xtype : "numbercolumn",
 						width : 120
@@ -375,6 +380,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 						id: "columnActionDelete",
 						align : "center",
 						menuDisabled : true,
+						draggable: false,
 						width : 50,
 						xtype : "actioncolumn",
 						items : [ {
@@ -394,6 +400,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 						id: "columnActionAdd",
 						align : "center",
 						menuDisabled : true,
+						draggable: false,
 						width : 50,
 						xtype : "actioncolumn",
 						items : [ {
@@ -410,6 +417,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 						id: "columnActionAppend",
 						align : "center",
 						menuDisabled : true,
+						draggable: false,
 						width : 50,
 						xtype : "actioncolumn",
 						items : [ {
