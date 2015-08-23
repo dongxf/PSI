@@ -18,12 +18,14 @@ class BizlogService extends PSIBaseService {
 		$start = $params["start"];
 		$limit = $params["limit"];
 		
+		$db = M();
+		
 		$sql = "select b.id, u.login_name, u.name, b.ip, b.info, b.date_created, b.log_category 
 				from t_biz_log b, t_user u
 				where b.user_id = u.id
 				order by b.date_created desc
 				limit %d, %d ";
-		$data = M()->query($sql, $start , $limit);
+		$data = $db->query($sql, $start, $limit);
 		$result = array();
 		
 		foreach ( $data as $i => $v ) {
@@ -36,19 +38,16 @@ class BizlogService extends PSIBaseService {
 			$result[$i]["logCategory"] = $v["log_category"];
 		}
 		
-		return $result;
-	}
-
-	public function logTotalCount() {
-		if ($this->isNotOnline()) {
-			return 0;
-		}
-		
 		$sql = "select count(*) as cnt 
 				from t_biz_log b, t_user u
 				where b.user_id = u.id";
-		$data = M()->query($sql);
-		return $data[0]["cnt"];
+		$data = $db->query($sql);
+		$cnt = $data[0]["cnt"];
+		
+		return array(
+				"logs" => $result,
+				"totalCount" => $cnt
+		);
 	}
 
 	public function insertBizlog($log, $category = "系统") {
