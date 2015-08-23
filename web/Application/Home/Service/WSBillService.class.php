@@ -142,6 +142,30 @@ class WSBillService extends PSIBaseService {
 		$items = $bill["items"];
 		
 		$db = M();
+
+		//检查客户
+		$sql = "select count(*) as cnt from t_customer where id = '%s' ";
+		$data = $db->query($sql, $customerId);
+		$cnt = $data[0]["cnt"];
+		if ($cnt != 1) {
+			return $this->bad("选择的客户不存在，无法保存数据");
+		}
+		
+		// 检查仓库
+		$sql = "select count(*) as cnt from t_warehouse where id = '%s' ";
+		$data = $db->query($sql, $warehouseId);
+		$cnt = $data[0]["cnt"];
+		if ($cnt != 1) {
+			return $this->bad("选择的仓库不存在，无法保存数据");
+		}
+		
+		// 检查业务员
+		$sql = "select count(*) as cnt from t_user where id = '%s' ";
+		$data = $db->query($sql, $bizUserId);
+		$cnt = $data[0]["cnt"];
+		if ($cnt != 1) {
+			return $this->bad("选择的业务员不存在，无法保存数据");
+		}
 		
 		$idGen = new IdGenService();
 		if ($id) {
