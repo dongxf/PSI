@@ -411,6 +411,13 @@ class SRBillService extends PSIBaseService {
 			return $this->bad("选择的仓库不存在");
 		}
 		
+		$sql = "select count(*) as cnt from t_user where id = '%s' ";
+		$data = $db->query($sql, $bizUserId);
+		$cnt = $data[0]["cnt"];
+		if ($cnt != 1) {
+			return $this->bad("选择的业务员不存在");
+		}
+		
 		if ($id) {
 			// 编辑
 			$sql = "select bill_status, ref from t_sr_bill where id = '%s' ";
