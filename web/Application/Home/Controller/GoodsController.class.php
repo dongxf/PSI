@@ -100,7 +100,8 @@ class GoodsController extends Controller {
 			$params = array(
 					"code" => I("post.code"),
 					"name" => I("post.name"),
-					"spec" => I("post.spec")
+					"spec" => I("post.spec"),
+					"barCode" => I("post.barCode")
 			);
 			$this->ajaxReturn($gs->allCategories($params));
 		}
@@ -135,6 +136,7 @@ class GoodsController extends Controller {
 					"code" => I("post.code"),
 					"name" => I("post.name"),
 					"spec" => I("post.spec"),
+					"barCode" => I("post.barCode"),
 					"page" => I("post.page"),
 					"start" => I("post.start"),
 					"limit" => I("post.limit")

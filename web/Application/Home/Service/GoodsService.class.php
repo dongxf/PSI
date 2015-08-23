@@ -107,6 +107,7 @@ class GoodsService extends PSIBaseService {
 		$code = $params["code"];
 		$name = $params["name"];
 		$spec = $params["spec"];
+		$barCode = $params["barCode"];
 		
 		$sql = "select c.id, c.code, c.name, count(g.id) as cnt 
 				from t_goods_category c
@@ -125,6 +126,10 @@ class GoodsService extends PSIBaseService {
 		if ($spec) {
 			$sql .= " and (g.spec like '%s')";
 			$queryParam[] = "%{$spec}%";
+		}
+		if ($barCode) {
+			$sql .= " and (g.bar_code = '%s') ";
+			$queryParam[] = $barCode;
 		}
 		
 		$sql .= " group by c.id 
@@ -227,6 +232,7 @@ class GoodsService extends PSIBaseService {
 		$code = $params["code"];
 		$name = $params["name"];
 		$spec = $params["spec"];
+		$barCode = $params["barCode"];
 		
 		$page = $params["page"];
 		$start = $params["start"];
@@ -252,6 +258,10 @@ class GoodsService extends PSIBaseService {
 		if ($spec) {
 			$sql .= " and (g.spec like '%s')";
 			$queryParam[] = "%{$spec}%";
+		}
+		if ($barCode) {
+			$sql .= " and (g.bar_code = '%s') ";
+			$queryParam[] = $barCode;
 		}
 		
 		$sql .= " order by g.code limit %d, %d";
@@ -287,6 +297,11 @@ class GoodsService extends PSIBaseService {
 			$sql .= " and (g.spec like '%s')";
 			$queryParam[] = "%{$spec}%";
 		}
+		if ($barCode) {
+			$sql .= " and (g.bar_code = '%s') ";
+			$queryParam[] = $barCode;
+		}
+		
 		$data = $db->query($sql, $queryParam);
 		$totalCount = $data[0]["cnt"];
 		
@@ -342,7 +357,7 @@ class GoodsService extends PSIBaseService {
 					return $this->bad("条形码[{$barCode}]已经被其他商品使用");
 				}
 			}
-				
+			
 			$ps = new PinyinService();
 			$py = $ps->toPY($name);
 			
@@ -522,7 +537,7 @@ class GoodsService extends PSIBaseService {
 			$result["spec"] = $data[0]["spec"];
 			$result["unitId"] = $data[0]["unit_id"];
 			$result["salePrice"] = $data[0]["sale_price"];
-
+			
 			$v = $data[0]["purchase_price"];
 			if ($v == 0) {
 				$result["purchasePrice"] = null;
@@ -531,7 +546,7 @@ class GoodsService extends PSIBaseService {
 			}
 			
 			$result["barCode"] = $data[0]["bar_code"];
-				
+			
 			return $result;
 		} else {
 			return array();

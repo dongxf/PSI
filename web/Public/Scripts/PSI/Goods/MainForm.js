@@ -175,7 +175,7 @@ Ext.define("PSI.Goods.MainForm", {
                     	collapsible: true,
                     	layout : {
         					type : "table",
-        					columns : 4
+        					columns : 5
         				},
                     	items: [{
                     		id: "editQueryCode",
@@ -211,6 +211,20 @@ Ext.define("PSI.Goods.MainForm", {
         					labelAlign : "right",
         					labelSeparator : "",
         					fieldLabel : "规格型号",
+        					margin: "5, 0, 0, 0",
+        					xtype : "textfield",
+        					listeners: {
+                                specialkey: {
+                                    fn: me.onQueryEditSpecialKey,
+                                    scope: me
+                                }
+                            }
+        				},{
+        					id: "editQueryBarCode",
+        					labelWidth : 60,
+        					labelAlign : "right",
+        					labelSeparator : "",
+        					fieldLabel : "条形码",
         					margin: "5, 0, 0, 0",
         					xtype : "textfield",
         					listeners: {
@@ -267,7 +281,7 @@ Ext.define("PSI.Goods.MainForm", {
 
         me.callParent(arguments);
         
-        me.__queryEditNameList = ["editQueryCode", "editQueryName", "editQuerySpec"];
+        me.__queryEditNameList = ["editQueryCode", "editQueryName", "editQuerySpec", "editQueryBarCode"];
 
         me.freshCategoryGrid(null, true);
     },
@@ -565,6 +579,11 @@ Ext.define("PSI.Goods.MainForm", {
         var spec = Ext.getCmp("editQuerySpec").getValue();
         if (spec) {
         	result.spec = spec;
+        }
+        
+        var barCode = Ext.getCmp("editQueryBarCode").getValue();
+        if (barCode) {
+        	result.barCode = barCode;
         }
         
         return result;
