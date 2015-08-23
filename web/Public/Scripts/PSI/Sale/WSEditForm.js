@@ -482,6 +482,28 @@ Ext.define("PSI.Sale.WSEditForm", {
     },
     
     onBarCode: function() {
-    	PSI.MsgBox.showInfo("TODO");
+    	var form = Ext.create("PSI.Sale.WSBarcodeEditForm", {
+    		parentForm: this
+    	});
+    	form.show();
+    },
+    
+    addGoodsByBarCode: function(goods) {
+    	if (!goods) {
+    		return;
+    	}
+    	
+    	var me = this;
+    	var store = me.getGoodsGrid().getStore();
+    	
+    	if (store.getCount() == 1) {
+    		var r = store.getAt(0);
+    		var id = r.get("goodsId");
+    		if (id == null || id == "") {
+    			store.removeAll();
+    		}
+    	}
+    	
+    	store.add(goods);
     }
 });

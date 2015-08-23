@@ -720,4 +720,31 @@ class GoodsService extends PSIBaseService {
 		
 		return $this->ok();
 	}
+
+	public function queryGoodsInfoByBarcode($params) {
+		$barcode = $params["barcode"];
+		
+		$result = array();
+		
+		$db = M();
+		$sql = "select g.id, g.code, g.name, g.spec, g.sale_price, u.name as unit_name  
+				from t_goods g, t_goods_unit u
+				where g.bar_code = '%s' and g.unit_id = u.id ";
+		$data = $db->query($sql, $barcode);
+
+		if (! $data) {
+			$result["success"] = false;
+			$result["msg"] = "条码为[{$barcode}]的商品不存在";
+		} else {
+			$result["success"] = true;
+			$result["id"] = $data[0]["id"];	
+			$result["code"] = $data[0]["code"];	
+			$result["name"] = $data[0]["name"];	
+			$result["spec"] = $data[0]["spec"];	
+			$result["salePrice"] = $data[0]["sale_price"];	
+			$result["unitName"] = $data[0]["unit_name"];	
+		}
+		
+		return $result;
+	}
 }

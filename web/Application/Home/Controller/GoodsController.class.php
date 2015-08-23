@@ -229,4 +229,14 @@ class GoodsController extends Controller {
 			$this->ajaxReturn($gs->editSafetyInventory($params));
 		}
 	}
+
+	public function queryGoodsInfoByBarcode() {
+		if (IS_POST) {
+			$params = array(
+					"barcode" => I("post.barcode")
+			);
+			$gs = new GoodsService();
+			$this->ajaxReturn($gs->queryGoodsInfoByBarcode($params));
+		}
+	}
 }
