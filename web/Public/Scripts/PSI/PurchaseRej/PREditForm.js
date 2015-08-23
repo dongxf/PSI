@@ -292,13 +292,15 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 						header : "商品编码",
 						dataIndex : "goodsCode",
 						menuDisabled : true,
-						sortable : false
+						sortable : false,
+						draggable: false
 					},
 					{
 						header : "商品名称",
 						dataIndex : "goodsName",
 						menuDisabled : true,
 						sortable : false,
+						draggable: false,
 						width : 200
 					},
 					{
@@ -306,6 +308,7 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 						dataIndex : "goodsSpec",
 						menuDisabled : true,
 						sortable : false,
+						draggable: false,
 						width : 200
 					},
 					{
@@ -313,6 +316,7 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 						dataIndex : "rejCount",
 						menuDisabled : true,
 						sortable : false,
+						draggable: false,
 						align : "right",
 						width : 100,
 						editor : {
@@ -326,6 +330,7 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 						dataIndex : "unitName",
 						menuDisabled : true,
 						sortable : false,
+						draggable: false,
 						width : 60
 					},
 					{
@@ -333,6 +338,7 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 						dataIndex : "rejPrice",
 						menuDisabled : true,
 						sortable : false,
+						draggable: false,
 						align : "right",
 						xtype : "numbercolumn",
 						width : 100,
@@ -346,6 +352,7 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 						dataIndex : "rejMoney",
 						menuDisabled : true,
 						sortable : false,
+						draggable: false,
 						align : "right",
 						xtype : "numbercolumn",
 						width : 120
@@ -354,6 +361,7 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 						dataIndex : "goodsCount",
 						menuDisabled : true,
 						sortable : false,
+						draggable: false,
 						align : "right",
 						xtype : "numbercolumn",
 						width : 120,
@@ -363,6 +371,7 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 						dataIndex : "goodsPrice",
 						menuDisabled : true,
 						sortable : false,
+						draggable: false,
 						align : "right",
 						xtype : "numbercolumn",
 						width : 120
@@ -371,6 +380,7 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 						dataIndex : "goodsMoney",
 						menuDisabled : true,
 						sortable : false,
+						draggable: false,
 						align : "right",
 						xtype : "numbercolumn",
 						width : 120
