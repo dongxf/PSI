@@ -523,7 +523,6 @@ Ext.define("PSI.Sale.WSEditForm", {
     
     getExportData: function () {
         var result = {
-            id: Ext.getCmp("hiddenId").getValue(),
             bizDT: Ext.Date.format(Ext.getCmp("editBizDT").getValue(), "Y-m-d"),
             customerId: Ext.getCmp("editCustomer").getIdValue(),
             customerName: Ext.getCmp("editCustomer").getValue(),
@@ -562,6 +561,36 @@ Ext.define("PSI.Sale.WSEditForm", {
     },
     
     onImportBill: function() {
-    	PSI.MsgBox.showInfo("TODO");
+    	var form = Ext.create("PSI.Sale.WSImportForm", {
+    		parentForm: this
+    	});
+    	form.show();
+    },
+    
+    importBill: function(bill) {
+    	if (!bill) {
+    		PSI.MsgBox.showInfo("没有输入数据");
+    		return false;
+    	}
+    	
+    	var me = this;
+    	// 主表
+        Ext.getCmp("editCustomer").setIdValue(bill.customerId);
+        Ext.getCmp("editCustomer").setValue(bill.customerName);
+
+        Ext.getCmp("editWarehouse").setIdValue(bill.warehouseId);
+        Ext.getCmp("editWarehouse").setValue(bill.warehouseName);
+
+        Ext.getCmp("editBizUser").setIdValue(bill.bizUserId);
+        Ext.getCmp("editBizUser").setValue(bill.bizUserName);
+        Ext.getCmp("editBizDT").setValue(bill.bizDT);
+
+    	
+    	// 明细表
+    	var store = me.getGoodsGrid().getStore();
+    	store.removeAll();
+    	store.add(bill.items);
+    	
+    	return true;
     }
 });
