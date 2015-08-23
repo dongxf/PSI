@@ -167,6 +167,11 @@ class WSBillService extends PSIBaseService {
 			return $this->bad("选择的业务员不存在，无法保存数据");
 		}
 		
+		// 检查业务日期
+		if (! $this->dateIsValid($bizDT)) {
+			return $this->bad("业务日期不正确");
+		}
+		
 		$idGen = new IdGenService();
 		if ($id) {
 			// 编辑

@@ -185,6 +185,11 @@ class PWBillService extends PSIBaseService {
 			return $this->bad("业务人员不存在");
 		}
 		
+		// 检查业务日期
+		if (! $this->dateIsValid($bizDT)) {
+			return $this->bad("业务日期不正确");
+		}
+		
 		$idGen = new IdGenService();
 		
 		if ($id) {

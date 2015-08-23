@@ -191,6 +191,11 @@ class ITBillService extends PSIBaseService {
 			return $this->bad("调出仓库和调入仓库不能是同一个仓库");
 		}
 		
+		// 检查业务日期
+		if (! $this->dateIsValid($bizDT)) {
+			return $this->bad("业务日期不正确");
+		}
+		
 		$items = $bill["items"];
 		
 		$idGen = new IdGenService();

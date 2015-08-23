@@ -70,18 +70,32 @@ class PSIBaseService {
 	protected function isNotOnline() {
 		return session("loginUserId") == null;
 	}
-	
+
 	/**
 	 * 当用户不在线的时候，返回的提示信息
 	 */
 	protected function notOnlineError() {
 		return $this->bad("当前用户已经退出系统，请重新登录PSI");
 	}
-	
+
 	/**
 	 * 返回空列表
 	 */
-	protected  function emptyResult() {
+	protected function emptyResult() {
 		return array();
+	}
+
+	/**
+	 * 盘点日期是否是正确的Y-m-d格式
+	 * @param string $date
+	 * @return boolean true: 是正确的格式
+	 */
+	protected function dateIsValid($date) {
+		$dt = strtotime($date);
+		if (! $dt) {
+			return false;
+		}
+		
+		return date("Y-m-d", $dt) == $date;
 	}
 }

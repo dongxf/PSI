@@ -120,6 +120,11 @@ class ICBillService extends PSIBaseService {
 			return $this->bad("业务人员不存在，无法保存");
 		}
 		
+		// 检查业务日期
+		if (! $this->dateIsValid($bizDT)) {
+			return $this->bad("业务日期不正确");
+		}
+		
 		$items = $bill["items"];
 		
 		$idGen = new IdGenService();
