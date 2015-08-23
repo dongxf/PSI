@@ -204,6 +204,10 @@ class UserService extends PSIBaseService {
 	}
 
 	public function editOrg($id, $name, $parentId, $orgCode) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
 		if ($this->isDemo()) {
 			if ($id == DemoConst::ORG_COMPANY_ID) {
 				return $this->bad("在演示环境下，组织机构[公司]不希望被您修改，请见谅");
@@ -348,6 +352,10 @@ class UserService extends PSIBaseService {
 	}
 
 	public function deleteOrg($id) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
 		if ($this->isDemo()) {
 			if ($id == DemoConst::ORG_COMPANY_ID) {
 				return $this->bad("在演示环境下，组织机构[公司]不希望被您删除，请见谅");
@@ -394,6 +402,10 @@ class UserService extends PSIBaseService {
 	 * 新增或编辑用户
 	 */
 	public function editUser($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
 		$id = $params["id"];
 		$loginName = $params["loginName"];
 		$name = $params["name"];
@@ -491,6 +503,10 @@ class UserService extends PSIBaseService {
 	 * 删除用户
 	 */
 	public function deleteUser($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
 		$id = $params["id"];
 		
 		if ($id == "6C2A09CD-A129-11E4-9B6A-782BCBD7746B") {
@@ -581,6 +597,10 @@ class UserService extends PSIBaseService {
 	}
 
 	public function changePassword($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
 		$id = $params["id"];
 		
 		if ($this->isDemo() && $id == DemoConst::ADMIN_USER_ID) {
@@ -616,6 +636,10 @@ class UserService extends PSIBaseService {
 	}
 
 	public function changeMyPassword($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
 		$userId = $params["userId"];
 		$oldPassword = $params["oldPassword"];
 		$newPassword = $params["newPassword"];
@@ -660,6 +684,10 @@ class UserService extends PSIBaseService {
 	}
 
 	public function queryData($queryKey) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		if ($queryKey == null) {
 			$queryKey = "";
 		}
