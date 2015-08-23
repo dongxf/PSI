@@ -521,8 +521,44 @@ Ext.define("PSI.Sale.WSEditForm", {
     	store.add(goods);
     },
     
+    getExportData: function () {
+        var result = {
+            id: Ext.getCmp("hiddenId").getValue(),
+            bizDT: Ext.Date.format(Ext.getCmp("editBizDT").getValue(), "Y-m-d"),
+            customerId: Ext.getCmp("editCustomer").getIdValue(),
+            customerName: Ext.getCmp("editCustomer").getValue(),
+            warehouseId: Ext.getCmp("editWarehouse").getIdValue(),
+            warehouseName: Ext.getCmp("editWarehouse").getValue(),
+            bizUserId: Ext.getCmp("editBizUser").getIdValue(),
+            bizUserName: Ext.getCmp("editBizUser").getValue(),
+            items: []
+        };
+
+        var store = this.getGoodsGrid().getStore();
+        for (var i = 0; i < store.getCount(); i++) {
+            var item = store.getAt(i);
+            result.items.push({
+                id: item.get("id"),
+                goodsId: item.get("goodsId"),
+                goodsCode: item.get("goodsCode"),
+                goodsName: item.get("goodsName"),
+                goodsSpec: item.get("goodsSpec"),
+                unitName: item.get("unitName"),
+                goodsCount: item.get("goodsCount"),
+                goodsPrice: item.get("goodsPrice"),
+                goodsMoney: item.get("goodsMoney"),
+                sn: item.get("sn")
+            });
+        }
+
+        return Ext.JSON.encode(result);
+    },
+
     onExportBill: function() {
-    	PSI.MsgBox.showInfo("TODO");
+    	var form = Ext.create("PSI.Sale.WSExportForm", {
+    		billData: this.getExportData()
+    	});
+    	form.show();
     },
     
     onImportBill: function() {
