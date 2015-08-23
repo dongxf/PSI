@@ -13,6 +13,10 @@ use Home\Service\BizlogService;
 class SupplierService extends PSIBaseService {
 
 	public function categoryList($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
 		$code = $params["code"];
 		$name = $params["name"];
 		$address = $params["address"];
@@ -67,6 +71,10 @@ class SupplierService extends PSIBaseService {
 	}
 
 	public function supplierList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$categoryId = $params["categoryId"];
 		$page = $params["page"];
 		$start = $params["start"];
@@ -194,6 +202,10 @@ class SupplierService extends PSIBaseService {
 	}
 
 	public function editCategory($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
 		$id = $params["id"];
 		$code = $params["code"];
 		$name = $params["name"];
@@ -243,6 +255,10 @@ class SupplierService extends PSIBaseService {
 	}
 
 	public function deleteCategory($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
 		$id = $params["id"];
 		
 		$db = M();
@@ -268,6 +284,10 @@ class SupplierService extends PSIBaseService {
 	}
 
 	public function editSupplier($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
 		$id = $params["id"];
 		$code = $params["code"];
 		$name = $params["name"];
@@ -407,6 +427,10 @@ class SupplierService extends PSIBaseService {
 	}
 
 	public function deleteSupplier($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
 		$id = $params["id"];
 		$db = M();
 		$sql = "select code, name from t_supplier where id = '%s' ";
@@ -467,6 +491,10 @@ class SupplierService extends PSIBaseService {
 	}
 
 	public function queryData($queryKey) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		if ($queryKey == null) {
 			$queryKey = "";
 		}
@@ -480,6 +508,10 @@ class SupplierService extends PSIBaseService {
 	}
 
 	public function supplierInfo($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$id = $params["id"];
 		
 		$result = array();
@@ -506,7 +538,7 @@ class SupplierService extends PSIBaseService {
 			$result["address"] = $data[0]["address"];
 			$result["addressShipping"] = $data[0]["address_shipping"];
 			$result["initPayables"] = $data[0]["init_payables"];
-			$d = $data[0]["init_payables_dt"]; 
+			$d = $data[0]["init_payables_dt"];
 			if ($d) {
 				$result["initPayablesDT"] = $this->toYMD($d);
 			}
