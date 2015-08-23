@@ -309,23 +309,23 @@ Ext.define("PSI.Sale.WSEditForm", {
             columns: [
                 Ext.create("Ext.grid.RowNumberer", {text: "序号", width: 30}),
                 {header: "商品编码", dataIndex: "goodsCode", menuDisabled: true,
-                    sortable: false, editor: {xtype: "psi_goods_with_saleprice_field", parentCmp: me}},
-                {header: "商品名称", dataIndex: "goodsName", menuDisabled: true, sortable: false, width: 200},
-                {header: "规格型号", dataIndex: "goodsSpec", menuDisabled: true, sortable: false, width: 200},
-                {header: "销售数量", dataIndex: "goodsCount", menuDisabled: true,
+                    sortable: false, draggable: false, editor: {xtype: "psi_goods_with_saleprice_field", parentCmp: me}},
+                {header: "商品名称", dataIndex: "goodsName", menuDisabled: true, sortable: false, draggable: false, width: 200},
+                {header: "规格型号", dataIndex: "goodsSpec", menuDisabled: true, sortable: false, draggable: false, width: 200},
+                {header: "销售数量", dataIndex: "goodsCount", menuDisabled: true, draggable: false,
                     sortable: false, align: "right", width: 100,
                     editor: {xtype: "numberfield",
                         allowDecimals: false,
                         hideTrigger: true}
                 },
-                {header: "单位", dataIndex: "unitName", menuDisabled: true, sortable: false, width: 60},
-                {header: "销售单价", dataIndex: "goodsPrice", menuDisabled: true,
+                {header: "单位", dataIndex: "unitName", menuDisabled: true, sortable: false, draggable: false, width: 60},
+                {header: "销售单价", dataIndex: "goodsPrice", menuDisabled: true, draggable: false,
                     sortable: false, align: "right", xtype: "numbercolumn",
                     width: 100, id: "columnGoodsPrice"},
-                {header: "销售金额", dataIndex: "goodsMoney", menuDisabled: true,
+                {header: "销售金额", dataIndex: "goodsMoney", menuDisabled: true, draggable: false,
                     sortable: false, align: "right", xtype: "numbercolumn", width: 120},
                 {
-                	header: "序列号", dataIndex: "sn", menuDisabled: true, sortable: false, 
+                	header: "序列号", dataIndex: "sn", menuDisabled: true, sortable: false, draggable: false,
                 	editor: {
                 		xtype: "textfield"
                 	}
@@ -333,6 +333,7 @@ Ext.define("PSI.Sale.WSEditForm", {
                     header: "",
                     align: "center",
                     menuDisabled: true,
+                    draggable: false,
                     width: 50,
                     xtype: "actioncolumn",
                     id: "columnActionDelete",
@@ -353,6 +354,7 @@ Ext.define("PSI.Sale.WSEditForm", {
 					id: "columnActionAdd",
 					align : "center",
 					menuDisabled : true,
+					draggable: false,
 					width : 50,
 					xtype : "actioncolumn",
 					items : [ {
@@ -369,6 +371,7 @@ Ext.define("PSI.Sale.WSEditForm", {
 					id: "columnActionAppend",
 					align : "center",
 					menuDisabled : true,
+					draggable: false,
 					width : 50,
 					xtype : "actioncolumn",
 					items : [ {
