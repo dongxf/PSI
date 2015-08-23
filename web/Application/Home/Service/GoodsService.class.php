@@ -267,7 +267,7 @@ class GoodsService extends PSIBaseService {
 			$result[$i]["spec"] = $v["spec"];
 			$result[$i]["unitId"] = $v["unit_id"];
 			$result[$i]["unitName"] = $v["unit_name"];
-			$result[$i]["purchasePrice"] = $v["purchase_price"];
+			$result[$i]["purchasePrice"] = $v["purchase_price"] == 0 ? null : $v["purchase_price"];
 			$result[$i]["barCode"] = $v["bar_code"];
 		}
 		
@@ -308,6 +308,8 @@ class GoodsService extends PSIBaseService {
 		$categoryId = $params["categoryId"];
 		$unitId = $params["unitId"];
 		$salePrice = $params["salePrice"];
+		$purchasePrice = $params["purchasePrice"];
+		$barCode = $params["barCode"];
 		
 		$db = M();
 		$sql = "select name from t_goods_unit where id = '%s' ";
@@ -331,15 +333,27 @@ class GoodsService extends PSIBaseService {
 				return $this->bad("编码为 [{$code}]的商品已经存在");
 			}
 			
+			// 如果录入了条形码，则需要检查条形码是否唯一
+			if ($barCode) {
+				$sql = "select count(*) as cnt from t_goods where bar_code = '%s' and id <> '%s' ";
+				$data = $db->query($sql, $barCode, $id);
+				$cnt = $data[0]["cnt"];
+				if ($cnt != 0) {
+					return $this->bad("条形码[{$barCode}]已经被其他商品使用");
+				}
+			}
+				
 			$ps = new PinyinService();
 			$py = $ps->toPY($name);
 			
 			$sql = "update t_goods
 					set code = '%s', name = '%s', spec = '%s', category_id = '%s', 
-					    unit_id = '%s', sale_price = %f, py = '%s' 
+					    unit_id = '%s', sale_price = %f, py = '%s', purchase_price = %f,
+						bar_code = '%s'
 					where id = '%s' ";
 			
-			$db->execute($sql, $code, $name, $spec, $categoryId, $unitId, $salePrice, $py, $id);
+			$db->execute($sql, $code, $name, $spec, $categoryId, $unitId, $salePrice, $py, 
+					$purchasePrice, $barCode, $id);
 			
 			$log = "编辑商品: 商品编码 = {$code}, 品名 = {$name}, 规格型号 = {$spec}";
 			$bs = new BizlogService();
@@ -354,14 +368,26 @@ class GoodsService extends PSIBaseService {
 				return $this->bad("编码为 [{$code}]的商品已经存在");
 			}
 			
+			// 如果录入了条形码，则需要检查条形码是否唯一
+			if ($barCode) {
+				$sql = "select count(*) as cnt from t_goods where bar_code = '%s' ";
+				$data = $db->query($sql, $barCode);
+				$cnt = $data[0]["cnt"];
+				if ($cnt != 0) {
+					return $this->bad("条形码[{$barCode}]已经被其他商品使用");
+				}
+			}
+			
 			$idGen = new IdGenService();
 			$id = $idGen->newId();
 			$ps = new PinyinService();
 			$py = $ps->toPY($name);
 			
-			$sql = "insert into t_goods (id, code, name, spec, category_id, unit_id, sale_price, py)
-					values ('%s', '%s', '%s', '%s', '%s', '%s', %f, '%s')";
-			$db->execute($sql, $id, $code, $name, $spec, $categoryId, $unitId, $salePrice, $py);
+			$sql = "insert into t_goods (id, code, name, spec, category_id, unit_id, sale_price, 
+						py, purchase_price, bar_code)
+					values ('%s', '%s', '%s', '%s', '%s', '%s', %f, '%s', %f, '%s')";
+			$db->execute($sql, $id, $code, $name, $spec, $categoryId, $unitId, $salePrice, $py, 
+					$purchasePrice, $barCode);
 			
 			$log = "新增商品: 商品编码 = {$code}, 品名 = {$name}, 规格型号 = {$spec}";
 			$bs = new BizlogService();
@@ -484,7 +510,7 @@ class GoodsService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		$sql = "select category_id, code, name, spec, unit_id, sale_price
+		$sql = "select category_id, code, name, spec, unit_id, sale_price, purchase_price, bar_code
 				from t_goods
 				where id = '%s' ";
 		$data = M()->query($sql, $id);
@@ -496,7 +522,16 @@ class GoodsService extends PSIBaseService {
 			$result["spec"] = $data[0]["spec"];
 			$result["unitId"] = $data[0]["unit_id"];
 			$result["salePrice"] = $data[0]["sale_price"];
+
+			$v = $data[0]["purchase_price"];
+			if ($v == 0) {
+				$result["purchasePrice"] = null;
+			} else {
+				$result["purchasePrice"] = $v;
+			}
 			
+			$result["barCode"] = $data[0]["bar_code"];
+				
 			return $result;
 		} else {
 			return array();

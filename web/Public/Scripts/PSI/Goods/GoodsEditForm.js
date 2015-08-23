@@ -60,7 +60,7 @@ Ext.define("PSI.Goods.GoodsEditForm", {
             modal: true,
             onEsc: Ext.emptyFn,
             width: 460,
-            height: 180,
+            height: 210,
             layout: "fit",
             items: [
                 {
@@ -171,7 +171,20 @@ Ext.define("PSI.Goods.GoodsEditForm", {
                                     scope: me
                                 }
                             }
-                        }, {
+                        }, 
+                        {
+                            id: "editBarCode",
+                            fieldLabel: "条形码",
+                            name: "barCode",
+                            value: entity == null ? null : entity.get("barCode"),
+                            listeners: {
+                                specialkey: {
+                                    fn: me.onEditSpecialKey,
+                                    scope: me
+                                }
+                            }
+                        },
+                        {
                             fieldLabel: "销售价",
                             allowBlank: false,
                             blankText: "没有输入销售价",
@@ -183,7 +196,21 @@ Ext.define("PSI.Goods.GoodsEditForm", {
                             value: entity == null ? null : entity.get("salePrice"),
                             listeners: {
                                 specialkey: {
-                                    fn: me.onEditSalePriceSpecialKey,
+                                    fn: me.onEditSpecialKey,
+                                    scope: me
+                                }
+                            }
+                        },
+                        {
+                            fieldLabel: "建议采购价",
+                            xtype: "numberfield",
+                            hideTrigger: true,
+                            name: "purchasePrice",
+                            id: "editPurchasePrice",
+                            value: entity == null ? null : entity.get("purchasePrice"),
+                            listeners: {
+                                specialkey: {
+                                    fn: me.onLastEditSpecialKey,
                                     scope: me
                                 }
                             }
@@ -206,7 +233,7 @@ Ext.define("PSI.Goods.GoodsEditForm", {
         me.callParent(arguments);
 
         me.__editorList = ["editCategory", "editCode", "editName", "editSpec",
-            "editUnit", "editSalePrice"];
+            "editUnit", "editBarCode", "editSalePrice", "editPurchasePrice"];
     },
     onWndShow: function () {
         var me = this;
@@ -240,6 +267,8 @@ Ext.define("PSI.Goods.GoodsEditForm", {
                         Ext.getCmp("editSpec").setValue(data.spec);
                         Ext.getCmp("editUnit").setValue(data.unitId);
                         Ext.getCmp("editSalePrice").setValue(data.salePrice);
+                        Ext.getCmp("editPurchasePrice").setValue(data.purchasePrice);
+                        Ext.getCmp("editBarCode").setValue(data.barCode);
                     } else {
                     	// 新增商品
                         if (unitStore.getCount() > 0) {
@@ -299,7 +328,7 @@ Ext.define("PSI.Goods.GoodsEditForm", {
             }
         }
     },
-    onEditSalePriceSpecialKey: function (field, e) {
+    onLastEditSpecialKey: function (field, e) {
         if (e.getKey() == e.ENTER) {
             var f = Ext.getCmp("editForm");
             if (f.getForm().isValid()) {
@@ -312,7 +341,7 @@ Ext.define("PSI.Goods.GoodsEditForm", {
         Ext.getCmp("editCode").focus();
 
         var editors = [Ext.getCmp("editCode"), Ext.getCmp("editName"), Ext.getCmp("editSpec"),
-            Ext.getCmp("editSalePrice")];
+            Ext.getCmp("editSalePrice"), Ext.getCmp("editPurchasePrice"), Ext.getCmp("editBarCode")];
         for (var i = 0; i < editors.length; i++) {
             var edit = editors[i];
             edit.setValue(null);

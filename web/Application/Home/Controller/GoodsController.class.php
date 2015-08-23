@@ -153,29 +153,12 @@ class GoodsController extends Controller {
 					"name" => I("post.name"),
 					"spec" => I("post.spec"),
 					"unitId" => I("post.unitId"),
-					"salePrice" => I("post.salePrice")
+					"salePrice" => I("post.salePrice"),
+					"purchasePrice" => I("post.purchasePrice"),
+					"barCode" => I("post.barCode")
 			);
 			$gs = new GoodsService();
 			$this->ajaxReturn($gs->editGoods($params));
-		}
-	}
-
-	public function editGoodsTU() {
-		if (IS_POST) {
-			$params = array(
-					"id" => I("post.id"),
-					"categoryId" => I("post.categoryId"),
-					"code" => I("post.code"),
-					"name" => I("post.name"),
-					"spec" => I("post.spec"),
-					"unitId" => I("post.unitId"),
-					"salePrice" => I("post.salePrice"),
-					"purchaseUnitId" => I("post.purchaseUnitId"),
-					"purchasePrice" => I("post.purchasePrice"),
-					"psFactor" => I("post.psFactor")
-			);
-			$gs = new GoodsService();
-			$this->ajaxReturn($gs->editGoodsTU($params));
 		}
 	}
 
@@ -204,39 +187,12 @@ class GoodsController extends Controller {
 			$this->ajaxReturn($gs->queryDataWithSalePrice($queryKey));
 		}
 	}
-	
-	// TU: Two Units 商品双单位
-	public function goodsListTU() {
-		if (IS_POST) {
-			$params = array(
-					"categoryId" => I("post.categoryId"),
-					"code" => I("post.code"),
-					"name" => I("post.name"),
-					"spec" => I("post.spec"),
-					"page" => I("post.page"),
-					"start" => I("post.start"),
-					"limit" => I("post.limit")
-			);
-			$gs = new GoodsService();
-			$this->ajaxReturn($gs->goodsListTU($params));
-		}
-	}
 
 	public function goodsInfo() {
 		if (IS_POST) {
 			$id = I("post.id");
 			$gs = new GoodsService();
 			$data = $gs->getGoodsInfo($id);
-			$data["units"] = $gs->allUnits();
-			$this->ajaxReturn($data);
-		}
-	}
-
-	public function goodsInfoTU() {
-		if (IS_POST) {
-			$id = I("post.id");
-			$gs = new GoodsService();
-			$data = $gs->getGoodsInfoTU($id);
 			$data["units"] = $gs->allUnits();
 			$this->ajaxReturn($data);
 		}
