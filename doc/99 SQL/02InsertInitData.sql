@@ -208,7 +208,7 @@ INSERT INTO `t_config` (`id`, `name`, `value`, `note`) VALUES
 
 TRUNCATE TABLE `t_psi_db_version`;
 INSERT INTO `t_psi_db_version` (`db_version`, `update_dt`) VALUES
-('20150822-001', '2015-08-22');
+('20150823-001', '2015-08-23');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
