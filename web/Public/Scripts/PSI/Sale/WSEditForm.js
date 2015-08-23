@@ -21,6 +21,19 @@ Ext.define("PSI.Sale.WSEditForm", {
             layout: "border",
             defaultFocus: "editCustomer",
             tbar: [{
+            	id: "buttonToolbox",
+            	text: "工具",
+            	iconCls: "PSI-button-toolbox",
+            	menu: [{
+            		text: "临时保存销售出库单",
+            		scope: me,
+            		handler: me.onExportBill
+            	}, "-", {
+            		text: "导入临时保存的销售出库单",
+            		scope: me,
+            		handler: me.onImportBill
+            	}]
+            }, "-", {
             	text: "条码录入",
             	id: "buttonBarCode",
             	iconCls: "PSI-button-barcode",
@@ -469,6 +482,7 @@ Ext.define("PSI.Sale.WSEditForm", {
 		var me = this;
 		me.__readonly = true;
 		me.setTitle("查看销售出库单");
+		Ext.getCmp("buttonToolbox").setDisabled(true);
 		Ext.getCmp("buttonBarCode").setDisabled(true);
 		Ext.getCmp("buttonSave").setDisabled(true);
 		Ext.getCmp("buttonCancel").setText("关闭");
@@ -505,5 +519,13 @@ Ext.define("PSI.Sale.WSEditForm", {
     	}
     	
     	store.add(goods);
+    },
+    
+    onExportBill: function() {
+    	PSI.MsgBox.showInfo("TODO");
+    },
+    
+    onImportBill: function() {
+    	PSI.MsgBox.showInfo("TODO");
     }
 });

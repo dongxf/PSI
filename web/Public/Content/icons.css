@@ -74,6 +74,10 @@
     background-image:url(../Images/icons/barcode.png) !important;
 }
 
+.PSI-button-toolbox {
+    background-image:url(../Images/icons/toolbox.png) !important;
+}
+
 .PSI-fid-8993 {
     background-image:url(../Images/fid/fid-8993.png) !important;
 }
