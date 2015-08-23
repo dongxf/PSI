@@ -20,7 +20,13 @@ Ext.define("PSI.Sale.WSEditForm", {
             height: 600,
             layout: "border",
             defaultFocus: "editCustomer",
-            tbar: ["-", {
+            tbar: [{
+            	text: "条码录入",
+            	id: "buttonBarCode",
+            	iconCls: "PSI-button-barcode",
+            	handler: me.onBarCode,
+            	scope: me
+            },"-", {
                 text: "保存",
                 iconCls: "PSI-button-ok",
                 handler: me.onOK,
@@ -463,6 +469,7 @@ Ext.define("PSI.Sale.WSEditForm", {
 		var me = this;
 		me.__readonly = true;
 		me.setTitle("查看销售出库单");
+		Ext.getCmp("buttonBarCode").setDisabled(true);
 		Ext.getCmp("buttonSave").setDisabled(true);
 		Ext.getCmp("buttonCancel").setText("关闭");
 		Ext.getCmp("editBizDT").setReadOnly(true);
@@ -472,5 +479,9 @@ Ext.define("PSI.Sale.WSEditForm", {
 		Ext.getCmp("columnActionDelete").hide();
 		Ext.getCmp("columnActionAdd").hide();
 		Ext.getCmp("columnActionAppend").hide();
+    },
+    
+    onBarCode: function() {
+    	PSI.MsgBox.showInfo("TODO");
     }
 });
