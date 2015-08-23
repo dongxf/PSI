@@ -13,6 +13,10 @@ class ReceivablesReportService extends PSIBaseService {
 	 * 应收账款账龄分析
 	 */
 	public function receivablesAgeQueryData($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$page = $params["page"];
 		$start = $params["start"];
 		$limit = $params["limit"];
@@ -50,7 +54,7 @@ class ReceivablesReportService extends PSIBaseService {
 					";
 			$data = $db->query($sql, $caType, $caId);
 			$bm = $data[0]["balance_money"];
-			if (!$bm) {
+			if (! $bm) {
 				$bm = 0;
 			}
 			$result[$i]["money30"] = $bm;
@@ -64,11 +68,11 @@ class ReceivablesReportService extends PSIBaseService {
 					";
 			$data = $db->query($sql, $caType, $caId);
 			$bm = $data[0]["balance_money"];
-			if (!$bm) {
+			if (! $bm) {
 				$bm = 0;
 			}
 			$result[$i]["money30to60"] = $bm;
-				
+			
 			// 账龄60-90天
 			$sql = "select sum(balance_money) as balance_money
 					from t_receivables_detail
@@ -78,11 +82,11 @@ class ReceivablesReportService extends PSIBaseService {
 					";
 			$data = $db->query($sql, $caType, $caId);
 			$bm = $data[0]["balance_money"];
-			if (!$bm) {
+			if (! $bm) {
 				$bm = 0;
 			}
 			$result[$i]["money60to90"] = $bm;
-				
+			
 			// 账龄90天以上
 			$sql = "select sum(balance_money) as balance_money
 					from t_receivables_detail
@@ -91,7 +95,7 @@ class ReceivablesReportService extends PSIBaseService {
 					";
 			$data = $db->query($sql, $caType, $caId);
 			$bm = $data[0]["balance_money"];
-			if (!$bm) {
+			if (! $bm) {
 				$bm = 0;
 			}
 			$result[$i]["money90"] = $bm;
@@ -108,8 +112,12 @@ class ReceivablesReportService extends PSIBaseService {
 				"totalCount" => $cnt
 		);
 	}
-	
+
 	public function receivablesSummaryQueryData() {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$db = M();
 		$result = array();
 		

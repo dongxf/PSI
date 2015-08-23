@@ -10,6 +10,10 @@ namespace Home\Service;
 class PortalService extends PSIBaseService {
 
 	public function inventoryPortal() {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$result = array();
 		
 		$db = M();
@@ -57,6 +61,10 @@ class PortalService extends PSIBaseService {
 	}
 
 	public function salePortal() {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$result = array();
 		
 		$db = M();
@@ -131,6 +139,10 @@ class PortalService extends PSIBaseService {
 	}
 
 	public function purchasePortal() {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$result = array();
 		
 		$db = M();
@@ -188,6 +200,10 @@ class PortalService extends PSIBaseService {
 	}
 
 	public function moneyPortal() {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$result = array();
 		
 		$db = M();
@@ -213,7 +229,7 @@ class PortalService extends PSIBaseService {
 			$balance = 0;
 		}
 		$result[0]["money30"] = $balance;
-	
+		
 		// 账龄30-60天
 		$sql = "select sum(balance_money) as balance_money
 				from t_receivables_detail
@@ -270,7 +286,7 @@ class PortalService extends PSIBaseService {
 			$balance = 0;
 		}
 		$result[1]["money30"] = $balance;
-	
+		
 		// 账龄30-60天
 		$sql = "select sum(balance_money) as balance_money
 				from t_payables_detail

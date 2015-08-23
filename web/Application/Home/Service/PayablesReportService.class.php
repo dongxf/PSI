@@ -13,6 +13,10 @@ class PayablesReportService extends PSIBaseService {
 	 * 应付账款账龄分析
 	 */
 	public function payablesAgeQueryData($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$page = $params["page"];
 		$start = $params["start"];
 		$limit = $params["limit"];
@@ -110,6 +114,10 @@ class PayablesReportService extends PSIBaseService {
 	}
 	
 	public function payablesSummaryQueryData() {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$db = M();
 		$result = array();
 		

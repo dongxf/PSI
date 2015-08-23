@@ -13,6 +13,10 @@ class SaleReportService extends PSIBaseService {
 	 * 销售日报表(按商品汇总) - 查询数据
 	 */
 	public function saleDayByGoodsQueryData($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$page = $params["page"];
 		$start = $params["start"];
 		$limit = $params["limit"];
@@ -174,6 +178,10 @@ class SaleReportService extends PSIBaseService {
 	 * 销售日报表(按商品汇总) - 查询汇总数据
 	 */
 	public function saleDayByGoodsSummaryQueryData($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		return $this->saleDaySummaryQueryData($params);
 	}
 
@@ -181,6 +189,10 @@ class SaleReportService extends PSIBaseService {
 	 * 销售日报表(按客户汇总) - 查询数据
 	 */
 	public function saleDayByCustomerQueryData($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$page = $params["page"];
 		$start = $params["start"];
 		$limit = $params["limit"];
@@ -275,6 +287,10 @@ class SaleReportService extends PSIBaseService {
 	 * 销售日报表(按客户汇总) - 查询汇总数据
 	 */
 	public function saleDayByCustomerSummaryQueryData($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		return $this->saleDaySummaryQueryData($params);
 	}
 
@@ -282,6 +298,10 @@ class SaleReportService extends PSIBaseService {
 	 * 销售日报表(按仓库汇总) - 查询数据
 	 */
 	public function saleDayByWarehouseQueryData($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$page = $params["page"];
 		$start = $params["start"];
 		$limit = $params["limit"];
@@ -376,6 +396,10 @@ class SaleReportService extends PSIBaseService {
 	 * 销售日报表(按仓库汇总) - 查询汇总数据
 	 */
 	public function saleDayByWarehouseSummaryQueryData($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		return $this->saleDaySummaryQueryData($params);
 	}
 
@@ -383,6 +407,10 @@ class SaleReportService extends PSIBaseService {
 	 * 销售日报表(按业务员汇总) - 查询数据
 	 */
 	public function saleDayByBizuserQueryData($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$page = $params["page"];
 		$start = $params["start"];
 		$limit = $params["limit"];
@@ -477,6 +505,10 @@ class SaleReportService extends PSIBaseService {
 	 * 销售日报表(按业务员汇总) - 查询汇总数据
 	 */
 	public function saleDayByBizuserSummaryQueryData($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		return $this->saleDaySummaryQueryData($params);
 	}
 
@@ -484,6 +516,10 @@ class SaleReportService extends PSIBaseService {
 	 * 销售月报表(按商品汇总) - 查询数据
 	 */
 	public function saleMonthByGoodsQueryData($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$page = $params["page"];
 		$start = $params["start"];
 		$limit = $params["limit"];
@@ -660,6 +696,10 @@ class SaleReportService extends PSIBaseService {
 	 * 销售月报表(按商品汇总) - 查询汇总数据
 	 */
 	public function saleMonthByGoodsSummaryQueryData($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		return $this->saleMonthSummaryQueryData($params);
 	}
 
@@ -667,6 +707,10 @@ class SaleReportService extends PSIBaseService {
 	 * 销售月报表(按客户汇总) - 查询数据
 	 */
 	public function saleMonthByCustomerQueryData($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$page = $params["page"];
 		$start = $params["start"];
 		$limit = $params["limit"];
@@ -774,6 +818,10 @@ class SaleReportService extends PSIBaseService {
 	 * 销售月报表(按客户汇总) - 查询汇总数据
 	 */
 	public function saleMonthByCustomerSummaryQueryData($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		return $this->saleMonthSummaryQueryData($params);
 	}
 
@@ -781,6 +829,10 @@ class SaleReportService extends PSIBaseService {
 	 * 销售月报表(按仓库汇总) - 查询数据
 	 */
 	public function saleMonthByWarehouseQueryData($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$page = $params["page"];
 		$start = $params["start"];
 		$limit = $params["limit"];
@@ -888,22 +940,30 @@ class SaleReportService extends PSIBaseService {
 	 * 销售月报表(按仓库汇总) - 查询汇总数据
 	 */
 	public function saleMonthByWarehouseSummaryQueryData($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		return $this->saleMonthSummaryQueryData($params);
 	}
-	
+
 	/**
 	 * 销售月报表(按业务员汇总) - 查询数据
 	 */
 	public function saleMonthByBizuserQueryData($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$page = $params["page"];
 		$start = $params["start"];
 		$limit = $params["limit"];
-	
+		
 		$year = $params["year"];
 		$month = $params["month"];
-	
+		
 		$result = array();
-	
+		
 		$db = M();
 		$sql = "select u.id, u.org_code as code, u.name
 				from t_user u
@@ -927,10 +987,10 @@ class SaleReportService extends PSIBaseService {
 			} else {
 				$result[$i]["bizDT"] = "$year-$month";
 			}
-				
+			
 			$result[$i]["userCode"] = $v["code"];
 			$result[$i]["userName"] = $v["name"];
-				
+			
 			$userId = $v["id"];
 			$sql = "select sum(w.sale_money) as goods_money, sum(w.inventory_money) as inventory_money
 					from t_ws_bill w
@@ -947,7 +1007,7 @@ class SaleReportService extends PSIBaseService {
 				$saleInventoryMoney = 0;
 			}
 			$result[$i]["saleMoney"] = $saleMoney;
-				
+			
 			$sql = "select sum(s.rejection_sale_money) as rej_money,
 						sum(s.inventory_money) as rej_inventory_money
 					from t_sr_bill s
@@ -963,9 +1023,9 @@ class SaleReportService extends PSIBaseService {
 			if (! $rejInventoryMoney) {
 				$rejInventoryMoney = 0;
 			}
-				
+			
 			$result[$i]["rejMoney"] = $rejSaleMoney;
-				
+			
 			$m = $saleMoney - $rejSaleMoney;
 			$result[$i]["m"] = $m;
 			$profit = $saleMoney - $rejSaleMoney - $saleInventoryMoney + $rejInventoryMoney;
@@ -974,7 +1034,7 @@ class SaleReportService extends PSIBaseService {
 				$result[$i]["rate"] = sprintf("%0.2f", $profit / $m * 100) . "%";
 			}
 		}
-	
+		
 		$sql = "select count(*) as cnt
 				from t_user u
 				where u.id in(
@@ -991,17 +1051,21 @@ class SaleReportService extends PSIBaseService {
 				";
 		$data = $db->query($sql, $year, $month, $year, $month);
 		$cnt = $data[0]["cnt"];
-	
+		
 		return array(
 				"dataList" => $result,
 				"totalCount" => $cnt
 		);
 	}
-	
+
 	/**
 	 * 销售月报表(按业务员汇总) - 查询汇总数据
 	 */
 	public function saleMonthByBizuserSummaryQueryData($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		return $this->saleMonthSummaryQueryData($params);
 	}
 }

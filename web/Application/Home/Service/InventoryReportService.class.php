@@ -13,6 +13,10 @@ class InventoryReportService extends PSIBaseService {
 	 * 安全库存明细表 - 数据查询
 	 */
 	public function safetyInventoryQueryData($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$page = $params["page"];
 		$start = $params["start"];
 		$limit = $params["limit"];
@@ -58,19 +62,23 @@ class InventoryReportService extends PSIBaseService {
 				"totalCount" => $cnt
 		);
 	}
-	
+
 	/**
 	 * 库存超上限明细表 - 数据查询
 	 */
 	public function inventoryUpperQueryData($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$page = $params["page"];
 		$start = $params["start"];
 		$limit = $params["limit"];
-	
+		
 		$result = array();
-	
+		
 		$db = M();
-	
+		
 		$sql = "select w.code as warehouse_code, w.name as warehouse_name,
 					g.code as goods_code, g.name as goods_name, g.spec as goods_spec,
 					u.name as unit_name,
@@ -94,7 +102,7 @@ class InventoryReportService extends PSIBaseService {
 			$result[$i]["invCount"] = $v["balance_count"];
 			$result[$i]["delta"] = $v["balance_count"] - $v["inventory_upper"];
 		}
-	
+		
 		$sql = "select count(*) as cnt
 				from t_inventory i, t_goods g, t_goods_unit u, t_goods_si s, t_warehouse w
 				where i.warehouse_id = w.id and i.goods_id = g.id and g.unit_id = u.id
@@ -102,14 +110,13 @@ class InventoryReportService extends PSIBaseService {
 					and s.inventory_upper < i.balance_count
 					and s.inventory_upper <> 0 and s.inventory_upper is not null
 				";
-	
+		
 		$data = $db->query($sql);
 		$cnt = $data[0]["cnt"];
-	
+		
 		return array(
 				"dataList" => $result,
 				"totalCount" => $cnt
 		);
 	}
-	
 }
