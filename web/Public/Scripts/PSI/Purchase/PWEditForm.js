@@ -310,7 +310,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 						sortable : false,
 						draggable: false,
 						editor : {
-							xtype : "psi_goodsfield",
+							xtype : "psi_goods_with_purchaseprice_field",
 							parentCmp : me
 						}
 		           }, {
@@ -453,6 +453,9 @@ Ext.define("PSI.Purchase.PWEditForm", {
 		goods.set("goodsName", data.name);
 		goods.set("unitName", data.unitName);
 		goods.set("goodsSpec", data.spec);
+		
+		// 设置建议采购价
+		goods.set("goodsPrice", data.purchasePrice);
 	},
 	cellEditingAfterEdit : function(editor, e) {
 		var me = this;

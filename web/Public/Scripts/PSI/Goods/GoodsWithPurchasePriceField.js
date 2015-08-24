@@ -1,6 +1,6 @@
-﻿Ext.define("PSI.Goods.GoodsWithSalePriceField", {
+﻿Ext.define("PSI.Goods.GoodsWithPurchaseFieldField", {
     extend: "Ext.form.field.Trigger",
-    alias: "widget.psi_goods_with_saleprice_field",
+    alias: "widget.psi_goods_with_purchaseprice_field",
 
     config: {
     	parentCmp: null
@@ -29,7 +29,7 @@
         var modelName = "PSIGoodsField";
         Ext.define(modelName, {
             extend: "Ext.data.Model",
-            fields: ["id", "code", "name", "spec", "unitName", "salePrice"]
+            fields: ["id", "code", "name", "spec", "unitName", "purchasePrice"]
         });
 
         var store = Ext.create("Ext.data.Store", {
@@ -46,7 +46,7 @@
                 { header: "商品", dataIndex: "name", menuDisabled: true, flex: 1 },
                 { header: "规格型号", dataIndex: "spec", menuDisabled: true, flex: 1 },
                 { header: "单位", dataIndex: "unitName", menuDisabled: true, width: 60 },
-                { header: "销售价", dataIndex: "salePrice", menuDisabled: true, align: "right", xtype: "numbercolumn" }
+                { header: "建议采购价", dataIndex: "purchasePrice", menuDisabled: true, align: "right", xtype: "numbercolumn" }
             ]
         });
         me.lookupGrid = lookupGrid;
@@ -110,7 +110,7 @@
         editName.on("change", function () {
             var store = me.lookupGrid.getStore();
             Ext.Ajax.request({
-                url: PSI.Const.BASE_URL + "Home/Goods/queryDataWithSalePrice",
+                url: PSI.Const.BASE_URL + "Home/Goods/queryDataWithPurchasePrice",
                 params: {
                     queryKey: editName.getValue()
                 },

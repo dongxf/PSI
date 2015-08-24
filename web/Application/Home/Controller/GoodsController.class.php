@@ -190,6 +190,14 @@ class GoodsController extends Controller {
 		}
 	}
 
+	public function queryDataWithPurchasePrice() {
+		if (IS_POST) {
+			$queryKey = I("post.queryKey");
+			$gs = new GoodsService();
+			$this->ajaxReturn($gs->queryDataWithPurchasePrice($queryKey));
+		}
+	}
+	
 	public function goodsInfo() {
 		if (IS_POST) {
 			$id = I("post.id");
