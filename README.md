@@ -16,16 +16,6 @@ PSI演示
 -------------
 >PSI的演示见：<a href = 'http://psi.oschina.mopaas.com' target = '_blank'>http://psi.oschina.mopaas.com</a>
 
-<p>
-    <img src="http://static.oschina.net/uploads/space/2015/0302/215537_vaAs_134395.jpg"/>
-</p>
-<p>
-    <img src="http://static.oschina.net/uploads/space/2015/0302/215556_Szez_134395.jpg"/>
-</p>
-<p>
-    <img src="http://static.oschina.net/uploads/space/2015/0302/215612_fu1s_134395.jpg"/>
-</p>
-
 PSI 2015 beta2下载地址
 -------------
 >PSI 2015 beta2下载地址见：http://pan.baidu.com/s/1qWkQByk
@@ -51,10 +41,6 @@ PSI的开源协议
 -------------
 > 更多文档，请参考：http://my.oschina.net/u/134395
 
-PSI的安卓App
--------------
-> 见：http://git.oschina.net/crm8000/PSI_Android
-
 
 如需要技术支持，请联系
 -------------
@@ -65,9 +51,6 @@ PSI的安卓App
 
 - QQ群：414474186
  <a target="_blank" href="http://shang.qq.com/wpa/qunwpa?idkey=64808ce24f2a3186ccb1f37aad9ed591bcc4fb257d09749753aca98c6c73e400"><img border="0" src="http://pub.idqqimg.com/wpa/images/group.png" alt="开源进销存PSI" title="开源进销存PSI"></a>
-
-- 微信公众号：opensource-psi
-- <img src="http://static.oschina.net/uploads/space/2015/0331/084326_fzIx_134395.jpg" height="300" width="300">
 
 致谢
 -------------
@@ -84,19 +67,5 @@ PSI的安卓App
 >5、Overtrue\Pinyin (http://overtrue.me/pinyin/)
 >
 >6、PHPExcel (http://phpexcel.codeplex.com/)
-
-捐赠
--------------
-- 支付宝
-- <img src="http://static.oschina.net/uploads/space/2015/0223/220628_NiUJ_134395.jpg" height="300" width="300">
-
-- 微信支付
-- <img src="http://static.oschina.net/uploads/space/2015/0221/215715_jA8D_134395.jpg" height="300" width="300">
-
-商业付费服务
--------------
->微店：http://weidian.com/?userid=315007574
 >
->请加微信洽谈
-<p>
-<img src="http://static.oschina.net/uploads/space/2015/0220/171355_VdiS_134395.png" height="300" width="300">
+>7、TCPDF (http://www.tcpdf.org/)
