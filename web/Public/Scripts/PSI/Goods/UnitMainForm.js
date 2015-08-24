@@ -1,3 +1,4 @@
+// 商品计量单位 - 主界面
 Ext.define("PSI.Goods.UnitMainForm", {
     extend: "Ext.panel.Panel",
     initComponent: function () {

@@ -1,3 +1,4 @@
+// 商品计量单位 - 新增或编辑界面
 Ext.define("PSI.Goods.UnitEditForm", {
     extend: "Ext.window.Window",
     config: {

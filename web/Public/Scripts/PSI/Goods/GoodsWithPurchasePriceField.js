@@ -1,4 +1,5 @@
-﻿Ext.define("PSI.Goods.GoodsWithPurchaseFieldField", {
+﻿// 自定义字段 - 商品字段，显示建议采购价
+Ext.define("PSI.Goods.GoodsWithPurchaseFieldField", {
     extend: "Ext.form.field.Trigger",
     alias: "widget.psi_goods_with_purchaseprice_field",
 

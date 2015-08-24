@@ -1,3 +1,4 @@
+// 自定义字段 - 商品字段
 Ext.define("PSI.Goods.GoodsField", {
     extend: "Ext.form.field.Trigger",
     alias: "widget.psi_goodsfield",
