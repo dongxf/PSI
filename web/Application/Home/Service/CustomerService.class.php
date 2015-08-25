@@ -496,12 +496,13 @@ class CustomerService extends PSIBaseService {
 			$queryKey = "";
 		}
 		
-		$sql = "select id, code, name
+		$sql = "select id, code, name, mobile01
 				from t_customer 
 				where code like '%s' or name like '%s' or py like '%s' 
+					or mobile01 like '%s' or mobile02 like '%s' 
 				limit 20";
 		$key = "%{$queryKey}%";
-		return M()->query($sql, $key, $key, $key);
+		return M()->query($sql, $key, $key, $key, $key, $key);
 	}
 
 	public function customerInfo($params) {

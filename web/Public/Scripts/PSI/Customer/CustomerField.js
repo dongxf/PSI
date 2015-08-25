@@ -38,7 +38,7 @@ Ext.define("PSI.Customer.CustomerField", {
         var modelName = "PSICustomerField";
         Ext.define(modelName, {
             extend: "Ext.data.Model",
-            fields: ["id", "code", "name"]
+            fields: ["id", "code", "name", "mobile01"]
         });
 
         var store = Ext.create("Ext.data.Store", {
@@ -51,7 +51,8 @@ Ext.define("PSI.Customer.CustomerField", {
             border: 0,
             store: store,
             columns: [{ header: "编码", dataIndex: "code", menuDisabled: true},
-                      { header: "客户", dataIndex: "name", menuDisabled: true, flex: 1}
+                      { header: "客户", dataIndex: "name", menuDisabled: true, flex: 1},
+                      { header: "手机", dataIndex: "mobile01", menuDisabled: true, width: 120}
             ]
         });
         me.lookupGrid = lookupGrid;
@@ -60,7 +61,7 @@ Ext.define("PSI.Customer.CustomerField", {
         var wnd = Ext.create("Ext.window.Window", {
             title: "选择 - 客户",
             modal: true,
-            width: 400,
+            width: 500,
             height: 300,
             layout: "border",
             defaultFocus: "__editCustomer",
