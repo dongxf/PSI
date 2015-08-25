@@ -740,10 +740,15 @@ class SRBillService extends PSIBaseService {
 		$bizUserId = $data[0]["biz_user_id"];
 		$rejectionSaleMoney = $data[0]["rejection_sale_money"];
 		
-		$sql = "select name from t_warehouse where id = '%s' ";
+		$sql = "select name, inited from t_warehouse where id = '%s' ";
 		$data = $db->query($sql, $warehouseId);
 		if (! $data) {
 			return $this->bad("仓库不存在，无法提交");
+		}
+		$warehouseName = $data[0]["name"];
+		$inited = $data[0]["inited"];
+		if ($inited != 1) {
+			return $this->bad("仓库[{$warehouseName}]还没有建账");
 		}
 		
 		$sql = "select name from t_customer where id = '%s' ";
@@ -838,38 +843,71 @@ class SRBillService extends PSIBaseService {
 						where warehouse_id = '%s' and goods_id = '%s' ";
 				$data = $db->query($sql, $warehouseId, $goodsId);
 				if (! $data) {
-					continue;
-				}
-				$totalInCount = $data[0]["in_count"];
-				$totalInMoney = $data[0]["in_money"];
-				$totalBalanceCount = $data[0]["balance_count"];
-				$totalBalanceMoney = $data[0]["balance_money"];
-				
-				$totalInCount += $rejCount;
-				$totalInMoney += $rejMoney;
-				$totalInPrice = $totalInMoney / $totalInCount;
-				$totalBalanceCount += $rejCount;
-				$totalBalanceMoney += $rejMoney;
-				$totalBalancePrice = $totalBalanceMoney / $totalBalanceCount;
-				
-				// 库存明细账
-				$sql = "insert into t_inventory_detail(in_count, in_price, in_money,
+					$totalInCount = 0;
+					$totalInMoney = 0;
+					$totalBalanceCount = 0;
+					$totalBalanceMoney = 0;
+					
+					$totalInCount += $rejCount;
+					$totalInMoney += $rejMoney;
+					$totalInPrice = $totalInMoney / $totalInCount;
+					$totalBalanceCount += $rejCount;
+					$totalBalanceMoney += $rejMoney;
+					$totalBalancePrice = $totalBalanceMoney / $totalBalanceCount;
+					
+					// 库存明细账
+					$sql = "insert into t_inventory_detail(in_count, in_price, in_money,
 						balance_count, balance_price, balance_money, ref_number, ref_type,
 						biz_date, biz_user_id, date_created, goods_id, warehouse_id)
 						values (%d, %f, %f, 
 						%d, %f, %f, '%s', '销售退货入库',
 						'%s', '%s', now(), '%s', '%s')";
-				$db->execute($sql, $rejCount, $rejPrice, $rejMoney, $totalBalanceCount, 
-						$totalBalancePrice, $totalBalanceMoney, $ref, $bizDT, $bizUserId, $goodsId, 
-						$warehouseId);
-				
-				// 库存总账
-				$sql = "update t_inventory
+					$db->execute($sql, $rejCount, $rejPrice, $rejMoney, $totalBalanceCount, 
+							$totalBalancePrice, $totalBalanceMoney, $ref, $bizDT, $bizUserId, 
+							$goodsId, $warehouseId);
+					
+					// 库存总账
+					$sql = "insert into t_inventory(in_count, in_price, in_money,
+						balance_count, balance_price, balance_money, 
+						goods_id, warehouse_id)
+						values (%d, %f, %f, 
+						%d, %f, %f, '%s', '%s')";
+					$db->execute($sql, $totalInCount, $totalInPrice, $totalInMoney, 
+							$totalBalanceCount, $totalBalancePrice, $totalBalanceMoney, $goodsId, 
+							$warehouseId);
+				} else {
+					$totalInCount = $data[0]["in_count"];
+					$totalInMoney = $data[0]["in_money"];
+					$totalBalanceCount = $data[0]["balance_count"];
+					$totalBalanceMoney = $data[0]["balance_money"];
+					
+					$totalInCount += $rejCount;
+					$totalInMoney += $rejMoney;
+					$totalInPrice = $totalInMoney / $totalInCount;
+					$totalBalanceCount += $rejCount;
+					$totalBalanceMoney += $rejMoney;
+					$totalBalancePrice = $totalBalanceMoney / $totalBalanceCount;
+					
+					// 库存明细账
+					$sql = "insert into t_inventory_detail(in_count, in_price, in_money,
+						balance_count, balance_price, balance_money, ref_number, ref_type,
+						biz_date, biz_user_id, date_created, goods_id, warehouse_id)
+						values (%d, %f, %f, 
+						%d, %f, %f, '%s', '销售退货入库',
+						'%s', '%s', now(), '%s', '%s')";
+					$db->execute($sql, $rejCount, $rejPrice, $rejMoney, $totalBalanceCount, 
+							$totalBalancePrice, $totalBalanceMoney, $ref, $bizDT, $bizUserId, 
+							$goodsId, $warehouseId);
+					
+					// 库存总账
+					$sql = "update t_inventory
 						set in_count = %d, in_price = %f, in_money = %f,
 						  balance_count = %d, balance_price = %f, balance_money = %f
 						where goods_id = '%s' and warehouse_id = '%s' ";
-				$db->execute($sql, $totalInCount, $totalInPrice, $totalInMoney, $totalBalanceCount, 
-						$totalBalancePrice, $totalBalanceMoney, $goodsId, $warehouseId);
+					$db->execute($sql, $totalInCount, $totalInPrice, $totalInMoney, 
+							$totalBalanceCount, $totalBalancePrice, $totalBalanceMoney, $goodsId, 
+							$warehouseId);
+				}
 			}
 			
 			$idGen = new IdGenService();
