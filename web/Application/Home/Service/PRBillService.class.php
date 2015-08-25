@@ -774,7 +774,7 @@ class PRBillService extends PSIBaseService {
 						set out_count = %d, out_price = %f, out_money = %f,
 							balance_count = %d, balance_price = %f, balance_money = %f
 						where warehouse_id = '%s' and goods_id = '%s' ";
-				$rc = $db->execute($sql, $outCount, $outPrice, $outMoney, $balanceCount, 
+				$rc = $db->execute($sql, $totalOutCount, $totalOutPrice, $totalOutMoney, $balanceCount, 
 						$balancePrice, $balanceMoney, $warehouseId, $goodsId);
 				if (! $rc) {
 					$db->rollback();
