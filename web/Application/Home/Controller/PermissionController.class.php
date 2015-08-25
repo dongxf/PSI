@@ -15,6 +15,9 @@ use Home\Common\FIdConst;
  */
 class PermissionController extends Controller {
 
+	/**
+	 * 权限管理 - 主页面
+	 */
 	public function index() {
 		$us = new UserService();
 		

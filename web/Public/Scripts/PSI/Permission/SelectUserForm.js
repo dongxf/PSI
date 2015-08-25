@@ -7,9 +7,9 @@ Ext.define("PSI.Permission.SelectUserForm", {
         parentForm: null
     },
 
-    title: "选择权限",
-    width: 400,
-    height: 350,
+    title: "选择用户",
+    width: 600,
+    height: 500,
     modal: true,
     layout: "fit",
 
@@ -38,9 +38,10 @@ Ext.define("PSI.Permission.SelectUserForm", {
                 emptyText: "所有用户都已经加入到当前角色中了"
             },
             store: userStore,
+            columnLines: true,
             columns: [
-                { header: "用户姓名", dataIndex: "name", flex: 1, menuDisabled: true },
-                { header: "登录名", dataIndex: "loginName", flex: 1, menuDisabled: true },
+                { header: "用户姓名", dataIndex: "name", width: 120, menuDisabled: true },
+                { header: "登录名", dataIndex: "loginName", width: 120, menuDisabled: true },
                 { header: "所属组织", dataIndex: "orgFullName", flex: 1, menuDisabled: true }
             ]
         });

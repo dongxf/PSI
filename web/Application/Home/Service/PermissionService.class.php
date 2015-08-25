@@ -16,7 +16,8 @@ class PermissionService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		$sql = "select id, name from t_role order by name";
+		$sql = "select id, name from t_role 
+				order by convert(name USING gbk) collate gbk_chinese_ci";
 		$data = M()->query($sql);
 		
 		return $data;
@@ -30,7 +31,7 @@ class PermissionService extends PSIBaseService {
 		$sql = "select p.id, p.name
 				from t_role r, t_role_permission rp, t_permission p 
 				where r.id = rp.role_id and r.id = '%s' and rp.permission_id = p.id 
-				order by p.name";
+				order by convert(p.name USING gbk) collate gbk_chinese_ci";
 		$data = M()->query($sql, $roleId);
 		
 		return $data;
@@ -44,7 +45,7 @@ class PermissionService extends PSIBaseService {
 		$sql = "select u.id, u.login_name, u.name, org.full_name 
 				from t_role r, t_role_user ru, t_user u, t_org org 
 				where r.id = ru.role_id and r.id = '%s' and ru.user_id = u.id and u.org_id = org.id 
-				order by org.full_name ";
+				order by convert(org.full_name USING gbk) collate gbk_chinese_ci";
 		$data = M()->query($sql, $roleId);
 		$result = array();
 		
@@ -169,7 +170,8 @@ class PermissionService extends PSIBaseService {
 		
 		$result = array();
 		
-		$sql = "select id, name from t_permission order by name";
+		$sql = "select id, name from t_permission 
+				order by convert(name USING gbk) collate gbk_chinese_ci";
 		$data = M()->query($sql);
 		
 		$index = 0;
@@ -201,7 +203,7 @@ class PermissionService extends PSIBaseService {
 		$sql = "select u.id, u.name, u.login_name, o.full_name 
 				from t_user u, t_org o 
 				where u.org_id = o.id 
-				order by u.name";
+				order by convert(u.name USING gbk) collate gbk_chinese_ci";
 		$data = M()->query($sql);
 		
 		$index = 0;
