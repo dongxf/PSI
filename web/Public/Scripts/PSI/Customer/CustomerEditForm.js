@@ -35,7 +35,10 @@ Ext.define("PSI.Customer.CustomerEditForm", {
             }, scope: me
         });
 
-        var categoryStore = me.getParentForm().categoryGrid.getStore();
+        var categoryStore = null;
+        if (me.getParentForm()) {
+            categoryStore = me.getParentForm().categoryGrid.getStore();
+        }
 
         Ext.apply(me, {
             title: entity == null ? "新增客户" : "编辑客户",
@@ -78,7 +81,7 @@ Ext.define("PSI.Customer.CustomerEditForm", {
                             store: categoryStore,
                             queryMode: "local",
                             editable: false,
-                            value: categoryStore.getAt(0).get("id"),
+                            value: categoryStore != null ? categoryStore.getAt(0).get("id") : null,
                             name: "categoryId",
                             listeners: {
                                 specialkey: {
@@ -324,13 +327,47 @@ Ext.define("PSI.Customer.CustomerEditForm", {
             });
         } else {
         	// 新建客户资料
-            var grid = me.getParentForm().categoryGrid;
-            var item = grid.getSelectionModel().getSelection();
-            if (item == null || item.length != 1) {
-                return;
-            }
+        	if (me.getParentForm()) {
+                var grid = me.getParentForm().categoryGrid;
+                var item = grid.getSelectionModel().getSelection();
+                if (item == null || item.length != 1) {
+                    return;
+                }
 
-            Ext.getCmp("editCategory").setValue(item[0].get("id"));
+                Ext.getCmp("editCategory").setValue(item[0].get("id"));
+        	} else {
+        		// 在其他界面中调用新增客户资料
+        		var modelName = "PSICustomerCategory_CustomerEditForm";
+                Ext.define(modelName, {
+                    extend: "Ext.data.Model",
+                    fields: ["id", "code", "name", {name: "cnt", type: "int"}]
+                });
+                var store = Ext.create("Ext.data.Store", {
+                    model: modelName,
+                    autoLoad: false,
+                    data: []
+                });
+                Ext.getCmp("editCategory").bindStore(store);
+                var el = Ext.getBody();
+                el.mask(PSI.Const.LOADING);
+                Ext.Ajax.request({
+                    url: PSI.Const.BASE_URL + "Home/Customer/categoryList",
+                    method: "POST",
+                    callback: function (options, success, response) {
+                        store.removeAll();
+
+                        if (success) {
+                            var data = Ext.JSON.decode(response.responseText);
+                            store.add(data);
+                            if (store.getCount() > 0) {
+                            	Ext.getCmp("editCategory").setValue(store.getAt(0).get("id"))
+                            }
+                        }
+
+                        el.unmask();
+                    }
+                });
+        	}
         }
 
         var editCode = Ext.getCmp("editCode");
@@ -341,7 +378,9 @@ Ext.define("PSI.Customer.CustomerEditForm", {
     onWndClose: function () {
         var me = this;
         if (me.__lastId) {
-            me.getParentForm().freshCustomerGrid(me.__lastId);
+        	if (me.getParentForm()) {
+                me.getParentForm().freshCustomerGrid(me.__lastId);
+        	}
         }
     },
     // private

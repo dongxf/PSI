@@ -116,6 +116,7 @@ Ext.define("PSI.Sale.WSEditForm", {
                             id: "editCustomer",
                             xtype: "psi_customerfield",
                             fieldLabel: "客户",
+                            showAddButton: true,
                             allowBlank: false,
                             labelWidth: 60,
                             labelAlign: "right",
@@ -209,6 +210,7 @@ Ext.define("PSI.Sale.WSEditForm", {
 
                     Ext.getCmp("editCustomer").setIdValue(data.customerId);
                     Ext.getCmp("editCustomer").setValue(data.customerName);
+                    Ext.getCmp("editCustomer").setShowAddButton(data.showAddCustomerButton);
 
                     Ext.getCmp("editWarehouse").setIdValue(data.warehouseId);
                     Ext.getCmp("editWarehouse").setValue(data.warehouseName);

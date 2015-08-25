@@ -3,6 +3,10 @@ Ext.define("PSI.Customer.CustomerField", {
     extend: "Ext.form.field.Trigger",
     alias: "widget.psi_customerfield",
     
+    config: {
+    	showAddButton: false
+    },
+    
     initComponent: function () {
     	var me = this;
     	me.__idValue = null;
@@ -59,6 +63,7 @@ Ext.define("PSI.Customer.CustomerField", {
             width: 400,
             height: 300,
             layout: "border",
+            defaultFocus: "__editCustomer",
             items: [
                 {
                     region: "center",
@@ -93,6 +98,13 @@ Ext.define("PSI.Customer.CustomerField", {
                 }
             ],
             buttons: [
+                {
+                	text: "新增客户资料",
+                	iconCls: "PSI-button-add",
+                	hidden: !me.getShowAddButton(),
+                	handler: me.onAdd,
+                	scope: me
+                },
                 {
                     text: "确定", handler: me.onOK, scope: me
                 },
@@ -209,5 +221,10 @@ Ext.define("PSI.Customer.CustomerField", {
     clearIdValue: function() {
     	this.setValue(null);
     	this.__idValue = null;
+    },
+    
+    onAdd: function() {
+    	var form = Ext.create("PSI.Customer.CustomerEditForm");
+    	form.show();
     }
 });

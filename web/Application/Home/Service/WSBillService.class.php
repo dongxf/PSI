@@ -2,6 +2,7 @@
 
 namespace Home\Service;
 
+use Home\Common\FIdConst;
 /**
  * 销售出库Service
  *
@@ -18,6 +19,7 @@ class WSBillService extends PSIBaseService {
 		$us = new UserService();
 		$result = array();
 		$result["canEditGoodsPrice"] = $this->canEditGoodsPrice();
+		$result["showAddCustomerButton"] = $us->hasPermission(FIdConst::CUSTOMER);
 		
 		if (! $id) {
 			// 新建销售出库单
