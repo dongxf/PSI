@@ -1,7 +1,7 @@
 Ext.define("PSI.About.MainForm", {
     extend: 'Ext.window.Window',
     header: {
-        title: "<span style='font-size:120%'>关于 - PSI</span>",
+        title: "<span style='font-size:120%'>关于 - 开源进销存PSI</span>",
         iconCls: "PSI-fid-9994",
         height: 40
     },

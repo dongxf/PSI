@@ -7,7 +7,7 @@ Ext.define("PSI.User.LoginForm", {
     },
 
     header: {
-        title: "<span style='font-size:120%'>登录 - PSI</span>",
+        title: "<span style='font-size:120%'>登录 - 开源进销存PSI</span>",
         iconCls: "PSI-login",
         height: 40
     },

@@ -208,7 +208,7 @@ Ext.define("PSI.App", {
             return;
         }
         var panel = Ext.getCmp("__PSITopPanel");
-        panel.setTitle(header.title + " - PSI");
+        panel.setTitle(header.title + " - 开源进销存PSI");
         panel.setIconCls(header.iconCls);
     },
     
