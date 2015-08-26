@@ -65,7 +65,7 @@ Ext.define("PSI.BizConfig.MainForm", {
             columns: [
                 Ext.create("Ext.grid.RowNumberer", {text: "序号", width: 40}),
                 {text: "设置项", dataIndex: "name", width: 250, menuDisabled: true},
-                {text: "值", dataIndex: "displayValue", width: 200, menuDisabled: true},
+                {text: "值", dataIndex: "displayValue", width: 500, menuDisabled: true},
                 {text: "备注", dataIndex: "note", width: 500, menuDisabled: true}
             ],
             store: store,

@@ -16,7 +16,7 @@ class BizConfigService extends PSIBaseService {
 		
 		$sql = "select id, name, value, note  
 				from t_config  
-				order by id";
+				order by show_order";
 		$data = M()->query($sql);
 		$result = array();
 		
