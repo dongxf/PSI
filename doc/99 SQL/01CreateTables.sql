@@ -134,6 +134,9 @@ CREATE TABLE IF NOT EXISTS `t_supplier` (
   `init_receivables_dt` datetime DEFAULT NULL, 
   `init_payables` decimal(19,2) DEFAULT NULL, 
   `init_payables_dt` datetime DEFAULT NULL, 
+  `bank_name` varchar(255) DEFAULT NULL,
+  `bank_account` varchar(255) DEFAULT NULL,
+  `tax_number` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -197,6 +200,9 @@ CREATE TABLE IF NOT EXISTS `t_customer` (
   `init_receivables_dt` datetime DEFAULT NULL, 
   `init_payables` decimal(19,2) DEFAULT NULL, 
   `init_payables_dt` datetime DEFAULT NULL, 
+  `bank_name` varchar(255) DEFAULT NULL,
+  `bank_account` varchar(255) DEFAULT NULL,
+  `tax_number` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
