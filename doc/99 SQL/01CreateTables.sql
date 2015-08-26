@@ -137,6 +137,8 @@ CREATE TABLE IF NOT EXISTS `t_supplier` (
   `bank_name` varchar(255) DEFAULT NULL,
   `bank_account` varchar(255) DEFAULT NULL,
   `tax_number` varchar(255) DEFAULT NULL,
+  `fax` varchar(255) DEFAULT NULL,
+  `note` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -203,6 +205,8 @@ CREATE TABLE IF NOT EXISTS `t_customer` (
   `bank_name` varchar(255) DEFAULT NULL,
   `bank_account` varchar(255) DEFAULT NULL,
   `tax_number` varchar(255) DEFAULT NULL,
+  `fax` varchar(255) DEFAULT NULL,
+  `note` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
