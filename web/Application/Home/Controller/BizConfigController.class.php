@@ -53,7 +53,11 @@ class BizConfigController extends Controller {
 			$bs = new BizConfigService();
 			
 			$params = array(
-					"1001-01" => I("post.value1001-01"),
+					"9000-01" => I("post.value9000-01"),
+					"9000-02" => I("post.value9000-02"),
+					"9000-03" => I("post.value9000-03"),
+					"9000-04" => I("post.value9000-04"),
+					"9000-05" => I("post.value9000-05"),
 					"1003-01" => I("post.value1003-01"),
 					"2001-01" => I("post.value2001-01"),
 					"2002-01" => I("post.value2002-01"),

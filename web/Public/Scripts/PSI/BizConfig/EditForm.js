@@ -57,74 +57,123 @@ Ext.define("PSI.BizConfig.EditForm", {
 			modal : true,
 			onEsc : Ext.emptyFn,
 			width : 400,
-			height : 330,
+			height : 350,
 			layout : "fit",
 			items : [ {
-				id : "editForm",
-				xtype : "form",
-				layout : "form",
-				height : "100%",
+				xtype : "tabpanel",
 				bodyPadding : 5,
-				defaultType : 'textfield',
-				fieldDefaults : {
-					labelWidth : 60,
-					labelAlign : "right",
-					labelSeparator : "",
-					msgTarget : 'side'
-				},
-				items : [ {
-					id : "editName1003-01",
-					xtype : "displayfield"
-				}, {
-					id : "editValue1003-01",
-					xtype : "combo",
-					queryMode : "local",
-					editable : false,
-					valueField : "id",
-					store : Ext.create("Ext.data.ArrayStore", {
-						fields : [ "id", "text" ],
-						data : [ [ "0", "仓库不需指定组织机构" ], [ "1", "仓库需指定组织机构" ] ]
-					}),
-					name : "value1003-01"
-				},{
-					id : "editName2001-01",
-					xtype : "displayfield"
-				}, {
-					id : "editValue2001-01",
-					xtype : "combo",
-					queryMode : "local",
-					editable : false,
-					valueField : "id",
-					displayField: "name",
-					store : storePW,
-					name : "value2001-01"
-				}, {
-					id : "editName2002-01",
-					xtype : "displayfield"
-				}, {
-					id : "editValue2002-01",
-					xtype : "combo",
-					queryMode : "local",
-					editable : false,
-					valueField : "id",
-					store : Ext.create("Ext.data.ArrayStore", {
-						fields : [ "id", "text" ],
-						data : [ [ "0", "不允许编辑销售单价" ], [ "1", "允许编辑销售单价" ] ]
-					}),
-					name : "value2002-01"
-				}, {
-					id : "editName2002-02",
-					xtype : "displayfield"
-				}, {
-					id : "editValue2002-02",
-					xtype : "combo",
-					queryMode : "local",
-					editable : false,
-					valueField : "id",
-					displayField: "name",
-					store : storeWS,
-					name : "value2002-02"
-				} ],
+				items : [
+				         {
+				        	 title: "公司",
+				        	 layout: "form",
+				        	 iconCls: "PSI-fid2008",
+				        	 items: [{
+				        		 id: "editName9000-01",
+				        		 xtype: "displayfield"
+				        	 },{
+				        		 id: "editValue9000-01",
+				        		 xtype: "textfield"
+				        	 },{
+				        		 id: "editName9000-02",
+				        		 xtype: "displayfield"
+				        	 },{
+				        		 id: "editValue9000-02",
+				        		 xtype: "textfield"
+				        	 },{
+				        		 id: "editName9000-03",
+				        		 xtype: "displayfield"
+				        	 },{
+				        		 id: "editValue9000-03",
+				        		 xtype: "textfield"
+				        	 },{
+				        		 id: "editName9000-04",
+				        		 xtype: "displayfield"
+				        	 },{
+				        		 id: "editValue9000-04",
+				        		 xtype: "textfield"
+				        	 },{
+				        		 id: "editName9000-05",
+				        		 xtype: "displayfield"
+				        	 },{
+				        		 id: "editValue9000-05",
+				        		 xtype: "textfield"
+				        	 }
+				        	 ]
+				         },
+				         {
+				        	 title: "采购",
+				        	 layout: "form",
+				        	 iconCls: "PSI-fid2001",
+				        	 items: [{
+									id : "editName2001-01",
+									xtype : "displayfield"
+								}, {
+									id : "editValue2001-01",
+									xtype : "combo",
+									queryMode : "local",
+									editable : false,
+									valueField : "id",
+									displayField: "name",
+									store : storePW,
+									name : "value2001-01"
+								}
+				        	 ]
+				         },
+				         {
+				        	 title: "销售",
+				        	 layout: "form",
+				        	 iconCls: "PSI-fid2002",
+				        	 items: [{
+									id : "editName2002-02",
+									xtype : "displayfield"
+								}, {
+									id : "editValue2002-02",
+									xtype : "combo",
+									queryMode : "local",
+									editable : false,
+									valueField : "id",
+									displayField: "name",
+									store : storeWS,
+									name : "value2002-02"
+								}, {
+									id : "editName2002-01",
+									xtype : "displayfield"
+								}, {
+									id : "editValue2002-01",
+									xtype : "combo",
+									queryMode : "local",
+									editable : false,
+									valueField : "id",
+									store : Ext.create("Ext.data.ArrayStore", {
+										fields : [ "id", "text" ],
+										data : [ [ "0", "不允许编辑销售单价" ], [ "1", "允许编辑销售单价" ] ]
+									}),
+									name : "value2002-01"
+								}
+				        	 ]
+				         },
+				         {
+				        	 title: "库存",
+				        	 layout: "form",
+				        	 iconCls: "PSI-fid1003",
+				        	 items: [{
+									id : "editName1003-01",
+									xtype : "displayfield"
+								}, {
+									id : "editValue1003-01",
+									xtype : "combo",
+									queryMode : "local",
+									editable : false,
+									valueField : "id",
+									store : Ext.create("Ext.data.ArrayStore", {
+										fields : [ "id", "text" ],
+										data : [ [ "0", "仓库不需指定组织机构" ], [ "1", "仓库需指定组织机构" ] ]
+									}),
+									name : "value1003-01"
+								}
+				        	 ]
+				         }
+				 ],
 				buttons : buttons
 			} ],
 			listeners : {
@@ -141,34 +190,55 @@ Ext.define("PSI.BizConfig.EditForm", {
 
 		me.callParent(arguments);
 	},
-	// private
+	
+	getSaveData: function() {
+		var result = {
+				'value9000-01': Ext.getCmp("editValue9000-01").getValue(),
+				'value9000-02': Ext.getCmp("editValue9000-02").getValue(),
+				'value9000-03': Ext.getCmp("editValue9000-03").getValue(),
+				'value9000-04': Ext.getCmp("editValue9000-04").getValue(),
+				'value9000-05': Ext.getCmp("editValue9000-05").getValue(),
+				'value1003-01': Ext.getCmp("editValue1003-01").getValue(),
+				'value2001-01': Ext.getCmp("editValue2001-01").getValue(),
+				'value2002-01': Ext.getCmp("editValue2002-01").getValue(),
+				'value2002-02': Ext.getCmp("editValue2002-02").getValue(),
+		};
+		
+		return result;
+	},
+	
 	onOK : function(thenAdd) {
 		var me = this;
-		var f = Ext.getCmp("editForm");
-		var el = f.getEl();
-		el.mask(PSI.Const.SAVING);
-		f.submit({
-			url : PSI.Const.BASE_URL + "Home/BizConfig/edit",
-			method : "POST",
-			success : function(form, action) {
-				el.unmask();
-				me.__saved = true;
-				PSI.MsgBox.showInfo("数据保存成功", function() {
-					me.close();
-				});
-			},
-			failure : function(form, action) {
-				el.unmask();
-				PSI.MsgBox.showInfo(action.result.msg);
-			}
-		});
+        Ext.getBody().mask("正在保存中...");
+        Ext.Ajax.request({
+            url: PSI.Const.BASE_URL + "Home/BizConfig/edit",
+            method: "POST",
+            params: me.getSaveData(),
+            callback: function (options, success, response) {
+                Ext.getBody().unmask();
+
+                if (success) {
+                    var data = Ext.JSON.decode(response.responseText);
+                    if (data.success) {
+                    	me.__saved = true;
+                        PSI.MsgBox.showInfo("成功保存数据", function () {
+                            me.close();
+                        });
+                    } else {
+                        PSI.MsgBox.showInfo(data.msg);
+                    }
+                }
+            }
+        });
 	},
+
 	onWndClose : function() {
 		var me = this;
 		if (me.__saved) {
 			me.getParentForm().refreshGrid();
 		}
 	},
+	
 	onWndShow : function() {
 		var me = this;
 		me.__saved = false;
