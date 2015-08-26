@@ -16,14 +16,17 @@ Ext.define("PSI.User.UserEditForm", {
             title: entity === null ? "新增用户" : "编辑用户",
             modal: true,
             onEsc: Ext.emptyFn,
-            width: 400,
-            height: 370,
+            width: 470,
+            height: 260,
             layout: "fit",
             defaultFocus: "editLoginName",
             items: [{
                 id: "editForm",
                 xtype: "form",
-                layout: "form",
+                layout: {
+					type : "table",
+					columns : 2
+				},
                 height: "100%",
                 bodyPadding: 5,
                 defaultType: 'textfield',
@@ -78,7 +81,8 @@ Ext.define("PSI.User.UserEditForm", {
                             fn: me.onEditSpecialKey,
                             scope: me
                         }
-                    }
+                    },
+                    colspan: 2
                 }, {
                     id: "editOrgName",
                     xtype: "PSI_org_editor",
@@ -93,7 +97,9 @@ Ext.define("PSI.User.UserEditForm", {
                             fn: me.onEditSpecialKey,
                             scope: me
                         }
-                    }
+                    },
+                    colspan: 2,
+                    width: 430
                 }, {
                     id: "editOrgId",
                     xtype: "hidden",
@@ -155,7 +161,9 @@ Ext.define("PSI.User.UserEditForm", {
                             fn: me.onLastEditSpecialKey,
                             scope: me
                         }
-                    }
+                    },
+                    colspan: 2,
+                    width: 430
                 }, {
                     xtype: "radiogroup",
                     fieldLabel: "性别",
@@ -170,7 +178,8 @@ Ext.define("PSI.User.UserEditForm", {
                             name: "gender", inputValue: "女",
                             checked: entity === null ? false : entity.gender == "女"
                         }
-                    ]
+                    ],
+                    width: 200
                 }, {
                     xtype: "radiogroup",
                     fieldLabel: "能否登录",
@@ -185,7 +194,8 @@ Ext.define("PSI.User.UserEditForm", {
                             name: "enabled", inputValue: false,
                             checked: entity === null ? false : entity.enabled != 1
                         }
-                    ]
+                    ],
+                    width: 240
                 }],
                 buttons: [{
                     text: "确定",
