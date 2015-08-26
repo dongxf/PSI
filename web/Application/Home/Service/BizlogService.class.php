@@ -113,7 +113,7 @@ class BizlogService extends PSIBaseService {
 		$cnt = $data[0]["cnt"];
 		return $cnt == 1;
 	}
-	private $CURRENT_DB_VERSION = "20150827-004";
+	private $CURRENT_DB_VERSION = "20150827-005";
 
 	public function updateDatabase() {
 		if ($this->isNotOnline()) {
@@ -154,8 +154,7 @@ class BizlogService extends PSIBaseService {
 	}
 
 	private function t_config($db) {
-		$sql = "
-			TRUNCATE TABLE `t_config`;
+		$sql = "TRUNCATE TABLE `t_config`;
 			INSERT INTO `t_config` (`id`, `name`, `value`, `note`, `show_order`) VALUES
 			('9000-01', '公司名称', '', '', 100),
 			('9000-02', '公司地址', '', '', 101),
@@ -165,8 +164,7 @@ class BizlogService extends PSIBaseService {
 			('2001-01', '采购入库默认仓库', '', '', 200),
 			('2002-02', '销售出库默认仓库', '', '', 300),
 			('2002-01', '销售出库单允许编辑销售单价', '0', '当允许编辑的时候，还需要给用户赋予权限[销售出库单允许编辑销售单价]', 301),
-			('1003-01', '仓库需指定组织机构', '0', '当仓库需要指定组织机构的时候，就意味着可以控制仓库的使用人', 401);
-				";
+			('1003-01', '仓库需指定组织机构', '0', '当仓库需要指定组织机构的时候，就意味着可以控制仓库的使用人', 401);";
 		$db->execute($sql);
 	}
 
@@ -242,8 +240,7 @@ class BizlogService extends PSIBaseService {
 					  `safety_inventory` decimal(19,2) NOT NULL,
 					  `inventory_upper` decimal(19,2) DEFAULT NULL,
 					  PRIMARY KEY (`id`)
-					) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-					";
+					) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
 			$db->execute($sql);
 			return;
 		}
