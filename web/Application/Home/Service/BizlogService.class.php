@@ -113,7 +113,7 @@ class BizlogService extends PSIBaseService {
 		$cnt = $data[0]["cnt"];
 		return $cnt == 1;
 	}
-	private $CURRENT_DB_VERSION = "20150823-001";
+	private $CURRENT_DB_VERSION = "20150826-005";
 
 	public function updateDatabase() {
 		if ($this->isNotOnline()) {
@@ -137,7 +137,11 @@ class BizlogService extends PSIBaseService {
 		
 		$this->t_config($db);
 		$this->t_customer($db);
+		$this->t_goods($db);
+		$this->t_goods_si($db);
 		$this->t_supplier($db);
+		$this->t_sr_bill_detail($db);
+		$this->t_ws_bill_detail($db);
 		
 		$sql = "truncate table t_psi_db_version;
 				insert into t_psi_db_version (db_version, update_dt) 
@@ -200,6 +204,39 @@ class BizlogService extends PSIBaseService {
 		}
 	}
 
+	private function t_goods($db) {
+		$tableName = "t_goods";
+		
+		$columnName = "bar_code";
+		if (! $this->columnExists($db, $tableName, $columnName)) {
+			$sql = "alter table {$tableName} add {$columnName} varchar(255) default null;";
+			$db->execute($sql);
+		}
+	}
+
+	private function t_goods_si($db) {
+		$tableName = "t_goods_si";
+		if (! $this->tableExists($db, $tableName)) {
+			$sql = "CREATE TABLE IF NOT EXISTS `t_goods_si` (
+					  `id` varchar(255) NOT NULL,
+					  `goods_id` varchar(255) NOT NULL,
+					  `warehouse_id` varchar(255) NOT NULL,
+					  `safety_inventory` decimal(19,2) NOT NULL,
+					  `inventory_upper` decimal(19,2) DEFAULT NULL,
+					  PRIMARY KEY (`id`)
+					) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+					";
+			$db->execute($sql);
+			return;
+		}
+		
+		$columnName = "inventory_upper";
+		if (! $this->columnExists($db, $tableName, $columnName)) {
+			$sql = "alter table {$tableName} add {$columnName} decimal(19,2) default null;";
+			$db->execute($sql);
+		}
+	}
+
 	private function t_supplier($db) {
 		$tableName = "t_supplier";
 		
@@ -228,6 +265,26 @@ class BizlogService extends PSIBaseService {
 		}
 		
 		$columnName = "note";
+		if (! $this->columnExists($db, $tableName, $columnName)) {
+			$sql = "alter table {$tableName} add {$columnName} varchar(255) default null;";
+			$db->execute($sql);
+		}
+	}
+
+	private function t_sr_bill_detail($db) {
+		$tableName = "t_sr_bill_detail";
+		
+		$columnName = "sn_note";
+		if (! $this->columnExists($db, $tableName, $columnName)) {
+			$sql = "alter table {$tableName} add {$columnName} varchar(255) default null;";
+			$db->execute($sql);
+		}
+	}
+	
+	private function t_ws_bill_detail($db) {
+		$tableName = "t_ws_bill_detail";
+		
+		$columnName = "sn_note";
 		if (! $this->columnExists($db, $tableName, $columnName)) {
 			$sql = "alter table {$tableName} add {$columnName} varchar(255) default null;";
 			$db->execute($sql);
