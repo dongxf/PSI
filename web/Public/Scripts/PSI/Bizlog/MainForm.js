@@ -94,6 +94,13 @@ Ext.define("PSI.Bizlog.MainForm", {
                     text: "关闭", iconCls: "PSI-button-exit", handler: function () {
                         location.replace(PSI.Const.BASE_URL);
                     }
+                },
+                "->",
+                {
+                	text: "升级数据库",
+                	iconCls: "PSI-button-database",
+                	scope: me,
+                	handler: me.onUpdateDatabase
                 }
             ],
             items: [
@@ -106,8 +113,40 @@ Ext.define("PSI.Bizlog.MainForm", {
 
         me.callParent(arguments);
     },
-    // private
+    
     onRefresh: function () {
         Ext.getCmp("pagingToobar").doRefresh();
+    },
+    
+    // 升级数据库
+    onUpdateDatabase: function() {
+    	var me = this;
+    	
+    	PSI.MsgBox.confirm("请确认是否升级数据库？", function() {
+            var el = Ext.getBody();
+            el.mask("正在升级数据库，请稍等......");
+            Ext.Ajax.request({
+                url: PSI.Const.BASE_URL + "Home/Bizlog/updateDatabase",
+                method: "POST",
+                callback: function (options, success, response) {
+                    el.unmask();
+                    
+                    if (success) {
+                        var data = Ext.JSON.decode(response.responseText);
+                        if (data.success) {
+                            PSI.MsgBox.showInfo("成功升级数据库", function () {
+                                me.onRefresh();
+                            });
+                        } else {
+                            PSI.MsgBox.showInfo(data.msg);
+                        }
+                    } else {
+                        PSI.MsgBox.showInfo("网络错误", function () {
+                            window.location.reload();
+                        });
+                    }
+                }
+            });
+    	});
     }
 });

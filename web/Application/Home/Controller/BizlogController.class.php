@@ -9,7 +9,7 @@ use Home\Common\FIdConst;
 
 /**
  * 业务日志Controller
- * 
+ *
  * @author 李静波
  *        
  */
@@ -49,6 +49,16 @@ class BizlogController extends Controller {
 			
 			$bs = new BizlogService();
 			$this->ajaxReturn($bs->logList($params));
+		}
+	}
+
+	/**
+	 * 升级数据库
+	 */
+	public function updateDatabase() {
+		if (IS_POST) {
+			$bs = new BizlogService();
+			$this->ajaxReturn($bs->updateDatabase());
 		}
 	}
 }
