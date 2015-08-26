@@ -113,7 +113,7 @@ class BizlogService extends PSIBaseService {
 		$cnt = $data[0]["cnt"];
 		return $cnt == 1;
 	}
-	private $CURRENT_DB_VERSION = "20150826-005";
+	private $CURRENT_DB_VERSION = "20150827-004";
 
 	public function updateDatabase() {
 		if ($this->isNotOnline()) {
@@ -172,6 +172,24 @@ class BizlogService extends PSIBaseService {
 
 	private function t_customer($db) {
 		$tableName = "t_customer";
+		
+		$columnName = "address";
+		if (! $this->columnExists($db, $tableName, $columnName)) {
+			$sql = "alter table {$tableName} add {$columnName} varchar(255) default null;";
+			$db->execute($sql);
+		}
+		
+		$columnName = "address_shipping";
+		if (! $this->columnExists($db, $tableName, $columnName)) {
+			$sql = "alter table {$tableName} add {$columnName} varchar(255) default null;";
+			$db->execute($sql);
+		}
+		
+		$columnName = "address_receipt";
+		if (! $this->columnExists($db, $tableName, $columnName)) {
+			$sql = "alter table {$tableName} add {$columnName} varchar(255) default null;";
+			$db->execute($sql);
+		}
 		
 		$columnName = "bank_name";
 		if (! $this->columnExists($db, $tableName, $columnName)) {
@@ -240,6 +258,24 @@ class BizlogService extends PSIBaseService {
 	private function t_supplier($db) {
 		$tableName = "t_supplier";
 		
+		$columnName = "address";
+		if (! $this->columnExists($db, $tableName, $columnName)) {
+			$sql = "alter table {$tableName} add {$columnName} varchar(255) default null;";
+			$db->execute($sql);
+		}
+		
+		$columnName = "address_shipping";
+		if (! $this->columnExists($db, $tableName, $columnName)) {
+			$sql = "alter table {$tableName} add {$columnName} varchar(255) default null;";
+			$db->execute($sql);
+		}
+		
+		$columnName = "address_receipt";
+		if (! $this->columnExists($db, $tableName, $columnName)) {
+			$sql = "alter table {$tableName} add {$columnName} varchar(255) default null;";
+			$db->execute($sql);
+		}
+		
 		$columnName = "bank_name";
 		if (! $this->columnExists($db, $tableName, $columnName)) {
 			$sql = "alter table {$tableName} add {$columnName} varchar(255) default null;";
@@ -280,7 +316,7 @@ class BizlogService extends PSIBaseService {
 			$db->execute($sql);
 		}
 	}
-	
+
 	private function t_ws_bill_detail($db) {
 		$tableName = "t_ws_bill_detail";
 		

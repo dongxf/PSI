@@ -97,7 +97,7 @@ Ext.define("PSI.Bizlog.MainForm", {
                 },
                 "->",
                 {
-                	text: "升级数据库",
+                	text: "一键升级数据库",
                 	iconCls: "PSI-button-database",
                 	scope: me,
                 	handler: me.onUpdateDatabase
