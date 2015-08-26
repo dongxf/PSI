@@ -44,7 +44,7 @@ Ext.define("PSI.Supplier.SupplierEditForm", {
             modal: true,
             onEsc: Ext.emptyFn,
             width: 550,
-            height: 310,
+            height: 400,
             layout: "fit",
             items: [
                 {
@@ -243,7 +243,56 @@ Ext.define("PSI.Supplier.SupplierEditForm", {
                             },
                             colspan: 2,
                             width: 490
-                        },{
+                        },
+                        {
+                            id: "editBankName",
+                            fieldLabel: "开户行",
+                            name: "bankName",
+                            value: entity == null ? null : entity.get("bankName"),
+                            listeners: {
+                                specialkey: {
+                                    fn: me.onEditSpecialKey,
+                                    scope: me
+                                }
+                            }
+                        },
+                        {
+                            id: "editBankAccount",
+                            fieldLabel: "开户行账号",
+                            name: "bankAccount",
+                            value: entity == null ? null : entity.get("bankAccount"),
+                            listeners: {
+                                specialkey: {
+                                    fn: me.onEditSpecialKey,
+                                    scope: me
+                                }
+                            }
+                        },
+                        {
+                            id: "editTax",
+                            fieldLabel: "税号",
+                            name: "tax",
+                            value: entity == null ? null : entity.get("tax"),
+                            listeners: {
+                                specialkey: {
+                                    fn: me.onEditSpecialKey,
+                                    scope: me
+                                }
+                            }
+                        },
+                        {
+                            id: "editFax",
+                            fieldLabel: "传真",
+                            name: "fax",
+                            value: entity == null ? null : entity.get("fax"),
+                            listeners: {
+                                specialkey: {
+                                    fn: me.onEditSpecialKey,
+                                    scope: me
+                                }
+                            }
+                        },
+                        {
                             id: "editInitPayables",
                             fieldLabel: "应付期初余额",
                             name: "initPayables",
@@ -265,10 +314,24 @@ Ext.define("PSI.Supplier.SupplierEditForm", {
                             value: entity == null ? null : entity.get("initPayablesDT"),
                             listeners: {
                                 specialkey: {
-                                    fn: me.onEditLastSpecialKey,
+                                    fn: me.onEditSpecialKey,
                                     scope: me
                                 }
                             }
+                        },
+                        {
+                            id: "editNote",
+                            fieldLabel: "备注",
+                            name: "note",
+                            value: entity == null ? null : entity.get("note"),
+                            listeners: {
+                                specialkey: {
+                                    fn: me.onEditLastSpecialKey,
+                                    scope: me
+                                }
+                            },
+                            width: 490,
+                            colspan: 2
                         }
                     ],
                     buttons: buttons
@@ -289,8 +352,9 @@ Ext.define("PSI.Supplier.SupplierEditForm", {
 
         me.__editorList = ["editCategory", "editCode", "editName", "editAddress", "editContact01",
             "editMobile01", "editTel01", "editQQ01", "editContact02",
-            "editMobile02", "editTel02", "editQQ02", "editAddressShipping",  
-            "editInitPayables", "editInitPayablesDT"];
+            "editMobile02", "editTel02", "editQQ02", "editAddressShipping",
+            "editBankName", "editBankAccount", "editTax", "editFax",
+            "editInitPayables", "editInitPayablesDT", "editNote"];
     },
     onWndShow: function () {
         var me = this;
@@ -331,6 +395,11 @@ Ext.define("PSI.Supplier.SupplierEditForm", {
                         Ext.getCmp("editAddressShipping").setValue(data.addressShipping);
                         Ext.getCmp("editInitPayables").setValue(data.initPayables);
                         Ext.getCmp("editInitPayablesDT").setValue(data.initPayablesDT);
+                        Ext.getCmp("editBankName").setValue(data.bankName);
+                        Ext.getCmp("editBankAccount").setValue(data.bankAccount);
+                        Ext.getCmp("editTax").setValue(data.tax);
+                        Ext.getCmp("editFax").setValue(data.fax);
+                        Ext.getCmp("editNote").setValue(data.note);
                     }
 
                     el.unmask();
@@ -398,7 +467,8 @@ Ext.define("PSI.Supplier.SupplierEditForm", {
 
         var editors = ["editCode", "editName", "editAddress", "editAddressShipping", "editContact01",
             "editMobile01", "editTel01", "editQQ01", "editContact02",
-            "editMobile02", "editTel02", "editQQ02", "editInitPayables", "editInitPayablesDT"];
+            "editMobile02", "editTel02", "editQQ02", "editInitPayables", "editInitPayablesDT",
+            "editBankName", "editBankAccount", "editTax", "editFax", "editNote"];
         for (var i = 0; i < editors.length; i++) {
             var edit = Ext.getCmp(editors[i]);
             if (edit) {
