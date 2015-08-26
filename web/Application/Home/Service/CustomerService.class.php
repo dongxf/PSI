@@ -123,7 +123,7 @@ class CustomerService extends PSIBaseService {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
 		}
-			
+		
 		$id = $params["id"];
 		
 		$db = M();
@@ -169,6 +169,11 @@ class CustomerService extends PSIBaseService {
 		$qq02 = $params["qq02"];
 		$initReceivables = $params["initReceivables"];
 		$initReceivablesDT = $params["initReceivablesDT"];
+		$bankName = $params["bankName"];
+		$bankAccount = $params["bankAccount"];
+		$tax = $params["tax"];
+		$fax = $params["fax"];
+		$note = $params["note"];
 		
 		$ps = new PinyinService();
 		$py = $ps->toPY($name);
@@ -198,11 +203,14 @@ class CustomerService extends PSIBaseService {
 					set code = '%s', name = '%s', category_id = '%s', py = '%s', 
 					contact01 = '%s', qq01 = '%s', tel01 = '%s', mobile01 = '%s', 
 					contact02 = '%s', qq02 = '%s', tel02 = '%s', mobile02 = '%s',
-					address = '%s', address_receipt = '%s'
+					address = '%s', address_receipt = '%s',
+					bank_name = '%s', bank_account = '%s', tax_number = '%s',
+					fax = '%s', note = '%s'
 					where id = '%s'  ";
 			
 			$db->execute($sql, $code, $name, $categoryId, $py, $contact01, $qq01, $tel01, $mobile01, 
-					$contact02, $qq02, $tel02, $mobile02, $address, $addressReceipt, $id);
+					$contact02, $qq02, $tel02, $mobile02, $address, $addressReceipt, $bankName, 
+					$bankAccount, $tax, $fax, $note, $id);
 			
 			$log = "编辑客户：编码 = {$code}, 名称 = {$name}";
 			$bs = new BizlogService();
@@ -221,11 +229,14 @@ class CustomerService extends PSIBaseService {
 			}
 			
 			$sql = "insert into t_customer (id, category_id, code, name, py, contact01, 
-					qq01, tel01, mobile01, contact02, qq02, tel02, mobile02, address, address_receipt)  
+					qq01, tel01, mobile01, contact02, qq02, tel02, mobile02, address, address_receipt,
+					bank_name, bank_account, tax_number, fax, note)  
 					values ('%s', '%s', '%s', '%s', '%s', '%s', 
-							'%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')  ";
+							'%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
+							'%s', '%s', '%s', '%s', '%s')  ";
 			$db->execute($sql, $id, $categoryId, $code, $name, $py, $contact01, $qq01, $tel01, 
-					$mobile01, $contact02, $qq02, $tel02, $mobile02, $address, $addressReceipt);
+					$mobile01, $contact02, $qq02, $tel02, $mobile02, $address, $addressReceipt, 
+					$bankName, $bankAccount, $tax, $fax, $note);
 			
 			$log = "新增客户：编码 = {$code}, 名称 = {$name}";
 			$bs = new BizlogService();
@@ -311,7 +322,7 @@ class CustomerService extends PSIBaseService {
 		
 		$sql = "select id, category_id, code, name, address, contact01, qq01, tel01, mobile01, 
 				 contact02, qq02, tel02, mobile02, init_receivables, init_receivables_dt,
-					address_receipt
+					address_receipt, bank_name, bank_account, tax_number, fax, note
 				 from t_customer where (category_id = '%s') ";
 		$queryParam = array();
 		$queryParam[] = $categoryId;
@@ -375,6 +386,11 @@ class CustomerService extends PSIBaseService {
 				$result[$i]["initReceivablesDT"] = date("Y-m-d", 
 						strtotime($v["init_receivables_dt"]));
 			}
+			$result[$i]["bankName"] = $v["bank_name"];
+			$result[$i]["bankAccount"] = $v["bank_account"];
+			$result[$i]["tax"] = $v["tax_number"];
+			$result[$i]["fax"] = $v["fax"];
+			$result[$i]["note"] = $v["note"];
 		}
 		
 		$sql = "select count(*) as cnt from t_customer where (category_id  = '%s') ";
@@ -517,7 +533,8 @@ class CustomerService extends PSIBaseService {
 		$db = M();
 		$sql = "select category_id, code, name, contact01, qq01, mobile01, tel01,
 					contact02, qq02, mobile02, tel02, address, address_receipt,
-					init_receivables, init_receivables_dt
+					init_receivables, init_receivables_dt,
+					bank_name, bank_account, tax_number, fax, note
 				from t_customer
 				where id = '%s' ";
 		$data = $db->query($sql, $id);
@@ -540,6 +557,11 @@ class CustomerService extends PSIBaseService {
 			if ($d) {
 				$result["initReceivablesDT"] = $this->toYMD($d);
 			}
+			$result["bankName"] = $data[0]["bank_name"];
+			$result["bankAccount"] = $data[0]["bank_account"];
+			$result["tax"] = $data[0]["tax_number"];
+			$result["fax"] = $data[0]["fax"];
+			$result["note"] = $data[0]["note"];
 		}
 		
 		return $result;

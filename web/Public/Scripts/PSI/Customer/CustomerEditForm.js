@@ -45,7 +45,7 @@ Ext.define("PSI.Customer.CustomerEditForm", {
             modal: true,
             onEsc: Ext.emptyFn,
             width: 550,
-            height: 310,
+            height: 400,
             layout: "fit",
             items: [
                 {
@@ -240,7 +240,56 @@ Ext.define("PSI.Customer.CustomerEditForm", {
                             },
                             width: 490,
                             colspan: 2
-                        },{
+                        },
+                        {
+                            id: "editBankName",
+                            fieldLabel: "开户行",
+                            name: "bankName",
+                            value: entity == null ? null : entity.get("bankName"),
+                            listeners: {
+                                specialkey: {
+                                    fn: me.onEditSpecialKey,
+                                    scope: me
+                                }
+                            }
+                        },
+                        {
+                            id: "editBankAccount",
+                            fieldLabel: "开户行账号",
+                            name: "bankAccount",
+                            value: entity == null ? null : entity.get("bankAccount"),
+                            listeners: {
+                                specialkey: {
+                                    fn: me.onEditSpecialKey,
+                                    scope: me
+                                }
+                            }
+                        },
+                        {
+                            id: "editTax",
+                            fieldLabel: "税号",
+                            name: "tax",
+                            value: entity == null ? null : entity.get("tax"),
+                            listeners: {
+                                specialkey: {
+                                    fn: me.onEditSpecialKey,
+                                    scope: me
+                                }
+                            }
+                        },
+                        {
+                            id: "editFax",
+                            fieldLabel: "传真",
+                            name: "fax",
+                            value: entity == null ? null : entity.get("fax"),
+                            listeners: {
+                                specialkey: {
+                                    fn: me.onEditSpecialKey,
+                                    scope: me
+                                }
+                            }
+                        },
+                        {
                             id: "editInitReceivables",
                             fieldLabel: "应收期初余额",
                             name: "initReceivables",
@@ -262,10 +311,24 @@ Ext.define("PSI.Customer.CustomerEditForm", {
                             value: entity == null ? null : entity.get("initReceivablesDT"),
                             listeners: {
                                 specialkey: {
-                                    fn: me.onEditLastSpecialKey,
+                                    fn: me.onEditSpecialKey,
                                     scope: me
                                 }
                             }
+                        },
+                        {
+                            id: "editNote",
+                            fieldLabel: "备注",
+                            name: "note",
+                            value: entity == null ? null : entity.get("note"),
+                            listeners: {
+                                specialkey: {
+                                    fn: me.onEditLastSpecialKey,
+                                    scope: me
+                                }
+                            },
+                            width: 490,
+                            colspan: 2
                         }
                     ],
                     buttons: buttons
@@ -286,7 +349,9 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 
         me.__editorList = ["editCategory", "editCode", "editName", "editAddress", "editContact01",
             "editMobile01", "editTel01", "editQQ01", "editContact02",
-            "editMobile02", "editTel02", "editQQ02", "editAddressReceipt", "editInitReceivables", "editInitReceivablesDT"];
+            "editMobile02", "editTel02", "editQQ02", "editAddressReceipt",
+            "editBankName", "editBankAccount", "editTax", "editFax",
+            "editInitReceivables", "editInitReceivablesDT", "editNote"];
 
     },
     
@@ -320,6 +385,11 @@ Ext.define("PSI.Customer.CustomerEditForm", {
                         Ext.getCmp("editAddressReceipt").setValue(data.addressReceipt);
                         Ext.getCmp("editInitReceivables").setValue(data.initReceivables);
                         Ext.getCmp("editInitReceivablesDT").setValue(data.initReceivablesDT);
+                        Ext.getCmp("editBankName").setValue(data.bankName);
+                        Ext.getCmp("editBankAccount").setValue(data.bankAccount);
+                        Ext.getCmp("editTax").setValue(data.tax);
+                        Ext.getCmp("editFax").setValue(data.fax);
+                        Ext.getCmp("editNote").setValue(data.note);
                     }
 
                     el.unmask();
@@ -438,7 +508,9 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 
         var editors = ["editCode", "editName", "editAddress", "editContact01",
             "editMobile01", "editTel01", "editQQ01", "editContact02",
-            "editMobile02", "editTel02", "editQQ02", "editAddressReceipt", "editInitReceivables", "editInitReceivablesDT"];
+            "editMobile02", "editTel02", "editQQ02", "editAddressReceipt",
+            "editBankName", "editBankAccount", "editTax", "editFax", "editNote",
+            "editInitReceivables", "editInitReceivablesDT"];
         for (var i = 0; i < editors.length; i++) {
             var edit = Ext.getCmp(editors[i]);
             if (edit) {

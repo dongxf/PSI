@@ -87,6 +87,11 @@ class CustomerController extends Controller {
 					"mobile02" => I("post.mobile02"),
 					"tel02" => I("post.tel02"),
 					"qq02" => I("post.qq02"),
+					"bankName" => I("post.bankName"),
+					"bankAccount" => I("post.bankAccount"),
+					"tax" => I("post.tax"),
+					"fax" => I("post.fax"),
+					"note" => I("post.note"),
 					"categoryId" => I("post.categoryId"),
 					"initReceivables" => I("post.initReceivables"),
 					"initReceivablesDT" => I("post.initReceivablesDT")
