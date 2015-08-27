@@ -403,6 +403,9 @@ Ext.define("PSI.Goods.MainForm", {
     // private
     onCategoryGridSelect: function () {
         var me = this;
+        me.getSIGrid().setTitle("商品安全库存");
+        me.getSIGrid().getStore().removeAll();
+        
         me.goodsGrid.getStore().currentPage = 1;
         
         me.freshGoodsGrid();
