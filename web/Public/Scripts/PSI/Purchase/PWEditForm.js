@@ -373,7 +373,11 @@ Ext.define("PSI.Purchase.PWEditForm", {
 						draggable: false,
 						align : "right",
 						xtype : "numbercolumn",
-						width : 120
+						width : 120,
+						editor : {
+							xtype : "numberfield",
+							hideTrigger : true
+						}
 					},
 					{
 						header : "",
@@ -464,8 +468,13 @@ Ext.define("PSI.Purchase.PWEditForm", {
 			return;
 		}
 		
-		if (e.colIdx == 6) {
-			me.calcMoney();
+		var fieldName = e.field;
+		var goods = e.record;
+		var oldValue = e.originalValue;
+		if (fieldName == "goodsMoney") {
+			if (goods.get(fieldName) != (new Number(oldValue)).toFixed(2)) {
+				me.calcPrice(goods);
+			}
 
 			var store = me.getGoodsGrid().getStore();
 			if (e.rowIdx == store.getCount() - 1) {
@@ -474,17 +483,44 @@ Ext.define("PSI.Purchase.PWEditForm", {
 			e.rowIdx += 1;
 			me.getGoodsGrid().getSelectionModel().select(e.rowIdx);
 			me.__cellEditing.startEdit(e.rowIdx, 1);
-		} else if (e.colIdx == 4) {
-			me.calcMoney();
+		} else if (fieldName == "goodsCount") {
+			if (goods.get(fieldName) != oldValue) {
+				me.calcMoney(goods);
+			}
+		} else if (fieldName == "goodsPrice") {
+			if (goods.get(fieldName) != (new Number(oldValue)).toFixed(2)) {
+				me.calcMoney(goods);
+			}
 		}
 	},
-	calcMoney : function() {
-		var me = this;
-		var item = me.getGoodsGrid().getSelectionModel().getSelection();
-		if (item == null || item.length != 1) {
+	
+	calcMoney : function(goods) {
+		if (!goods) {
 			return;
 		}
-		var goods = item[0];
+		
+		goods.set("goodsMoney", goods.get("goodsCount")
+				* goods.get("goodsPrice"));
+	},
+	
+	calcPrice : function(goods) {
+		if (!goods) {
+			return;
+		}
+		
+		var goodsCount = goods.get("goodsCount");
+		if (goodsCount) {
+			if (goodsCount == 0) {
+				goods.set("goodsPrice", 0);
+				goods.set("goodsMoney", 0);
+			} else {
+				goods.set("goodsPrice", goods.get("goodsMoney") / goods.get("goodsCount"));
+			}
+		} else {
+			goods.set("goodsCount", 0);
+			goods.set("goodsPrice", 0);
+			goods.set("goodsMoney", 0);
+		}
 		goods.set("goodsMoney", goods.get("goodsCount")
 				* goods.get("goodsPrice"));
 	},
@@ -506,7 +542,8 @@ Ext.define("PSI.Purchase.PWEditForm", {
 				id : item.get("id"),
 				goodsId : item.get("goodsId"),
 				goodsCount : item.get("goodsCount"),
-				goodsPrice : item.get("goodsPrice")
+				goodsPrice : item.get("goodsPrice"),
+				goodsMoney: item.get("goodsMoney")
 			});
 		}
 

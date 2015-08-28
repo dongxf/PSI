@@ -222,8 +222,8 @@ class PWBillService extends PSIBaseService {
 						$cnt = $data[0]["cnt"];
 						if ($cnt == 1) {
 							
-							$goodsPrice = floatval($item["goodsPrice"]);
-							$goodsMoney = $goodsCount * $goodsPrice;
+							$goodsPrice = $item["goodsPrice"];
+							$goodsMoney = $item["goodsMoney"];
 							
 							$sql = "insert into t_pw_bill_detail (id, date_created, goods_id, goods_count, goods_price,
 									goods_money,  pwbill_id, show_order)
@@ -282,8 +282,8 @@ class PWBillService extends PSIBaseService {
 						$cnt = $data[0]["cnt"];
 						if ($cnt == 1) {
 							
-							$goodsPrice = floatval($item["goodsPrice"]);
-							$goodsMoney = $goodsCount * $goodsPrice;
+							$goodsPrice = $item["goodsPrice"];
+							$goodsMoney = $item["goodsMoney"];
 							
 							$sql = "insert into t_pw_bill_detail 
 									(id, date_created, goods_id, goods_count, goods_price,
@@ -498,7 +498,7 @@ class PWBillService extends PSIBaseService {
 			return $this->bad("采购入库单没有采购明细记录，不能入库");
 		}
 		
-		// 检查入库数量和单价不能为负数
+		// 检查入库数量、单价、金额不能为负数
 		foreach ( $items as $v ) {
 			$goodsCount = intval($v["goods_count"]);
 			if ($goodsCount <= 0) {
@@ -508,6 +508,10 @@ class PWBillService extends PSIBaseService {
 			if ($goodsPrice < 0) {
 				return $this->bad("采购单价不能为负数");
 			}
+			$goodsMoney = floatval($v["goods_money"]);
+			if ($goodsMoney < 0) {
+				return $this->bad("采购金额不能为负数");
+			}
 		}
 		
 		$db->startTrans();
@@ -516,6 +520,10 @@ class PWBillService extends PSIBaseService {
 				$goodsCount = intval($v["goods_count"]);
 				$goodsPrice = floatval($v["goods_price"]);
 				$goodsMoney = floatval($v["goods_money"]);
+				if ($goodsCount != 0) {
+					$goodsPrice = $goodsMoney / $goodsCount;
+				}
+				
 				$goodsId = $v["goods_id"];
 				
 				$balanceCount = 0;
