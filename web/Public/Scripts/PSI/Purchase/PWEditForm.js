@@ -509,20 +509,9 @@ Ext.define("PSI.Purchase.PWEditForm", {
 		}
 		
 		var goodsCount = goods.get("goodsCount");
-		if (goodsCount) {
-			if (goodsCount == 0) {
-				goods.set("goodsPrice", 0);
-				goods.set("goodsMoney", 0);
-			} else {
-				goods.set("goodsPrice", goods.get("goodsMoney") / goods.get("goodsCount"));
-			}
-		} else {
-			goods.set("goodsCount", 0);
-			goods.set("goodsPrice", 0);
-			goods.set("goodsMoney", 0);
+		if (goodsCount && goodsCount != 0) {
+			goods.set("goodsPrice", goods.get("goodsMoney") / goods.get("goodsCount"));
 		}
-		goods.set("goodsMoney", goods.get("goodsCount")
-				* goods.get("goodsPrice"));
 	},
 	getSaveData : function() {
 		var result = {
