@@ -153,7 +153,7 @@ Ext.define("PSI.Purchase.PWMainForm", {
         Ext.define(modelName, {
             extend: "Ext.data.Model",
             fields: ["id", "ref", "bizDate", "supplierName", "warehouseName", "inputUserName",
-                "bizUserName", "billStatus", "amount", "dateCreated"]
+                "bizUserName", "billStatus", "amount", "dateCreated", "paymentType"]
         });
         var store = Ext.create("Ext.data.Store", {
             autoLoad: false,
@@ -199,6 +199,18 @@ Ext.define("PSI.Purchase.PWMainForm", {
                 {header: "业务日期", dataIndex: "bizDate", menuDisabled: true, sortable: false},
                 {header: "供应商", dataIndex: "supplierName", width: 300, menuDisabled: true, sortable: false},
                 {header: "采购金额", dataIndex: "amount", menuDisabled: true, sortable: false, align: "right", xtype: "numbercolumn", width: 150},
+                {
+                	header: "付款方式", dataIndex: "paymentType", menuDisabled: true, sortable: false, width: 100,
+                	renderer: function(value) {
+                		if (value == 0) {
+                			return "记应付账款";
+                		} else if (value == 1) {
+                			return "现金付款";
+                		} else {
+                			return "";
+                		}
+                	}
+                },
                 {header: "入库仓库", dataIndex: "warehouseName", menuDisabled: true, sortable: false},
                 {header: "业务员", dataIndex: "bizUserName", menuDisabled: true, sortable: false},
                 {header: "制单人", dataIndex: "inputUserName", menuDisabled: true, sortable: false},
