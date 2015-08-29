@@ -113,7 +113,7 @@ class BizlogService extends PSIBaseService {
 		$cnt = $data[0]["cnt"];
 		return $cnt == 1;
 	}
-	private $CURRENT_DB_VERSION = "20150827-005";
+	private $CURRENT_DB_VERSION = "20150829-001";
 
 	public function updateDatabase() {
 		if ($this->isNotOnline()) {
@@ -135,6 +135,8 @@ class BizlogService extends PSIBaseService {
 			return $this->bad("当前数据库是最新版本，不用升级");
 		}
 		
+		$this->t_cash($db);
+		$this->t_cash_detail($db);
 		$this->t_config($db);
 		$this->t_customer($db);
 		$this->t_goods($db);
@@ -151,6 +153,43 @@ class BizlogService extends PSIBaseService {
 		$this->insertBizlog("升级数据库，数据库版本 = " . $this->CURRENT_DB_VERSION);
 		
 		return $this->ok();
+	}
+
+	private function t_cash($db) {
+		$tableName = "t_cash";
+		if (! $this->tableExists($db, $tableName)) {
+			$sql = "CREATE TABLE IF NOT EXISTS `t_cash` (
+					  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+					  `biz_date` datetime NOT NULL,
+					  `in_money` decimal(19,2) DEFAULT NULL,
+					  `out_money` decimal(19,2) DEFAULT NULL,
+					  `balance_money` decimal(19,2) NOT NULL,
+					  PRIMARY KEY (`id`)
+					) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+					";
+			$db->execute($sql);
+			return;
+		}
+	}
+
+	private function t_cash_detail($db) {
+		$tableName = "t_cash_detail";
+		if (! $this->tableExists($db, $tableName)) {
+			$sql = "CREATE TABLE IF NOT EXISTS `t_cash_detail` (
+					  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+					  `biz_date` datetime NOT NULL,
+					  `in_money` decimal(19,2) DEFAULT NULL,
+					  `out_money` decimal(19,2) DEFAULT NULL,
+					  `balance_money` decimal(19,2) NOT NULL,
+					  `ref_number` varchar(255) NOT NULL,
+					  `ref_type` varchar(255) NOT NULL,
+					  `date_created` datetime NOT NULL,
+					  PRIMARY KEY (`id`)
+					) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+					";
+			$db->execute($sql);
+			return;
+		}
 	}
 
 	private function t_config($db) {
