@@ -467,7 +467,7 @@ class SRBillService extends PSIBaseService {
 					if ($rejCount == null) {
 						$rejCount = 0;
 					}
-					$rejSaleMoney = $rejCount * $rejPrice;
+					$rejSaleMoney = $v["rejMoney"];
 					$inventoryMoney = $rejCount * $inventoryPrice;
 					$goodsId = $v["goodsId"];
 					$sn = $v["sn"];

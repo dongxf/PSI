@@ -312,11 +312,14 @@ Ext.define("PSI.Sale.SREditForm", {
                     sortable: false, align: "right", xtype: "numbercolumn",
                     width: 100, 
                     editor: {xtype: "numberfield",
-                        allowDecimals: false,
+                        allowDecimals: true,
                         hideTrigger: true}
                 },
                 {header: "退货金额", dataIndex: "rejMoney", menuDisabled: true, draggable: false,
-                    sortable: false, align: "right", xtype: "numbercolumn", width: 120},
+                    sortable: false, align: "right", xtype: "numbercolumn", width: 120,
+                    editor: {xtype: "numberfield",
+                        allowDecimals: true,
+                        hideTrigger: true}},
                 {header: "销售数量", dataIndex: "goodsCount", menuDisabled: true, draggable: false,
                     sortable: false, align: "right", width: 100
                 },{header: "销售单价", dataIndex: "goodsPrice", menuDisabled: true, draggable: false,
@@ -340,22 +343,32 @@ Ext.define("PSI.Sale.SREditForm", {
     },
     cellEditingAfterEdit: function (editor, e) {
         var me = this;
-        if (e.colIdx == 6) {
-            me.calcMoney();
-            e.rowIdx += 1;
-            me.getGoodsGrid().getSelectionModel().select(e.rowIdx);
-            me.__cellEditing.startEdit(e.rowIdx, 4);
-        } else if (e.colIdx == 4) {
-        	me.calcMoney();
+        if (me.__readonly) {
+        	return;
+        }
+        
+        var fieldName = e.field;
+		var goods = e.record;
+		var oldValue = e.originalValue;
+		if (fieldName == "rejMoney") {
+			if (goods.get(fieldName) != (new Number(oldValue)).toFixed(2)) {
+				me.calcPrice(goods);	
+			}
+		} else if (fieldName == "rejCount") {
+			if (goods.get(fieldName) != oldValue) {
+				me.calcMoney(goods);	
+			}
+        } else if (fieldName == "rejPrice") {
+			if (goods.get(fieldName) != (new Number(oldValue)).toFixed(2)) {
+				me.calcMoney(goods);	
+			}
         }
     },
-    calcMoney: function () {
-        var me = this;
-        var item = me.getGoodsGrid().getSelectionModel().getSelection();
-        if (item == null || item.length != 1) {
-            return;
-        }
-        var goods = item[0];
+    calcMoney: function (goods) {
+    	if (!goods) {
+    		return;
+    	}
+    	
         var rejCount = goods.get("rejCount");
         if (!rejCount) {
         	rejCount = 0;
@@ -365,6 +378,16 @@ Ext.define("PSI.Sale.SREditForm", {
         	rejPrice = 0;
         }
         goods.set("rejMoney", rejCount * rejPrice);
+    },
+    
+    calcPrice: function(goods) {
+    	if (!goods) {
+    		return;
+    	}
+    	var rejCount = goods.get("rejCount");
+    	if (rejCount && rejCount != 0) {
+    		goods.set("rejPrice", goods.get("rejMoney") / goods.get("rejCount"));
+    	}
     },
 
     getSaveData: function () {
@@ -387,6 +410,7 @@ Ext.define("PSI.Sale.SREditForm", {
                 goodsId: item.get("goodsId"),
                 rejCount: item.get("rejCount"),
                 rejPrice: item.get("rejPrice"),
+                rejMoney: item.get("rejMoney"),
                 sn: item.get("sn")
             });
         }
