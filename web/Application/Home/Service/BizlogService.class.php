@@ -113,7 +113,7 @@ class BizlogService extends PSIBaseService {
 		$cnt = $data[0]["cnt"];
 		return $cnt == 1;
 	}
-	private $CURRENT_DB_VERSION = "20150829-001";
+	private $CURRENT_DB_VERSION = "20150829-004";
 
 	public function updateDatabase() {
 		if ($this->isNotOnline()) {
@@ -193,18 +193,59 @@ class BizlogService extends PSIBaseService {
 	}
 
 	private function t_config($db) {
-		$sql = "TRUNCATE TABLE `t_config`;
-			INSERT INTO `t_config` (`id`, `name`, `value`, `note`, `show_order`) VALUES
-			('9000-01', '公司名称', '', '', 100),
-			('9000-02', '公司地址', '', '', 101),
-			('9000-03', '公司电话', '', '', 102),
-			('9000-04', '公司传真', '', '', 103),
-			('9000-05', '公司邮编', '', '', 104),
-			('2001-01', '采购入库默认仓库', '', '', 200),
-			('2002-02', '销售出库默认仓库', '', '', 300),
-			('2002-01', '销售出库单允许编辑销售单价', '0', '当允许编辑的时候，还需要给用户赋予权限[销售出库单允许编辑销售单价]', 301),
-			('1003-01', '仓库需指定组织机构', '0', '当仓库需要指定组织机构的时候，就意味着可以控制仓库的使用人', 401);";
+		// 移走商品双单位
+		$sql = "delete from t_config where id = '1001-01'";
 		$db->execute($sql);
+		
+		// 9000-01
+		$sql = "select count(*) as cnt from t_config where id = '9000-01' ";
+		$data = $db->query($sql);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_config (id, name, value, note, show_order)
+					values ('9000-01', '公司名称', '', '', 100)";
+			$db->execute($sql);
+		}
+		
+		// 9000-02
+		$sql = "select count(*) as cnt from t_config where id = '9000-02' ";
+		$data = $db->query($sql);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_config (id, name, value, note, show_order)
+					values ('9000-02', '公司地址', '', '', 101)";
+			$db->execute($sql);
+		}
+		
+		// 9000-03
+		$sql = "select count(*) as cnt from t_config where id = '9000-03' ";
+		$data = $db->query($sql);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_config (id, name, value, note, show_order)
+					values ('9000-03', '公司电话', '', '', 102)";
+			$db->execute($sql);
+		}
+		
+		// 9000-04
+		$sql = "select count(*) as cnt from t_config where id = '9000-04' ";
+		$data = $db->query($sql);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_config (id, name, value, note, show_order)
+					values ('9000-04', '公司传真', '', '', 103)";
+			$db->execute($sql);
+		}
+		
+		// 9000-05
+		$sql = "select count(*) as cnt from t_config where id = '9000-05' ";
+		$data = $db->query($sql);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_config (id, name, value, note, show_order)
+					values ('9000-05', '公司邮编', '', '', 104)";
+			$db->execute($sql);
+		}
 	}
 
 	private function t_customer($db) {
