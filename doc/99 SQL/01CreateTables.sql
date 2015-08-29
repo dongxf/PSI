@@ -557,6 +557,28 @@ CREATE TABLE IF NOT EXISTS `t_goods_si` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `t_cash`;
+CREATE TABLE IF NOT EXISTS `t_cash` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `biz_date` datetime NOT NULL,
+  `in_money` decimal(19,2) DEFAULT NULL,
+  `out_money` decimal(19,2) DEFAULT NULL,
+  `balance_money` decimal(19,2) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `t_cash_detail`;
+CREATE TABLE IF NOT EXISTS `t_cash_detail` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `biz_date` datetime NOT NULL,
+  `in_money` decimal(19,2) DEFAULT NULL,
+  `out_money` decimal(19,2) DEFAULT NULL,
+  `balance_money` decimal(19,2) NOT NULL,
+  `ref_number` varchar(255) NOT NULL,
+  `ref_type` varchar(255) NOT NULL,
+  `date_created` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
