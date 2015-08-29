@@ -113,7 +113,7 @@ class BizlogService extends PSIBaseService {
 		$cnt = $data[0]["cnt"];
 		return $cnt == 1;
 	}
-	private $CURRENT_DB_VERSION = "20150830-001";
+	private $CURRENT_DB_VERSION = "20150830-002";
 
 	public function updateDatabase() {
 		if ($this->isNotOnline()) {
@@ -146,9 +146,10 @@ class BizlogService extends PSIBaseService {
 		$this->t_sr_bill_detail($db);
 		$this->t_ws_bill_detail($db);
 		
-		$sql = "truncate table t_psi_db_version;
-				insert into t_psi_db_version (db_version, update_dt) 
-				values ('%s', now());";
+		$sql = "delete from t_psi_db_version";
+		$db->execute($sql);
+		$sql = "insert into t_psi_db_version (db_version, update_dt) 
+				values ('%s', now())";
 		$db->execute($sql, $this->CURRENT_DB_VERSION);
 		
 		$this->insertBizlog("升级数据库，数据库版本 = " . $this->CURRENT_DB_VERSION);
