@@ -189,7 +189,7 @@ class PRBillService extends PSIBaseService {
 					$goodsMoney = $goodsCount * $goodsPrice;
 					$rejCount = $v["rejCount"];
 					$rejPrice = $v["rejPrice"];
-					$rejMoney = $rejCount * $rejPrice;
+					$rejMoney = $v["rejMoney"];
 					
 					$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsPrice, 
 							$goodsMoney, $rejCount, $rejPrice, $rejMoney, $i, $id, $pwbillDetailId);
@@ -261,7 +261,7 @@ class PRBillService extends PSIBaseService {
 					$goodsMoney = $goodsCount * $goodsPrice;
 					$rejCount = $v["rejCount"];
 					$rejPrice = $v["rejPrice"];
-					$rejMoney = $rejCount * $rejPrice;
+					$rejMoney = $v["rejMoney"];
 					
 					$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsPrice, 
 							$goodsMoney, $rejCount, $rejPrice, $rejMoney, $i, $id, $pwbillDetailId);
@@ -706,6 +706,7 @@ class PRBillService extends PSIBaseService {
 			}
 			
 			$sql = "select goods_id, rejection_goods_count as rej_count,
+						rejection_money as rej_money,
 						goods_count, goods_price
 					from t_pr_bill_detail
 					where prbill_id = '%s'
@@ -714,6 +715,7 @@ class PRBillService extends PSIBaseService {
 			foreach ( $items as $i => $v ) {
 				$goodsId = $v["goods_id"];
 				$rejCount = $v["rej_count"];
+				$rejMoney = $v["rej_money"];
 				$goodsCount = $v["goods_count"];
 				$goodsPricePurchase = $v["goods_price"];
 				

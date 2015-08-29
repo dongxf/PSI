@@ -355,7 +355,11 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 						draggable: false,
 						align : "right",
 						xtype : "numbercolumn",
-						width : 120
+						width : 120,
+						editor : {
+							xtype : "numberfield",
+							hideTrigger : true
+						}
 					},{
 						header : "原采购数量",
 						dataIndex : "goodsCount",
@@ -398,27 +402,49 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 
 	cellEditingAfterEdit : function(editor, e) {
 		var me = this;
-		if (e.colIdx == 6) {
-			me.calcMoney();
-
+		
+		var fieldName = e.field;
+		var goods = e.record;
+		var oldValue = e.originalValue;
+		
+		if (fieldName == "rejMoney") {
+			if (goods.get(fieldName) != (new Number(oldValue)).toFixed(2)) {
+				me.calcPrice(goods);
+			}
+			
 			var store = me.getGoodsGrid().getStore();
 			e.rowIdx += 1;
 			me.getGoodsGrid().getSelectionModel().select(e.rowIdx);
 			me.__cellEditing.startEdit(e.rowIdx, 1);
-		} else if (e.colIdx == 4) {
-			me.calcMoney();
+		} else if (fieldName == "rejCount") {
+			if (goods.get(fieldName) != oldValue) {
+				me.calcMoney(goods);
+			}
+		} else if (fieldName == "rejPrice") {
+			if (goods.get(fieldName) != (new Number(oldValue)).toFixed(2)) {
+				me.calcMoney(goods);
+			}
 		}
 	},
-	calcMoney : function() {
-		var me = this;
-		var item = me.getGoodsGrid().getSelectionModel().getSelection();
-		if (item == null || item.length != 1) {
+	
+	calcMoney : function(goods) {
+		if (!goods) {
 			return;
 		}
-		var goods = item[0];
+		
 		goods.set("rejMoney", goods.get("rejCount") * goods.get("rejPrice"));
 	},
 	
+	calcPrice : function(goods) {
+		if (!goods) {
+			return;
+		}
+		var rejCount = goods.get("rejCount");
+		if (rejCount && rejCount != 0) {
+			goods.set("rejPrice", goods.get("rejMoney") / goods.get("rejCount"));
+		}
+	},
+
 	getSaveData : function() {
 		var me = this;
 		
@@ -440,7 +466,8 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 				goodsCount : item.get("goodsCount"),
 				goodsPrice : item.get("goodsPrice"),
 				rejCount: item.get("rejCount"),
-				rejPrice: item.get("rejPrice")
+				rejPrice: item.get("rejPrice"),
+				rejMoney: item.get("rejMoney")
 			});
 		}
 
