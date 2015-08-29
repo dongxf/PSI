@@ -202,6 +202,9 @@ Ext.define("PSI.Sale.WSEditForm", {
                         Ext.getCmp("columnGoodsPrice").setEditor({xtype: "numberfield",
                             allowDecimals: true,
                             hideTrigger: true});
+                        Ext.getCmp("columnGoodsMoney").setEditor({xtype: "numberfield",
+                            allowDecimals: true,
+                            hideTrigger: true});
                     }
                     
                     if (data.ref) {
@@ -344,7 +347,7 @@ Ext.define("PSI.Sale.WSEditForm", {
                     sortable: false, align: "right", xtype: "numbercolumn",
                     width: 100, id: "columnGoodsPrice"},
                 {header: "销售金额", dataIndex: "goodsMoney", menuDisabled: true, draggable: false,
-                    sortable: false, align: "right", xtype: "numbercolumn", width: 120},
+                    sortable: false, align: "right", xtype: "numbercolumn", width: 120, id: "columnGoodsMoney"},
                 {
                 	header: "序列号", dataIndex: "sn", menuDisabled: true, sortable: false, draggable: false,
                 	editor: {
@@ -416,29 +419,54 @@ Ext.define("PSI.Sale.WSEditForm", {
 
         return me.__goodsGrid;
     },
+    
     cellEditingAfterEdit: function (editor, e) {
         var me = this;
-        if (e.colIdx == 4 || e.colIdx == 6) {
-            me.calcMoney();
-        } else if (e.colIdx == 8) {
+        
+        var fieldName = e.field;
+		var goods = e.record;
+		var oldValue = e.originalValue;
+        if (fieldName == "goodsCount") {
+        	if (goods.get(fieldName) != oldValue) {
+        		me.calcMoney(goods);	
+        	}
+        } else if (fieldName == "goodsPrice"){
+        	if (goods.get(fieldName) != (new Number(oldValue)).toFixed(2)) {
+				me.calcMoney(goods);
+			}
+        } else if (fieldName == "goodsMoney") {
+        	if (goods.get(fieldName) != (new Number(oldValue)).toFixed(2)) {
+				me.calcPrice(goods);
+			}
+        } else if (fieldName == "sn") {
             var store = me.getGoodsGrid().getStore();
             if (e.rowIdx == store.getCount() - 1) {
                 store.add({});
             }
-            e.rowIdx += 1;
-            me.getGoodsGrid().getSelectionModel().select(e.rowIdx);
-            me.__cellEditing.startEdit(e.rowIdx, 1);
+            
+            me.getGoodsGrid().getSelectionModel().select(e.rowIdx + 1);
+            me.__cellEditing.startEdit(e.rowIdx + 1, 1);
         }
     },
-    calcMoney: function () {
-        var me = this;
-        var item = me.getGoodsGrid().getSelectionModel().getSelection();
-        if (item == null || item.length != 1) {
-            return;
-        }
-        var goods = item[0];
+    
+    calcMoney: function (goods) {
+    	if (!goods) {
+    		return;
+    	}
         goods.set("goodsMoney", goods.get("goodsCount") * goods.get("goodsPrice"));
     },
+    
+    calcPrice: function(goods) {
+    	if (!goods) {
+    		return;
+    	}
+    	
+    	var goodsCount = goods.get("goodsCount");
+    	if (goodsCount && goodsCount != 0) {
+    		goods.set("goodsPrice", goods.get("goodsMoney") / goods.get("goodsCount"));
+    	}
+    },
+    
     __setGoodsInfo: function (data) {
         var me = this;
         var item = me.getGoodsGrid().getSelectionModel().getSelection();
@@ -473,6 +501,7 @@ Ext.define("PSI.Sale.WSEditForm", {
                 goodsId: item.get("goodsId"),
                 goodsCount: item.get("goodsCount"),
                 goodsPrice: item.get("goodsPrice"),
+                goodsMoney: item.get("goodsMoney"),
                 sn: item.get("sn")
             });
         }

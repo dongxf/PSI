@@ -201,7 +201,7 @@ class WSBillService extends PSIBaseService {
 					if ($goodsId) {
 						$goodsCount = intval($v["goodsCount"]);
 						$goodsPrice = floatval($v["goodsPrice"]);
-						$goodsMoney = $goodsCount * $goodsPrice;
+						$goodsMoney = floatval($v["goodsMoney"]);
 						
 						$sn = $v["sn"];
 						
@@ -254,7 +254,7 @@ class WSBillService extends PSIBaseService {
 					if ($goodsId) {
 						$goodsCount = intval($v["goodsCount"]);
 						$goodsPrice = floatval($v["goodsPrice"]);
-						$goodsMoney = $goodsCount * $goodsPrice;
+						$goodsMoney = floatval($v["goodsMoney"]);
 						
 						$sn = $v["sn"];
 						
