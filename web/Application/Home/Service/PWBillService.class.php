@@ -680,7 +680,7 @@ class PWBillService extends PSIBaseService {
 					$sumOutMoney = $data[0]["out_money"] + $outCash;
 					$sql = "update t_cash
 							set out_money = %f, balance_money = %f
-							where biz_dt = '%s' ";
+							where biz_date = '%s' ";
 					$db->execute($sql, $sumOutMoney, $balanceCash, $bizDT);
 				
 					// 记现金明细账

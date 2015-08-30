@@ -305,7 +305,7 @@ class PRBillService extends PSIBaseService {
 
 	public function selectPWBillList($params) {
 		if ($this->isNotOnline()) {
-			return $this->emptyResult();	
+			return $this->emptyResult();
 		}
 		
 		$page = $params["page"];
@@ -517,7 +517,7 @@ class PRBillService extends PSIBaseService {
 			$sql .= " and (p.warehouse_id = '%s') ";
 			$queryParams[] = $warehouseId;
 		}
-		if ($receivingType != -1) {
+		if ($receivingType != - 1) {
 			$sql .= " and (p.receiving_type = %d) ";
 			$queryParams[] = $receivingType;
 		}
@@ -572,7 +572,7 @@ class PRBillService extends PSIBaseService {
 			$sql .= " and (p.warehouse_id = '%s') ";
 			$queryParams[] = $warehouseId;
 		}
-		if ($receivingType != -1) {
+		if ($receivingType != - 1) {
 			$sql .= " and (p.receiving_type = %d) ";
 			$queryParams[] = $receivingType;
 		}
@@ -588,7 +588,7 @@ class PRBillService extends PSIBaseService {
 
 	public function prBillDetailList($params) {
 		if ($this->isNotOnline()) {
-			return $this->emptyResult();	
+			return $this->emptyResult();
 		}
 		
 		$id = $params["id"];
@@ -673,7 +673,7 @@ class PRBillService extends PSIBaseService {
 		$db->startTrans();
 		try {
 			$sql = "select ref, bill_status, warehouse_id, bizdt, biz_user_id, rejection_money,
-					supplier_id
+						supplier_id, receiving_type
 					from t_pr_bill 
 					where id = '%s' ";
 			$data = $db->query($sql, $id);
@@ -688,6 +688,7 @@ class PRBillService extends PSIBaseService {
 			$bizUserId = $data[0]["biz_user_id"];
 			$allRejMoney = $data[0]["rejection_money"];
 			$supplierId = $data[0]["supplier_id"];
+			$receivingType = $data[0]["receiving_type"];
 			
 			if ($billStatus != 0) {
 				$db->rollback();
@@ -716,6 +717,15 @@ class PRBillService extends PSIBaseService {
 			if (! $data) {
 				$db->rollback();
 				return $this->bad("供应商不存在，无法完成提交操作");
+			}
+			
+			$allReceivingType = array(
+					0,
+					1
+			);
+			if (! in_array($receivingType, $allReceivingType)) {
+				$db->rollback();
+				return $this->bad("收款方式不正确，无法完成提交操作");
 			}
 			
 			$sql = "select goods_id, rejection_goods_count as rej_count,
@@ -789,8 +799,8 @@ class PRBillService extends PSIBaseService {
 						set out_count = %d, out_price = %f, out_money = %f,
 							balance_count = %d, balance_price = %f, balance_money = %f
 						where warehouse_id = '%s' and goods_id = '%s' ";
-				$rc = $db->execute($sql, $totalOutCount, $totalOutPrice, $totalOutMoney, $balanceCount, 
-						$balancePrice, $balanceMoney, $warehouseId, $goodsId);
+				$rc = $db->execute($sql, $totalOutCount, $totalOutPrice, $totalOutMoney, 
+						$balanceCount, $balancePrice, $balanceMoney, $warehouseId, $goodsId);
 				if (! $rc) {
 					$db->rollback();
 					return $this->sqlError();
@@ -812,43 +822,103 @@ class PRBillService extends PSIBaseService {
 			
 			$idGen = new IdGenService();
 			
-			// 应收总账
-			$sql = "select rv_money, balance_money
+			if ($receivingType == 0) {
+				// 记应收账款
+				// 应收总账
+				$sql = "select rv_money, balance_money
 					from t_receivables
 					where ca_id = '%s' and ca_type = 'supplier'";
-			$data = $db->query($sql, $supplierId);
-			if (! $data) {
-				$sql = "insert into t_receivables(id, rv_money, act_money, balance_money, ca_id, ca_type)
+				$data = $db->query($sql, $supplierId);
+				if (! $data) {
+					$sql = "insert into t_receivables(id, rv_money, act_money, balance_money, ca_id, ca_type)
 						values ('%s', %f, 0, %f, '%s', 'supplier')";
-				$rc = $db->execute($sql, $idGen->newId(), $allRejMoney, $allRejMoney, $supplierId);
-				if (! $rc) {
-					$db->rollback();
-					return $this->sqlError();
-				}
-			} else {
-				$rvMoney = $data[0]["rv_money"];
-				$balanceMoney = $data[0]["balance_money"];
-				$rvMoney += $allRejMoney;
-				$balanceMoney += $allRejMoney;
-				$sql = "update t_receivables
+					$rc = $db->execute($sql, $idGen->newId(), $allRejMoney, $allRejMoney, 
+							$supplierId);
+					if (! $rc) {
+						$db->rollback();
+						return $this->sqlError();
+					}
+				} else {
+					$rvMoney = $data[0]["rv_money"];
+					$balanceMoney = $data[0]["balance_money"];
+					$rvMoney += $allRejMoney;
+					$balanceMoney += $allRejMoney;
+					$sql = "update t_receivables
 						set rv_money = %f, balance_money = %f
 						where ca_id = '%s' and ca_type = 'supplier' ";
-				$rc = $db->execute($sql, $rvMoney, $balanceMoney, $supplierId);
+					$rc = $db->execute($sql, $rvMoney, $balanceMoney, $supplierId);
+					if (! $rc) {
+						$db->rollback();
+						return $this->sqlError();
+					}
+				}
+				
+				// 应收明细账
+				$sql = "insert into t_receivables_detail(id, rv_money, act_money, balance_money, ca_id, ca_type,
+						biz_date, date_created, ref_number, ref_type)
+					values ('%s', %f, 0, %f, '%s', 'supplier', '%s', now(), '%s', '采购退货出库')";
+				$rc = $db->execute($sql, $idGen->newId(), $allRejMoney, $allRejMoney, $supplierId, 
+						$bizDT, $ref);
 				if (! $rc) {
 					$db->rollback();
 					return $this->sqlError();
 				}
-			}
-			
-			// 应收明细账
-			$sql = "insert into t_receivables_detail(id, rv_money, act_money, balance_money, ca_id, ca_type,
-						biz_date, date_created, ref_number, ref_type)
-					values ('%s', %f, 0, %f, '%s', 'supplier', '%s', now(), '%s', '采购退货出库')";
-			$rc = $db->execute($sql, $idGen->newId(), $allRejMoney, $allRejMoney, $supplierId, 
-					$bizDT, $ref);
-			if (! $rc) {
-				$db->rollback();
-				return $this->sqlError();
+			} else if ($receivingType == 1) {
+				// 现金收款
+				$inCash = $allRejMoney;
+				
+				$sql = "select in_money, out_money, balance_money from t_cash where biz_date = '%s' ";
+				$data = $db->query($sql, $bizDT);
+				if (! $data) {
+					// 当天首次发生现金业务
+					$sql = "select sum(in_money) as sum_in_money, sum(out_money) as sum_out_money
+							from t_cash
+							where biz_date <= '%s' ";
+					$data = $db->query($sql, $bizDT);
+					$sumInMoney = $data[0]["sum_in_money"];
+					$sumOutMoney = $data[0]["sum_out_money"];
+					if (! $sumInMoney) {
+						$sumInMoney = 0;
+					}
+					if (! $sumOutMoney) {
+						$sumOutMoney = 0;
+					}
+					
+					$balanceCash = $sumInMoney - $sumOutMoney + $inCash;
+					$sql = "insert into t_cash(in_money, balance_money, biz_date)
+							values (%f, %f, '%s')";
+					$db->execute($sql, $inCash, $balanceCash, $bizDT);
+					
+					// 记现金明细账
+					$sql = "insert into t_cash_detail(in_money, balance_money, biz_date, ref_type,
+								ref_number, date_created)
+							values (%f, %f, '%s', '采购退货出库', '%s', now())";
+					$db->execute($sql, $inCash, $balanceCash, $bizDT, $ref);
+				} else {
+					$balanceCash = $data[0]["balance_money"] + $inCash;
+					$sumInMoney = $data[0]["in_money"] + $inCash;
+					$sql = "update t_cash
+							set in_money = %f, balance_money = %f
+							where biz_date = '%s' ";
+					$db->execute($sql, $sumInMoney, $balanceCash, $bizDT);
+					
+					// 记现金明细账
+					$sql = "insert into t_cash_detail(in_money, balance_money, biz_date, ref_type,
+								ref_number, date_created)
+							values (%f, %f, '%s', '采购退货出库', '%s', now())";
+					$db->execute($sql, $inCash, $balanceCash, $bizDT, $ref);
+				}
+				
+				// 调整业务日期之后的现金总账和明细账的余额
+				$sql = "update t_cash
+							set balance_money = balance_money + %f
+							where biz_date > '%s' ";
+				$db->execute($sql, $inCash, $bizDT);
+				
+				$sql = "update t_cash_detail
+							set balance_money = balance_money + %f
+							where biz_date > '%s' ";
+				$db->execute($sql, $inCash, $bizDT);
 			}
 			
 			// 修改单据本身的状态
