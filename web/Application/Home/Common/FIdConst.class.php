@@ -213,4 +213,9 @@ class FIdConst {
 	 * 库存超上限明细表
 	 */
 	const REPORT_INVENTORY_UPPER = "2023";
+	
+	/**
+	 * 现金收支查询
+	 */
+	const CASH_INDEX = "2024";
 }

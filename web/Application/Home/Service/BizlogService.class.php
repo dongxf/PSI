@@ -113,7 +113,7 @@ class BizlogService extends PSIBaseService {
 		$cnt = $data[0]["cnt"];
 		return $cnt == 1;
 	}
-	private $CURRENT_DB_VERSION = "20150830-005";
+	private $CURRENT_DB_VERSION = "20150830-007";
 
 	public function updateDatabase() {
 		if ($this->isNotOnline()) {
@@ -139,10 +139,14 @@ class BizlogService extends PSIBaseService {
 		$this->t_cash_detail($db);
 		$this->t_config($db);
 		$this->t_customer($db);
+		$this->t_fid($db);
 		$this->t_goods($db);
 		$this->t_goods_si($db);
+		$this->t_menu_item($db);
+		$this->t_permission($db);
 		$this->t_pr_bill($db);
 		$this->t_pw_bill($db);
+		$this->t_role_permission($db);
 		$this->t_supplier($db);
 		$this->t_sr_bill($db);
 		$this->t_sr_bill_detail($db);
@@ -315,6 +319,17 @@ class BizlogService extends PSIBaseService {
 		}
 	}
 
+	private function t_fid($db) {
+		// fid 2024: 现金收支查询
+		$sql = "select count(*) as cnt from t_fid where fid = '2024' ";
+		$data = $db->query($sql);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_fid(fid, name) values ('2024', '现金收支查询')";
+			$db->execute($sql);
+		}
+	}
+
 	private function t_goods_si($db) {
 		$tableName = "t_goods_si";
 		if (! $this->tableExists($db, $tableName)) {
@@ -337,6 +352,19 @@ class BizlogService extends PSIBaseService {
 		}
 	}
 
+	private function t_menu_item($db) {
+		// fid 2024: 现金收支查询
+		$sql = "select count(*) as cnt from t_menu_item
+				where id = '0603' ";
+		$data = $db->query($sql);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_menu_item(id, caption, fid, parent_id, show_order)
+					values ('0603', '现金收支查询', '2024', '06', 3)";
+			$db->execute($sql);
+		}
+	}
+
 	private function t_pr_bill($db) {
 		$tableName = "t_pr_bill";
 		
@@ -346,13 +374,38 @@ class BizlogService extends PSIBaseService {
 			$db->execute($sql);
 		}
 	}
-	
+
+	private function t_permission($db) {
+		// fid 2024: 现金收支查询
+		$sql = "select count(*) as cnt from t_permission where id = '2024' ";
+		$data = $db->query($sql);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_permission(id, fid, name, note)
+					values ('2024', '2024', '现金收支查询', '现金收支查询')";
+			$db->execute($sql);
+		}
+	}
+
 	private function t_pw_bill($db) {
 		$tableName = "t_pw_bill";
 		
 		$columnName = "payment_type";
 		if (! $this->columnExists($db, $tableName, $columnName)) {
 			$sql = "alter table {$tableName} add {$columnName} int(11) not null default 0;";
+			$db->execute($sql);
+		}
+	}
+
+	private function t_role_permission($db) {
+		// fid 2024: 现金收支查询
+		$sql = "select count(*) as cnt from t_role_permission 
+				where permission_id = '2024' and role_id = 'A83F617E-A153-11E4-A9B8-782BCBD7746B' ";
+		$data = $db->query($sql);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_role_permission(role_id, permission_id)
+					values ('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2024')";
 			$db->execute($sql);
 		}
 	}
@@ -411,14 +464,14 @@ class BizlogService extends PSIBaseService {
 
 	private function t_sr_bill($db) {
 		$tableName = "t_sr_bill";
-	
+		
 		$columnName = "payment_type";
 		if (! $this->columnExists($db, $tableName, $columnName)) {
 			$sql = "alter table {$tableName} add {$columnName} int(11) not null default 0;";
 			$db->execute($sql);
 		}
 	}
-	
+
 	private function t_sr_bill_detail($db) {
 		$tableName = "t_sr_bill_detail";
 		
@@ -438,7 +491,7 @@ class BizlogService extends PSIBaseService {
 			$db->execute($sql);
 		}
 	}
-	
+
 	private function t_ws_bill_detail($db) {
 		$tableName = "t_ws_bill_detail";
 		
