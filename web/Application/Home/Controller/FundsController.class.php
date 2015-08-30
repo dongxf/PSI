@@ -281,4 +281,17 @@ class FundsController extends Controller {
 			$this->ajaxReturn($cs->cashList($params));
 		}
 	}
+
+	public function cashDetailList() {
+		if (IS_POST) {
+			$params = array(
+					"bizDT" => I("post.bizDT"),
+					"page" => I("post.page"),
+					"start" => I("post.start"),
+					"limit" => I("post.limit")
+			);
+			$cs = new CashService();
+			$this->ajaxReturn($cs->cashDetailList($params));
+		}
+	}
 }

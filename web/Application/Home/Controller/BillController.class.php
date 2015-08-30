@@ -21,7 +21,8 @@ class BillController extends Controller {
 		$idArray = array(
 				FIdConst::INVENTORY_QUERY,
 				FIdConst::PAYABLES,
-				FIdConst::RECEIVING
+				FIdConst::RECEIVING,
+				FIdConst::CASH_INDEX
 		);
 		
 		if (in_array($fid, $idArray)) {

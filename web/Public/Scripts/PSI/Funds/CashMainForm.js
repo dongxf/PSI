@@ -181,7 +181,16 @@ Ext.define("PSI.Funds.CashMainForm", {
 		});
 
 		store.on("beforeload", function() {
+			var item = me.getMainGrid().getSelectionModel().getSelection();
+			var c;
+			if (item == null || item.length != 1) {
+				c = null;
+			} else {
+				c = item[0];
+			}
+			
 			Ext.apply(store.proxy.extraParams, {
+				bizDT : c == null ? null : c.get("bizDT")
 			});
 		});
 
