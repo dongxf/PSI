@@ -61,7 +61,7 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 					type : "table",
 					columns : 2
 				},
-				height : 100,
+				height : 120,
 				bodyPadding : 10,
 				border : 0,
 				items : [ {
@@ -141,6 +141,27 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 							scope : me
 						}
 					}
+				}, {
+					id: "editReceivingType",
+					labelWidth : 60,
+					labelAlign : "right",
+					labelSeparator : "",
+					fieldLabel : "收款方式",
+					xtype : "combo",
+					queryMode : "local",
+					editable : false,
+					valueField : "id",
+					store : Ext.create("Ext.data.ArrayStore", {
+						fields : [ "id", "text" ],
+						data : [ [ "0", "记应收账款" ], [ "1", "现金收款" ] ]
+					}),
+					value: "0",
+					listeners : {
+						specialkey : {
+							fn : me.onEditReceivingTypeSpecialKey,
+							scope : me
+						}
+					}
 				} ]
 			} ],
 			listeners : {
@@ -188,6 +209,11 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 					if (data.bizDT) {
 						Ext.getCmp("editBizDT").setValue(data.bizDT);
 					}
+					
+					if (data.receivingType) {
+						Ext.getCmp("editReceivingType").setValue(data.receivingType);
+					}
+					
 					me.__billId = data.pwbillId;
 
 					var store = me.getGoodsGrid().getStore();
@@ -242,6 +268,12 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 		}
 	},
 	onEditBizUserSpecialKey : function(field, e) {
+		if (e.getKey() == e.ENTER) {
+			Ext.getCmp("editReceivingType").focus();
+		}
+	},
+
+	onEditReceivingTypeSpecialKey : function(field, e) {
 		if (e.getKey() == e.ENTER) {
 			var me = this;
 			me.getGoodsGrid().focus();
@@ -453,6 +485,7 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 			bizDT : Ext.Date.format(Ext.getCmp("editBizDT").getValue(), "Y-m-d"),
 			warehouseId : Ext.getCmp("editWarehouse").getIdValue(),
 			bizUserId : Ext.getCmp("editBizUser").getIdValue(),
+			receivingType: Ext.getCmp("editReceivingType").getValue(),
 			pwBillId: me.__billId,
 			items : []
 		};
@@ -519,5 +552,6 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 		Ext.getCmp("editWarehouse").setReadOnly(true);
 		Ext.getCmp("editBizUser").setReadOnly(true);
 		Ext.getCmp("editBizDT").setReadOnly(true);
+		Ext.getCmp("editReceivingType").setReadOnly(true);
 	}
 });

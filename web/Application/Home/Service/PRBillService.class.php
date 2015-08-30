@@ -46,7 +46,7 @@ class PRBillService extends PSIBaseService {
 			$sql = "select p.ref, p.bill_status, p.warehouse_id, w.name as warehouse_name,
 						p.biz_user_id, u.name as biz_user_name, pw.ref as pwbill_ref,
 						s.name as supplier_name, s.id as supplier_id,
-						p.pw_bill_id as pwbill_id, p.bizdt
+						p.pw_bill_id as pwbill_id, p.bizdt, p.receiving_type
 					from t_pr_bill p, t_warehouse w, t_user u, t_pw_bill pw, t_supplier s
 					where p.id = '%s' 
 						and p.warehouse_id = w.id
@@ -69,6 +69,7 @@ class PRBillService extends PSIBaseService {
 			$result["supplierName"] = $data[0]["supplier_name"];
 			$result["pwbillId"] = $data[0]["pwbill_id"];
 			$result["bizDT"] = $this->toYMD($data[0]["bizdt"]);
+			$result["receivingType"] = $data[0]["receiving_type"];
 			
 			$items = array();
 			$sql = "select p.pwbilldetail_id as id, p.goods_id, g.code as goods_code, g.name as goods_name,
@@ -144,6 +145,8 @@ class PRBillService extends PSIBaseService {
 		}
 		$supplierId = $data[0]["supplier_id"];
 		
+		$receivingType = $bill["receivingType"];
+		
 		$items = $bill["items"];
 		
 		// 检查业务日期
@@ -212,10 +215,10 @@ class PRBillService extends PSIBaseService {
 						set rejection_money = %f,
 							bizdt = '%s', biz_user_id = '%s',
 							date_created = now(), input_user_id = '%s',
-							warehouse_id = '%s'
+							warehouse_id = '%s', receiving_type = %d
 						where id = '%s' ";
 				$rc = $db->execute($sql, $rejMoney, $bizDT, $bizUserId, $us->getLoginUserId(), 
-						$warehouseId, $id);
+						$warehouseId, $receivingType, $id);
 				if (! $rc) {
 					$db->rollback();
 					return $this->sqlError();
@@ -239,10 +242,10 @@ class PRBillService extends PSIBaseService {
 				
 				// 主表
 				$sql = "insert into t_pr_bill(id, bill_status, bizdt, biz_user_id, supplier_id, date_created,
-							input_user_id, ref, warehouse_id, pw_bill_id)
-						values ('%s', 0, '%s', '%s', '%s', now(), '%s', '%s', '%s', '%s')";
+							input_user_id, ref, warehouse_id, pw_bill_id, receiving_type)
+						values ('%s', 0, '%s', '%s', '%s', now(), '%s', '%s', '%s', '%s', %d)";
 				$rc = $db->execute($sql, $id, $bizDT, $bizUserId, $supplierId, 
-						$us->getLoginUserId(), $ref, $warehouseId, $pwBillId);
+						$us->getLoginUserId(), $ref, $warehouseId, $pwBillId, $receivingType);
 				if (! $rc) {
 					$db->rollback();
 					return $this->sqlError();
