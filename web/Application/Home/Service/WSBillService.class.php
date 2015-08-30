@@ -3,6 +3,7 @@
 namespace Home\Service;
 
 use Home\Common\FIdConst;
+
 /**
  * 销售出库Service
  *
@@ -54,7 +55,8 @@ class WSBillService extends PSIBaseService {
 			$db = M();
 			$sql = "select w.id, w.ref, w.bill_status, w.bizdt, c.id as customer_id, c.name as customer_name, 
 					  u.id as biz_user_id, u.name as biz_user_name, 
-					  h.id as warehouse_id, h.name as warehouse_name 
+					  h.id as warehouse_id, h.name as warehouse_name,
+						w.receiving_type
 					from t_ws_bill w, t_customer c, t_user u, t_warehouse h 
 					where w.customer_id = c.id and w.biz_user_id = u.id 
 					  and w.warehouse_id = h.id 
@@ -70,6 +72,7 @@ class WSBillService extends PSIBaseService {
 				$result["warehouseName"] = $data[0]["warehouse_name"];
 				$result["bizUserId"] = $data[0]["biz_user_id"];
 				$result["bizUserName"] = $data[0]["biz_user_name"];
+				$result["receivingType"] = $data[0]["receiving_type"];
 			}
 			
 			$sql = "select d.id, g.id as goods_id, g.code, g.name, g.spec, u.name as unit_name, d.goods_count, 
@@ -141,11 +144,12 @@ class WSBillService extends PSIBaseService {
 		$warehouseId = $bill["warehouseId"];
 		$customerId = $bill["customerId"];
 		$bizUserId = $bill["bizUserId"];
+		$receivingType = $bill["receivingType"];
 		$items = $bill["items"];
 		
 		$db = M();
-
-		//检查客户
+		
+		// 检查客户
 		$sql = "select count(*) as cnt from t_customer where id = '%s' ";
 		$data = $db->query($sql, $customerId);
 		$cnt = $data[0]["cnt"];
@@ -218,10 +222,10 @@ class WSBillService extends PSIBaseService {
 				
 				$sql = "update t_ws_bill 
 						set sale_money = %f, customer_id = '%s', warehouse_id = '%s', 
-						biz_user_id = '%s', bizdt = '%s' 
+						biz_user_id = '%s', bizdt = '%s', receiving_type = %d 
 						where id = '%s' ";
 				$db->execute($sql, $sumGoodsMoney, $customerId, $warehouseId, $bizUserId, $bizDT, 
-						$id);
+						$receivingType, $id);
 				
 				$log = "编辑销售出库单，单号 = {$ref}";
 				$bs = new BizlogService();
@@ -239,11 +243,11 @@ class WSBillService extends PSIBaseService {
 				$id = $idGen->newId();
 				$ref = $this->genNewBillRef();
 				$sql = "insert into t_ws_bill(id, bill_status, bizdt, biz_user_id, customer_id,  date_created,
-						input_user_id, ref, warehouse_id) 
-						values ('%s', 0, '%s', '%s', '%s', now(), '%s', '%s', '%s')";
+						input_user_id, ref, warehouse_id, receiving_type) 
+						values ('%s', 0, '%s', '%s', '%s', now(), '%s', '%s', '%s', %d)";
 				$us = new UserService();
 				$db->execute($sql, $id, $bizDT, $bizUserId, $customerId, $us->getLoginUserId(), 
-						$ref, $warehouseId);
+						$ref, $warehouseId, $receivingType);
 				
 				$sql = "insert into t_ws_bill_detail (id, date_created, goods_id, 
 						goods_count, goods_price, goods_money,
@@ -364,7 +368,7 @@ class WSBillService extends PSIBaseService {
 					 where d.sn_note like '%s'))";
 			$queryParams[] = "%$sn%";
 		}
-		if ($receivingType != -1) {
+		if ($receivingType != - 1) {
 			$sql .= " and (w.receiving_type = %d) ";
 			$queryParams[] = $receivingType;
 		}
@@ -425,7 +429,7 @@ class WSBillService extends PSIBaseService {
 					 where d.sn_note like '%s'))";
 			$queryParams[] = "%$sn%";
 		}
-		if ($receivingType != -1) {
+		if ($receivingType != - 1) {
 			$sql .= " and (w.receiving_type = %d) ";
 			$queryParams[] = $receivingType;
 		}
@@ -753,9 +757,17 @@ class WSBillService extends PSIBaseService {
 		$pdf = $ps->getInstance();
 		$pdf->SetTitle("销售出库单，单号：{$ref}");
 		
-		$pdf->setHeaderFont(Array("stsongstdlight", "", 16));
+		$pdf->setHeaderFont(Array(
+				"stsongstdlight",
+				"",
+				16
+		));
 		
-		$pdf->setFooterFont(Array("stsongstdlight", "", 14));
+		$pdf->setFooterFont(Array(
+				"stsongstdlight",
+				"",
+				14
+		));
 		
 		$pdf->SetHeaderData("", 0, "开源进销存PSI", "销售出库单");
 		
@@ -764,7 +776,7 @@ class WSBillService extends PSIBaseService {
 		
 		$html = '
 				<table>
-					<tr><td colspan="2">单号：' .$ref . '</td></tr>
+					<tr><td colspan="2">单号：' . $ref . '</td></tr>
 					<tr><td colspan="2">客户：' . $bill["customerName"] . '</td></tr>
 					<tr><td>业务日期：' . $bill["bizDT"] . '</td><td>出库仓库:' . $bill["warehouseName"] . '</td></tr>
 					<tr><td>业务员：' . $bill["bizUserName"] . '</td><td></td></tr>
@@ -777,7 +789,7 @@ class WSBillService extends PSIBaseService {
 						<td>单价</td><td>销售金额</td><td>序列号</td>
 					</tr>
 				';
-		foreach ($bill["items"] as $v) {
+		foreach ( $bill["items"] as $v ) {
 			$html .= '<tr>';
 			$html .= '<td>' . $v["goodsCode"] . '</td>';
 			$html .= '<td>' . $v["goodsName"] . '</td>';

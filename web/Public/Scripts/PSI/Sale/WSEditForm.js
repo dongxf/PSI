@@ -74,7 +74,7 @@ Ext.define("PSI.Sale.WSEditForm", {
                         type: "table",
                         columns: 2
                     },
-                    height: 100,
+                    height: 120,
                     bodyPadding: 10,
                     items: [
                         {
@@ -166,7 +166,29 @@ Ext.define("PSI.Sale.WSEditForm", {
                                     scope: me
                                 }
                             }
-                        }
+                        },
+                        {
+        					id: "editReceivingType",
+        					labelWidth : 60,
+        					labelAlign : "right",
+        					labelSeparator : "",
+        					fieldLabel : "收款方式",
+        					xtype : "combo",
+        					queryMode : "local",
+        					editable : false,
+        					valueField : "id",
+        					store : Ext.create("Ext.data.ArrayStore", {
+        						fields : [ "id", "text" ],
+        						data : [ [ "0", "记应收账款" ], [ "1", "现金收款" ] ]
+        					}),
+        					value: "0",
+        					listeners : {
+        						specialkey : {
+        							fn : me.onEditReceivingTypeSpecialKey,
+        							scope : me
+        						}
+        					}
+        				}
                     ]
                 }],
             listeners: {
@@ -223,6 +245,9 @@ Ext.define("PSI.Sale.WSEditForm", {
                     if (data.bizDT) {
                         Ext.getCmp("editBizDT").setValue(data.bizDT);
                     }
+                    if (data.receivingType) {
+						Ext.getCmp("editReceivingType").setValue(data.receivingType);
+					}
 
                     var store = me.getGoodsGrid().getStore();
                     store.removeAll();
@@ -283,6 +308,16 @@ Ext.define("PSI.Sale.WSEditForm", {
         }
     },
     onEditBizUserSpecialKey: function (field, e) {
+    	if (this.__readonly) {
+    		return;
+    	}
+    	
+        if (e.getKey() == e.ENTER) {
+        	Ext.getCmp("editReceivingType").focus();
+        }
+    },
+
+    onEditReceivingTypeSpecialKey: function (field, e) {
     	if (this.__readonly) {
     		return;
     	}
@@ -490,6 +525,7 @@ Ext.define("PSI.Sale.WSEditForm", {
             customerId: Ext.getCmp("editCustomer").getIdValue(),
             warehouseId: Ext.getCmp("editWarehouse").getIdValue(),
             bizUserId: Ext.getCmp("editBizUser").getIdValue(),
+            receivingType: Ext.getCmp("editReceivingType").getValue(),
             items: []
         };
 
@@ -524,6 +560,7 @@ Ext.define("PSI.Sale.WSEditForm", {
 		Ext.getCmp("columnActionDelete").hide();
 		Ext.getCmp("columnActionAdd").hide();
 		Ext.getCmp("columnActionAppend").hide();
+		Ext.getCmp("editReceivingType").setReadOnly(true);
     },
     
     onBarCode: function() {
