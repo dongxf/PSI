@@ -48,6 +48,7 @@ class PurchaseController extends Controller {
 					"toDT" => I("post.toDT"),
 					"warehouseId" => I("post.warehouseId"),
 					"supplierId" => I("post.supplierId"),
+					"paymentType" => I("post.paymentType"),
 					"page" => I("post.page"),
 					"start" => I("post.start"),
 					"limit" => I("post.limit")

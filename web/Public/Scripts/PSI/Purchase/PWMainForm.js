@@ -123,6 +123,21 @@ Ext.define("PSI.Purchase.PWMainForm", {
 			margin: "5, 0, 0, 0",
             fieldLabel: "仓库"
         },{
+			id: "editQueryPaymentType",
+			labelAlign : "right",
+			labelSeparator : "",
+			fieldLabel : "付款方式",
+			margin: "5, 0, 0, 0",
+			xtype : "combo",
+			queryMode : "local",
+			editable : false,
+			valueField : "id",
+			store : Ext.create("Ext.data.ArrayStore", {
+				fields : [ "id", "text" ],
+				data : [[-1, "所有"],  [0, "记应付账款" ], [1, "现金付款" ] ]
+			}),
+			value: -1
+		}, {
         	xtype: "container",
         	items: [{
                 xtype: "button",
@@ -560,6 +575,7 @@ Ext.define("PSI.Purchase.PWMainForm", {
     	Ext.getCmp("editQueryToDT").setValue(null);
     	Ext.getCmp("editQuerySupplier").clearIdValue();
     	Ext.getCmp("editQueryWarehouse").clearIdValue();
+    	Ext.getCmp("editQueryPaymentType").setValue(-1);
     	
     	me.onQuery();
     },
@@ -595,6 +611,9 @@ Ext.define("PSI.Purchase.PWMainForm", {
     	if (toDT) {
     		result.toDT = Ext.Date.format(toDT, "Y-m-d");
     	}
+    	
+    	var paymentType = Ext.getCmp("editQueryPaymentType").getValue();
+    	result.paymentType = paymentType;
     	
     	return result;
     }

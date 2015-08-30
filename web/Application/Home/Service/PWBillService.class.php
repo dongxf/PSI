@@ -24,6 +24,7 @@ class PWBillService extends PSIBaseService {
 		$toDT = $params["toDT"];
 		$warehouseId = $params["warehouseId"];
 		$supplierId = $params["supplierId"];
+		$paymentType = $params["paymentType"];
 		
 		$db = M();
 		
@@ -58,6 +59,10 @@ class PWBillService extends PSIBaseService {
 		if ($warehouseId) {
 			$sql .= " and (p.warehouse_id = '%s') ";
 			$queryParams[] = $warehouseId;
+		}
+		if ($paymentType != -1) {
+			$sql .= " and (p.payment_type = %d) ";
+			$queryParams[] = $paymentType;
 		}
 		
 		$sql .= " order by p.ref desc 
@@ -109,6 +114,10 @@ class PWBillService extends PSIBaseService {
 		if ($warehouseId) {
 			$sql .= " and (p.warehouse_id = '%s') ";
 			$queryParams[] = $warehouseId;
+		}
+		if ($paymentType != -1) {
+			$sql .= " and (p.payment_type = %d) ";
+			$queryParams[] = $paymentType;
 		}
 		
 		$data = $db->query($sql, $queryParams);
