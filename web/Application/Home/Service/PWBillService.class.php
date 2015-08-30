@@ -60,7 +60,7 @@ class PWBillService extends PSIBaseService {
 			$sql .= " and (p.warehouse_id = '%s') ";
 			$queryParams[] = $warehouseId;
 		}
-		if ($paymentType != -1) {
+		if ($paymentType != - 1) {
 			$sql .= " and (p.payment_type = %d) ";
 			$queryParams[] = $paymentType;
 		}
@@ -115,7 +115,7 @@ class PWBillService extends PSIBaseService {
 			$sql .= " and (p.warehouse_id = '%s') ";
 			$queryParams[] = $warehouseId;
 		}
-		if ($paymentType != -1) {
+		if ($paymentType != - 1) {
 			$sql .= " and (p.payment_type = %d) ";
 			$queryParams[] = $paymentType;
 		}
@@ -469,13 +469,17 @@ class PWBillService extends PSIBaseService {
 		return $this->ok();
 	}
 
+	/**
+	 * 提交采购入库单
+	 */
 	public function commitPWBill($id) {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
 		}
 		
 		$db = M();
-		$sql = "select ref, warehouse_id, bill_status, biz_dt, biz_user_id,  goods_money, supplier_id 
+		$sql = "select ref, warehouse_id, bill_status, biz_dt, biz_user_id,  goods_money, supplier_id,
+					payment_type
 				from t_pw_bill 
 				where id = '%s' ";
 		$data = $db->query($sql, $id);
@@ -494,6 +498,8 @@ class PWBillService extends PSIBaseService {
 		$billPayables = floatval($data[0]["goods_money"]);
 		$supplierId = $data[0]["supplier_id"];
 		$warehouseId = $data[0]["warehouse_id"];
+		$paymentType = $data[0]["payment_type"];
+		
 		$sql = "select name, inited from t_warehouse where id = '%s' ";
 		$data = $db->query($sql, $warehouseId);
 		if (! $data) {
@@ -526,6 +532,14 @@ class PWBillService extends PSIBaseService {
 			if ($goodsMoney < 0) {
 				return $this->bad("采购金额不能为负数");
 			}
+		}
+		
+		$allPaymentType = array(
+				0,
+				1
+		);
+		if (! in_array($paymentType, $allPaymentType)) {
+			return $this->bad("付款方式填写不正确，无法提交");
 		}
 		
 		$db->startTrans();
@@ -596,34 +610,96 @@ class PWBillService extends PSIBaseService {
 			$sql = "update t_pw_bill set bill_status = 1000 where id = '%s' ";
 			$db->execute($sql, $id);
 			
-			// 应付明细账
-			$sql = "insert into t_payables_detail (id, pay_money, act_money, balance_money,
+			if ($paymentType == 0) {
+				// 记应付账款
+				// 应付明细账
+				$sql = "insert into t_payables_detail (id, pay_money, act_money, balance_money,
 					ca_id, ca_type, date_created, ref_number, ref_type, biz_date)
 					values ('%s', %f, 0, %f, '%s', 'supplier', now(), '%s', '采购入库', '%s')";
-			$idGen = new IdGenService();
-			$db->execute($sql, $idGen->newId(), $billPayables, $billPayables, $supplierId, $ref, 
-					$bizDT);
-			// 应付总账
-			$sql = "select id, pay_money 
+				$idGen = new IdGenService();
+				$db->execute($sql, $idGen->newId(), $billPayables, $billPayables, $supplierId, $ref, 
+						$bizDT);
+				// 应付总账
+				$sql = "select id, pay_money 
 					from t_payables 
 					where ca_id = '%s' and ca_type = 'supplier' ";
-			$data = $db->query($sql, $supplierId);
-			if ($data) {
-				$pId = $data[0]["id"];
-				$payMoney = floatval($data[0]["pay_money"]);
-				$payMoney += $billPayables;
-				
-				$sql = "update t_payables 
+				$data = $db->query($sql, $supplierId);
+				if ($data) {
+					$pId = $data[0]["id"];
+					$payMoney = floatval($data[0]["pay_money"]);
+					$payMoney += $billPayables;
+					
+					$sql = "update t_payables 
 						set pay_money = %f, balance_money = %f 
 						where id = '%s' ";
-				$db->execute($sql, $payMoney, $payMoney, $pId);
-			} else {
-				$payMoney = $billPayables;
-				
-				$sql = "insert into t_payables (id, pay_money, act_money, balance_money, 
+					$db->execute($sql, $payMoney, $payMoney, $pId);
+				} else {
+					$payMoney = $billPayables;
+					
+					$sql = "insert into t_payables (id, pay_money, act_money, balance_money, 
 						ca_id, ca_type) 
 						values ('%s', %f, 0, %f, '%s', 'supplier')";
-				$db->execute($sql, $idGen->newId(), $payMoney, $payMoney, $supplierId);
+					$db->execute($sql, $idGen->newId(), $payMoney, $payMoney, $supplierId);
+				}
+			} else if ($paymentType == 1) {
+				// 现金付款
+				
+				$outCash = $billPayables;
+				
+				$sql = "select in_money, out_money, balance_money from t_cash where biz_date = '%s' ";
+				$data = $db->query($sql, $bizDT);
+				if (! $data) {
+					// 当天首次发生现金业务
+					
+					$sql = "select sum(in_money) as sum_in_money, sum(out_money) as sum_out_money
+							from t_cash
+							where biz_date <= '%s' ";
+					$data = $db->query($sql, $bizDT);
+					$sumInMoney = $data[0]["sum_in_money"];
+					$sumOutMoney = $data[0]["sum_out_money"];
+					if (! $sumInMoney) {
+						$sumInMoney = 0;
+					}
+					if (! $sumOutMoney) {
+						$sumOutMoney = 0;
+					}
+					
+					$balanceCash = $sumInMoney - $sumOutMoney - $outCash;
+					$sql = "insert into t_cash(out_money, balance_money, biz_date)
+							values (%f, %f, '%s')";
+					$db->execute($sql, $outCash, $balanceCash, $bizDT);
+					
+					// 记现金明细账
+					$sql = "insert into t_cash_detail(out_money, balance_money, biz_date, ref_type, 
+								ref_number, date_created)
+							values (%f, %f, '%s', '采购入库', '%s', now())";
+					$db->execute($sql, $outCash, $balanceCash, $bizDT, $ref);
+					
+				} else {
+					$balanceCash = $data[0]["balance_money"] - $outCash;
+					$sumOutMoney = $data[0]["out_money"] + $outCash;
+					$sql = "update t_cash
+							set out_money = %f, balance_money = %f
+							where biz_dt = '%s' ";
+					$db->execute($sql, $sumOutMoney, $balanceCash, $bizDT);
+				
+					// 记现金明细账
+					$sql = "insert into t_cash_detail(out_money, balance_money, biz_date, ref_type, 
+								ref_number, date_created)
+							values (%f, %f, '%s', '采购入库', '%s', now())";
+					$db->execute($sql, $outCash, $balanceCash, $bizDT, $ref);
+				}
+				
+				// 调整业务日期之后的现金总账和明细账的余额
+				$sql = "update t_cash
+							set balance_money = balance_money - %f
+							where biz_date > '%s' ";
+				$db->execute($sql, $outCash, $bizDT);
+					
+				$sql = "update t_cash_detail
+							set balance_money = balance_money - %f
+							where biz_date > '%s' ";
+				$db->execute($sql, $outCash, $bizDT);
 			}
 			
 			// 日志
