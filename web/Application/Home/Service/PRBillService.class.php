@@ -483,7 +483,7 @@ class PRBillService extends PSIBaseService {
 		$queryParams = array();
 		$sql = "select p.id, p.ref, p.bill_status, w.name as warehouse_name, p.bizdt,
 					p.rejection_money, u1.name as biz_user_name, u2.name as input_user_name,
-					s.name as supplier_name, p.date_created
+					s.name as supplier_name, p.date_created, p.receiving_type
 				from t_pr_bill p, t_warehouse w, t_user u1, t_user u2, t_supplier s
 				where (p.warehouse_id = w.id)
 					and (p.biz_user_id = u1.id)
@@ -530,6 +530,7 @@ class PRBillService extends PSIBaseService {
 			$result[$i]["inputUserName"] = $v["input_user_name"];
 			$result[$i]["bizDT"] = $this->toYMD($v["bizdt"]);
 			$result[$i]["dateCreated"] = $v["date_created"];
+			$result[$i]["receivingType"] = $v["receiving_type"];
 		}
 		
 		$sql = "select count(*) as cnt

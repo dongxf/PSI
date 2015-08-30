@@ -288,7 +288,8 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
         Ext.define(modelName, {
             extend: "Ext.data.Model",
             fields: ["id", "ref", "bizDT",  "warehouseName", "supplierName",
-                "inputUserName", "bizUserName", "billStatus", "rejMoney", "dateCreated"]
+                "inputUserName", "bizUserName", "billStatus", "rejMoney", 
+                "dateCreated", "receivingType"]
         });
         var store = Ext.create("Ext.data.Store", {
             autoLoad: false,
@@ -350,6 +351,21 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
                     menuDisabled: true,
                     sortable: false,
                     width: 300
+                }, {
+                    header: "收款方式",
+                    dataIndex: "receivingType",
+                    menuDisabled: true,
+                    sortable: false,
+                    width: 100,
+                    renderer: function(value) {
+                    	if (value == 0) {
+                    		return "记应收账款";
+                    	} else if (value == 1) {
+                    		return "现金收款";
+                    	} else {
+                    		return "";
+                    	}
+                    }
                 }, {
                     header: "出库仓库",
                     dataIndex: "warehouseName",
