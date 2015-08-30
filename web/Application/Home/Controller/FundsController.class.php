@@ -7,10 +7,11 @@ use Home\Service\UserService;
 use Home\Service\PayablesService;
 use Home\Service\ReceivablesService;
 use Home\Common\FIdConst;
+use Home\Service\CashService;
 
 /**
  * 资金Controller
- * 
+ *
  * @author 李静波
  *        
  */
@@ -264,6 +265,20 @@ class FundsController extends Controller {
 			$this->display();
 		} else {
 			redirect(__ROOT__ . "/Home/User/login");
+		}
+	}
+
+	public function cashList() {
+		if (IS_POST) {
+			$params = array(
+					"dtFrom" => I("post.dtFrom"),
+					"dtTo" => I("post.dtTo"),
+					"page" => I("post.page"),
+					"start" => I("post.start"),
+					"limit" => I("post.limit")
+			);
+			$cs = new CashService();
+			$this->ajaxReturn($cs->cashList($params));
 		}
 	}
 }

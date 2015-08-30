@@ -58,6 +58,10 @@ Ext.define("PSI.Funds.CashMainForm", {
 		});
 
 		me.callParent(arguments);
+		
+		var dt = new Date();
+		dt.setDate(dt.getDate() - 7);
+		Ext.getCmp("dtFrom").setValue(dt);
 	},
 	
 	getMainGrid: function() {
@@ -66,14 +70,14 @@ Ext.define("PSI.Funds.CashMainForm", {
 			return me.__mainGrid;
 		}
 
-		Ext.define("PSIPay", {
+		var modelName = "PSICash";
+		Ext.define(modelName, {
 			extend : "Ext.data.Model",
-			fields : [ "id", "caId", "code", "name", "payMoney", "actMoney",
-					"balanceMoney" ]
+			fields : [ "bizDT", "inMoney", "outMoney", "balanceMoney" ]
 		});
 
 		var store = Ext.create("Ext.data.Store", {
-			model : "PSIPay",
+			model : modelName,
 			pageSize : 20,
 			proxy : {
 				type : "ajax",
@@ -92,6 +96,8 @@ Ext.define("PSI.Funds.CashMainForm", {
 
 		store.on("beforeload", function() {
 			Ext.apply(store.proxy.extraParams, {
+				dtFrom : Ext.Date.format(Ext.getCmp("dtFrom").getValue(), "Y-m-d"),
+				dtTo : Ext.Date.format(Ext.getCmp("dtTo").getValue(), "Y-m-d")
 			});
 		});
 
@@ -102,34 +108,28 @@ Ext.define("PSI.Funds.CashMainForm", {
 			} ],
 			columnLines : true,
 			columns : [ {
-				header : "编码",
-				dataIndex : "code",
+				header : "业务日期",
+				dataIndex : "bizDT",
 				menuDisabled : true,
 				sortable : false
 			}, {
-				header : "名称",
-				dataIndex : "name",
-				menuDisabled : true,
-				sortable : false,
-				width: 300
-			}, {
-				header : "应付金额",
-				dataIndex : "payMoney",
+				header : "收",
+				dataIndex : "inMoney",
 				menuDisabled : true,
 				sortable : false,
 				align : "right",
 				xtype : "numbercolumn",
 				width: 160
 			}, {
-				header : "已付金额",
-				dataIndex : "actMoney",
+				header : "支",
+				dataIndex : "outMoney",
 				menuDisabled : true,
 				sortable : false,
 				align : "right",
 				xtype : "numbercolumn",
 				width: 160
 			}, {
-				header : "未付金额",
+				header : "余额",
 				dataIndex : "balanceMoney",
 				menuDisabled : true,
 				sortable : false,
@@ -140,14 +140,13 @@ Ext.define("PSI.Funds.CashMainForm", {
 			store : store,
 			listeners : {
 				select : {
-					fn : me.onPayGridSelect,
+					fn : me.onMainGridSelect,
 					scope : me
 				}
 			}
 		});
 
 		return me.__mainGrid;
-
 	},
 	
 	getDetailGrid: function() {
@@ -156,14 +155,15 @@ Ext.define("PSI.Funds.CashMainForm", {
 			return me.__detailGrid;
 		}
 
-		Ext.define("PSIPayDetail", {
+		var modelName = "PSICashDetail";
+		Ext.define(modelName, {
 			extend : "Ext.data.Model",
-			fields : [ "id", "payMoney", "actMoney", "balanceMoney", "refType",
-					"refNumber", "bizDT", "dateCreated" ]
+			fields : [ "bizDT", "inMoney", "outMoney", "balanceMoney", "refType",
+					"refNumber", "dateCreated" ]
 		});
 
 		var store = Ext.create("Ext.data.Store", {
-			model : "PSIPayDetail",
+			model : modelName,
 			pageSize : 20,
 			proxy : {
 				type : "ajax",
@@ -186,7 +186,7 @@ Ext.define("PSI.Funds.CashMainForm", {
 		});
 
 		me.__detailGrid = Ext.create("Ext.grid.Panel", {
-			title : "现金支付流水明细",
+			title : "现金收支流水明细",
 			bbar : [ {
 				xtype : "pagingtoolbar",
 				store : store
@@ -215,21 +215,21 @@ Ext.define("PSI.Funds.CashMainForm", {
 				menuDisabled : true,
 				sortable : false
 			}, {
-				header : "应付金额",
-				dataIndex : "payMoney",
+				header : "收",
+				dataIndex : "inMoney",
 				menuDisabled : true,
 				sortable : false,
 				align : "right",
 				xtype : "numbercolumn"
 			}, {
-				header : "已付金额",
-				dataIndex : "actMoney",
+				header : "支",
+				dataIndex : "outMoney",
 				menuDisabled : true,
 				sortable : false,
 				align : "right",
 				xtype : "numbercolumn"
 			}, {
-				header : "未付金额",
+				header : "余额",
 				dataIndex : "balanceMoney",
 				menuDisabled : true,
 				sortable : false,
@@ -244,9 +244,8 @@ Ext.define("PSI.Funds.CashMainForm", {
 			} ],
 			store : store
 		});
-
+		
 		return me.__detailGrid;
-
 	},
 	
 	onQuery : function() {
