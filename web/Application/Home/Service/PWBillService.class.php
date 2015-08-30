@@ -162,6 +162,7 @@ class PWBillService extends PSIBaseService {
 		$warehouseId = $bill["warehouseId"];
 		$supplierId = $bill["supplierId"];
 		$bizUserId = $bill["bizUserId"];
+		$paymentType = $bill["paymentType"];
 		
 		$db = M();
 		
@@ -245,9 +246,10 @@ class PWBillService extends PSIBaseService {
 				$sql = "update t_pw_bill 
 						set goods_money = %f, warehouse_id = '%s', 
 							supplier_id = '%s', biz_dt = '%s',
-							biz_user_id = '%s'
+							biz_user_id = '%s', payment_type = %d
 						where id = '%s' ";
-				$db->execute($sql, $totalMoney, $warehouseId, $supplierId, $bizDT, $bizUserId, $id);
+				$db->execute($sql, $totalMoney, $warehouseId, $supplierId, $bizDT, $bizUserId, 
+						$paymentType, $id);
 				
 				$log = "编辑采购入库单: 单号 = {$ref}";
 				$bs = new BizlogService();
@@ -263,13 +265,13 @@ class PWBillService extends PSIBaseService {
 			$db->startTrans();
 			try {
 				$sql = "insert into t_pw_bill (id, ref, supplier_id, warehouse_id, biz_dt, 
-						biz_user_id, bill_status, date_created, goods_money, input_user_id) 
-						values ('%s', '%s', '%s', '%s', '%s', '%s', 0, now(), 0, '%s')";
+						biz_user_id, bill_status, date_created, goods_money, input_user_id, payment_type) 
+						values ('%s', '%s', '%s', '%s', '%s', '%s', 0, now(), 0, '%s', %d)";
 				
 				$ref = $this->genNewBillRef();
 				$us = new UserService();
 				$db->execute($sql, $id, $ref, $supplierId, $warehouseId, $bizDT, $bizUserId, 
-						$us->getLoginUserId());
+						$us->getLoginUserId(), $paymentType);
 				
 				// 明细记录
 				$items = $bill["items"];
@@ -349,7 +351,7 @@ class PWBillService extends PSIBaseService {
 		$db = M();
 		$sql = "select p.ref, p.bill_status, p.supplier_id, s.name as supplier_name, 
 				p.warehouse_id, w.name as  warehouse_name, 
-				p.biz_user_id, u.name as biz_user_name, p.biz_dt 
+				p.biz_user_id, u.name as biz_user_name, p.biz_dt, p.payment_type 
 				from t_pw_bill p, t_supplier s, t_warehouse w, t_user u 
 				where p.id = '%s' and p.supplier_id = s.id and p.warehouse_id = w.id 
 				  and p.biz_user_id = u.id";
@@ -365,7 +367,9 @@ class PWBillService extends PSIBaseService {
 			$result["bizUserId"] = $v["biz_user_id"];
 			$result["bizUserName"] = $v["biz_user_name"];
 			$result["bizDT"] = date("Y-m-d", strtotime($v["biz_dt"]));
+			$result["paymentType"] = $v["payment_type"];
 			
+			// 采购的商品明细
 			$items = array();
 			$sql = "select p.id, p.goods_id, g.code, g.name, g.spec, u.name as unit_name, 
 					p.goods_count, p.goods_price, p.goods_money 
