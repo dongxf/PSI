@@ -69,7 +69,7 @@ class SRBillService extends PSIBaseService {
 					  where d.sn_note like '%s')) ";
 			$queryParams[] = "%$sn%";
 		}
-		if ($paymentType != -1) {
+		if ($paymentType != - 1) {
 			$sql .= " and (w.payment_type = %d) ";
 			$queryParams[] = $paymentType;
 		}
@@ -131,7 +131,7 @@ class SRBillService extends PSIBaseService {
 					  where d.sn_note like '%s')) ";
 			$queryParams[] = "%$sn%";
 		}
-		if ($paymentType != -1) {
+		if ($paymentType != - 1) {
 			$sql .= " and (w.payment_type = %d) ";
 			$queryParams[] = $paymentType;
 		}
@@ -204,7 +204,8 @@ class SRBillService extends PSIBaseService {
 			$result = array();
 			$sql = "select w.id, w.ref, w.bill_status, w.bizdt, c.id as customer_id, c.name as customer_name, 
 					 u.id as biz_user_id, u.name as biz_user_name,
-					 h.id as warehouse_id, h.name as warehouse_name, wsBill.ref as ws_bill_ref 
+					 h.id as warehouse_id, h.name as warehouse_name, wsBill.ref as ws_bill_ref,
+						w.payment_type
 					 from t_sr_bill w, t_customer c, t_user u, t_warehouse h, t_ws_bill wsBill 
 					 where w.customer_id = c.id and w.biz_user_id = u.id 
 					 and w.warehouse_id = h.id 
@@ -221,6 +222,7 @@ class SRBillService extends PSIBaseService {
 				$result["bizUserId"] = $data[0]["biz_user_id"];
 				$result["bizUserName"] = $data[0]["biz_user_name"];
 				$result["wsBillRef"] = $data[0]["ws_bill_ref"];
+				$result["paymentType"] = $data[0]["payment_type"];
 			}
 			
 			$sql = "select d.id, g.id as goods_id, g.code, g.name, g.spec, u.name as unit_name, d.goods_count, 
@@ -397,6 +399,7 @@ class SRBillService extends PSIBaseService {
 		$bizUserId = $bill["bizUserId"];
 		$items = $bill["items"];
 		$wsBillId = $bill["wsBillId"];
+		$paymentType = $bill["paymentType"];
 		
 		if (! $id) {
 			$sql = "select count(*) as cnt from t_ws_bill where id = '%s' ";
@@ -450,10 +453,12 @@ class SRBillService extends PSIBaseService {
 			try {
 				$sql = "update t_sr_bill
 						set bizdt = '%s', biz_user_id = '%s', date_created = now(),
-						   input_user_id = '%s', warehouse_id = '%s'
+						   input_user_id = '%s', warehouse_id = '%s',
+							payment_type = %d
 						where id = '%s' ";
 				$us = new UserService();
-				$db->execute($sql, $bizDT, $bizUserId, $us->getLoginUserId(), $warehouseId, $id);
+				$db->execute($sql, $bizDT, $bizUserId, $us->getLoginUserId(), $warehouseId, 
+						$paymentType, $id);
 				
 				// 退货明细
 				$sql = "delete from t_sr_bill_detail where srbill_id = '%s' ";
@@ -531,12 +536,12 @@ class SRBillService extends PSIBaseService {
 				$id = $idGen->newId();
 				$ref = $this->genNewBillRef();
 				$sql = "insert into t_sr_bill(id, bill_status, bizdt, biz_user_id, customer_id, 
-						  date_created, input_user_id, ref, warehouse_id, ws_bill_id)
+						  date_created, input_user_id, ref, warehouse_id, ws_bill_id, payment_type)
 						values ('%s', 0, '%s', '%s', '%s', 
-						  now(), '%s', '%s', '%s', '%s')";
+						  now(), '%s', '%s', '%s', '%s', %d)";
 				$us = new UserService();
 				$db->execute($sql, $id, $bizDT, $bizUserId, $customerId, $us->getLoginUserId(), 
-						$ref, $warehouseId, $wsBillId);
+						$ref, $warehouseId, $wsBillId, $paymentType);
 				
 				foreach ( $items as $i => $v ) {
 					$wsBillDetailId = $v["id"];

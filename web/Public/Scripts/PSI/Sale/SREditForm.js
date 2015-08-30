@@ -62,7 +62,7 @@ Ext.define("PSI.Sale.SREditForm", {
                         type: "table",
                         columns: 2
                     },
-                    height: 100,
+                    height: 120,
                     bodyPadding: 10,
                     items: [
                         {
@@ -149,7 +149,29 @@ Ext.define("PSI.Sale.SREditForm", {
                                     scope: me
                                 }
                             }
-                        }
+                        },
+                        {
+        					id: "editPaymentType",
+        					labelWidth : 60,
+        					labelAlign : "right",
+        					labelSeparator : "",
+        					fieldLabel : "付款方式",
+        					xtype : "combo",
+        					queryMode : "local",
+        					editable : false,
+        					valueField : "id",
+        					store : Ext.create("Ext.data.ArrayStore", {
+        						fields : [ "id", "text" ],
+        						data : [ [ "0", "记应付账款" ], [ "1", "现金付款" ] ]
+        					}),
+        					value: "0",
+        					listeners : {
+        						specialkey : {
+        							fn : me.onEditPaymentTypeSpecialKey,
+        							scope : me
+        						}
+        					}
+        				}
                     ]
                 }],
             listeners: {
@@ -198,6 +220,9 @@ Ext.define("PSI.Sale.SREditForm", {
                     if (data.bizDT) {
                         Ext.getCmp("editBizDT").setValue(data.bizDT);
                     }
+                    if (data.paymentType) {
+						Ext.getCmp("editPaymentType").setValue(data.paymentType);
+					}
 
                     var store = me.getGoodsGrid().getStore();
                     store.removeAll();
@@ -250,6 +275,16 @@ Ext.define("PSI.Sale.SREditForm", {
         }
     },
     onEditBizUserSpecialKey: function (field, e) {
+    	if (this.__readonly) {
+    		return;
+    	}
+    	
+        if (e.getKey() == e.ENTER) {
+        	Ext.getCmp("editPaymentType").focus();
+        }
+    },
+
+    onEditPaymentTypeSpecialKey: function (field, e) {
     	if (this.__readonly) {
     		return;
     	}
@@ -398,6 +433,7 @@ Ext.define("PSI.Sale.SREditForm", {
             customerId: Ext.getCmp("editCustomerId").getValue(),
             warehouseId: Ext.getCmp("editWarehouse").getIdValue(),
             bizUserId: Ext.getCmp("editBizUser").getIdValue(),
+            paymentType: Ext.getCmp("editPaymentType").getValue(),
             wsBillId: me.__wsBillId,
             items: []
         };
@@ -463,5 +499,6 @@ Ext.define("PSI.Sale.SREditForm", {
 		Ext.getCmp("editBizDT").setReadOnly(true);
 		Ext.getCmp("editWarehouse").setReadOnly(true);
 		Ext.getCmp("editBizUser").setReadOnly(true);
+		Ext.getCmp("editPaymentType").setReadOnly(true);
     }
 });
