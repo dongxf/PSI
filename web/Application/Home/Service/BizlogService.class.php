@@ -113,7 +113,7 @@ class BizlogService extends PSIBaseService {
 		$cnt = $data[0]["cnt"];
 		return $cnt == 1;
 	}
-	private $CURRENT_DB_VERSION = "20150830-002";
+	private $CURRENT_DB_VERSION = "20150830-003";
 
 	public function updateDatabase() {
 		if ($this->isNotOnline()) {
@@ -141,6 +141,7 @@ class BizlogService extends PSIBaseService {
 		$this->t_customer($db);
 		$this->t_goods($db);
 		$this->t_goods_si($db);
+		$this->t_pr_bill($db);
 		$this->t_pw_bill($db);
 		$this->t_supplier($db);
 		$this->t_sr_bill_detail($db);
@@ -334,6 +335,16 @@ class BizlogService extends PSIBaseService {
 		}
 	}
 
+	private function t_pr_bill($db) {
+		$tableName = "t_pr_bill";
+		
+		$columnName = "receiving_type";
+		if (! $this->columnExists($db, $tableName, $columnName)) {
+			$sql = "alter table {$tableName} add {$columnName} int(11) not null default 0;";
+			$db->execute($sql);
+		}
+	}
+	
 	private function t_pw_bill($db) {
 		$tableName = "t_pw_bill";
 		
