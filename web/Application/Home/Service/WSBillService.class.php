@@ -721,7 +721,7 @@ class WSBillService extends PSIBaseService {
 					// 记现金明细账
 					$sql = "insert into t_cash_detail(in_money, balance_money, biz_date, ref_type,
 								ref_number, date_created)
-							values (%f, %f, '%s', '采购退货出库', '%s', now())";
+							values (%f, %f, '%s', '销售出库', '%s', now())";
 					$db->execute($sql, $inCash, $balanceCash, $bizDT, $ref);
 				} else {
 					$balanceCash = $data[0]["balance_money"] + $inCash;
@@ -734,7 +734,7 @@ class WSBillService extends PSIBaseService {
 					// 记现金明细账
 					$sql = "insert into t_cash_detail(in_money, balance_money, biz_date, ref_type,
 								ref_number, date_created)
-							values (%f, %f, '%s', '采购退货出库', '%s', now())";
+							values (%f, %f, '%s', '销售出库', '%s', now())";
 					$db->execute($sql, $inCash, $balanceCash, $bizDT, $ref);
 				}
 				

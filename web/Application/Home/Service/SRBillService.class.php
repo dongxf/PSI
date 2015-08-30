@@ -998,7 +998,7 @@ class SRBillService extends PSIBaseService {
 					// 记现金明细账
 					$sql = "insert into t_cash_detail(out_money, balance_money, biz_date, ref_type,
 								ref_number, date_created)
-							values (%f, %f, '%s', '采购入库', '%s', now())";
+							values (%f, %f, '%s', '销售退货入库', '%s', now())";
 					$db->execute($sql, $outCash, $balanceCash, $bizDT, $ref);
 				} else {
 					$balanceCash = $data[0]["balance_money"] - $outCash;
@@ -1011,7 +1011,7 @@ class SRBillService extends PSIBaseService {
 					// 记现金明细账
 					$sql = "insert into t_cash_detail(out_money, balance_money, biz_date, ref_type,
 								ref_number, date_created)
-							values (%f, %f, '%s', '采购入库', '%s', now())";
+							values (%f, %f, '%s', '销售退货入库', '%s', now())";
 					$db->execute($sql, $outCash, $balanceCash, $bizDT, $ref);
 				}
 				
