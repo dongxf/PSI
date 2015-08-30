@@ -372,6 +372,7 @@ CREATE TABLE IF NOT EXISTS `t_ws_bill` (
   `ref` varchar(255) NOT NULL,
   `sale_money` decimal(19,2) DEFAULT NULL,
   `warehouse_id` varchar(255) NOT NULL,
+  `receiving_type` int(11) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
