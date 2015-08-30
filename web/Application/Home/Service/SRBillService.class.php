@@ -737,7 +737,7 @@ class SRBillService extends PSIBaseService {
 		$db = M();
 		
 		$sql = "select ref, bill_status, warehouse_id, customer_id, bizdt, 
-					biz_user_id, rejection_sale_money  
+					biz_user_id, rejection_sale_money, payment_type  
 				from t_sr_bill where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if (! $data) {
@@ -749,6 +749,7 @@ class SRBillService extends PSIBaseService {
 			return $this->bad("销售退货入库单(单号:{$ref})已经提交，不能再次提交");
 		}
 		
+		$paymentType = $data[0]["payment_type"];
 		$warehouseId = $data[0]["warehouse_id"];
 		$customerId = $data[0]["customer_id"];
 		$bizDT = $data[0]["bizdt"];
@@ -776,6 +777,14 @@ class SRBillService extends PSIBaseService {
 		$data = $db->query($sql, $bizUserId);
 		if (! $data) {
 			return $this->bad("业务人员不存在，无法提交");
+		}
+		
+		$allPaymentType = array(
+				0,
+				1
+		);
+		if (! in_array($paymentType, $allPaymentType)) {
+			return $this->bad("付款方式不正确，无法提交");
 		}
 		
 		// 检查退货数量
@@ -927,36 +936,96 @@ class SRBillService extends PSIBaseService {
 			
 			$idGen = new IdGenService();
 			
-			// 应付账款总账
-			$sql = "select pay_money, balance_money
+			if ($paymentType == 0) {
+				// 记应付账款
+				// 应付账款总账
+				$sql = "select pay_money, balance_money
 					from t_payables
 					where ca_id = '%s' and ca_type = 'customer' ";
-			$data = $db->query($sql, $customerId);
-			if ($data) {
-				$totalPayMoney = $data[0]["pay_money"];
-				$totalBalanceMoney = $data[0]["balance_money"];
-				
-				$totalPayMoney += $rejectionSaleMoney;
-				$totalBalanceMoney += $rejectionSaleMoney;
-				$sql = "update t_payables
+				$data = $db->query($sql, $customerId);
+				if ($data) {
+					$totalPayMoney = $data[0]["pay_money"];
+					$totalBalanceMoney = $data[0]["balance_money"];
+					
+					$totalPayMoney += $rejectionSaleMoney;
+					$totalBalanceMoney += $rejectionSaleMoney;
+					$sql = "update t_payables
 						set pay_money = %f, balance_money = %f
 						where ca_id = '%s' and ca_type = 'customer' ";
-				$db->execute($sql, $totalPayMoney, $totalBalanceMoney, $customerId);
-			} else {
-				
-				$sql = "insert into t_payables (id, ca_id, ca_type, pay_money, balance_money, act_money)
+					$db->execute($sql, $totalPayMoney, $totalBalanceMoney, $customerId);
+				} else {
+					
+					$sql = "insert into t_payables (id, ca_id, ca_type, pay_money, balance_money, act_money)
 						values ('%s', '%s', 'customer', %f, %f, %f)";
-				$db->execute($sql, $idGen->newId(), $customerId, $rejectionSaleMoney, 
-						$rejectionSaleMoney, 0);
-			}
-			
-			// 应付账款明细账
-			$sql = "insert into t_payables_detail(id, ca_id, ca_type, pay_money, balance_money,
+					$db->execute($sql, $idGen->newId(), $customerId, $rejectionSaleMoney, 
+							$rejectionSaleMoney, 0);
+				}
+				
+				// 应付账款明细账
+				$sql = "insert into t_payables_detail(id, ca_id, ca_type, pay_money, balance_money,
 					biz_date, date_created, ref_number, ref_type, act_money)
 					values ('%s', '%s', 'customer', %f, %f,
 					 '%s', now(), '%s', '销售退货入库', 0)";
-			$db->execute($sql, $idGen->newId(), $customerId, $rejectionSaleMoney, 
-					$rejectionSaleMoney, $bizDT, $ref);
+				$db->execute($sql, $idGen->newId(), $customerId, $rejectionSaleMoney, 
+						$rejectionSaleMoney, $bizDT, $ref);
+			} else if ($paymentType == 1) {
+				// 现金付款
+				$outCash = $rejectionSaleMoney;
+				
+				$sql = "select in_money, out_money, balance_money from t_cash where biz_date = '%s' ";
+				$data = $db->query($sql, $bizDT);
+				if (! $data) {
+					// 当天首次发生现金业务
+					
+					$sql = "select sum(in_money) as sum_in_money, sum(out_money) as sum_out_money
+							from t_cash
+							where biz_date <= '%s' ";
+					$data = $db->query($sql, $bizDT);
+					$sumInMoney = $data[0]["sum_in_money"];
+					$sumOutMoney = $data[0]["sum_out_money"];
+					if (! $sumInMoney) {
+						$sumInMoney = 0;
+					}
+					if (! $sumOutMoney) {
+						$sumOutMoney = 0;
+					}
+					
+					$balanceCash = $sumInMoney - $sumOutMoney - $outCash;
+					$sql = "insert into t_cash(out_money, balance_money, biz_date)
+							values (%f, %f, '%s')";
+					$db->execute($sql, $outCash, $balanceCash, $bizDT);
+					
+					// 记现金明细账
+					$sql = "insert into t_cash_detail(out_money, balance_money, biz_date, ref_type,
+								ref_number, date_created)
+							values (%f, %f, '%s', '采购入库', '%s', now())";
+					$db->execute($sql, $outCash, $balanceCash, $bizDT, $ref);
+				} else {
+					$balanceCash = $data[0]["balance_money"] - $outCash;
+					$sumOutMoney = $data[0]["out_money"] + $outCash;
+					$sql = "update t_cash
+							set out_money = %f, balance_money = %f
+							where biz_date = '%s' ";
+					$db->execute($sql, $sumOutMoney, $balanceCash, $bizDT);
+					
+					// 记现金明细账
+					$sql = "insert into t_cash_detail(out_money, balance_money, biz_date, ref_type,
+								ref_number, date_created)
+							values (%f, %f, '%s', '采购入库', '%s', now())";
+					$db->execute($sql, $outCash, $balanceCash, $bizDT, $ref);
+				}
+				
+				// 调整业务日期之后的现金总账和明细账的余额
+				$sql = "update t_cash
+							set balance_money = balance_money - %f
+							where biz_date > '%s' ";
+				$db->execute($sql, $outCash, $bizDT);
+				
+				$sql = "update t_cash_detail
+							set balance_money = balance_money - %f
+							where biz_date > '%s' ";
+				$db->execute($sql, $outCash, $bizDT);
+			}
 			
 			// 把单据本身的状态修改为已经提交
 			$sql = "update t_sr_bill
