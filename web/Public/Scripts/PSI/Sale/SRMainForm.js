@@ -15,7 +15,7 @@ Ext.define("PSI.Sale.SRMainForm", {
                 collapsible: true,
             	layout : {
 					type : "table",
-					columns : 4
+					columns : 5
 				},
 				items: me.getQueryCmp()
             }, {
@@ -132,9 +132,25 @@ Ext.define("PSI.Sale.SRMainForm", {
 			id: "editQuerySN",
 			labelAlign : "right",
 			labelSeparator : "",
+			labelWidth : 60,
 			fieldLabel : "序列号",
 			margin: "5, 0, 0, 0",
 			xtype : "textfield"
+		},{
+			id: "editQueryPaymentType",
+			labelAlign : "right",
+			labelSeparator : "",
+			fieldLabel : "付款方式",
+			margin: "5, 0, 0, 0",
+			xtype : "combo",
+			queryMode : "local",
+			editable : false,
+			valueField : "id",
+			store : Ext.create("Ext.data.ArrayStore", {
+				fields : [ "id", "text" ],
+				data : [[-1, "所有"],  [0, "记应付账款" ], [1, "现金付款" ] ]
+			}),
+			value: -1
 		},{
         	xtype: "container",
         	items: [{
@@ -296,7 +312,8 @@ Ext.define("PSI.Sale.SRMainForm", {
         Ext.define(modelName, {
             extend: "Ext.data.Model",
             fields: ["id", "ref", "bizDate", "customerName", "warehouseName",
-                "inputUserName", "bizUserName", "billStatus", "amount", "dateCreated"]
+                "inputUserName", "bizUserName", "billStatus", "amount", "dateCreated",
+                "paymentType"]
         });
         var store = Ext.create("Ext.data.Store", {
             autoLoad: false,
@@ -365,6 +382,17 @@ Ext.define("PSI.Sale.SRMainForm", {
                     align: "right",
                     xtype: "numbercolumn",
                     width: 80
+                }, {
+                	header: "付款方式", dataIndex: "paymentType", menuDisabled: true, sortable: false, width: 100,
+                	renderer: function(value) {
+                		if (value == 0) {
+                			return "记应付账款";
+                		} else if (value == 1) {
+                			return "现金付款";
+                		} else {
+                			return "";
+                		}
+                	}
                 }, {
                     header: "入库仓库",
                     dataIndex: "warehouseName",
@@ -626,6 +654,7 @@ Ext.define("PSI.Sale.SRMainForm", {
     	Ext.getCmp("editQueryCustomer").clearIdValue();
     	Ext.getCmp("editQueryWarehouse").clearIdValue();
     	Ext.getCmp("editQuerySN").setValue(null);
+    	Ext.getCmp("editQueryPaymentType").setValue(-1);
     	
     	me.onQuery();
     },
@@ -666,6 +695,9 @@ Ext.define("PSI.Sale.SRMainForm", {
     	if (sn) {
     		result.sn = sn;
     	}
+    	
+    	var paymentType = Ext.getCmp("editQueryPaymentType").getValue();
+    	result.paymentType = paymentType;
     	
     	return result;
     }
