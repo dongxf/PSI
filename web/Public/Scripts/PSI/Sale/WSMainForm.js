@@ -15,7 +15,7 @@ Ext.define("PSI.Sale.WSMainForm", {
                 collapsible: true,
             	layout : {
 					type : "table",
-					columns : 4
+					columns : 5
 				},
 				items: me.getQueryCmp()
             }, {
@@ -139,7 +139,23 @@ Ext.define("PSI.Sale.WSMainForm", {
 			labelSeparator : "",
 			fieldLabel : "序列号",
 			margin: "5, 0, 0, 0",
+			labelWidth : 60,
 			xtype : "textfield"
+		},{
+			id: "editQueryReceivingType",
+			margin: "5, 0, 0, 0",
+			labelAlign : "right",
+			labelSeparator : "",
+			fieldLabel : "收款方式",
+			xtype : "combo",
+			queryMode : "local",
+			editable : false,
+			valueField : "id",
+			store : Ext.create("Ext.data.ArrayStore", {
+				fields : [ "id", "text" ],
+				data : [[-1, "所有"],  [ 0, "记应收账款" ], [ 1, "现金收款" ] ]
+			}),
+			value: -1
 		},{
         	xtype: "container",
         	items: [{
@@ -171,7 +187,8 @@ Ext.define("PSI.Sale.WSMainForm", {
         Ext.define(modelName, {
             extend: "Ext.data.Model",
             fields: ["id", "ref", "bizDate", "customerName", "warehouseName",
-                "inputUserName", "bizUserName", "billStatus", "amount", "dateCreated"]
+                "inputUserName", "bizUserName", "billStatus", "amount", "dateCreated",
+                "receivingType"]
         });
         var store = Ext.create("Ext.data.Store", {
             autoLoad: false,
@@ -233,6 +250,21 @@ Ext.define("PSI.Sale.WSMainForm", {
                     width: 300,
                     menuDisabled: true,
                     sortable: false
+                }, {
+                    header: "收款方式",
+                    dataIndex: "receivingType",
+                    menuDisabled: true,
+                    sortable: false,
+                    width: 100,
+                    renderer: function(value) {
+                    	if (value == 0) {
+                    		return "记应收账款";
+                    	} else if (value == 1) {
+                    		return "现金收款";
+                    	} else {
+                    		return "";
+                    	}
+                    }
                 }, {
                     header: "销售金额",
                     dataIndex: "amount",
@@ -660,6 +692,7 @@ Ext.define("PSI.Sale.WSMainForm", {
     	Ext.getCmp("editQueryCustomer").clearIdValue();
     	Ext.getCmp("editQueryWarehouse").clearIdValue();
     	Ext.getCmp("editQuerySN").setValue(null);
+    	Ext.getCmp("editQueryReceivingType").setValue(-1);
     	
     	me.onQuery();
     },
@@ -700,6 +733,9 @@ Ext.define("PSI.Sale.WSMainForm", {
     	if (sn) {
     		result.sn = sn;
     	}
+    	
+    	var receivingType = Ext.getCmp("editQueryReceivingType").getValue();
+    	result.receivingType = receivingType;
     	
     	return result;
     },
