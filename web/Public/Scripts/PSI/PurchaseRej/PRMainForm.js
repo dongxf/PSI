@@ -128,6 +128,21 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
 			margin: "5, 0, 0, 0",
             fieldLabel: "仓库"
         },{
+			id: "editQueryReceivingType",
+			margin: "5, 0, 0, 0",
+			labelAlign : "right",
+			labelSeparator : "",
+			fieldLabel : "收款方式",
+			xtype : "combo",
+			queryMode : "local",
+			editable : false,
+			valueField : "id",
+			store : Ext.create("Ext.data.ArrayStore", {
+				fields : [ "id", "text" ],
+				data : [[-1, "所有"],  [ 0, "记应收账款" ], [ 1, "现金收款" ] ]
+			}),
+			value: -1
+		},{
         	xtype: "container",
         	items: [{
                 xtype: "button",
@@ -646,6 +661,7 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
     	Ext.getCmp("editQueryToDT").setValue(null);
     	Ext.getCmp("editQuerySupplier").clearIdValue();
     	Ext.getCmp("editQueryWarehouse").clearIdValue();
+    	Ext.getCmp("editQueryReceivingType").setValue(-1);
     	
     	me.onQuery();
     },
@@ -681,6 +697,9 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
     	if (toDT) {
     		result.toDT = Ext.Date.format(toDT, "Y-m-d");
     	}
+    	
+    	var receivingType = Ext.getCmp("editQueryReceivingType").getValue();
+    	result.receivingType = receivingType;
     	
     	return result;
     }

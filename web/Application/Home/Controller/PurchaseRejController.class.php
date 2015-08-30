@@ -42,6 +42,7 @@ class PurchaseRejController extends Controller {
 					"toDT" => I("post.toDT"),
 					"warehouseId" => I("post.warehouseId"),
 					"supplierId" => I("post.supplierId"),
+					"receivingType" => I("post.receivingType"),
 					"page" => I("post.page"),
 					"start" => I("post.start"),
 					"limit" => I("post.limit")

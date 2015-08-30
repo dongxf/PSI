@@ -480,6 +480,7 @@ class PRBillService extends PSIBaseService {
 		$toDT = $params["toDT"];
 		$warehouseId = $params["warehouseId"];
 		$supplierId = $params["supplierId"];
+		$receivingType = $params["receivingType"];
 		
 		$db = M();
 		$result = array();
@@ -515,6 +516,10 @@ class PRBillService extends PSIBaseService {
 		if ($warehouseId) {
 			$sql .= " and (p.warehouse_id = '%s') ";
 			$queryParams[] = $warehouseId;
+		}
+		if ($receivingType != -1) {
+			$sql .= " and (p.receiving_type = %d) ";
+			$queryParams[] = $receivingType;
 		}
 		
 		$sql .= " order by p.ref desc
@@ -566,6 +571,10 @@ class PRBillService extends PSIBaseService {
 		if ($warehouseId) {
 			$sql .= " and (p.warehouse_id = '%s') ";
 			$queryParams[] = $warehouseId;
+		}
+		if ($receivingType != -1) {
+			$sql .= " and (p.receiving_type = %d) ";
+			$queryParams[] = $receivingType;
 		}
 		
 		$data = $db->query($sql, $queryParams);
