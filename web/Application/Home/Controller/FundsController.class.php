@@ -8,6 +8,7 @@ use Home\Service\PayablesService;
 use Home\Service\ReceivablesService;
 use Home\Common\FIdConst;
 use Home\Service\CashService;
+use Home\Service\PreReceivingService;
 
 /**
  * 资金Controller
@@ -312,6 +313,24 @@ class FundsController extends Controller {
 			$this->display();
 		} else {
 			redirect(__ROOT__ . "/Home/User/login");
+		}
+	}
+
+	public function addPreReceivingInfo() {
+		if (IS_POST) {
+			$ps = new PreReceivingService();
+			$this->ajaxReturn($ps->addPreReceivingInfo());
+		}
+	}
+
+	public function addPreReceiving() {
+		if (IS_POST) {
+			$params = array(
+					"bizUserId" => I("post.bizUserId")
+			);
+			
+			$ps = new PreReceivingService();
+			$this->ajaxReturn($ps->addPreReceiving($params));
 		}
 	}
 }

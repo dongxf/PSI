@@ -338,7 +338,10 @@ Ext.define("PSI.Funds.PreReceivingMainForm", {
     },
     
     onReceivingMoney: function() {
-    	PSI.MsgBox.showInfo("TODO");
+    	var form = Ext.create("PSI.Funds.AddPreReceivingForm", {
+    		parentForm: this
+    	});
+    	form.show();
     },
     
     onReturnMoney: function() {
