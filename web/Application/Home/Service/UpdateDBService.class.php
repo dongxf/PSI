@@ -8,7 +8,7 @@ namespace Home\Service;
  * @author 李静波
  */
 class UpdateDBService extends PSIBaseService {
-	private $CURRENT_DB_VERSION = "20150901-002";
+	private $CURRENT_DB_VERSION = "20150901-003";
 
 	private function tableExists($db, $tableName) {
 		$dbName = C('DB_NAME');
@@ -350,6 +350,18 @@ class UpdateDBService extends PSIBaseService {
 					  PRIMARY KEY (`id`)
 					) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 					";
+			$db->execute($sql);
+		}
+		
+		$columnName = "biz_user_id";
+		if (! $this->columnExists($db, $tableName, $columnName)) {
+			$sql = "alter table {$tableName} add {$columnName} varchar(255) not null;";
+			$db->execute($sql);
+		}
+		
+		$columnName = "input_user_id";
+		if (! $this->columnExists($db, $tableName, $columnName)) {
+			$sql = "alter table {$tableName} add {$columnName} varchar(255) not null;";
 			$db->execute($sql);
 		}
 	}
