@@ -18,10 +18,14 @@ Ext.define("PSI.Funds.PreReceivingMainForm", {
 			tbar : [ 
 			{
 				text: "收预收款",
-				iconCls: "PSI-button-add"
+				iconCls: "PSI-button-add",
+				handler: me.onReceivingMoney,
+				scope: me
 			}, "-", {
 				text: "退预收款",
-				iconCls: "PSI-button-delete"
+				iconCls: "PSI-button-delete",
+				handler: me.onReturnMoney,
+				scope: me
 			}, "-",
 			{
 				xtype : "displayfield",
@@ -317,5 +321,13 @@ Ext.define("PSI.Funds.PreReceivingMainForm", {
                 el.unmask();
             }
         });
+    },
+    
+    onReceivingMoney: function() {
+    	PSI.MsgBox.showInfo("TODO");
+    },
+    
+    onReturnMoney: function() {
+    	PSI.MsgBox.showInfo("TODO");
     }
 });

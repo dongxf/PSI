@@ -605,6 +605,8 @@ CREATE TABLE IF NOT EXISTS `t_pre_receiving_detail` (
   `date_created` datetime DEFAULT NULL,
   `ref_number` varchar(255) NOT NULL,
   `ref_type` varchar(255) NOT NULL,
+  `biz_user_id` varchar(255) NOT NULL,
+  `input_user_id` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
