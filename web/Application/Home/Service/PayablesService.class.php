@@ -202,6 +202,19 @@ class PayablesService extends PSIBaseService {
 			$billId = $data[0]["id"];
 		}
 		
+		// 检查付款人是否存在
+		$sql = "select count(*) as cnt from t_user where id = '%s' ";
+		$data = $db->query($sql, $bizUserId);
+		$cnt = $data[0]["cnt"];
+		if ($cnt != 1) {
+			return $this->bad("付款人不存在，无法付款");
+		}
+		
+		// 检查付款日期是否正确
+		if (! $this->dateIsValid($bizDT)) {
+			return $this->bad("付款日期不正确");
+		}
+		
 		$db->startTrans();
 		try {
 			$sql = "insert into t_payment (id, act_money, biz_date, date_created, input_user_id,
@@ -234,18 +247,24 @@ class PayablesService extends PSIBaseService {
 			$db->execute($sql, $actMoneyNew, $balanceMoney, $refType, $refNumber, $caId, $caType);
 			
 			// 应付总账
-			$sql = "select balance_money, act_money 
-					from t_payables 
+			$sql = "select sum(pay_money) as sum_pay_money, sum(act_money) as sum_act_money
+					from t_payables_detail
 					where ca_type = '%s' and ca_id = '%s' ";
 			$data = $db->query($sql, $caType, $caId);
-			$balanceMoneyTotal = $data[0]["balance_money"];
-			$actMoneyTotal = $data[0]["act_money"];
-			$actMoneyTotal += $actMoney;
-			$balanceMoneyTotal -= $actMoney;
+			$sumPayMoney = $data[0]["sum_pay_money"];
+			$sumActMoney = $data[0]["sum_act_money"];
+			if (! $sumPayMoney) {
+				$sumPayMoney = 0;
+			}
+			if (! $sumActMoney) {
+				$sumActMoney = 0;
+			}
+			$sumBalanceMoney = $sumPayMoney - $sumActMoney;
+			
 			$sql = "update t_payables 
 					set act_money = %f, balance_money = %f 
 					where ca_type = '%s' and ca_id = '%s' ";
-			$db->execute($sql, $actMoneyTotal, $balanceMoneyTotal, $caType, $caId);
+			$db->execute($sql, $sumActMoney, $sumBalanceMoney, $caType, $caId);
 			
 			$db->commit();
 		} catch ( Exception $ex ) {
