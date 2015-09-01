@@ -208,6 +208,18 @@ class ReceivablesService extends PSIBaseService {
 			$billId = $data[0]["id"];
 		}
 		
+		// 检查收款人是否存在
+		$sql = "select count(*) as cnt from t_user where id = '%s' ";
+		$data = $db->query($sql, $bizUserId);
+		$cnt = $data[0]["cnt"];
+		if ($cnt != 1) {
+			return $this->bad("收款人不存在，无法收款");
+		}
+		
+		if (! $this->dateIsValid($bizDT)) {
+			return $this->bad("收款日期不正确");
+		}
+		
 		$db->startTrans();
 		try {
 			$sql = "insert into t_receiving (id, act_money, biz_date, date_created, input_user_id,
@@ -245,23 +257,24 @@ class ReceivablesService extends PSIBaseService {
 					$caType);
 			
 			// 应收总账
-			$sql = "select act_money, balance_money 
-					from t_receivables 
+			$sql = "select sum(rv_money) as sum_rv_money, sum(act_money) as sum_act_money
+					from t_receivables_detail
 					where ca_id = '%s' and ca_type = '%s' ";
 			$data = $db->query($sql, $caId, $caType);
-			if (! $data) {
-				$db->rollback();
-				return $this->bad("数据库错误，没有应收总账对应，无法收款");
+			$sumRvMoney = $data[0]["sum_rv_money"];
+			if (! $sumRvMoney) {
+				$sumRvMoney = 0;
 			}
-			$actMoneyTotal = $data[0]["act_money"];
-			$balanceMoneyTotal = $data[0]["balance_money"];
-			$actMoneyTotal += $actMoney;
-			$balanceMoneyTotal -= $actMoney;
+			$sumActMoney = $data[0]["sum_act_money"];
+			if (! $sumActMoney) {
+				$sumActMoney = 0;
+			}
+			$sumBalanceMoney = $sumRvMoney - $sumActMoney;
 			
 			$sql = "update t_receivables 
 					set act_money = %f, balance_money = %f 
 					where ca_id = '%s' and ca_type = '%s' ";
-			$db->execute($sql, $actMoneyTotal, $balanceMoneyTotal, $caId, $caType);
+			$db->execute($sql, $sumActMoney, $sumBalanceMoney, $caId, $caType);
 			
 			$db->commit();
 		} catch ( Exception $ex ) {
