@@ -42,7 +42,7 @@ Ext.define("PSI.Funds.PreReceivingMainForm", {
 					autoLoad : false,
 					data : []
 				})
-			}, "-", {
+			}, {
 				text : "查询",
 				iconCls : "PSI-button-refresh",
 				handler : me.onQuery,
@@ -117,6 +117,7 @@ Ext.define("PSI.Funds.PreReceivingMainForm", {
 			viewConfig: {
                 enableTextSelection: true
             },
+            border: 0,
 			bbar : [ {
 				xtype : "pagingtoolbar",
 				store : store
@@ -135,7 +136,7 @@ Ext.define("PSI.Funds.PreReceivingMainForm", {
 				sortable : false,
 				width: 300
 			}, {
-				header : "预收金额",
+				header : "收",
 				dataIndex : "inMoney",
 				menuDisabled : true,
 				sortable : false,
@@ -143,7 +144,7 @@ Ext.define("PSI.Funds.PreReceivingMainForm", {
 				xtype : "numbercolumn",
 				width: 160
 			}, {
-				header : "消费金额",
+				header : "支",
 				dataIndex : "outMoney",
 				menuDisabled : true,
 				sortable : false,
@@ -195,7 +196,7 @@ Ext.define("PSI.Funds.PreReceivingMainForm", {
 		Ext.define(modelName, {
 			extend : "Ext.data.Model",
 			fields : [ "id", "inMoney", "outMoney", "balanceMoney", "refType",
-					"refNumber", "bizDT", "dateCreated" ]
+					"refNumber", "bizDT", "dateCreated", "bizUserName", "inputUserName" ]
 		});
 
 		var store = Ext.create("Ext.data.Store", {
@@ -227,6 +228,7 @@ Ext.define("PSI.Funds.PreReceivingMainForm", {
                 enableTextSelection: true
             },
 			title : "预收款明细",
+			border: 0,
 			bbar : [ {
 				xtype : "pagingtoolbar",
 				store : store
@@ -255,7 +257,7 @@ Ext.define("PSI.Funds.PreReceivingMainForm", {
 				menuDisabled : true,
 				sortable : false
 			}, {
-				header : "预收金额",
+				header : "收",
 				dataIndex : "inMoney",
 				menuDisabled : true,
 				sortable : false,
@@ -263,7 +265,7 @@ Ext.define("PSI.Funds.PreReceivingMainForm", {
 				xtype : "numbercolumn",
 				width: 160
 			}, {
-				header : "消费金额",
+				header : "支",
 				dataIndex : "outMoney",
 				menuDisabled : true,
 				sortable : false,
@@ -284,6 +286,18 @@ Ext.define("PSI.Funds.PreReceivingMainForm", {
 				menuDisabled : true,
 				sortable : false,
 				width: 140
+			},{
+				header : "业务员",
+				dataIndex : "bizUserName",
+				menuDisabled : true,
+				sortable : false,
+				width: 120
+			},{
+				header : "制单人",
+				dataIndex : "inputUserName",
+				menuDisabled : true,
+				sortable : false,
+				width: 120
 			} ],
 			store : store
 		});
