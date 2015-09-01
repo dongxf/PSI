@@ -7,36 +7,25 @@ Ext.define("PSI.Funds.PreReceivingMainForm", {
 
 	initComponent : function() {
 		var me = this;
-
-		Ext.define("PSICACategory", {
+		
+		var modelName = "PSICustomerCategroy";
+		Ext.define(modelName, {
 			extend : "Ext.data.Model",
 			fields : [ "id", "name" ]
 		});
 
 		Ext.apply(me, {
-			tbar : [ {
+			tbar : [ 
+			{
+				text: "收预收款",
+				iconCls: "PSI-button-add"
+			}, "-", {
+				text: "退预收款",
+				iconCls: "PSI-button-delete"
+			}, "-",
+			{
 				xtype : "displayfield",
-				value : "往来单位："
-			}, {
-				xtype : "combo",
-				id : "comboCA",
-				queryMode : "local",
-				editable : false,
-				valueField : "id",
-				store : Ext.create("Ext.data.ArrayStore", {
-					fields : [ "id", "text" ],
-					data : [ [ "customer", "客户" ], [ "supplier", "供应商" ] ]
-				}),
-				value : "customer",
-				listeners : {
-					select : {
-						fn : me.onComboCASelect,
-						scope : me
-					}
-				}
-			}, {
-				xtype : "displayfield",
-				value : "分类"
+				value : "客户分类"
 			}, {
 				xtype : "combobox",
 				id : "comboCategory",
@@ -45,11 +34,11 @@ Ext.define("PSI.Funds.PreReceivingMainForm", {
 				valueField : "id",
 				displayField : "name",
 				store : Ext.create("Ext.data.Store", {
-					model : "PSICACategory",
+					model : modelName,
 					autoLoad : false,
 					data : []
 				})
-			}, {
+			}, "-", {
 				text : "查询",
 				iconCls : "PSI-button-refresh",
 				handler : me.onQuery,
@@ -67,55 +56,44 @@ Ext.define("PSI.Funds.PreReceivingMainForm", {
 				region : "center",
 				layout : "fit",
 				border : 0,
-				items : [ me.getRvGrid() ]
+				items : [ me.getMainGrid() ]
 			}, {
 				region : "south",
-				layout : "border",
+				layout : "fit",
 				border : 0,
 				split : true,
 				height : "50%",
-				items : [ {
-					region : "center",
-					border : 0,
-					layout : "fit",
-					items : [ me.getRvDetailGrid() ]
-				}, {
-					region : "east",
-					layout : "fit",
-					border : 0,
-					width : "40%",
-					split : true,
-					items : [ me.getRvRecordGrid() ]
-				} ]
+				items : [ me.getDetailGrid() ]
 			} ]
 		});
 
 		me.callParent(arguments);
-
-		me.onComboCASelect();
+		
+		me.queryCustomerCategory();
 	},
 
-	getRvGrid : function() {
+	getMainGrid : function() {
 		var me = this;
 		if (me.__rvGrid) {
-			return me.__rvGrid;
+			return me.__mainGrid;
 		}
 
-		Ext.define("PSIRv", {
+		var modelName = "PSIPreReceiving";
+		Ext.define(modelName, {
 			extend : "Ext.data.Model",
-			fields : [ "id", "caId", "code", "name", "rvMoney", "actMoney",
+			fields : [ "id", "customerId", "code", "name", "inMoney", "outMoney",
 					"balanceMoney" ]
 		});
 
 		var store = Ext.create("Ext.data.Store", {
-			model : "PSIRv",
+			model : modelName,
 			pageSize : 20,
 			proxy : {
 				type : "ajax",
 				actionMethods : {
 					read : "POST"
 				},
-				url : PSI.Const.BASE_URL + "Home/Funds/rvList",
+				url : PSI.Const.BASE_URL + "Home/Funds/prereceivingList",
 				reader : {
 					root : 'dataList',
 					totalProperty : 'totalCount'
@@ -127,12 +105,11 @@ Ext.define("PSI.Funds.PreReceivingMainForm", {
 
 		store.on("beforeload", function() {
 			Ext.apply(store.proxy.extraParams, {
-				caType : Ext.getCmp("comboCA").getValue(),
 				categoryId : Ext.getCmp("comboCategory").getValue()
 			});
 		});
 
-		me.__rvGrid = Ext.create("Ext.grid.Panel", {
+		me.__mainGrid = Ext.create("Ext.grid.Panel", {
 			viewConfig: {
                 enableTextSelection: true
             },
@@ -142,34 +119,35 @@ Ext.define("PSI.Funds.PreReceivingMainForm", {
 			} ],
 			columnLines : true,
 			columns : [ {
-				header : "编码",
+				header : "客户编码",
 				dataIndex : "code",
 				menuDisabled : true,
-				sortable : false
+				sortable : false,
+				width: 120
 			}, {
-				header : "名称",
+				header : "客户名称",
 				dataIndex : "name",
 				menuDisabled : true,
 				sortable : false,
 				width: 300
 			}, {
-				header : "应收金额",
-				dataIndex : "rvMoney",
+				header : "预收金额",
+				dataIndex : "inMoney",
 				menuDisabled : true,
 				sortable : false,
 				align : "right",
 				xtype : "numbercolumn",
 				width: 160
 			}, {
-				header : "已收金额",
-				dataIndex : "actMoney",
+				header : "消费金额",
+				dataIndex : "outMoney",
 				menuDisabled : true,
 				sortable : false,
 				align : "right",
 				xtype : "numbercolumn",
 				width: 160
 			}, {
-				header : "未收金额",
+				header : "预付款余额",
 				dataIndex : "balanceMoney",
 				menuDisabled : true,
 				sortable : false,
@@ -180,13 +158,13 @@ Ext.define("PSI.Funds.PreReceivingMainForm", {
 			store : store,
 			listeners : {
 				select : {
-					fn : me.onRvGridSelect,
+					fn : me.onDetailGridSelect,
 					scope : me
 				}
 			}
 		});
 
-		return me.__rvGrid;
+		return me.__mainGrid;
 	},
 
 	getRvParam : function() {
@@ -196,37 +174,35 @@ Ext.define("PSI.Funds.PreReceivingMainForm", {
 		}
 
 		var rv = item[0];
-		return rv.get("caId");
+		return rv.get("customerId");
 	},
 
-	onRvGridSelect : function() {
-		this.getRvRecordGrid().getStore().removeAll();
-		this.getRvRecordGrid().setTitle("收款记录");
-		
-		this.getRvDetailGrid().getStore().loadPage(1);
+	onDetailGridSelect : function() {
+		this.getDetailGrid().getStore().loadPage(1);
 	},
 
-	getRvDetailGrid : function() {
+	getDetailGrid : function() {
 		var me = this;
-		if (me.__rvDetailGrid) {
-			return me.__rvDetailGrid;
+		if (me.__detailGrid) {
+			return me.__detailGrid;
 		}
 
-		Ext.define("PSIRvDetail", {
+		var modelName = "PSIPreReceivingDetail";
+		Ext.define(modelName, {
 			extend : "Ext.data.Model",
-			fields : [ "id", "rvMoney", "actMoney", "balanceMoney", "refType",
+			fields : [ "id", "inMoney", "outMoney", "balanceMoney", "refType",
 					"refNumber", "bizDT", "dateCreated" ]
 		});
 
 		var store = Ext.create("Ext.data.Store", {
-			model : "PSIRvDetail",
+			model : modelName,
 			pageSize : 20,
 			proxy : {
 				type : "ajax",
 				actionMethods : {
 					read : "POST"
 				},
-				url : PSI.Const.BASE_URL + "Home/Funds/rvDetailList",
+				url : PSI.Const.BASE_URL + "Home/Funds/prereceivingDetailList",
 				reader : {
 					root : 'dataList',
 					totalProperty : 'totalCount'
@@ -238,16 +214,15 @@ Ext.define("PSI.Funds.PreReceivingMainForm", {
 
 		store.on("beforeload", function() {
 			Ext.apply(store.proxy.extraParams, {
-				caType : Ext.getCmp("comboCA").getValue(),
-				caId : me.getRvParam()
+				customerId : me.getRvParam()
 			});
 		});
 
-		me.__rvDetailGrid = Ext.create("Ext.grid.Panel", {
+		me.__detailGrid = Ext.create("Ext.grid.Panel", {
 			viewConfig: {
                 enableTextSelection: true
             },
-			title : "业务单据",
+			title : "预收款明细",
 			bbar : [ {
 				xtype : "pagingtoolbar",
 				store : store
@@ -266,11 +241,7 @@ Ext.define("PSI.Funds.PreReceivingMainForm", {
 				sortable : false,
 				width : 120,
 				renderer: function(value, md, record) {
-					if (record.get("refType") == "应收账款期初建账") {
-						return value;
-					}
-					
-					return "<a href='" + PSI.Const.BASE_URL + "Home/Bill/viewIndex?fid=2004&refType=" 
+					return "<a href='" + PSI.Const.BASE_URL + "Home/Bill/viewIndex?fid=2025&refType=" 
 						+ encodeURIComponent(record.get("refType")) 
 						+ "&ref=" + encodeURIComponent(record.get("refNumber")) + "' target='_blank'>" + value + "</a>";
 				}
@@ -280,26 +251,29 @@ Ext.define("PSI.Funds.PreReceivingMainForm", {
 				menuDisabled : true,
 				sortable : false
 			}, {
-				header : "应收金额",
-				dataIndex : "rvMoney",
+				header : "预收金额",
+				dataIndex : "inMoney",
 				menuDisabled : true,
 				sortable : false,
 				align : "right",
-				xtype : "numbercolumn"
+				xtype : "numbercolumn",
+				width: 160
 			}, {
-				header : "已收金额",
-				dataIndex : "actMoney",
+				header : "消费金额",
+				dataIndex : "outMoney",
 				menuDisabled : true,
 				sortable : false,
 				align : "right",
-				xtype : "numbercolumn"
+				xtype : "numbercolumn",
+				width: 160
 			}, {
-				header : "未收金额",
+				header : "预收款余额",
 				dataIndex : "balanceMoney",
 				menuDisabled : true,
 				sortable : false,
 				align : "right",
-				xtype : "numbercolumn"
+				xtype : "numbercolumn",
+				width: 160
 			},{
 				header : "创建时间",
 				dataIndex : "dateCreated",
@@ -307,243 +281,41 @@ Ext.define("PSI.Funds.PreReceivingMainForm", {
 				sortable : false,
 				width: 140
 			} ],
-			store : store,
-			listeners : {
-				select : {
-					fn : me.onRvDetailGridSelect,
-					scope : me
-				}
-			}
-		});
-
-		return me.__rvDetailGrid;
-	},
-
-	onRvDetailGridSelect : function() {
-		var grid = this.getRvRecordGrid();
-		var item = this.getRvDetailGrid().getSelectionModel().getSelection();
-		if (item == null || item.length != 1) {
-			grid.setTitle("收款记录");
-			return null;
-		}
-
-		var rvDetail = item[0];
-
-		grid.setTitle(rvDetail.get("refType") + " - 单号: "
-				+ rvDetail.get("refNumber") + " 的收款记录")
-		grid.getStore().loadPage(1);
-	},
-
-	getRvRecordGrid : function() {
-		var me = this;
-		if (me.__rvRecordGrid) {
-			return me.__rvRecordGrid;
-		}
-
-		Ext.define("PSIRvRecord", {
-			extend : "Ext.data.Model",
-			fields : [ "id", "actMoney", "bizDate", "bizUserName",
-					"inputUserName", "dateCreated", "remark" ]
-		});
-
-		var store = Ext.create("Ext.data.Store", {
-			model : "PSIRvRecord",
-			pageSize : 20,
-			proxy : {
-				type : "ajax",
-				actionMethods : {
-					read : "POST"
-				},
-				url : PSI.Const.BASE_URL + "Home/Funds/rvRecordList",
-				reader : {
-					root : 'dataList',
-					totalProperty : 'totalCount'
-				}
-			},
-			autoLoad : false,
-			data : []
-		});
-
-		store.on("beforeload", function() {
-			var rvDetail
-			var item = me.getRvDetailGrid().getSelectionModel().getSelection();
-			if (item == null || item.length != 1) {
-				rvDetail = null;
-			} else {
-				rvDetail = item[0];
-			}
-
-			Ext.apply(store.proxy.extraParams, {
-				refType : rvDetail == null ? null : rvDetail.get("refType"),
-				refNumber : rvDetail == null ? null : rvDetail.get("refNumber")
-			});
-		});
-
-		me.__rvRecordGrid = Ext.create("Ext.grid.Panel", {
-			viewConfig: {
-                enableTextSelection: true
-            },
-			title : "收款记录",
-			tbar : [ {
-				text : "录入收款记录",
-				iconCls : "PSI-button-add",
-				handler: me.onAddRvRecord,
-				scope: me
-			} ],
-			bbar : [ {
-				xtype : "pagingtoolbar",
-				store : store
-			} ],
-			columnLines : true,
-			columns : [ {
-				header : "收款日期",
-				dataIndex : "bizDate",
-				menuDisabled : true,
-				sortable : false,
-				width: 80
-			}, {
-				header : "收款金额",
-				dataIndex : "actMoney",
-				menuDisabled : true,
-				sortable : false,
-				align : "right",
-				xtype : "numbercolumn"
-			}, {
-				header : "收款人",
-				dataIndex : "bizUserName",
-				menuDisabled : true,
-				sortable : false,
-				width: 80
-			}, {
-				header : "录入时间",
-				dataIndex : "dateCreated",
-				menuDisabled : true,
-				sortable : false,
-				width: 140
-			}, {
-				header : "录入人",
-				dataIndex : "inputUserName",
-				menuDisabled : true,
-				sortable : false,
-				width: 80
-			}, {
-				header : "备注",
-				dataIndex : "remark",
-				menuDisabled : true,
-				sortable : false,
-				width : 150
-			} ],
 			store : store
 		});
 
-		return me.__rvRecordGrid;
-	},
-
-	onComboCASelect : function() {
-		var me = this;
-		me.getRvGrid().getStore().removeAll();
-		me.getRvDetailGrid().getStore().removeAll();
-		me.getRvRecordGrid().getStore().removeAll();
-
-		var el = Ext.getBody();
-		el.mask(PSI.Const.LOADING);
-		Ext.Ajax.request({
-			url : PSI.Const.BASE_URL + "Home/Funds/rvCategoryList",
-			params : {
-				id : Ext.getCmp("comboCA").getValue()
-			},
-			method : "POST",
-			callback : function(options, success, response) {
-				var combo = Ext.getCmp("comboCategory");
-				var store = combo.getStore();
-
-				store.removeAll();
-
-				if (success) {
-					var data = Ext.JSON.decode(response.responseText);
-					store.add(data);
-
-					if (store.getCount() > 0) {
-						combo.setValue(store.getAt(0).get("id"))
-					}
-				}
-
-				el.unmask();
-			}
-		});
+		return me.__detailGrid;
 	},
 
 	onQuery : function() {
 		var me = this;
-		me.getRvDetailGrid().getStore().removeAll();
-		me.getRvRecordGrid().getStore().removeAll();
-		me.getRvRecordGrid().setTitle("收款记录");
-		
-		me.getRvGrid().getStore().loadPage(1);
-	},
-	
-	onAddRvRecord: function() {
-		var me = this;
-		var item = me.getRvDetailGrid().getSelectionModel().getSelection();
-		if (item == null || item.length != 1) {
-			PSI.MsgBox.showInfo("请选择要做收款记录的业务单据");
-			return;
-		}	
-		
-		var rvDetail = item[0];
-		
-		var form = Ext.create("PSI.Funds.RvRecordEditForm", {
-			parentForm: me,
-			rvDetail: rvDetail
-		})
-		form.show();
-	},
-	
-    refreshRvInfo: function() {
-    	var me = this;
-    	var item = me.getRvGrid().getSelectionModel().getSelection();
-        if (item == null || item.length != 1) {
-            return;
-        }
-        var rv = item[0];
-        
-        Ext.Ajax.request({
-            url: PSI.Const.BASE_URL + "Home/Funds/refreshRvInfo",
-            method: "POST",
-            params: { id: rv.get("id") },
-            callback: function (options, success, response) {
-                if (success) {
-                    var data = Ext.JSON.decode(response.responseText);
-                    rv.set("actMoney", data.actMoney);
-                    rv.set("balanceMoney", data.balanceMoney)
-                    me.getRvGrid().getStore().commitChanges();
-                }
-            }
 
-        });
+		me.getMainGrid().getStore().loadPage(1);
     },
     
-    refreshRvDetailInfo: function() {
-    	var me = this;
-    	var item = me.getRvDetailGrid().getSelectionModel().getSelection();
-        if (item == null || item.length != 1) {
-            return;
-        }
-        var rvDetail = item[0];
-        
+    queryCustomerCategory: function() {
+    	var combo = Ext.getCmp("comboCategory");
+        var el = Ext.getBody();
+        el.mask(PSI.Const.LOADING);
         Ext.Ajax.request({
-            url: PSI.Const.BASE_URL + "Home/Funds/refreshRvDetailInfo",
+            url: PSI.Const.BASE_URL + "Home/Customer/categoryList",
             method: "POST",
-            params: { id: rvDetail.get("id") },
             callback: function (options, success, response) {
+                var store = combo.getStore();
+
+                store.removeAll();
+
                 if (success) {
                     var data = Ext.JSON.decode(response.responseText);
-                    rvDetail.set("actMoney", data.actMoney);
-                    rvDetail.set("balanceMoney", data.balanceMoney)
-                    me.getRvDetailGrid().getStore().commitChanges();
-                }
-            }
+                    store.add(data);
 
+                    if (store.getCount() > 0) {
+                    	combo.setValue(store.getAt(0).get("id"));
+                    }
+                }
+
+                el.unmask();
+            }
         });
     }
 });
