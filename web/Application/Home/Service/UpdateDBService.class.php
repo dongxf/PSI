@@ -250,7 +250,7 @@ class UpdateDBService extends PSIBaseService {
 			$db->execute($sql);
 		}
 		
-		// fid 2025: 预付款管理
+		// fid 2025: 预收款管理
 		$sql = "select count(*) as cnt from t_fid where fid = '2025' ";
 		$data = $db->query($sql);
 		$cnt = $data[0]["cnt"];
@@ -294,14 +294,14 @@ class UpdateDBService extends PSIBaseService {
 			$db->execute($sql);
 		}
 		
-		// fid 2025: 预付款管理
+		// fid 2025: 预收款管理
 		$sql = "select count(*) as cnt from t_menu_item
 				where id = '0604' ";
 		$data = $db->query($sql);
 		$cnt = $data[0]["cnt"];
 		if ($cnt == 0) {
 			$sql = "insert into t_menu_item(id, caption, fid, parent_id, show_order)
-					values ('0604', '预付款管理', '2025', '06', 4)";
+					values ('0604', '预收款管理', '2025', '06', 4)";
 			$db->execute($sql);
 		}
 	}
@@ -365,13 +365,13 @@ class UpdateDBService extends PSIBaseService {
 			$db->execute($sql);
 		}
 		
-		// fid 2025: 预付款管理
+		// fid 2025: 预收款管理
 		$sql = "select count(*) as cnt from t_permission where id = '2025' ";
 		$data = $db->query($sql);
 		$cnt = $data[0]["cnt"];
 		if ($cnt == 0) {
 			$sql = "insert into t_permission(id, fid, name, note)
-					values ('2025', '2025', '预付款管理', '预付款管理')";
+					values ('2025', '2025', '预收款管理', '预收款管理')";
 			$db->execute($sql);
 		}
 	}
@@ -398,7 +398,7 @@ class UpdateDBService extends PSIBaseService {
 			$db->execute($sql);
 		}
 		
-		// fid 2025: 预付款管理
+		// fid 2025: 预收款管理
 		$sql = "select count(*) as cnt from t_role_permission 
 				where permission_id = '2025' and role_id = 'A83F617E-A153-11E4-A9B8-782BCBD7746B' ";
 		$data = $db->query($sql);
