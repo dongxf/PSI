@@ -113,7 +113,7 @@ class BizlogService extends PSIBaseService {
 		$cnt = $data[0]["cnt"];
 		return $cnt == 1;
 	}
-	private $CURRENT_DB_VERSION = "20150830-007";
+	private $CURRENT_DB_VERSION = "20150901-001";
 
 	public function updateDatabase() {
 		if ($this->isNotOnline()) {
@@ -145,6 +145,8 @@ class BizlogService extends PSIBaseService {
 		$this->t_menu_item($db);
 		$this->t_permission($db);
 		$this->t_pr_bill($db);
+		$this->t_pre_receiving($db);
+		$this->t_pre_receiving_detail($db);
 		$this->t_pw_bill($db);
 		$this->t_role_permission($db);
 		$this->t_supplier($db);
@@ -371,6 +373,44 @@ class BizlogService extends PSIBaseService {
 		$columnName = "receiving_type";
 		if (! $this->columnExists($db, $tableName, $columnName)) {
 			$sql = "alter table {$tableName} add {$columnName} int(11) not null default 0;";
+			$db->execute($sql);
+		}
+	}
+
+	private function t_pre_receiving($db) {
+		$tableName = "t_pre_receiving";
+		
+		if (! $this->tableExists($db, $tableName)) {
+			$sql = "CREATE TABLE IF NOT EXISTS `t_pre_receiving` (
+					  `id` varchar(255) NOT NULL,
+					  `customer_id` varchar(255) NOT NULL,
+					  `in_money` decimal(19,2) DEFAULT NULL,
+					  `out_money` decimal(19,2) DEFAULT NULL,
+					  `balance_money` decimal(19,2) NOT NULL,
+					  PRIMARY KEY (`id`)
+					) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+					";
+			$db->execute($sql);
+		}
+	}
+
+	private function t_pre_receiving_detail($db) {
+		$tableName = "t_pre_receiving_detail";
+		
+		if (! $this->tableExists($db, $tableName)) {
+			$sql = "CREATE TABLE IF NOT EXISTS `t_pre_receiving_detail` (
+					  `id` varchar(255) NOT NULL,
+					  `customer_id` varchar(255) NOT NULL,
+					  `in_money` decimal(19,2) DEFAULT NULL,
+					  `out_money` decimal(19,2) DEFAULT NULL,
+					  `balance_money` decimal(19,2) NOT NULL,
+					  `biz_date` datetime DEFAULT NULL,
+					  `date_created` datetime DEFAULT NULL,
+					  `ref_number` varchar(255) NOT NULL,
+					  `ref_type` varchar(255) NOT NULL,
+					  PRIMARY KEY (`id`)
+					) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+					";
 			$db->execute($sql);
 		}
 	}
