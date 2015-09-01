@@ -6,6 +6,7 @@ use Think\Controller;
 use Home\Service\UserService;
 use Home\Service\BizlogService;
 use Home\Common\FIdConst;
+use Home\Service\UpdateDBService;
 
 /**
  * 业务日志Controller
@@ -57,7 +58,7 @@ class BizlogController extends Controller {
 	 */
 	public function updateDatabase() {
 		if (IS_POST) {
-			$bs = new BizlogService();
+			$bs = new UpdateDBService();
 			$this->ajaxReturn($bs->updateDatabase());
 		}
 	}
