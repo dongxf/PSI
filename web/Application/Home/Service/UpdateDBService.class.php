@@ -8,7 +8,7 @@ namespace Home\Service;
  * @author 李静波
  */
 class UpdateDBService extends PSIBaseService {
-	private $CURRENT_DB_VERSION = "20150901-001";
+	private $CURRENT_DB_VERSION = "20150901-002";
 
 	private function tableExists($db, $tableName) {
 		$dbName = C('DB_NAME');
@@ -249,6 +249,15 @@ class UpdateDBService extends PSIBaseService {
 			$sql = "insert into t_fid(fid, name) values ('2024', '现金收支查询')";
 			$db->execute($sql);
 		}
+		
+		// fid 2025: 预付款管理
+		$sql = "select count(*) as cnt from t_fid where fid = '2025' ";
+		$data = $db->query($sql);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_fid(fid, name) values ('2025', '预付款管理')";
+			$db->execute($sql);
+		}
 	}
 
 	private function t_goods_si($db) {
@@ -282,6 +291,17 @@ class UpdateDBService extends PSIBaseService {
 		if ($cnt == 0) {
 			$sql = "insert into t_menu_item(id, caption, fid, parent_id, show_order)
 					values ('0603', '现金收支查询', '2024', '06', 3)";
+			$db->execute($sql);
+		}
+		
+		// fid 2025: 预付款管理
+		$sql = "select count(*) as cnt from t_menu_item
+				where id = '0604' ";
+		$data = $db->query($sql);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_menu_item(id, caption, fid, parent_id, show_order)
+					values ('0604', '预付款管理', '2025', '06', 4)";
 			$db->execute($sql);
 		}
 	}
@@ -344,6 +364,16 @@ class UpdateDBService extends PSIBaseService {
 					values ('2024', '2024', '现金收支查询', '现金收支查询')";
 			$db->execute($sql);
 		}
+		
+		// fid 2025: 预付款管理
+		$sql = "select count(*) as cnt from t_permission where id = '2025' ";
+		$data = $db->query($sql);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_permission(id, fid, name, note)
+					values ('2025', '2025', '预付款管理', '预付款管理')";
+			$db->execute($sql);
+		}
 	}
 
 	private function t_pw_bill($db) {
@@ -365,6 +395,17 @@ class UpdateDBService extends PSIBaseService {
 		if ($cnt == 0) {
 			$sql = "insert into t_role_permission(role_id, permission_id)
 					values ('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2024')";
+			$db->execute($sql);
+		}
+		
+		// fid 2025: 预付款管理
+		$sql = "select count(*) as cnt from t_role_permission 
+				where permission_id = '2025' and role_id = 'A83F617E-A153-11E4-A9B8-782BCBD7746B' ";
+		$data = $db->query($sql);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_role_permission(role_id, permission_id)
+					values ('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2025')";
 			$db->execute($sql);
 		}
 	}
