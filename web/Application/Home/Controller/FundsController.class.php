@@ -294,4 +294,24 @@ class FundsController extends Controller {
 			$this->ajaxReturn($cs->cashDetailList($params));
 		}
 	}
+
+	/**
+	 * 预收款管理
+	 */
+	public function prereceivingIndex() {
+		$us = new UserService();
+		
+		if ($us->hasPermission(FIdConst::PRE_RECEIVING)) {
+			$this->assign("title", "预收款管理");
+			$this->assign("uri", __ROOT__ . "/");
+			
+			$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
+			
+			$dtFlag = getdate();
+			$this->assign("dtFlag", $dtFlag[0]);
+			$this->display();
+		} else {
+			redirect(__ROOT__ . "/Home/User/login");
+		}
+	}
 }

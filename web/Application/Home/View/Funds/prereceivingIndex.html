@@ -1,6 +1,6 @@
 <layout name="layout" />
 
-<script src="{$uri}Public/Scripts/PSI/Funds/CashMainForm.js?dt={$dtFlag}" type="text/javascript"></script>
+<script src="{$uri}Public/Scripts/PSI/Funds/PreReceivingMainForm.js?dt={$dtFlag}" type="text/javascript"></script>
 
 
 <script>
@@ -9,10 +9,10 @@
             userName: "{$loginUserName}"
         });
 
-        app.add(Ext.create("PSI.Funds.CashMainForm"));
+        app.add(Ext.create("PSI.Funds.PreReceivingMainForm"));
         app.setAppHeader({
             title: "{$title}",
-            iconCls: "PSI-fid2024"
+            iconCls: "PSI-fid2025"
             });
     });
 </script>

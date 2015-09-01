@@ -168,9 +168,13 @@ class MainMenuController extends Controller {
 				// 库存超上限明细表
 				redirect(__ROOT__ . "/Home/Report/inventoryUpper");
 				break;
-			case FIdConst::CASH_INDEX:
+			case FIdConst::CASH_INDEX :
 				// 现金收支查询
 				redirect(__ROOT__ . "/Home/Funds/cashIndex");
+				break;
+			case FIdConst::PRE_RECEIVING :
+				// 预付款管理
+				redirect(__ROOT__ . "/Home/Funds/prereceivingIndex");
 				break;
 			default :
 				redirect(__ROOT__ . "/Home");

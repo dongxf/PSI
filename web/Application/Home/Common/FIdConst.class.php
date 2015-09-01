@@ -218,4 +218,9 @@ class FIdConst {
 	 * 现金收支查询
 	 */
 	const CASH_INDEX = "2024";
+	
+	/**
+	 * 预收款管理
+	 */
+	const PRE_RECEIVING = "2025";
 }
