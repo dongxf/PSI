@@ -781,7 +781,8 @@ class SRBillService extends PSIBaseService {
 		
 		$allPaymentType = array(
 				0,
-				1
+				1,
+				2
 		);
 		if (! in_array($paymentType, $allPaymentType)) {
 			return $this->bad("付款方式不正确，无法提交");
@@ -1025,6 +1026,60 @@ class SRBillService extends PSIBaseService {
 							set balance_money = balance_money - %f
 							where biz_date > '%s' ";
 				$db->execute($sql, $outCash, $bizDT);
+			} else if ($paymentType == 2) {
+				// 2： 退款转入预收款
+				$inMoney = $rejectionSaleMoney;
+				
+				// 预收款总账
+				$totalInMoney = 0;
+				$totalBalanceMoney = 0;
+				$sql = "select in_money, balance_money 
+						from t_pre_receiving
+						where customer_id = '%s' ";
+				$data = $db->query($sql, $customerId);
+				if (! $data) {
+					$totalInMoney = $inMoney;
+					$totalBalanceMoney = $inMoney;
+					$sql = "insert into t_pre_receiving(id, customer_id, in_money, balance_money)
+							values ('%s', '%s', %f, %f)";
+					$rc = $db->execute($sql, $idGen->newId(), $customerId, $totalInMoney, 
+							$totalBalanceMoney);
+					if (! $rc) {
+						$db->rollback();
+						return $this->sqlError();
+					}
+				} else {
+					$totalInMoney = $data[0]["in_money"];
+					if (! $totalInMoney) {
+						$totalInMoney = 0;
+					}
+					$totalBalanceMoney = $data[0]["balance_money"];
+					if (! $totalBalanceMoney) {
+						$totalBalanceMoney = 0;
+					}
+					$totalInMoney += $inMoney;
+					$totalBalanceMoney += $inMoney;
+					$sql = "update t_pre_receiving
+							set in_money = %f, balance_money = %f
+							where customer_id = '%s' ";
+					$rc = $db->execute($sql, $totalInMoney, $totalBalanceMoney, $customerId);
+					if (! $rc) {
+						$db->rollback();
+						return $this->sqlError();
+					}
+				}
+				
+				// 预收款明细账
+				$sql = "insert into t_pre_receiving_detail(id, customer_id, in_money, balance_money,
+							biz_date, date_created, ref_number, ref_type, biz_user_id, input_user_id)
+						values('%s', '%s', %f, %f, '%s', now(), '%s', '销售退货入库', '%s', '%s')";
+				$us = new UserService();
+				$rc = $db->execute($sql, $idGen->newId(), $customerId, $inMoney, $totalBalanceMoney, 
+						$bizDT, $ref, $bizUserId, $us->getLoginUserId());
+				if (! $rc) {
+					$db->rollback();
+					return $this->sqlError();
+				}
 			}
 			
 			// 把单据本身的状态修改为已经提交
