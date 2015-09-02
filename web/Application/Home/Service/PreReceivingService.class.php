@@ -22,6 +22,9 @@ class PreReceivingService extends PSIBaseService {
 		);
 	}
 
+	/**
+	 * 收预收款
+	 */
 	public function addPreReceiving($params) {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
@@ -116,6 +119,12 @@ class PreReceivingService extends PSIBaseService {
 					return $this->sqlError();
 				}
 			}
+			
+			// 记录业务日志
+			$bs = new BizlogService();
+			$customerName = $cs->getCustomerNameById($customerId, $db);
+			$log = "收取客户[{$customerName}]预收款：{$inMoney}元";
+			$bs->insertBizlog($log, "预收款管理");
 			
 			$db->commit();
 		} catch ( Exception $e ) {

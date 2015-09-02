@@ -587,4 +587,18 @@ class CustomerService extends PSIBaseService {
 		$data = $db->query($sql, $customerId);
 		return $data[0]["cnt"] == 1;
 	}
+
+	public function getCustomerNameById($customerId, $db) {
+		if (! $db) {
+			$db = M();
+		}
+		
+		$sql = "select name from t_customer where id = '%s' ";
+		$data = $db->query($sql, $customerId);
+		if ($data) {
+			return $data[0]["name"];
+		} else {
+			return "";
+		}
+	}
 }
