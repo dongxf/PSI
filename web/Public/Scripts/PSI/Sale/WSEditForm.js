@@ -179,7 +179,7 @@ Ext.define("PSI.Sale.WSEditForm", {
         					valueField : "id",
         					store : Ext.create("Ext.data.ArrayStore", {
         						fields : [ "id", "text" ],
-        						data : [ [ "0", "记应收账款" ], [ "1", "现金收款" ] ]
+        						data : [ [ "0", "记应收账款" ], [ "1", "现金收款" ], [ "2", "用预收款支付" ] ]
         					}),
         					value: "0",
         					listeners : {

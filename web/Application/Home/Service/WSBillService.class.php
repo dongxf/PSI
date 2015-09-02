@@ -562,7 +562,8 @@ class WSBillService extends PSIBaseService {
 		
 		$allReceivingType = array(
 				0,
-				1
+				1,
+				2
 		);
 		
 		if (! in_array($receivingType, $allReceivingType)) {
@@ -748,6 +749,51 @@ class WSBillService extends PSIBaseService {
 							set balance_money = balance_money + %f
 							where biz_date > '%s' ";
 				$db->execute($sql, $inCash, $bizDT);
+			} else if ($receivingType == 2) {
+				// 2: 用预收款支付
+				
+				$outMoney = $saleMoney;
+				
+				// 预收款总账
+				$sql = "select out_money, balance_money from t_pre_receiving
+						where customer_id = '%s' ";
+				$data = $db->query($sql, $customerId);
+				$totalOutMoney = $data[0]["out_money"];
+				if (! $totalOutMoney) {
+					$totalOutMoney = 0;
+				}
+				$totalBalanceMoney = $data[0]["balance_money"];
+				if (! $totalBalanceMoney) {
+					$totalBalanceMoney = 0;
+				}
+				if ($totalBalanceMoney < $outMoney) {
+					$db->rollback();
+					return $this->bad("付余款余额是{$totalBalanceMoney}元，小于销售金额，无法付款");
+				}
+				
+				$totalOutMoney += $outMoney;
+				$totalBalanceMoney -= $outMoney;
+				$sql = "update t_pre_receiving
+						set out_money = %f, balance_money = %f
+						where customer_id = '%s' ";
+				$rc = $db->execute($sql, $totalOutMoney, $totalBalanceMoney, $customerId);
+				if (! $rc) {
+					$db->rollback();
+					return $this->sqlError();
+				}
+				
+				// 预收款明细账
+				$sql = "insert into t_pre_receiving_detail (id, customer_id, out_money, balance_money,
+							biz_date, date_created, ref_number, ref_type, biz_user_id, input_user_id)
+						values ('%s', '%s', %f, %f, '%s', now(), '%s', '销售出库', '%s', '%s')";
+				$idGen = new IdGenService();
+				$us = new UserService();
+				$rc = $db->execute($sql, $idGen->newId(), $customerId, $outMoney, 
+						$totalBalanceMoney, $bizDT, $ref, $bizUserId, $us->getLoginUserId());
+				if (! $rc) {
+					$db->rollback();
+					return $this->sqlError();
+				}
 			}
 			
 			// 单据本身设置为已经提交出库
