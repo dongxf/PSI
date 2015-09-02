@@ -610,6 +610,31 @@ CREATE TABLE IF NOT EXISTS `t_pre_receiving_detail` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `t_pre_payment`;
+CREATE TABLE IF NOT EXISTS `t_pre_payment` (
+  `id` varchar(255) NOT NULL,
+  `supplier_id` varchar(255) NOT NULL,
+  `in_money` decimal(19,2) DEFAULT NULL,
+  `out_money` decimal(19,2) DEFAULT NULL,
+  `balance_money` decimal(19,2) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `t_pre_payment_detail`;
+CREATE TABLE IF NOT EXISTS `t_pre_payment_detail` (
+  `id` varchar(255) NOT NULL,
+  `supplier_id` varchar(255) NOT NULL,
+  `in_money` decimal(19,2) DEFAULT NULL,
+  `out_money` decimal(19,2) DEFAULT NULL,
+  `balance_money` decimal(19,2) NOT NULL,
+  `biz_date` datetime DEFAULT NULL,
+  `date_created` datetime DEFAULT NULL,
+  `ref_number` varchar(255) NOT NULL,
+  `ref_type` varchar(255) NOT NULL,
+  `biz_user_id` varchar(255) NOT NULL,
+  `input_user_id` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
