@@ -706,4 +706,22 @@ class UserService extends PSIBaseService {
 		}
 		return $result;
 	}
+
+	/**
+	 * 盘点指定用户id的用户是否存在
+	 *
+	 * @return true: 存在
+	 */
+	public function userExists($userId, $db) {
+		if (! $db) {
+			$db = M();
+		}
+		if (! $userId) {
+			return false;
+		}
+		
+		$sql = "select count(*) as cnt from t_user where id = '%s' ";
+		$data = $db->query($sql, $userId);
+		return $data[0]["cnt"] == 1;
+	}
 }

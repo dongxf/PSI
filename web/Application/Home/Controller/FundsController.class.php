@@ -326,7 +326,10 @@ class FundsController extends Controller {
 	public function addPreReceiving() {
 		if (IS_POST) {
 			$params = array(
-					"bizUserId" => I("post.bizUserId")
+					"customerId" => I("post.customerId"),
+					"bizUserId" => I("post.bizUserId"),
+					"bizDT" => I("post.bizDT"),
+					"inMoney" => I("post.inMoney")
 			);
 			
 			$ps = new PreReceivingService();

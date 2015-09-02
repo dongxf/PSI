@@ -13,9 +13,9 @@ Ext.define("PSI.Funds.AddPreReceivingForm", {
 			modal : true,
 			onEsc : Ext.emptyFn,
 			width : 400,
-			height : 230,
+			height : 200,
 			layout : "fit",
-			defaultFocus : "editInMoney",
+			defaultFocus : "editCustomer",
 			listeners : {
 				show : {
 					fn : me.onWndShow,
@@ -35,7 +35,26 @@ Ext.define("PSI.Funds.AddPreReceivingForm", {
 					labelSeparator : "",
 					msgTarget : 'side'
 				},
-				items : [ 
+				items : [
+				{
+					id: "editCustomerId",
+					xtype: "hidden",
+					name: "customerId"
+				},
+				{
+					id : "editCustomer",
+					fieldLabel : "客户",
+					xtype : "psi_customerfield",
+					allowBlank : false,
+					blankText : "没有输入客户",
+					beforeLabelTextTpl : PSI.Const.REQUIRED,
+					listeners : {
+						specialkey : {
+							fn : me.onEditCustomerSpecialKey,
+							scope : me
+						}
+					}
+				},
 				{
 					id : "editBizDT",
 					fieldLabel : "收款日期",
@@ -134,6 +153,7 @@ Ext.define("PSI.Funds.AddPreReceivingForm", {
 	onOK : function() {
 		var me = this;
         Ext.getCmp("editBizUserId").setValue(Ext.getCmp("editBizUser").getIdValue());
+        Ext.getCmp("editCustomerId").setValue(Ext.getCmp("editCustomer").getIdValue());
 
         var f = Ext.getCmp("editForm");
 		var el = f.getEl();
@@ -157,9 +177,15 @@ Ext.define("PSI.Funds.AddPreReceivingForm", {
 		});
 	},
 	
+    onEditCustomerSpecialKey: function (field, e) {
+        if (e.getKey() == e.ENTER) {
+            Ext.getCmp("editBizDT").focus();
+        }
+    },
+
     onEditBizDTSpecialKey: function (field, e) {
         if (e.getKey() == e.ENTER) {
-            Ext.getCmp("editActMoney").focus();
+            Ext.getCmp("editInMoney").focus();
         }
     },
     

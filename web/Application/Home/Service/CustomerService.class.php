@@ -566,4 +566,25 @@ class CustomerService extends PSIBaseService {
 		
 		return $result;
 	}
+
+	/**
+	 * 盘点给定id的客户是否存在
+	 *
+	 * @param string $customerId        	
+	 *
+	 * @return true: 存在
+	 */
+	public function customerExists($customerId, $db) {
+		if (! $db) {
+			$db = M();
+		}
+		
+		if (! $customerId) {
+			return false;
+		}
+		
+		$sql = "select count(*) as cnt from t_customer where id = '%s' ";
+		$data = $db->query($sql, $customerId);
+		return $data[0]["cnt"] == 1;
+	}
 }
