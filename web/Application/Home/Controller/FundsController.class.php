@@ -323,6 +323,13 @@ class FundsController extends Controller {
 		}
 	}
 
+	public function returnPreReceivingInfo() {
+		if (IS_POST) {
+			$ps = new PreReceivingService();
+			$this->ajaxReturn($ps->returnPreReceivingInfo());
+		}
+	}
+
 	public function addPreReceiving() {
 		if (IS_POST) {
 			$params = array(
@@ -334,6 +341,20 @@ class FundsController extends Controller {
 			
 			$ps = new PreReceivingService();
 			$this->ajaxReturn($ps->addPreReceiving($params));
+		}
+	}
+
+	public function returnPreReceiving() {
+		if (IS_POST) {
+			$params = array(
+					"customerId" => I("post.customerId"),
+					"bizUserId" => I("post.bizUserId"),
+					"bizDT" => I("post.bizDT"),
+					"outMoney" => I("post.outMoney")
+			);
+			
+			$ps = new PreReceivingService();
+			$this->ajaxReturn($ps->returnPreReceiving($params));
 		}
 	}
 

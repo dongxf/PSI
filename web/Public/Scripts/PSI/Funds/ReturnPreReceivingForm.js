@@ -1,5 +1,5 @@
-// 预付款管理 - 收预付款
-Ext.define("PSI.Funds.AddPreReceivingForm", {
+// 预付款管理 - 退还预付款
+Ext.define("PSI.Funds.ReturnPreReceivingForm", {
 	extend : "Ext.window.Window",
 
 	config : {
@@ -9,7 +9,7 @@ Ext.define("PSI.Funds.AddPreReceivingForm", {
 	initComponent : function() {
 		var me = this;
 		Ext.apply(me, {
-			title : "收取预付款",
+			title : "退还预付款",
 			modal : true,
 			onEsc : Ext.emptyFn,
 			width : 400,
@@ -57,9 +57,9 @@ Ext.define("PSI.Funds.AddPreReceivingForm", {
 				},
 				{
 					id : "editBizDT",
-					fieldLabel : "收款日期",
+					fieldLabel : "退款日期",
                     allowBlank: false,
-                    blankText: "没有输入收款日期",
+                    blankText: "没有输入退款日期",
                     beforeLabelTextTpl: PSI.Const.REQUIRED,
                     xtype: "datefield",
                     format: "Y-m-d",
@@ -72,17 +72,17 @@ Ext.define("PSI.Funds.AddPreReceivingForm", {
 						}
 					}
 				}, {
-					fieldLabel : "收款金额",
+					fieldLabel : "退款金额",
 					allowBlank : false,
-					blankText : "没有输入收款金额",
+					blankText : "没有输入退款金额",
 					beforeLabelTextTpl : PSI.Const.REQUIRED,
 					xtype : "numberfield",
 					hideTrigger : true,
-					name : "inMoney",
-					id : "editInMoney",
+					name : "outMoney",
+					id : "editOutMoney",
 					listeners : {
 						specialkey : {
-							fn : me.onEditInMoneySpecialKey,
+							fn : me.onEditOutMoneySpecialKey,
 							scope : me
 						}
 					}
@@ -129,7 +129,7 @@ Ext.define("PSI.Funds.AddPreReceivingForm", {
         var el = f.getEl();
         el.mask(PSI.Const.LOADING);
         Ext.Ajax.request({
-            url: PSI.Const.BASE_URL + "Home/Funds/addPreReceivingInfo",
+            url: PSI.Const.BASE_URL + "Home/Funds/returnPreReceivingInfo",
             params: {
             },
             method: "POST",
@@ -159,7 +159,7 @@ Ext.define("PSI.Funds.AddPreReceivingForm", {
 		var el = f.getEl();
 		el.mask(PSI.Const.SAVING);
 		f.submit({
-			url : PSI.Const.BASE_URL + "Home/Funds/addPreReceiving",
+			url : PSI.Const.BASE_URL + "Home/Funds/returnPreReceiving",
 			method : "POST",
 			success : function(form, action) {
 				el.unmask();
@@ -185,11 +185,11 @@ Ext.define("PSI.Funds.AddPreReceivingForm", {
 
     onEditBizDTSpecialKey: function (field, e) {
         if (e.getKey() == e.ENTER) {
-            Ext.getCmp("editInMoney").focus();
+            Ext.getCmp("editOutMoney").focus();
         }
     },
     
-    onEditInMoneySpecialKey: function (field, e) {
+    onEditOutMoneySpecialKey: function (field, e) {
         if (e.getKey() == e.ENTER) {
             Ext.getCmp("editBizUser").focus();
         }
@@ -200,7 +200,7 @@ Ext.define("PSI.Funds.AddPreReceivingForm", {
             var f = Ext.getCmp("editForm");
             if (f.getForm().isValid()) {
                 var me = this;
-                PSI.MsgBox.confirm("请确认是否录入收款记录?", function () {
+                PSI.MsgBox.confirm("请确认是否录入退款记录?", function () {
                     me.onOK();
                 });
             }

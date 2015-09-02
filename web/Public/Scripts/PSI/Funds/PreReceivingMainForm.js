@@ -17,12 +17,12 @@ Ext.define("PSI.Funds.PreReceivingMainForm", {
 		Ext.apply(me, {
 			tbar : [ 
 			{
-				text: "收预收款",
+				text: "收取预收款",
 				iconCls: "PSI-button-add",
 				handler: me.onReceivingMoney,
 				scope: me
 			}, "-", {
-				text: "退预收款",
+				text: "退还预收款",
 				iconCls: "PSI-button-delete",
 				handler: me.onReturnMoney,
 				scope: me
@@ -308,6 +308,7 @@ Ext.define("PSI.Funds.PreReceivingMainForm", {
 	onQuery : function() {
 		var me = this;
 		
+		me.getMainGrid().getStore().removeAll();
 		me.getDetailGrid().getStore().removeAll();
 
 		me.getMainGrid().getStore().loadPage(1);
@@ -347,6 +348,9 @@ Ext.define("PSI.Funds.PreReceivingMainForm", {
     },
     
     onReturnMoney: function() {
-    	PSI.MsgBox.showInfo("TODO");
+    	var form = Ext.create("PSI.Funds.ReturnPreReceivingForm", {
+    		parentForm: this
+    	});
+    	form.show();
     }
 });
