@@ -78,7 +78,7 @@ Ext.define("PSI.Funds.PreReceivingMainForm", {
 
 	getMainGrid : function() {
 		var me = this;
-		if (me.__rvGrid) {
+		if (me.__mainGrid) {
 			return me.__mainGrid;
 		}
 

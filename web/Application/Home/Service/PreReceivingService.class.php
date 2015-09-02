@@ -125,4 +125,48 @@ class PreReceivingService extends PSIBaseService {
 		
 		return $this->ok();
 	}
+
+	public function prereceivingList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$page = $params["page"];
+		$start = $params["start"];
+		$limit = $params["limit"];
+		
+		$categoryId = $params["categoryId"];
+		
+		$db = M();
+		$sql = "select r.id, c.id as customer_id, c.code, c.name,
+					r.in_money, r.out_money, r.balance_money
+				from t_pre_receiving r, t_customer c
+				where r.customer_id = c.id and c.category_id = '%s'
+				limit %d , %d
+				";
+		$data = $db->query($sql, $categoryId, $start, $limit);
+		
+		$result = array();
+		foreach ( $data as $i => $v ) {
+			$result[$i]["id"] = $v["id"];
+			$result[$i]["customerId"] = $v["customer_id"];
+			$result[$i]["code"] = $v["code"];
+			$result[$i]["name"] = $v["name"];
+			$result[$i]["inMoney"] = $v["in_money"];
+			$result[$i]["outMoney"] = $v["out_money"];
+			$result[$i]["balanceMoney"] = $v["balance_money"];
+		}
+		
+		$sql = "select count(*) as cnt
+				from t_pre_receiving r, t_customer c
+				where r.customer_id = c.id and c.category_id = '%s'
+				";
+		$data = $db->query($sql, $categoryId);
+		$cnt = $data[0]["cnt"];
+		
+		return array(
+				"dataList" => $result,
+				"totalCount" => $cnt
+		);
+	}
 }
