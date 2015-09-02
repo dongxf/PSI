@@ -788,7 +788,8 @@ class WSBillService extends PSIBaseService {
 		$db = M();
 		$sql = "select w.id, w.bizdt, c.name as customer_name,
 					  u.name as biz_user_name,
-					  h.name as warehouse_name
+					  h.name as warehouse_name,
+					  w.sale_money
 					from t_ws_bill w, t_customer c, t_user u, t_warehouse h
 					where w.customer_id = c.id and w.biz_user_id = u.id
 					  and w.warehouse_id = h.id
@@ -804,6 +805,7 @@ class WSBillService extends PSIBaseService {
 		$bill["customerName"] = $data[0]["customer_name"];
 		$bill["warehouseName"] = $data[0]["warehouse_name"];
 		$bill["bizUserName"] = $data[0]["biz_user_name"];
+		$bill["saleMoney"] = $data[0]["sale_money"];
 		
 		// 明细表
 		$sql = "select g.code, g.name, g.spec, u.name as unit_name, d.goods_count,
@@ -852,6 +854,7 @@ class WSBillService extends PSIBaseService {
 					<tr><td colspan="2">客户：' . $bill["customerName"] . '</td></tr>
 					<tr><td>业务日期：' . $bill["bizDT"] . '</td><td>出库仓库:' . $bill["warehouseName"] . '</td></tr>
 					<tr><td>业务员：' . $bill["bizUserName"] . '</td><td></td></tr>
+					<tr><td colspan="2">销售金额:' . $bill["saleMoney"] . '</td></tr>
 				</table>
 				';
 		$pdf->writeHTML($html);
