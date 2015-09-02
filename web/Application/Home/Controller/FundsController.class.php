@@ -350,4 +350,18 @@ class FundsController extends Controller {
 			$this->ajaxReturn($ps->prereceivingList($params));
 		}
 	}
+
+	public function prereceivingDetailList() {
+		if (IS_POST) {
+			$params = array(
+					"customerId" => I("post.customerId"),
+					"page" => I("post.page"),
+					"start" => I("post.start"),
+					"limit" => I("post.limit")
+			);
+			
+			$ps = new PreReceivingService();
+			$this->ajaxReturn($ps->prereceivingDetailList($params));
+		}
+	}
 }

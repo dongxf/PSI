@@ -1,4 +1,4 @@
-// 预收款 - 主界面
+// 预收款管理 - 主界面
 Ext.define("PSI.Funds.PreReceivingMainForm", {
 	extend : "Ext.panel.Panel",
 
@@ -163,7 +163,7 @@ Ext.define("PSI.Funds.PreReceivingMainForm", {
 			store : store,
 			listeners : {
 				select : {
-					fn : me.onDetailGridSelect,
+					fn : me.onMainGridSelect,
 					scope : me
 				}
 			}
@@ -172,8 +172,8 @@ Ext.define("PSI.Funds.PreReceivingMainForm", {
 		return me.__mainGrid;
 	},
 
-	getRvParam : function() {
-		var item = this.getRvGrid().getSelectionModel().getSelection();
+	getDetailParam : function() {
+		var item = this.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
 			return null;
 		}
@@ -182,7 +182,7 @@ Ext.define("PSI.Funds.PreReceivingMainForm", {
 		return rv.get("customerId");
 	},
 
-	onDetailGridSelect : function() {
+	onMainGridSelect : function() {
 		this.getDetailGrid().getStore().loadPage(1);
 	},
 
@@ -219,7 +219,7 @@ Ext.define("PSI.Funds.PreReceivingMainForm", {
 
 		store.on("beforeload", function() {
 			Ext.apply(store.proxy.extraParams, {
-				customerId : me.getRvParam()
+				customerId : me.getDetailParam()
 			});
 		});
 
@@ -307,6 +307,8 @@ Ext.define("PSI.Funds.PreReceivingMainForm", {
 
 	onQuery : function() {
 		var me = this;
+		
+		me.getDetailGrid().getStore().removeAll();
 
 		me.getMainGrid().getStore().loadPage(1);
     },

@@ -75,10 +75,10 @@ class PreReceivingService extends PSIBaseService {
 				
 				// 明细账
 				$sql = "insert into t_pre_receiving_detail(id, customer_id, in_money, balance_money, date_created,
-							ref_number, ref_type, biz_user_id, input_user_id)
-						values('%s', '%s', %f, %f, now(), '', '收预收款', '%s', '%s')";
+							ref_number, ref_type, biz_user_id, input_user_id, biz_date)
+						values('%s', '%s', %f, %f, now(), '', '收预收款', '%s', '%s', '%s')";
 				$rc = $db->execute($sql, $idGen->newId(), $customerId, $inMoney, $inMoney, 
-						$bizUserId, $us->getLoginUserId());
+						$bizUserId, $us->getLoginUserId(), $bizDT);
 				if (! $rc) {
 					$db->rollback();
 					return $this->sqlError();
@@ -107,10 +107,10 @@ class PreReceivingService extends PSIBaseService {
 				
 				// 明细账
 				$sql = "insert into t_pre_receiving_detail(id, customer_id, in_money, balance_money, date_created,
-							ref_number, ref_type, biz_user_id, input_user_id)
-						values('%s', '%s', %f, %f, now(), '', '收预收款', '%s', '%s')";
+							ref_number, ref_type, biz_user_id, input_user_id, biz_date)
+						values('%s', '%s', %f, %f, now(), '', '收预收款', '%s', '%s', '%s')";
 				$rc = $db->execute($sql, $idGen->newId(), $customerId, $inMoney, $totalBalanceMoney, 
-						$bizUserId, $us->getLoginUserId());
+						$bizUserId, $us->getLoginUserId(), $bizDT);
 				if (! $rc) {
 					$db->rollback();
 					return $this->sqlError();
@@ -162,6 +162,55 @@ class PreReceivingService extends PSIBaseService {
 				where r.customer_id = c.id and c.category_id = '%s'
 				";
 		$data = $db->query($sql, $categoryId);
+		$cnt = $data[0]["cnt"];
+		
+		return array(
+				"dataList" => $result,
+				"totalCount" => $cnt
+		);
+	}
+
+	public function prereceivingDetailList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$page = $params["page"];
+		$start = $params["start"];
+		$limit = $params["limit"];
+		
+		$customerId = $params["customerId"];
+		
+		$db = M();
+		$sql = "select d.id, d.ref_type, d.ref_number, d.in_money, d.out_money, d.balance_money,
+					d.biz_date, d.date_created,
+					u1.name as biz_user_name, u2.name as input_user_name
+				from t_pre_receiving_detail d, t_user u1, t_user u2
+				where d.customer_id = '%s' and d.biz_user_id = u1.id and d.input_user_id = u2.id
+				order by d.date_created
+				limit %d , %d
+				";
+		$data = $db->query($sql, $customerId, $start, $limit);
+		$result = array();
+		foreach ( $data as $i => $v ) {
+			$result[$i]["id"] = $v["id"];
+			$result[$i]["refType"] = $v["ref_type"];
+			$result[$i]["refNumber"] = $v["ref_number"];
+			$result[$i]["inMoney"] = $v["in_money"];
+			$result[$i]["outMoney"] = $v["out_money"];
+			$result[$i]["balanceMoney"] = $v["balance_money"];
+			$result[$i]["bizDT"] = $this->toYMD($v["biz_date"]);
+			$result[$i]["dateCreated"] = $v["date_created"];
+			$result[$i]["bizUserName"] = $v["biz_user_name"];
+			$result[$i]["inputUserName"] = $v["input_user_name"];
+		}
+		
+		$sql = "select count(*) as cnt
+				from t_pre_receiving_detail d, t_user u1, t_user u2
+				where d.customer_id = '%s' and d.biz_user_id = u1.id and d.input_user_id = u2.id
+				";
+		
+		$data = $db->query($sql, $customerId);
 		$cnt = $data[0]["cnt"];
 		
 		return array(
