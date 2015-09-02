@@ -8,7 +8,7 @@ namespace Home\Service;
  * @author 李静波
  */
 class UpdateDBService extends PSIBaseService {
-	private $CURRENT_DB_VERSION = "20150901-003";
+	private $CURRENT_DB_VERSION = "20150903-001";
 
 	private function tableExists($db, $tableName) {
 		$dbName = C('DB_NAME');
@@ -63,6 +63,8 @@ class UpdateDBService extends PSIBaseService {
 		$this->t_menu_item($db);
 		$this->t_permission($db);
 		$this->t_pr_bill($db);
+		$this->t_pre_payment($db);
+		$this->t_pre_payment_detail($db);
 		$this->t_pre_receiving($db);
 		$this->t_pre_receiving_detail($db);
 		$this->t_pw_bill($db);
@@ -316,6 +318,46 @@ class UpdateDBService extends PSIBaseService {
 		}
 	}
 
+	private function t_pre_payment($db) {
+		$tableName = "t_pre_payment";
+		
+		if (! $this->tableExists($db, $tableName)) {
+			$sql = "CREATE TABLE IF NOT EXISTS `t_pre_payment` (
+					  `id` varchar(255) NOT NULL,
+					  `supplier_id` varchar(255) NOT NULL,
+					  `in_money` decimal(19,2) DEFAULT NULL,
+					  `out_money` decimal(19,2) DEFAULT NULL,
+					  `balance_money` decimal(19,2) NOT NULL,
+					  PRIMARY KEY (`id`)
+					) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+					";
+			$db->execute($sql);
+		}
+	}
+
+	private function t_pre_payment_detail($db) {
+		$tableName = "t_pre_payment_detail";
+		
+		if (! $this->tableExists($db, $tableName)) {
+			$sql = "CREATE TABLE IF NOT EXISTS `t_pre_payment_detail` (
+					  `id` varchar(255) NOT NULL,
+					  `supplier_id` varchar(255) NOT NULL,
+					  `in_money` decimal(19,2) DEFAULT NULL,
+					  `out_money` decimal(19,2) DEFAULT NULL,
+					  `balance_money` decimal(19,2) NOT NULL,
+					  `biz_date` datetime DEFAULT NULL,
+					  `date_created` datetime DEFAULT NULL,
+					  `ref_number` varchar(255) NOT NULL,
+					  `ref_type` varchar(255) NOT NULL,
+					  `biz_user_id` varchar(255) NOT NULL,
+					  `input_user_id` varchar(255) NOT NULL,
+					  PRIMARY KEY (`id`)
+					) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+					";
+			$db->execute($sql);
+		}
+	}
+	
 	private function t_pre_receiving($db) {
 		$tableName = "t_pre_receiving";
 		
