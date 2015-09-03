@@ -1,5 +1,5 @@
-// 预收款管理 - 退还预收款
-Ext.define("PSI.Funds.ReturnPreReceivingForm", {
+// 预付款管理 - 供应商退回采购预付款
+Ext.define("PSI.Funds.ReturnPrePaymentForm", {
 	extend : "Ext.window.Window",
 
 	config : {
@@ -9,13 +9,13 @@ Ext.define("PSI.Funds.ReturnPreReceivingForm", {
 	initComponent : function() {
 		var me = this;
 		Ext.apply(me, {
-			title : "退还预收款",
+			title : "供应商退回采购预付款",
 			modal : true,
 			onEsc : Ext.emptyFn,
 			width : 400,
 			height : 200,
 			layout : "fit",
-			defaultFocus : "editCustomer",
+			defaultFocus : "editSupplier",
 			listeners : {
 				show : {
 					fn : me.onWndShow,
@@ -37,20 +37,20 @@ Ext.define("PSI.Funds.ReturnPreReceivingForm", {
 				},
 				items : [
 				{
-					id: "editCustomerId",
+					id: "editSupplierId",
 					xtype: "hidden",
-					name: "customerId"
+					name: "supplierId"
 				},
 				{
-					id : "editCustomer",
-					fieldLabel : "客户",
-					xtype : "psi_customerfield",
+					id : "editSupplier",
+					fieldLabel : "供应商",
+					xtype : "psi_supplierfield",
 					allowBlank : false,
-					blankText : "没有输入客户",
+					blankText : "没有输入供应商",
 					beforeLabelTextTpl : PSI.Const.REQUIRED,
 					listeners : {
 						specialkey : {
-							fn : me.onEditCustomerSpecialKey,
+							fn : me.onEditSupplierSpecialKey,
 							scope : me
 						}
 					}
@@ -78,11 +78,11 @@ Ext.define("PSI.Funds.ReturnPreReceivingForm", {
 					beforeLabelTextTpl : PSI.Const.REQUIRED,
 					xtype : "numberfield",
 					hideTrigger : true,
-					name : "outMoney",
-					id : "editOutMoney",
+					name : "inMoney",
+					id : "editInMoney",
 					listeners : {
 						specialkey : {
-							fn : me.onEditOutMoneySpecialKey,
+							fn : me.onEditInMoneySpecialKey,
 							scope : me
 						}
 					}
@@ -129,7 +129,7 @@ Ext.define("PSI.Funds.ReturnPreReceivingForm", {
         var el = f.getEl();
         el.mask(PSI.Const.LOADING);
         Ext.Ajax.request({
-            url: PSI.Const.BASE_URL + "Home/Funds/returnPreReceivingInfo",
+            url: PSI.Const.BASE_URL + "Home/Funds/returnPrePaymentInfo",
             params: {
             },
             method: "POST",
@@ -153,13 +153,13 @@ Ext.define("PSI.Funds.ReturnPreReceivingForm", {
 	onOK : function() {
 		var me = this;
         Ext.getCmp("editBizUserId").setValue(Ext.getCmp("editBizUser").getIdValue());
-        Ext.getCmp("editCustomerId").setValue(Ext.getCmp("editCustomer").getIdValue());
+        Ext.getCmp("editSupplierId").setValue(Ext.getCmp("editSupplier").getIdValue());
 
         var f = Ext.getCmp("editForm");
 		var el = f.getEl();
 		el.mask(PSI.Const.SAVING);
 		f.submit({
-			url : PSI.Const.BASE_URL + "Home/Funds/returnPreReceiving",
+			url : PSI.Const.BASE_URL + "Home/Funds/returnPrePayment",
 			method : "POST",
 			success : function(form, action) {
 				el.unmask();
@@ -177,7 +177,7 @@ Ext.define("PSI.Funds.ReturnPreReceivingForm", {
 		});
 	},
 	
-    onEditCustomerSpecialKey: function (field, e) {
+    onEditSupplierSpecialKey: function (field, e) {
         if (e.getKey() == e.ENTER) {
             Ext.getCmp("editBizDT").focus();
         }
@@ -185,11 +185,11 @@ Ext.define("PSI.Funds.ReturnPreReceivingForm", {
 
     onEditBizDTSpecialKey: function (field, e) {
         if (e.getKey() == e.ENTER) {
-            Ext.getCmp("editOutMoney").focus();
+            Ext.getCmp("editInMoney").focus();
         }
     },
     
-    onEditOutMoneySpecialKey: function (field, e) {
+    onEditInMoneySpecialKey: function (field, e) {
         if (e.getKey() == e.ENTER) {
             Ext.getCmp("editBizUser").focus();
         }

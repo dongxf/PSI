@@ -456,13 +456,20 @@ class FundsController extends Controller {
 		}
 	}
 
+	public function returnPrePaymentInfo() {
+		if (IS_POST) {
+			$ps = new PrePaymentService();
+			$this->ajaxReturn($ps->returnPrePaymentInfo());
+		}
+	}
+
 	public function returnPrePayment() {
 		if (IS_POST) {
 			$params = array(
 					"supplierId" => I("post.supplierId"),
 					"bizUserId" => I("post.bizUserId"),
 					"bizDT" => I("post.bizDT"),
-					"outMoney" => I("post.outMoney")
+					"inMoney" => I("post.inMoney")
 			);
 			
 			$ps = new PrePaymentService();

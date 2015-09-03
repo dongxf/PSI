@@ -92,7 +92,7 @@ class PrePaymentService extends PSIBaseService {
 				// 明细账
 				$sql = "insert into t_pre_payment_detail(id, supplier_id, in_money, balance_money, date_created,
 							ref_number, ref_type, biz_user_id, input_user_id, biz_date)
-						values('%s', '%s', %f, %f, now(), '', '付预付款', '%s', '%s', '%s')";
+						values('%s', '%s', %f, %f, now(), '', '预付供应商采购货款', '%s', '%s', '%s')";
 				$rc = $db->execute($sql, $idGen->newId(), $supplierId, $inMoney, $inMoney, 
 						$bizUserId, $us->getLoginUserId(), $bizDT);
 				if (! $rc) {
@@ -124,7 +124,7 @@ class PrePaymentService extends PSIBaseService {
 				// 明细账
 				$sql = "insert into t_pre_payment_detail(id, supplier_id, in_money, balance_money, date_created,
 							ref_number, ref_type, biz_user_id, input_user_id, biz_date)
-						values('%s', '%s', %f, %f, now(), '', '付预付款', '%s', '%s', '%s')";
+						values('%s', '%s', %f, %f, now(), '', '预付供应商采购货款', '%s', '%s', '%s')";
 				$rc = $db->execute($sql, $idGen->newId(), $supplierId, $inMoney, $totalBalanceMoney, 
 						$bizUserId, $us->getLoginUserId(), $bizDT);
 				if (! $rc) {
@@ -159,14 +159,14 @@ class PrePaymentService extends PSIBaseService {
 		$supplierId = $params["supplierId"];
 		$bizUserId = $params["bizUserId"];
 		$bizDT = $params["bizDT"];
-		$outMoney = $params["outMoney"];
+		$inMoney = $params["inMoney"];
 		
 		$db = M();
 		
 		// 检查客户
-		$cs = new CustomerService();
-		if (! $cs->customerExists($customerId, $db)) {
-			return $this->bad("客户不存在，无法预收款");
+		$cs = new SupplierService();
+		if (! $cs->supplierExists($supplierId, $db)) {
+			return $this->bad("供应商不存在，无法收款");
 		}
 		
 		// 检查业务日期
@@ -180,58 +180,58 @@ class PrePaymentService extends PSIBaseService {
 			return $this->bad("收款人不存在");
 		}
 		
-		$inMoney = floatval($outMoney);
-		if ($outMoney <= 0) {
+		$inMoney = floatval($inMoney);
+		if ($inMoney <= 0) {
 			return $this->bad("收款金额需要是正数");
 		}
 		
-		$customerName = $cs->getCustomerNameById($customerId, $db);
+		$supplierName = $cs->getSupplierNameById($supplierId, $db);
 		
 		$idGen = new IdGenService();
 		
 		$db->startTrans();
 		try {
-			$sql = "select balance_money, out_money from t_pre_receiving where customer_id = '%s' ";
-			$data = $db->query($sql, $customerId);
+			$sql = "select balance_money, in_money from t_pre_payment where supplier_id = '%s' ";
+			$data = $db->query($sql, $supplierId);
 			$balanceMoney = $data[0]["balance_money"];
 			if (! $balanceMoney) {
 				$balanceMoney = 0;
 			}
 			
-			if ($balanceMoney < $outMoney) {
+			if ($balanceMoney < $inMoney) {
 				$db->rollback();
 				return $this->bad(
-						"退款金额{$outMoney}元超过余额。<br /><br />客户[{$customerName}]的预付款余额是{$balanceMoney}元");
+						"退款金额{$inMoney}元超过余额。<br /><br />供应商[{$supplierName}]的预付款余额是{$balanceMoney}元");
 			}
-			$totalOutMoney = $data[0]["out_money"];
-			if (! $totalOutMoney) {
-				$totalOutMoney = 0;
+			$totalInMoney = $data[0]["in_money"];
+			if (! $totalInMoney) {
+				$totalInMoney = 0;
 			}
 			
 			// 总账
-			$sql = "update t_pre_receiving
-					set out_money = %f, balance_money = %f
-					where customer_id = '%s' ";
-			$totalOutMoney += $outMoney;
-			$balanceMoney -= $outMoney;
-			$rc = $db->execute($sql, $totalOutMoney, $balanceMoney, $customerId);
+			$sql = "update t_pre_payment
+					set in_money = %f, balance_money = %f
+					where supplier_id = '%s' ";
+			$totalInMoney -= $inMoney;
+			$balanceMoney -= $inMoney;
+			$rc = $db->execute($sql, $totalInMoney, $balanceMoney, $supplierId);
 			if (! $rc) {
 				$db->rollback();
 				return $this->sqlError();
 			}
 			
 			// 明细账
-			$sql = "insert into t_pre_receiving_detail(id, customer_id, out_money, balance_money,
+			$sql = "insert into t_pre_payment_detail(id, supplier_id, in_money, balance_money,
 						biz_date, date_created, ref_number, ref_type, biz_user_id, input_user_id)
-					values ('%s', '%s', %f, %f, '%s', now(), '', '退预收款', '%s', '%s')";
-			$rc = $db->execute($sql, $idGen->newId(), $customerId, $outMoney, $balanceMoney, $bizDT, 
+					values ('%s', '%s', %f, %f, '%s', now(), '', '供应商退回采购预付款', '%s', '%s')";
+			$rc = $db->execute($sql, $idGen->newId(), $supplierId, -$inMoney, $balanceMoney, $bizDT, 
 					$bizUserId, $us->getLoginUserId());
 			
 			// 记录业务日志
 			$bs = new BizlogService();
-			$log = "退还客户[{$customerName}]预收款：{$outMoney}元";
-			$bs->insertBizlog($log, "预收款管理");
-				
+			$log = "供应商[{$supplierName}]退回采购预付款：{$inMoney}元";
+			$bs->insertBizlog($log, "预付款管理");
+			
 			$db->commit();
 		} catch ( Exception $e ) {
 			$db->rollback();
