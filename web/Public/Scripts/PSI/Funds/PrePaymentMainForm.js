@@ -314,12 +314,12 @@ Ext.define("PSI.Funds.PrePaymentMainForm", {
 		me.getMainGrid().getStore().loadPage(1);
     },
     
-    queryCustomerCategory: function() {
+    querySupplierCategory: function() {
     	var combo = Ext.getCmp("comboCategory");
         var el = Ext.getBody();
         el.mask(PSI.Const.LOADING);
         Ext.Ajax.request({
-            url: PSI.Const.BASE_URL + "Home/Supplier/supplierList",
+            url: PSI.Const.BASE_URL + "Home/Supplier/categoryList",
             method: "POST",
             callback: function (options, success, response) {
                 var store = combo.getStore();

@@ -50,7 +50,8 @@ INSERT INTO `t_fid` (`fid`, `name`) VALUES
 ('2022', '报表-应付账款账龄分析表'),
 ('2023', '报表-库存超上限明细表'),
 ('2024', '现金收支查询'),
-('2025', '预收款管理');
+('2025', '预收款管理'),
+('2026', '预付款管理');
 
 TRUNCATE TABLE `t_menu_item`;
 INSERT INTO `t_menu_item` (`id`, `caption`, `fid`, `parent_id`, `show_order`) VALUES
@@ -76,6 +77,7 @@ INSERT INTO `t_menu_item` (`id`, `caption`, `fid`, `parent_id`, `show_order`) VA
 ('0602', '应付账款管理', '2005', '06', 2),
 ('0603', '现金收支查询', '2024', '06', 3),
 ('0604', '预收款管理', '2025', '06', 4),
+('0605', '预付款管理', '2026', '06', 5),
 ('07', '报表', NULL, NULL, 7),
 ('0701', '销售日报表', NULL, '07', 1),
 ('070101', '销售日报表(按商品汇总)', '2012', '0701', 1),
@@ -152,7 +154,8 @@ INSERT INTO `t_permission` (`id`, `fid`, `name`, `note`) VALUES
 ('2022', '2022', '报表-应付账款账龄分析表', '报表-应付账款账龄分析表'),
 ('2023', '2023', '报表-库存超上限明细表', '报表-库存超上限明细表'),
 ('2024', '2024', '现金收支查询', '现金收支查询'),
-('2025', '2025', '预收款管理', '预收款管理');
+('2025', '2025', '预收款管理', '预收款管理'),
+('2026', '2026', '预付款管理', '预付款管理');
 
 TRUNCATE TABLE `t_role`;
 INSERT INTO `t_role` (`id`, `name`) VALUES
@@ -197,7 +200,8 @@ INSERT INTO `t_role_permission` (`role_id`, `permission_id`) VALUES
 ('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2022'),
 ('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2023'),
 ('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2024'),
-('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2025');
+('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2025'),
+('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2026');
 
 TRUNCATE TABLE `t_role_user`;
 INSERT INTO `t_role_user` (`role_id`, `user_id`) VALUES
@@ -221,7 +225,7 @@ INSERT INTO `t_config` (`id`, `name`, `value`, `note`, `show_order`) VALUES
 
 TRUNCATE TABLE `t_psi_db_version`;
 INSERT INTO `t_psi_db_version` (`db_version`, `update_dt`) VALUES
-('20150903-001', now());
+('20150903-002', now());
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
