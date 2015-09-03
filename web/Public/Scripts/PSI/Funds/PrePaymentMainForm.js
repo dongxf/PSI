@@ -1,4 +1,4 @@
-// 预付款管理 - 主界面
+// 采购预付款管理 - 主界面
 Ext.define("PSI.Funds.PrePaymentMainForm", {
 	extend : "Ext.panel.Panel",
 
@@ -17,12 +17,12 @@ Ext.define("PSI.Funds.PrePaymentMainForm", {
 		Ext.apply(me, {
 			tbar : [ 
 			{
-				text: "付预付款",
+				text: "付供应商预付款",
 				iconCls: "PSI-button-add",
 				handler: me.onPaymentMoney,
 				scope: me
 			}, "-", {
-				text: "预付款回款",
+				text: "供应商回款",
 				iconCls: "PSI-button-delete",
 				handler: me.onReturnMoney,
 				scope: me
@@ -136,15 +136,7 @@ Ext.define("PSI.Funds.PrePaymentMainForm", {
 				sortable : false,
 				width: 300
 			}, {
-				header : "付款",
-				dataIndex : "outMoney",
-				menuDisabled : true,
-				sortable : false,
-				align : "right",
-				xtype : "numbercolumn",
-				width: 160
-			}, {
-				header : "回款",
+				header : "付供应商采购预付款",
 				dataIndex : "inMoney",
 				menuDisabled : true,
 				sortable : false,
@@ -152,7 +144,15 @@ Ext.define("PSI.Funds.PrePaymentMainForm", {
 				xtype : "numbercolumn",
 				width: 160
 			}, {
-				header : "预付款余额",
+				header : "支付货款",
+				dataIndex : "outMoney",
+				menuDisabled : true,
+				sortable : false,
+				align : "right",
+				xtype : "numbercolumn",
+				width: 160
+			}, {
+				header : "采购预付款余额",
 				dataIndex : "balanceMoney",
 				menuDisabled : true,
 				sortable : false,
@@ -227,7 +227,7 @@ Ext.define("PSI.Funds.PrePaymentMainForm", {
 			viewConfig: {
                 enableTextSelection: true
             },
-			title : "预付款明细",
+			title : "采购预付款明细",
 			border: 0,
 			bbar : [ {
 				xtype : "pagingtoolbar",
@@ -257,15 +257,7 @@ Ext.define("PSI.Funds.PrePaymentMainForm", {
 				menuDisabled : true,
 				sortable : false
 			}, {
-				header : "付款",
-				dataIndex : "outMoney",
-				menuDisabled : true,
-				sortable : false,
-				align : "right",
-				xtype : "numbercolumn",
-				width: 160
-			}, {
-				header : "回款",
+				header : "付供应商预付款",
 				dataIndex : "inMoney",
 				menuDisabled : true,
 				sortable : false,
@@ -273,7 +265,15 @@ Ext.define("PSI.Funds.PrePaymentMainForm", {
 				xtype : "numbercolumn",
 				width: 160
 			}, {
-				header : "预付款余额",
+				header : "支付货款",
+				dataIndex : "outMoney",
+				menuDisabled : true,
+				sortable : false,
+				align : "right",
+				xtype : "numbercolumn",
+				width: 160
+			}, {
+				header : "采购预付款余额",
 				dataIndex : "balanceMoney",
 				menuDisabled : true,
 				sortable : false,
