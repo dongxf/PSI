@@ -134,7 +134,7 @@ Ext.define("PSI.Purchase.PWMainForm", {
 			valueField : "id",
 			store : Ext.create("Ext.data.ArrayStore", {
 				fields : [ "id", "text" ],
-				data : [[-1, "所有"],  [0, "记应付账款" ], [1, "现金付款" ] ]
+				data : [[-1, "所有"],  [0, "记应付账款" ], [1, "现金付款" ], [2, "预付款" ] ]
 			}),
 			value: -1
 		}, {
@@ -221,6 +221,8 @@ Ext.define("PSI.Purchase.PWMainForm", {
                 			return "记应付账款";
                 		} else if (value == 1) {
                 			return "现金付款";
+                		} else if (value == 2) {
+                			return "预付款";
                 		} else {
                 			return "";
                 		}

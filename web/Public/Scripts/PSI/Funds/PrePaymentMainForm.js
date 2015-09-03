@@ -239,7 +239,7 @@ Ext.define("PSI.Funds.PrePaymentMainForm", {
 				dataIndex : "refType",
 				menuDisabled : true,
 				sortable : false,
-				width: 120
+				width: 160
 			}, {
 				header : "单号",
 				dataIndex : "refNumber",

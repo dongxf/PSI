@@ -536,7 +536,8 @@ class PWBillService extends PSIBaseService {
 		
 		$allPaymentType = array(
 				0,
-				1
+				1,
+				2
 		);
 		if (! in_array($paymentType, $allPaymentType)) {
 			return $this->bad("付款方式填写不正确，无法提交");
@@ -674,7 +675,6 @@ class PWBillService extends PSIBaseService {
 								ref_number, date_created)
 							values (%f, %f, '%s', '采购入库', '%s', now())";
 					$db->execute($sql, $outCash, $balanceCash, $bizDT, $ref);
-					
 				} else {
 					$balanceCash = $data[0]["balance_money"] - $outCash;
 					$sumOutMoney = $data[0]["out_money"] + $outCash;
@@ -682,7 +682,7 @@ class PWBillService extends PSIBaseService {
 							set out_money = %f, balance_money = %f
 							where biz_date = '%s' ";
 					$db->execute($sql, $sumOutMoney, $balanceCash, $bizDT);
-				
+					
 					// 记现金明细账
 					$sql = "insert into t_cash_detail(out_money, balance_money, biz_date, ref_type, 
 								ref_number, date_created)
@@ -695,11 +695,59 @@ class PWBillService extends PSIBaseService {
 							set balance_money = balance_money - %f
 							where biz_date > '%s' ";
 				$db->execute($sql, $outCash, $bizDT);
-					
+				
 				$sql = "update t_cash_detail
 							set balance_money = balance_money - %f
 							where biz_date > '%s' ";
 				$db->execute($sql, $outCash, $bizDT);
+			} else if ($paymentType == 2) {
+				// 2: 预付款
+				
+				$outMoney = $billPayables;
+				
+				$sql = "select out_money, balance_money from t_pre_payment
+						where supplier_id = '%s' ";
+				$data = $db->query($sql, $supplierId);
+				$totalOutMoney = $data[0]["out_money"];
+				$totalBalanceMoney = $data[0]["balance_money"];
+				if (! $totalOutMoney) {
+					$totalOutMoney = 0;
+				}
+				if (! $totalBalanceMoney) {
+					$totalBalanceMoney = 0;
+				}
+				if ($outMoney > $totalBalanceMoney) {
+					$db->rollback();
+					$ss = new SupplierService();
+					$supplierName = $ss->getSupplierNameById($supplierId, $db);
+					return $this->bad(
+							"供应商[{$supplierName}]预付款余额不足，无法完成支付<br/><br/>余额:{$totalBalanceMoney}元，付款金额:{$outMoney}元");
+				}
+				
+				// 预付款总账
+				$sql = "update t_pre_payment
+						set out_money = %f, balance_money = %f
+						where supplier_id = '%s' ";
+				$totalOutMoney += $outMoney;
+				$totalBalanceMoney -= $outMoney;
+				$rc = $db->execute($sql, $totalOutMoney, $totalBalanceMoney, $supplierId);
+				if (! $rc) {
+					$db->rollback();
+					return $this->sqlError();
+				}
+				
+				// 预付款明细账
+				$sql = "insert into t_pre_payment_detail(id, supplier_id, out_money, balance_money,
+							biz_date, date_created, ref_number, ref_type, biz_user_id, input_user_id)
+						values ('%s', '%s', %f, %f, '%s', now(), '%s', '采购入库', '%s', '%s')";
+				$idGen = new IdGenService();
+				$us = new UserService();
+				$rc = $db->execute($sql, $idGen->newId(), $supplierId, $outMoney, 
+						$totalBalanceMoney, $bizDT, $ref, $bizUserId, $us->getLoginUserId());
+				if (! $rc) {
+					$db->rollback();
+					return $this->sqlError();
+				}
 			}
 			
 			// 日志
