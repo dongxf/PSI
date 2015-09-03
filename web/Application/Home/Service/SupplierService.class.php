@@ -376,7 +376,7 @@ class SupplierService extends PSIBaseService {
 							'%s', '%s', '%s', '%s',
 							'%s', '%s', '%s', '%s', '%s')  ";
 			$db->execute($sql, $id, $categoryId, $code, $name, $py, $contact01, $qq01, $tel01, 
-					$mobile01, $contact02, $qq02, $tel02, $mobile02, $address, $addressShipping,
+					$mobile01, $contact02, $qq02, $tel02, $mobile02, $address, $addressShipping, 
 					$bankName, $bankAccount, $tax, $fax, $note);
 			
 			$log = "新增供应商：编码 = {$code}, 名称 = {$name}";
@@ -568,5 +568,29 @@ class SupplierService extends PSIBaseService {
 		}
 		
 		return $result;
+	}
+
+	public function supplierExists($supplierId, $db) {
+		if (! $db) {
+			$db = M();
+		}
+		
+		$sql = "select count(*) as cnt from t_supplier where id = '%s' ";
+		$data = $db->query($sql, $supplierId);
+		return $data[0]["cnt"] == 1;
+	}
+
+	public function getSupplierNameById($supplierId, $db) {
+		if (! $db) {
+			$db = M();
+		}
+		
+		$sql = "select name from t_supplier where id = '%s' ";
+		$data = $db->query($sql, $supplierId);
+		if ($data) {
+			return $data[0]["name"];
+		} else {
+			return "";
+		}
 	}
 }

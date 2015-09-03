@@ -9,6 +9,7 @@ use Home\Service\ReceivablesService;
 use Home\Common\FIdConst;
 use Home\Service\CashService;
 use Home\Service\PreReceivingService;
+use Home\Service\PrePaymentService;
 
 /**
  * 资金Controller
@@ -403,6 +404,69 @@ class FundsController extends Controller {
 			$this->display();
 		} else {
 			redirect(__ROOT__ . "/Home/User/login");
+		}
+	}
+
+	public function addPrePaymentInfo() {
+		if (IS_POST) {
+			$ps = new PrePaymentService();
+			$this->ajaxReturn($ps->addPrePaymentInfo());
+		}
+	}
+
+	public function addPrePayment() {
+		if (IS_POST) {
+			$params = array(
+					"supplierId" => I("post.supplierId"),
+					"bizUserId" => I("post.bizUserId"),
+					"bizDT" => I("post.bizDT"),
+					"inMoney" => I("post.inMoney")
+			);
+			
+			$ps = new PrePaymentService();
+			$this->ajaxReturn($ps->addPrePayment($params));
+		}
+	}
+
+	public function prepaymentList() {
+		if (IS_POST) {
+			$params = array(
+					"categoryId" => I("post.categoryId"),
+					"page" => I("post.page"),
+					"start" => I("post.start"),
+					"limit" => I("post.limit")
+			);
+			
+			$ps = new PrePaymentService();
+			$this->ajaxReturn($ps->prepaymentList($params));
+		}
+	}
+
+	public function prepaymentDetailList() {
+		if (IS_POST) {
+			$params = array(
+					"supplierId" => I("post.supplierId"),
+					"page" => I("post.page"),
+					"start" => I("post.start"),
+					"limit" => I("post.limit")
+			);
+			
+			$ps = new PrePaymentService();
+			$this->ajaxReturn($ps->prepaymentDetailList($params));
+		}
+	}
+
+	public function returnPrePayment() {
+		if (IS_POST) {
+			$params = array(
+					"supplierId" => I("post.supplierId"),
+					"bizUserId" => I("post.bizUserId"),
+					"bizDT" => I("post.bizDT"),
+					"outMoney" => I("post.outMoney")
+			);
+			
+			$ps = new PrePaymentService();
+			$this->ajaxReturn($ps->returnPrePayment($params));
 		}
 	}
 }

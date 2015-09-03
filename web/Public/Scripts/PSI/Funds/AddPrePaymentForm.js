@@ -1,5 +1,5 @@
-// 预付款管理 - 收预收款
-Ext.define("PSI.Funds.AddPreReceivingForm", {
+// 预付款管理 - 付供应商预付款
+Ext.define("PSI.Funds.AddPrePaymentForm", {
 	extend : "Ext.window.Window",
 
 	config : {
@@ -9,13 +9,13 @@ Ext.define("PSI.Funds.AddPreReceivingForm", {
 	initComponent : function() {
 		var me = this;
 		Ext.apply(me, {
-			title : "收取客户预付款",
+			title : "预付供应商采购货款",
 			modal : true,
 			onEsc : Ext.emptyFn,
 			width : 400,
 			height : 200,
 			layout : "fit",
-			defaultFocus : "editCustomer",
+			defaultFocus : "editSupplier",
 			listeners : {
 				show : {
 					fn : me.onWndShow,
@@ -37,20 +37,20 @@ Ext.define("PSI.Funds.AddPreReceivingForm", {
 				},
 				items : [
 				{
-					id: "editCustomerId",
+					id: "editSupplierId",
 					xtype: "hidden",
-					name: "customerId"
+					name: "supplierId"
 				},
 				{
-					id : "editCustomer",
-					fieldLabel : "客户",
-					xtype : "psi_customerfield",
+					id : "editSupplier",
+					fieldLabel : "供应商",
+					xtype : "psi_supplierfield",
 					allowBlank : false,
-					blankText : "没有输入客户",
+					blankText : "没有输入供应商",
 					beforeLabelTextTpl : PSI.Const.REQUIRED,
 					listeners : {
 						specialkey : {
-							fn : me.onEditCustomerSpecialKey,
+							fn : me.onEditSupplierSpecialKey,
 							scope : me
 						}
 					}
@@ -72,9 +72,9 @@ Ext.define("PSI.Funds.AddPreReceivingForm", {
 						}
 					}
 				}, {
-					fieldLabel : "收款金额",
+					fieldLabel : "预付金额",
 					allowBlank : false,
-					blankText : "没有输入收款金额",
+					blankText : "没有输入预付款金额",
 					beforeLabelTextTpl : PSI.Const.REQUIRED,
 					xtype : "numberfield",
 					hideTrigger : true,
@@ -92,10 +92,10 @@ Ext.define("PSI.Funds.AddPreReceivingForm", {
 					name: "bizUserId"
 				}, {
 					id : "editBizUser",
-					fieldLabel : "收款人",
+					fieldLabel : "付款人",
 					xtype : "psi_userfield",
 					allowBlank : false,
-					blankText : "没有输入收款人",
+					blankText : "没有输入付款人",
 					beforeLabelTextTpl : PSI.Const.REQUIRED,
 					listeners : {
 						specialkey : {
@@ -129,7 +129,7 @@ Ext.define("PSI.Funds.AddPreReceivingForm", {
         var el = f.getEl();
         el.mask(PSI.Const.LOADING);
         Ext.Ajax.request({
-            url: PSI.Const.BASE_URL + "Home/Funds/addPreReceivingInfo",
+            url: PSI.Const.BASE_URL + "Home/Funds/addPrePaymentInfo",
             params: {
             },
             method: "POST",
@@ -153,13 +153,13 @@ Ext.define("PSI.Funds.AddPreReceivingForm", {
 	onOK : function() {
 		var me = this;
         Ext.getCmp("editBizUserId").setValue(Ext.getCmp("editBizUser").getIdValue());
-        Ext.getCmp("editCustomerId").setValue(Ext.getCmp("editCustomer").getIdValue());
+        Ext.getCmp("editSupplierId").setValue(Ext.getCmp("editSupplier").getIdValue());
 
         var f = Ext.getCmp("editForm");
 		var el = f.getEl();
 		el.mask(PSI.Const.SAVING);
 		f.submit({
-			url : PSI.Const.BASE_URL + "Home/Funds/addPreReceiving",
+			url : PSI.Const.BASE_URL + "Home/Funds/addPrePayment",
 			method : "POST",
 			success : function(form, action) {
 				el.unmask();
@@ -177,7 +177,7 @@ Ext.define("PSI.Funds.AddPreReceivingForm", {
 		});
 	},
 	
-    onEditCustomerSpecialKey: function (field, e) {
+    onEditSupplierSpecialKey: function (field, e) {
         if (e.getKey() == e.ENTER) {
             Ext.getCmp("editBizDT").focus();
         }
@@ -200,7 +200,7 @@ Ext.define("PSI.Funds.AddPreReceivingForm", {
             var f = Ext.getCmp("editForm");
             if (f.getForm().isValid()) {
                 var me = this;
-                PSI.MsgBox.confirm("请确认是否录入收款记录?", function () {
+                PSI.MsgBox.confirm("请确认是否录入付款记录?", function () {
                     me.onOK();
                 });
             }
