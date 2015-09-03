@@ -223,4 +223,9 @@ class FIdConst {
 	 * 预收款管理
 	 */
 	const PRE_RECEIVING = "2025";
+	
+	/**
+	 * 预付款管理
+	 */
+	const PRE_PAYMENT = "2026";
 }

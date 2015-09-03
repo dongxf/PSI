@@ -173,8 +173,12 @@ class MainMenuController extends Controller {
 				redirect(__ROOT__ . "/Home/Funds/cashIndex");
 				break;
 			case FIdConst::PRE_RECEIVING :
-				// 预付款管理
+				// 预收款管理
 				redirect(__ROOT__ . "/Home/Funds/prereceivingIndex");
+				break;
+			case FIdConst::PRE_PAYMENT :
+				// 预付款管理
+				redirect(__ROOT__ . "/Home/Funds/prepaymentIndex");
 				break;
 			default :
 				redirect(__ROOT__ . "/Home");

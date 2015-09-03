@@ -385,4 +385,24 @@ class FundsController extends Controller {
 			$this->ajaxReturn($ps->prereceivingDetailList($params));
 		}
 	}
+
+	/**
+	 * 预付款管理
+	 */
+	public function prepaymentIndex() {
+		$us = new UserService();
+		
+		if ($us->hasPermission(FIdConst::PRE_PAYMENT)) {
+			$this->assign("title", "预付款管理");
+			$this->assign("uri", __ROOT__ . "/");
+			
+			$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
+			
+			$dtFlag = getdate();
+			$this->assign("dtFlag", $dtFlag[0]);
+			$this->display();
+		} else {
+			redirect(__ROOT__ . "/Home/User/login");
+		}
+	}
 }
