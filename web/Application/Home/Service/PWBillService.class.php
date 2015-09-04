@@ -9,12 +9,14 @@ namespace Home\Service;
  */
 class PWBillService extends PSIBaseService {
 
+	/**
+	 * 获得采购入库单主表列表
+	 */
 	public function pwbillList($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
 		
-		$page = $params["page"];
 		$start = $params["start"];
 		$limit = $params["limit"];
 		
@@ -75,7 +77,7 @@ class PWBillService extends PSIBaseService {
 		foreach ( $data as $i => $v ) {
 			$result[$i]["id"] = $v["id"];
 			$result[$i]["ref"] = $v["ref"];
-			$result[$i]["bizDate"] = date("Y-m-d", strtotime($v["biz_dt"]));
+			$result[$i]["bizDate"] = $this->toYMD($v["biz_dt"]);
 			$result[$i]["supplierName"] = $v["supplier_name"];
 			$result[$i]["warehouseName"] = $v["warehouse_name"];
 			$result[$i]["inputUserName"] = $v["input_user_name"];
@@ -129,6 +131,9 @@ class PWBillService extends PSIBaseService {
 		);
 	}
 
+	/**
+	 * 获得采购入库单商品明细记录列表
+	 */
 	public function pwBillDetailList($pwbillId) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
@@ -156,6 +161,9 @@ class PWBillService extends PSIBaseService {
 		return $result;
 	}
 
+	/**
+	 * 新建或编辑采购入库单
+	 */
 	public function editPWBill($json) {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
@@ -327,7 +335,7 @@ class PWBillService extends PSIBaseService {
 			} catch ( Exception $exc ) {
 				$db->rollback();
 				
-				return $this->bad("数据库操作错误，请联系管理员");
+				return $this->sqlError();
 			}
 		}
 		

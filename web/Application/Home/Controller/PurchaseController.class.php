@@ -9,7 +9,7 @@ use Home\Common\FIdConst;
 
 /**
  * 采购Controller
- * 
+ *
  * @author 李静波
  *        
  */
@@ -21,14 +21,13 @@ class PurchaseController extends Controller {
 	public function pwbillIndex() {
 		$us = new UserService();
 		
-		$this->assign("title", "采购入库");
-		$this->assign("uri", __ROOT__ . "/");
-		
-		$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
-		$dtFlag = getdate();
-		$this->assign("dtFlag", $dtFlag[0]);
-		
 		if ($us->hasPermission(FIdConst::PURCHASE_WAREHOUSE)) {
+			$this->assign("title", "采购入库");
+			$this->assign("uri", __ROOT__ . "/");
+			
+			$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
+			$dtFlag = getdate();
+			$this->assign("dtFlag", $dtFlag[0]);
 			$this->display();
 		} else {
 			redirect(__ROOT__ . "/Home/User/login");
@@ -49,7 +48,6 @@ class PurchaseController extends Controller {
 					"warehouseId" => I("post.warehouseId"),
 					"supplierId" => I("post.supplierId"),
 					"paymentType" => I("post.paymentType"),
-					"page" => I("post.page"),
 					"start" => I("post.start"),
 					"limit" => I("post.limit")
 			);
