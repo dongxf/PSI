@@ -342,6 +342,9 @@ class PWBillService extends PSIBaseService {
 		return $this->ok($id);
 	}
 
+	/**
+	 * 生成新的采购入库单单号
+	 */
 	private function genNewBillRef() {
 		$pre = "PW";
 		$mid = date("Ymd");
@@ -358,6 +361,9 @@ class PWBillService extends PSIBaseService {
 		return $pre . $mid . $suf;
 	}
 
+	/**
+	 * 获得某个采购入库单的信息
+	 */
 	public function pwBillInfo($id) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
@@ -439,6 +445,9 @@ class PWBillService extends PSIBaseService {
 		return $result;
 	}
 
+	/**
+	 * 删除采购入库单
+	 */
 	public function deletePWBill($id) {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
