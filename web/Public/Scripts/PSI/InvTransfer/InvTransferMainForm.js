@@ -85,7 +85,7 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
 			margin: "5, 0, 0, 0",
 			store : Ext.create("Ext.data.ArrayStore", {
 				fields : [ "id", "text" ],
-				data : [ [ -1, "所有调拨单" ], [ 0, "待调拨" ], [ 1000, "已调拨" ] ]
+				data : [ [ -1, "全部" ], [ 0, "待调拨" ], [ 1000, "已调拨" ] ]
 			}),
 			value: -1
 		},{

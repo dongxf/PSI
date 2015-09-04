@@ -84,7 +84,7 @@ Ext.define("PSI.InvCheck.InvCheckMainForm", {
 			margin: "5, 0, 0, 0",
 			store : Ext.create("Ext.data.ArrayStore", {
 				fields : [ "id", "text" ],
-				data : [ [ -1, "所有盘点单" ], [ 0, "待盘点" ], [ 1000, "已盘点" ] ]
+				data : [ [ -1, "全部" ], [ 0, "待盘点" ], [ 1000, "已盘点" ] ]
 			}),
 			value: -1
 		},{

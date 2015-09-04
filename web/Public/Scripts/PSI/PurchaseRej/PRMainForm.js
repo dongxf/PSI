@@ -84,7 +84,7 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
 			margin: "5, 0, 0, 0",
 			store : Ext.create("Ext.data.ArrayStore", {
 				fields : [ "id", "text" ],
-				data : [ [ -1, "所有采购退货出库单" ], [ 0, "待出库" ], [ 1000, "已出库" ] ]
+				data : [ [ -1, "全部" ], [ 0, "待出库" ], [ 1000, "已出库" ] ]
 			}),
 			value: -1
 		},{
@@ -139,7 +139,7 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
 			valueField : "id",
 			store : Ext.create("Ext.data.ArrayStore", {
 				fields : [ "id", "text" ],
-				data : [[-1, "所有"],  [ 0, "记应收账款" ], [ 1, "现金收款" ] ]
+				data : [[-1, "全部"],  [ 0, "记应收账款" ], [ 1, "现金收款" ] ]
 			}),
 			value: -1
 		},{
