@@ -24,7 +24,7 @@ Ext.define("PSI.About.MainForm", {
                 }
             ],
             buttons: [{
-                    id: "buttonOK",
+                    id: "buttonAboutFormOK",
                     text: "确定",
                     handler: me.onOK,
                     scope: me,

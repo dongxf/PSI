@@ -63,6 +63,7 @@ Ext.define("PSI.Sale.WSMainForm", {
             handler: me.onCommit
         }, "-",{
         	text: "单据生成pdf",
+        	id: "buttonPDF",
         	iconCls: "PSI-button-pdf",
         	scope: me,
         	handler: me.onPDF
@@ -435,6 +436,7 @@ Ext.define("PSI.Sale.WSMainForm", {
     	Ext.getCmp("buttonEdit").setDisabled(true);
     	Ext.getCmp("buttonDelete").setDisabled(true);
     	Ext.getCmp("buttonCommit").setDisabled(true);
+    	Ext.getCmp("buttonPDF").setDisabled(true);
     	
         var gridDetail = this.getDetailGrid();
         gridDetail.setTitle("销售出库单明细");
@@ -524,6 +526,7 @@ Ext.define("PSI.Sale.WSMainForm", {
             Ext.getCmp("buttonEdit").setDisabled(true);
             Ext.getCmp("buttonDelete").setDisabled(true);
             Ext.getCmp("buttonCommit").setDisabled(true);
+            Ext.getCmp("buttonPDF").setDisabled(true);
             return;
         }
         var bill = item[0];
@@ -539,6 +542,7 @@ Ext.define("PSI.Sale.WSMainForm", {
 
         Ext.getCmp("buttonDelete").setDisabled(commited);
         Ext.getCmp("buttonCommit").setDisabled(commited);
+        Ext.getCmp("buttonPDF").setDisabled(false);
 
         me.refreshDetailGrid();
     },
