@@ -4,6 +4,6 @@ Ext.define("PSI.Const", {
         LOADING: "数据加载中...",
         SAVING: "数据保存中...",
         BASE_URL: "",
-        VERSION: "PSI2015 - build2015-09-05/09:49"
+        VERSION: "PSI 2015 - build201509050951"
     }
 });
