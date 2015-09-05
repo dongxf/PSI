@@ -290,11 +290,12 @@ class PrePaymentService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		$page = $params["page"];
 		$start = $params["start"];
 		$limit = $params["limit"];
 		
 		$supplerId = $params["supplierId"];
+		$dtFrom = $params["dtFrom"];
+		$dtTo = $params["dtTo"];
 		
 		$db = M();
 		$sql = "select d.id, d.ref_type, d.ref_number, d.in_money, d.out_money, d.balance_money,
@@ -302,10 +303,11 @@ class PrePaymentService extends PSIBaseService {
 					u1.name as biz_user_name, u2.name as input_user_name
 				from t_pre_payment_detail d, t_user u1, t_user u2
 				where d.supplier_id = '%s' and d.biz_user_id = u1.id and d.input_user_id = u2.id
+					and (d.biz_date between '%s' and '%s')
 				order by d.date_created
 				limit %d , %d
 				";
-		$data = $db->query($sql, $supplerId, $start, $limit);
+		$data = $db->query($sql, $supplerId, $dtFrom, $dtTo, $start, $limit);
 		$result = array();
 		foreach ( $data as $i => $v ) {
 			$result[$i]["id"] = $v["id"];
@@ -323,9 +325,10 @@ class PrePaymentService extends PSIBaseService {
 		$sql = "select count(*) as cnt
 				from t_pre_payment_detail d, t_user u1, t_user u2
 				where d.supplier_id = '%s' and d.biz_user_id = u1.id and d.input_user_id = u2.id
+					and (d.biz_date between '%s' and '%s')
 				";
 		
-		$data = $db->query($sql, $supplerId);
+		$data = $db->query($sql, $supplerId, $dtFrom, $dtTo);
 		$cnt = $data[0]["cnt"];
 		
 		return array(

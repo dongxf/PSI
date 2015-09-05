@@ -179,7 +179,14 @@ Ext.define("PSI.Funds.PrePaymentMainForm", {
 		}
 
 		var rv = item[0];
-		return rv.get("supplierId");
+		
+		var result = {
+				dtFrom : Ext.Date.format(Ext.getCmp("dtFrom").getValue(), "Y-m-d"),
+				dtTo : Ext.Date.format(Ext.getCmp("dtTo").getValue(), "Y-m-d"),
+				supplierId: rv.get("supplierId")
+		};
+		
+		return result;
 	},
 
 	onMainGridSelect : function() {
@@ -218,9 +225,7 @@ Ext.define("PSI.Funds.PrePaymentMainForm", {
 		});
 
 		store.on("beforeload", function() {
-			Ext.apply(store.proxy.extraParams, {
-				supplierId : me.getDetailParam()
-			});
+			Ext.apply(store.proxy.extraParams, me.getDetailParam());
 		});
 
 		me.__detailGrid = Ext.create("Ext.grid.Panel", {
@@ -229,7 +234,29 @@ Ext.define("PSI.Funds.PrePaymentMainForm", {
             },
 			title : "采购预付款明细",
 			border: 0,
-			bbar : [ {
+			tbar : [ {
+				xtype : "displayfield",
+				value : "业务日期 从"
+			}, {
+				id : "dtFrom",
+				xtype : "datefield",
+				format : "Y-m-d",
+				width : 90
+			}, {
+				xtype : "displayfield",
+				value : " 到 "
+			}, {
+				id : "dtTo",
+				xtype : "datefield",
+				format : "Y-m-d",
+				width : 90,
+				value : new Date()
+			}, {
+				text : "查询",
+				iconCls : "PSI-button-refresh",
+				handler : me.onQueryDetail,
+				scope : me
+			}, {
 				xtype : "pagingtoolbar",
 				store : store
 			} ],
@@ -301,6 +328,10 @@ Ext.define("PSI.Funds.PrePaymentMainForm", {
 			} ],
 			store : store
 		});
+		
+		var dt = new Date();
+		dt.setDate(dt.getDate() - 7);
+		Ext.getCmp("dtFrom").setValue(dt);
 
 		return me.__detailGrid;
 	},
@@ -352,5 +383,21 @@ Ext.define("PSI.Funds.PrePaymentMainForm", {
     		parentForm: this
     	});
     	form.show();
+    },
+    
+    onQueryDetail: function() {
+    	var dtTo = Ext.getCmp("dtTo").getValue();
+		if (dtTo == null) {
+			Ext.getCmp("dtTo").setValue(new Date());
+		}
+
+		var dtFrom = Ext.getCmp("dtFrom").getValue();
+		if (dtFrom == null) {
+			var dt = new Date();
+			dt.setDate(dt.getDate() - 7);
+			Ext.getCmp("dtFrom").setValue(dt);
+		}
+
+    	this.getDetailGrid().getStore().loadPage(1);
     }
 });

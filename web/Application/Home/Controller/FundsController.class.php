@@ -448,7 +448,8 @@ class FundsController extends Controller {
 		if (IS_POST) {
 			$params = array(
 					"supplierId" => I("post.supplierId"),
-					"page" => I("post.page"),
+					"dtFrom" => I("post.dtFrom"),
+					"dtTo" => I("post.dtTo"),
 					"start" => I("post.start"),
 					"limit" => I("post.limit")
 			);
