@@ -9,29 +9,35 @@ use Home\Common\FIdConst;
 
 /**
  * 业务设置Controller
- * @author 李静波
  *
+ * @author 李静波
+ *        
  */
 class BizConfigController extends Controller {
 
+	/**
+	 * 业务设置 - 主页面
+	 */
 	public function index() {
 		$us = new UserService();
 		
-		$this->assign("title", "业务设置");
-		$this->assign("uri", __ROOT__ . "/");
-		
-		$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
-		
-		$dtFlag = getdate();
-		$this->assign("dtFlag", $dtFlag[0]);
-		
 		if ($us->hasPermission(FIdConst::BIZ_CONFIG)) {
+			$this->assign("title", "业务设置");
+			$this->assign("uri", __ROOT__ . "/");
+			
+			$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
+			
+			$dtFlag = getdate();
+			$this->assign("dtFlag", $dtFlag[0]);
 			$this->display();
 		} else {
 			redirect(__ROOT__ . "/Home/User/login");
 		}
 	}
 
+	/**
+	 * 获得所有的配置项目
+	 */
 	public function allConfigs() {
 		if (IS_POST) {
 			$bs = new BizConfigService();
@@ -40,6 +46,9 @@ class BizConfigController extends Controller {
 		}
 	}
 
+	/**
+	 * 获得所有的配置项目以及配置项目附带的数据
+	 */
 	public function allConfigsWithExtData() {
 		if (IS_POST) {
 			$bs = new BizConfigService();
@@ -48,6 +57,9 @@ class BizConfigController extends Controller {
 		}
 	}
 
+	/**
+	 * 编辑配置项
+	 */
 	public function edit() {
 		if (IS_POST) {
 			$bs = new BizConfigService();

@@ -16,6 +16,9 @@ use Home\Service\BillViewService;
  */
 class BillController extends Controller {
 
+	/**
+	 * 判断当前用户对给定的fid是否有权限
+	 */
 	private function hasPermission($fid) {
 		$pm = false;
 		$idArray = array(
@@ -103,6 +106,9 @@ class BillController extends Controller {
 		}
 	}
 
+	/**
+	 * 查看采购退货出库单
+	 */
 	public function viewPRBill() {
 		$fid = I("get.fid");
 		if (! $this->hasPermission($fid)) {
