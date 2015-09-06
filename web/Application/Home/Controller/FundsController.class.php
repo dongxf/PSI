@@ -40,6 +40,9 @@ class FundsController extends Controller {
 		}
 	}
 
+	/**
+	 * 应付账款，查询往来单位分类
+	 */
 	public function payCategoryList() {
 		if (IS_POST) {
 			$params = array(
@@ -50,6 +53,9 @@ class FundsController extends Controller {
 		}
 	}
 
+	/**
+	 * 应付账款，总账
+	 */
 	public function payList() {
 		if (IS_POST) {
 			$params = array(
@@ -64,6 +70,9 @@ class FundsController extends Controller {
 		}
 	}
 
+	/**
+	 * 应付账款，明细账
+	 */
 	public function payDetailList() {
 		if (IS_POST) {
 			$params = array(
@@ -78,6 +87,9 @@ class FundsController extends Controller {
 		}
 	}
 
+	/**
+	 * 应付账款，付款记录
+	 */
 	public function payRecordList() {
 		if (IS_POST) {
 			$params = array(
@@ -92,6 +104,9 @@ class FundsController extends Controller {
 		}
 	}
 
+	/**
+	 * 应付账款，付款时候查询信息
+	 */
 	public function payRecInfo() {
 		if (IS_POST) {
 			$us = new UserService();
@@ -104,6 +119,9 @@ class FundsController extends Controller {
 		}
 	}
 
+	/**
+	 * 应付账款，新增付款记录
+	 */
 	public function addPayment() {
 		if (IS_POST) {
 			$params = array(
@@ -119,6 +137,9 @@ class FundsController extends Controller {
 		}
 	}
 
+	/**
+	 * 刷新应付账款总账信息
+	 */
 	public function refreshPayInfo() {
 		if (IS_POST) {
 			$params = array(
@@ -129,6 +150,9 @@ class FundsController extends Controller {
 		}
 	}
 
+	/**
+	 * 刷新应付账款明细账信息
+	 */
 	public function refreshPayDetailInfo() {
 		if (IS_POST) {
 			$params = array(
@@ -139,24 +163,30 @@ class FundsController extends Controller {
 		}
 	}
 
+	/**
+	 * 应收账款管理 - 主页面
+	 */
 	public function rvIndex() {
 		$us = new UserService();
 		
-		$this->assign("title", "应收账款管理");
-		$this->assign("uri", __ROOT__ . "/");
-		
-		$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
-		
-		$dtFlag = getdate();
-		$this->assign("dtFlag", $dtFlag[0]);
-		
 		if ($us->hasPermission(FIdConst::RECEIVING)) {
+			$this->assign("title", "应收账款管理");
+			$this->assign("uri", __ROOT__ . "/");
+			
+			$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
+			
+			$dtFlag = getdate();
+			$this->assign("dtFlag", $dtFlag[0]);
+			
 			$this->display();
 		} else {
 			redirect(__ROOT__ . "/Home/User/login");
 		}
 	}
 
+	/**
+	 * 获得应收账款往来单位的分类
+	 */
 	public function rvCategoryList() {
 		if (IS_POST) {
 			$params = array(
@@ -167,6 +197,9 @@ class FundsController extends Controller {
 		}
 	}
 
+	/**
+	 * 应收账款，总账
+	 */
 	public function rvList() {
 		if (IS_POST) {
 			$params = array(
@@ -181,6 +214,9 @@ class FundsController extends Controller {
 		}
 	}
 
+	/**
+	 * 应收账款，明细账
+	 */
 	public function rvDetailList() {
 		if (IS_POST) {
 			$params = array(
@@ -195,6 +231,9 @@ class FundsController extends Controller {
 		}
 	}
 
+	/**
+	 * 应收账款，收款记录
+	 */
 	public function rvRecordList() {
 		if (IS_POST) {
 			$params = array(
@@ -209,6 +248,9 @@ class FundsController extends Controller {
 		}
 	}
 
+	/**
+	 * 应收账款收款时候，查询信息
+	 */
 	public function rvRecInfo() {
 		if (IS_POST) {
 			$us = new UserService();
@@ -221,6 +263,9 @@ class FundsController extends Controller {
 		}
 	}
 
+	/**
+	 * 记录收款记录
+	 */
 	public function addRvRecord() {
 		if (IS_POST) {
 			$params = array(
@@ -236,6 +281,9 @@ class FundsController extends Controller {
 		}
 	}
 
+	/**
+	 * 刷新应收账款总账信息
+	 */
 	public function refreshRvInfo() {
 		if (IS_POST) {
 			$params = array(
@@ -246,6 +294,9 @@ class FundsController extends Controller {
 		}
 	}
 
+	/**
+	 * 刷新应收账款明细账信息
+	 */
 	public function refreshRvDetailInfo() {
 		if (IS_POST) {
 			$params = array(
@@ -256,6 +307,9 @@ class FundsController extends Controller {
 		}
 	}
 
+	/**
+	 * 现金收支查询 - 主页面
+	 */
 	public function cashIndex() {
 		$us = new UserService();
 		
@@ -273,6 +327,9 @@ class FundsController extends Controller {
 		}
 	}
 
+	/**
+	 * 现金收支，总账
+	 */
 	public function cashList() {
 		if (IS_POST) {
 			$params = array(
@@ -287,6 +344,9 @@ class FundsController extends Controller {
 		}
 	}
 
+	/**
+	 * 现金收支，明细账
+	 */
 	public function cashDetailList() {
 		if (IS_POST) {
 			$params = array(
@@ -320,6 +380,9 @@ class FundsController extends Controller {
 		}
 	}
 
+	/**
+	 * 收取预收款时候，查询信息
+	 */
 	public function addPreReceivingInfo() {
 		if (IS_POST) {
 			$ps = new PreReceivingService();
@@ -327,6 +390,9 @@ class FundsController extends Controller {
 		}
 	}
 
+	/**
+	 * 退回预收款时候，查询信息
+	 */
 	public function returnPreReceivingInfo() {
 		if (IS_POST) {
 			$ps = new PreReceivingService();
@@ -334,6 +400,9 @@ class FundsController extends Controller {
 		}
 	}
 
+	/**
+	 * 收取预收款
+	 */
 	public function addPreReceiving() {
 		if (IS_POST) {
 			$params = array(
@@ -348,6 +417,9 @@ class FundsController extends Controller {
 		}
 	}
 
+	/**
+	 * 退回预收款
+	 */
 	public function returnPreReceiving() {
 		if (IS_POST) {
 			$params = array(
@@ -362,6 +434,9 @@ class FundsController extends Controller {
 		}
 	}
 
+	/**
+	 * 预收款，总账
+	 */
 	public function prereceivingList() {
 		if (IS_POST) {
 			$params = array(
@@ -376,6 +451,9 @@ class FundsController extends Controller {
 		}
 	}
 
+	/**
+	 * 预收款，明细账
+	 */
 	public function prereceivingDetailList() {
 		if (IS_POST) {
 			$params = array(
@@ -412,6 +490,9 @@ class FundsController extends Controller {
 		}
 	}
 
+	/**
+	 * 付预付款时候，查询信息
+	 */
 	public function addPrePaymentInfo() {
 		if (IS_POST) {
 			$ps = new PrePaymentService();
@@ -419,6 +500,9 @@ class FundsController extends Controller {
 		}
 	}
 
+	/**
+	 * 付预付款
+	 */
 	public function addPrePayment() {
 		if (IS_POST) {
 			$params = array(
@@ -433,6 +517,9 @@ class FundsController extends Controller {
 		}
 	}
 
+	/**
+	 * 预付款，总账
+	 */
 	public function prepaymentList() {
 		if (IS_POST) {
 			$params = array(
@@ -447,6 +534,9 @@ class FundsController extends Controller {
 		}
 	}
 
+	/**
+	 * 预付款，明细账
+	 */
 	public function prepaymentDetailList() {
 		if (IS_POST) {
 			$params = array(
@@ -462,6 +552,9 @@ class FundsController extends Controller {
 		}
 	}
 
+	/**
+	 * 返回预付款时候，查询信息
+	 */
 	public function returnPrePaymentInfo() {
 		if (IS_POST) {
 			$ps = new PrePaymentService();
@@ -469,6 +562,9 @@ class FundsController extends Controller {
 		}
 	}
 
+	/**
+	 * 供应商返回预付款
+	 */
 	public function returnPrePayment() {
 		if (IS_POST) {
 			$params = array(
