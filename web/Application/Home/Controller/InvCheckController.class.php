@@ -10,29 +10,35 @@ use Home\Service\ICBillService;
 
 /**
  * 库存盘点Controller
- * 
+ *
  * @author 李静波
  *        
  */
 class InvCheckController extends Controller {
 
+	/**
+	 * 库存盘点 - 主页面
+	 */
 	public function index() {
 		$us = new UserService();
 		
-		$this->assign("title", "库存盘点");
-		$this->assign("uri", __ROOT__ . "/");
-		
-		$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
-		$dtFlag = getdate();
-		$this->assign("dtFlag", $dtFlag[0]);
-		
 		if ($us->hasPermission(FIdConst::INVENTORY_CHECK)) {
+			$this->assign("title", "库存盘点");
+			$this->assign("uri", __ROOT__ . "/");
+			
+			$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
+			$dtFlag = getdate();
+			$this->assign("dtFlag", $dtFlag[0]);
+			
 			$this->display();
 		} else {
 			redirect(__ROOT__ . "/Home/User/login");
 		}
 	}
 
+	/**
+	 * 盘点单，主表
+	 */
 	public function icbillList() {
 		if (IS_POST) {
 			$params = array(
@@ -51,6 +57,9 @@ class InvCheckController extends Controller {
 		}
 	}
 
+	/**
+	 * 获得某个盘点单的信息
+	 */
 	public function icBillInfo() {
 		if (IS_POST) {
 			$params = array(
@@ -63,6 +72,9 @@ class InvCheckController extends Controller {
 		}
 	}
 
+	/**
+	 * 新增或编辑盘点单
+	 */
 	public function editICBill() {
 		if (IS_POST) {
 			$params = array(
@@ -75,6 +87,9 @@ class InvCheckController extends Controller {
 		}
 	}
 
+	/**
+	 * 盘点单明细记录
+	 */
 	public function icBillDetailList() {
 		if (IS_POST) {
 			$params = array(
@@ -87,6 +102,9 @@ class InvCheckController extends Controller {
 		}
 	}
 
+	/**
+	 * 删除盘点单
+	 */
 	public function deleteICBill() {
 		if (IS_POST) {
 			$params = array(
@@ -98,15 +116,18 @@ class InvCheckController extends Controller {
 			$this->ajaxReturn($ic->deleteICBill($params));
 		}
 	}
-	
+
+	/**
+	 * 提交盘点单
+	 */
 	public function commitICBill() {
 		if (IS_POST) {
 			$params = array(
 					"id" => I("post.id")
 			);
-				
+			
 			$ic = new ICBillService();
-				
+			
 			$this->ajaxReturn($ic->commitICBill($params));
 		}
 	}
