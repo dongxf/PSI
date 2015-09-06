@@ -9,29 +9,36 @@ use Home\Common\FIdConst;
 
 /**
  * 客户资料Controller
- * @author 李静波
  *
+ * @author 李静波
+ *        
  */
 class CustomerController extends Controller {
 
+	/**
+	 * 客户资料 - 主页面
+	 */
 	public function index() {
 		$us = new UserService();
 		
-		$this->assign("title", "客户资料");
-		$this->assign("uri", __ROOT__ . "/");
-		
-		$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
-		
-		$dtFlag = getdate();
-		$this->assign("dtFlag", $dtFlag[0]);
-		
 		if ($us->hasPermission(FIdConst::CUSTOMER)) {
+			$this->assign("title", "客户资料");
+			$this->assign("uri", __ROOT__ . "/");
+			
+			$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
+			
+			$dtFlag = getdate();
+			$this->assign("dtFlag", $dtFlag[0]);
+			
 			$this->display();
 		} else {
 			redirect(__ROOT__ . "/Home/User/login");
 		}
 	}
 
+	/**
+	 * 获得客户分类列表
+	 */
 	public function categoryList() {
 		if (IS_POST) {
 			$cs = new CustomerService();
@@ -44,11 +51,14 @@ class CustomerController extends Controller {
 					"tel" => I("post.tel"),
 					"qq" => I("post.qq")
 			);
-				
+			
 			$this->ajaxReturn($cs->categoryList($params));
 		}
 	}
 
+	/**
+	 * 新增或编辑客户分类
+	 */
 	public function editCategory() {
 		if (IS_POST) {
 			$params = array(
@@ -61,6 +71,9 @@ class CustomerController extends Controller {
 		}
 	}
 
+	/**
+	 * 删除客户分类
+	 */
 	public function deleteCategory() {
 		if (IS_POST) {
 			$params = array(
@@ -71,6 +84,9 @@ class CustomerController extends Controller {
 		}
 	}
 
+	/**
+	 * 新增或编辑客户资料
+	 */
 	public function editCustomer() {
 		if (IS_POST) {
 			$params = array(
@@ -101,6 +117,9 @@ class CustomerController extends Controller {
 		}
 	}
 
+	/**
+	 * 获得客户列表
+	 */
 	public function customerList() {
 		if (IS_POST) {
 			$params = array(
@@ -121,6 +140,9 @@ class CustomerController extends Controller {
 		}
 	}
 
+	/**
+	 * 删除客户
+	 */
 	public function deleteCustomer() {
 		if (IS_POST) {
 			$params = array(
@@ -131,6 +153,9 @@ class CustomerController extends Controller {
 		}
 	}
 
+	/**
+	 * 客户自定义字段，查询客户
+	 */
 	public function queryData() {
 		if (IS_POST) {
 			$params = array(
@@ -140,7 +165,10 @@ class CustomerController extends Controller {
 			$this->ajaxReturn($cs->queryData($params));
 		}
 	}
-	
+
+	/**
+	 * 获得某个客户的信息
+	 */
 	public function customerInfo() {
 		if (IS_POST) {
 			$params = array(
