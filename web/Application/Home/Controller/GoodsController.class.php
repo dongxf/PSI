@@ -94,6 +94,9 @@ class GoodsController extends Controller {
 		}
 	}
 
+	/**
+	 * 获得商品分类
+	 */
 	public function allCategories() {
 		if (IS_POST) {
 			$gs = new GoodsService();
@@ -107,6 +110,9 @@ class GoodsController extends Controller {
 		}
 	}
 
+	/**
+	 * 新增或编辑商品分类
+	 */
 	public function editCategory() {
 		if (IS_POST) {
 			$params = array(
@@ -119,6 +125,9 @@ class GoodsController extends Controller {
 		}
 	}
 
+	/**
+	 * 删除商品分类
+	 */
 	public function deleteCategory() {
 		if (IS_POST) {
 			$params = array(
@@ -129,6 +138,9 @@ class GoodsController extends Controller {
 		}
 	}
 
+	/**
+	 * 获得商品列表
+	 */
 	public function goodsList() {
 		if (IS_POST) {
 			$params = array(
@@ -146,6 +158,9 @@ class GoodsController extends Controller {
 		}
 	}
 
+	/**
+	 * 新增或编辑商品
+	 */
 	public function editGoods() {
 		if (IS_POST) {
 			$params = array(
@@ -164,6 +179,9 @@ class GoodsController extends Controller {
 		}
 	}
 
+	/**
+	 * 删除商品
+	 */
 	public function deleteGoods() {
 		if (IS_POST) {
 			$params = array(
@@ -174,6 +192,9 @@ class GoodsController extends Controller {
 		}
 	}
 
+	/**
+	 * 商品自定义字段，查询数据
+	 */
 	public function queryData() {
 		if (IS_POST) {
 			$queryKey = I("post.queryKey");
@@ -182,6 +203,9 @@ class GoodsController extends Controller {
 		}
 	}
 
+	/**
+	 * 商品自定义字段，查询数据
+	 */
 	public function queryDataWithSalePrice() {
 		if (IS_POST) {
 			$queryKey = I("post.queryKey");
@@ -190,6 +214,9 @@ class GoodsController extends Controller {
 		}
 	}
 
+	/**
+	 * 商品自定义字段，查询数据
+	 */
 	public function queryDataWithPurchasePrice() {
 		if (IS_POST) {
 			$queryKey = I("post.queryKey");
@@ -197,7 +224,10 @@ class GoodsController extends Controller {
 			$this->ajaxReturn($gs->queryDataWithPurchasePrice($queryKey));
 		}
 	}
-	
+
+	/**
+	 * 查询某个商品的信息
+	 */
 	public function goodsInfo() {
 		if (IS_POST) {
 			$id = I("post.id");
@@ -208,6 +238,9 @@ class GoodsController extends Controller {
 		}
 	}
 
+	/**
+	 * 获得商品的安全库存信息
+	 */
 	public function goodsSafetyInventoryList() {
 		if (IS_POST) {
 			$params = array(
@@ -218,6 +251,9 @@ class GoodsController extends Controller {
 		}
 	}
 
+	/**
+	 * 设置安全库存时候，查询信息
+	 */
 	public function siInfo() {
 		if (IS_POST) {
 			$params = array(
@@ -228,6 +264,9 @@ class GoodsController extends Controller {
 		}
 	}
 
+	/**
+	 * 设置安全库存
+	 */
 	public function editSafetyInventory() {
 		if (IS_POST) {
 			$params = array(
@@ -238,6 +277,9 @@ class GoodsController extends Controller {
 		}
 	}
 
+	/**
+	 * 根据条形码，查询商品信息
+	 */
 	public function queryGoodsInfoByBarcode() {
 		if (IS_POST) {
 			$params = array(
