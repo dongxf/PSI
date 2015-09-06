@@ -8,7 +8,7 @@ namespace Home\Service;
  * @author 李静波
  */
 class UpdateDBService extends PSIBaseService {
-	private $CURRENT_DB_VERSION = "20150903-002";
+	private $CURRENT_DB_VERSION = "20150906-002";
 
 	private function tableExists($db, $tableName) {
 		$dbName = C('DB_NAME');
@@ -125,6 +125,17 @@ class UpdateDBService extends PSIBaseService {
 	}
 
 	private function t_config($db) {
+		$tableName = "t_config";
+		
+		$columnName = "show_order";
+		if (! $this->columnExists($db, $tableName, $columnName)) {
+			$sql = "alter table {$tableName} add {$columnName} int(11) default null;";
+			$db->execute($sql);
+			
+			$sql = "delete from t_config";
+			$db->execute($sql);
+		}
+		
 		// 移走商品双单位
 		$sql = "delete from t_config where id = '1001-01'";
 		$db->execute($sql);
@@ -176,6 +187,46 @@ class UpdateDBService extends PSIBaseService {
 		if ($cnt == 0) {
 			$sql = "insert into t_config (id, name, value, note, show_order)
 					values ('9000-05', '公司邮编', '', '', 104)";
+			$db->execute($sql);
+		}
+		
+		// 2001-01
+		$sql = "select count(*) as cnt from t_config where id = '2001-01' ";
+		$data = $db->query($sql);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_config (id, name, value, note, show_order)
+					values ('2001-01', '采购入库默认仓库', '', '', 200)";
+			$db->execute($sql);
+		}
+		
+		// 2002-02
+		$sql = "select count(*) as cnt from t_config where id = '2002-02' ";
+		$data = $db->query($sql);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_config (id, name, value, note, show_order)
+					values ('2002-02', '销售出库默认仓库', '', '', 300)";
+			$db->execute($sql);
+		}
+		
+		// 2002-01
+		$sql = "select count(*) as cnt from t_config where id = '2002-01' ";
+		$data = $db->query($sql);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_config (id, name, value, note, show_order)
+					values ('2002-01', '销售出库单允许编辑销售单价', '0', '当允许编辑的时候，还需要给用户赋予权限[销售出库单允许编辑销售单价]', 301)";
+			$db->execute($sql);
+		}
+		
+		// 1003-01
+		$sql = "select count(*) as cnt from t_config where id = '1003-01' ";
+		$data = $db->query($sql);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_config (id, name, value, note, show_order)
+					values ('1003-01', '仓库需指定组织机构', '0', '当仓库需要指定组织机构的时候，就意味着可以控制仓库的使用人', 401)";
 			$db->execute($sql);
 		}
 	}
