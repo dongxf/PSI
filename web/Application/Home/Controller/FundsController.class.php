@@ -19,18 +19,21 @@ use Home\Service\PrePaymentService;
  */
 class FundsController extends Controller {
 
+	/**
+	 * 应付账款管理 - 主页面
+	 */
 	public function payIndex() {
 		$us = new UserService();
 		
-		$this->assign("title", "应付账款管理");
-		$this->assign("uri", __ROOT__ . "/");
-		
-		$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
-		
-		$dtFlag = getdate();
-		$this->assign("dtFlag", $dtFlag[0]);
-		
 		if ($us->hasPermission(FIdConst::PAYABLES)) {
+			$this->assign("title", "应付账款管理");
+			$this->assign("uri", __ROOT__ . "/");
+			
+			$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
+			
+			$dtFlag = getdate();
+			$this->assign("dtFlag", $dtFlag[0]);
+			
 			$this->display();
 		} else {
 			redirect(__ROOT__ . "/Home/User/login");
