@@ -106,6 +106,7 @@ Ext.define("PSI.Permission.EditForm", {
         Ext.apply(me, {
             title: entity == null ? "新增角色" : "编辑角色",
             modal: true,
+            resizable: false,
             onEsc: Ext.emptyFn,
             width: 700,
             height: 600,
@@ -122,7 +123,10 @@ Ext.define("PSI.Permission.EditForm", {
                         {
                             id: "editForm",
                             xtype: "form",
-                            layout: "form",
+                            layout: {
+            					type : "table",
+            					columns : 1
+            				},
                             border: 0,
                             bodyPadding: 5,
                             defaultType: 'textfield',
@@ -130,7 +134,9 @@ Ext.define("PSI.Permission.EditForm", {
                                 labelWidth: 60,
                                 labelAlign: "right",
                                 labelSeparator: "",
-                                msgTarget: 'side'
+                                msgTarget: 'side',
+                                width: 670,
+                                margin: "5"
                             },
                             items: [
                                 {
