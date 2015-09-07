@@ -13,6 +13,7 @@ Ext.define("PSI.User.LoginForm", {
     },
     modal: true,
     closable: false,
+    resizable: false,
     onEsc: Ext.emptyFn,
     width: 400,
     layout: "fit",
@@ -26,7 +27,10 @@ Ext.define("PSI.User.LoginForm", {
             items: [{
                 id: "loginForm",
                 xtype: "form",
-                layout: "form",
+                layout: {
+					type : "table",
+					columns : 1
+				},
                 height: "100%",
                 border: 0,
                 bodyPadding: 5,
@@ -39,6 +43,7 @@ Ext.define("PSI.User.LoginForm", {
                 },
                 items: [{
                     id: "editLoginName",
+                    width: 370,
                     fieldLabel: "登录名",
                     allowBlank: false,
                     blankText: "没有输入登录名",
@@ -60,6 +65,7 @@ Ext.define("PSI.User.LoginForm", {
                     beforeLabelTextTpl: PSI.Const.REQUIRED,
                     inputType: "password",
                     name: "password",
+                    width: 370,
                     listeners: {
                         specialkey: function (field, e) {
                             if (e.getKey() === e.ENTER) {
