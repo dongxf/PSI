@@ -15,6 +15,7 @@ Ext.define("PSI.User.OrgEditForm", {
         Ext.apply(me, {
             title: entity === null ? "新增组织机构" : "编辑组织机构",
             modal: true,
+            resizable: false,
             onEsc: Ext.emptyFn,
             width: 400,
             height: 160,
@@ -24,7 +25,10 @@ Ext.define("PSI.User.OrgEditForm", {
                 {
                     id: "editForm",
                     xtype: "form",
-                    layout: "form",
+                    layout: {
+    					type : "table",
+    					columns : 1
+    				},
                     height: "100%",
                     bodyPadding: 5,
                     defaultType: 'textfield',
@@ -53,7 +57,8 @@ Ext.define("PSI.User.OrgEditForm", {
                                     fn: me.onEditNameSpecialKey,
                                     scope: me
                                 }
-                            }
+                            },
+                            width: 370
                         },
                         {
                             id: "editParentOrg",
@@ -65,7 +70,8 @@ Ext.define("PSI.User.OrgEditForm", {
                                     fn: me.onEditParentOrgSpecialKey,
                                     scope: me
                                 }
-                            }
+                            },
+                            width: 370
                         },
                         {
                             id: "editParentOrgId",
@@ -86,7 +92,8 @@ Ext.define("PSI.User.OrgEditForm", {
                                     fn: me.onEditOrgCodeSpecialKey,
                                     scope: me
                                 }
-                            }
+                            },
+                            width: 370
                         }
                     ],
                     buttons: [
