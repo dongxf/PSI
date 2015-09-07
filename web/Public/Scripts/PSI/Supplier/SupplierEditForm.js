@@ -42,6 +42,7 @@ Ext.define("PSI.Supplier.SupplierEditForm", {
         Ext.apply(me, {
             title: entity == null ? "新增供应商" : "编辑供应商",
             modal: true,
+            resizable: false,
             onEsc: Ext.emptyFn,
             width: 550,
             height: 400,
