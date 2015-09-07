@@ -11,6 +11,7 @@ Ext.define("PSI.Funds.ReturnPreReceivingForm", {
 		Ext.apply(me, {
 			title : "退还预收款",
 			modal : true,
+			resizable: false,
 			onEsc : Ext.emptyFn,
 			width : 400,
 			height : 200,
@@ -25,7 +26,10 @@ Ext.define("PSI.Funds.ReturnPreReceivingForm", {
 			items : [ {
 				id : "editForm",
 				xtype : "form",
-				layout : "form",
+				layout : {
+					type : "table",
+					columns : 1
+				},
 				height : "100%",
 				bodyPadding : 5,
 				defaultType : 'textfield',
@@ -33,7 +37,9 @@ Ext.define("PSI.Funds.ReturnPreReceivingForm", {
 					labelWidth : 60,
 					labelAlign : "right",
 					labelSeparator : "",
-					msgTarget : 'side'
+					msgTarget : 'side',
+					width: 370,
+					margin: "5"
 				},
 				items : [
 				{
