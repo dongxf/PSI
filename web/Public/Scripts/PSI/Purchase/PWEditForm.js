@@ -311,7 +311,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 		Ext.define(modelName, {
 			extend : "Ext.data.Model",
 			fields : [ "id", "goodsId", "goodsCode", "goodsName", "goodsSpec",
-					"unitName", "goodsCount", "goodsMoney", "goodsPrice" ]
+					"unitName", "goodsCount", {name: "goodsMoney", type: "float"}, "goodsPrice" ]
 		});
 		var store = Ext.create("Ext.data.Store", {
 			autoLoad : false,
@@ -333,6 +333,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 			viewConfig: {
                 enableTextSelection: true
             },
+            features: [{ftype: "summary"}],
 			plugins : [ me.__cellEditing ],
 			columnLines : true,
 			columns : [
@@ -398,7 +399,10 @@ Ext.define("PSI.Purchase.PWEditForm", {
 						editor : {
 							xtype : "numberfield",
 							hideTrigger : true
-						}
+						},
+						summaryRenderer: function () {
+	                        return "采购金额合计";
+	                    }
 					},
 					{
 						header : "采购金额",
@@ -412,7 +416,8 @@ Ext.define("PSI.Purchase.PWEditForm", {
 						editor : {
 							xtype : "numberfield",
 							hideTrigger : true
-						}
+						},
+						summaryType: "sum"
 					},
 					{
 						header : "",

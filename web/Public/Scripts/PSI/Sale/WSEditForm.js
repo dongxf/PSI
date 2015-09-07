@@ -341,7 +341,7 @@ Ext.define("PSI.Sale.WSEditForm", {
         Ext.define("PSIWSBillDetail_EditForm", {
             extend: "Ext.data.Model",
             fields: ["id", "goodsId", "goodsCode", "goodsName", "goodsSpec", "unitName", "goodsCount",
-                "goodsMoney", "goodsPrice", "sn"]
+                     {name: "goodsMoney", type: "float"}, "goodsPrice", "sn"]
         });
         var store = Ext.create("Ext.data.Store", {
             autoLoad: false,
@@ -363,6 +363,7 @@ Ext.define("PSI.Sale.WSEditForm", {
         	viewConfig: {
                 enableTextSelection: true
             },
+            features: [{ftype: "summary"}],
             plugins: [me.__cellEditing],
             columnLines: true,
             columns: [
@@ -380,9 +381,13 @@ Ext.define("PSI.Sale.WSEditForm", {
                 {header: "单位", dataIndex: "unitName", menuDisabled: true, sortable: false, draggable: false, width: 60},
                 {header: "销售单价", dataIndex: "goodsPrice", menuDisabled: true, draggable: false,
                     sortable: false, align: "right", xtype: "numbercolumn",
-                    width: 100, id: "columnGoodsPrice"},
+                    width: 100, id: "columnGoodsPrice",
+                    summaryRenderer: function () {
+                        return "销售金额合计";
+                    }},
                 {header: "销售金额", dataIndex: "goodsMoney", menuDisabled: true, draggable: false,
-                    sortable: false, align: "right", xtype: "numbercolumn", width: 120, id: "columnGoodsMoney"},
+                    sortable: false, align: "right", xtype: "numbercolumn", width: 120, id: "columnGoodsMoney",
+                    summaryType: "sum"},
                 {
                 	header: "序列号", dataIndex: "sn", menuDisabled: true, sortable: false, draggable: false,
                 	editor: {

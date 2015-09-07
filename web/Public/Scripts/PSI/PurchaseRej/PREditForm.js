@@ -291,7 +291,7 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 			extend : "Ext.data.Model",
 			fields : [ "id", "goodsId", "goodsCode", "goodsName", "goodsSpec",
 					"unitName", "goodsCount", "goodsMoney", "goodsPrice", "rejCount",
-					"rejPrice", "rejMoney"]
+					"rejPrice", {name: "rejMoney", type: "float"}]
 		});
 		var store = Ext.create("Ext.data.Store", {
 			autoLoad : false,
@@ -313,6 +313,7 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 			viewConfig: {
                 enableTextSelection: true
             },
+            features: [{ftype: "summary"}],
 			plugins : [ me.__cellEditing ],
 			columnLines : true,
 			columns : [
@@ -377,7 +378,10 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 						editor : {
 							xtype : "numberfield",
 							hideTrigger : true
-						}
+						},
+						summaryRenderer: function () {
+	                        return "退货金额合计";
+	                    }
 					},
 					{
 						header : "退货金额",
@@ -391,7 +395,8 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 						editor : {
 							xtype : "numberfield",
 							hideTrigger : true
-						}
+						},
+						summaryType: "sum"
 					},{
 						header : "原采购数量",
 						dataIndex : "goodsCount",

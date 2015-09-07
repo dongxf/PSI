@@ -306,7 +306,7 @@ Ext.define("PSI.Sale.SREditForm", {
         Ext.define(modelName, {
             extend: "Ext.data.Model",
             fields: ["id", "goodsId", "goodsCode", "goodsName", "goodsSpec", "unitName", "goodsCount",
-                "goodsMoney", "goodsPrice", "rejCount", "rejPrice", "rejMoney", "sn"]
+                "goodsMoney", "goodsPrice", "rejCount", "rejPrice", {name: "rejMoney", type: "float"}, "sn"]
         });
         var store = Ext.create("Ext.data.Store", {
             autoLoad: false,
@@ -328,6 +328,7 @@ Ext.define("PSI.Sale.SREditForm", {
         	viewConfig: {
                 enableTextSelection: true
             },
+            features: [{ftype: "summary"}],
             plugins: [me.__cellEditing],
             columnLines: true,
             columns: [
@@ -348,13 +349,17 @@ Ext.define("PSI.Sale.SREditForm", {
                     width: 100, 
                     editor: {xtype: "numberfield",
                         allowDecimals: true,
-                        hideTrigger: true}
+                        hideTrigger: true},
+                    summaryRenderer: function () {
+                        return "退货金额合计";
+                    }
                 },
                 {header: "退货金额", dataIndex: "rejMoney", menuDisabled: true, draggable: false,
                     sortable: false, align: "right", xtype: "numbercolumn", width: 120,
                     editor: {xtype: "numberfield",
                         allowDecimals: true,
-                        hideTrigger: true}},
+                        hideTrigger: true},
+                    summaryType: "sum"},
                 {header: "销售数量", dataIndex: "goodsCount", menuDisabled: true, draggable: false,
                     sortable: false, align: "right", width: 100
                 },{header: "销售单价", dataIndex: "goodsPrice", menuDisabled: true, draggable: false,
