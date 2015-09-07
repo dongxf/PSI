@@ -12,6 +12,7 @@ Ext.define("PSI.Funds.PaymentEditForm", {
 		Ext.apply(me, {
 			title : "录入付款记录",
 			modal : true,
+			resizable: false,
 			onEsc : Ext.emptyFn,
 			width : 400,
 			height : 230,
@@ -26,7 +27,10 @@ Ext.define("PSI.Funds.PaymentEditForm", {
 			items : [ {
 				id : "editForm",
 				xtype : "form",
-				layout : "form",
+				layout : {
+					type : "table",
+					columns : 1
+				},
 				height : "100%",
 				bodyPadding : 5,
 				defaultType : 'textfield',
@@ -34,7 +38,9 @@ Ext.define("PSI.Funds.PaymentEditForm", {
 					labelWidth : 60,
 					labelAlign : "right",
 					labelSeparator : "",
-					msgTarget : 'side'
+					msgTarget : 'side',
+					width: 370,
+					margin: "5"
 				},
 				items : [ {
 					xtype : "hidden",
