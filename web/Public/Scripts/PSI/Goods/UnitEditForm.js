@@ -37,6 +37,7 @@ Ext.define("PSI.Goods.UnitEditForm", {
         Ext.apply(me, {
             title: entity == null ? "新增商品计量单位" : "编辑商品计量单位",
             modal: true,
+            resizable: false,
             onEsc: Ext.emptyFn,
             width: 400,
             height: 110,
@@ -45,7 +46,10 @@ Ext.define("PSI.Goods.UnitEditForm", {
                 {
                     id: "editForm",
                     xtype: "form",
-                    layout: "form",
+                    layout: {
+    					type : "table",
+    					columns : 1
+    				},
                     height: "100%",
                     bodyPadding: 5,
                     defaultType: 'textfield',
@@ -53,7 +57,9 @@ Ext.define("PSI.Goods.UnitEditForm", {
                         labelWidth: 60,
                         labelAlign: "right",
                         labelSeparator: "",
-                        msgTarget: 'side'
+                        msgTarget: 'side',
+                        width: 370,
+                        margin: "5"
                     },
                     items: [
                         {

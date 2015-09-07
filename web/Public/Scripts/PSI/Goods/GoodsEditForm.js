@@ -58,6 +58,7 @@ Ext.define("PSI.Goods.GoodsEditForm", {
         Ext.apply(me, {
             title: entity == null ? "新增商品" : "编辑商品",
             modal: true,
+            resizable: false,
             onEsc: Ext.emptyFn,
             width: 460,
             height: 210,

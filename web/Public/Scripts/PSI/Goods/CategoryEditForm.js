@@ -41,6 +41,7 @@ Ext.define("PSI.Goods.CategoryEditForm", {
         Ext.apply(me, {
             title: entity == null ? "新增商品分类" : "编辑商品分类",
             modal: true,
+            resizable: false,
             onEsc: Ext.emptyFn,
             width: 400,
             height: 130,
@@ -49,7 +50,10 @@ Ext.define("PSI.Goods.CategoryEditForm", {
                 {
                     id: "editForm",
                     xtype: "form",
-                    layout: "form",
+                    layout: {
+    					type : "table",
+    					columns : 1
+    				},
                     height: "100%",
                     bodyPadding: 5,
                     defaultType: 'textfield',
@@ -57,7 +61,8 @@ Ext.define("PSI.Goods.CategoryEditForm", {
                         labelWidth: 60,
                         labelAlign: "right",
                         labelSeparator: "",
-                        msgTarget: 'side'
+                        msgTarget: 'side',
+                        width: 370
                     },
                     items: [
                         {
