@@ -43,6 +43,7 @@ Ext.define("PSI.Customer.CustomerEditForm", {
         Ext.apply(me, {
             title: entity == null ? "新增客户" : "编辑客户",
             modal: true,
+            resizable: false,
             onEsc: Ext.emptyFn,
             width: 550,
             height: 400,
