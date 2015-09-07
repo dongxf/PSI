@@ -40,6 +40,7 @@ Ext.define("PSI.Warehouse.EditForm", {
         Ext.apply(me, {
             title: entity == null ? "新增仓库" : "编辑仓库",
             modal: true,
+            resizable: false,
             onEsc: Ext.emptyFn,
             width: 400,
             height: 130,
@@ -58,7 +59,10 @@ Ext.define("PSI.Warehouse.EditForm", {
                 {
                     id: "editForm",
                     xtype: "form",
-                    layout: "form",
+                    layout: {
+    					type : "table",
+    					columns : 1
+    				},
                     height: "100%",
                     bodyPadding: 5,
                     defaultType: 'textfield',
@@ -66,7 +70,9 @@ Ext.define("PSI.Warehouse.EditForm", {
                         labelWidth: 60,
                         labelAlign: "right",
                         labelSeparator: "",
-                        msgTarget: 'side'
+                        msgTarget: 'side',
+                        width: 370,
+                        margin: "5"
                     },
                     items: [
                         {
