@@ -22,7 +22,10 @@ Ext.define("PSI.User.ChangeUserPasswordForm", {
                 {
                     id: "editForm",
                     xtype: "form",
-                    layout: "form",
+                    layout: {
+    					type : "table",
+    					columns : 1
+    				},
                     height: "100%",
                     bodyPadding: 5,
                     defaultType: 'textfield',
@@ -30,7 +33,8 @@ Ext.define("PSI.User.ChangeUserPasswordForm", {
                         labelWidth: 60,
                         labelAlign: "right",
                         labelSeparator: "",
-                        msgTarget: 'side'
+                        msgTarget: 'side',
+                        width: 370
                     },
                     items: [
                         {
