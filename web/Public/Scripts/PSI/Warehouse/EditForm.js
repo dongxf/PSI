@@ -43,7 +43,7 @@ Ext.define("PSI.Warehouse.EditForm", {
             resizable: false,
             onEsc: Ext.emptyFn,
             width: 400,
-            height: 130,
+            height: 140,
             layout: "fit",
             listeners: {
                 show: {
