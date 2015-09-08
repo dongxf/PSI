@@ -9,7 +9,7 @@ use Home\Common\FIdConst;
 
 /**
  * 权限Controller
- * 
+ *
  * @author 李静波
  *        
  */
@@ -35,6 +35,9 @@ class PermissionController extends Controller {
 		}
 	}
 
+	/**
+	 * 获得所有的角色列表
+	 */
 	public function roleList() {
 		if (IS_POST) {
 			$ps = new PermissionService();
@@ -45,6 +48,9 @@ class PermissionController extends Controller {
 		}
 	}
 
+	/**
+	 * 获得某个角色的所有权限
+	 */
 	public function permissionList() {
 		if (IS_POST) {
 			$ps = new PermissionService();
@@ -56,6 +62,9 @@ class PermissionController extends Controller {
 		}
 	}
 
+	/**
+	 * 获得某个角色的所有用户
+	 */
 	public function userList() {
 		if (IS_POST) {
 			$ps = new PermissionService();
@@ -67,6 +76,9 @@ class PermissionController extends Controller {
 		}
 	}
 
+	/**
+	 * 新增或编辑角色
+	 */
 	public function editRole() {
 		if (IS_POST) {
 			$ps = new PermissionService();
@@ -83,6 +95,9 @@ class PermissionController extends Controller {
 		}
 	}
 
+	/**
+	 * 选择权限
+	 */
 	public function selectPermission() {
 		if (IS_POST) {
 			$idList = I("post.idList");
@@ -94,6 +109,9 @@ class PermissionController extends Controller {
 		}
 	}
 
+	/**
+	 * 选择用户
+	 */
 	public function selectUsers() {
 		if (IS_POST) {
 			$idList = I("post.idList");
@@ -105,6 +123,9 @@ class PermissionController extends Controller {
 		}
 	}
 
+	/**
+	 * 删除角色
+	 */
 	public function deleteRole() {
 		if (IS_POST) {
 			$id = I("post.id");
