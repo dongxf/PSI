@@ -13,6 +13,9 @@ use Home\Service\PortalService;
  */
 class PortalController extends Controller {
 
+	/**
+	 * 库存看板
+	 */
 	public function inventoryPortal() {
 		if (IS_POST) {
 			$ps = new PortalService();
@@ -21,6 +24,9 @@ class PortalController extends Controller {
 		}
 	}
 
+	/**
+	 * 销售看板
+	 */
 	public function salePortal() {
 		if (IS_POST) {
 			$ps = new PortalService();
@@ -29,6 +35,9 @@ class PortalController extends Controller {
 		}
 	}
 
+	/**
+	 * 采购看板
+	 */
 	public function purchasePortal() {
 		if (IS_POST) {
 			$ps = new PortalService();
@@ -36,11 +45,14 @@ class PortalController extends Controller {
 			$this->ajaxReturn($ps->purchasePortal());
 		}
 	}
-	
+
+	/**
+	 * 资金看板
+	 */
 	public function moneyPortal() {
 		if (IS_POST) {
 			$ps = new PortalService();
-				
+			
 			$this->ajaxReturn($ps->moneyPortal());
 		}
 	}
