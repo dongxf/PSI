@@ -9,45 +9,55 @@ use Home\Common\FIdConst;
 
 /**
  * 库存Controller
- * @author 李静波
  *
+ * @author 李静波
+ *        
  */
 class InventoryController extends Controller {
 
+	/**
+	 * 库存建账 - 主页面
+	 */
 	public function initIndex() {
 		$us = new UserService();
 		
-		$this->assign("title", "库存建账");
-		$this->assign("uri", __ROOT__ . "/");
-		
-		$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
-		$dtFlag = getdate();
-		$this->assign("dtFlag", $dtFlag[0]);
-		
 		if ($us->hasPermission(FIdConst::INVENTORY_INIT)) {
+			$this->assign("title", "库存建账");
+			$this->assign("uri", __ROOT__ . "/");
+			
+			$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
+			$dtFlag = getdate();
+			$this->assign("dtFlag", $dtFlag[0]);
+			
 			$this->display();
 		} else {
 			redirect(__ROOT__ . "/Home/User/login");
 		}
 	}
 
+	/**
+	 * 库存账查询
+	 */
 	public function inventoryQuery() {
 		$us = new UserService();
 		
-		$this->assign("title", "库存账查询");
-		$this->assign("uri", __ROOT__ . "/");
-		
-		$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
-		$dtFlag = getdate();
-		$this->assign("dtFlag", $dtFlag[0]);
-		
 		if ($us->hasPermission(FIdConst::INVENTORY_QUERY)) {
+			$this->assign("title", "库存账查询");
+			$this->assign("uri", __ROOT__ . "/");
+			
+			$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
+			$dtFlag = getdate();
+			$this->assign("dtFlag", $dtFlag[0]);
+			
 			$this->display();
 		} else {
 			redirect(__ROOT__ . "/Home/User/login");
 		}
 	}
 
+	/**
+	 * 获得所有仓库列表
+	 */
 	public function warehouseList() {
 		if (IS_POST) {
 			$is = new InventoryService();
@@ -55,6 +65,9 @@ class InventoryController extends Controller {
 		}
 	}
 
+	/**
+	 * 库存总账
+	 */
 	public function inventoryList() {
 		if (IS_POST) {
 			$params = array(
@@ -71,6 +84,9 @@ class InventoryController extends Controller {
 		}
 	}
 
+	/**
+	 * 库存明细账
+	 */
 	public function inventoryDetailList() {
 		if (IS_POST) {
 			$params = array(
