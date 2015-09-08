@@ -36,12 +36,12 @@ Ext.define("PSI.Bizlog.MainForm", {
             columnLines: true,
             columns: [
                 Ext.create("Ext.grid.RowNumberer", {text: "序号", width: 50}),
-                {text: "登录名", dataIndex: "loginName", width: 60, menuDisabled: true},
-                {text: "姓名", dataIndex: "userName", width: 80, menuDisabled: true},
-                {text: "IP", dataIndex: "ip", width: 120, menuDisabled: true},
-                {text: "日志分类", dataIndex: "logCategory", width: 150, menuDisabled: true},
-                {text: "日志内容", dataIndex: "content", flex: 1, menuDisabled: true},
-                {text: "日志记录时间", dataIndex: "dt", width: 140, menuDisabled: true}
+                {text: "登录名", dataIndex: "loginName", width: 60, menuDisabled: true, sortable: false},
+                {text: "姓名", dataIndex: "userName", width: 80, menuDisabled: true, sortable: false},
+                {text: "IP", dataIndex: "ip", width: 120, menuDisabled: true, sortable: false},
+                {text: "日志分类", dataIndex: "logCategory", width: 150, menuDisabled: true, sortable: false},
+                {text: "日志内容", dataIndex: "content", flex: 1, menuDisabled: true, sortable: false},
+                {text: "日志记录时间", dataIndex: "dt", width: 140, menuDisabled: true, sortable: false}
             ],
             store: store,
             tbar: [{
