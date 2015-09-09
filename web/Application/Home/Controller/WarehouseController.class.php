@@ -10,22 +10,26 @@ use Home\Service\BizConfigService;
 
 /**
  * 仓库Controller
- * @author 李静波
  *
+ * @author 李静波
+ *        
  */
 class WarehouseController extends Controller {
 
+	/**
+	 * 仓库 - 主页面
+	 */
 	public function index() {
 		$us = new UserService();
 		
-		$this->assign("title", "仓库");
-		$this->assign("uri", __ROOT__ . "/");
-		
-		$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
-		$dtFlag = getdate();
-		$this->assign("dtFlag", $dtFlag[0]);
-		
 		if ($us->hasPermission(FIdConst::WAREHOUSE)) {
+			$this->assign("title", "仓库");
+			$this->assign("uri", __ROOT__ . "/");
+			
+			$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
+			$dtFlag = getdate();
+			$this->assign("dtFlag", $dtFlag[0]);
+			
 			$ts = new BizConfigService();
 			$this->assign("warehouseUsesOrg", $ts->warehouseUsesOrg());
 			
@@ -35,6 +39,9 @@ class WarehouseController extends Controller {
 		}
 	}
 
+	/**
+	 * 仓库列表
+	 */
 	public function warehouseList() {
 		if (IS_POST) {
 			$ws = new WarehouseService();
@@ -42,6 +49,9 @@ class WarehouseController extends Controller {
 		}
 	}
 
+	/**
+	 * 新增或编辑仓库
+	 */
 	public function editWarehouse() {
 		if (IS_POST) {
 			$params = array(
@@ -54,6 +64,9 @@ class WarehouseController extends Controller {
 		}
 	}
 
+	/**
+	 * 删除仓库
+	 */
 	public function deleteWarehouse() {
 		if (IS_POST) {
 			$params = array(
@@ -64,6 +77,9 @@ class WarehouseController extends Controller {
 		}
 	}
 
+	/**
+	 * 仓库自定义字段，查询数据
+	 */
 	public function queryData() {
 		if (IS_POST) {
 			$queryKey = I("post.queryKey");
@@ -73,6 +89,9 @@ class WarehouseController extends Controller {
 		}
 	}
 
+	/**
+	 * 使用仓库的组织机构列表
+	 */
 	public function warehouseOrgList() {
 		if (IS_POST) {
 			$params = array(
@@ -84,12 +103,18 @@ class WarehouseController extends Controller {
 		}
 	}
 
+	/**
+	 * 查询组织机构树
+	 */
 	public function allOrgs() {
 		$ws = new WarehouseService();
 		
 		$this->ajaxReturn($ws->allOrgs());
 	}
 
+	/**
+	 * 为仓库增加组织机构
+	 */
 	public function addOrg() {
 		if (IS_POST) {
 			$params = array(
@@ -102,6 +127,9 @@ class WarehouseController extends Controller {
 		}
 	}
 
+	/**
+	 * 为仓库移走组织机构
+	 */
 	public function deleteOrg() {
 		if (IS_POST) {
 			$params = array(
@@ -114,6 +142,9 @@ class WarehouseController extends Controller {
 		}
 	}
 
+	/**
+	 * 从组织机构的视角查看仓库信息
+	 */
 	public function orgViewWarehouseList() {
 		if (IS_POST) {
 			$params = array(

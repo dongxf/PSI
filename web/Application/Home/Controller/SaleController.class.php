@@ -10,28 +10,35 @@ use Home\Service\SRBillService;
 
 /**
  * 销售Controller
- * @author 李静波
  *
+ * @author 李静波
+ *        
  */
 class SaleController extends Controller {
 
+	/**
+	 * 销售出库 - 主页面
+	 */
 	public function wsIndex() {
 		$us = new UserService();
 		
-		$this->assign("title", "销售出库");
-		$this->assign("uri", __ROOT__ . "/");
-		
-		$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
-		$dtFlag = getdate();
-		$this->assign("dtFlag", $dtFlag[0]);
-		
 		if ($us->hasPermission(FIdConst::WAREHOUSING_SALE)) {
+			$this->assign("title", "销售出库");
+			$this->assign("uri", __ROOT__ . "/");
+			
+			$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
+			$dtFlag = getdate();
+			$this->assign("dtFlag", $dtFlag[0]);
+			
 			$this->display();
 		} else {
 			redirect(__ROOT__ . "/Home/User/login");
 		}
 	}
 
+	/**
+	 * 获得销售出库单的信息
+	 */
 	public function wsBillInfo() {
 		if (IS_POST) {
 			$params = array(
@@ -43,6 +50,9 @@ class SaleController extends Controller {
 		}
 	}
 
+	/**
+	 * 新建或编辑销售出库单
+	 */
 	public function editWSBill() {
 		if (IS_POST) {
 			$params = array(
@@ -54,6 +64,9 @@ class SaleController extends Controller {
 		}
 	}
 
+	/**
+	 * 销售出库单主表信息列表
+	 */
 	public function wsbillList() {
 		if (IS_POST) {
 			$params = array(
@@ -75,6 +88,9 @@ class SaleController extends Controller {
 		}
 	}
 
+	/**
+	 * 销售出库单明细信息列表
+	 */
 	public function wsBillDetailList() {
 		if (IS_POST) {
 			$params = array(
@@ -86,6 +102,9 @@ class SaleController extends Controller {
 		}
 	}
 
+	/**
+	 * 删除销售出库单
+	 */
 	public function deleteWSBill() {
 		if (IS_POST) {
 			$params = array(
@@ -97,6 +116,9 @@ class SaleController extends Controller {
 		}
 	}
 
+	/**
+	 * 提交销售出库单
+	 */
 	public function commitWSBill() {
 		if (IS_POST) {
 			$params = array(
@@ -108,23 +130,29 @@ class SaleController extends Controller {
 		}
 	}
 
+	/**
+	 * 销售退货入库 - 主界面
+	 */
 	public function srIndex() {
 		$us = new UserService();
 		
-		$this->assign("title", "销售退货入库");
-		$this->assign("uri", __ROOT__ . "/");
-		
-		$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
-		$dtFlag = getdate();
-		$this->assign("dtFlag", $dtFlag[0]);
-		
 		if ($us->hasPermission(FIdConst::SALE_REJECTION)) {
+			$this->assign("title", "销售退货入库");
+			$this->assign("uri", __ROOT__ . "/");
+			
+			$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
+			$dtFlag = getdate();
+			$this->assign("dtFlag", $dtFlag[0]);
+			
 			$this->display();
 		} else {
 			redirect(__ROOT__ . "/Home/User/login");
 		}
 	}
 
+	/**
+	 * 销售退货入库单主表信息列表
+	 */
 	public function srbillList() {
 		if (IS_POST) {
 			$params = array(
@@ -146,6 +174,9 @@ class SaleController extends Controller {
 		}
 	}
 
+	/**
+	 * 销售退货入库单明细信息列表
+	 */
 	public function srBillDetailList() {
 		if (IS_POST) {
 			$params = array(
@@ -157,6 +188,9 @@ class SaleController extends Controller {
 		}
 	}
 
+	/**
+	 * 获得销售退货入库单的信息
+	 */
 	public function srBillInfo() {
 		if (IS_POST) {
 			$params = array(
@@ -168,6 +202,9 @@ class SaleController extends Controller {
 		}
 	}
 
+	/**
+	 * 选择销售出库单
+	 */
 	public function selectWSBillList() {
 		if (IS_POST) {
 			$params = array(
@@ -201,6 +238,9 @@ class SaleController extends Controller {
 		}
 	}
 
+	/**
+	 * 查询要退货的销售出库单信息
+	 */
 	public function getWSBillInfoForSRBill() {
 		if (IS_POST) {
 			$params = array(
@@ -239,7 +279,7 @@ class SaleController extends Controller {
 			$this->ajaxReturn($rs->commitSRBill($params));
 		}
 	}
-	
+
 	/**
 	 * 生成pdf文件
 	 */

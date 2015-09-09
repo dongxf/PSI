@@ -16,23 +16,29 @@ use Home\Service\PRBillService;
  */
 class PurchaseRejController extends Controller {
 
+	/**
+	 * 采购退货出库 - 主页面
+	 */
 	public function index() {
 		$us = new UserService();
 		
-		$this->assign("title", "采购退货出库");
-		$this->assign("uri", __ROOT__ . "/");
-		
-		$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
-		$dtFlag = getdate();
-		$this->assign("dtFlag", $dtFlag[0]);
-		
 		if ($us->hasPermission(FIdConst::PURCHASE_REJECTION)) {
+			$this->assign("title", "采购退货出库");
+			$this->assign("uri", __ROOT__ . "/");
+			
+			$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
+			$dtFlag = getdate();
+			$this->assign("dtFlag", $dtFlag[0]);
+			
 			$this->display();
 		} else {
 			redirect(__ROOT__ . "/Home/User/login");
 		}
 	}
 
+	/**
+	 * 获得采购退货出库单主表信息列表
+	 */
 	public function prbillList() {
 		if (IS_POST) {
 			$params = array(
@@ -53,6 +59,9 @@ class PurchaseRejController extends Controller {
 		}
 	}
 
+	/**
+	 * 获得采购退货出库单的信息
+	 */
 	public function prBillInfo() {
 		if (IS_POST) {
 			$params = array(
@@ -65,6 +74,9 @@ class PurchaseRejController extends Controller {
 		}
 	}
 
+	/**
+	 * 新建或编辑采购退货出库单
+	 */
 	public function editPRBill() {
 		if (IS_POST) {
 			$params = array(
@@ -77,6 +89,9 @@ class PurchaseRejController extends Controller {
 		}
 	}
 
+	/**
+	 * 选择采购入库单
+	 */
 	public function selectPWBillList() {
 		if (IS_POST) {
 			$params = array(
@@ -96,6 +111,9 @@ class PurchaseRejController extends Controller {
 		}
 	}
 
+	/**
+	 * 查询要退货的采购入库单的信息
+	 */
 	public function getPWBillInfoForPRBill() {
 		if (IS_POST) {
 			$params = array(
@@ -108,6 +126,9 @@ class PurchaseRejController extends Controller {
 		}
 	}
 
+	/**
+	 * 采购退货出库单的明细
+	 */
 	public function prBillDetailList() {
 		if (IS_POST) {
 			$params = array(
@@ -120,6 +141,9 @@ class PurchaseRejController extends Controller {
 		}
 	}
 
+	/**
+	 * 删除采购退货出库单
+	 */
 	public function deletePRBill() {
 		if (IS_POST) {
 			$params = array(
@@ -132,6 +156,9 @@ class PurchaseRejController extends Controller {
 		}
 	}
 
+	/**
+	 * 提交采购退货出库单
+	 */
 	public function commitPRBill() {
 		if (IS_POST) {
 			$params = array(

@@ -15,23 +15,29 @@ use Home\Common\FIdConst;
  */
 class SupplierController extends Controller {
 
+	/**
+	 * 供应商档案 - 主页面
+	 */
 	public function index() {
 		$us = new UserService();
 		
-		$this->assign("title", "供应商档案");
-		$this->assign("uri", __ROOT__ . "/");
-		
-		$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
-		$dtFlag = getdate();
-		$this->assign("dtFlag", $dtFlag[0]);
-		
 		if ($us->hasPermission(FIdConst::SUPPLIER)) {
+			$this->assign("title", "供应商档案");
+			$this->assign("uri", __ROOT__ . "/");
+			
+			$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
+			$dtFlag = getdate();
+			$this->assign("dtFlag", $dtFlag[0]);
+			
 			$this->display();
 		} else {
 			redirect(__ROOT__ . "/Home/User/login");
 		}
 	}
 
+	/**
+	 * 供应商分类
+	 */
 	public function categoryList() {
 		if (IS_POST) {
 			$params = array(
@@ -48,6 +54,9 @@ class SupplierController extends Controller {
 		}
 	}
 
+	/**
+	 * 供应商档案列表
+	 */
 	public function supplierList() {
 		if (IS_POST) {
 			$params = array(
@@ -68,6 +77,9 @@ class SupplierController extends Controller {
 		}
 	}
 
+	/**
+	 * 新建或编辑供应商分类
+	 */
 	public function editCategory() {
 		if (IS_POST) {
 			$params = array(
@@ -80,6 +92,9 @@ class SupplierController extends Controller {
 		}
 	}
 
+	/**
+	 * 删除供应商分类
+	 */
 	public function deleteCategory() {
 		if (IS_POST) {
 			$params = array(
@@ -90,6 +105,9 @@ class SupplierController extends Controller {
 		}
 	}
 
+	/**
+	 * 新建或编辑供应商档案
+	 */
 	public function editSupplier() {
 		if (IS_POST) {
 			$params = array(
@@ -120,6 +138,9 @@ class SupplierController extends Controller {
 		}
 	}
 
+	/**
+	 * 删除供应商档案
+	 */
 	public function deleteSupplier() {
 		if (IS_POST) {
 			$params = array(
@@ -130,6 +151,9 @@ class SupplierController extends Controller {
 		}
 	}
 
+	/**
+	 * 供应商自定义字段，查询数据
+	 */
 	public function queryData() {
 		if (IS_POST) {
 			$queryKey = I("post.queryKey");
@@ -138,6 +162,9 @@ class SupplierController extends Controller {
 		}
 	}
 
+	/**
+	 * 获得某个供应商的信息
+	 */
 	public function supplierInfo() {
 		if (IS_POST) {
 			$params = array(

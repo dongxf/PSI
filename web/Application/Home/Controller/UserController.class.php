@@ -20,13 +20,13 @@ class UserController extends Controller {
 	public function index() {
 		$us = new UserService();
 		
-		$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
-		$this->assign("title", "用户管理");
-		$this->assign("uri", __ROOT__ . "/");
-		$dtFlag = getdate();
-		$this->assign("dtFlag", $dtFlag[0]);
-		
 		if ($us->hasPermission(FIdConst::USR_MANAGEMENT)) {
+			$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
+			$this->assign("title", "用户管理");
+			$this->assign("uri", __ROOT__ . "/");
+			$dtFlag = getdate();
+			$this->assign("dtFlag", $dtFlag[0]);
+			
 			$this->display();
 		} else {
 			redirect(__ROOT__ . "/");
@@ -57,21 +57,23 @@ class UserController extends Controller {
 	public function changeMyPassword() {
 		$us = new UserService();
 		
-		$this->assign("loginUserId", $us->getLoginUserId());
-		$this->assign("loginName", $us->getLoginName());
-		$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
-		$this->assign("title", "修改我的密码");
-		$this->assign("uri", __ROOT__ . "/");
-		$dtFlag = getdate();
-		$this->assign("dtFlag", $dtFlag[0]);
-		
-		if ($us->hasPermission("-9996")) {
+		if ($us->hasPermission(FIdConst::CHANGE_MY_PASSWORD)) {
+			$this->assign("loginUserId", $us->getLoginUserId());
+			$this->assign("loginName", $us->getLoginName());
+			$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
+			$this->assign("title", "修改我的密码");
+			$this->assign("uri", __ROOT__ . "/");
+			$dtFlag = getdate();
+			$this->assign("dtFlag", $dtFlag[0]);
 			$this->display();
 		} else {
 			redirect(__ROOT__ . "/");
 		}
 	}
 
+	/**
+	 * 修改我的密码，POST方法
+	 */
 	public function changeMyPasswordPOST() {
 		if (IS_POST) {
 			$us = new UserService();
@@ -86,6 +88,9 @@ class UserController extends Controller {
 		}
 	}
 
+	/**
+	 * 用户登录，POST方法
+	 */
 	public function loginPOST() {
 		if (IS_POST) {
 			$loginName = I("post.loginName");
@@ -95,6 +100,9 @@ class UserController extends Controller {
 		}
 	}
 
+	/**
+	 * 获得组织机构树，目前最多是三级
+	 */
 	public function allOrgs() {
 		$us = new UserService();
 		$data = $us->allOrgs();
@@ -102,6 +110,9 @@ class UserController extends Controller {
 		$this->ajaxReturn($data);
 	}
 
+	/**
+	 * 获得组织机构下的用户列表
+	 */
 	public function users() {
 		if (IS_POST) {
 			$us = new UserService();
@@ -111,6 +122,9 @@ class UserController extends Controller {
 		}
 	}
 
+	/**
+	 * 新建或编辑组织结构
+	 */
 	public function editOrg() {
 		if (IS_POST) {
 			$us = new UserService();
@@ -125,6 +139,9 @@ class UserController extends Controller {
 		}
 	}
 
+	/**
+	 * 获得组织机构的名称
+	 */
 	public function orgParentName() {
 		if (IS_POST) {
 			$us = new UserService();
@@ -135,6 +152,9 @@ class UserController extends Controller {
 		}
 	}
 
+	/**
+	 * 删除组织机构
+	 */
 	public function deleteOrg() {
 		if (IS_POST) {
 			$us = new UserService();
@@ -190,6 +210,9 @@ class UserController extends Controller {
 		}
 	}
 
+	/**
+	 * 修改用户的密码
+	 */
 	public function changePassword() {
 		if (IS_POST) {
 			$us = new UserService();
@@ -205,6 +228,9 @@ class UserController extends Controller {
 		}
 	}
 
+	/**
+	 * 用户自定义字段，查询数据
+	 */
 	public function queryData() {
 		if (IS_POST) {
 			$queryKey = I("post.queryKey");
