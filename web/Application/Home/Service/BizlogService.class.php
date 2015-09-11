@@ -9,6 +9,9 @@ namespace Home\Service;
  */
 class BizlogService extends PSIBaseService {
 
+	/**
+	 * 返回日志列表
+	 */
 	public function logList($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
@@ -50,6 +53,14 @@ class BizlogService extends PSIBaseService {
 		);
 	}
 
+	/**
+	 * 记录业务日志
+	 * 
+	 * @param string $log
+	 *        	日志内容
+	 * @param string $category
+	 *        	日志分类
+	 */
 	public function insertBizlog($log, $category = "系统") {
 		try {
 			$us = new UserService();

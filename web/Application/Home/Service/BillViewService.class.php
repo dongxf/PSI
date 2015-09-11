@@ -9,6 +9,9 @@ namespace Home\Service;
  */
 class BillViewService extends PSIBaseService {
 
+	/**
+	 * 由单号查询采购入库单信息
+	 */
 	public function pwBillInfo($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
@@ -60,6 +63,9 @@ class BillViewService extends PSIBaseService {
 		return $result;
 	}
 
+	/**
+	 * 由单号查询销售出库单信息
+	 */
 	public function wsBillInfo($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
@@ -113,6 +119,9 @@ class BillViewService extends PSIBaseService {
 		return $result;
 	}
 
+	/**
+	 * 由单号查询采购退货出库单
+	 */
 	public function prBillInfo($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
@@ -176,6 +185,9 @@ class BillViewService extends PSIBaseService {
 		return $result;
 	}
 
+	/**
+	 * 由单号查询销售退货入库单信息
+	 */
 	public function srBillInfo($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
@@ -233,6 +245,9 @@ class BillViewService extends PSIBaseService {
 		return $result;
 	}
 
+	/**
+	 * 由单号查询调拨单信息
+	 */
 	public function itBillInfo($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
@@ -283,6 +298,9 @@ class BillViewService extends PSIBaseService {
 		return $result;
 	}
 
+	/**
+	 * 由单号查询盘点单信息
+	 */
 	public function icBillInfo($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();

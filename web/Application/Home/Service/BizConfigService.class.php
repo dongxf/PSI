@@ -9,6 +9,9 @@ namespace Home\Service;
  */
 class BizConfigService extends PSIBaseService {
 
+	/**
+	 * 返回所有的配置项
+	 */
 	public function allConfigs($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
@@ -43,6 +46,9 @@ class BizConfigService extends PSIBaseService {
 		return $result;
 	}
 
+	/**
+	 * 返回所有的配置项，附带着附加数据集
+	 */
 	public function allConfigsWithExtData() {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
@@ -70,6 +76,9 @@ class BizConfigService extends PSIBaseService {
 		);
 	}
 
+	/**
+	 * 保存配置项
+	 */
 	public function edit($params) {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
