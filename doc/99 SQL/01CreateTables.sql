@@ -636,6 +636,54 @@ CREATE TABLE IF NOT EXISTS `t_pre_payment_detail` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `t_po_bill`;
+CREATE TABLE IF NOT EXISTS `t_po_bill` (
+  `id` varchar(255) NOT NULL,
+  `bill_status` int(11) NOT NULL,
+  `biz_dt` datetime NOT NULL,
+  `deal_date` datetime NOT NULL,
+  `org_id` varchar(255) NOT NULL,
+  `biz_user_id` varchar(255) NOT NULL,
+  `date_created` datetime DEFAULT NULL,
+  `goods_money` decimal(19,2) NOT NULL,
+  `tax` decimal(19,2) NOT NULL,
+  `money_with_tax` decimal(19,2) NOT NULL,
+  `input_user_id` varchar(255) NOT NULL,
+  `ref` varchar(255) NOT NULL,
+  `supplier_id` varchar(255) NOT NULL,
+  `contact` varchar(255) NOT NULL,
+  `tel` varchar(255) DEFAULT NULL,
+  `fax` varchar(255) DEFAULT NULL,
+  `deal_address` varchar(255) DEFAULT NULL,
+  `bill_memo` varchar(255) DEFAULT NULL,
+  `payment_type` int(11) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `t_po_bill_detail`;
+CREATE TABLE IF NOT EXISTS `t_po_bill_detail` (
+  `id` varchar(255) NOT NULL,
+  `date_created` datetime DEFAULT NULL,
+  `goods_id` varchar(255) NOT NULL,
+  `goods_count` int(11) NOT NULL,
+  `goods_money` decimal(19,2) NOT NULL,
+  `goods_price` decimal(19,2) NOT NULL,
+  `pobill_id` varchar(255) NOT NULL,
+  `tax_rate` decimal(19,2) NOT NULL,
+  `tax` decimal(19,2) NOT NULL,
+  `money_with_tax` decimal(19,2) NOT NULL,
+  `pw_count` int(11) NOT NULL,
+  `left_count` int(11) NOT NULL,
+  `show_order` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `t_po_pw`;
+CREATE TABLE IF NOT EXISTS `t_po_pw` (
+  `po_id` varchar(255) NOT NULL,
+  `pw_id` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
