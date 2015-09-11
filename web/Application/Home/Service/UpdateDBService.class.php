@@ -8,7 +8,7 @@ namespace Home\Service;
  * @author 李静波
  */
 class UpdateDBService extends PSIBaseService {
-	private $CURRENT_DB_VERSION = "20150906-002";
+	private $CURRENT_DB_VERSION = "20150911-001";
 
 	private function tableExists($db, $tableName) {
 		$dbName = C('DB_NAME');
@@ -62,6 +62,9 @@ class UpdateDBService extends PSIBaseService {
 		$this->t_goods_si($db);
 		$this->t_menu_item($db);
 		$this->t_permission($db);
+		$this->t_po_bill($db);
+		$this->t_po_bill_detail($db);
+		$this->t_po_pw($db);
 		$this->t_pr_bill($db);
 		$this->t_pre_payment($db);
 		$this->t_pre_payment_detail($db);
@@ -375,6 +378,75 @@ class UpdateDBService extends PSIBaseService {
 		if ($cnt == 0) {
 			$sql = "insert into t_menu_item(id, caption, fid, parent_id, show_order)
 					values ('0605', '预付款管理', '2026', '06', 5)";
+			$db->execute($sql);
+		}
+	}
+
+	private function t_po_bill($db) {
+		$tableName = "t_po_bill";
+		
+		if (! $this->tableExists($db, $tableName)) {
+			$sql = "CREATE TABLE IF NOT EXISTS `t_po_bill` (
+					  `id` varchar(255) NOT NULL,
+					  `bill_status` int(11) NOT NULL,
+					  `biz_dt` datetime NOT NULL,
+					  `deal_date` datetime NOT NULL,
+					  `org_id` varchar(255) NOT NULL,
+					  `biz_user_id` varchar(255) NOT NULL,
+					  `date_created` datetime DEFAULT NULL,
+					  `goods_money` decimal(19,2) NOT NULL,
+					  `tax` decimal(19,2) NOT NULL,
+					  `money_with_tax` decimal(19,2) NOT NULL,
+					  `input_user_id` varchar(255) NOT NULL,
+					  `ref` varchar(255) NOT NULL,
+					  `supplier_id` varchar(255) NOT NULL,
+					  `contact` varchar(255) NOT NULL,
+					  `tel` varchar(255) DEFAULT NULL,
+					  `fax` varchar(255) DEFAULT NULL,
+					  `deal_address` varchar(255) DEFAULT NULL,
+					  `bill_memo` varchar(255) DEFAULT NULL,
+					  `payment_type` int(11) NOT NULL DEFAULT 0,
+					  PRIMARY KEY (`id`)
+					) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+					";
+			$db->execute($sql);
+		}
+	}
+
+	private function t_po_bill_detail($db) {
+		$tableName = "t_po_bill_detail";
+		
+		if (! $this->tableExists($db, $tableName)) {
+			$sql = "CREATE TABLE IF NOT EXISTS `t_po_bill_detail` (
+					  `id` varchar(255) NOT NULL,
+					  `date_created` datetime DEFAULT NULL,
+					  `goods_id` varchar(255) NOT NULL,
+					  `goods_count` int(11) NOT NULL,
+					  `goods_money` decimal(19,2) NOT NULL,
+					  `goods_price` decimal(19,2) NOT NULL,
+					  `pobill_id` varchar(255) NOT NULL,
+					  `tax_rate` decimal(19,2) NOT NULL,
+					  `tax` decimal(19,2) NOT NULL,
+					  `money_with_tax` decimal(19,2) NOT NULL,
+					  `pw_count` int(11) NOT NULL,
+					  `left_count` int(11) NOT NULL,
+					  `show_order` int(11) NOT NULL,
+					  PRIMARY KEY (`id`)
+					) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+					";
+			$db->execute($sql);
+		}
+	}
+
+	private function t_po_pw($db) {
+		$tableName = "t_po_pw";
+		
+		if (! $this->tableExists($db, $tableName)) {
+			$sql = "CREATE TABLE IF NOT EXISTS `t_po_pw` (
+					  `po_id` varchar(255) NOT NULL,
+					  `pw_id` varchar(255) NOT NULL
+					) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+					";
 			$db->execute($sql);
 		}
 	}
