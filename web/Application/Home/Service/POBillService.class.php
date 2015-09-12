@@ -30,7 +30,7 @@ class POBillService extends PSIBaseService {
 		$db = M();
 		
 		$queryParams = array();
-
+		
 		$result = array();
 		$sql = "select p.id, p.ref, p.bill_status, p.goods_money, p.tax, p.money_with_tax,
 					s.name as supplier_name, p.contact, p.tel, p.fax, p.deal_address,
@@ -45,7 +45,7 @@ class POBillService extends PSIBaseService {
 		$queryParams[] = $start;
 		$queryParams[] = $limit;
 		$data = $db->query($sql, $queryParams);
-		foreach ($data as $i => $v) {
+		foreach ( $data as $i => $v ) {
 			$result[$i]["id"] = $v["id"];
 			$result[$i]["ref"] = $v["ref"];
 		}
@@ -63,5 +63,21 @@ class POBillService extends PSIBaseService {
 				"dataList" => $result,
 				"totalCount" => $cnt
 		);
+	}
+
+	/**
+	 * 新建或编辑采购订单
+	 */
+	public function editPOBill($json) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
+		$bill = json_decode(html_entity_decode($json), true);
+		if ($bill == null) {
+			return $this->bad("传入的参数错误，不是正确的JSON格式");
+		}
+		
+		return $this->todo();
 	}
 }

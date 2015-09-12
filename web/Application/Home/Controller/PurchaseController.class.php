@@ -149,4 +149,15 @@ class PurchaseController extends Controller {
 			$this->ajaxReturn($ps->pobillList($params));
 		}
 	}
+
+	/**
+	 * 新增或编辑采购订单
+	 */
+	public function editPOBill() {
+		if (IS_POST) {
+			$json = I("post.jsonStr");
+			$ps = new POBillService();
+			$this->ajaxReturn($ps->editPOBill($json));
+		}
+	}
 }
