@@ -315,13 +315,7 @@ Ext.define("PSI.Purchase.PWMainForm", {
                 {header: "采购单价", dataIndex: "goodsPrice", menuDisabled: true, sortable: false, align: "right", xtype: "numbercolumn", width: 150},
                 {header: "采购金额", dataIndex: "goodsMoney", menuDisabled: true, sortable: false, align: "right", xtype: "numbercolumn", width: 150}
             ],
-            store: store,
-            listeners: {
-                itemdblclick: {
-                    fn: me.onEditPWBillDetail,
-                    scope: me
-                }
-            }
+            store: store
         });
 
         return me.__detailGrid;
