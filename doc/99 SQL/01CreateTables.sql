@@ -675,6 +675,8 @@ CREATE TABLE IF NOT EXISTS `t_po_bill_detail` (
   `pw_count` int(11) NOT NULL,
   `left_count` int(11) NOT NULL,
   `show_order` int(11) NOT NULL,
+  `confirm_user_id` varchar(255) DEFAULT NULL,
+  `confirm_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
