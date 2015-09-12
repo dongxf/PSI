@@ -89,7 +89,7 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
             format: "Y-m-d",
             labelAlign: "right",
             labelSeparator: "",
-            fieldLabel: "业务日期（起）"
+            fieldLabel: "交货日期（起）"
         },{
         	id: "editQueryToDT",
             xtype: "datefield",
@@ -97,7 +97,7 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
             format: "Y-m-d",
             labelAlign: "right",
             labelSeparator: "",
-            fieldLabel: "业务日期（止）"
+            fieldLabel: "交货日期（止）"
         },{
         	id: "editQuerySupplier",
             xtype: "psi_supplierfield",
@@ -153,9 +153,9 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
     	var modelName = "PSIPOBill";
         Ext.define(modelName, {
             extend: "Ext.data.Model",
-            fields: ["id", "ref", "bizDate", "supplierName", "contact", "tel", "fax", "inputUserName",
+            fields: ["id", "ref", "supplierName", "contact", "tel", "fax", "inputUserName",
                 "bizUserName", "billStatus", "goodsMoney", "dateCreated", "paymentType", "tax", "moneyWithTax",
-                "dealDate", "dealAddress", "orgName", "confrimUserName", "confirmDate"]
+                "dealDate", "dealAddress", "orgName", "confirmUserName", "confirmDate"]
         });
         var store = Ext.create("Ext.data.Store", {
             autoLoad: false,
@@ -198,9 +198,11 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
                     }
                 },
                 {header: "采购订单号", dataIndex: "ref", width: 110, menuDisabled: true, sortable: false},
-                {header: "业务日期", dataIndex: "bizDate", menuDisabled: true, sortable: false},
+                {header: "交货日期", dataIndex: "dealDate", menuDisabled: true, sortable: false},
                 {header: "供应商", dataIndex: "supplierName", width: 300, menuDisabled: true, sortable: false},
-                {header: "采购金额", dataIndex: "amount", menuDisabled: true, sortable: false, align: "right", xtype: "numbercolumn", width: 150},
+                {header: "采购金额", dataIndex: "goodsMoney", menuDisabled: true, sortable: false, align: "right", xtype: "numbercolumn", width: 150},
+                {header: "税金", dataIndex: "tax", menuDisabled: true, sortable: false, align: "right", xtype: "numbercolumn", width: 150},
+                {header: "价税合计", dataIndex: "moneyWithTax", menuDisabled: true, sortable: false, align: "right", xtype: "numbercolumn", width: 150},
                 {
                 	header: "付款方式", dataIndex: "paymentType", menuDisabled: true, sortable: false, width: 100,
                 	renderer: function(value) {
@@ -216,8 +218,11 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
                 	}
                 },
                 {header: "业务员", dataIndex: "bizUserName", menuDisabled: true, sortable: false},
+                {header: "组织机构", dataIndex: "orgName", menuDisabled: true, sortable: false},
                 {header: "制单人", dataIndex: "inputUserName", menuDisabled: true, sortable: false},
-                {header: "制单时间", dataIndex: "dateCreated", menuDisabled: true, sortable: false, width: 140}
+                {header: "制单时间", dataIndex: "dateCreated", menuDisabled: true, sortable: false, width: 140},
+                {header: "审核人", dataIndex: "confirmUserName", menuDisabled: true, sortable: false},
+                {header: "审核时间", dataIndex: "confirmDate", menuDisabled: true, sortable: false, width: 140}
             ],
             store: store,
             tbar: [{

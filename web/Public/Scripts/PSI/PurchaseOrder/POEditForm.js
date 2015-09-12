@@ -73,12 +73,12 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 					value : "<span style='color:red'>保存后自动生成</span>"
 				}, {
 					id : "editBizDT",
-					fieldLabel : "业务日期",
+					fieldLabel : "交货日期",
 					labelWidth : 60,
 					labelAlign : "right",
 					labelSeparator : "",
 					allowBlank : false,
-					blankText : "没有输入业务日期",
+					blankText : "没有输入交货日期",
 					beforeLabelTextTpl : PSI.Const.REQUIRED,
 					xtype : "datefield",
 					format : "Y-m-d",
@@ -113,11 +113,10 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 					labelWidth : 60,
 					labelAlign : "right",
 					labelSeparator : "",
-					fieldLabel : "入库仓库",
-					xtype : "psi_warehousefield",
-					fid: "2001",
+					fieldLabel : "组织机构",
+					xtype : "psi_orgfield",
 					allowBlank : false,
-					blankText : "没有输入入库仓库",
+					blankText : "没有输入组织机构",
 					beforeLabelTextTpl : PSI.Const.REQUIRED,
 					listeners : {
 						specialkey : {
