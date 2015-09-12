@@ -153,8 +153,9 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
     	var modelName = "PSIPOBill";
         Ext.define(modelName, {
             extend: "Ext.data.Model",
-            fields: ["id", "ref", "bizDate", "supplierName", "warehouseName", "inputUserName",
-                "bizUserName", "billStatus", "amount", "dateCreated", "paymentType"]
+            fields: ["id", "ref", "bizDate", "supplierName", "contact", "tel", "fax", "inputUserName",
+                "bizUserName", "billStatus", "goodsMoney", "dateCreated", "paymentType", "tax", "moneyWithTax",
+                "dealDate", "dealAddress", "orgName", "confrimUserName", "confirmDate"]
         });
         var store = Ext.create("Ext.data.Store", {
             autoLoad: false,
@@ -193,10 +194,10 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
                 {xtype: "rownumberer", width: 50},
                 {header: "状态", dataIndex: "billStatus", menuDisabled: true, sortable: false, width: 60,
                 	renderer: function (value) {
-                        return value == "待入库" ? "<span style='color:red'>" + value + "</span>" : value;
+                        return value == "待审核" ? "<span style='color:red'>" + value + "</span>" : value;
                     }
                 },
-                {header: "入库单号", dataIndex: "ref", width: 110, menuDisabled: true, sortable: false},
+                {header: "采购订单号", dataIndex: "ref", width: 110, menuDisabled: true, sortable: false},
                 {header: "业务日期", dataIndex: "bizDate", menuDisabled: true, sortable: false},
                 {header: "供应商", dataIndex: "supplierName", width: 300, menuDisabled: true, sortable: false},
                 {header: "采购金额", dataIndex: "amount", menuDisabled: true, sortable: false, align: "right", xtype: "numbercolumn", width: 150},
@@ -214,7 +215,6 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
                 		}
                 	}
                 },
-                {header: "入库仓库", dataIndex: "warehouseName", menuDisabled: true, sortable: false},
                 {header: "业务员", dataIndex: "bizUserName", menuDisabled: true, sortable: false},
                 {header: "制单人", dataIndex: "inputUserName", menuDisabled: true, sortable: false},
                 {header: "制单时间", dataIndex: "dateCreated", menuDisabled: true, sortable: false, width: 140}
@@ -277,7 +277,7 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
         Ext.define(modelName, {
             extend: "Ext.data.Model",
             fields: ["id", "goodsCode", "goodsName", "goodsSpec", "unitName", "goodsCount",
-                "goodsMoney", "goodsPrice"]
+                "goodsMoney", "goodsPrice", "taxRate", "tax", "moneyWithTax"]
         });
         var store = Ext.create("Ext.data.Store", {
             autoLoad: false,
@@ -299,7 +299,10 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
                 {header: "采购数量", dataIndex: "goodsCount", menuDisabled: true, sortable: false, align: "right"},
                 {header: "单位", dataIndex: "unitName", menuDisabled: true, sortable: false, width: 60},
                 {header: "采购单价", dataIndex: "goodsPrice", menuDisabled: true, sortable: false, align: "right", xtype: "numbercolumn", width: 150},
-                {header: "采购金额", dataIndex: "goodsMoney", menuDisabled: true, sortable: false, align: "right", xtype: "numbercolumn", width: 150}
+                {header: "采购金额", dataIndex: "goodsMoney", menuDisabled: true, sortable: false, align: "right", xtype: "numbercolumn", width: 150},
+                {header: "税率", dataIndex: "taxRate", menuDisabled: true, sortable: false, align: "right"},
+                {header: "税金", dataIndex: "tax", menuDisabled: true, sortable: false, align: "right", xtype: "numbercolumn", width: 150},
+                {header: "价税合计", dataIndex: "moneyWithTax", menuDisabled: true, sortable: false, align: "right", xtype: "numbercolumn", width: 150}
             ],
             store: store
         });
@@ -315,7 +318,7 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
     	Ext.getCmp("buttonCommit").setDisabled(true);
     	
         var gridDetail = me.getDetailGrid();
-        gridDetail.setTitle("采购入库单明细");
+        gridDetail.setTitle("采购订单明细");
         gridDetail.getStore().removeAll();
         
         Ext.getCmp("pagingToobar").doRefresh();
@@ -359,7 +362,7 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
         var bill = item[0];
         
         if (bill.get("billStatus") == "已审核") {
-        	PSI.MsgBox.showInfo("当前采购入库单已经审核，不能删除");
+        	PSI.MsgBox.showInfo("当前采购订单已经审核，不能删除");
         	return;
         }
         
