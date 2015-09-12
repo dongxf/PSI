@@ -112,6 +112,7 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 			labelAlign : "right",
 			labelSeparator : "",
 			fieldLabel : "付款方式",
+			labelWidth : 60,
 			margin: "5, 0, 0, 0",
 			xtype : "combo",
 			queryMode : "local",
@@ -165,7 +166,7 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
                 actionMethods: {
                     read: "POST"
                 },
-                url: PSI.Const.BASE_URL + "Home/Purchase/pwbillList",
+                url: PSI.Const.BASE_URL + "Home/Purchase/pobillList",
                 reader: {
                     root: 'dataList',
                     totalProperty: 'totalCount'
