@@ -109,4 +109,23 @@ class PurchaseController extends Controller {
 			$this->ajaxReturn($ps->commitPWBill($id));
 		}
 	}
+	
+	/**
+	 * 采购订单 - 主页面
+	 */
+	public function pobillIndex() {
+		$us = new UserService();
+	
+		if ($us->hasPermission(FIdConst::PURCHASE_ORDER)) {
+			$this->assign("title", "采购订单");
+			$this->assign("uri", __ROOT__ . "/");
+				
+			$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
+			$dtFlag = getdate();
+			$this->assign("dtFlag", $dtFlag[0]);
+			$this->display();
+		} else {
+			redirect(__ROOT__ . "/Home/User/login");
+		}
+	}
 }

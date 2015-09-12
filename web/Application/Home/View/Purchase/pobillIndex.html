@@ -1,0 +1,26 @@
+<layout name="layout" />
+
+<script src="{$uri}Public/Scripts/PSI/Warehouse/WarehouseField.js?dt={$dtFlag}" type="text/javascript"></script>
+<script src="{$uri}Public/Scripts/PSI/User/UserField.js?dt={$dtFlag}" type="text/javascript"></script>
+<script src="{$uri}Public/Scripts/PSI/Supplier/SupplierField.js?dt={$dtFlag}" type="text/javascript"></script>
+<script src="{$uri}Public/Scripts/PSI/Goods/GoodsWithPurchasePriceField.js?dt={$dtFlag}" type="text/javascript"></script>
+
+
+<script src="{$uri}Public/Scripts/PSI/PurchaseOrder/POMainForm.js?dt={$dtFlag}" type="text/javascript"></script>
+<script src="{$uri}Public/Scripts/PSI/PurchaseOrder/POEditForm.js?dt={$dtFlag}" type="text/javascript"></script>
+
+<script src="{$uri}Public/Scripts/PSI/UX/CellEditing.js?dt={$dtFlag}" type="text/javascript"></script>
+
+<script>
+    Ext.onReady(function(){
+        var app = Ext.create("PSI.App", {
+            userName: "{$loginUserName}"
+        });
+
+        app.add(Ext.create("PSI.PurchaseOrder.POMainForm"));
+        app.setAppHeader({
+            title: "{$title}",
+            iconCls: "PSI-fid2027"
+            });
+    });
+</script>

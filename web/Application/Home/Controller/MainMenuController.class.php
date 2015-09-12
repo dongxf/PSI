@@ -180,6 +180,10 @@ class MainMenuController extends Controller {
 				// 预付款管理
 				redirect(__ROOT__ . "/Home/Funds/prepaymentIndex");
 				break;
+			case FIdConst::PURCHASE_ORDER :
+				// 采购订单
+				redirect(__ROOT__ . "/Home/Purchase/pobillIndex");
+				break;
 			default :
 				redirect(__ROOT__ . "/Home");
 		}

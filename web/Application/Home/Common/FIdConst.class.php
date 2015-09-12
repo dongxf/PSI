@@ -228,4 +228,9 @@ class FIdConst {
 	 * 预付款管理
 	 */
 	const PRE_PAYMENT = "2026";
+	
+	/**
+	 * 采购订单
+	 */
+	const PURCHASE_ORDER = "2027";
 }
