@@ -155,7 +155,7 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
             extend: "Ext.data.Model",
             fields: ["id", "ref", "supplierName", "contact", "tel", "fax", "inputUserName",
                 "bizUserName", "billStatus", "goodsMoney", "dateCreated", "paymentType", "tax", "moneyWithTax",
-                "dealDate", "dealAddress", "orgName", "confirmUserName", "confirmDate"]
+                "dealDate", "dealAddress", "orgName", "confirmUserName", "confirmDate", "billMemo"]
         });
         var store = Ext.create("Ext.data.Store", {
             autoLoad: false,
@@ -199,7 +199,11 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
                 },
                 {header: "采购订单号", dataIndex: "ref", width: 110, menuDisabled: true, sortable: false},
                 {header: "交货日期", dataIndex: "dealDate", menuDisabled: true, sortable: false},
+                {header: "交货地址", dataIndex: "dealAddress", menuDisabled: true, sortable: false},
                 {header: "供应商", dataIndex: "supplierName", width: 300, menuDisabled: true, sortable: false},
+                {header: "供应商联系人", dataIndex: "contact", menuDisabled: true, sortable: false},
+                {header: "供应商电话", dataIndex: "tel", menuDisabled: true, sortable: false},
+                {header: "供应商传真", dataIndex: "fax", menuDisabled: true, sortable: false},
                 {header: "采购金额", dataIndex: "goodsMoney", menuDisabled: true, sortable: false, align: "right", xtype: "numbercolumn", width: 150},
                 {header: "税金", dataIndex: "tax", menuDisabled: true, sortable: false, align: "right", xtype: "numbercolumn", width: 150},
                 {header: "价税合计", dataIndex: "moneyWithTax", menuDisabled: true, sortable: false, align: "right", xtype: "numbercolumn", width: 150},
@@ -222,7 +226,8 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
                 {header: "制单人", dataIndex: "inputUserName", menuDisabled: true, sortable: false},
                 {header: "制单时间", dataIndex: "dateCreated", menuDisabled: true, sortable: false, width: 140},
                 {header: "审核人", dataIndex: "confirmUserName", menuDisabled: true, sortable: false},
-                {header: "审核时间", dataIndex: "confirmDate", menuDisabled: true, sortable: false, width: 140}
+                {header: "审核时间", dataIndex: "confirmDate", menuDisabled: true, sortable: false, width: 140},
+                {header: "备注", dataIndex: "billMemo", menuDisabled: true, sortable: false}
             ],
             store: store,
             tbar: [{
