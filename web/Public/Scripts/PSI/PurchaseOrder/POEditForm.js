@@ -125,6 +125,19 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 						}
 					}
 				},{
+					id: "editContact",
+					labelWidth : 60,
+					labelAlign : "right",
+					labelSeparator : "",
+					fieldLabel : "联系人",
+					xtype : "textfield",
+					listeners : {
+						specialkey : {
+							fn : me.onEditSpecialKey,
+							scope : me
+						}
+					}
+				}, {
 					id: "editTel",
 					labelWidth : 60,
 					labelAlign : "right",
@@ -212,8 +225,8 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 					labelSeparator : "",
 					fieldLabel : "备注",
 					xtype : "textfield",
-					colspan: 4,
-					width: 860,
+					colspan: 3,
+					width: 645,
 					listeners : {
 						specialkey : {
 							fn : me.onLastEditSpecialKey,
@@ -232,7 +245,7 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 
 		me.callParent(arguments);
 		
-		me.__editorList = ["editDealDate", "editSupplier", "editDealAddress", "editTel", 
+		me.__editorList = ["editDealDate", "editSupplier", "editDealAddress", "editContact", "editTel", 
 		                   "editFax", "editOrg", "editBizUser", "editPaymentType", "editBillMemo"];
 	},
 	
@@ -670,10 +683,10 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 	getSaveData : function() {
 		var result = {
 			id : Ext.getCmp("hiddenId").getValue(),
-			dealDate : Ext.Date
-					.format(Ext.getCmp("editDealDate").getValue(), "Y-m-d"),
+			dealDate : Ext.Date.format(Ext.getCmp("editDealDate").getValue(), "Y-m-d"),
 			supplierId : Ext.getCmp("editSupplier").getIdValue(),
 			dealAddress: Ext.getCmp("editDealAddress").getValue(),
+			contact: Ext.getCmp("editContact").getValue(),
 			tel: Ext.getCmp("editTel").getValue(),
 			fax: Ext.getCmp("editFax").getValue(),
 			orgId: Ext.getCmp("editOrg").getIdValue(),
@@ -721,5 +734,6 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 		Ext.getCmp("editDealAddress").setValue(data.address_shipping);
 		Ext.getCmp("editTel").setValue(data.tel01);
 		Ext.getCmp("editFax").setValue(data.fax);
+		Ext.getCmp("editContact").setValue(data.contact01);
 	}
 });
