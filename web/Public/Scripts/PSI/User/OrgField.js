@@ -4,15 +4,20 @@ Ext.define("PSI.User.OrgField", {
     alias: "widget.psi_orgfield",
     
     initComponent: function () {
-        this.enableKeyEvents = true;
+    	var me = this;
+    	
+        me.enableKeyEvents = true;
 
-        this.callParent(arguments);
+        me.callParent(arguments);
 
-        this.on("keydown", function (field, e) {
-            if (e.getKey() === e.BACKSPACE) {
+        me.on("keydown", function (field, e) {
+            if (e.getKey() == e.BACKSPACE) {
+                field.setValue(null);
+                me.setIdValue(null);
                 e.preventDefault();
                 return false;
             }
+
 
             if (e.getKey() !== e.ENTER) {
                 this.onTriggerClick(e);
@@ -87,7 +92,9 @@ Ext.define("PSI.User.OrgField", {
 
     // private
     onOK: function () {
-        var tree = this.tree;
+    	var me = this;
+    	
+        var tree = me.tree;
         var item = tree.getSelectionModel().getSelection();
 
         if (item === null || item.length !== 1) {
@@ -96,12 +103,21 @@ Ext.define("PSI.User.OrgField", {
             return;
         }
 
-        var data = item[0].data;
+        var data = item[0];
         //var parentItem = this.initialConfig.parentItem;
-        this.focus();
         
         //parentItem.setParentOrg(data);
-        this.wnd.close();
-        this.focus();
+        me.setIdValue(data.get("id"));
+        me.setValue(data.get("fullName"));
+        me.wnd.close();
+        me.focus();
+    },
+    
+    setIdValue: function(id) {
+    	this.__idValue = id;
+    },
+    
+    getIdValue: function() {
+    	return this.__idValue;
     }
 });
