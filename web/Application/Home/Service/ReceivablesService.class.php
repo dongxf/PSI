@@ -14,12 +14,27 @@ class ReceivablesService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
+		$db = M();
+		$result = array();
+		$result[0]["id"] = "";
+		$result[0]["name"] = "[全部]";
+		
 		$id = $params["id"];
 		if ($id == "customer") {
-			return M()->query("select id,  code, name from t_customer_category order by code");
+			$data = $db->query("select id, name from t_customer_category order by code");
+			foreach ( $data as $i => $v ) {
+				$result[$i + 1]["id"] = $v["id"];
+				$result[$i + 1]["name"] = $v["name"];
+			}
 		} else {
-			return M()->query("select id,  code, name from t_supplier_category order by code");
+			$data = $db->query("select id, name from t_supplier_category order by code");
+			foreach ( $data as $i => $v ) {
+				$result[$i + 1]["id"] = $v["id"];
+				$result[$i + 1]["name"] = $v["name"];
+			}
 		}
+		
+		return $result;
 	}
 
 	public function rvList($params) {
@@ -36,12 +51,20 @@ class ReceivablesService extends PSIBaseService {
 		$db = M();
 		
 		if ($caType == "customer") {
+			$queryParams = array();
 			$sql = "select r.id, r.ca_id, c.code, c.name, r.act_money, r.balance_money, r.rv_money 
 					from t_receivables r, t_customer c 
-					where r.ca_type = '%s'  and c.category_id = '%s' and r.ca_id = c.id 
-					order by c.code 
+					where r.ca_type = '%s' and r.ca_id = c.id";
+			$queryParams[] = $caType;
+			if ($categoryId) {
+				$sql .= " and c.category_id = '%s' ";
+				$queryParams[] = $categoryId;
+			}
+			$sql .= " order by c.code 
 					limit %d , %d ";
-			$data = $db->query($sql, $caType, $categoryId, $start, $limit);
+			$queryParams[] = $start;
+			$queryParams[] = $limit;
+			$data = $db->query($sql, $queryParams);
 			$result = array();
 			
 			foreach ( $data as $i => $v ) {
@@ -54,10 +77,16 @@ class ReceivablesService extends PSIBaseService {
 				$result[$i]["rvMoney"] = $v["rv_money"];
 			}
 			
+			$queryParams = array();
 			$sql = "select count(*) as cnt 
 					from t_receivables r, t_customer c 
-					where r.ca_type = '%s' and c.category_id = '%s' and r.ca_id = c.id";
-			$data = $db->query($sql, $caType, $categoryId);
+					where r.ca_type = '%s'  and r.ca_id = c.id";
+			$queryParams[] = $caType;
+			if ($categoryId) {
+				$sql .= " and c.category_id = '%s' ";
+				$queryParams[] = $categoryId;
+			}
+			$data = $db->query($sql, $queryParams);
 			$cnt = $data[0]["cnt"];
 			
 			return array(
@@ -65,12 +94,20 @@ class ReceivablesService extends PSIBaseService {
 					"totalCount" => $cnt
 			);
 		} else {
+			$queryParams = array();
 			$sql = "select r.id, r.ca_id, c.code, c.name, r.act_money, r.balance_money, r.rv_money 
 					from t_receivables r, t_supplier c 
-					where r.ca_type = '%s'  and c.category_id = '%s' and r.ca_id = c.id 
-					order by c.code 
+					where r.ca_type = '%s' and r.ca_id = c.id ";
+			$queryParams[] = $caType;
+			if ($categoryId) {
+				$sql .= " and c.category_id = '%s' ";
+				$queryParams[] = $categoryId;
+			}
+			$sql .= " order by c.code 
 					limit %d , %d ";
-			$data = $db->query($sql, $caType, $categoryId, $start, $limit);
+			$queryParams[] = $start;
+			$queryParams[] = $limit;
+			$data = $db->query($sql, $queryParams);
 			$result = array();
 			
 			foreach ( $data as $i => $v ) {
@@ -83,10 +120,16 @@ class ReceivablesService extends PSIBaseService {
 				$result[$i]["rvMoney"] = $v["rv_money"];
 			}
 			
+			$queryParams = array();
 			$sql = "select count(*) as cnt 
 					from t_receivables r, t_supplier c 
-					where r.ca_type = '%s' and c.category_id = '%s' and r.ca_id = c.id";
-			$data = $db->query($sql, $caType, $categoryId);
+					where r.ca_type = '%s'  and r.ca_id = c.id";
+			$queryParams[] = $caType;
+			if ($categoryId) {
+				$sql .= " and c.category_id = '%s' ";
+				$queryParams[] = $categoryId;
+			}
+			$data = $db->query($sql, $queryParams);
 			$cnt = $data[0]["cnt"];
 			
 			return array(
