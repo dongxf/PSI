@@ -86,7 +86,7 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 					name : "bizDT",
 					listeners : {
 						specialkey : {
-							fn : me.onEditBizDTSpecialKey,
+							fn : me.onEditSpecialKey,
 							scope : me
 						}
 					}
@@ -104,7 +104,7 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 					beforeLabelTextTpl : PSI.Const.REQUIRED,
 					listeners : {
 						specialkey : {
-							fn : me.onEditSupplierSpecialKey,
+							fn : me.onEditSpecialKey,
 							scope : me
 						}
 					}
@@ -116,21 +116,39 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 					fieldLabel : "交货地址",
 					colspan: 2,
 					width: 430,
-					xtype : "textfield"
+					xtype : "textfield",
+					listeners : {
+						specialkey : {
+							fn : me.onEditSpecialKey,
+							scope : me
+						}
+					}
 				},{
 					id: "editTel",
 					labelWidth : 60,
 					labelAlign : "right",
 					labelSeparator : "",
 					fieldLabel : "电话",
-					xtype : "textfield"
+					xtype : "textfield",
+					listeners : {
+						specialkey : {
+							fn : me.onEditSpecialKey,
+							scope : me
+						}
+					}
 				},{
 					id: "editFax",
 					labelWidth : 60,
 					labelAlign : "right",
 					labelSeparator : "",
 					fieldLabel : "传真",
-					xtype : "textfield"
+					xtype : "textfield",
+					listeners : {
+						specialkey : {
+							fn : me.onEditSpecialKey,
+							scope : me
+						}
+					}
 				},{
 					id : "editOrg",
 					labelWidth : 60,
@@ -145,7 +163,7 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 					beforeLabelTextTpl : PSI.Const.REQUIRED,
 					listeners : {
 						specialkey : {
-							fn : me.onEditWarehouseSpecialKey,
+							fn : me.onEditSpecialKey,
 							scope : me
 						}
 					}
@@ -161,7 +179,7 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 					beforeLabelTextTpl : PSI.Const.REQUIRED,
 					listeners : {
 						specialkey : {
-							fn : me.onEditBizUserSpecialKey,
+							fn : me.onEditSpecialKey,
 							scope : me
 						}
 					}
@@ -182,7 +200,7 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 					value: "0",
 					listeners : {
 						specialkey : {
-							fn : me.onEditPaymentTypeSpecialKey,
+							fn : me.onEditSpecialKey,
 							scope : me
 						}
 					}
@@ -194,7 +212,13 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 					fieldLabel : "备注",
 					xtype : "textfield",
 					colspan: 4,
-					width: 860
+					width: 860,
+					listeners : {
+						specialkey : {
+							fn : me.onLastEditSpecialKey,
+							scope : me
+						}
+					}
 				} ]
 			} ],
 			listeners : {
@@ -206,6 +230,9 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 		});
 
 		me.callParent(arguments);
+		
+		me.__editorList = ["editDealDate", "editSupplier", "editDealAddress", "editTel", 
+		                   "editFax", "editOrg", "editBizUser", "editPaymentType", "editBillMemo"];
 	},
 	
 	onWndShow : function() {
@@ -289,32 +316,23 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 		});
 
 	},
-	onEditBizDTSpecialKey : function(field, e) {
-		if (e.getKey() == e.ENTER) {
-			Ext.getCmp("editSupplier").focus();
-		}
-	},
-	onEditSupplierSpecialKey : function(field, e) {
-		if (e.getKey() == e.ENTER) {
-			Ext.getCmp("editWarehouse").focus();
-		}
-	},
-	onEditWarehouseSpecialKey : function(field, e) {
-		if (e.getKey() == e.ENTER) {
-			Ext.getCmp("editBizUser").focus();
-		}
-	},
-	onEditBizUserSpecialKey : function(field, e) {
-		if (this.__readonly) {
-			return;
-		}
-		
-		if (e.getKey() == e.ENTER) {
-			Ext.getCmp("editPaymentType").focus();
-		}
-	},
+    
+	onEditSpecialKey: function (field, e) {
+        if (e.getKey() === e.ENTER) {
+            var me = this;
+            var id = field.getId();
+            for (var i = 0; i < me.__editorList.length; i++) {
+                var editorId = me.__editorList[i];
+                if (id === editorId) {
+                    var edit = Ext.getCmp(me.__editorList[i + 1]);
+                    edit.focus();
+                    edit.setValue(edit.getValue());
+                }
+            }
+        }
+    },
 
-	onEditPaymentTypeSpecialKey : function(field, e) {
+	onLastEditSpecialKey : function(field, e) {
 		if (this.__readonly) {
 			return;
 		}
