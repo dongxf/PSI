@@ -233,6 +233,11 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 
 					Ext.getCmp("editBizUser").setIdValue(data.bizUserId);
 					Ext.getCmp("editBizUser").setValue(data.bizUserName);
+					if (data.orgId) {
+						Ext.getCmp("editOrg").setIdValue(data.orgId);
+						Ext.getCmp("editOrg").setValue(data.orgFullName);
+					}
+					
 					if (data.bizDT) {
 						Ext.getCmp("editBizDT").setValue(data.bizDT);
 					}

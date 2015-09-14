@@ -89,6 +89,8 @@ class POBillService extends PSIBaseService {
 		
 		$result = array();
 		
+		$db = M();
+		
 		if ($id) {
 			// 编辑采购订单
 		} else {
@@ -96,6 +98,15 @@ class POBillService extends PSIBaseService {
 			$us = new UserService();
 			$result["bizUserId"] = $us->getLoginUserId();
 			$result["bizUserName"] = $us->getLoginUserName();
+			
+			$sql = "select o.id, o.full_name
+					from t_org o, t_user u
+					where o.id = u.org_id and u.id = '%s' ";
+			$data = $db->query($sql, $us->getLoginUserId());
+			if ($data) {
+				$result["orgId"] = $data[0]["id"];
+				$result["orgFullName"] = $data[0]["full_name"];
+			}
 		}
 		
 		return $result;
