@@ -258,6 +258,7 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 						Ext.getCmp("editSupplier").setIdValue(data.supplierId);
 						Ext.getCmp("editSupplier").setValue(data.supplierName);
 					}
+					me.__taxRate = data.taxRate;
 
 					Ext.getCmp("editBizUser").setIdValue(data.bizUserId);
 					Ext.getCmp("editBizUser").setValue(data.bizUserName);
@@ -279,7 +280,7 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 						store.add(data.items);
 					}
 					if (store.getCount() == 0) {
-						store.add({});
+						store.add({taxRate: me.__taxRate});
 					}
 					
 					if (data.billStatus && data.billStatus !=0) {
@@ -342,7 +343,7 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 			var me = this;
 			var store = me.getGoodsGrid().getStore();
 			if (store.getCount() == 0) {
-				store.add({});
+				store.add({taxRate: me.__taxRate});
 			}
 			me.getGoodsGrid().focus();
 			me.__cellEditing.startEdit(0, 1);
@@ -474,12 +475,7 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 						sortable : false,
 						draggable: false,
 						align : "right",
-						width : 60,
-						editor : {
-							xtype : "numberfield",
-							allowDecimals : false,
-							hideTrigger : true
-						}
+						width : 60
 					},
 					{
 						header : "税金",
@@ -544,7 +540,7 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 									+ "Public/Images/icons/add.png",
 							handler : function(grid, row) {
 								var store = grid.getStore();
-								store.insert(row, [{}]);
+								store.insert(row, [{taxRate: me.__taxRate}]);
 							},
 							scope : me
 						}]
@@ -561,7 +557,7 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 									+ "Public/Images/icons/add_detail.png",
 							handler : function(grid, row) {
 								var store = grid.getStore();
-								store.insert(row + 1, [{}]);
+								store.insert(row + 1, [{taxRate: me.__taxRate}]);
 							},
 							scope : me
 						}]
@@ -604,13 +600,20 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 		var goods = e.record;
 		var oldValue = e.originalValue;
 		if (fieldName == "moneyWithTax") {
+			if (goods.get(fieldName) != (new Number(oldValue)).toFixed(2)) {
+				me.calcTax(goods);
+			}
 			var store = me.getGoodsGrid().getStore();
 			if (e.rowIdx == store.getCount() - 1) {
-				store.add({});
+				store.add({taxRate: me.__taxRate});
 			}
 			e.rowIdx += 1;
 			me.getGoodsGrid().getSelectionModel().select(e.rowIdx);
 			me.__cellEditing.startEdit(e.rowIdx, 1);
+		} else if (fieldName == "tax") {
+			if (goods.get(fieldName) != (new Number(oldValue)).toFixed(2)) {
+				me.calcMoneyWithTax(goods);
+			}
 		} else if (fieldName == "goodsMoney") {
 			if (goods.get(fieldName) != (new Number(oldValue)).toFixed(2)) {
 				me.calcPrice(goods);
@@ -626,6 +629,23 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 		}
 	},
 	
+	calcTax: function(goods) {
+		if (!goods) {
+			return;
+		}
+		var taxRate = goods.get("taxRate") / 100;
+		var tax = goods.get("moneyWithTax") * taxRate / (1 + taxRate);
+		goods.set("tax", tax);
+		goods.set("goodsMoney", goods.get("moneyWithTax") - tax);
+	},
+	
+	calcMoneyWithTax: function(goods) {
+		if (!goods) {
+			return;
+		}
+		goods.set("moneyWithTax", goods.get("goodsMoney") + goods.get("tax"));
+	},
+	
 	calcMoney : function(goods) {
 		if (!goods) {
 			return;
@@ -633,6 +653,8 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 		
 		goods.set("goodsMoney", goods.get("goodsCount")
 				* goods.get("goodsPrice"));
+		goods.set("tax", goods.get("goodsMoney") * goods.get("taxRate") / 100);
+		goods.set("moneyWithTax", goods.get("goodsMoney") + goods.get("tax"));
 	},
 	
 	calcPrice : function(goods) {

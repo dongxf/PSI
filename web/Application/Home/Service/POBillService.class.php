@@ -89,6 +89,9 @@ class POBillService extends PSIBaseService {
 		
 		$result = array();
 		
+		$cs = new BizConfigService();
+		$result["taxRate"] = $cs->getTaxRate();
+		
 		$db = M();
 		
 		if ($id) {
