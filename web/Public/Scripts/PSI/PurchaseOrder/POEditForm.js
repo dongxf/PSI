@@ -53,7 +53,7 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 				id : "editForm",
 				layout : {
 					type : "table",
-					columns : 2
+					columns : 4
 				},
 				height : 120,
 				bodyPadding : 10,
@@ -72,7 +72,7 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 					xtype : "displayfield",
 					value : "<span style='color:red'>保存后自动生成</span>"
 				}, {
-					id : "editBizDT",
+					id : "editDealDate",
 					fieldLabel : "交货日期",
 					labelWidth : 60,
 					labelAlign : "right",
@@ -109,12 +109,37 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 						}
 					}
 				}, {
-					id : "editWarehouse",
+					id: "editDealAddress",
+					labelWidth : 60,
+					labelAlign : "right",
+					labelSeparator : "",
+					fieldLabel : "交货地址",
+					colspan: 2,
+					width: 430,
+					xtype : "textfield"
+				},{
+					id: "editTel",
+					labelWidth : 60,
+					labelAlign : "right",
+					labelSeparator : "",
+					fieldLabel : "电话",
+					xtype : "textfield"
+				},{
+					id: "editFax",
+					labelWidth : 60,
+					labelAlign : "right",
+					labelSeparator : "",
+					fieldLabel : "传真",
+					xtype : "textfield"
+				},{
+					id : "editOrg",
 					labelWidth : 60,
 					labelAlign : "right",
 					labelSeparator : "",
 					fieldLabel : "组织机构",
 					xtype : "psi_orgfield",
+					colspan: 2,
+					width: 430,
 					allowBlank : false,
 					blankText : "没有输入组织机构",
 					beforeLabelTextTpl : PSI.Const.REQUIRED,
@@ -161,6 +186,15 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 							scope : me
 						}
 					}
+				},{
+					id: "editBillMemo",
+					labelWidth : 60,
+					labelAlign : "right",
+					labelSeparator : "",
+					fieldLabel : "备注",
+					xtype : "textfield",
+					colspan: 4,
+					width: 860
 				} ]
 			} ],
 			listeners : {
