@@ -673,8 +673,13 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 			dealDate : Ext.Date
 					.format(Ext.getCmp("editDealDate").getValue(), "Y-m-d"),
 			supplierId : Ext.getCmp("editSupplier").getIdValue(),
+			dealAddress: Ext.getCmp("editDealAddress").getValue(),
+			tel: Ext.getCmp("editTel").getValue(),
+			fax: Ext.getCmp("editFax").getValue(),
+			orgId: Ext.getCmp("editOrg").getIdValue(),
 			bizUserId : Ext.getCmp("editBizUser").getIdValue(),
 			paymentType: Ext.getCmp("editPaymentType").getValue(),
+			billMemo: Ext.getCmp("editBillMemo").getValue(),
 			items : []
 		};
 
@@ -686,7 +691,10 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 				goodsId : item.get("goodsId"),
 				goodsCount : item.get("goodsCount"),
 				goodsPrice : item.get("goodsPrice"),
-				goodsMoney: item.get("goodsMoney")
+				goodsMoney: item.get("goodsMoney"),
+				tax: item.get("tax"),
+				taxRate: item.get("taxRate"),
+				moneyWithTax: item.get("moneyWithTax")
 			});
 		}
 

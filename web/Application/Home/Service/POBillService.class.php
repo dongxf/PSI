@@ -10,6 +10,26 @@ namespace Home\Service;
 class POBillService extends PSIBaseService {
 
 	/**
+	 * 生成新的采购订单号
+	 */
+	private function genNewBillRef() {
+		$pre = "PO";
+		$mid = date("Ymd");
+		
+		$sql = "select ref from t_po_bill where ref like '%s' order by ref desc limit 1";
+		$data = M()->query($sql, $pre . $mid . "%");
+		$sufLength = 3;
+		$suf = str_pad("1", $sufLength, "0", STR_PAD_LEFT);
+		if ($data) {
+			$ref = $data[0]["ref"];
+			$nextNumber = intval(substr($ref, 10)) + 1;
+			$suf = str_pad($nextNumber, $sufLength, "0", STR_PAD_LEFT);
+		}
+		
+		return $pre . $mid . $suf;
+	}
+
+	/**
 	 * 获得采购订单主表信息列表
 	 */
 	public function pobillList($params) {
@@ -78,9 +98,56 @@ class POBillService extends PSIBaseService {
 			return $this->bad("传入的参数错误，不是正确的JSON格式");
 		}
 		
+		$db = M();
+		
+		$id = $bill["id"];
+		$dealDate = $bill["dealDate"];
+		if (! $this->dateIsValid($dealDate)) {
+			return $this->bad("交货日期不正确");
+		}
+		
+		$supplierId = $bill["supplierId"];
+		$ss = new SupplierService();
+		if (! $ss->supplierExists($supplierId, $db)) {
+			return $this->bad("供应商不存在");
+		}
+		$orgId = $bill["orgId"];
+		$us = new UserService();
+		if (! $us->orgExists($orgId, $db)) {
+			return $this->bad("组织机构不存在");
+		}
+		$bizUserId = $bill["bizUserId"];
+		if (! $us->userExists($bizUserId, $db)) {
+			return $this->bad("业务员不存在");
+		}
+		$items = $bill["items"];
+		
+		$idGen = new IdGenService();
+		
+		if ($id) {
+			// 编辑
+		} else {
+			// 新建采购订单
+			
+			$db->startTrans();
+			try {
+				$ref = $this->genNewBillRef();
+				// 主表
+				$sql = "insert into t_po_bill(id, ref, bill_status, deal_date, biz_dt, org_id, biz_user_id,
+							goods_money, tax, money_with_tax, input_user_id, supplier_id, contact)";
+				
+				// 明细记录
+				
+				$db->commit();
+			} catch ( Exception $e ) {
+				$db->rollback();
+				return $this->sqlError();
+			}
+		}
+		
 		return $this->todo();
 	}
-	
+
 	/**
 	 * 获得采购订单的信息
 	 */

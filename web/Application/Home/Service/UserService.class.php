@@ -708,7 +708,7 @@ class UserService extends PSIBaseService {
 	}
 
 	/**
-	 * 盘点指定用户id的用户是否存在
+	 * 判断指定用户id的用户是否存在
 	 *
 	 * @return true: 存在
 	 */
@@ -722,6 +722,24 @@ class UserService extends PSIBaseService {
 		
 		$sql = "select count(*) as cnt from t_user where id = '%s' ";
 		$data = $db->query($sql, $userId);
+		return $data[0]["cnt"] == 1;
+	}
+
+	/**
+	 * 判断指定的组织机构是否存储
+	 * 
+	 * @return boolean true: 存在
+	 */
+	public function orgExists($orgId, $db) {
+		if (! $db) {
+			$db = M();
+		}
+		if (! $orgId) {
+			return false;
+		}
+		
+		$sql = "select count(*) as cnt from t_org where id = '%s' ";
+		$data = $db->query($sql, $orgId);
 		return $data[0]["cnt"] == 1;
 	}
 }
