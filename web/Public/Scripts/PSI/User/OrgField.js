@@ -6,6 +6,8 @@ Ext.define("PSI.User.OrgField", {
     initComponent: function () {
     	var me = this;
     	
+    	me.__idValue = null;
+    	
         me.enableKeyEvents = true;
 
         me.callParent(arguments);

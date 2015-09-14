@@ -3,6 +3,10 @@ Ext.define("PSI.Supplier.SupplierField", {
     extend: "Ext.form.field.Trigger",
     alias: "widget.psi_supplierfield",
     
+    config: {
+    	callbackFunc: null
+    },
+    
     initComponent: function () {
     	var me = this;
     	
@@ -35,7 +39,7 @@ Ext.define("PSI.Supplier.SupplierField", {
         var modelName = "PSISupplierField";
         Ext.define(modelName, {
             extend: "Ext.data.Model",
-            fields: ["id", "code", "name"]
+            fields: ["id", "code", "name", "tel01", "fax", "address_shipping"]
         });
 
         var store = Ext.create("Ext.data.Store", {
@@ -197,6 +201,11 @@ Ext.define("PSI.Supplier.SupplierField", {
         me.focus();
         
         me.setIdValue(data.id);
+        
+        var func = me.getCallbackFunc();
+        if (func) {
+        	func(data);
+        }
     },
     
     setIdValue: function(id) {

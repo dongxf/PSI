@@ -107,7 +107,8 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 							fn : me.onEditSpecialKey,
 							scope : me
 						}
-					}
+					},
+					callbackFunc: me.__setSupplierExtData
 				}, {
 					id: "editDealAddress",
 					labelWidth : 60,
@@ -640,5 +641,11 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 		Ext.getCmp("columnActionDelete").hide();
 		Ext.getCmp("columnActionAdd").hide();
 		Ext.getCmp("columnActionAppend").hide();
+	},
+	
+	__setSupplierExtData: function(data) {
+		Ext.getCmp("editDealAddress").setValue(data.address_shipping);
+		Ext.getCmp("editTel").setValue(data.tel01);
+		Ext.getCmp("editFax").setValue(data.fax);
 	}
 });

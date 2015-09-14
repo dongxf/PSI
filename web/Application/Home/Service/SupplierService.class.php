@@ -516,7 +516,8 @@ class SupplierService extends PSIBaseService {
 			$queryKey = "";
 		}
 		
-		$sql = "select id, code, name from t_supplier
+		$sql = "select id, code, name, tel01, fax, address_shipping 
+				from t_supplier
 				where code like '%s' or name like '%s' or py like '%s' 
 				order by code 
 				limit 20";
