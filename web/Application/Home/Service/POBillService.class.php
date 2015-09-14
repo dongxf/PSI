@@ -80,4 +80,24 @@ class POBillService extends PSIBaseService {
 		
 		return $this->todo();
 	}
+	
+	/**
+	 * 获得采购订单的信息
+	 */
+	public function poBillInfo($params) {
+		$id = $params["id"];
+		
+		$result = array();
+		
+		if ($id) {
+			// 编辑采购订单
+		} else {
+			// 新建采购订单
+			$us = new UserService();
+			$result["bizUserId"] = $us->getLoginUserId();
+			$result["bizUserName"] = $us->getLoginUserName();
+		}
+		
+		return $result;
+	}
 }

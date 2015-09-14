@@ -193,13 +193,9 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 
 					if (data.ref) {
 						Ext.getCmp("editRef").setValue(data.ref);
+						Ext.getCmp("editSupplier").setIdValue(data.supplierId);
+						Ext.getCmp("editSupplier").setValue(data.supplierName);
 					}
-
-					Ext.getCmp("editSupplier").setIdValue(data.supplierId);
-					Ext.getCmp("editSupplier").setValue(data.supplierName);
-
-					Ext.getCmp("editWarehouse").setIdValue(data.warehouseId);
-					Ext.getCmp("editWarehouse").setValue(data.warehouseName);
 
 					Ext.getCmp("editBizUser").setIdValue(data.bizUserId);
 					Ext.getCmp("editBizUser").setValue(data.bizUserName);

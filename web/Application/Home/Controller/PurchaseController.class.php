@@ -160,4 +160,18 @@ class PurchaseController extends Controller {
 			$this->ajaxReturn($ps->editPOBill($json));
 		}
 	}
+
+	/**
+	 * 获得采购订单的信息
+	 */
+	public function poBillInfo() {
+		if (IS_POST) {
+			$params = array(
+					"id" => I("post.id")
+			);
+
+			$ps = new POBillService();
+			$this->ajaxReturn($ps->poBillInfo($params));
+		}
+	}
 }
