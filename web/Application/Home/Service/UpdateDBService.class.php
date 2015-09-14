@@ -8,7 +8,7 @@ namespace Home\Service;
  * @author 李静波
  */
 class UpdateDBService extends PSIBaseService {
-	private $CURRENT_DB_VERSION = "20150912-002";
+	private $CURRENT_DB_VERSION = "20150914-001";
 
 	private function tableExists($db, $tableName) {
 		$dbName = C('DB_NAME');
@@ -230,6 +230,16 @@ class UpdateDBService extends PSIBaseService {
 		if ($cnt == 0) {
 			$sql = "insert into t_config (id, name, value, note, show_order)
 					values ('1003-01', '仓库需指定组织机构', '0', '当仓库需要指定组织机构的时候，就意味着可以控制仓库的使用人', 401)";
+			$db->execute($sql);
+		}
+		
+		// 9001-01
+		$sql = "select count(*) as cnt from t_config where id = '9001-01' ";
+		$data = $db->query($sql);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_config (id, name, value, note, show_order)
+					values ('9001-01', '增值税税率', '17', '', 501)";
 			$db->execute($sql);
 		}
 	}

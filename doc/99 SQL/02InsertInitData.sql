@@ -225,11 +225,12 @@ INSERT INTO `t_config` (`id`, `name`, `value`, `note`, `show_order`) VALUES
 ('2001-01', '采购入库默认仓库', '', '', 200),
 ('2002-02', '销售出库默认仓库', '', '', 300),
 ('2002-01', '销售出库单允许编辑销售单价', '0', '当允许编辑的时候，还需要给用户赋予权限[销售出库单允许编辑销售单价]', 301),
-('1003-01', '仓库需指定组织机构', '0', '当仓库需要指定组织机构的时候，就意味着可以控制仓库的使用人', 401);
+('1003-01', '仓库需指定组织机构', '0', '当仓库需要指定组织机构的时候，就意味着可以控制仓库的使用人', 401),
+('9001-01', '增值税税率', '17', '', 501);
 
 TRUNCATE TABLE `t_psi_db_version`;
 INSERT INTO `t_psi_db_version` (`db_version`, `update_dt`) VALUES
-('20150912-002', now());
+('20150914-001', now());
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
