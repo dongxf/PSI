@@ -84,6 +84,19 @@ class BizConfigService extends PSIBaseService {
 			return $this->notOnlineError();
 		}
 		
+		// 检查值是否合法
+		foreach ( $params as $key => $value ) {
+			if ($key == "9001-01") {
+				$v = intval($value);
+				if ($v < 0) {
+					return $this->bad("增值税税率不能为负数");
+				}
+				if ($v > 17) {
+					return $this->bad("增值税税率不能大于17");
+				}
+			}
+		}
+		
 		$db = M();
 		
 		foreach ( $params as $key => $value ) {
@@ -98,6 +111,10 @@ class BizConfigService extends PSIBaseService {
 			$oldValue = $data[0]["value"];
 			if ($value == $oldValue) {
 				continue;
+			}
+			
+			if ($key == "9001-01") {
+				$value = intval($value);
 			}
 			
 			$sql = "update t_config set value = '%s'
@@ -155,6 +172,21 @@ class BizConfigService extends PSIBaseService {
 			return $data[0]["value"] == "1";
 		} else {
 			return false;
+		}
+	}
+	
+	/**
+	 * 获得增值税税率
+	 */
+	public function getTaxRate() {
+		$db = M();
+		$sql = "select value from t_config where id = '9001-01' ";
+		$data = $db->query($sql);
+		if ($data) {
+			$result = $data[0]["value"];
+			return intval($result);
+		} else {
+			return 17; 
 		}
 	}
 }

@@ -172,6 +172,20 @@ Ext.define("PSI.BizConfig.EditForm", {
 									name : "value1003-01"
 								}
 				        	 ]
+				         }, {
+				        	 title: "财务",
+				        	 layout: "form",
+				        	 items: [
+				        	         {
+				        	        	 id: "editName9001-01",
+				        	        	 xtype: "displayfield"
+				        	         }, {
+				        	        	 id: "editValue9001-01",
+				        	        	 xtype: "numberfield",
+				        	        	 hideTrigger: true,
+				        	        	 allowDecimals: false
+				        	         }
+				        	 ]
 				         }
 				 ],
 				buttons : buttons
@@ -202,6 +216,7 @@ Ext.define("PSI.BizConfig.EditForm", {
 				'value2001-01': Ext.getCmp("editValue2001-01").getValue(),
 				'value2002-01': Ext.getCmp("editValue2002-01").getValue(),
 				'value2002-02': Ext.getCmp("editValue2002-02").getValue(),
+				'value9001-01': Ext.getCmp("editValue9001-01").getValue()
 		};
 		
 		return result;
