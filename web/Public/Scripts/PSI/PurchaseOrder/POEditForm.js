@@ -358,7 +358,8 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 		Ext.define(modelName, {
 			extend : "Ext.data.Model",
 			fields : [ "id", "goodsId", "goodsCode", "goodsName", "goodsSpec",
-					"unitName", "goodsCount", {name: "goodsMoney", type: "float"}, "goodsPrice" ]
+					"unitName", "goodsCount", {name: "goodsMoney", type: "float"}, "goodsPrice",
+					"taxRate", {name: "tax", type: "float"}, {name: "moneyWithTax", type: "float"}]
 		});
 		var store = Ext.create("Ext.data.Store", {
 			autoLoad : false,
@@ -467,12 +468,56 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 						summaryType: "sum"
 					},
 					{
+						header : "税率(%)",
+						dataIndex : "taxRate",
+						menuDisabled : true,
+						sortable : false,
+						draggable: false,
+						align : "right",
+						width : 60,
+						editor : {
+							xtype : "numberfield",
+							allowDecimals : false,
+							hideTrigger : true
+						}
+					},
+					{
+						header : "税金",
+						dataIndex : "tax",
+						menuDisabled : true,
+						sortable : false,
+						draggable: false,
+						align : "right",
+						xtype : "numbercolumn",
+						width : 100,
+						editor : {
+							xtype : "numberfield",
+							hideTrigger : true
+						},
+						summaryType: "sum"
+					},
+					{
+						header : "价税合计",
+						dataIndex : "moneyWithTax",
+						menuDisabled : true,
+						sortable : false,
+						draggable: false,
+						align : "right",
+						xtype : "numbercolumn",
+						width : 120,
+						editor : {
+							xtype : "numberfield",
+							hideTrigger : true
+						},
+						summaryType: "sum"
+					},
+					{
 						header : "",
 						id: "columnActionDelete",
 						align : "center",
 						menuDisabled : true,
 						draggable: false,
-						width : 50,
+						width : 40,
 						xtype : "actioncolumn",
 						items : [ {
 							icon : PSI.Const.BASE_URL
@@ -492,7 +537,7 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 						align : "center",
 						menuDisabled : true,
 						draggable: false,
-						width : 50,
+						width : 40,
 						xtype : "actioncolumn",
 						items : [ {
 							icon : PSI.Const.BASE_URL
@@ -509,7 +554,7 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 						align : "center",
 						menuDisabled : true,
 						draggable: false,
-						width : 50,
+						width : 40,
 						xtype : "actioncolumn",
 						items : [ {
 							icon : PSI.Const.BASE_URL
@@ -558,11 +603,7 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 		var fieldName = e.field;
 		var goods = e.record;
 		var oldValue = e.originalValue;
-		if (fieldName == "goodsMoney") {
-			if (goods.get(fieldName) != (new Number(oldValue)).toFixed(2)) {
-				me.calcPrice(goods);
-			}
-
+		if (fieldName == "moneyWithTax") {
 			var store = me.getGoodsGrid().getStore();
 			if (e.rowIdx == store.getCount() - 1) {
 				store.add({});
@@ -570,6 +611,10 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 			e.rowIdx += 1;
 			me.getGoodsGrid().getSelectionModel().select(e.rowIdx);
 			me.__cellEditing.startEdit(e.rowIdx, 1);
+		} else if (fieldName == "goodsMoney") {
+			if (goods.get(fieldName) != (new Number(oldValue)).toFixed(2)) {
+				me.calcPrice(goods);
+			}
 		} else if (fieldName == "goodsCount") {
 			if (goods.get(fieldName) != oldValue) {
 				me.calcMoney(goods);
