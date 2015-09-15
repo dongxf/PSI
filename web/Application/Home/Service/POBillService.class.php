@@ -120,23 +120,94 @@ class POBillService extends PSIBaseService {
 		if (! $us->userExists($bizUserId, $db)) {
 			return $this->bad("业务员不存在");
 		}
+		$paymentType = $bill["paymentType"];
+		$contact = $bill["contact"];
+		$tel = $bill["tel"];
+		$fax = $bill["fax"];
+		$dealAddress = $bill["dealAddress"];
+		$billMemo = $bill["billMemo"];
+		
 		$items = $bill["items"];
 		
 		$idGen = new IdGenService();
 		
 		if ($id) {
 			// 编辑
+			return $this->todo();
 		} else {
 			// 新建采购订单
 			
 			$db->startTrans();
 			try {
+				$id = $idGen->newId();
 				$ref = $this->genNewBillRef();
 				// 主表
 				$sql = "insert into t_po_bill(id, ref, bill_status, deal_date, biz_dt, org_id, biz_user_id,
-							goods_money, tax, money_with_tax, input_user_id, supplier_id, contact)";
+							goods_money, tax, money_with_tax, input_user_id, supplier_id, contact, tel, fax,
+							deal_address, bill_memo, payment_type, date_created)
+						values ('%s', '%s', 0, '%s', '%s', '%s', '%s', 
+							0, 0, 0, '%s', '%s', '%s', '%s', '%s', 
+							'%s', '%s', %d, now())";
+				$rc = $db->execute($sql, $id, $ref, $dealDate, $dealDate, $orgId, $bizUserId, 
+						$us->getLoginUserId(), $supplierId, $contact, $tel, $fax, $dealAddress, 
+						$billMemo, $paymentType);
+				if (! $rc) {
+					$db->rollback();
+					return $this->sqlError();
+				}
 				
 				// 明细记录
+				foreach ( $items as $i => $v ) {
+					$goodsId = $v["goodsId"];
+					if (! $goodsId) {
+						continue;
+					}
+					$goodsCount = $v["goodsCount"];
+					$goodsPrice = $v["goodsPrice"];
+					$goodsMoney = $v["goodsMoney"];
+					$taxRate = $v["taxRate"];
+					$tax = $v["tax"];
+					$moneyWithTax = $v["moneyWithTax"];
+					
+					$sql = "insert into t_po_bill_detail(id, date_created, goods_id, goods_count, goods_money,
+								goods_price, pobill_id, tax_rate, tax, money_with_tax, pw_count, left_count, show_order)
+							values ('%s', now(), '%s', %d, %f,
+								%f, '%s', %d, %f, %f, 0, %d, %d)";
+					$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsMoney, 
+							$goodsPrice, $id, $taxRate, $tax, $moneyWithTax, $goodsCount, $i);
+					if (! $rc) {
+						$db->rollback();
+						return $this->sqlError();
+					}
+				}
+				
+				// 同步主表的金额合计字段
+				$sql = "select sum(goods_money) as sum_goods_money, sum(tax) as sum_tax, 
+							sum(money_with_tax) as sum_money_with_tax
+						from t_po_bill_detail
+						where pobill_id = '%s' ";
+				$data = $db->query($sql, $id);
+				$sumGoodsMoney = $data[0]["sum_goods_money"];
+				if (! $sumGoodsMoney) {
+					$sumGoodsMoney = 0;
+				}
+				$sumTax = $data[0]["sum_tax"];
+				if (! $sumTax) {
+					$sumTax = 0;
+				}
+				$sumMoneyWithTax = $data[0]["sum_money_with_tax"];
+				if (! $sumMoneyWithTax) {
+					$sumMoneyWithTax = 0;
+				}
+				
+				$sql = "update t_po_bill
+						set goods_money = %f, tax = %f, money_with_tax = %f
+						where id = '%s' ";
+				$rc = $db->execute($sql, $sumGoodsMoney, $sumTax, $sumMoneyWithTax, $id);
+				if (! $rc) {
+					$db->rollback();
+					return $this->sqlError();
+				}
 				
 				$db->commit();
 			} catch ( Exception $e ) {
@@ -145,7 +216,7 @@ class POBillService extends PSIBaseService {
 			}
 		}
 		
-		return $this->todo();
+		return $this->ok($id);
 	}
 
 	/**
