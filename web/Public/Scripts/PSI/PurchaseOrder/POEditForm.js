@@ -270,6 +270,12 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 						Ext.getCmp("editRef").setValue(data.ref);
 						Ext.getCmp("editSupplier").setIdValue(data.supplierId);
 						Ext.getCmp("editSupplier").setValue(data.supplierName);
+						Ext.getCmp("editBillMemo").setValue(data.billMemo);
+						Ext.getCmp("editDealDate").setValue(data.dealDate);
+						Ext.getCmp("editDealAddress").setValue(data.dealAddress);
+						Ext.getCmp("editContact").setValue(data.contact);
+						Ext.getCmp("editTel").setValue(data.tel);
+						Ext.getCmp("editFax").setValue(data.fax);
 					}
 					me.__taxRate = data.taxRate;
 
@@ -280,9 +286,6 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 						Ext.getCmp("editOrg").setValue(data.orgFullName);
 					}
 					
-					if (data.bizDT) {
-						Ext.getCmp("editBizDT").setValue(data.bizDT);
-					}
 					if (data.paymentType) {
 						Ext.getCmp("editPaymentType").setValue(data.paymentType);
 					}

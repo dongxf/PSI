@@ -261,6 +261,58 @@ class POBillService extends PSIBaseService {
 		
 		if ($id) {
 			// 编辑采购订单
+			$sql = "select p.ref, p.deal_date, p.deal_address, p.supplier_id,
+						s.name as supplier_name, p.contact, p.tel, p.fax,
+						p.org_id, o.full_name, p.biz_user_id, u.name as biz_user_name,
+						p.payment_type, p.bill_memo, p.bill_status
+					from t_po_bill p, t_supplier s, t_user u, t_org o
+					where p.id = '%s' and p.supplier_Id = s.id
+						and p.biz_user_id = u.id
+						and p.org_id = o.id";
+			$data = $db->query($sql, $id);
+			if ($data) {
+				$v = $data[0];
+				$result["ref"] = $v["ref"];
+				$result["dealDate"] = $this->toYMD($v["deal_date"]);
+				$result["dealAddress"] = $v["deal_address"];
+				$result["supplierId"] = $v["supplier_id"];
+				$result["supplierName"] = $v["supplier_name"];
+				$result["contact"] = $v["contact"];
+				$result["tel"] = $v["tel"];
+				$result["fax"] = $v["fax"];
+				$result["orgId"] = $v["org_id"];
+				$result["orgFullName"] = $v["full_name"];
+				$result["bizUserId"] = $v["biz_user_id"];
+				$result["bizUserName"] = $v["biz_user_name"];
+				$result["paymentType"] = $v["paymentType"];
+				$result["billMemo"] = $v["bill_memo"];
+				$result["billStatus"] = $v["bill_status"];
+				
+				// 明细表
+				$sql = "select p.id, p.goods_id, g.code, g.name, g.spec, p.goods_count, p.goods_price, p.goods_money,
+					p.tax_rate, p.tax, p.money_with_tax, u.name as unit_name
+				from t_po_bill_detail p, t_goods g, t_goods_unit u
+				where p.pobill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id
+				order by p.show_order";
+				$items = array();
+				$data = $db->query($sql, $id);
+				
+				foreach ( $data as $i => $v ) {
+					$items[$i]["goodsId"] = $v["goods_id"];
+					$items[$i]["goodsCode"] = $v["code"];
+					$items[$i]["goodsName"] = $v["name"];
+					$items[$i]["goodsSpec"] = $v["spec"];
+					$items[$i]["goodsCount"] = $v["goods_count"];
+					$items[$i]["goodsPrice"] = $v["goods_price"];
+					$items[$i]["goodsMoney"] = $v["goods_money"];
+					$items[$i]["taxRate"] = $v["tax_rate"];
+					$items[$i]["tax"] = $v["tax"];
+					$items[$i]["moneyWithTax"] = $v["money_with_tax"];
+					$items[$i]["unitName"] = $v["unit_name"];
+				}
+				
+				$result["items"] = $items;
+			}
 		} else {
 			// 新建采购订单
 			$us = new UserService();
@@ -279,12 +331,12 @@ class POBillService extends PSIBaseService {
 		
 		return $result;
 	}
-	
+
 	public function poBillDetailList($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-
+		
 		$id = $params["id"];
 		$db = M();
 		
@@ -296,7 +348,7 @@ class POBillService extends PSIBaseService {
 		$result = array();
 		$data = $db->query($sql, $id);
 		
-		foreach ($data as $i => $v) {
+		foreach ( $data as $i => $v ) {
 			$result[$i]["id"] = $v["id"];
 			$result[$i]["goodsCode"] = $v["code"];
 			$result[$i]["goodsName"] = $v["name"];
