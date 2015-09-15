@@ -54,8 +54,9 @@ class POBillService extends PSIBaseService {
 		$result = array();
 		$sql = "select p.id, p.ref, p.bill_status, p.goods_money, p.tax, p.money_with_tax,
 					s.name as supplier_name, p.contact, p.tel, p.fax, p.deal_address,
-					p.deal_date, p.payment_type, p.bill_memo, p.biz_dt, p.date_created,
-					o.name as org_name, u1.name as biz_user_name, u2.name as input_user_name
+					p.deal_date, p.payment_type, p.bill_memo, p.date_created,
+					o.full_name as org_name, u1.name as biz_user_name, u2.name as input_user_name,
+					p.confirm_user_id, p.confirm_date
 				from t_po_bill p, t_supplier s, t_org o, t_user u1, t_user u2
 				where (p.supplier_id = s.id) and (p.org_id = o.id)
 					and (p.biz_user_id = u1.id) and (p.input_user_id = u2.id)
@@ -68,6 +69,32 @@ class POBillService extends PSIBaseService {
 		foreach ( $data as $i => $v ) {
 			$result[$i]["id"] = $v["id"];
 			$result[$i]["ref"] = $v["ref"];
+			$result[$i]["billStatus"] = $v["bill_status"];
+			$result[$i]["dealDate"] = $this->toYMD($v["deal_date"]);
+			$result[$i]["dealAddress"] = $v["deal_address"];
+			$result[$i]["supplierName"] = $v["supplier_name"];
+			$result[$i]["contact"] = $v["contact"];
+			$result[$i]["tel"] = $v["tel"];
+			$result[$i]["fax"] = $v["fax"];
+			$result[$i]["goodsMoney"] = $v["goods_money"];
+			$result[$i]["tax"] = $v["tax"];
+			$result[$i]["moneyWithTax"] = $v["money_with_tax"];
+			$result[$i]["paymentType"] = $v["payment_type"];
+			$result[$i]["billMemo"] = $v["bill_memo"];
+			$result[$i]["bizUserName"] = $v["biz_user_name"];
+			$result[$i]["orgName"] = $v["org_name"];
+			$result[$i]["inputUserName"] = $v["input_user_name"];
+			$result[$i]["dateCreated"] = $v["date_created"];
+			
+			$confirmUserId = $v["confirm_user_id"];
+			if (! $confirmUserId) {
+				$sql = "select name from t_user where id = '%s' ";
+				$d = $db->query($sql, $confirmUserId);
+				if ($d) {
+					$result[$i]["confirmUserName"] = $d[0]["name"];
+					$result[$i]["confirmDate"] = $v["confirm_date"];
+				}
+			}
 		}
 		
 		$sql = "select count(*) as cnt
@@ -248,6 +275,39 @@ class POBillService extends PSIBaseService {
 				$result["orgId"] = $data[0]["id"];
 				$result["orgFullName"] = $data[0]["full_name"];
 			}
+		}
+		
+		return $result;
+	}
+	
+	public function poBillDetailList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+
+		$id = $params["id"];
+		$db = M();
+		
+		$sql = "select p.id, g.code, g.name, g.spec, p.goods_count, p.goods_price, p.goods_money,
+					p.tax_rate, p.tax, p.money_with_tax, u.name as unit_name
+				from t_po_bill_detail p, t_goods g, t_goods_unit u
+				where p.pobill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id
+				order by p.show_order";
+		$result = array();
+		$data = $db->query($sql, $id);
+		
+		foreach ($data as $i => $v) {
+			$result[$i]["id"] = $v["id"];
+			$result[$i]["goodsCode"] = $v["code"];
+			$result[$i]["goodsName"] = $v["name"];
+			$result[$i]["goodsSpec"] = $v["spec"];
+			$result[$i]["goodsCount"] = $v["goods_count"];
+			$result[$i]["goodsPrice"] = $v["goods_price"];
+			$result[$i]["goodsMoney"] = $v["goods_money"];
+			$result[$i]["taxRate"] = $v["tax_rate"];
+			$result[$i]["tax"] = $v["tax"];
+			$result[$i]["moneyWithTax"] = $v["money_with_tax"];
+			$result[$i]["unitName"] = $v["unit_name"];
 		}
 		
 		return $result;

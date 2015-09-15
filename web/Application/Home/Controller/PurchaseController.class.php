@@ -174,4 +174,19 @@ class PurchaseController extends Controller {
 			$this->ajaxReturn($ps->poBillInfo($params));
 		}
 	}
+	
+	/**
+	 * 获得采购订单的明细信息
+	 */
+	public function poBillDetailList() {
+		if (IS_POST) {
+			$params = array(
+					"id" => I("post.id")
+			);
+	
+			$ps = new POBillService();
+			$this->ajaxReturn($ps->poBillDetailList($params));
+		}
+	}
+	
 }

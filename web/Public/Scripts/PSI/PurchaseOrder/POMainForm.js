@@ -194,7 +194,13 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
                 {xtype: "rownumberer", width: 50},
                 {header: "状态", dataIndex: "billStatus", menuDisabled: true, sortable: false, width: 60,
                 	renderer: function (value) {
-                        return value == "待审核" ? "<span style='color:red'>" + value + "</span>" : value;
+                		if (value == 0) {
+                			return "<span style='color:red'>待审核</span>";
+                		} else if (value == 1000) {
+                			return "已审核";
+                		} else {
+                			return "";
+                		}
                     }
                 },
                 {header: "采购订单号", dataIndex: "ref", width: 110, menuDisabled: true, sortable: false},
@@ -428,7 +434,7 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
             return;
         }
         var bill = item[0];
-        var commited = bill.get("billStatus") == "已入库";
+        var commited = bill.get("billStatus") >= 1000;
 
         var buttonEdit = Ext.getCmp("buttonEdit");
         buttonEdit.setDisabled(false);
@@ -460,7 +466,7 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
         Ext.Ajax.request({
             url: PSI.Const.BASE_URL + "Home/Purchase/poBillDetailList",
             params: {
-            	pwBillId: bill.get("id")
+            	id: bill.get("id")
             },
             method: "POST",
             callback: function (options, success, response) {
