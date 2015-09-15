@@ -59,10 +59,33 @@ class POBillService extends PSIBaseService {
 					p.confirm_user_id, p.confirm_date
 				from t_po_bill p, t_supplier s, t_org o, t_user u1, t_user u2
 				where (p.supplier_id = s.id) and (p.org_id = o.id)
-					and (p.biz_user_id = u1.id) and (p.input_user_id = u2.id)
-				order by p.ref desc";
-		
-		$sql .= " limit %d , %d";
+					and (p.biz_user_id = u1.id) and (p.input_user_id = u2.id) ";
+		if ($billStatus != - 1) {
+			$sql .= " and (p.bill_status = %d) ";
+			$queryParams[] = $billStatus;
+		}
+		if ($ref) {
+			$sql .= " and (p.ref like '%s') ";
+			$queryParams[] = "%$ref%";
+		}
+		if ($fromDT) {
+			$sql .= " and (p.deal_date >= '%s')";
+			$queryParams[] = $fromDT;
+		}
+		if ($toDT) {
+			$sql .= " and (p.deal_date <= '%s')";
+			$queryParams[] = $toDT;
+		}
+		if ($supplierId) {
+			$sql .= " and (p.supplier_id = '%s')";
+			$queryParams[] = $supplierId;
+		}
+		if ($paymentType != - 1) {
+			$sql .= " and (p.payment_type = %d) ";
+			$queryParams[] = $paymentType;
+		}
+		$sql .= " order by p.ref desc 
+				  limit %d , %d";
 		$queryParams[] = $start;
 		$queryParams[] = $limit;
 		$data = $db->query($sql, $queryParams);
@@ -103,6 +126,30 @@ class POBillService extends PSIBaseService {
 					and (p.biz_user_id = u1.id) and (p.input_user_id = u2.id)
 				";
 		$queryParams = array();
+		if ($billStatus != - 1) {
+			$sql .= " and (p.bill_status = %d) ";
+			$queryParams[] = $billStatus;
+		}
+		if ($ref) {
+			$sql .= " and (p.ref like '%s') ";
+			$queryParams[] = "%$ref%";
+		}
+		if ($fromDT) {
+			$sql .= " and (p.deal_date >= '%s')";
+			$queryParams[] = $fromDT;
+		}
+		if ($toDT) {
+			$sql .= " and (p.deal_date <= '%s')";
+			$queryParams[] = $toDT;
+		}
+		if ($supplierId) {
+			$sql .= " and (p.supplier_id = '%s')";
+			$queryParams[] = $supplierId;
+		}
+		if ($paymentType != - 1) {
+			$sql .= " and (p.payment_type = %d) ";
+			$queryParams[] = $paymentType;
+		}
 		$data = $db->query($sql, $queryParams);
 		$cnt = $data[0]["cnt"];
 		

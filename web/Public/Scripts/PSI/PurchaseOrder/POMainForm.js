@@ -574,7 +574,6 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
     	Ext.getCmp("editQueryFromDT").setValue(null);
     	Ext.getCmp("editQueryToDT").setValue(null);
     	Ext.getCmp("editQuerySupplier").clearIdValue();
-    	Ext.getCmp("editQueryWarehouse").clearIdValue();
     	Ext.getCmp("editQueryPaymentType").setValue(-1);
     	
     	me.onQuery();
