@@ -377,7 +377,7 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
         
         var bill = item[0];
         
-        if (bill.get("billStatus") == "已审核") {
+        if (bill.get("billStatus") > 0) {
         	PSI.MsgBox.showInfo("当前采购订单已经审核，不能删除");
         	return;
         }
@@ -503,7 +503,7 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
         }
         var bill = item[0];
 
-        if (bill.get("billStatus") == "已审核") {
+        if (bill.get("billStatus") > 0) {
         	PSI.MsgBox.showInfo("当前采购订单已经审核，不能再次审核");
         	return;
         }

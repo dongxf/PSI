@@ -236,6 +236,11 @@ class POBillService extends PSIBaseService {
 					return $this->sqlError();
 				}
 				
+				//记录业务日志
+				$log = "新建采购订单，单号：{$ref}";
+				$bs = new BizlogService();
+				$bs->insertBizlog($log, "采购订单");
+				
 				$db->commit();
 			} catch ( Exception $e ) {
 				$db->rollback();
@@ -284,7 +289,7 @@ class POBillService extends PSIBaseService {
 				$result["orgFullName"] = $v["full_name"];
 				$result["bizUserId"] = $v["biz_user_id"];
 				$result["bizUserName"] = $v["biz_user_name"];
-				$result["paymentType"] = $v["paymentType"];
+				$result["paymentType"] = $v["payment_type"];
 				$result["billMemo"] = $v["bill_memo"];
 				$result["billStatus"] = $v["bill_status"];
 				
@@ -363,5 +368,31 @@ class POBillService extends PSIBaseService {
 		}
 		
 		return $result;
+	}
+
+	/**
+	 * 审核采购订单
+	 */
+	public function commitPOBill($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
+		$id = $params["id"];
+		
+		return $this->todo();
+	}
+
+	/**
+	 * 删除采购订单
+	 */
+	public function deletePOBill($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
+		$id = $params["id"];
+		
+		return $this->todo();
 	}
 }

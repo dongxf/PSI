@@ -189,4 +189,31 @@ class PurchaseController extends Controller {
 		}
 	}
 	
+	/**
+	 * 删除采购订单
+	 */
+	public function deletePOBill() {
+		if (IS_POST) {
+			$params = array(
+					"id" => I("post.id")
+			);
+	
+			$ps = new POBillService();
+			$this->ajaxReturn($ps->deletePOBill($params));
+		}
+	}
+	
+	/**
+	 * 审核采购订单
+	 */
+	public function commitPOBill() {
+		if (IS_POST) {
+			$params = array(
+					"id" => I("post.id")
+			);
+	
+			$ps = new POBillService();
+			$this->ajaxReturn($ps->commitPOBill($params));
+		}
+	}
 }
