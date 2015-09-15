@@ -160,7 +160,86 @@ class POBillService extends PSIBaseService {
 		
 		if ($id) {
 			// 编辑
-			return $this->todo();
+			$sql = "select ref from t_po_bill where id = '%s' ";
+			$data = $db->query($sql, $id);
+			if (! $data) {
+				return $this->bad("要编辑的采购订单不存在");
+			}
+			$ref = $data[0]["ref"];
+			
+			$db->startTrans();
+			try {
+				$sql = "delete from t_po_bill_detail where pobill_id = '%s' ";
+				$db->execute($sql, $id);
+				
+				foreach ( $items as $i => $v ) {
+					$goodsId = $v["goodsId"];
+					if (! $goodsId) {
+						continue;
+					}
+					$goodsCount = $v["goodsCount"];
+					$goodsPrice = $v["goodsPrice"];
+					$goodsMoney = $v["goodsMoney"];
+					$taxRate = $v["taxRate"];
+					$tax = $v["tax"];
+					$moneyWithTax = $v["moneyWithTax"];
+					
+					$sql = "insert into t_po_bill_detail(id, date_created, goods_id, goods_count, goods_money,
+								goods_price, pobill_id, tax_rate, tax, money_with_tax, pw_count, left_count, show_order)
+							values ('%s', now(), '%s', %d, %f,
+								%f, '%s', %d, %f, %f, 0, %d, %d)";
+					$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsMoney, 
+							$goodsPrice, $id, $taxRate, $tax, $moneyWithTax, $goodsCount, $i);
+					if (! $rc) {
+						$db->rollback();
+						return $this->sqlError();
+					}
+				}
+				
+				// 同步主表的金额合计字段
+				$sql = "select sum(goods_money) as sum_goods_money, sum(tax) as sum_tax, 
+							sum(money_with_tax) as sum_money_with_tax
+						from t_po_bill_detail
+						where pobill_id = '%s' ";
+				$data = $db->query($sql, $id);
+				$sumGoodsMoney = $data[0]["sum_goods_money"];
+				if (! $sumGoodsMoney) {
+					$sumGoodsMoney = 0;
+				}
+				$sumTax = $data[0]["sum_tax"];
+				if (! $sumTax) {
+					$sumTax = 0;
+				}
+				$sumMoneyWithTax = $data[0]["sum_money_with_tax"];
+				if (! $sumMoneyWithTax) {
+					$sumMoneyWithTax = 0;
+				}
+				
+				$sql = "update t_po_bill
+						set goods_money = %f, tax = %f, money_with_tax = %f,
+							deal_date = '%s', supplier_id = '%s',
+							deal_address = '%s', contact = '%s', tel = '%s', fax = '%s',
+							org_id = '%s', biz_user_id = '%s', payment_type = %d,
+							bill_memo = '%s', input_user_id = '%s', date_created = now()
+						where id = '%s' ";
+				$rc = $db->execute($sql, $sumGoodsMoney, $sumTax, $sumMoneyWithTax, $dealDate, 
+						$supplierId, $dealAddress, $contact, $tel, $fax, $orgId, $bizUserId, 
+						$paymentType, $billMemo, $us->getLoginUserId(), $id);
+				if (! $rc) {
+					$db->rollback();
+					return $this->sqlError();
+				}
+				
+				// 记录业务日志
+				$log = "编辑采购订单，单号：{$ref}";
+				$bs = new BizlogService();
+				$bs->insertBizlog($log, "采购订单");
+				
+				$db->commit();
+			} catch ( Exception $e ) {
+				$db->rollback();
+				return $this->sqlError();
+			}
 		} else {
 			// 新建采购订单
 			
@@ -236,7 +315,7 @@ class POBillService extends PSIBaseService {
 					return $this->sqlError();
 				}
 				
-				//记录业务日志
+				// 记录业务日志
 				$log = "新建采购订单，单号：{$ref}";
 				$bs = new BizlogService();
 				$bs->insertBizlog($log, "采购订单");
@@ -392,7 +471,38 @@ class POBillService extends PSIBaseService {
 		}
 		
 		$id = $params["id"];
+		$db = M();
 		
-		return $this->todo();
+		$db->startTrans();
+		try {
+			$sql = "select ref, bill_status from t_po_bill where id = '%s' ";
+			$data = $db->query($sql, $id);
+			if (! $data) {
+				$db->rollback();
+				return $this->bad("要删除的采购订单不存在");
+			}
+			$ref = $data[0]["ref"];
+			$billStatus = $data[0]["bill_status"];
+			if ($billStatus > 0) {
+				$db->rollback();
+				return $this->bad("采购订单(单号：{$ref})已经审核，不能被删除");
+			}
+			
+			$sql = "delete from t_po_bill_detail where pobill_id = '%s' ";
+			$db->execute($sql, $id);
+			
+			$sql = "delete from t_po_bill where id = '%s' ";
+			$db->execute($sql, $id);
+			
+			$log = "删除采购订单，单号：{$ref}";
+			$bs = new BizlogService();
+			$bs->insertBizlog($log, "采购订单");
+			
+			$db->commit();
+		} catch ( Exception $e ) {
+			$db->rollback();
+		}
+		
+		return $this->ok();
 	}
 }
