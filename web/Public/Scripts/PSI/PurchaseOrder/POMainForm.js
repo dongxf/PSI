@@ -529,7 +529,7 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
                     if (success) {
                         var data = Ext.JSON.decode(response.responseText);
                         if (data.success) {
-                            PSI.MsgBox.showInfo("成功完成提交操作", function () {
+                            PSI.MsgBox.showInfo("成功完成审核操作", function () {
                                 me.refreshMainGrid(id);
                             });
                         } else {

@@ -720,14 +720,20 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 	setBillReadonly: function() {
 		var me = this;
 		me.__readonly = true;
-		me.setTitle("查看采购入库单");
+		me.setTitle("查看采购订单");
 		Ext.getCmp("buttonSave").setDisabled(true);
 		Ext.getCmp("buttonCancel").setText("关闭");
-		Ext.getCmp("editBizDT").setReadOnly(true);
+		Ext.getCmp("editDealDate").setReadOnly(true);
 		Ext.getCmp("editSupplier").setReadOnly(true);
-		Ext.getCmp("editWarehouse").setReadOnly(true);
+		Ext.getCmp("editDealAddress").setReadOnly(true);
+		Ext.getCmp("editContact").setReadOnly(true);
+		Ext.getCmp("editTel").setReadOnly(true);
+		Ext.getCmp("editFax").setReadOnly(true);
+		Ext.getCmp("editOrg").setReadOnly(true);
 		Ext.getCmp("editBizUser").setReadOnly(true);
 		Ext.getCmp("editPaymentType").setReadOnly(true);
+		Ext.getCmp("editBillMemo").setReadOnly(true);
+		
 		Ext.getCmp("columnActionDelete").hide();
 		Ext.getCmp("columnActionAdd").hide();
 		Ext.getCmp("columnActionAppend").hide();
