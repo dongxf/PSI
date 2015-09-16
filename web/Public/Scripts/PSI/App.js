@@ -147,7 +147,7 @@ Ext.define("PSI.App", {
             } else if (fid == "-9994"){
                 Ext.create("PSI.About.MainForm").show();
             } else if (fid == "-9993") {
-            	window.open("http://weidian.com/?userid=315007574");
+            	window.open("https://zb.oschina.net/market/opus/134395_122");
             } else if (fid === "-9999") {
                 PSI.MsgBox.confirm("请确认是否重新登录", function () {
                     location.replace(PSI.Const.BASE_URL + "Home/MainMenu/navigateTo/fid/-9999");
