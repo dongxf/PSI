@@ -216,4 +216,18 @@ class PurchaseController extends Controller {
 			$this->ajaxReturn($ps->commitPOBill($params));
 		}
 	}
+
+	/**
+	 * 取消审核采购订单
+	 */
+	public function cancelConfirmPOBill() {
+		if (IS_POST) {
+			$params = array(
+					"id" => I("post.id")
+			);
+	
+			$ps = new POBillService();
+			$this->ajaxReturn($ps->cancelConfirmPOBill($params));
+		}
+	}
 }

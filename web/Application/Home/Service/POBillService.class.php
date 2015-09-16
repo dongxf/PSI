@@ -591,4 +591,49 @@ class POBillService extends PSIBaseService {
 		
 		return $this->ok();
 	}
+
+	/**
+	 * 取消审核采购订单
+	 */
+	public function cancelConfirmPOBill($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
+		$id = $params["id"];
+		$db = M();
+		
+		$db->startTrans();
+		try {
+			$sql = "select ref, bill_status from t_po_bill where id = '%s' ";
+			$data = $db->query($sql, $id);
+			if (! $data) {
+				$db->rollback();
+				return $this->bad("要取消审核的采购订单不存在");
+			}
+			$ref = $data[0]["ref"];
+			$billStatus = $data[0]["bill_status"];
+			if ($billStatus > 1000) {
+				$db->rollback();
+				return $this->bad("采购订单(单号:{$ref})不能取消审核");
+			}
+			
+			$sql = "update t_po_bill
+					set bill_status = 0, confirm_user_id = null, confirm_date = null
+					where id = '%s' ";
+			$rc = $db->execute($sql, $id);
+			
+			// 记录业务日志
+			$log = "取消审核采购订单，单号：{$ref}";
+			$bs = new BizlogService();
+			$bs->insertBizlog($log, "采购订单");
+			
+			$db->commit();
+		} catch ( Exception $e ) {
+			$db->rollback();
+			return $this->sqlError();
+		}
+		
+		return $this->ok($id);
+	}
 }

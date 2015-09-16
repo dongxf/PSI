@@ -553,7 +553,48 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
     
     // 取消审核
     onCancelConfirm: function() {
-    	
+    	var me = this;
+        var item = me.getMainGrid().getSelectionModel().getSelection();
+        if (item == null || item.length != 1) {
+            PSI.MsgBox.showInfo("没有选择要取消审核的采购订单");
+            return;
+        }
+        var bill = item[0];
+
+        if (bill.get("billStatus") == 0) {
+        	PSI.MsgBox.showInfo("当前采购订单还没有审核，无法取消审核");
+        	return;
+        }
+        
+        var info = "请确认是否取消审核单号为 <span style='color:red'>" + bill.get("ref") + "</span> 的采购订单?";
+        var id = bill.get("id");
+        PSI.MsgBox.confirm(info, function () {
+            var el = Ext.getBody();
+            el.mask("正在提交中...");
+            Ext.Ajax.request({
+                url: PSI.Const.BASE_URL + "Home/Purchase/cancelConfirmPOBill",
+                method: "POST",
+                params: {id: id},
+                callback: function (options, success, response) {
+                    el.unmask();
+
+                    if (success) {
+                        var data = Ext.JSON.decode(response.responseText);
+                        if (data.success) {
+                            PSI.MsgBox.showInfo("成功完成取消审核操作", function () {
+                                me.refreshMainGrid(id);
+                            });
+                        } else {
+                            PSI.MsgBox.showInfo(data.msg);
+                        }
+                    } else {
+                        PSI.MsgBox.showInfo("网络错误", function () {
+                            window.location.reload();
+                        });
+                    }
+                }
+            });
+        });
     },
     
     gotoMainGridRecord: function (id) {
