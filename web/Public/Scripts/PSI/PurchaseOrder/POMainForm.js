@@ -54,6 +54,10 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
         	handler: me.onCancelConfirm,
         	id: "buttonCancelConfirm"
         },"-", {
+        	text: "生成采购入库单", iconCls: "PSI-button-genbill", scope: me,
+        	handler: me.onGenPWBill,
+        	id: "buttonGenPWBill"
+        },"-", {
             text: "关闭", iconCls: "PSI-button-exit", handler: function () {
                 location.replace(PSI.Const.BASE_URL);
             }
@@ -435,6 +439,7 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
             Ext.getCmp("buttonDelete").setDisabled(true);
             Ext.getCmp("buttonCommit").setDisabled(true);
             Ext.getCmp("buttonCancelConfirm").setDisabled(true);
+            Ext.getCmp("buttonGenPWBill").setDisabled(true);
         	
             return;
         }
@@ -452,6 +457,7 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
         Ext.getCmp("buttonDelete").setDisabled(commited);
         Ext.getCmp("buttonCommit").setDisabled(commited);
         Ext.getCmp("buttonCancelConfirm").setDisabled(!commited);
+        Ext.getCmp("buttonGenPWBill").setDisabled(!commited);
 
         this.refreshDetailGrid();
     },
@@ -662,5 +668,27 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
     	result.paymentType = paymentType;
     	
     	return result;
+    },
+
+    // 生成采购入库单
+    onGenPWBill: function() {
+    	var me = this;
+        var item = me.getMainGrid().getSelectionModel().getSelection();
+        if (item == null || item.length != 1) {
+            PSI.MsgBox.showInfo("没有选择要生成入库单的采购订单");
+            return;
+        }
+        var bill = item[0];
+
+        if (bill.get("billStatus") != 1000) {
+        	PSI.MsgBox.showInfo("当前采购订单还没有审核，无法生成采购订单");
+        	return;
+        }
+        
+        var form = Ext.create("PSI.Purchase.PWEditForm", {
+        	genBill: true,
+        	pobillRef: bill.get("ref")
+        });
+        form.show();
     }
 });

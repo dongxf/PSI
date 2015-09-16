@@ -86,6 +86,10 @@
     background-image:url(../Images/icons/cancel_confirm.png) !important;
 }
 
+.PSI-button-genbill {
+    background-image:url(../Images/icons/gen_bill.png) !important;
+}
+
 .PSI-fid-8993 {
     background-image:url(../Images/fid/fid-8993.png) !important;
 }

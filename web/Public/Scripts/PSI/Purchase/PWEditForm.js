@@ -3,7 +3,9 @@ Ext.define("PSI.Purchase.PWEditForm", {
 	extend : "Ext.window.Window",
 	config : {
 		parentForm : null,
-		entity : null
+		entity : null,
+		genBill: false,
+		pobillRef: null
 	},
 	initComponent : function() {
 		var me = this;
@@ -251,7 +253,10 @@ Ext.define("PSI.Purchase.PWEditForm", {
 					if (data.success) {
 						PSI.MsgBox.showInfo("成功保存数据", function() {
 							me.close();
-							me.getParentForm().refreshMainGrid(data.id);
+							var pf = me.getParentForm();
+							if (pf) {
+								pf.refreshMainGrid(data.id);
+							}
 						});
 					} else {
 						PSI.MsgBox.showInfo(data.msg);
