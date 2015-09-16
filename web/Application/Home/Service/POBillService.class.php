@@ -618,6 +618,14 @@ class POBillService extends PSIBaseService {
 				return $this->bad("采购订单(单号:{$ref})不能取消审核");
 			}
 			
+			$sql = "select count(*) as cnt from t_po_pw where po_id = '%s' ";
+			$data = $db->query($sql, $id);
+			$cnt = $data[0]["cnt"];
+			if ($cnt > 0) {
+				$db->rollback();
+				return $this->bad("采购订单(单号:{$ref})已经生成了采购入库单，不能取消审核");
+			}
+			
 			$sql = "update t_po_bill
 					set bill_status = 0, confirm_user_id = null, confirm_date = null
 					where id = '%s' ";
