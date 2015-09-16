@@ -110,7 +110,7 @@ class POBillService extends PSIBaseService {
 			$result[$i]["dateCreated"] = $v["date_created"];
 			
 			$confirmUserId = $v["confirm_user_id"];
-			if (! $confirmUserId) {
+			if ($confirmUserId) {
 				$sql = "select name from t_user where id = '%s' ";
 				$d = $db->query($sql, $confirmUserId);
 				if ($d) {
@@ -505,8 +505,47 @@ class POBillService extends PSIBaseService {
 		}
 		
 		$id = $params["id"];
+		$db = M();
 		
-		return $this->todo();
+		$db->startTrans();
+		try {
+			$sql = "select ref, bill_status from t_po_bill where id = '%s' ";
+			$data = $db->query($sql, $id);
+			if (! $data) {
+				$db->rollback();
+				return $this->bad("要审核的采购订单不存在");
+			}
+			$ref = $data[0]["ref"];
+			$billStatus = $data[0]["bill_status"];
+			if ($billStatus > 0) {
+				$db->rollback();
+				return $this->bad("采购订单(单号：$ref)已经被审核，不能再次审核");
+			}
+			
+			$sql = "update t_po_bill
+					set bill_status = 1000,
+						confirm_user_id = '%s',
+						confirm_date = now()
+					where id = '%s' ";
+			$us = new UserService();
+			$rc = $db->execute($sql, $us->getLoginUserId(), $id);
+			if (! $rc) {
+				$db->rollback();
+				return $this->sqlError();
+			}
+			
+			// 记录业务日志
+			$log = "审核采购订单，单号：{$ref}";
+			$bs = new BizlogService();
+			$bs->insertBizlog($log, "采购订单");
+			
+			$db->commit();
+		} catch ( Exception $e ) {
+			$db->rollback();
+			return $this->sqlError();
+		}
+		
+		return $this->ok($id);
 	}
 
 	/**
