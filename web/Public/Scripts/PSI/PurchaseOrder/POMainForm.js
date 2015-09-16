@@ -49,7 +49,11 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
         }, "-", {
             text: "审核", iconCls: "PSI-button-commit", scope: me, handler: me.onCommit,
             id: "buttonCommit"
-        }, "-", {
+        }, {
+        	text: "取消审核", iconCls: "PSI-button-cancelconfirm", scope: me,
+        	handler: me.onCancelConfirm,
+        	id: "buttonCancelConfirm"
+        },"-", {
             text: "关闭", iconCls: "PSI-button-exit", handler: function () {
                 location.replace(PSI.Const.BASE_URL);
             }
@@ -430,6 +434,7 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
             Ext.getCmp("buttonEdit").setDisabled(true);
             Ext.getCmp("buttonDelete").setDisabled(true);
             Ext.getCmp("buttonCommit").setDisabled(true);
+            Ext.getCmp("buttonCancelConfirm").setDisabled(true);
         	
             return;
         }
@@ -446,6 +451,7 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 
         Ext.getCmp("buttonDelete").setDisabled(commited);
         Ext.getCmp("buttonCommit").setDisabled(commited);
+        Ext.getCmp("buttonCancelConfirm").setDisabled(!commited);
 
         this.refreshDetailGrid();
     },
@@ -543,6 +549,11 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
                 }
             });
         });
+    },
+    
+    // 取消审核
+    onCancelConfirm: function() {
+    	
     },
     
     gotoMainGridRecord: function (id) {

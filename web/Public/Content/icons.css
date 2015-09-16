@@ -82,6 +82,10 @@
     background-image:url(../Images/icons/database.png) !important;
 }
 
+.PSI-button-cancelconfirm {
+    background-image:url(../Images/icons/cancel_confirm.png) !important;
+}
+
 .PSI-fid-8993 {
     background-image:url(../Images/fid/fid-8993.png) !important;
 }
