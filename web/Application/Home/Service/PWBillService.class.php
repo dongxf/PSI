@@ -539,6 +539,10 @@ class PWBillService extends PSIBaseService {
 			$sql = "delete from t_pw_bill where id = '%s' ";
 			$db->execute($sql, $id);
 			
+			// 删除从采购订单生成的记录
+			$sql = "delete from t_po_pw where pw_id = '%s' ";
+			$db->execute($sql, $id);
+			
 			$log = "删除采购入库单: 单号 = {$ref}";
 			$bs = new BizlogService();
 			$bs->insertBizlog($log, "采购入库");
