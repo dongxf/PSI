@@ -219,18 +219,25 @@ Ext.define("PSI.Purchase.PWEditForm", {
 						Ext.getCmp("columnActionAppend").hide();
 
 					} else {
-						Ext.getCmp("columnGoodsCode").setEditor({
-							xtype : "psi_goods_with_purchaseprice_field",
-							parentCmp : me
-						});
-						Ext.getCmp("columnGoodsPrice").setEditor({
-							xtype : "numberfield",
-							hideTrigger : true
-						});
-						Ext.getCmp("columnGoodsMoney").setEditor({
-							xtype : "numberfield",
-							hideTrigger : true
-						});
+						if (!data.genBill){
+							Ext.getCmp("columnGoodsCode").setEditor({
+								xtype : "psi_goods_with_purchaseprice_field",
+								parentCmp : me
+							});
+							Ext.getCmp("columnGoodsPrice").setEditor({
+								xtype : "numberfield",
+								hideTrigger : true
+							});
+							Ext.getCmp("columnGoodsMoney").setEditor({
+								xtype : "numberfield",
+								hideTrigger : true
+							});
+						} else {
+							Ext.getCmp("editSupplier").setReadOnly(true);
+							Ext.getCmp("columnActionDelete").hide();
+							Ext.getCmp("columnActionAdd").hide();
+							Ext.getCmp("columnActionAppend").hide();
+						}
 						
 						if (data.ref) {
 							Ext.getCmp("editRef").setValue(data.ref);

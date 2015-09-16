@@ -440,6 +440,15 @@ class PWBillService extends PSIBaseService {
 			}
 			
 			$result["items"] = $items;
+			
+			// 查询该单据是否是由采购订单生成的
+			$sql = "select po_id from t_po_pw where pw_id = '%s' ";
+			$data = $db->query($sql, $id);
+			if ($data) {
+				$result["genBill"] = true;
+			} else {
+				$result["genBill"] = false;
+			}
 		} else {
 			// 新建采购入库单
 			$us = new UserService();
