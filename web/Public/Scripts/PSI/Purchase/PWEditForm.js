@@ -573,14 +573,16 @@ Ext.define("PSI.Purchase.PWEditForm", {
 		}
 	},
 	getSaveData : function() {
+		var me = this;
+		
 		var result = {
 			id : Ext.getCmp("hiddenId").getValue(),
-			bizDT : Ext.Date
-					.format(Ext.getCmp("editBizDT").getValue(), "Y-m-d"),
+			bizDT : Ext.Date.format(Ext.getCmp("editBizDT").getValue(), "Y-m-d"),
 			supplierId : Ext.getCmp("editSupplier").getIdValue(),
 			warehouseId : Ext.getCmp("editWarehouse").getIdValue(),
 			bizUserId : Ext.getCmp("editBizUser").getIdValue(),
 			paymentType: Ext.getCmp("editPaymentType").getValue(),
+			pobillRef: me.getPobillRef(),
 			items : []
 		};
 

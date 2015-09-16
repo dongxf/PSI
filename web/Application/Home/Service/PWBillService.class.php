@@ -181,6 +181,8 @@ class PWBillService extends PSIBaseService {
 		$bizUserId = $bill["bizUserId"];
 		$paymentType = $bill["paymentType"];
 		
+		$pobillRef = $bill["pobillRef"];
+		
 		$db = M();
 		
 		$sql = "select count(*) as cnt from t_warehouse where id = '%s' ";
@@ -327,9 +329,31 @@ class PWBillService extends PSIBaseService {
 						where id = '%s' ";
 				$db->execute($sql, $totalMoney, $id);
 				
-				$log = "新建采购入库单: 单号 = {$ref}";
-				$bs = new BizlogService();
-				$bs->insertBizlog($log, "采购入库");
+				if ($pobillRef) {
+					// 从采购订单生成采购入库单
+					$sql = "select id from t_po_bill where ref = '%s' ";
+					$data = $db->query($sql, $pobillRef);
+					if (! $data) {
+						$db->rollback();
+						return $this->sqlError();
+					}
+					$pobillId = $data[0]["id"];
+					$sql = "insert into t_po_pw(po_id, pw_id) values('%s', '%s')";
+					$rc = $db->execute($sql, $pobillId, $id);
+					if (! $rc) {
+						$db->rollback();
+						return $this->sqlError();
+					}
+					
+					$log = "从采购订单(单号：{$pobillRef})生成采购入库单: 单号 = {$ref}";
+					$bs = new BizlogService();
+					$bs->insertBizlog($log, "采购订单");
+				} else {
+					// 手工新建采购入库单
+					$log = "新建采购入库单: 单号 = {$ref}";
+					$bs = new BizlogService();
+					$bs->insertBizlog($log, "采购入库");
+				}
 				
 				$db->commit();
 			} catch ( Exception $exc ) {
@@ -467,7 +491,7 @@ class PWBillService extends PSIBaseService {
 							where p.pobill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id
 							order by p.show_order ";
 					$data = $db->query($sql, $pobillId);
-					foreach ($data as $i => $v) {
+					foreach ( $data as $i => $v ) {
 						$items[$i]["id"] = $v["id"];
 						$items[$i]["goodsId"] = $v["goods_id"];
 						$items[$i]["goodsCode"] = $v["code"];
