@@ -191,7 +191,8 @@ Ext.define("PSI.Purchase.PWEditForm", {
 		Ext.Ajax.request({
 			url : PSI.Const.BASE_URL + "Home/Purchase/pwBillInfo",
 			params : {
-				id : Ext.getCmp("hiddenId").getValue()
+				id : Ext.getCmp("hiddenId").getValue(),
+				pobillRef: me.getPobillRef()
 			},
 			method : "POST",
 			callback : function(options, success, response) {
@@ -200,36 +201,49 @@ Ext.define("PSI.Purchase.PWEditForm", {
 				if (success) {
 					var data = Ext.JSON.decode(response.responseText);
 
-					if (data.ref) {
-						Ext.getCmp("editRef").setValue(data.ref);
-					}
-
-					Ext.getCmp("editSupplier").setIdValue(data.supplierId);
-					Ext.getCmp("editSupplier").setValue(data.supplierName);
-
-					Ext.getCmp("editWarehouse").setIdValue(data.warehouseId);
-					Ext.getCmp("editWarehouse").setValue(data.warehouseName);
-
-					Ext.getCmp("editBizUser").setIdValue(data.bizUserId);
-					Ext.getCmp("editBizUser").setValue(data.bizUserName);
-					if (data.bizDT) {
-						Ext.getCmp("editBizDT").setValue(data.bizDT);
-					}
-					if (data.paymentType) {
+					if (me.getGenBill()) {
+						// 从采购订单生成采购入库单
+						Ext.getCmp("editSupplier").setIdValue(data.supplierId);
+						Ext.getCmp("editSupplier").setValue(data.supplierName);
+						Ext.getCmp("editBizUser").setIdValue(data.bizUserId);
+						Ext.getCmp("editBizUser").setValue(data.bizUserName);
+						Ext.getCmp("editBizDT").setValue(data.dealDate);
 						Ext.getCmp("editPaymentType").setValue(data.paymentType);
-					}
-
-					var store = me.getGoodsGrid().getStore();
-					store.removeAll();
-					if (data.items) {
+						var store = me.getGoodsGrid().getStore();
+						store.removeAll();
 						store.add(data.items);
-					}
-					if (store.getCount() == 0) {
-						store.add({});
-					}
-					
-					if (data.billStatus && data.billStatus !=0) {
-						me.setBillReadonly();
+					} else {
+						if (data.ref) {
+							Ext.getCmp("editRef").setValue(data.ref);
+						}
+
+						Ext.getCmp("editSupplier").setIdValue(data.supplierId);
+						Ext.getCmp("editSupplier").setValue(data.supplierName);
+
+						Ext.getCmp("editWarehouse").setIdValue(data.warehouseId);
+						Ext.getCmp("editWarehouse").setValue(data.warehouseName);
+
+						Ext.getCmp("editBizUser").setIdValue(data.bizUserId);
+						Ext.getCmp("editBizUser").setValue(data.bizUserName);
+						if (data.bizDT) {
+							Ext.getCmp("editBizDT").setValue(data.bizDT);
+						}
+						if (data.paymentType) {
+							Ext.getCmp("editPaymentType").setValue(data.paymentType);
+						}
+
+						var store = me.getGoodsGrid().getStore();
+						store.removeAll();
+						if (data.items) {
+							store.add(data.items);
+						}
+						if (store.getCount() == 0) {
+							store.add({});
+						}
+						
+						if (data.billStatus && data.billStatus !=0) {
+							me.setBillReadonly();
+						}
 					}
 				}
 			}

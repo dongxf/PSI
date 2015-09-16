@@ -364,10 +364,13 @@ class PWBillService extends PSIBaseService {
 	/**
 	 * 获得某个采购入库单的信息
 	 */
-	public function pwBillInfo($id) {
+	public function pwBillInfo($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
+		
+		$id = $params["id"];
+		$pobillRef = $params["pobillRef"];
 		
 		$result["id"] = $id;
 		
@@ -438,6 +441,45 @@ class PWBillService extends PSIBaseService {
 						$result["warehouseId"] = $data[0]["id"];
 						$result["warehouseName"] = $data[0]["name"];
 					}
+				}
+			}
+			
+			if ($pobillRef) {
+				// 由采购订单生成采购入库单
+				$sql = "select p.id, p.supplier_id, s.name as supplier_name, p.deal_date,
+							p.payment_type
+						from t_po_bill p, t_supplier s
+						where p.ref = '%s' and p.supplier_id = s.id ";
+				$data = $db->query($sql, $pobillRef);
+				if ($data) {
+					$v = $data[0];
+					$result["supplierId"] = $v["supplier_id"];
+					$result["supplierName"] = $v["supplier_name"];
+					$result["dealDate"] = $this->toYMD($v["deal_date"]);
+					$result["paymentType"] = $v["payment_type"];
+					
+					$pobillId = $v["id"];
+					// 采购的明细
+					$items = array();
+					$sql = "select p.id, p.goods_id, g.code, g.name, g.spec, u.name as unit_name,
+								p.goods_count, p.goods_price, p.goods_money
+							from t_po_bill_detail p, t_goods g, t_goods_unit u
+							where p.pobill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id
+							order by p.show_order ";
+					$data = $db->query($sql, $pobillId);
+					foreach ($data as $i => $v) {
+						$items[$i]["id"] = $v["id"];
+						$items[$i]["goodsId"] = $v["goods_id"];
+						$items[$i]["goodsCode"] = $v["code"];
+						$items[$i]["goodsName"] = $v["name"];
+						$items[$i]["goodsSpec"] = $v["spec"];
+						$items[$i]["unitName"] = $v["unit_name"];
+						$items[$i]["goodsCount"] = $v["goods_count"];
+						$items[$i]["goodsPrice"] = $v["goods_price"];
+						$items[$i]["goodsMoney"] = $v["goods_money"];
+					}
+					
+					$result["items"] = $items;
 				}
 			}
 		}

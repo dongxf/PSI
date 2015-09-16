@@ -83,9 +83,13 @@ class PurchaseController extends Controller {
 	 */
 	public function pwBillInfo() {
 		if (IS_POST) {
-			$id = I("post.id");
+			$params = array(
+					"id" => I("post.id"),
+					"pobillRef" => I("post.pobillRef")
+			);
+			
 			$ps = new PWBillService();
-			$this->ajaxReturn($ps->pwBillInfo($id));
+			$this->ajaxReturn($ps->pwBillInfo($params));
 		}
 	}
 
@@ -169,12 +173,12 @@ class PurchaseController extends Controller {
 			$params = array(
 					"id" => I("post.id")
 			);
-
+			
 			$ps = new POBillService();
 			$this->ajaxReturn($ps->poBillInfo($params));
 		}
 	}
-	
+
 	/**
 	 * 获得采购订单的明细信息
 	 */
@@ -183,12 +187,12 @@ class PurchaseController extends Controller {
 			$params = array(
 					"id" => I("post.id")
 			);
-	
+			
 			$ps = new POBillService();
 			$this->ajaxReturn($ps->poBillDetailList($params));
 		}
 	}
-	
+
 	/**
 	 * 删除采购订单
 	 */
@@ -197,12 +201,12 @@ class PurchaseController extends Controller {
 			$params = array(
 					"id" => I("post.id")
 			);
-	
+			
 			$ps = new POBillService();
 			$this->ajaxReturn($ps->deletePOBill($params));
 		}
 	}
-	
+
 	/**
 	 * 审核采购订单
 	 */
@@ -211,7 +215,7 @@ class PurchaseController extends Controller {
 			$params = array(
 					"id" => I("post.id")
 			);
-	
+			
 			$ps = new POBillService();
 			$this->ajaxReturn($ps->commitPOBill($params));
 		}
@@ -225,7 +229,7 @@ class PurchaseController extends Controller {
 			$params = array(
 					"id" => I("post.id")
 			);
-	
+			
 			$ps = new POBillService();
 			$this->ajaxReturn($ps->cancelConfirmPOBill($params));
 		}
