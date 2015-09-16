@@ -212,7 +212,26 @@ Ext.define("PSI.Purchase.PWEditForm", {
 						var store = me.getGoodsGrid().getStore();
 						store.removeAll();
 						store.add(data.items);
+						
+						Ext.getCmp("editSupplier").setReadOnly(true);
+						Ext.getCmp("columnActionDelete").hide();
+						Ext.getCmp("columnActionAdd").hide();
+						Ext.getCmp("columnActionAppend").hide();
+
 					} else {
+						Ext.getCmp("columnGoodsCode").setEditor({
+							xtype : "psi_goods_with_purchaseprice_field",
+							parentCmp : me
+						});
+						Ext.getCmp("columnGoodsPrice").setEditor({
+							xtype : "numberfield",
+							hideTrigger : true
+						});
+						Ext.getCmp("columnGoodsMoney").setEditor({
+							xtype : "numberfield",
+							hideTrigger : true
+						});
+						
 						if (data.ref) {
 							Ext.getCmp("editRef").setValue(data.ref);
 						}
@@ -364,10 +383,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 						menuDisabled : true,
 						sortable : false,
 						draggable: false,
-						editor : {
-							xtype : "psi_goods_with_purchaseprice_field",
-							parentCmp : me
-						}
+						id: "columnGoodsCode"
 		           }, {
 						header : "商品名称",
 						dataIndex : "goodsName",
@@ -415,10 +431,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 						align : "right",
 						xtype : "numbercolumn",
 						width : 100,
-						editor : {
-							xtype : "numberfield",
-							hideTrigger : true
-						},
+						id: "columnGoodsPrice",
 						summaryRenderer: function () {
 	                        return "采购金额合计";
 	                    }
@@ -432,10 +445,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 						align : "right",
 						xtype : "numbercolumn",
 						width : 120,
-						editor : {
-							xtype : "numberfield",
-							hideTrigger : true
-						},
+						id: "columnGoodsMoney",
 						summaryType: "sum"
 					},
 					{
