@@ -8,7 +8,7 @@ namespace Home\Service;
  * @author 李静波
  */
 class UpdateDBService extends PSIBaseService {
-	private $CURRENT_DB_VERSION = "20150914-001";
+	private $CURRENT_DB_VERSION = "20150917-001";
 
 	private function tableExists($db, $tableName) {
 		$dbName = C('DB_NAME');
@@ -342,6 +342,24 @@ class UpdateDBService extends PSIBaseService {
 			$sql = "insert into t_fid(fid, name) values ('2027', '采购订单')";
 			$db->execute($sql);
 		}
+		
+		// fid 2027-01: 采购订单 - 审核
+		$sql = "select count(*) as cnt from t_fid where fid = '2027-01' ";
+		$data = $db->query($sql);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_fid(fid, name) values ('2027-01', '采购订单 - 审核/取消审核')";
+			$db->execute($sql);
+		}
+		
+		// fid 2027-02: 采购订单 - 生成采购入库单
+		$sql = "select count(*) as cnt from t_fid where fid = '2027-02' ";
+		$data = $db->query($sql);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_fid(fid, name) values ('2027-02', '采购订单 - 生成采购入库单')";
+			$db->execute($sql);
+		}
 	}
 
 	private function t_goods_si($db) {
@@ -633,6 +651,26 @@ class UpdateDBService extends PSIBaseService {
 					values ('2027', '2027', '采购订单', '采购订单')";
 			$db->execute($sql);
 		}
+		
+		// fid 2027-01: 采购订单 - 审核/取消审核
+		$sql = "select count(*) as cnt from t_permission where id = '2027-01' ";
+		$data = $db->query($sql);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_permission(id, fid, name, note)
+					values ('2027-01', '2027-01', '采购订单 - 审核/取消审核', '采购订单 - 审核/取消审核')";
+			$db->execute($sql);
+		}
+		
+		// fid 2027-02: 采购订单 - 生成采购入库单
+		$sql = "select count(*) as cnt from t_permission where id = '2027-02' ";
+		$data = $db->query($sql);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_permission(id, fid, name, note)
+					values ('2027-02', '2027-02', '采购订单 - 生成采购入库单', '采购订单 - 生成采购入库单')";
+			$db->execute($sql);
+		}
 	}
 
 	private function t_pw_bill($db) {
@@ -687,6 +725,28 @@ class UpdateDBService extends PSIBaseService {
 		if ($cnt == 0) {
 			$sql = "insert into t_role_permission(role_id, permission_id)
 					values ('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2027')";
+			$db->execute($sql);
+		}
+		
+		// fid 2027-01: 采购订单 - 审核/取消审核
+		$sql = "select count(*) as cnt from t_role_permission 
+				where permission_id = '2027-01' and role_id = 'A83F617E-A153-11E4-A9B8-782BCBD7746B' ";
+		$data = $db->query($sql);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_role_permission(role_id, permission_id)
+					values ('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2027-01')";
+			$db->execute($sql);
+		}
+		
+		// fid 2027-02: 采购订单 - 生成采购入库单
+		$sql = "select count(*) as cnt from t_role_permission 
+				where permission_id = '2027-02' and role_id = 'A83F617E-A153-11E4-A9B8-782BCBD7746B' ";
+		$data = $db->query($sql);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_role_permission(role_id, permission_id)
+					values ('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2027-02')";
 			$db->execute($sql);
 		}
 	}

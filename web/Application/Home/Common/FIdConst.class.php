@@ -233,4 +233,14 @@ class FIdConst {
 	 * 采购订单
 	 */
 	const PURCHASE_ORDER = "2027";
+	
+	/**
+	 * 采购订单 - 审核
+	 */
+	const PURCHASE_ORDER_CONFIRM = "2027-01";
+	
+	/**
+	 * 采购订单 - 生成采购入库单
+	 */
+	const PURCHASE_ORDER_GEN_PWBILL = "2027-02";
 }

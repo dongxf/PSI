@@ -18,8 +18,15 @@
         var app = Ext.create("PSI.App", {
             userName: "{$loginUserName}"
         });
+        
+        var permission = {
+        		confirm: "{$pConfirm}",
+        		genPWBill: "{$pGenPWBill}"
+        };
 
-        app.add(Ext.create("PSI.PurchaseOrder.POMainForm"));
+        app.add(Ext.create("PSI.PurchaseOrder.POMainForm", {
+        	permission: permission
+        }));
         app.setAppHeader({
             title: "{$title}",
             iconCls: "PSI-fid2027"

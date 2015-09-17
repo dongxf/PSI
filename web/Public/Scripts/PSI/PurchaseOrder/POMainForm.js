@@ -2,6 +2,10 @@
 Ext.define("PSI.PurchaseOrder.POMainForm", {
     extend: "Ext.panel.Panel",
     
+    config: {
+    	permission: null
+    },
+    
     initComponent: function () {
         var me = this;
 
@@ -33,6 +37,12 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 
         me.callParent(arguments);
 
+        Ext.getCmp("tbseparator1").setVisible(me.getPermission().confirm == "1");
+        Ext.getCmp("buttonCommit").setVisible(me.getPermission().confirm == "1");
+        Ext.getCmp("buttonCancelConfirm").setVisible(me.getPermission().confirm == "1");
+        Ext.getCmp("buttonGenPWBill").setVisible(me.getPermission().genPWBill == "1");
+        Ext.getCmp("tbseparator2").setVisible(me.getPermission().genPWBill == "1");
+        
         me.refreshMainGrid();
     },
     
@@ -46,14 +56,20 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
         }, "-", {
             text: "删除采购订单", iconCls: "PSI-button-delete", scope: me, handler: me.onDeleteBill,
             id: "buttonDelete"
-        }, "-", {
+        }, {
+        	xtype: "tbseparator",
+        	id: "tbseparator1"
+        }, {
             text: "审核", iconCls: "PSI-button-commit", scope: me, handler: me.onCommit,
             id: "buttonCommit"
         }, {
         	text: "取消审核", iconCls: "PSI-button-cancelconfirm", scope: me,
         	handler: me.onCancelConfirm,
         	id: "buttonCancelConfirm"
-        },"-", {
+        },{
+        	xtype: "tbseparator",
+        	id: "tbseparator2"
+        }, {
         	text: "生成采购入库单", iconCls: "PSI-button-genbill", scope: me,
         	handler: me.onGenPWBill,
         	id: "buttonGenPWBill"

@@ -125,6 +125,11 @@ class PurchaseController extends Controller {
 			$this->assign("title", "采购订单");
 			$this->assign("uri", __ROOT__ . "/");
 			
+			$this->assign("pConfirm", 
+					$us->hasPermission(FIdConst::PURCHASE_ORDER_CONFIRM) ? "1" : "0");
+			$this->assign("pGenPWBill", 
+					$us->hasPermission(FIdConst::PURCHASE_ORDER_GEN_PWBILL) ? "1" : "0");
+			
 			$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
 			$dtFlag = getdate();
 			$this->assign("dtFlag", $dtFlag[0]);
