@@ -52,7 +52,9 @@ INSERT INTO `t_fid` (`fid`, `name`) VALUES
 ('2024', '现金收支查询'),
 ('2025', '预收款管理'),
 ('2026', '预付款管理'),
-('2027', '采购订单');
+('2027', '采购订单'),
+('2027-01', '采购订单 - 审核/取消审核'),
+('2027-02', '采购订单 - 生成采购入库单');
 
 TRUNCATE TABLE `t_menu_item`;
 INSERT INTO `t_menu_item` (`id`, `caption`, `fid`, `parent_id`, `show_order`) VALUES
@@ -158,7 +160,9 @@ INSERT INTO `t_permission` (`id`, `fid`, `name`, `note`) VALUES
 ('2024', '2024', '现金收支查询', '现金收支查询'),
 ('2025', '2025', '预收款管理', '预收款管理'),
 ('2026', '2026', '预付款管理', '预付款管理'),
-('2027', '2027', '采购订单', '采购订单');
+('2027', '2027', '采购订单', '采购订单'),
+('2027-01', '2027-01', '采购订单 - 审核/取消审核', '采购订单 - 审核/取消审核'),
+('2027-02', '2027-02', '采购订单 - 生成采购入库单', '采购订单 - 生成采购入库单');
 
 TRUNCATE TABLE `t_role`;
 INSERT INTO `t_role` (`id`, `name`) VALUES
@@ -205,7 +209,9 @@ INSERT INTO `t_role_permission` (`role_id`, `permission_id`) VALUES
 ('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2024'),
 ('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2025'),
 ('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2026'),
-('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2027');
+('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2027'),
+('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2027-01'),
+('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2027-02');
 
 TRUNCATE TABLE `t_role_user`;
 INSERT INTO `t_role_user` (`role_id`, `user_id`) VALUES
@@ -230,7 +236,7 @@ INSERT INTO `t_config` (`id`, `name`, `value`, `note`, `show_order`) VALUES
 
 TRUNCATE TABLE `t_psi_db_version`;
 INSERT INTO `t_psi_db_version` (`db_version`, `update_dt`) VALUES
-('20150914-001', now());
+('20150917-001', now());
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
