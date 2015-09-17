@@ -52,8 +52,12 @@ class PSIBaseService {
 		}
 	}
 
-	protected function sqlError() {
-		return $this->bad("数据库错误，请联系管理员");
+	protected function sqlError($codeLine = null) {
+		$info = "数据库错误，请联系管理员";
+		if ($codeLine) {
+			$info .= "<br />错误定位：{$codeLine}行";
+		}
+		return $this->bad($info);
 	}
 
 	/**
@@ -87,7 +91,8 @@ class PSIBaseService {
 
 	/**
 	 * 盘点日期是否是正确的Y-m-d格式
-	 * @param string $date
+	 *
+	 * @param string $date        	
 	 * @return boolean true: 是正确的格式
 	 */
 	protected function dateIsValid($date) {

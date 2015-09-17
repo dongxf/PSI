@@ -237,9 +237,9 @@ class POBillService extends PSIBaseService {
 								%f, '%s', %d, %f, %f, 0, %d, %d)";
 					$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsMoney, 
 							$goodsPrice, $id, $taxRate, $tax, $moneyWithTax, $goodsCount, $i);
-					if (! $rc) {
+					if ($rc === false) {
 						$db->rollback();
-						return $this->sqlError();
+						return $this->sqlError(__LINE__);
 					}
 				}
 				
@@ -272,9 +272,9 @@ class POBillService extends PSIBaseService {
 				$rc = $db->execute($sql, $sumGoodsMoney, $sumTax, $sumMoneyWithTax, $dealDate, 
 						$supplierId, $dealAddress, $contact, $tel, $fax, $orgId, $bizUserId, 
 						$paymentType, $billMemo, $us->getLoginUserId(), $id);
-				if (! $rc) {
+				if ($rc === false) {
 					$db->rollback();
-					return $this->sqlError();
+					return $this->sqlError(__LINE__);
 				}
 				
 				// 记录业务日志
@@ -285,7 +285,7 @@ class POBillService extends PSIBaseService {
 				$db->commit();
 			} catch ( Exception $e ) {
 				$db->rollback();
-				return $this->sqlError();
+				return $this->sqlError(__LINE__);
 			}
 		} else {
 			// 新建采购订单
@@ -304,9 +304,9 @@ class POBillService extends PSIBaseService {
 				$rc = $db->execute($sql, $id, $ref, $dealDate, $dealDate, $orgId, $bizUserId, 
 						$us->getLoginUserId(), $supplierId, $contact, $tel, $fax, $dealAddress, 
 						$billMemo, $paymentType);
-				if (! $rc) {
+				if ($rc === false) {
 					$db->rollback();
-					return $this->sqlError();
+					return $this->sqlError(__LINE__);
 				}
 				
 				// 明细记录
@@ -328,9 +328,9 @@ class POBillService extends PSIBaseService {
 								%f, '%s', %d, %f, %f, 0, %d, %d)";
 					$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsMoney, 
 							$goodsPrice, $id, $taxRate, $tax, $moneyWithTax, $goodsCount, $i);
-					if (! $rc) {
+					if ($rc === false) {
 						$db->rollback();
-						return $this->sqlError();
+						return $this->sqlError(__LINE__);
 					}
 				}
 				
@@ -359,7 +359,7 @@ class POBillService extends PSIBaseService {
 				$rc = $db->execute($sql, $sumGoodsMoney, $sumTax, $sumMoneyWithTax, $id);
 				if ($rc === false) {
 					$db->rollback();
-					return $this->sqlError();
+					return $this->sqlError(__LINE__);
 				}
 				
 				// 记录业务日志
@@ -370,7 +370,7 @@ class POBillService extends PSIBaseService {
 				$db->commit();
 			} catch ( Exception $e ) {
 				$db->rollback();
-				return $this->sqlError();
+				return $this->sqlError(__LINE__);
 			}
 		}
 		
@@ -529,9 +529,9 @@ class POBillService extends PSIBaseService {
 					where id = '%s' ";
 			$us = new UserService();
 			$rc = $db->execute($sql, $us->getLoginUserId(), $id);
-			if (! $rc) {
+			if ($rc === false) {
 				$db->rollback();
-				return $this->sqlError();
+				return $this->sqlError(__LINE__);
 			}
 			
 			// 记录业务日志
@@ -630,6 +630,10 @@ class POBillService extends PSIBaseService {
 					set bill_status = 0, confirm_user_id = null, confirm_date = null
 					where id = '%s' ";
 			$rc = $db->execute($sql, $id);
+			if ($rc === false) {
+				$db->rollback();
+				return $this->sqlError(__LINE__);
+			}
 			
 			// 记录业务日志
 			$log = "取消审核采购订单，单号：{$ref}";
@@ -639,7 +643,7 @@ class POBillService extends PSIBaseService {
 			$db->commit();
 		} catch ( Exception $e ) {
 			$db->rollback();
-			return $this->sqlError();
+			return $this->sqlError(__LINE__);
 		}
 		
 		return $this->ok($id);
