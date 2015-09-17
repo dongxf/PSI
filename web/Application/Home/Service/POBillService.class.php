@@ -299,7 +299,7 @@ class POBillService extends PSIBaseService {
 							goods_money, tax, money_with_tax, input_user_id, supplier_id, contact, tel, fax,
 							deal_address, bill_memo, payment_type, date_created)
 						values ('%s', '%s', 0, '%s', '%s', '%s', '%s', 
-							0, 0, 0, '%s', '%s', '%s', '%s', '%s', 
+							-1, -1, -1, '%s', '%s', '%s', '%s', '%s', 
 							'%s', '%s', %d, now())";
 				$rc = $db->execute($sql, $id, $ref, $dealDate, $dealDate, $orgId, $bizUserId, 
 						$us->getLoginUserId(), $supplierId, $contact, $tel, $fax, $dealAddress, 
