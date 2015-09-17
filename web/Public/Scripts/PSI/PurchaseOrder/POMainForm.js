@@ -356,6 +356,8 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
     	Ext.getCmp("buttonEdit").setDisabled(true);
     	Ext.getCmp("buttonDelete").setDisabled(true);
     	Ext.getCmp("buttonCommit").setDisabled(true);
+    	Ext.getCmp("buttonCancelConfirm").setDisabled(true);
+    	Ext.getCmp("buttonGenPWBill").setDisabled(true);
     	
         var gridDetail = me.getDetailGrid();
         gridDetail.setTitle("采购订单明细");
