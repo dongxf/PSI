@@ -1,8 +1,6 @@
 <?php
 namespace Home\Service;
 
-use \Overtrue\Pinyin\Pinyin;
-
 require __DIR__ . '/../Common/Pinyin/Pinyin.php';
 
 /**
@@ -12,9 +10,6 @@ require __DIR__ . '/../Common/Pinyin/Pinyin.php';
  */
 class PinyinService {
 	public function toPY($s) {
-		Pinyin::set('delimiter', '');
-		Pinyin::set('uppercase', true);
-		Pinyin::set('only_chinese', false);
-		return Pinyin::letter($s);
+		return strtoupper(pinyin($s, "first"));
 	}
 }
