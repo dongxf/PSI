@@ -388,6 +388,14 @@ class UserService extends PSIBaseService {
 			return $this->bad("当前组织机构还有用户，不能删除");
 		}
 		
+		// 检查当前组织机构在采购订单中是否使用了
+		$sql = "select count(*) as cnt from t_po_bill where org_id = '%s' ";
+		$data = $db->query($sql, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("当前组织机构在采购订单中使用了，不能删除");
+		}
+		
 		$sql = "delete from t_org where id = '%s' ";
 		$db->execute($sql, $id);
 		
@@ -584,6 +592,14 @@ class UserService extends PSIBaseService {
 		$cnt = $data[0]["cnt"];
 		if ($cnt > 0) {
 			return $this->bad("用户[{$userName}]已经在盘点单中使用了，不能删除");
+		}
+		
+		// 判断在采购订单中是否使用了该用户
+		$sql = "select count(*) as cnt from t_po_bill where biz_user_id = '%s' or input_user_id = '%s' ";
+		$data = $db->query($sql, $id, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("用户[{$userName}]已经在采购订单中使用了，不能删除");
 		}
 		
 		// TODO 如果增加了其他单据，同样需要做出判断是否使用了该用户

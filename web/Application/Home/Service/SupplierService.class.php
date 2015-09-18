@@ -475,12 +475,20 @@ class SupplierService extends PSIBaseService {
 			return $this->bad("供应商档案 [{$code} {$name}] 已经产生付款记录，不能删除");
 		}
 		
-		// 盘点采购退货出库单中是否使用该供应商
+		// 判断采购退货出库单中是否使用该供应商
 		$sql = "select count(*) as cnt from t_pr_bill where supplier_id = '%s' ";
 		$data = $db->query($sql, $id);
 		$cnt = $data[0]["cnt"];
 		if ($cnt > 0) {
 			return $this->bad("供应商档案 [{$code} {$name}] 在采购退货出库单中已经被使用，不能删除");
+		}
+		
+		// 判断在采购订单中是否已经使用该供应商
+		$sql = "select count(*) as cnt from t_po_bill where supplier_id = '%s' ";
+		$data = $db->query($sql, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("供应商档案 [{$code} {$name}] 在采购订单中已经被使用，不能删除");
 		}
 		
 		$db->startTrans();

@@ -430,6 +430,13 @@ class GoodsService extends PSIBaseService {
 		$spec = $data[0]["spec"];
 		
 		// 判断商品是否能删除
+		$sql = "select count(*) as cnt from t_po_bill_detail where goods_id = '%s' ";
+		$data = $db->query($sql, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("商品[{$code} {$name}]已经在采购订单中使用了，不能删除");
+		}
+		
 		$sql = "select count(*) as cnt from t_pw_bill_detail where goods_id = '%s' ";
 		$data = $db->query($sql, $id);
 		$cnt = $data[0]["cnt"];
@@ -549,7 +556,7 @@ class GoodsService extends PSIBaseService {
 		
 		return $result;
 	}
-	
+
 	public function getGoodsInfo($id) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
@@ -761,18 +768,18 @@ class GoodsService extends PSIBaseService {
 				from t_goods g, t_goods_unit u
 				where g.bar_code = '%s' and g.unit_id = u.id ";
 		$data = $db->query($sql, $barcode);
-
+		
 		if (! $data) {
 			$result["success"] = false;
 			$result["msg"] = "条码为[{$barcode}]的商品不存在";
 		} else {
 			$result["success"] = true;
-			$result["id"] = $data[0]["id"];	
-			$result["code"] = $data[0]["code"];	
-			$result["name"] = $data[0]["name"];	
-			$result["spec"] = $data[0]["spec"];	
-			$result["salePrice"] = $data[0]["sale_price"];	
-			$result["unitName"] = $data[0]["unit_name"];	
+			$result["id"] = $data[0]["id"];
+			$result["code"] = $data[0]["code"];
+			$result["name"] = $data[0]["name"];
+			$result["spec"] = $data[0]["spec"];
+			$result["salePrice"] = $data[0]["sale_price"];
+			$result["unitName"] = $data[0]["unit_name"];
 		}
 		
 		return $result;
