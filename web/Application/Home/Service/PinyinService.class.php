@@ -1,7 +1,7 @@
 <?php
 namespace Home\Service;
 
-require __DIR__ . '/../Common/Pinyin/Pinyin.php';
+require __DIR__ . '/../Common/Pinyin/pinyin.php';
 
 /**
  * 拼音Service
