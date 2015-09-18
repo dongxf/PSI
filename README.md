@@ -67,7 +67,7 @@ PSI的开源协议
 >
 >4、ThinkPHP 3.2.3 (http://www.thinkphp.cn/)
 >
->5、Overtrue\Pinyin (http://overtrue.me/pinyin/)
+>5、乱码 / pinyin_php (https://git.oschina.net/cik/pinyin_php)
 >
 >6、PHPExcel (http://phpexcel.codeplex.com/)
 >
