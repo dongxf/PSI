@@ -147,6 +147,7 @@ CREATE TABLE IF NOT EXISTS `t_supplier_category` (
   `id` varchar(255) NOT NULL,
   `code` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
+  `parent_id` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -170,6 +171,7 @@ CREATE TABLE IF NOT EXISTS `t_goods_category` (
   `id` varchar(255) NOT NULL,
   `code` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
+  `parent_id` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
