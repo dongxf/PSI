@@ -568,7 +568,7 @@ class CustomerService extends PSIBaseService {
 	}
 
 	/**
-	 * 盘点给定id的客户是否存在
+	 * 判断给定id的客户是否存在
 	 *
 	 * @param string $customerId        	
 	 *

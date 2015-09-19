@@ -1,4 +1,5 @@
 <?php
+
 namespace Home\Service;
 
 /**
@@ -7,9 +8,17 @@ namespace Home\Service;
  * @author 李静波
  */
 class IdGenService {
-	public function newId() {
-		$data = M()->query("select UUID() as uuid");
-		if (!$data) {
+
+	/**
+	 * 创建一个新的UUID
+	 */
+	public function newId($db = null) {
+		if (! $db) {
+			$db = M();
+		}
+		
+		$data = $db->query("select UUID() as uuid");
+		if (! $data) {
 			return strtoupper(uniqid());
 		} else {
 			return strtoupper($data[0]["uuid"]);
