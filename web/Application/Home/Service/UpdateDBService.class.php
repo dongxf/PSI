@@ -8,7 +8,7 @@ namespace Home\Service;
  * @author 李静波
  */
 class UpdateDBService extends PSIBaseService {
-	private $CURRENT_DB_VERSION = "20150917-001";
+	private $CURRENT_DB_VERSION = "20150919-001";
 
 	private function tableExists($db, $tableName) {
 		$dbName = C('DB_NAME');
@@ -59,6 +59,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->t_customer($db);
 		$this->t_fid($db);
 		$this->t_goods($db);
+		$this->t_goods_category($db);
 		$this->t_goods_si($db);
 		$this->t_menu_item($db);
 		$this->t_permission($db);
@@ -73,6 +74,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->t_pw_bill($db);
 		$this->t_role_permission($db);
 		$this->t_supplier($db);
+		$this->t_supplier_category($db);
 		$this->t_sr_bill($db);
 		$this->t_sr_bill_detail($db);
 		$this->t_ws_bill($db);
@@ -300,6 +302,16 @@ class UpdateDBService extends PSIBaseService {
 		$tableName = "t_goods";
 		
 		$columnName = "bar_code";
+		if (! $this->columnExists($db, $tableName, $columnName)) {
+			$sql = "alter table {$tableName} add {$columnName} varchar(255) default null;";
+			$db->execute($sql);
+		}
+	}
+
+	private function t_goods_category($db) {
+		$tableName = "t_goods_category";
+		
+		$columnName = "parent_id";
 		if (! $this->columnExists($db, $tableName, $columnName)) {
 			$sql = "alter table {$tableName} add {$columnName} varchar(255) default null;";
 			$db->execute($sql);
@@ -797,6 +809,16 @@ class UpdateDBService extends PSIBaseService {
 		}
 		
 		$columnName = "note";
+		if (! $this->columnExists($db, $tableName, $columnName)) {
+			$sql = "alter table {$tableName} add {$columnName} varchar(255) default null;";
+			$db->execute($sql);
+		}
+	}
+
+	private function t_supplier_category($db) {
+		$tableName = "t_supplier_category";
+		
+		$columnName = "parent_id";
 		if (! $this->columnExists($db, $tableName, $columnName)) {
 			$sql = "alter table {$tableName} add {$columnName} varchar(255) default null;";
 			$db->execute($sql);
