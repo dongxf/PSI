@@ -9,15 +9,23 @@ namespace Home\Service;
  */
 class PSIBaseService {
 
+	/**
+	 * 是否是演示系统
+	 */
 	protected function isDemo() {
 		return getenv("IS_DEMO") == "1";
 	}
 
+	/**
+	 * 是否部署在MoPaaS
+	 */
 	protected function isMOPAAS() {
-		// 是否部署在 http://psi.oschina.mopaas.com
 		return getenv("IS_MOPAAS") == "1";
 	}
 
+	/**
+	 * 操作成功
+	 */
 	protected function ok($id = null) {
 		if ($id) {
 			return array(
@@ -31,6 +39,12 @@ class PSIBaseService {
 		}
 	}
 
+	/**
+	 * 操作失败
+	 *
+	 * @param string $msg
+	 *        	错误信息
+	 */
 	protected function bad($msg) {
 		return array(
 				"success" => false,
@@ -38,6 +52,12 @@ class PSIBaseService {
 		);
 	}
 
+	/**
+	 * 当前功能还没有开发
+	 *
+	 * @param string $info
+	 *        	附加信息
+	 */
 	protected function todo($info = null) {
 		if ($info) {
 			return array(
@@ -52,6 +72,9 @@ class PSIBaseService {
 		}
 	}
 
+	/**
+	 * 数据库错误
+	 */
 	protected function sqlError($codeLine = null) {
 		$info = "数据库错误，请联系管理员";
 		if ($codeLine) {
