@@ -463,6 +463,9 @@ class POBillService extends PSIBaseService {
 		return $result;
 	}
 
+	/**
+	 * 采购订单的商品明细
+	 */
 	public function poBillDetailList($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
