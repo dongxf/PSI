@@ -39,7 +39,7 @@
 <div id="loading">
     <div class="loading-indicator">
         <img src="{$uri}Public/Images/loader.gif" width="32" height="32" style="margin-right: 8px; float: left; vertical-align: top;" />
-        欢迎使用开源进销存PSI&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        欢迎使用{$productionName}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <br />
         <span id="loading-msg">正在加载中，请稍候...</span>
     </div>
@@ -60,7 +60,8 @@
     Ext.onReady(function () {
 		PSI.Const.BASE_URL = "{$uri}";
         var form = Ext.create("PSI.User.LoginForm", {
-               demoInfo: "{$demoInfo}"
+               demoInfo: "{$demoInfo}",
+               productionName: "{$productionName}"
            });
         form.show();
 

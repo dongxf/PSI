@@ -3,14 +3,10 @@ Ext.define("PSI.User.LoginForm", {
     extend: 'Ext.window.Window',
     
     config: {
-        demoInfo: ""
+        demoInfo: "",
+        productionName: ""
     },
 
-    header: {
-        title: "<span style='font-size:120%'>登录 - 开源进销存PSI</span>",
-        iconCls: "PSI-login",
-        height: 40
-    },
     modal: true,
     closable: false,
     resizable: false,
@@ -24,6 +20,11 @@ Ext.define("PSI.User.LoginForm", {
 
         Ext.apply(me, {
             height: me.getDemoInfo() == "" ? 140 : 200,
+            header: {
+                title: "<span style='font-size:120%'>登录 - " + me.getProductionName() + "</span>",
+                iconCls: "PSI-login",
+                height: 40
+            },
             items: [{
                 id: "loginForm",
                 xtype: "form",

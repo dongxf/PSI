@@ -24,6 +24,7 @@ class IndexController extends Controller {
 		if ($us->hasPermission()) {
 			$bcs = new BizConfigService();
 			$this->assign("productionName", $bcs->getProductionName());
+
 			$this->assign("title", "首页");
 			$this->assign("uri", __ROOT__ . "/");
 			

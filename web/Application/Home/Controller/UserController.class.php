@@ -5,6 +5,7 @@ namespace Home\Controller;
 use Think\Controller;
 use Home\Service\UserService;
 use Home\Common\FIdConst;
+use Home\Service\BizConfigService;
 
 /**
  * 用户管理Controller
@@ -41,6 +42,8 @@ class UserController extends Controller {
 			redirect(__ROOT__);
 		}
 		
+		$bcs = new BizConfigService();
+		$this->assign("productionName", $bcs->getProductionName());
 		$this->assign("title", "登录");
 		$this->assign("uri", __ROOT__ . "/");
 		$dtFlag = getdate();
