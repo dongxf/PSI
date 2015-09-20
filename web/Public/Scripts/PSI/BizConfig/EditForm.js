@@ -56,7 +56,7 @@ Ext.define("PSI.BizConfig.EditForm", {
 			title : "业务设置",
 			modal : true,
 			onEsc : Ext.emptyFn,
-			width : 400,
+			width : 420,
 			height : 350,
 			layout : "fit",
 			items : [ {
@@ -174,6 +174,7 @@ Ext.define("PSI.BizConfig.EditForm", {
 				        	 ]
 				         }, {
 				        	 title: "财务",
+				        	 iconCls: "PSI-fid2024",
 				        	 layout: "form",
 				        	 items: [
 				        	         {
@@ -188,6 +189,7 @@ Ext.define("PSI.BizConfig.EditForm", {
 				        	 ]
 				         }, {
 				        	 title: "系统",
+				        	 iconCls: "PSI-fid-9994",
 				        	 layout: "form",
 				        	 items: [
 				        	         {

@@ -2,7 +2,7 @@
 Ext.define("PSI.App", {
     config: {
         userName: "",
-        productionName: ""
+        productionName: "开源进销存PSI"
     },
     
     constructor: function (config) {
@@ -146,7 +146,10 @@ Ext.define("PSI.App", {
             if (fid == "-9995") {
                 window.open("http://my.oschina.net/u/134395/blog/374195");
             } else if (fid == "-9994"){
-                Ext.create("PSI.About.MainForm").show();
+                var form = Ext.create("PSI.About.MainForm", {
+                	productionName: me.getProductionName()
+                });
+                form.show();
             } else if (fid == "-9993") {
             	window.open("https://zb.oschina.net/market/opus/134395_122");
             } else if (fid === "-9999") {
