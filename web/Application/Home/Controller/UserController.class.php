@@ -61,6 +61,8 @@ class UserController extends Controller {
 		$us = new UserService();
 		
 		if ($us->hasPermission(FIdConst::CHANGE_MY_PASSWORD)) {
+			$bcs = new BizConfigService();
+			$this->assign("productionName", $bcs->getProductionName());
 			$this->assign("loginUserId", $us->getLoginUserId());
 			$this->assign("loginName", $us->getLoginName());
 			$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
