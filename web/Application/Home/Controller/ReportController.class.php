@@ -9,6 +9,7 @@ use Home\Service\SaleReportService;
 use Home\Service\InventoryReportService;
 use Home\Service\ReceivablesReportService;
 use Home\Service\PayablesReportService;
+use Home\Service\BizConfigService;
 
 /**
  * 报表Controller
@@ -25,6 +26,9 @@ class ReportController extends Controller {
 		$us = new UserService();
 		
 		if ($us->hasPermission(FIdConst::REPORT_SALE_DAY_BY_GOODS)) {
+			$bcs = new BizConfigService();
+			$this->assign("productionName", $bcs->getProductionName());
+			
 			$this->assign("title", "销售日报表(按商品汇总)");
 			$this->assign("uri", __ROOT__ . "/");
 			
@@ -78,6 +82,9 @@ class ReportController extends Controller {
 		$us = new UserService();
 		
 		if ($us->hasPermission(FIdConst::REPORT_SALE_DAY_BY_CUSTOMER)) {
+			$bcs = new BizConfigService();
+			$this->assign("productionName", $bcs->getProductionName());
+			
 			$this->assign("title", "销售日报表(按客户汇总)");
 			$this->assign("uri", __ROOT__ . "/");
 			
@@ -131,6 +138,9 @@ class ReportController extends Controller {
 		$us = new UserService();
 		
 		if ($us->hasPermission(FIdConst::REPORT_SALE_DAY_BY_WAREHOUSE)) {
+			$bcs = new BizConfigService();
+			$this->assign("productionName", $bcs->getProductionName());
+			
 			$this->assign("title", "销售日报表(按仓库汇总)");
 			$this->assign("uri", __ROOT__ . "/");
 			
@@ -184,6 +194,9 @@ class ReportController extends Controller {
 		$us = new UserService();
 		
 		if ($us->hasPermission(FIdConst::REPORT_SALE_DAY_BY_BIZUSER)) {
+			$bcs = new BizConfigService();
+			$this->assign("productionName", $bcs->getProductionName());
+			
 			$this->assign("title", "销售日报表(按业务员汇总)");
 			$this->assign("uri", __ROOT__ . "/");
 			
@@ -237,6 +250,9 @@ class ReportController extends Controller {
 		$us = new UserService();
 		
 		if ($us->hasPermission(FIdConst::REPORT_SALE_MONTH_BY_GOODS)) {
+			$bcs = new BizConfigService();
+			$this->assign("productionName", $bcs->getProductionName());
+			
 			$this->assign("title", "销售月报表(按商品汇总)");
 			$this->assign("uri", __ROOT__ . "/");
 			
@@ -292,6 +308,9 @@ class ReportController extends Controller {
 		$us = new UserService();
 		
 		if ($us->hasPermission(FIdConst::REPORT_SALE_MONTH_BY_CUSTOMER)) {
+			$bcs = new BizConfigService();
+			$this->assign("productionName", $bcs->getProductionName());
+			
 			$this->assign("title", "销售月报表(按客户汇总)");
 			$this->assign("uri", __ROOT__ . "/");
 			
@@ -347,6 +366,9 @@ class ReportController extends Controller {
 		$us = new UserService();
 		
 		if ($us->hasPermission(FIdConst::REPORT_SALE_MONTH_BY_WAREHOUSE)) {
+			$bcs = new BizConfigService();
+			$this->assign("productionName", $bcs->getProductionName());
+			
 			$this->assign("title", "销售月报表(按仓库汇总)");
 			$this->assign("uri", __ROOT__ . "/");
 			
@@ -402,6 +424,9 @@ class ReportController extends Controller {
 		$us = new UserService();
 		
 		if ($us->hasPermission(FIdConst::REPORT_SALE_MONTH_BY_BIZUSER)) {
+			$bcs = new BizConfigService();
+			$this->assign("productionName", $bcs->getProductionName());
+			
 			$this->assign("title", "销售月报表(按业务员汇总)");
 			$this->assign("uri", __ROOT__ . "/");
 			
@@ -457,6 +482,9 @@ class ReportController extends Controller {
 		$us = new UserService();
 		
 		if ($us->hasPermission(FIdConst::REPORT_SAFETY_INVENTORY)) {
+			$bcs = new BizConfigService();
+			$this->assign("productionName", $bcs->getProductionName());
+			
 			$this->assign("title", "安全库存明细表");
 			$this->assign("uri", __ROOT__ . "/");
 			
@@ -494,6 +522,9 @@ class ReportController extends Controller {
 		$us = new UserService();
 		
 		if ($us->hasPermission(FIdConst::REPORT_RECEIVABLES_AGE)) {
+			$bcs = new BizConfigService();
+			$this->assign("productionName", $bcs->getProductionName());
+			
 			$this->assign("title", "应收账款账龄分析表");
 			$this->assign("uri", __ROOT__ . "/");
 			
@@ -542,6 +573,9 @@ class ReportController extends Controller {
 		$us = new UserService();
 		
 		if ($us->hasPermission(FIdConst::REPORT_PAYABLES_AGE)) {
+			$bcs = new BizConfigService();
+			$this->assign("productionName", $bcs->getProductionName());
+			
 			$this->assign("title", "应付账款账龄分析表");
 			$this->assign("uri", __ROOT__ . "/");
 			
@@ -590,6 +624,9 @@ class ReportController extends Controller {
 		$us = new UserService();
 		
 		if ($us->hasPermission(FIdConst::REPORT_INVENTORY_UPPER)) {
+			$bcs = new BizConfigService();
+			$this->assign("productionName", $bcs->getProductionName());
+			
 			$this->assign("title", "库存超上限明细表");
 			$this->assign("uri", __ROOT__ . "/");
 			
