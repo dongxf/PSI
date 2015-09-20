@@ -7,6 +7,7 @@ use Home\Service\UserService;
 use Home\Service\InventoryService;
 use Home\Common\FIdConst;
 use Home\Service\ITBillService;
+use Home\Service\BizConfigService;
 
 /**
  * 库间调拨
@@ -22,14 +23,17 @@ class InvTransferController extends Controller {
 	public function index() {
 		$us = new UserService();
 		
-		$this->assign("title", "库间调拨");
-		$this->assign("uri", __ROOT__ . "/");
-		
-		$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
-		$dtFlag = getdate();
-		$this->assign("dtFlag", $dtFlag[0]);
-		
 		if ($us->hasPermission(FIdConst::INVENTORY_TRANSFER)) {
+			$bcs = new BizConfigService();
+			$this->assign("productionName", $bcs->getProductionName());
+			
+			$this->assign("title", "库间调拨");
+			$this->assign("uri", __ROOT__ . "/");
+			
+			$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
+			$dtFlag = getdate();
+			$this->assign("dtFlag", $dtFlag[0]);
+			
 			$this->display();
 		} else {
 			redirect(__ROOT__ . "/Home/User/login");

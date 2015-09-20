@@ -7,6 +7,7 @@ use Home\Service\UserService;
 use Home\Service\InventoryService;
 use Home\Common\FIdConst;
 use Home\Service\ICBillService;
+use Home\Service\BizConfigService;
 
 /**
  * 库存盘点Controller
@@ -23,6 +24,9 @@ class InvCheckController extends Controller {
 		$us = new UserService();
 		
 		if ($us->hasPermission(FIdConst::INVENTORY_CHECK)) {
+			$bcs = new BizConfigService();
+			$this->assign("productionName", $bcs->getProductionName());
+			
 			$this->assign("title", "库存盘点");
 			$this->assign("uri", __ROOT__ . "/");
 			
