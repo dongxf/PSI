@@ -95,6 +95,12 @@ class BizConfigService extends PSIBaseService {
 					return $this->bad("增值税税率不能大于17");
 				}
 			}
+			
+			if ($key == "9002-01") {
+				if (! $value) {
+					$value = "开源进销存PSI";
+				}
+			}
 		}
 		
 		$db = M();
@@ -115,6 +121,12 @@ class BizConfigService extends PSIBaseService {
 			
 			if ($key == "9001-01") {
 				$value = intval($value);
+			}
+			
+			if ($key == "9002-01") {
+				if ($this->isDemo()) {
+					return $this->bad("在演示环境下不能修改产品名称，请原谅。");
+				}
 			}
 			
 			$sql = "update t_config set value = '%s'
@@ -174,7 +186,7 @@ class BizConfigService extends PSIBaseService {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * 获得增值税税率
 	 */
@@ -186,7 +198,21 @@ class BizConfigService extends PSIBaseService {
 			$result = $data[0]["value"];
 			return intval($result);
 		} else {
-			return 17; 
+			return 17;
+		}
+	}
+
+	/**
+	 * 获得本产品名称，默认值是：开源进销存PSI
+	 */
+	public function getProductionName() {
+		$db = M();
+		$sql = "select value from t_config where id = '9002-01' ";
+		$data = $db->query($sql);
+		if ($data) {
+			return $data[0]["value"];
+		} else {
+			return "开源进销存PSI";
 		}
 	}
 }

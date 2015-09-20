@@ -1,7 +1,8 @@
 //PSI的应用容器：承载主菜单、其他模块的UI
 Ext.define("PSI.App", {
     config: {
-        userName: ""
+        userName: "",
+        productionName: ""
     },
     
     constructor: function (config) {
@@ -208,7 +209,7 @@ Ext.define("PSI.App", {
             return;
         }
         var panel = Ext.getCmp("__PSITopPanel");
-        panel.setTitle(header.title + " - 开源进销存PSI");
+        panel.setTitle(header.title + " - " + this.getProductionName());
         panel.setIconCls(header.iconCls);
     },
     

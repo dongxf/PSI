@@ -5,6 +5,7 @@ namespace Home\Controller;
 use Think\Controller;
 use Home\Service\UserService;
 use Home\Common\FIdConst;
+use Home\Service\BizConfigService;
 
 /**
  * 首页Controller
@@ -21,6 +22,8 @@ class IndexController extends Controller {
 		$us = new UserService();
 		
 		if ($us->hasPermission()) {
+			$bcs = new BizConfigService();
+			$this->assign("productionName", $bcs->getProductionName());
 			$this->assign("title", "首页");
 			$this->assign("uri", __ROOT__ . "/");
 			
