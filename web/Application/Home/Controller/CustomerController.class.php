@@ -6,6 +6,7 @@ use Think\Controller;
 use Home\Service\UserService;
 use Home\Service\CustomerService;
 use Home\Common\FIdConst;
+use Home\Service\BizConfigService;
 
 /**
  * 客户资料Controller
@@ -22,6 +23,9 @@ class CustomerController extends Controller {
 		$us = new UserService();
 		
 		if ($us->hasPermission(FIdConst::CUSTOMER)) {
+			$bcs = new BizConfigService();
+			$this->assign("productionName", $bcs->getProductionName());
+			
 			$this->assign("title", "客户资料");
 			$this->assign("uri", __ROOT__ . "/");
 			
