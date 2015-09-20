@@ -6,6 +6,7 @@ use Think\Controller;
 use Home\Service\UserService;
 use Home\Service\SupplierService;
 use Home\Common\FIdConst;
+use Home\Service\BizConfigService;
 
 /**
  * 供应商档案Controller
@@ -22,6 +23,9 @@ class SupplierController extends Controller {
 		$us = new UserService();
 		
 		if ($us->hasPermission(FIdConst::SUPPLIER)) {
+			$bcs = new BizConfigService();
+			$this->assign("productionName", $bcs->getProductionName());
+			
 			$this->assign("title", "供应商档案");
 			$this->assign("uri", __ROOT__ . "/");
 			

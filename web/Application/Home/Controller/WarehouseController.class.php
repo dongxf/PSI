@@ -23,6 +23,9 @@ class WarehouseController extends Controller {
 		$us = new UserService();
 		
 		if ($us->hasPermission(FIdConst::WAREHOUSE)) {
+			$bcs = new BizConfigService();
+			$this->assign("productionName", $bcs->getProductionName());
+			
 			$this->assign("title", "仓库");
 			$this->assign("uri", __ROOT__ . "/");
 			

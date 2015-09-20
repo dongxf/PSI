@@ -8,7 +8,8 @@
 <script>
     Ext.onReady(function(){
         var app = Ext.create("PSI.App", {
-            userName: "{$loginUserName}"
+            userName: "{$loginUserName}",
+            productionName: "{$productionName}"
         });
 
         app.add(Ext.create("PSI.Goods.MainForm"));

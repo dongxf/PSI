@@ -24,6 +24,9 @@ class GoodsController extends Controller {
 		$us = new UserService();
 		
 		if ($us->hasPermission(FIdConst::GOODS)) {
+			$bcs = new BizConfigService();
+			$this->assign("productionName", $bcs->getProductionName());
+			
 			$this->assign("title", "商品");
 			$this->assign("uri", __ROOT__ . "/");
 			
@@ -44,6 +47,9 @@ class GoodsController extends Controller {
 		$us = new UserService();
 		
 		if ($us->hasPermission(FIdConst::GOODS_UNIT)) {
+			$bcs = new BizConfigService();
+			$this->assign("productionName", $bcs->getProductionName());
+			
 			$this->assign("title", "商品计量单位");
 			$this->assign("uri", __ROOT__ . "/");
 			
