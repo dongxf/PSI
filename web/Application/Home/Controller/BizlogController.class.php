@@ -7,6 +7,7 @@ use Home\Service\UserService;
 use Home\Service\BizlogService;
 use Home\Common\FIdConst;
 use Home\Service\UpdateDBService;
+use Home\Service\BizConfigService;
 
 /**
  * 业务日志Controller
@@ -22,15 +23,18 @@ class BizlogController extends Controller {
 	public function index() {
 		$us = new UserService();
 		
-		$this->assign("title", "业务日志");
-		$this->assign("uri", __ROOT__ . "/");
-		
-		$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
-		
-		$dtFlag = getdate();
-		$this->assign("dtFlag", $dtFlag[0]);
-		
 		if ($us->hasPermission(FIdConst::BIZ_LOG)) {
+			$bcs = new BizConfigService();
+			$this->assign("productionName", $bcs->getProductionName());
+			
+			$this->assign("title", "业务日志");
+			$this->assign("uri", __ROOT__ . "/");
+			
+			$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
+			
+			$dtFlag = getdate();
+			$this->assign("dtFlag", $dtFlag[0]);
+			
 			$this->display();
 		} else {
 			redirect(__ROOT__ . "/Home/User/login");

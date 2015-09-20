@@ -22,6 +22,9 @@ class BizConfigController extends Controller {
 		$us = new UserService();
 		
 		if ($us->hasPermission(FIdConst::BIZ_CONFIG)) {
+			$bcs = new BizConfigService();
+			$this->assign("productionName", $bcs->getProductionName());
+			
 			$this->assign("title", "业务设置");
 			$this->assign("uri", __ROOT__ . "/");
 			

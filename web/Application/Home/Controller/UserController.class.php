@@ -22,6 +22,9 @@ class UserController extends Controller {
 		$us = new UserService();
 		
 		if ($us->hasPermission(FIdConst::USR_MANAGEMENT)) {
+			$bcs = new BizConfigService();
+			$this->assign("productionName", $bcs->getProductionName());
+			
 			$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
 			$this->assign("title", "用户管理");
 			$this->assign("uri", __ROOT__ . "/");
