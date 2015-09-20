@@ -10,6 +10,7 @@ use Home\Common\FIdConst;
 use Home\Service\CashService;
 use Home\Service\PreReceivingService;
 use Home\Service\PrePaymentService;
+use Home\Service\BizConfigService;
 
 /**
  * 资金Controller
@@ -26,6 +27,9 @@ class FundsController extends Controller {
 		$us = new UserService();
 		
 		if ($us->hasPermission(FIdConst::PAYABLES)) {
+			$bcs = new BizConfigService();
+			$this->assign("productionName", $bcs->getProductionName());
+			
 			$this->assign("title", "应付账款管理");
 			$this->assign("uri", __ROOT__ . "/");
 			
@@ -170,6 +174,9 @@ class FundsController extends Controller {
 		$us = new UserService();
 		
 		if ($us->hasPermission(FIdConst::RECEIVING)) {
+			$bcs = new BizConfigService();
+			$this->assign("productionName", $bcs->getProductionName());
+			
 			$this->assign("title", "应收账款管理");
 			$this->assign("uri", __ROOT__ . "/");
 			
@@ -314,6 +321,9 @@ class FundsController extends Controller {
 		$us = new UserService();
 		
 		if ($us->hasPermission(FIdConst::CASH_INDEX)) {
+			$bcs = new BizConfigService();
+			$this->assign("productionName", $bcs->getProductionName());
+			
 			$this->assign("title", "现金收支查询");
 			$this->assign("uri", __ROOT__ . "/");
 			
@@ -367,6 +377,9 @@ class FundsController extends Controller {
 		$us = new UserService();
 		
 		if ($us->hasPermission(FIdConst::PRE_RECEIVING)) {
+			$bcs = new BizConfigService();
+			$this->assign("productionName", $bcs->getProductionName());
+			
 			$this->assign("title", "预收款管理");
 			$this->assign("uri", __ROOT__ . "/");
 			
@@ -477,6 +490,9 @@ class FundsController extends Controller {
 		$us = new UserService();
 		
 		if ($us->hasPermission(FIdConst::PRE_PAYMENT)) {
+			$bcs = new BizConfigService();
+			$this->assign("productionName", $bcs->getProductionName());
+			
 			$this->assign("title", "预付款管理");
 			$this->assign("uri", __ROOT__ . "/");
 			
