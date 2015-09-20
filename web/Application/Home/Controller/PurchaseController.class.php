@@ -7,6 +7,7 @@ use Home\Service\UserService;
 use Home\Service\PWBillService;
 use Home\Common\FIdConst;
 use Home\Service\POBillService;
+use Home\Service\BizConfigService;
 
 /**
  * 采购Controller
@@ -23,6 +24,9 @@ class PurchaseController extends Controller {
 		$us = new UserService();
 		
 		if ($us->hasPermission(FIdConst::PURCHASE_WAREHOUSE)) {
+			$bcs = new BizConfigService();
+			$this->assign("productionName", $bcs->getProductionName());
+			
 			$this->assign("title", "采购入库");
 			$this->assign("uri", __ROOT__ . "/");
 			
@@ -122,6 +126,9 @@ class PurchaseController extends Controller {
 		$us = new UserService();
 		
 		if ($us->hasPermission(FIdConst::PURCHASE_ORDER)) {
+			$bcs = new BizConfigService();
+			$this->assign("productionName", $bcs->getProductionName());
+			
 			$this->assign("title", "采购订单");
 			$this->assign("uri", __ROOT__ . "/");
 			

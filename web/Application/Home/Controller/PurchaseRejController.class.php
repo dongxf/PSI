@@ -7,6 +7,7 @@ use Home\Service\UserService;
 use Home\Service\InventoryService;
 use Home\Common\FIdConst;
 use Home\Service\PRBillService;
+use Home\Service\BizConfigService;
 
 /**
  * 采购退货出库Controller
@@ -23,6 +24,9 @@ class PurchaseRejController extends Controller {
 		$us = new UserService();
 		
 		if ($us->hasPermission(FIdConst::PURCHASE_REJECTION)) {
+			$bcs = new BizConfigService();
+			$this->assign("productionName", $bcs->getProductionName());
+			
 			$this->assign("title", "采购退货出库");
 			$this->assign("uri", __ROOT__ . "/");
 			
