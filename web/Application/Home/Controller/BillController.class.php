@@ -80,6 +80,9 @@ class BillController extends Controller {
 			return;
 		}
 		
+		$bcs = new BizConfigService();
+		$this->assign("productionName", $bcs->getProductionName());
+		
 		$ref = I("get.ref");
 		$this->assign("ref", $ref);
 		
@@ -114,6 +117,9 @@ class BillController extends Controller {
 		if (! $this->hasPermission($fid)) {
 			return;
 		}
+		
+		$bcs = new BizConfigService();
+		$this->assign("productionName", $bcs->getProductionName());
 		
 		$ref = I("get.ref");
 		$this->assign("ref", $ref);
@@ -150,6 +156,9 @@ class BillController extends Controller {
 			return;
 		}
 		
+		$bcs = new BizConfigService();
+		$this->assign("productionName", $bcs->getProductionName());
+		
 		$ref = I("get.ref");
 		$this->assign("ref", $ref);
 		
@@ -184,6 +193,9 @@ class BillController extends Controller {
 		if (! $this->hasPermission($fid)) {
 			return;
 		}
+		
+		$bcs = new BizConfigService();
+		$this->assign("productionName", $bcs->getProductionName());
 		
 		$ref = I("get.ref");
 		$this->assign("ref", $ref);
@@ -220,6 +232,9 @@ class BillController extends Controller {
 			return;
 		}
 		
+		$bcs = new BizConfigService();
+		$this->assign("productionName", $bcs->getProductionName());
+		
 		$ref = I("get.ref");
 		$this->assign("ref", $ref);
 		
@@ -254,6 +269,9 @@ class BillController extends Controller {
 		if (! $this->hasPermission($fid)) {
 			return;
 		}
+		
+		$bcs = new BizConfigService();
+		$this->assign("productionName", $bcs->getProductionName());
 		
 		$ref = I("get.ref");
 		$this->assign("ref", $ref);
