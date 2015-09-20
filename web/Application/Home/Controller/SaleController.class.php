@@ -7,6 +7,7 @@ use Home\Service\UserService;
 use Home\Common\FIdConst;
 use Home\Service\WSBillService;
 use Home\Service\SRBillService;
+use Home\Service\BizConfigService;
 
 /**
  * 销售Controller
@@ -23,6 +24,9 @@ class SaleController extends Controller {
 		$us = new UserService();
 		
 		if ($us->hasPermission(FIdConst::WAREHOUSING_SALE)) {
+			$bcs = new BizConfigService();
+			$this->assign("productionName", $bcs->getProductionName());
+			
 			$this->assign("title", "销售出库");
 			$this->assign("uri", __ROOT__ . "/");
 			
@@ -137,6 +141,9 @@ class SaleController extends Controller {
 		$us = new UserService();
 		
 		if ($us->hasPermission(FIdConst::SALE_REJECTION)) {
+			$bcs = new BizConfigService();
+			$this->assign("productionName", $bcs->getProductionName());
+			
 			$this->assign("title", "销售退货入库");
 			$this->assign("uri", __ROOT__ . "/");
 			
