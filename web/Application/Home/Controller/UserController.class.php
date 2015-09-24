@@ -103,8 +103,9 @@ class UserController extends Controller {
 		if (IS_POST) {
 			$loginName = I("post.loginName");
 			$password = I("post.password");
+			$fromDevice = I("post.fromDevice");
 			$us = new UserService();
-			$this->ajaxReturn($us->doLogin($loginName, $password));
+			$this->ajaxReturn($us->doLogin($loginName, $password, $fromDevice));
 		}
 	}
 

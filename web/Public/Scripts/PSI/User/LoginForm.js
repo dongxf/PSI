@@ -43,6 +43,10 @@ Ext.define("PSI.User.LoginForm", {
                     msgTarget: 'side'
                 },
                 items: [{
+                	xtype: "hidden",
+                	name: "fromDevice",
+                	value: "web"
+                },{
                     id: "editLoginName",
                     width: 370,
                     fieldLabel: "登录名",

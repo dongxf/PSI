@@ -101,7 +101,7 @@ class UserService extends PSIBaseService {
 		}
 	}
 
-	public function doLogin($loginName, $password) {
+	public function doLogin($loginName, $password, $fromDevice) {
 		$sql = "select id from t_user where login_name = '%s' and password = '%s' and enabled = 1";
 		
 		$user = M()->query($sql, $loginName, md5($password));
@@ -111,7 +111,7 @@ class UserService extends PSIBaseService {
 			
 			$bls = new BizlogService();
 			$bls->insertBizlog("登录系统");
-			return $this->ok();
+			return $this->ok($user[0]["id"]);
 		} else {
 			return $this->bad("用户名或者密码错误");
 		}
