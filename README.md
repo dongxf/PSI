@@ -32,6 +32,8 @@ PSI 2015 下载地址
 > 用WampServer部署可能会遇到的问题：http://my.oschina.net/u/134395/blog/383754
 > <br /> <br />
 > 用Nginx部署可能会遇到的问题：http://my.oschina.net/u/134395/blog/390650
+> <br /> <br />
+> 用IIS如何配置：http://my.oschina.net/u/1415918/blog/511228
 
 PSI的开源协议
 -------------
