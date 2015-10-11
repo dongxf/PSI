@@ -521,6 +521,8 @@ Ext.define("PSI.Sale.WSEditForm", {
         goods.set("unitName", data.unitName);
         goods.set("goodsSpec", data.spec);
         goods.set("goodsPrice", data.salePrice);
+        
+        me.calcMoney(goods);
     },
     
     getSaveData: function () {
