@@ -536,6 +536,8 @@ Ext.define("PSI.Purchase.PWEditForm", {
 		
 		// 设置建议采购价
 		goods.set("goodsPrice", data.purchasePrice);
+		
+		me.calcMoney(goods);
 	},
 	cellEditingAfterEdit : function(editor, e) {
 		var me = this;
