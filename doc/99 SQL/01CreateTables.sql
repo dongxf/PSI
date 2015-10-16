@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS `t_biz_log` (
   `ip` varchar(255) NOT NULL,
   `user_id` varchar(255) NOT NULL,
   `log_category` varchar(50) NOT NULL,
+  `data_org` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
@@ -37,6 +38,7 @@ CREATE TABLE IF NOT EXISTS `t_org` (
   `name` varchar(255) NOT NULL,
   `org_code` varchar(255) NOT NULL,
   `parent_id` varchar(255) DEFAULT NULL,
+  `data_org` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -60,13 +62,15 @@ DROP TABLE IF EXISTS `t_role`;
 CREATE TABLE IF NOT EXISTS `t_role` (
   `id` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
+  `data_org` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `t_role_permission`;
 CREATE TABLE IF NOT EXISTS `t_role_permission` (
   `role_id` varchar(255) DEFAULT NULL,
-  `permission_id` varchar(255) DEFAULT NULL
+  `permission_id` varchar(255) DEFAULT NULL,
+  `data_org` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `t_role_user`;
@@ -91,6 +95,7 @@ CREATE TABLE IF NOT EXISTS `t_user` (
   `tel` varchar(255) DEFAULT NULL,
   `tel02` varchar(255) DEFAULT NULL,
   `address` varchar(255) DEFAULT NULL,
+  `data_org` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -101,6 +106,7 @@ CREATE TABLE IF NOT EXISTS `t_warehouse` (
   `inited` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
   `py` varchar(255) DEFAULT NULL,
+  `data_org` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -109,7 +115,8 @@ CREATE TABLE IF NOT EXISTS `t_warehouse_org` (
   `warehouse_id` varchar(255) DEFAULT NULL,
   `org_id` varchar(255) DEFAULT NULL,
   `org_type` varchar(255) DEFAULT NULL,
-  `bill_fid` varchar(255) DEFAULT NULL
+  `bill_fid` varchar(255) DEFAULT NULL,
+  `data_org` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `t_supplier`;
@@ -139,6 +146,7 @@ CREATE TABLE IF NOT EXISTS `t_supplier` (
   `tax_number` varchar(255) DEFAULT NULL,
   `fax` varchar(255) DEFAULT NULL,
   `note` varchar(255) DEFAULT NULL,
+  `data_org` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -148,6 +156,7 @@ CREATE TABLE IF NOT EXISTS `t_supplier_category` (
   `code` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
   `parent_id` varchar(255) DEFAULT NULL,
+  `data_org` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -163,6 +172,7 @@ CREATE TABLE IF NOT EXISTS `t_goods` (
   `purchase_price` decimal(19, 2) DEFAULT NULL,
   `py` varchar(255) DEFAULT NULL,
   `bar_code` varchar(255) DEFAULT NULL,
+  `data_org` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -172,6 +182,7 @@ CREATE TABLE IF NOT EXISTS `t_goods_category` (
   `code` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
   `parent_id` varchar(255) DEFAULT NULL,
+  `data_org` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -179,6 +190,7 @@ DROP TABLE IF EXISTS `t_goods_unit`;
 CREATE TABLE IF NOT EXISTS `t_goods_unit` (
   `id` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
+  `data_org` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -209,6 +221,7 @@ CREATE TABLE IF NOT EXISTS `t_customer` (
   `tax_number` varchar(255) DEFAULT NULL,
   `fax` varchar(255) DEFAULT NULL,
   `note` varchar(255) DEFAULT NULL,
+  `data_org` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -218,6 +231,7 @@ CREATE TABLE IF NOT EXISTS `t_customer_category` (
   `code` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
   `parent_id` varchar(255) DEFAULT NULL,
+  `data_org` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -236,6 +250,7 @@ CREATE TABLE IF NOT EXISTS `t_inventory` (
   `out_money` decimal(19,2) DEFAULT NULL,
   `out_price` decimal(19,2) DEFAULT NULL,
   `warehouse_id` varchar(255) NOT NULL,
+  `data_org` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
@@ -258,6 +273,7 @@ CREATE TABLE IF NOT EXISTS `t_inventory_detail` (
   `ref_number` varchar(255) DEFAULT NULL,
   `ref_type` varchar(255) NOT NULL,
   `warehouse_id` varchar(255) NOT NULL,
+  `data_org` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
@@ -275,6 +291,7 @@ CREATE TABLE IF NOT EXISTS `t_pw_bill` (
   `supplier_id` varchar(255) NOT NULL,
   `warehouse_id` varchar(255) NOT NULL,
   `payment_type` int(11) NOT NULL DEFAULT 0,
+  `data_org` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -288,6 +305,7 @@ CREATE TABLE IF NOT EXISTS `t_pw_bill_detail` (
   `goods_price` decimal(19,2) NOT NULL,
   `pwbill_id` varchar(255) NOT NULL,
   `show_order` int(11) NOT NULL,
+  `data_org` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -300,6 +318,7 @@ CREATE TABLE IF NOT EXISTS `t_payables` (
   `ca_id` varchar(255) NOT NULL,
   `ca_type` varchar(255) NOT NULL,
   `pay_money` decimal(19,2) NOT NULL,
+  `data_org` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -315,6 +334,7 @@ CREATE TABLE IF NOT EXISTS `t_payables_detail` (
   `pay_money` decimal(19,2) NOT NULL,
   `ref_number` varchar(255) NOT NULL,
   `ref_type` varchar(255) NOT NULL,
+  `data_org` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -326,6 +346,7 @@ CREATE TABLE IF NOT EXISTS `t_receivables` (
   `ca_id` varchar(255) NOT NULL,
   `ca_type` varchar(255) NOT NULL,
   `rv_money` decimal(19,2) NOT NULL,
+  `data_org` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -341,6 +362,7 @@ CREATE TABLE IF NOT EXISTS `t_receivables_detail` (
   `ref_number` varchar(255) NOT NULL,
   `ref_type` varchar(255) NOT NULL,
   `rv_money` decimal(19,2) NOT NULL,
+  `data_org` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -357,6 +379,7 @@ CREATE TABLE IF NOT EXISTS `t_payment` (
   `ref_type` varchar(255) NOT NULL,
   `ref_number` varchar(255) NOT NULL,
   `remark` varchar(255) NOT NULL,
+  `data_org` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -375,6 +398,7 @@ CREATE TABLE IF NOT EXISTS `t_ws_bill` (
   `sale_money` decimal(19,2) DEFAULT NULL,
   `warehouse_id` varchar(255) NOT NULL,
   `receiving_type` int(11) NOT NULL DEFAULT 0,
+  `data_org` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -391,6 +415,7 @@ CREATE TABLE IF NOT EXISTS `t_ws_bill_detail` (
   `show_order` int(11) NOT NULL,
   `wsbill_id` varchar(255) NOT NULL,
   `sn_note` varchar(255) DEFAULT NULL,
+  `data_org` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -407,6 +432,7 @@ CREATE TABLE IF NOT EXISTS `t_receiving` (
   `bill_id` varchar(255) NOT NULL,
   `ref_number` varchar(255) NOT NULL,
   `ref_type` varchar(255) NOT NULL,
+  `data_org` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -427,6 +453,7 @@ CREATE TABLE IF NOT EXISTS `t_sr_bill` (
   `warehouse_id` varchar(255) NOT NULL,
   `ws_bill_id` varchar(255) NOT NULL,
   `payment_type` int(11) NOT NULL DEFAULT 0,
+  `data_org` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -447,6 +474,7 @@ CREATE TABLE IF NOT EXISTS `t_sr_bill_detail` (
   `srbill_id` varchar(255) NOT NULL,
   `wsbilldetail_id` varchar(255) NOT NULL,
   `sn_note` varchar(255) DEFAULT NULL,
+  `data_org` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -461,6 +489,7 @@ CREATE TABLE IF NOT EXISTS `t_it_bill` (
   `ref` varchar(255) NOT NULL,
   `from_warehouse_id` varchar(255) NOT NULL,
   `to_warehouse_id` varchar(255) NOT NULL,
+  `data_org` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -472,6 +501,7 @@ CREATE TABLE IF NOT EXISTS `t_it_bill_detail` (
   `goods_count` int(11) NOT NULL,
   `show_order` int(11) NOT NULL,
   `itbill_id` varchar(255) NOT NULL,
+  `data_org` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -485,6 +515,7 @@ CREATE TABLE IF NOT EXISTS `t_ic_bill` (
   `input_user_id` varchar(255) NOT NULL,
   `ref` varchar(255) NOT NULL,
   `warehouse_id` varchar(255) NOT NULL,
+  `data_org` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -497,6 +528,7 @@ CREATE TABLE IF NOT EXISTS `t_ic_bill_detail` (
   `goods_money` decimal(19,2) NOT NULL,
   `show_order` int(11) NOT NULL,
   `icbill_id` varchar(255) NOT NULL,
+  `data_org` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -515,6 +547,7 @@ CREATE TABLE IF NOT EXISTS `t_pr_bill` (
   `warehouse_id` varchar(255) NOT NULL,
   `pw_bill_id` varchar(255) NOT NULL,
   `receiving_type` int(11) NOT NULL DEFAULT 0,
+  `data_org` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -534,6 +567,7 @@ CREATE TABLE IF NOT EXISTS `t_pr_bill_detail` (
   `show_order` int(11) NOT NULL,
   `prbill_id` varchar(255) NOT NULL,
   `pwbilldetail_id` varchar(255) NOT NULL,
+  `data_org` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -560,6 +594,7 @@ CREATE TABLE IF NOT EXISTS `t_goods_si` (
   `warehouse_id` varchar(255) NOT NULL,
   `safety_inventory` decimal(19,2) NOT NULL,
   `inventory_upper` decimal(19,2) DEFAULT NULL,
+  `data_org` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -570,6 +605,7 @@ CREATE TABLE IF NOT EXISTS `t_cash` (
   `in_money` decimal(19,2) DEFAULT NULL,
   `out_money` decimal(19,2) DEFAULT NULL,
   `balance_money` decimal(19,2) NOT NULL,
+  `data_org` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -583,6 +619,7 @@ CREATE TABLE IF NOT EXISTS `t_cash_detail` (
   `ref_number` varchar(255) NOT NULL,
   `ref_type` varchar(255) NOT NULL,
   `date_created` datetime NOT NULL,
+  `data_org` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -593,6 +630,7 @@ CREATE TABLE IF NOT EXISTS `t_pre_receiving` (
   `in_money` decimal(19,2) DEFAULT NULL,
   `out_money` decimal(19,2) DEFAULT NULL,
   `balance_money` decimal(19,2) NOT NULL,
+  `data_org` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -609,6 +647,7 @@ CREATE TABLE IF NOT EXISTS `t_pre_receiving_detail` (
   `ref_type` varchar(255) NOT NULL,
   `biz_user_id` varchar(255) NOT NULL,
   `input_user_id` varchar(255) NOT NULL,
+  `data_org` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -619,6 +658,7 @@ CREATE TABLE IF NOT EXISTS `t_pre_payment` (
   `in_money` decimal(19,2) DEFAULT NULL,
   `out_money` decimal(19,2) DEFAULT NULL,
   `balance_money` decimal(19,2) NOT NULL,
+  `data_org` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -635,6 +675,7 @@ CREATE TABLE IF NOT EXISTS `t_pre_payment_detail` (
   `ref_type` varchar(255) NOT NULL,
   `biz_user_id` varchar(255) NOT NULL,
   `input_user_id` varchar(255) NOT NULL,
+  `data_org` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -661,6 +702,7 @@ CREATE TABLE IF NOT EXISTS `t_po_bill` (
   `payment_type` int(11) NOT NULL DEFAULT 0,
   `confirm_user_id` varchar(255) DEFAULT NULL,
   `confirm_date` datetime DEFAULT NULL,
+  `data_org` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -679,6 +721,7 @@ CREATE TABLE IF NOT EXISTS `t_po_bill_detail` (
   `pw_count` int(11) NOT NULL,
   `left_count` int(11) NOT NULL,
   `show_order` int(11) NOT NULL,
+  `data_org` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
