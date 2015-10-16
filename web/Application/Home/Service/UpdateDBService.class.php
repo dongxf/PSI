@@ -8,7 +8,7 @@ namespace Home\Service;
  * @author 李静波
  */
 class UpdateDBService extends PSIBaseService {
-	private $CURRENT_DB_VERSION = "20150920-001";
+	private $CURRENT_DB_VERSION = "20151016-001";
 
 	private function tableExists($db, $tableName) {
 		$dbName = C('DB_NAME');
@@ -80,6 +80,8 @@ class UpdateDBService extends PSIBaseService {
 		$this->t_ws_bill($db);
 		$this->t_ws_bill_detail($db);
 		
+		$this->update_20151016_01($db);
+		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
 		$sql = "insert into t_psi_db_version (db_version, update_dt) 
@@ -90,6 +92,67 @@ class UpdateDBService extends PSIBaseService {
 		$bl->insertBizlog("升级数据库，数据库版本 = " . $this->CURRENT_DB_VERSION);
 		
 		return $this->ok();
+	}
+
+	private function update_20151016_01($db) {
+		// 本次更新：表结构增加data_org字段
+		$tables = array(
+				"t_biz_log",
+				"t_org",
+				"t_role",
+				"t_role_permission",
+				"t_user",
+				"t_warehouse",
+				"t_warehouse_org",
+				"t_supplier",
+				"t_supplier_category",
+				"t_goods",
+				"t_goods_category",
+				"t_goods_unit",
+				"t_customer",
+				"t_customer_category",
+				"t_inventory",
+				"t_inventory_detail",
+				"t_pw_bill",
+				"t_pw_bill_detail",
+				"t_payables",
+				"t_payables_detail",
+				"t_receivables",
+				"t_receivables_detail",
+				"t_payment",
+				"t_ws_bill",
+				"t_ws_bill_detail",
+				"t_receiving",
+				"t_sr_bill",
+				"t_sr_bill_detail",
+				"t_it_bill",
+				"t_it_bill_detail",
+				"t_ic_bill",
+				"t_ic_bill_detail",
+				"t_pr_bill",
+				"t_pr_bill_detail",
+				"t_goods_si",
+				"t_cash",
+				"t_cash_detail",
+				"t_pre_receiving",
+				"t_pre_receiving_detail",
+				"t_pre_payment",
+				"t_pre_payment_detail",
+				"t_po_bill",
+				"t_po_bill_detail"
+		);
+		
+		$columnName = "data_org";
+		foreach ( $tables as $tableName ) {
+			if (! $this->tableExists($db, $tableName)) {
+				continue;
+			}
+			
+			if (! $this->columnExists($db, $tableName, $columnName)) {
+				$sql = "alter table {$tableName} add {$columnName} varchar(255) default null;";
+				$db->execute($sql);
+			}
+		}
 	}
 
 	private function t_cash($db) {
