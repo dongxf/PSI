@@ -117,6 +117,29 @@ class UserService extends PSIBaseService {
 		}
 	}
 
+	private function allOrgsInternal($parentId, $db) {
+		$result = array();
+		$sql = "select id, name, org_code, full_name 
+				from t_org 
+				where parent_id = '%s' 
+				order by org_code";
+		$data = $db->query($sql, $parentId);
+		foreach ( $data as $i => $v ) {
+			$result[$i]["id"] = $v["id"];
+			$result[$i]["text"] = $v["name"];
+			$result[$i]["orgCode"] = $v["org_code"];
+			$result[$i]["fullName"] = $v["full_name"];
+			
+			$c2 = $this->allOrgsInternal($v["id"], $db); // 递归调用自己
+			
+			$result[$i]["children"] = $c2;
+			$result[$i]["leaf"] = count($c2) == 0;
+			$result[$i]["expanded"] = true;
+		}
+		
+		return $result;
+	}
+
 	public function allOrgs() {
 		$sql = "select id, name, org_code, full_name 
 				from t_org 
@@ -134,42 +157,10 @@ class UserService extends PSIBaseService {
 			$result[$i]["fullName"] = $org1["full_name"];
 			
 			// 第二级
-			$sql = "select id, name,  org_code, full_name 
-					from t_org 
-					where parent_id = '%s' 
-					order by org_code";
-			$orgList2 = $db->query($sql, $org1["id"]);
-			
-			$c2 = array();
-			foreach ( $orgList2 as $j => $org2 ) {
-				$c2[$j]["id"] = $org2["id"];
-				$c2[$j]["text"] = $org2["name"];
-				$c2[$j]["orgCode"] = $org2["org_code"];
-				$c2[$j]["fullName"] = $org2["full_name"];
-				$c2[$j]["expanded"] = true;
-				
-				// 第三级
-				$sql = "select id, name,  org_code, full_name 
-						from t_org 
-						where parent_id = '%s'  
-						order by org_code ";
-				$orgList3 = $db->query($sql, $org2["id"]);
-				$c3 = array();
-				foreach ( $orgList3 as $k => $org3 ) {
-					$c3[$k]["id"] = $org3["id"];
-					$c3[$k]["text"] = $org3["name"];
-					$c3[$k]["orgCode"] = $org3["org_code"];
-					$c3[$k]["fullName"] = $org3["full_name"];
-					$c3[$k]["children"] = array();
-					$c3[$k]["leaf"] = true;
-				}
-				
-				$c2[$j]["children"] = $c3;
-				$c2[$j]["leaf"] = count($c3) == 0;
-			}
+			$c2 = $this->allOrgsInternal($org1["id"], $db);
 			
 			$result[$i]["children"] = $c2;
-			$result[$i]["leaf"] = count($orgList2) == 0;
+			$result[$i]["leaf"] = count($c2) == 0;
 			$result[$i]["expanded"] = true;
 		}
 		
@@ -743,7 +734,7 @@ class UserService extends PSIBaseService {
 
 	/**
 	 * 判断指定的组织机构是否存储
-	 * 
+	 *
 	 * @return boolean true: 存在
 	 */
 	public function orgExists($orgId, $db) {

@@ -110,7 +110,7 @@ class UserController extends Controller {
 	}
 
 	/**
-	 * 获得组织机构树，目前最多是三级
+	 * 获得组织机构树
 	 */
 	public function allOrgs() {
 		$us = new UserService();
