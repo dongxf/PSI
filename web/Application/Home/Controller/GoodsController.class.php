@@ -5,9 +5,10 @@ namespace Home\Controller;
 use Think\Controller;
 use Home\Service\UserService;
 use Home\Service\GoodsService;
+use Home\Service\GoodsImportService;
 use Home\Common\FIdConst;
 use Home\Service\BizConfigService;
-use Home\Service\Home\Service;
+use Home\Service;
 
 /**
  * 商品Controller
@@ -180,7 +181,7 @@ class GoodsController extends Controller {
 					"purchasePrice" => I("post.purchasePrice"),
 					"barCode" => I("post.barCode")
 			);
-			$gs = new GoodsService();
+			$gs = new GoodsImportService();
 			$this->ajaxReturn($gs->editGoods($params));
 		}
 	}
@@ -293,6 +294,26 @@ class GoodsController extends Controller {
 			);
 			$gs = new GoodsService();
 			$this->ajaxReturn($gs->queryGoodsInfoByBarcode($params));
+		}
+	}
+
+	public function importGoods(){
+		if(IS_POST){
+			$upload = new \Think\Upload();
+//			$upload->maxSize = 3145728;
+			$upload->exts = array('xls','xlsx');//允许上传的文件后缀
+			$upload->savePath = '/Goods/';//保存路径
+			//先上传文件
+			$fileInfo = $upload->uploadOne($_FILES['goodsFile']);
+			if( ! $fileInfo ){
+				$this->error($upload->getError());
+			}
+			else {
+				$uploadGoodsFile = './Uploads' . $fileInfo['savepath'] . $fileInfo['savename'];//获取上传到服务器文件路径
+				$uploadFileExt = $fileInfo['ext'];//上传文件扩展名
+				$gis = new GoodsImportService();
+				$this->ajaxReturn($gis->importGoodsFromExcelFile($uploadGoodsFile,$uploadFileExt));
+			}
 		}
 	}
 }

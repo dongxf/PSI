@@ -150,6 +150,7 @@ Ext.define("PSI.Goods.MainForm", {
                 {text: "编辑商品分类", iconCls: "PSI-button-edit", handler: me.onEditCategory, scope: me},
                 {text: "删除商品分类", iconCls: "PSI-button-delete", handler: me.onDeleteCategory, scope: me}, "-",
                 {text: "新增商品", iconCls: "PSI-button-add-detail", handler: me.onAddGoods, scope: me},
+                {text: "导入商品", iconCls: "PSI-button-add", handler: me.onImportGoods, scope: me}, "-",
                 {text: "修改商品", iconCls: "PSI-button-edit-detail", handler: me.onEditGoods, scope: me},
                 {text: "删除商品", iconCls: "PSI-button-delete-detail", handler: me.onDeleteGoods, scope: me}, "-",
                 {text: "设置商品安全库存", iconCls: "PSI-button-view", handler: me.onSafetyInventory, scope: me}, "-",
@@ -710,6 +711,19 @@ Ext.define("PSI.Goods.MainForm", {
         	entity: goods
         });
         
+        form.show();
+    },
+
+    onImportGoods: function () {
+        //if (this.categoryGrid.getStore().getCount() == 0) {
+        //    PSI.MsgBox.showInfo("没有商品分类，请先新增商品分类");
+        //    return;
+        //}
+
+        var form = Ext.create("PSI.Goods.GoodsImportForm", {
+            parentForm: this
+        });
+
         form.show();
     }
 });
