@@ -169,13 +169,19 @@ class UserService extends PSIBaseService {
 		return $result;
 	}
 
-	public function users($orgId) {
+	public function users($params) {
+		$orgId = $params["orgId"];
+		$start = $params["start"];
+		$limit = $params["limit"];
+		
+		$db = M();
 		$sql = "select id, login_name,  name, enabled, org_code, gender, birthday, id_card_number, tel,
 				    tel02, address, data_org 
 				from t_user 
-				where org_id = '%s' ";
+				where org_id = '%s' 
+				limit %d , %d ";
 		
-		$data = M()->query($sql, $orgId);
+		$data = $db->query($sql, $orgId, $start, $limit);
 		
 		$result = array();
 		
@@ -194,7 +200,17 @@ class UserService extends PSIBaseService {
 			$result[$key]["dataOrg"] = $value["data_org"];
 		}
 		
-		return $result;
+		$sql = "select count(*) as cnt
+				from t_user 
+				where org_id = '%s' ";
+		
+		$data = $db->query($sql, $orgId);
+		$cnt = $data[0]["cnt"];
+		
+		return array(
+				"dataList" => $result,
+				"totalCount" => $cnt
+		);
 	}
 
 	public function editOrg($id, $name, $parentId, $orgCode) {

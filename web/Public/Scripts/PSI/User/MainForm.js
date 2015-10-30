@@ -68,8 +68,24 @@ Ext.define("PSI.User.MainForm", {
         var storeGrid = Ext.create("Ext.data.Store", {
             autoLoad: false,
             model: "PSIUser",
-            data: []
+            data: [],
+            pageSize: 20,
+            proxy: {
+                type: "ajax",
+                actionMethods: {
+                    read: "POST"
+                },
+                url: PSI.Const.BASE_URL + "Home/User/users",
+                reader: {
+                    root: 'dataList',
+                    totalProperty: 'totalCount'
+                }
+            }
         });
+        storeGrid.on("beforeload", function () {
+            storeGrid.proxy.extraParams = me.getUserParam();
+        });
+
 
         var grid = Ext.create("Ext.grid.Panel", {
             title: "人员列表",
@@ -102,7 +118,39 @@ Ext.define("PSI.User.MainForm", {
                     fn: me.onEditUser,
                     scope: me
                 }
-            }
+            },
+            bbar: [{
+                id: "pagingToolbar",
+                border: 0,
+                xtype: "pagingtoolbar",
+                store: storeGrid
+            }, "-", {
+                xtype: "displayfield",
+                value: "每页显示"
+            }, {
+                id: "comboCountPerPage",
+                xtype: "combobox",
+                editable: false,
+                width: 60,
+                store: Ext.create("Ext.data.ArrayStore", {
+                    fields: ["text"],
+                    data: [["20"], ["50"], ["100"], ["300"], ["1000"]]
+                }),
+                value: 20,
+                listeners: {
+                    change: {
+                        fn: function () {
+                            storeGrid.pageSize = Ext.getCmp("comboCountPerPage").getValue();
+                            storeGrid.currentPage = 1;
+                            Ext.getCmp("pagingToolbar").doRefresh();
+                        },
+                        scope: me
+                    }
+                }
+            }, {
+                xtype: "displayfield",
+                value: "条记录"
+            }]
         });
 
         this.grid = grid;
@@ -314,27 +362,9 @@ Ext.define("PSI.User.MainForm", {
 
         grid.setTitle(org.fullName + " - 人员列表");
 
-        grid.getEl().mask("数据加载中...");
-
-        Ext.Ajax.request({
-            url: me.getBaseURL() + "Home/User/users",
-            params: {orgId: org.id},
-            method: "POST",
-            callback: function (options, success, response) {
-                var store = grid.getStore();
-
-                store.removeAll();
-
-                if (success) {
-                    var data = Ext.JSON.decode(response.responseText);
-                    store.add(data);
-                }
-
-                grid.getEl().unmask();
-            }
-        });
+        Ext.getCmp("pagingToolbar").doRefresh();
     },
-    // private
+    
     onOrgStoreLoad: function () {
         var tree = this.orgTree;
         var root = tree.getRootNode();
@@ -344,5 +374,19 @@ Ext.define("PSI.User.MainForm", {
                 this.onOrgTreeNodeSelect(node);
             }
         }
+    },
+    
+    getUserParam: function () {
+    	var me = this;
+    	var item = me.orgTree.getSelectionModel().getSelection();
+    	if (item == null || item.length == 0) {
+    		return {};
+    	}
+    	
+    	var org = item[0];
+    	
+    	return {
+    		orgId: org.get("id")
+    	}
     }
 });

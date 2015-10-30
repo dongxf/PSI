@@ -125,9 +125,13 @@ class UserController extends Controller {
 	public function users() {
 		if (IS_POST) {
 			$us = new UserService();
-			$data = $us->users(I("post.orgId"));
+			$params = array(
+					"orgId" => I("post.orgId"),
+					"start" => I("post.start"),
+					"limit" => I("post.limit")
+			);
 			
-			$this->ajaxReturn($data);
+			$this->ajaxReturn($us->users($params));
 		}
 	}
 
