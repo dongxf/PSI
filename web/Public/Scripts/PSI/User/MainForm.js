@@ -9,7 +9,7 @@ Ext.define("PSI.User.MainForm", {
 
         Ext.define("PSIOrgModel", {
             extend: "Ext.data.Model",
-            fields: ["id", "text", "fullName", "orgCode", "leaf", "children"]
+            fields: ["id", "text", "fullName", "orgCode", "dataOrg", "leaf", "children"]
         });
 
         var orgStore = Ext.create("Ext.data.TreeStore", {
@@ -44,7 +44,11 @@ Ext.define("PSI.User.MainForm", {
                     }, {
                         text: "编码",
                         dataIndex: "orgCode",
-                        flex: 1
+                        width: 100
+                    }, {
+                    	text: "数据域",
+                    	dataIndex: "dataOrg",
+                    	width: 100
                     }]
             }
         });
@@ -59,7 +63,7 @@ Ext.define("PSI.User.MainForm", {
         Ext.define("PSIUser", {
             extend: "Ext.data.Model",
             fields: ["id", "loginName", "name", "enabled", "orgCode", "gender", "birthday", 
-                     "idCardNumber", "tel", "tel02", "address"]
+                     "idCardNumber", "tel", "tel02", "address", "dataOrg"]
         });
         var storeGrid = Ext.create("Ext.data.Store", {
             autoLoad: false,
@@ -89,7 +93,8 @@ Ext.define("PSI.User.MainForm", {
                 {header: "身份证号", dataIndex: "idCardNumber", menuDisabled: true, sortable: false, width: 200},
                 {header: "联系电话", dataIndex: "tel", menuDisabled: true, sortable: false},
                 {header: "备用联系电话", dataIndex: "tel02", menuDisabled: true, sortable: false},
-                {header: "家庭住址", dataIndex: "address", menuDisabled: true, sortable: false, width: 200}
+                {header: "家庭住址", dataIndex: "address", menuDisabled: true, sortable: false, width: 200},
+                {header: "数据域", dataIndex: "dataOrg", menuDisabled: true, sortable: false, width: 100}
             ],
             store: storeGrid,
             listeners: {
@@ -134,9 +139,7 @@ Ext.define("PSI.User.MainForm", {
                     xtype: "panel",
                     region: "west",
                     layout: "fit",
-                    width: 300,
-                    minWidth: 200,
-                    maxWidth: 350,
+                    width: 440,
                     split: true,
                     border: 0,
                     items: [orgTree]
@@ -217,7 +220,7 @@ Ext.define("PSI.User.MainForm", {
 
         this.onOrgTreeNodeSelect(item[0]);
     },
-    // private
+    
     onAddUser: function () {
         var editFrom = Ext.create("PSI.User.UserEditForm", {
             parentForm: this

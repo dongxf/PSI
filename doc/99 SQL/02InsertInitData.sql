@@ -115,9 +115,9 @@ INSERT INTO `t_menu_item` (`id`, `caption`, `fid`, `parent_id`, `show_order`) VA
 ('1003', '关于PSI', '-9994', '10', 3);
 
 TRUNCATE TABLE `t_org`;
-INSERT INTO `t_org` (`id`, `full_name`, `name`, `org_code`, `parent_id`) VALUES
-('4D74E1E4-A129-11E4-9B6A-782BCBD7746B', '公司', '公司', '01', NULL),
-('5EBDBE11-A129-11E4-9B6A-782BCBD7746B', '公司\\信息部', '信息部', '0199', '4D74E1E4-A129-11E4-9B6A-782BCBD7746B');
+INSERT INTO `t_org` (`id`, `full_name`, `name`, `org_code`, `data_org`, `parent_id`) VALUES
+('4D74E1E4-A129-11E4-9B6A-782BCBD7746B', '公司', '公司', '01', '01', NULL),
+('5EBDBE11-A129-11E4-9B6A-782BCBD7746B', '公司\\信息部', '信息部', '0199', '0101', '4D74E1E4-A129-11E4-9B6A-782BCBD7746B');
 
 TRUNCATE TABLE `t_permission`;
 INSERT INTO `t_permission` (`id`, `fid`, `name`, `note`) VALUES
@@ -218,8 +218,8 @@ INSERT INTO `t_role_user` (`role_id`, `user_id`) VALUES
 ('A83F617E-A153-11E4-A9B8-782BCBD7746B', '6C2A09CD-A129-11E4-9B6A-782BCBD7746B');
 
 TRUNCATE TABLE `t_user`;
-INSERT INTO `t_user` (`id`, `enabled`, `login_name`, `name`, `org_id`, `org_code`, `password`, `py`) VALUES
-('6C2A09CD-A129-11E4-9B6A-782BCBD7746B', '1', 'admin', '系统管理员', '5EBDBE11-A129-11E4-9B6A-782BCBD7746B', '019901', '21232f297a57a5a743894a0e4a801fc3', 'XTGLY');
+INSERT INTO `t_user` (`id`, `enabled`, `login_name`, `name`, `org_id`, `org_code`, `data_org`, `password`, `py`) VALUES
+('6C2A09CD-A129-11E4-9B6A-782BCBD7746B', '1', 'admin', '系统管理员', '5EBDBE11-A129-11E4-9B6A-782BCBD7746B', '019901', '01010001', '21232f297a57a5a743894a0e4a801fc3', 'XTGLY');
 
 TRUNCATE TABLE `t_config`;
 INSERT INTO `t_config` (`id`, `name`, `value`, `note`, `show_order`) VALUES

@@ -119,7 +119,7 @@ class UserService extends PSIBaseService {
 
 	private function allOrgsInternal($parentId, $db) {
 		$result = array();
-		$sql = "select id, name, org_code, full_name 
+		$sql = "select id, name, org_code, full_name, data_org 
 				from t_org 
 				where parent_id = '%s' 
 				order by org_code";
@@ -129,6 +129,7 @@ class UserService extends PSIBaseService {
 			$result[$i]["text"] = $v["name"];
 			$result[$i]["orgCode"] = $v["org_code"];
 			$result[$i]["fullName"] = $v["full_name"];
+			$result[$i]["dataOrg"] = $v["data_org"];
 			
 			$c2 = $this->allOrgsInternal($v["id"], $db); // 递归调用自己
 			
@@ -141,7 +142,7 @@ class UserService extends PSIBaseService {
 	}
 
 	public function allOrgs() {
-		$sql = "select id, name, org_code, full_name 
+		$sql = "select id, name, org_code, full_name, data_org 
 				from t_org 
 				where parent_id is null 
 				order by org_code";
@@ -155,6 +156,7 @@ class UserService extends PSIBaseService {
 			$result[$i]["text"] = $org1["name"];
 			$result[$i]["orgCode"] = $org1["org_code"];
 			$result[$i]["fullName"] = $org1["full_name"];
+			$result[$i]["dataOrg"] = $org1["data_org"];
 			
 			// 第二级
 			$c2 = $this->allOrgsInternal($org1["id"], $db);
@@ -169,7 +171,7 @@ class UserService extends PSIBaseService {
 
 	public function users($orgId) {
 		$sql = "select id, login_name,  name, enabled, org_code, gender, birthday, id_card_number, tel,
-				    tel02, address 
+				    tel02, address, data_org 
 				from t_user 
 				where org_id = '%s' ";
 		
@@ -189,6 +191,7 @@ class UserService extends PSIBaseService {
 			$result[$key]["tel"] = $value["tel"];
 			$result[$key]["tel02"] = $value["tel02"];
 			$result[$key]["address"] = $value["address"];
+			$result[$key]["dataOrg"] = $value["data_org"];
 		}
 		
 		return $result;
