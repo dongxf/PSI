@@ -48,7 +48,7 @@ Ext.define("PSI.Goods.MainForm", {
         Ext.define(modelName, {
             extend: "Ext.data.Model",
             fields: ["id", "code", "name", "spec", "unitId", "unitName", "categoryId", "salePrice",
-                     "purchasePrice", "barCode"]
+                     "purchasePrice", "barCode", "memo"]
         });
 
         var store = Ext.create("Ext.data.Store", {
@@ -125,7 +125,8 @@ Ext.define("PSI.Goods.MainForm", {
                 {header: "计量单位", dataIndex: "unitName", menuDisabled: true, sortable: false, width: 60},
                 {header: "销售价", dataIndex: "salePrice", menuDisabled: true, sortable: false, align: "right", xtype: "numbercolumn"},
                 {header: "建议采购价", dataIndex: "purchasePrice", menuDisabled: true, sortable: false, align: "right", xtype: "numbercolumn"},
-                {header: "条形码", dataIndex: "barCode", menuDisabled: true, sortable: false}
+                {header: "条形码", dataIndex: "barCode", menuDisabled: true, sortable: false},
+                {header: "备注", dataIndex: "memo", menuDisabled: true, sortable: false, width: 300}
             ],
             store: store,
             listeners: {
