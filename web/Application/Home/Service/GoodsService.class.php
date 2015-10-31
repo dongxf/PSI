@@ -326,6 +326,7 @@ class GoodsService extends PSIBaseService {
 		$salePrice = $params["salePrice"];
 		$purchasePrice = $params["purchasePrice"];
 		$barCode = $params["barCode"];
+		$memo = $params["memo"];
 		
 		$db = M();
 		$sql = "select name from t_goods_unit where id = '%s' ";
@@ -365,11 +366,11 @@ class GoodsService extends PSIBaseService {
 			$sql = "update t_goods
 					set code = '%s', name = '%s', spec = '%s', category_id = '%s', 
 					    unit_id = '%s', sale_price = %f, py = '%s', purchase_price = %f,
-						bar_code = '%s'
+						bar_code = '%s', memo = '%s'
 					where id = '%s' ";
 			
 			$db->execute($sql, $code, $name, $spec, $categoryId, $unitId, $salePrice, $py, 
-					$purchasePrice, $barCode, $id);
+					$purchasePrice, $barCode, $memo, $id);
 			
 			$log = "编辑商品: 商品编码 = {$code}, 品名 = {$name}, 规格型号 = {$spec}";
 			$bs = new BizlogService();
@@ -400,10 +401,10 @@ class GoodsService extends PSIBaseService {
 			$py = $ps->toPY($name);
 			
 			$sql = "insert into t_goods (id, code, name, spec, category_id, unit_id, sale_price, 
-						py, purchase_price, bar_code)
-					values ('%s', '%s', '%s', '%s', '%s', '%s', %f, '%s', %f, '%s')";
+						py, purchase_price, bar_code, memo)
+					values ('%s', '%s', '%s', '%s', '%s', '%s', %f, '%s', %f, '%s', '%s')";
 			$db->execute($sql, $id, $code, $name, $spec, $categoryId, $unitId, $salePrice, $py, 
-					$purchasePrice, $barCode);
+					$purchasePrice, $barCode, $memo);
 			
 			$log = "新增商品: 商品编码 = {$code}, 品名 = {$name}, 规格型号 = {$spec}";
 			$bs = new BizlogService();
@@ -563,7 +564,8 @@ class GoodsService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		$sql = "select category_id, code, name, spec, unit_id, sale_price, purchase_price, bar_code
+		$sql = "select category_id, code, name, spec, unit_id, sale_price, purchase_price, 
+					bar_code, memo
 				from t_goods
 				where id = '%s' ";
 		$data = M()->query($sql, $id);
@@ -584,6 +586,7 @@ class GoodsService extends PSIBaseService {
 			}
 			
 			$result["barCode"] = $data[0]["bar_code"];
+			$result["memo"] = $data[0]["memo"];
 			
 			return $result;
 		} else {

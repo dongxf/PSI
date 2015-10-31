@@ -179,7 +179,8 @@ class GoodsController extends Controller {
 					"unitId" => I("post.unitId"),
 					"salePrice" => I("post.salePrice"),
 					"purchasePrice" => I("post.purchasePrice"),
-					"barCode" => I("post.barCode")
+					"barCode" => I("post.barCode"),
+					"memo" => I("post.memo")
 			);
 			$gs = new GoodsService();
 			$this->ajaxReturn($gs->editGoods($params));

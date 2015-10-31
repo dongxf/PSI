@@ -61,7 +61,7 @@ Ext.define("PSI.Goods.GoodsEditForm", {
             resizable: false,
             onEsc: Ext.emptyFn,
             width: 460,
-            height: 210,
+            height: 240,
             layout: "fit",
             items: [
                 {
@@ -211,10 +211,24 @@ Ext.define("PSI.Goods.GoodsEditForm", {
                             value: entity == null ? null : entity.get("purchasePrice"),
                             listeners: {
                                 specialkey: {
-                                    fn: me.onLastEditSpecialKey,
+                                    fn: me.onEditSpecialKey,
                                     scope: me
                                 }
                             }
+                        },
+                        {
+                            fieldLabel: "备注",
+                            name: "memo",
+                            id: "editMemo",
+                            value: entity == null ? null : entity.get("memo"),
+                            listeners: {
+                                specialkey: {
+                                    fn: me.onLastEditSpecialKey,
+                                    scope: me
+                                }
+                            },
+                            colspan: 2,
+                            width: 430
                         }
                     ],
                     buttons: buttons
@@ -234,7 +248,7 @@ Ext.define("PSI.Goods.GoodsEditForm", {
         me.callParent(arguments);
 
         me.__editorList = ["editCategory", "editCode", "editName", "editSpec",
-            "editUnit", "editBarCode", "editSalePrice", "editPurchasePrice"];
+            "editUnit", "editBarCode", "editSalePrice", "editPurchasePrice", "editMemo"];
     },
     onWndShow: function () {
         var me = this;
@@ -270,6 +284,7 @@ Ext.define("PSI.Goods.GoodsEditForm", {
                         Ext.getCmp("editSalePrice").setValue(data.salePrice);
                         Ext.getCmp("editPurchasePrice").setValue(data.purchasePrice);
                         Ext.getCmp("editBarCode").setValue(data.barCode);
+                        Ext.getCmp("editMemo").setValue(data.memo);
                     } else {
                     	// 新增商品
                         if (unitStore.getCount() > 0) {
