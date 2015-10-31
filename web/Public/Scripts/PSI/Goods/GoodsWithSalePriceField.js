@@ -30,7 +30,7 @@ Ext.define("PSI.Goods.GoodsWithSalePriceField", {
         var modelName = "PSIGoodsField";
         Ext.define(modelName, {
             extend: "Ext.data.Model",
-            fields: ["id", "code", "name", "spec", "unitName", "salePrice"]
+            fields: ["id", "code", "name", "spec", "unitName", "salePrice", "memo"]
         });
 
         var store = Ext.create("Ext.data.Store", {
@@ -47,7 +47,8 @@ Ext.define("PSI.Goods.GoodsWithSalePriceField", {
                 { header: "商品", dataIndex: "name", menuDisabled: true, flex: 1 },
                 { header: "规格型号", dataIndex: "spec", menuDisabled: true, flex: 1 },
                 { header: "单位", dataIndex: "unitName", menuDisabled: true, width: 60 },
-                { header: "销售价", dataIndex: "salePrice", menuDisabled: true, align: "right", xtype: "numbercolumn" }
+                { header: "销售价", dataIndex: "salePrice", menuDisabled: true, align: "right", xtype: "numbercolumn" },
+                { header: "备注", dataIndex: "memo", menuDisabled: true, width: 300 }
             ]
         });
         me.lookupGrid = lookupGrid;
@@ -56,7 +57,7 @@ Ext.define("PSI.Goods.GoodsWithSalePriceField", {
         var wnd = Ext.create("Ext.window.Window", {
             title: "选择 - 商品",
             modal: true,
-            width: 650,
+            width: 950,
             height: 300,
             layout: "border",
             items: [
