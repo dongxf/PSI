@@ -320,15 +320,44 @@ class UserService extends PSIBaseService {
 			}
 			
 			if ($parentId == null) {
-				$sql = "insert into t_org (id, name, full_name, org_code, parent_id) 
-						values ('%s', '%s', '%s', '%s', null)";
+				$dataOrg = "01";
+				$sql = "select data_org from t_org 
+						where parent_id is null
+						order by data_org desc limit 1";
+				$data = $db->query($sql);
+				if ($data) {
+					$dataOrg = $data[0]["data_org"];
+					$next = intval($dataOrg) + 1;
+					$dataOrg = str_pad($next, 2, "0", STR_PAD_LEFT);
+				}
 				
-				$db->execute($sql, $id, $name, $fullName, $orgCode);
+				$sql = "insert into t_org (id, name, full_name, org_code, parent_id, data_org) 
+						values ('%s', '%s', '%s', '%s', null, '%s')";
+				
+				$db->execute($sql, $id, $name, $fullName, $orgCode, $dataOrg);
 			} else {
-				$sql = "insert into t_org (id, name, full_name, org_code, parent_id) 
-						values ('%s', '%s', '%s', '%s', '%s')";
+				$dataOrg = "";
+				$sql = "select data_org from t_org
+						where parent_id = '%s' 
+						order by data_org desc limit 1";
+				$data = $db->query($sql, $parentId);
+				if ($data) {
+					$oldDataOrg = $data[0]["data_org"];
+					$next = intval($oldDataOrg) + 1;
+					$dataOrg = str_pad($next, strlen($oldDataOrg), "0", STR_PAD_LEFT);
+				} else {
+					$sql = "select data_org from t_org where id = '%s' ";
+					$data = $db->query($sql, $parentId);
+					if (! $data) {
+						return $this->bad("上级组织机构不存在");
+					}
+					$dataOrg = $data[0]["data_org"] . "01";
+				}
 				
-				$db->execute($sql, $id, $name, $fullName, $orgCode, $parentId);
+				$sql = "insert into t_org (id, name, full_name, org_code, parent_id, data_org) 
+						values ('%s', '%s', '%s', '%s', '%s', '%s')";
+				
+				$db->execute($sql, $id, $name, $fullName, $orgCode, $parentId, $dataOrg);
 			}
 			
 			$log = "新增组织机构：名称 = {$name} 编码 = {$orgCode}";
