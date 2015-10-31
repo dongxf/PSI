@@ -173,6 +173,7 @@ CREATE TABLE IF NOT EXISTS `t_goods` (
   `py` varchar(255) DEFAULT NULL,
   `bar_code` varchar(255) DEFAULT NULL,
   `data_org` varchar(255) DEFAULT NULL,
+  `memo` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
