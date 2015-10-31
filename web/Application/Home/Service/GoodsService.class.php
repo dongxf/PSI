@@ -538,7 +538,7 @@ class GoodsService extends PSIBaseService {
 			$queryKey = "";
 		}
 		
-		$sql = "select g.id, g.code, g.name, g.spec, u.name as unit_name, g.purchase_price
+		$sql = "select g.id, g.code, g.name, g.spec, u.name as unit_name, g.purchase_price, g.memo
 				from t_goods g, t_goods_unit u
 				where (g.unit_id = u.id)
 				and (g.code like '%s' or g.name like '%s' or g.py like '%s') 
@@ -554,6 +554,7 @@ class GoodsService extends PSIBaseService {
 			$result[$i]["spec"] = $v["spec"];
 			$result[$i]["unitName"] = $v["unit_name"];
 			$result[$i]["purchasePrice"] = $v["purchase_price"] == 0 ? null : $v["purchase_price"];
+			$result[$i]["memo"] = $v["memo"];
 		}
 		
 		return $result;
