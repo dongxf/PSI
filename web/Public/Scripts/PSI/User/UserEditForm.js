@@ -4,7 +4,8 @@ Ext.define("PSI.User.UserEditForm", {
 
     config: {
         parentForm: null,
-        entity: null
+        entity: null,
+        defaultOrg: null
     },
 
     initComponent: function () {
@@ -218,6 +219,13 @@ Ext.define("PSI.User.UserEditForm", {
         me.__editorList = ["editLoginName", "editName", "editOrgCode", "editOrgName",
                            "editBirthday", "editIdCardNumber", "editTel", "editTel02", "editAddress"];
 
+        if (me.getDefaultOrg()) {
+        	var org = me.getDefaultOrg();
+        	me.setOrg({
+        		id: org.get("id"),
+        		fullName: org.get("fullName")
+        	});
+        }
     },
 
     setOrg: function (data) {

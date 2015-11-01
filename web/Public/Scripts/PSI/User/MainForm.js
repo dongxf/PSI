@@ -270,8 +270,16 @@ Ext.define("PSI.User.MainForm", {
     },
     
     onAddUser: function () {
+    	var tree = this.orgTree;
+        var item = tree.getSelectionModel().getSelection();
+        var org = null;
+        if (item != null && item.length > 0) {
+            org = item[0];
+        }
+
         var editFrom = Ext.create("PSI.User.UserEditForm", {
-            parentForm: this
+            parentForm: this,
+            defaultOrg: org
         });
         editFrom.show();
     },
