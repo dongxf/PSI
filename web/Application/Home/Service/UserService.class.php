@@ -215,13 +215,23 @@ class UserService extends PSIBaseService {
 	}
 
 	/**
-	 * 做类似这种增长 '0101' => '0102'
+	 * 做类似这种增长 '0101' => '0102'，组织机构的数据域+1
 	 */
 	private function incDataOrg($dataOrg) {
 		$pre = substr($dataOrg, 0, strlen($dataOrg) - 2);
 		$seed = intval(substr($dataOrg, - 2)) + 1;
 		
 		return $pre . str_pad($seed, 2, "0", STR_PAD_LEFT);
+	}
+
+	/**
+	 * 做类似这种增长 '01010001' => '01020002', 用户的数据域+1
+	 */
+	private function incDataOrgForUser($dataOrg) {
+		$pre = substr($dataOrg, 0, strlen($dataOrg) - 4);
+		$seed = intval(substr($dataOrg, - 4)) + 1;
+		
+		return $pre . str_pad($seed, 4, "0", STR_PAD_LEFT);
 	}
 
 	private function modifyFullName($db, $id) {
@@ -601,14 +611,41 @@ class UserService extends PSIBaseService {
 				return $this->bad("组织机构不存在");
 			}
 			
-			$sql = "update t_user 
-					set login_name = '%s', name = '%s', org_code = '%s', 
-					    org_id = '%s', enabled = %d, py = '%s', 
+			$sql = "select org_id, data_org from t_user where id = '%s'";
+			$data = $db->query($sql, $id);
+			$oldOrgId = $data[0]["org_id"];
+			$dataOrg = $data[0]["data_org"];
+			if ($oldOrgId != $orgId) {
+				// 修改了用户的组织机构， 这个时候要调整数据域
+				$sql = "select data_org from t_user 
+						where org_id = '%s' 
+						order by data_org desc limit 1";
+				$data = $db->query($sql, $orgId);
+				if ($data) {
+					$dataOrg = $this->incDataOrg($data[0]["data_org"]);
+				} else {
+					$sql = "select data_org from t_org where id = '%s' ";
+					$data = $db->query($sql, $orgId);
+					$dataOrg = $data[0]["data_org"] . "0001";
+				}
+				$sql = "update t_user
+					set login_name = '%s', name = '%s', org_code = '%s',
+					    org_id = '%s', enabled = %d, py = '%s',
 					    gender = '%s', birthday = '%s', id_card_number = '%s',
-					    tel = '%s', tel02 = '%s', address = '%s' 
+					    tel = '%s', tel02 = '%s', address = '%s', data_org = '%s'
 					where id = '%s' ";
-			$db->execute($sql, $loginName, $name, $orgCode, $orgId, $enabled, $py, $gender, 
-					$birthday, $idCardNumber, $tel, $tel02, $address, $id);
+				$db->execute($sql, $loginName, $name, $orgCode, $orgId, $enabled, $py, $gender, 
+						$birthday, $idCardNumber, $tel, $tel02, $address, $dataOrg, $id);
+			} else {
+				$sql = "update t_user
+					set login_name = '%s', name = '%s', org_code = '%s',
+					    org_id = '%s', enabled = %d, py = '%s',
+					    gender = '%s', birthday = '%s', id_card_number = '%s',
+					    tel = '%s', tel02 = '%s', address = '%s'
+					where id = '%s' ";
+				$db->execute($sql, $loginName, $name, $orgCode, $orgId, $enabled, $py, $gender, 
+						$birthday, $idCardNumber, $tel, $tel02, $address, $id);
+			}
 			
 			$log = "编辑用户： 登录名 = {$loginName} 姓名 = {$name} 编码 = {$orgCode}";
 			$bs = new BizlogService();
@@ -637,19 +674,18 @@ class UserService extends PSIBaseService {
 			
 			// 生成数据域
 			$dataOrg = "";
-			$sql = "select data_org from t_user order by data_org desc limit 1";
-			$data = $db->query($sql);
+			$sql = "select data_org 
+					from t_user
+					where org_id = '%s'
+					order by data_org desc limit 1";
+			$data = $db->query($sql, $orgId);
 			if ($data) {
-				$userDataOrg = $data[0]["data_org"];
-				$index = intval($userDataOrg) + 1;
-				$dataOrg = str_pad($index, strlen($userDataOrg), "0", STR_PAD_LEFT);
+				$dataOrg = $this->incDataOrgForUser($data[0]["data_org"]);
 			} else {
 				$sql = "select data_org from t_org where id = '%s' ";
 				$data = $db->query($sql, $orgId);
 				if ($data) {
-					$userDataOrg = $data[0]["data_org"] . "0000";
-					$index = intval($userDataOrg) + 1;
-					$dataOrg = str_pad($index, strlen($userDataOrg), "0", STR_PAD_LEFT);
+					$dataOrg = $data[0]["data_org"] . "0001";
 				} else {
 					return $this->bad("组织机构不存在");
 				}
