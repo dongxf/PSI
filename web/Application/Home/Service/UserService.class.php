@@ -213,6 +213,29 @@ class UserService extends PSIBaseService {
 		);
 	}
 
+	private function modifyFullName($db, $id) {
+		$sql = "select full_name from t_org where id = '%s' ";
+		$data = $db->query($sql, $id);
+		
+		if (! $data) {
+			return;
+		}
+		
+		$fullName = $data[0]["full_name"];
+		
+		$sql = "select id, name from t_org where parent_id = '%s' ";
+		$data = $db->query($sql, $id);
+		foreach ( $data as $v ) {
+			$idChild = $v["id"];
+			$nameChild = $v["name"];
+			$fullNameChild = $fullName . "\\" . $nameChild;
+			$sql = "update t_org set full_name = '%s' where id = '%s' ";
+			$db->execute($sql, $fullNameChild, $idChild);
+			
+			$this->modifyFullName($db, $idChild); // 递归调用自身
+		}
+	}
+
 	public function editOrg($id, $name, $parentId, $orgCode) {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
@@ -234,6 +257,12 @@ class UserService extends PSIBaseService {
 			}
 			$fullName = "";
 			$db = M();
+			$sql = "select parent_id from t_org where id = '%s' ";
+			$data = $db->query($sql, $id);
+			if (! $data) {
+				return $this->bad("要编辑的组织机构不存在");
+			}
+			$oldParentId = $data[0]["parent_id"];
 			
 			if ($parentId == "root") {
 				$parentId = null;
@@ -280,27 +309,12 @@ class UserService extends PSIBaseService {
 				}
 			}
 			
-			// 同步下级组织的full_name字段
-			// 因为目前组织结构就最多三级，所以下面也就两个foreach就够了
-			$sql = "select id, name from t_org where parent_id = '%s' ";
-			$data = $db->query($sql, $id);
-			foreach ( $data as $v ) {
-				$idChild = $v["id"];
-				$nameChild = $v["name"];
-				$fullNameChild = $fullName . "\\" . $nameChild;
-				$sql = "update t_org set full_name = '%s' where id = '%s' ";
-				$db->execute($sql, $fullNameChild, $idChild);
-				
-				$sql = "select id, name from t_org where parent_id = '%s'";
-				$data2 = $db->query($sql, $idChild);
-				foreach ( $data2 as $v2 ) {
-					$idChild2 = $v2["id"];
-					$nameChild2 = $v2["name"];
-					$fullNameChild2 = $fullNameChild . "\\" . $nameChild2;
-					$sql = "update t_org set full_name = '%s' where id = '%s' ";
-					$db->execute($sql, $fullNameChild2, $idChild2);
-				}
+			if ($oldParentId != $parentId) {
+				// 上级组织机构发生了变化，这个时候，需要调整数据域
 			}
+			
+			// 同步下级组织的full_name字段
+			$this->modifyFullName($db, $id);
 			
 			return $this->OK($id);
 		} else {
