@@ -635,15 +635,35 @@ class UserService extends PSIBaseService {
 			// 新增用户的默认密码
 			$password = md5("123456");
 			
+			// 生成数据域
+			$dataOrg = "";
+			$sql = "select data_org from t_user order by data_org desc limit 1";
+			$data = $db->query($sql);
+			if ($data) {
+				$userDataOrg = $data[0]["data_org"];
+				$index = intval($userDataOrg) + 1;
+				$dataOrg = str_pad($index, strlen($userDataOrg), "0", STR_PAD_LEFT);
+			} else {
+				$sql = "select data_org from t_org where id = '%s' ";
+				$data = $db->query($sql, $orgId);
+				if ($data) {
+					$userDataOrg = $data[0]["data_org"] . "0000";
+					$index = intval($userDataOrg) + 1;
+					$dataOrg = str_pad($index, strlen($userDataOrg), "0", STR_PAD_LEFT);
+				} else {
+					return $this->bad("组织机构不存在");
+				}
+			}
+			
 			$idGen = new IdGenService();
 			$id = $idGen->newId();
 			
 			$sql = "insert into t_user (id, login_name, name, org_code, org_id, enabled, password, py,
-					gender, birthday, id_card_number, tel, tel02, address) 
+					gender, birthday, id_card_number, tel, tel02, address, data_org) 
 					values ('%s', '%s', '%s', '%s', '%s', %d, '%s', '%s',
-					'%s', '%s', '%s', '%s', '%s', '%s') ";
+					'%s', '%s', '%s', '%s', '%s', '%s', '%s') ";
 			$db->execute($sql, $id, $loginName, $name, $orgCode, $orgId, $enabled, $password, $py, 
-					$gender, $birthday, $idCardNumber, $tel, $tel02, $address);
+					$gender, $birthday, $idCardNumber, $tel, $tel02, $address, $dataOrg);
 			
 			$log = "新建用户： 登录名 = {$loginName} 姓名 = {$name} 编码 = {$orgCode}";
 			$bs = new BizlogService();
