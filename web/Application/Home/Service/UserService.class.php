@@ -236,6 +236,98 @@ class UserService extends PSIBaseService {
 		}
 	}
 
+	private function modifyDataOrg($db, $parentId, $id) {
+		// 修改自身的数据域
+		$dataOrg = "";
+		if ($parentId == null) {
+			$sql = "select data_org from t_org 
+					where parent_id is null and id <> '%s'
+					order by data_org desc limit 1";
+			$data = $db->query($sql, $id);
+			if (! $data) {
+				$dataOrg = "01";
+			} else {
+				$dataOrg = $data[0]["data_org"];
+				$next = intval($dataOrg) + 1;
+				$dataOrg = str_pad($next, 2, "0", STR_PAD_LEFT);
+			}
+		} else {
+			$sql = "select data_org from t_org 
+					where parent_id = '%s' and id <> '%s'
+					order by data_org desc limit 1";
+			$data = $db->query($sql, $parentId, $id);
+			if ($data) {
+				$oldDataOrg = $data[0]["data_org"];
+				$next = intval($oldDataOrg) + 1;
+				$dataOrg = str_pad($next, strlen($oldDataOrg), "0", STR_PAD_LEFT);
+			} else {
+				$sql = "select data_org from t_org where id = '%s' ";
+				$data = $db->query($sql, $parentId);
+				$dataOrg = $data[0]["data_org"] . "01";
+			}
+		}
+		
+		$sql = "update t_org
+				set data_org = '%s'
+				where id = '%s' ";
+		$db->execute($sql, $dataOrg, $id);
+		
+		// 修改 人员的数据域
+		$sql = "select id from t_user
+				where org_id = '%s'
+				order by org_code ";
+		$data = $db->query($sql, $id);
+		foreach ( $data as $i => $v ) {
+			$userId = $v["id"];
+			$userDataOrg = $dataOrg . "0000";
+			$index = intval($userDataOrg) + $i + 1;
+			$udo = str_pad($index, strlen($userDataOrg), "0", STR_PAD_LEFT);
+			
+			$sql = "update t_user
+					set data_org = '%s'
+					where id = '%s' ";
+			$db->execute($sql, $udo, $userId);
+		}
+		
+		// 修改下级组织机构的数据域
+		$this->modifySubDataOrg($db, $dataOrg, $id);
+	}
+
+	private function modifySubDataOrg($db, $parentDataOrg, $parentId) {
+		$sql = "select id from t_org where parent_id = '%s' order by org_code";
+		$data = $db->query($sql, $parentId);
+		foreach ( $data as $i => $v ) {
+			$subId = $v["id"];
+			
+			$do = $parentDataOrg . "00";
+			$next = intval($do) + $i + 1;
+			$dataOrg = str_pad($next, strlen($do), "0", STR_PAD_LEFT);
+			$sql = "update t_org
+					set data_org = '%s'
+					where id = '%s' ";
+			$db->execute($sql, $dataOrg, $subId);
+			
+			// 修改该组织机构的人员的数据域
+			$sql = "select id from t_user
+				where org_id = '%s'
+				order by org_code ";
+			$udata = $db->query($sql, $subId);
+			foreach ( $udata as $j => $u ) {
+				$userId = $u["id"];
+				$userDataOrg = $dataOrg . "0000";
+				$index = intval($userDataOrg) + $j + 1;
+				$udo = str_pad($index, strlen($userDataOrg), "0", STR_PAD_LEFT);
+				
+				$sql = "update t_user
+					set data_org = '%s'
+					where id = '%s' ";
+				$db->execute($sql, $udo, $userId);
+			}
+			
+			$this->modifySubDataOrg($db, $dataOrg, $subId); // 递归调用自身
+		}
+	}
+
 	public function editOrg($id, $name, $parentId, $orgCode) {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
@@ -311,6 +403,7 @@ class UserService extends PSIBaseService {
 			
 			if ($oldParentId != $parentId) {
 				// 上级组织机构发生了变化，这个时候，需要调整数据域
+				$this->modifyDataOrg($db, $parentId, $id);
 			}
 			
 			// 同步下级组织的full_name字段
