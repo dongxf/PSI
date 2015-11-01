@@ -177,8 +177,9 @@ class UserService extends PSIBaseService {
 		$db = M();
 		$sql = "select id, login_name,  name, enabled, org_code, gender, birthday, id_card_number, tel,
 				    tel02, address, data_org 
-				from t_user 
+				from t_user
 				where org_id = '%s' 
+				order by org_code
 				limit %d , %d ";
 		
 		$data = $db->query($sql, $orgId, $start, $limit);
@@ -211,6 +212,16 @@ class UserService extends PSIBaseService {
 				"dataList" => $result,
 				"totalCount" => $cnt
 		);
+	}
+
+	/**
+	 * 做类似这种增长 '0101' => '0102'
+	 */
+	private function incDataOrg($dataOrg) {
+		$pre = substr($dataOrg, 0, strlen($dataOrg) - 2);
+		$seed = intval(substr($dataOrg, - 2)) + 1;
+		
+		return $pre . str_pad($seed, 2, "0", STR_PAD_LEFT);
 	}
 
 	private function modifyFullName($db, $id) {
@@ -247,9 +258,7 @@ class UserService extends PSIBaseService {
 			if (! $data) {
 				$dataOrg = "01";
 			} else {
-				$dataOrg = $data[0]["data_org"];
-				$next = intval($dataOrg) + 1;
-				$dataOrg = str_pad($next, 2, "0", STR_PAD_LEFT);
+				$dataOrg = $this->incDataOrg($data[0]["data_org"]);
 			}
 		} else {
 			$sql = "select data_org from t_org 
@@ -257,9 +266,7 @@ class UserService extends PSIBaseService {
 					order by data_org desc limit 1";
 			$data = $db->query($sql, $parentId, $id);
 			if ($data) {
-				$oldDataOrg = $data[0]["data_org"];
-				$next = intval($oldDataOrg) + 1;
-				$dataOrg = str_pad($next, strlen($oldDataOrg), "0", STR_PAD_LEFT);
+				$dataOrg = $this->incDataOrg($data[0]["data_org"]);
 			} else {
 				$sql = "select data_org from t_org where id = '%s' ";
 				$data = $db->query($sql, $parentId);
@@ -279,9 +286,8 @@ class UserService extends PSIBaseService {
 		$data = $db->query($sql, $id);
 		foreach ( $data as $i => $v ) {
 			$userId = $v["id"];
-			$userDataOrg = $dataOrg . "0000";
-			$index = intval($userDataOrg) + $i + 1;
-			$udo = str_pad($index, strlen($userDataOrg), "0", STR_PAD_LEFT);
+			$index = str_pad($i + 1, 4, "0", STR_PAD_LEFT);
+			$udo = $dataOrg . $index;
 			
 			$sql = "update t_user
 					set data_org = '%s'
@@ -299,9 +305,8 @@ class UserService extends PSIBaseService {
 		foreach ( $data as $i => $v ) {
 			$subId = $v["id"];
 			
-			$do = $parentDataOrg . "00";
-			$next = intval($do) + $i + 1;
-			$dataOrg = str_pad($next, strlen($do), "0", STR_PAD_LEFT);
+			$next = str_pad($i + 1, 2, "0", STR_PAD_LEFT);
+			$dataOrg = $parentDataOrg . $next;
 			$sql = "update t_org
 					set data_org = '%s'
 					where id = '%s' ";
@@ -314,9 +319,8 @@ class UserService extends PSIBaseService {
 			$udata = $db->query($sql, $subId);
 			foreach ( $udata as $j => $u ) {
 				$userId = $u["id"];
-				$userDataOrg = $dataOrg . "0000";
-				$index = intval($userDataOrg) + $j + 1;
-				$udo = str_pad($index, strlen($userDataOrg), "0", STR_PAD_LEFT);
+				$index = str_pad($j + 1, 4, "0", STR_PAD_LEFT);
+				$udo = $dataOrg . $index;
 				
 				$sql = "update t_user
 					set data_org = '%s'
@@ -433,9 +437,7 @@ class UserService extends PSIBaseService {
 						order by data_org desc limit 1";
 				$data = $db->query($sql);
 				if ($data) {
-					$dataOrg = $data[0]["data_org"];
-					$next = intval($dataOrg) + 1;
-					$dataOrg = str_pad($next, 2, "0", STR_PAD_LEFT);
+					$dataOrg = $this->incDataOrg($data[0]["data_org"]);
 				}
 				
 				$sql = "insert into t_org (id, name, full_name, org_code, parent_id, data_org) 
@@ -449,9 +451,7 @@ class UserService extends PSIBaseService {
 						order by data_org desc limit 1";
 				$data = $db->query($sql, $parentId);
 				if ($data) {
-					$oldDataOrg = $data[0]["data_org"];
-					$next = intval($oldDataOrg) + 1;
-					$dataOrg = str_pad($next, strlen($oldDataOrg), "0", STR_PAD_LEFT);
+					$dataOrg = $this->incDataOrg($data[0]["data_org"]);
 				} else {
 					$sql = "select data_org from t_org where id = '%s' ";
 					$data = $db->query($sql, $parentId);
