@@ -29,7 +29,7 @@ Ext.define("PSI.Permission.MainForm", {
 
         Ext.define("PSIPermission", {
             extend: "Ext.data.Model",
-            fields: ["id", "name"]
+            fields: ["id", "name", "dataOrg"]
         });
 
         var permissionStore = Ext.create("Ext.data.Store", {
@@ -40,9 +40,17 @@ Ext.define("PSI.Permission.MainForm", {
 
         var permissionGrid = Ext.create("Ext.grid.Panel", {
             store: permissionStore,
+            columnLines: true,
             columns: [
-                { header: "权限名称", dataIndex: "name", flex: 1, menuDisabled: true }
-            ]
+                { header: "权限名称", dataIndex: "name", flex: 2, menuDisabled: true },
+                { header: "数据域", dataIndex: "dataOrg", flex: 1, menuDisabled: true }
+            ],
+            listeners: {
+            	itemclick: {
+            		fn: me.onPermissionGridItemClick,
+            		scope: me
+            	}
+            }
         });
 
         Ext.define("PSIUser", {
@@ -104,8 +112,19 @@ Ext.define("PSI.Permission.MainForm", {
                                     height: "50%",
                                     border: 0,
                                     split: true,
-                                    layout: "fit",
-                                    items: [permissionGrid]
+                                    layout: "border",
+                                    items: [{
+                                    	region: "center",
+                                    	layout: "fit",
+                                    	border: 0,
+                                    	items: [permissionGrid]
+                                    }, {
+                                    	region: "east",
+                                    	layout: "fit",
+                                    	width: "50%",
+                                    	border: 0,
+                                    	items: [ me.getDataOrgGrid()]
+                                    }]
                                 },
                                 {
                                     xtype: "panel",
@@ -173,6 +192,10 @@ Ext.define("PSI.Permission.MainForm", {
 
     // private
     onRoleGridItemClick: function () {
+    	var me = this;
+    	me.getDataOrgGrid().getStore().removeAll();
+    	me.getDataOrgGrid().setTitle("数据域");
+    	
         var grid = this.permissionGrid;
 
         var item = this.roleGrid.getSelectionModel().getSelection();
@@ -196,11 +219,7 @@ Ext.define("PSI.Permission.MainForm", {
 
                 if (success) {
                     var data = Ext.JSON.decode(response.responseText);
-
-                    for (var i = 0; i < data.length; i++) {
-                        var item = data[i];
-                        store.add({ id: item.id, name: item.name });
-                    }
+                    store.add(data);
                 }
 
                 el.unmask();
@@ -291,5 +310,81 @@ Ext.define("PSI.Permission.MainForm", {
                     }
                 });
             });
+    },
+    
+    getDataOrgGrid: function() {
+    	var me = this;
+    	if (me.__dataOrgGrid) {
+    		return me.__dataOrgGrid;
+    	}
+    	
+    	var modelName = "PSIPermissionDataOrg_MainForm";
+        Ext.define(modelName, {
+            extend: "Ext.data.Model",
+            fields: ["dataOrg", "fullName"]
+        });
+
+        var store = Ext.create("Ext.data.Store", {
+            model: modelName,
+            autoLoad: false,
+            data: []
+        });
+
+        me.__dataOrgGrid = Ext.create("Ext.grid.Panel", {
+            title: "数据域",
+            store: store,
+            columns: [
+                { header: "数据域", dataIndex: "dataOrg", flex: 1, menuDisabled: true },
+                { header: "组织机构/人", dataIndex: "fullName", flex: 1, menuDisabled: true }
+            ]
+        });
+
+        return me.__dataOrgGrid;
+    },
+    
+    onPermissionGridItemClick: function() {
+    	var me = this;
+        var grid = me.roleGrid;
+        var items = grid.getSelectionModel().getSelection();
+
+        if (items == null || items.length != 1) {
+            return;
+        }
+
+        var role = items[0];
+        
+        var grid = me.permissionGrid;
+        var items = grid.getSelectionModel().getSelection();
+
+        if (items == null || items.length != 1) {
+            return;
+        }
+        var permission = items[0];
+        
+        var grid = me.getDataOrgGrid();
+        grid.setTitle("角色 [" + role.get("name") + "] - 权限 [" + permission.get("name") + "] - 数据域");
+        
+        var el = grid.getEl() || Ext.getBody();
+        var store = grid.getStore();
+        
+        el.mask("数据加载中...");
+        Ext.Ajax.request({
+            url: PSI.Const.BASE_URL + "Home/Permission/dataOrgList",
+            params: { 
+            	roleId: role.get("id"),
+            	permissionId: permission.get("id")
+            },
+            method: "POST",
+            callback: function (options, success, response) {
+                store.removeAll();
+
+                if (success) {
+                    var data = Ext.JSON.decode(response.responseText);
+                    store.add(data);
+                }
+
+                el.unmask();
+            }
+        });
     }
 });

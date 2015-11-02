@@ -139,4 +139,19 @@ class PermissionController extends Controller {
 			$this->ajaxReturn($result);
 		}
 	}
+
+	/**
+	 * 获得角色的某个权限的数据域列表
+	 */
+	public function dataOrgList() {
+		if (IS_POST) {
+			$ps = new PermissionService();
+			$params = array(
+					"roleId" => I("post.roleId"),
+					"permissionId" => I("post.permissionId")
+			);
+			
+			$this->ajaxReturn($ps->dataOrgList($params));
+		}
+	}
 }

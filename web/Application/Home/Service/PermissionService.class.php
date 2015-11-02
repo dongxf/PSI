@@ -28,13 +28,35 @@ class PermissionService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
+		$db = M();
 		$sql = "select p.id, p.name
 				from t_role r, t_role_permission rp, t_permission p 
 				where r.id = rp.role_id and r.id = '%s' and rp.permission_id = p.id 
 				order by convert(p.name USING gbk) collate gbk_chinese_ci";
-		$data = M()->query($sql, $roleId);
+		$data = $db->query($sql, $roleId);
 		
-		return $data;
+		$result = array();
+		foreach ( $data as $i => $v ) {
+			$pid = $v["id"];
+			$result[$i]["id"] = $pid;
+			$result[$i]["name"] = $v["name"];
+			
+			$sql = "select data_org
+					from t_role_permission_dataorg
+					where role_id = '%s' and permission_id = '%s' ";
+			$od = $db->query($sql, $roleId, $pid);
+			if ($od) {
+				$dataOrg = "";
+				foreach ( $od as $item ) {
+					$dataOrg .= $item["data_org"] . ";";
+				}
+				$result[$i]["dataOrg"] = $dataOrg;
+			} else {
+				$result[$i]["dataOrg"] = "*";
+			}
+		}
+		
+		return $result;
 	}
 
 	public function userList($roleId) {
@@ -262,5 +284,51 @@ class PermissionService extends PSIBaseService {
 		}
 		
 		return $this->ok();
+	}
+
+	public function dataOrgList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$roleId = $params["roleId"];
+		$permissionId = $params["permissionId"];
+		
+		$db = M();
+		$sql = "select data_org
+				from t_role_permission_dataorg
+				where role_id = '%s' and permission_id = '%s' ";
+		$data = $db->query($sql, $roleId, $permissionId);
+		$result = array();
+		if ($data) {
+			foreach ( $data as $i => $v ) {
+				$dataOrg = $v["data_org"];
+				$result[$i]["dataOrg"] = $dataOrg;
+				if ($dataOrg == "*") {
+					$result[$i]["fullName"] = "[全部数据]";
+				} else if ($dataOrg == "#") {
+					$result[$i]["fullName"] = "[个人数据]";
+				}
+				$fullName = "";
+				$sql = "select full_name from t_org where data_org = '%s'";
+				$data = $db->query($sql, $dataOrg);
+				if ($data) {
+					$fullName = $data[0]["full_name"];
+				} else {
+					$sql = "select o.full_name, u.name
+							from t_org o, t_user u
+							where o.id = u.org_id and u.data_org = '%s' ";
+					$data = $db->query($sql, $dataOrg);
+					$fullName = $data[0]["full_name"] . "\\" . $data[0]["name"];
+				}
+				
+				$result[$i]["fullName"] = $fullName;
+			}
+		} else {
+			$result[0]["dataOrg"] = "*";
+			$result[0]["fullName"] = "[全部数据]";
+		}
+		
+		return $result;
 	}
 }
