@@ -11,7 +11,7 @@ Ext.define("PSI.Permission.EditForm", {
 
         Ext.define("PSIPermission", {
             extend: "Ext.data.Model",
-            fields: ["id", "name"]
+            fields: ["id", "name", "dataOrg"]
         });
 
         var permissionStore = Ext.create("Ext.data.Store", {
@@ -29,7 +29,8 @@ Ext.define("PSI.Permission.EditForm", {
             selType: "checkboxmodel",
             store: permissionStore,
             columns: [
-                {header: "权限名称", dataIndex: "name", flex: 1, menuDisabled: true},
+                {header: "权限名称", dataIndex: "name", flex: 2, menuDisabled: true},
+                {header: "数据域", dataIndex: "dataOrg", flex: 1, menuDisabled: true},
                 {
                     header: "操作",
                     align: "center",
@@ -108,6 +109,7 @@ Ext.define("PSI.Permission.EditForm", {
             modal: true,
             resizable: false,
             onEsc: Ext.emptyFn,
+            maximized: true,
             width: 700,
             height: 600,
             layout: "border",
@@ -172,8 +174,19 @@ Ext.define("PSI.Permission.EditForm", {
                     region: "center",
                     flex: 1,
                     border: 0,
-                    layout: "fit",
-                    items: [permissionGrid]
+                    layout: "border",
+                    items: [{
+                    	region: "center",
+                    	layout: "fit",
+                    	border: 0,
+                    	items: [permissionGrid]
+                    }, {
+                    	region: "east",
+                    	layout: "fit",
+                    	width: "50%",
+                    	border: 0,
+                    	items: [me.getDataOrgGrid()]
+                    }]
                 },
                 {
                     xtype: "panel",
@@ -184,7 +197,7 @@ Ext.define("PSI.Permission.EditForm", {
                     items: [userGrid]
                 }
             ],
-            buttons: [
+            tbar: [
                 {
                     text: "确定",
                     formBind: true,
@@ -197,8 +210,11 @@ Ext.define("PSI.Permission.EditForm", {
                     },
                     scope: this
                 },
+                "-",
                 {
-                    text: "取消", handler: function () {
+                    text: "取消", 
+                    iconCls: "PSI-button-cancel",
+                    handler: function () {
                         var me = this;
                         PSI.MsgBox.confirm("请确认是否取消操作?", function () {
                             me.close();
@@ -386,5 +402,38 @@ Ext.define("PSI.Permission.EditForm", {
         }
 
         grid.getStore().remove(items);
+    },
+    
+    getDataOrgGrid: function() {
+    	var me = this;
+    	if (me.__dataOrgGrid) {
+    		return me.__dataOrgGrid;
+    	}
+    	var modelName = "PSIPermissionDataOrg_EditForm";
+        Ext.define(modelName, {
+            extend: "Ext.data.Model",
+            fields: ["dataOrg", "fullName"]
+        });
+
+        var store = Ext.create("Ext.data.Store", {
+            model: modelName,
+            autoLoad: false,
+            data: []
+        });
+
+        me.__dataOrgGrid = Ext.create("Ext.grid.Panel", {
+            title: "数据域",
+            store: store,
+            padding: 5,
+            tbar:[{
+            	text: "设置数据域"
+            }],
+            columns: [
+                { header: "数据域", dataIndex: "dataOrg", flex: 1, menuDisabled: true },
+                { header: "组织机构/人", dataIndex: "fullName", flex: 1, menuDisabled: true }
+            ]
+        });
+
+        return me.__dataOrgGrid;
     }
 });

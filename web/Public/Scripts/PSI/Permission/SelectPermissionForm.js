@@ -11,7 +11,8 @@ Ext.define("PSI.Permission.SelectPermissionForm", {
     width: 600,
     height: 500,
     modal: true,
-    layout: "fit",
+    resizable: false,
+    layout: "border",
 
     initComponent: function () {
         var me = this;
@@ -46,7 +47,40 @@ Ext.define("PSI.Permission.SelectPermissionForm", {
         this.permissionGrid = permissionGrid;
 
         Ext.apply(me, {
-            items: [permissionGrid],
+        	padding: 5,
+            items: [{
+            	region: "center",
+            	layout: "fit",
+            	border: 0,
+            	items: [permissionGrid]
+            }, {
+            	region: "south",
+            	layout: {
+					type : "table",
+					columns : 2
+				},
+            	border: 0,
+            	height: 40,
+            	items: [ {
+            		xtype: "textfield",
+            		fieldLabel: "数据域",
+            		margin: "5 5 5 5",
+            		labelWidth: 60,
+                    labelAlign: "right",
+                    labelSeparator: "",
+                    width: 480,
+                    readOnly: true,
+                    value: "[全部数据]",
+                    id: "editDataOrg"
+            	},{
+            		xtype: "hidden",
+            		id: "editDataOrgIdList",
+            		value: "*"
+            	},{
+            		xtype: "button",
+            		text: "选择数据域"
+            	}]
+            }],
             buttons: [{
                 text: "确定",
                 formBind: true,
