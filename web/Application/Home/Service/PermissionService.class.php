@@ -165,11 +165,13 @@ class PermissionService extends PSIBaseService {
 			
 			$idGen = new IdGenService();
 			$id = $idGen->newId();
+			$us = new UserService();
+			$loginUserDataOrg = $us->getLoginUserDataOrg();
 			
 			$db->startTrans();
 			try {
-				$sql = "insert into t_role (id, name) values ('%s', '%s') ";
-				$db->execute($sql, $id, $name);
+				$sql = "insert into t_role (id, name, data_org) values ('%s', '%s', '%s') ";
+				$db->execute($sql, $id, $name, $loginUserDataOrg);
 				
 				if ($pid) {
 					foreach ( $pid as $i => $v ) {

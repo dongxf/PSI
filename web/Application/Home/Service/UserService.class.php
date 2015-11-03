@@ -960,4 +960,23 @@ class UserService extends PSIBaseService {
 		$data = $db->query($sql, $orgId);
 		return $data[0]["cnt"] == 1;
 	}
+
+	/**
+	 * 获得登录用户的数据域
+	 */
+	public function getLoginUserDataOrg() {
+		if ($this->isNotOnline()) {
+			return null;
+		}
+		
+		$loginUserId = $this->getLoginUserId();
+		$db = M();
+		$sql = "select data_org from t_user where id = '%s' ";
+		$data = $db->query($sql, $loginUserId);
+		if ($data) {
+			return $data[0]["data_org"];
+		} else {
+			return null;
+		}
+	}
 }
