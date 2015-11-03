@@ -2,6 +2,8 @@
 
 namespace Home\Service;
 
+use Home\Common\FIdConst;
+
 /**
  * 商品Service
  *
@@ -132,6 +134,14 @@ class GoodsService extends PSIBaseService {
 			$queryParam[] = $barCode;
 		}
 		
+		$p = array();
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::GOODS, "c", $p);
+		if ($rs) {
+			$sql .= " where " . $rs[0];
+			$queryParam = array_merge($queryParam, $rs[1]);
+		}
+		
 		$sql .= " group by c.id 
 				  order by c.code";
 		
@@ -249,6 +259,13 @@ class GoodsService extends PSIBaseService {
 				where (g.unit_id = u.id) and (g.category_id = '%s') ";
 		$queryParam = array();
 		$queryParam[] = $categoryId;
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::GOODS, "g", array());
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParam = array_merge($queryParam, $rs[1]);
+		}
+		
 		if ($code) {
 			$sql .= " and (g.code like '%s') ";
 			$queryParam[] = "%{$code}%";
@@ -288,6 +305,12 @@ class GoodsService extends PSIBaseService {
 		$sql = "select count(*) as cnt from t_goods g where (g.category_id = '%s') ";
 		$queryParam = array();
 		$queryParam[] = $categoryId;
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::GOODS, "g", array());
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParam = array_merge($queryParam, $rs[1]);
+		}
 		if ($code) {
 			$sql .= " and (g.code like '%s') ";
 			$queryParam[] = "%{$code}%";
