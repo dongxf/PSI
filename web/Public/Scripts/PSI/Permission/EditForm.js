@@ -11,7 +11,7 @@ Ext.define("PSI.Permission.EditForm", {
 
         Ext.define("PSIPermission", {
             extend: "Ext.data.Model",
-            fields: ["id", "name", "dataOrg"]
+            fields: ["id", "name", "dataOrg", "dataOrgFullName"]
         });
 
         var permissionStore = Ext.create("Ext.data.Store", {
@@ -274,12 +274,16 @@ Ext.define("PSI.Permission.EditForm", {
         });
 
     },
-    setSelectedPermission: function (data) {
+    setSelectedPermission: function (data, dataOrgList, fullNameList) {
         var store = this.permissionGrid.getStore();
 
         for (var i = 0; i < data.length; i++) {
             var item = data[i];
-            store.add({id: item.get("id"), name: item.get("name")});
+            store.add({
+            	id: item.get("id"), 
+            	name: item.get("name"),
+            	dataOrg: dataOrgList,
+            	dataOrgFullName: fullNameList});
         }
     },
     setSelectedUsers: function (data) {
@@ -430,7 +434,7 @@ Ext.define("PSI.Permission.EditForm", {
             }],
             columns: [
                 { header: "数据域", dataIndex: "dataOrg", flex: 1, menuDisabled: true },
-                { header: "组织机构/人", dataIndex: "fullName", flex: 1, menuDisabled: true }
+                { header: "组织机构/人", dataIndex: "fullName", flex: 2, menuDisabled: true }
             ]
         });
 
