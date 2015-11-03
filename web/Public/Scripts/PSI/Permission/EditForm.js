@@ -161,6 +161,11 @@ Ext.define("PSI.Permission.EditForm", {
                                     name: "permissionIdList"
                                 },
                                 {
+                                	id: "editDataOrgList",
+                                	xtype: "hidden",
+                                	name: "dataOrgList"
+                                },
+                                {
                                     id: "editUserIdList",
                                     xtype: "hidden",
                                     name: "userIdList"
@@ -313,13 +318,17 @@ Ext.define("PSI.Permission.EditForm", {
         var store = this.permissionGrid.getStore();
         var data = store.data;
         var idList = [];
+        var dataOrgList = [];
         for (var i = 0; i < data.getCount(); i++) {
             var item = data.items[i].data;
             idList.push(item.id);
+            dataOrgList.push(item.dataOrg);
         }
 
         var editPermissionIdList = Ext.getCmp("editPermissionIdList");
         editPermissionIdList.setValue(idList.join());
+        
+        Ext.getCmp("editDataOrgList").setValue(dataOrgList.join(","));
 
         store = this.userGrid.getStore();
         data = store.data;
