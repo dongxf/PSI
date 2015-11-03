@@ -155,5 +155,10 @@ Ext.define("PSI.Permission.SelectPermissionForm", {
     		parentForm: me
     	});
     	form.show();
+    },
+    
+    setDataOrgList: function(fullNameList, dataOrgList) {
+    	Ext.getCmp("editDataOrg").setValue(fullNameList);
+    	Ext.getCmp("editDataOrgIdList").setValue(dataOrgList);
     }
 });

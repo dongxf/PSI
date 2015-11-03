@@ -331,4 +331,24 @@ class PermissionService extends PSIBaseService {
 		
 		return $result;
 	}
+
+	public function selectDataOrg() {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$result = array();
+		$db = M();
+		$sql = "select full_name, data_org
+				from t_org
+				order by convert(full_name USING gbk) collate gbk_chinese_ci";
+		
+		$data = $db->query($sql);
+		foreach ( $data as $i => $v ) {
+			$result[$i]["fullName"] = $v["full_name"];
+			$result[$i]["dataOrg"] = $v["data_org"];
+		}
+		
+		return $result;
+	}
 }

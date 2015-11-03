@@ -66,8 +66,17 @@ Ext.define("PSI.Permission.SelectDataOrgForm", {
 
             return;
         }
+        
+        var fullNameList = [];
+        var dataOrgList = [];
+        for (var i = 0; i < items.length; i++) {
+        	var it = items[i];
+        	fullNameList.push(it.get("fullName"));
+        	dataOrgList.push(it.get("dataOrg"));
+        }
 
         if (me.getParentForm()) {
+        	me.getParentForm().setDataOrgList(fullNameList.join(";"), dataOrgList.join(";"));
         }
 
         me.close();
@@ -100,8 +109,8 @@ Ext.define("PSI.Permission.SelectDataOrgForm", {
             store: store,
             columnLines: true,
             columns: [
-                { header: "组织机构", dataIndex: "name", flex: 2, menuDisabled: true },
-                { header: "数据域", dataIndex: "loginName", flex: 1, menuDisabled: true }
+                { header: "组织机构", dataIndex: "fullName", flex: 2, menuDisabled: true },
+                { header: "数据域", dataIndex: "dataOrg", flex: 1, menuDisabled: true }
             ]
         });
         

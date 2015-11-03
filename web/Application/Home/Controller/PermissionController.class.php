@@ -154,4 +154,15 @@ class PermissionController extends Controller {
 			$this->ajaxReturn($ps->dataOrgList($params));
 		}
 	}
+
+	/**
+	 * 选择数据域
+	 */
+	public function selectDataOrg() {
+		if (IS_POST) {
+			$ps = new PermissionService();
+			
+			$this->ajaxReturn($ps->selectDataOrg());
+		}
+	}
 }
