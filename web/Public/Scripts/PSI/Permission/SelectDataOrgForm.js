@@ -18,6 +18,10 @@ Ext.define("PSI.Permission.SelectDataOrgForm", {
         Ext.apply(me, {
             items: [me.getMainGrid()],
             buttons: [{
+            	text: "把数据域设置为[本人数据]",
+            	handler: me.onSetSelf,
+            	scope: me
+            },{
                 text: "确定",
                 formBind: true,
                 iconCls: "PSI-button-ok",
@@ -115,5 +119,14 @@ Ext.define("PSI.Permission.SelectDataOrgForm", {
         });
         
         return me.__mainGrid;
+    },
+    
+    onSetSelf: function() {
+    	var me = this;
+        if (me.getParentForm()) {
+        	me.getParentForm().setDataOrgList("[本人数据]", "#");
+        }
+
+        me.close();
     }
 });
