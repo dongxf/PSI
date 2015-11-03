@@ -142,12 +142,20 @@ class UserService extends PSIBaseService {
 	}
 
 	public function allOrgs() {
+		$ds = new DataOrgService();
+		$queryParams = array();
+		$rs = $ds->buildSQL(FIdConst::USR_MANAGEMENT, "t_org", $queryParams);
+		
 		$sql = "select id, name, org_code, full_name, data_org 
 				from t_org 
-				where parent_id is null 
-				order by org_code";
+				where parent_id is null ";
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = $rs[1];
+		}
+		$sql .= " order by org_code";
 		$db = M();
-		$orgList1 = $db->query($sql);
+		$orgList1 = $db->query($sql, $queryParams);
 		$result = array();
 		
 		// 第一级组织
