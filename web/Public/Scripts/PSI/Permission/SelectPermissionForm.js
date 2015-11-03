@@ -70,15 +70,15 @@ Ext.define("PSI.Permission.SelectPermissionForm", {
                     labelSeparator: "",
                     width: 480,
                     readOnly: true,
-                    value: "[全部数据]",
                     id: "editDataOrg"
             	},{
             		xtype: "hidden",
-            		id: "editDataOrgIdList",
-            		value: "*"
+            		id: "editDataOrgIdList"
             	},{
             		xtype: "button",
-            		text: "选择数据域"
+            		text: "选择数据域",
+            		handler: me.onSelectDataOrg,
+            		scope: me
             	}]
             }],
             buttons: [{
@@ -126,7 +126,8 @@ Ext.define("PSI.Permission.SelectPermissionForm", {
     },
 
     onOK: function () {
-        var grid = this.permissionGrid;
+    	var me = this;
+        var grid = me.permissionGrid;
 
         var items = grid.getSelectionModel().getSelection();
         if (items == null || items.length == 0) {
@@ -134,11 +135,25 @@ Ext.define("PSI.Permission.SelectPermissionForm", {
 
             return;
         }
-
-        if (this.getParentForm()) {
-            this.getParentForm().setSelectedPermission(items);
+        
+        var dataOrgList = Ext.getCmp("editDataOrgIdList").getValue();
+        if (!dataOrgList) {
+        	PSI.MsgBox.showInfo("没有选择数据域");
+        	return;
         }
 
-        this.close();
+        if (me.getParentForm()) {
+            me.getParentForm().setSelectedPermission(items);
+        }
+
+        me.close();
+    },
+    
+    onSelectDataOrg: function() {
+    	var me = this;
+    	var form = Ext.create("PSI.Permission.SelectDataOrgForm", {
+    		parentForm: me
+    	});
+    	form.show();
     }
 });
