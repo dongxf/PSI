@@ -346,24 +346,25 @@ class PermissionService extends PSIBaseService {
 				if ($dataOrg == "*") {
 					$result[$i]["fullName"] = "[全部数据]";
 				} else if ($dataOrg == "#") {
-					$result[$i]["fullName"] = "[个人数据]";
-				}
-				$fullName = "";
-				$sql = "select full_name from t_org where data_org = '%s'";
-				$data = $db->query($sql, $dataOrg);
-				if ($data) {
-					$fullName = $data[0]["full_name"];
+					$result[$i]["fullName"] = "[本人数据]";
 				} else {
-					$sql = "select o.full_name, u.name
-							from t_org o, t_user u
-							where o.id = u.org_id and u.data_org = '%s' ";
+					$fullName = "";
+					$sql = "select full_name from t_org where data_org = '%s'";
 					$data = $db->query($sql, $dataOrg);
 					if ($data) {
-						$fullName = $data[0]["full_name"] . "\\" . $data[0]["name"];
+						$fullName = $data[0]["full_name"];
+					} else {
+						$sql = "select o.full_name, u.name
+							from t_org o, t_user u
+							where o.id = u.org_id and u.data_org = '%s' ";
+						$data = $db->query($sql, $dataOrg);
+						if ($data) {
+							$fullName = $data[0]["full_name"] . "\\" . $data[0]["name"];
+						}
 					}
+					
+					$result[$i]["fullName"] = $fullName;
 				}
-				
-				$result[$i]["fullName"] = $fullName;
 			}
 		} else {
 			$result[0]["dataOrg"] = "*";

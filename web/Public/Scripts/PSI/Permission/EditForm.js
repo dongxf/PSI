@@ -185,12 +185,6 @@ Ext.define("PSI.Permission.EditForm", {
                     	layout: "fit",
                     	border: 0,
                     	items: [permissionGrid]
-                    }, {
-                    	region: "east",
-                    	layout: "fit",
-                    	width: "50%",
-                    	border: 0,
-                    	items: [me.getDataOrgGrid()]
                     }]
                 },
                 {
