@@ -17,25 +17,22 @@ class DataOrgService extends PSIBaseService {
 		if (count($dataOrgList) == 0) {
 			return null; // 没有数据域
 		}
-		
-		$result = " ( ";
+
+		// data_org is null 是为了兼容之前的版本遗留下的数据
+		$result = " ( " . $tableName . ".data_org is null ";
 		foreach ( $dataOrgList as $i => $dataOrg ) {
 			if ($dataOrg == "*") {
-				return ""; // 全部数据域
-			}
-			
-			if ($i > 0) {
-				$result .= " or ";
+				return null; // 全部数据域
 			}
 			
 			if ($dataOrg == "#") {
-				$result .= $tableName . ".data_org = '%s' ";
+				$result .= " or " . $tableName . ".data_org = '%s' ";
 				$queryParams[] = $userDataOrg;
 				
 				continue;
 			}
 			
-			$result .= "left(" . $tableName . ".data_org, %d) = '%s' ";
+			$result .= " or left(" . $tableName . ".data_org, %d) = '%s' ";
 			$queryParams[] = strlen($dataOrg);
 			$queryParams[] = $dataOrg;
 		}

@@ -179,9 +179,12 @@ class GoodsService extends PSIBaseService {
 			
 			$idGen = new IdGenService();
 			$id = $idGen->newId();
+			$us = new UserService();
+			$dataOrg = $us->getLoginUserDataOrg();
 			
-			$sql = "insert into t_goods_category (id, code, name) values ('%s', '%s', '%s')";
-			$db->execute($sql, $id, $code, $name);
+			$sql = "insert into t_goods_category (id, code, name, data_org) 
+					values ('%s', '%s', '%s', '%s')";
+			$db->execute($sql, $id, $code, $name, $dataOrg);
 			
 			$log = "新增商品分类: 编码 = {$code}， 分类名称 = {$name}";
 			$bs = new BizlogService();
@@ -399,12 +402,14 @@ class GoodsService extends PSIBaseService {
 			$id = $idGen->newId();
 			$ps = new PinyinService();
 			$py = $ps->toPY($name);
+			$us = new UserService();
+			$dataOrg = $us->getLoginUserDataOrg();
 			
 			$sql = "insert into t_goods (id, code, name, spec, category_id, unit_id, sale_price, 
-						py, purchase_price, bar_code, memo)
-					values ('%s', '%s', '%s', '%s', '%s', '%s', %f, '%s', %f, '%s', '%s')";
+						py, purchase_price, bar_code, memo, data_org)
+					values ('%s', '%s', '%s', '%s', '%s', '%s', %f, '%s', %f, '%s', '%s', '%s')";
 			$db->execute($sql, $id, $code, $name, $spec, $categoryId, $unitId, $salePrice, $py, 
-					$purchasePrice, $barCode, $memo);
+					$purchasePrice, $barCode, $memo, $dataOrg);
 			
 			$log = "新增商品: 商品编码 = {$code}, 品名 = {$name}, 规格型号 = {$spec}";
 			$bs = new BizlogService();
