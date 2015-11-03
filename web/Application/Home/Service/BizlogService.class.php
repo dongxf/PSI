@@ -2,6 +2,8 @@
 
 namespace Home\Service;
 
+use Home\Common\FIdConst;
+
 /**
  * 业务日志Service
  *
@@ -25,10 +27,21 @@ class BizlogService extends PSIBaseService {
 		
 		$sql = "select b.id, u.login_name, u.name, b.ip, b.info, b.date_created, b.log_category 
 				from t_biz_log b, t_user u
-				where b.user_id = u.id
-				order by b.date_created desc
+				where b.user_id = u.id ";
+		$queryParams = array();
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::BIZ_LOG, "b", $queryParams);
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = $rs[1];
+		}
+		
+		$sql .= " order by b.date_created desc
 				limit %d, %d ";
-		$data = $db->query($sql, $start, $limit);
+		$queryParams[] = $start;
+		$queryParams[] = $limit;
+		
+		$data = $db->query($sql, $queryParams);
 		$result = array();
 		
 		foreach ( $data as $i => $v ) {
@@ -44,7 +57,15 @@ class BizlogService extends PSIBaseService {
 		$sql = "select count(*) as cnt 
 				from t_biz_log b, t_user u
 				where b.user_id = u.id";
-		$data = $db->query($sql);
+		$queryParams = array();
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::BIZ_LOG, "b", $queryParams);
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = $rs[1];
+		}
+		
+		$data = $db->query($sql, $queryParams);
 		$cnt = $data[0]["cnt"];
 		
 		return array(
@@ -55,7 +76,7 @@ class BizlogService extends PSIBaseService {
 
 	/**
 	 * 记录业务日志
-	 * 
+	 *
 	 * @param string $log
 	 *        	日志内容
 	 * @param string $category
@@ -68,9 +89,12 @@ class BizlogService extends PSIBaseService {
 				return;
 			}
 			
-			$sql = "insert into t_biz_log (user_id, info, ip, date_created, log_category) 
-					values ('%s', '%s', '%s',  now(), '%s')";
-			M()->execute($sql, $us->getLoginUserId(), $log, $this->getClientIP(), $category);
+			$dataOrg = $us->getLoginUserDataOrg();
+			
+			$sql = "insert into t_biz_log (user_id, info, ip, date_created, log_category, data_org) 
+					values ('%s', '%s', '%s',  now(), '%s', '%s')";
+			M()->execute($sql, $us->getLoginUserId(), $log, $this->getClientIP(), $category, 
+					$dataOrg);
 		} catch ( Exception $ex ) {
 		}
 	}
