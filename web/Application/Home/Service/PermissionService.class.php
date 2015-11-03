@@ -89,6 +89,7 @@ class PermissionService extends PSIBaseService {
 		$id = $params["id"];
 		$name = $params["name"];
 		$permissionIdList = $params["permissionIdList"];
+		$dataOrgList = $params["dataOrgList"];
 		$userIdList = $params["userIdList"];
 		
 		if ($this->isDemo() && $id == DemoConst::ADMIN_ROLE_ID) {
@@ -98,6 +99,7 @@ class PermissionService extends PSIBaseService {
 		$db = M();
 		
 		$pid = explode(",", $permissionIdList);
+		$doList = explode(",", $dataOrgList);
 		$uid = explode(",", $userIdList);
 		
 		if ($id) {
@@ -113,10 +115,23 @@ class PermissionService extends PSIBaseService {
 				$db->execute($sql, $id);
 				
 				if ($pid) {
-					foreach ( $pid as $v ) {
+					foreach ( $pid as $i => $v ) {
 						$sql = "insert into t_role_permission (role_id, permission_id) 
 								values ('%s', '%s')";
 						$db->execute($sql, $id, $v);
+						
+						// 权限的数据域
+						$sql = "delete from t_role_permission_dataorg 
+								where role_id = '%s' and permission_id = '%s' ";
+						$db->execute($sql, $id, $v);
+						
+						$dataOrg = $doList[$i];
+						$oList = explode(";", $dataOrg);
+						foreach ( $oList as $item ) {
+							$sql = "insert into t_role_permission_dataorg(role_id, permission_id, data_org)
+									values ('%s', '%s', '%s')";
+							$db->execute($sql, $id, $v, $item);
+						}
 					}
 				}
 				
@@ -150,10 +165,23 @@ class PermissionService extends PSIBaseService {
 				$db->execute($sql, $id, $name);
 				
 				if ($pid) {
-					foreach ( $pid as $v ) {
+					foreach ( $pid as $i => $v ) {
 						$sql = "insert into t_role_permission (role_id, permission_id) 
 								values ('%s', '%s')";
 						$db->execute($sql, $id, $v);
+						
+						// 权限的数据域
+						$sql = "delete from t_role_permission_dataorg 
+								where role_id = '%s' and permission_id = '%s' ";
+						$db->execute($sql, $id, $v);
+						
+						$dataOrg = $doList[$i];
+						$oList = explode(";", $dataOrg);
+						foreach ( $oList as $item ) {
+							$sql = "insert into t_role_permission_dataorg(role_id, permission_id, data_org)
+									values ('%s', '%s', '%s')";
+							$db->execute($sql, $id, $v, $item);
+						}
 					}
 				}
 				
@@ -319,7 +347,9 @@ class PermissionService extends PSIBaseService {
 							from t_org o, t_user u
 							where o.id = u.org_id and u.data_org = '%s' ";
 					$data = $db->query($sql, $dataOrg);
-					$fullName = $data[0]["full_name"] . "\\" . $data[0]["name"];
+					if ($data) {
+						$fullName = $data[0]["full_name"] . "\\" . $data[0]["name"];
+					}
 				}
 				
 				$result[$i]["fullName"] = $fullName;

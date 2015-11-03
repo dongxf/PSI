@@ -89,6 +89,7 @@ class PermissionController extends Controller {
 					"id" => I("post.id"),
 					"name" => I("post.name"),
 					"permissionIdList" => I("post.permissionIdList"),
+					"dataOrgList" => I("post.dataOrgList"),
 					"userIdList" => I("post.userIdList")
 			);
 			
