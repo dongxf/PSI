@@ -47,8 +47,11 @@ class PermissionService extends PSIBaseService {
 			$od = $db->query($sql, $roleId, $pid);
 			if ($od) {
 				$dataOrg = "";
-				foreach ( $od as $item ) {
-					$dataOrg .= $item["data_org"] . ";";
+				foreach ( $od as $j => $item ) {
+					if ($j > 0) {
+						$dataOrg .= ";";
+					}
+					$dataOrg .= $item["data_org"];
 				}
 				$result[$i]["dataOrg"] = $dataOrg;
 			} else {
