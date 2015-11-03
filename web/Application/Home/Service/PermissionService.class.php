@@ -3,6 +3,7 @@
 namespace Home\Service;
 
 use Home\Common\DemoConst;
+use Home\Common\FIdConst;
 
 /**
  * 权限 Service
@@ -16,9 +17,18 @@ class PermissionService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		$sql = "select id, name from t_role 
-				order by convert(name USING gbk) collate gbk_chinese_ci";
-		$data = M()->query($sql);
+		$sql = "select r.id, r.name from t_role r ";
+		$queryParams = array();
+		
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::PERMISSION_MANAGEMENT, "r", $queryParams);
+		if ($rs) {
+			$sql .= " where " . $rs[0];
+			$queryParams = $rs[1];
+		}
+		
+		$sql .= "	order by convert(name USING gbk) collate gbk_chinese_ci";
+		$data = M()->query($sql, $queryParams);
 		
 		return $data;
 	}
@@ -69,8 +79,9 @@ class PermissionService extends PSIBaseService {
 		
 		$sql = "select u.id, u.login_name, u.name, org.full_name 
 				from t_role r, t_role_user ru, t_user u, t_org org 
-				where r.id = ru.role_id and r.id = '%s' and ru.user_id = u.id and u.org_id = org.id 
-				order by convert(org.full_name USING gbk) collate gbk_chinese_ci";
+				where r.id = ru.role_id and r.id = '%s' and ru.user_id = u.id and u.org_id = org.id ";
+		
+		$sql .= " order by convert(org.full_name USING gbk) collate gbk_chinese_ci";
 		$data = M()->query($sql, $roleId);
 		$result = array();
 		
@@ -265,9 +276,17 @@ class PermissionService extends PSIBaseService {
 		
 		$sql = "select u.id, u.name, u.login_name, o.full_name 
 				from t_user u, t_org o 
-				where u.org_id = o.id 
-				order by convert(u.name USING gbk) collate gbk_chinese_ci";
-		$data = M()->query($sql);
+				where u.org_id = o.id ";
+		$queryParams = array();
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::PERMISSION_MANAGEMENT, "u", $queryParams);
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = $rs[1];
+		}
+		
+		$sql .= " order by convert(u.name USING gbk) collate gbk_chinese_ci";
+		$data = M()->query($sql, $queryParams);
 		
 		$index = 0;
 		
@@ -384,10 +403,18 @@ class PermissionService extends PSIBaseService {
 		$result = array();
 		$db = M();
 		$sql = "select full_name, data_org
-				from t_org
-				order by convert(full_name USING gbk) collate gbk_chinese_ci";
+				from t_org ";
+		$queryParams = array();
+		$ds = new DataOrgService();
 		
-		$data = $db->query($sql);
+		$rs = $ds->buildSQL(FIdConst::PERMISSION_MANAGEMENT, "t_org", $queryParams);
+		if ($rs) {
+			$sql .= " where " . $rs[0];
+			$queryParams = $rs[1];
+		}
+		$sql .= " order by convert(full_name USING gbk) collate gbk_chinese_ci";
+		
+		$data = $db->query($sql, $queryParams);
 		foreach ( $data as $i => $v ) {
 			$result[$i]["fullName"] = $v["full_name"];
 			$result[$i]["dataOrg"] = $v["data_org"];

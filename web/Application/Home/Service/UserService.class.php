@@ -1000,7 +1000,7 @@ class UserService extends PSIBaseService {
 		
 		$db = M();
 		$sql = "select distinct rpd.data_org
-				from t_role_permission rp, t_role_permssion_dataorg rpd,
+				from t_role_permission rp, t_role_permission_dataorg rpd,
 					t_role_user ru
 				where ru.user_id = '%s' and ru.role_id = rp.role_id
 					and rp.role_id = rpd.role_id and rp.permission_id = rpd.permission_id

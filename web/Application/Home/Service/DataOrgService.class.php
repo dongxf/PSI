@@ -21,7 +21,7 @@ class DataOrgService extends PSIBaseService {
 		$result = " ( ";
 		foreach ( $dataOrgList as $i => $dataOrg ) {
 			if ($dataOrg == "*") {
-				return "";
+				return ""; // 全部数据域
 			}
 			
 			if ($i > 0) {
@@ -42,6 +42,9 @@ class DataOrgService extends PSIBaseService {
 		
 		$result .= " ) ";
 		
-		return $result;
+		return array(
+				0 => $result,
+				1 => $queryParams
+		);
 	}
 }
