@@ -128,6 +128,10 @@ class PermissionService extends PSIBaseService {
 						$dataOrg = $doList[$i];
 						$oList = explode(";", $dataOrg);
 						foreach ( $oList as $item ) {
+							if (! $item) {
+								continue;
+							}
+							
 							$sql = "insert into t_role_permission_dataorg(role_id, permission_id, data_org)
 									values ('%s', '%s', '%s')";
 							$db->execute($sql, $id, $v, $item);
@@ -178,6 +182,10 @@ class PermissionService extends PSIBaseService {
 						$dataOrg = $doList[$i];
 						$oList = explode(";", $dataOrg);
 						foreach ( $oList as $item ) {
+							if (! $item) {
+								continue;
+							}
+							
 							$sql = "insert into t_role_permission_dataorg(role_id, permission_id, data_org)
 									values ('%s', '%s', '%s')";
 							$db->execute($sql, $id, $v, $item);
