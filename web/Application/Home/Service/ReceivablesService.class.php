@@ -2,6 +2,8 @@
 
 namespace Home\Service;
 
+use Home\Common\FIdConst;
+
 /**
  * 应收账款Service
  *
@@ -21,13 +23,36 @@ class ReceivablesService extends PSIBaseService {
 		
 		$id = $params["id"];
 		if ($id == "customer") {
-			$data = $db->query("select id, name from t_customer_category order by code");
+			$sql = "select id, name from t_customer_category ";
+			
+			$queryParams = array();
+			
+			$ds = new DataOrgService();
+			$rs = $ds->buildSQL(FIdConst::RECEIVING, "t_customer_category");
+			if ($rs) {
+				$sql .= " where " . $rs[0];
+				$queryParams = $rs[1];
+			}
+			
+			$sql .= " order by code";
+			$data = $db->query($sql, $queryParams);
 			foreach ( $data as $i => $v ) {
 				$result[$i + 1]["id"] = $v["id"];
 				$result[$i + 1]["name"] = $v["name"];
 			}
 		} else {
-			$data = $db->query("select id, name from t_supplier_category order by code");
+			$sql = "select id, name from t_supplier_category ";
+			$queryParams = array();
+			
+			$ds = new DataOrgService();
+			$rs = $ds->buildSQL(FIdConst::RECEIVING, "t_supplier_category");
+			if ($rs) {
+				$sql .= " where " . $rs[0];
+				$queryParams = $rs[1];
+			}
+			$sql .= " order by code";
+			
+			$data = $db->query($sql, $queryParams);
 			foreach ( $data as $i => $v ) {
 				$result[$i + 1]["id"] = $v["id"];
 				$result[$i + 1]["name"] = $v["name"];
@@ -54,8 +79,16 @@ class ReceivablesService extends PSIBaseService {
 			$queryParams = array();
 			$sql = "select r.id, r.ca_id, c.code, c.name, r.act_money, r.balance_money, r.rv_money 
 					from t_receivables r, t_customer c 
-					where r.ca_type = '%s' and r.ca_id = c.id";
+					where (r.ca_type = '%s' and r.ca_id = c.id)";
 			$queryParams[] = $caType;
+			
+			$ds = new DataOrgService();
+			$rs = $ds->buildSQL(FIdConst::RECEIVING, "c");
+			if ($rs) {
+				$sql .= " and " . $rs[0];
+				$queryParams = array_merge($queryParams, $rs[1]);
+			}
+			
 			if ($categoryId) {
 				$sql .= " and c.category_id = '%s' ";
 				$queryParams[] = $categoryId;
@@ -82,6 +115,14 @@ class ReceivablesService extends PSIBaseService {
 					from t_receivables r, t_customer c 
 					where r.ca_type = '%s'  and r.ca_id = c.id";
 			$queryParams[] = $caType;
+			
+			$ds = new DataOrgService();
+			$rs = $ds->buildSQL(FIdConst::RECEIVING, "c");
+			if ($rs) {
+				$sql .= " and " . $rs[0];
+				$queryParams = array_merge($queryParams, $rs[1]);
+			}
+			
 			if ($categoryId) {
 				$sql .= " and c.category_id = '%s' ";
 				$queryParams[] = $categoryId;
@@ -99,6 +140,12 @@ class ReceivablesService extends PSIBaseService {
 					from t_receivables r, t_supplier c 
 					where r.ca_type = '%s' and r.ca_id = c.id ";
 			$queryParams[] = $caType;
+			$ds = new DataOrgService();
+			$rs = $ds->buildSQL(FIdConst::RECEIVING, "c");
+			if ($rs) {
+				$sql .= " and " . $rs[0];
+				$queryParams = array_merge($queryParams, $rs[1]);
+			}
 			if ($categoryId) {
 				$sql .= " and c.category_id = '%s' ";
 				$queryParams[] = $categoryId;
@@ -125,6 +172,12 @@ class ReceivablesService extends PSIBaseService {
 					from t_receivables r, t_supplier c 
 					where r.ca_type = '%s'  and r.ca_id = c.id";
 			$queryParams[] = $caType;
+			$ds = new DataOrgService();
+			$rs = $ds->buildSQL(FIdConst::RECEIVING, "c");
+			if ($rs) {
+				$sql .= " and " . $rs[0];
+				$queryParams = array_merge($queryParams, $rs[1]);
+			}
 			if ($categoryId) {
 				$sql .= " and c.category_id = '%s' ";
 				$queryParams[] = $categoryId;
