@@ -237,22 +237,25 @@ class WSBillService extends PSIBaseService {
 				return $this->bad("数据库错误，请联系管理员");
 			}
 		} else {
+			$us = new UserService();
+			$dataOrg = $us->getLoginUserDataOrg();
+			
 			// 新增
 			$db->startTrans();
 			try {
 				$id = $idGen->newId();
 				$ref = $this->genNewBillRef();
 				$sql = "insert into t_ws_bill(id, bill_status, bizdt, biz_user_id, customer_id,  date_created,
-						input_user_id, ref, warehouse_id, receiving_type) 
-						values ('%s', 0, '%s', '%s', '%s', now(), '%s', '%s', '%s', %d)";
-				$us = new UserService();
+						input_user_id, ref, warehouse_id, receiving_type, data_org) 
+						values ('%s', 0, '%s', '%s', '%s', now(), '%s', '%s', '%s', %d, '%s')";
+				
 				$db->execute($sql, $id, $bizDT, $bizUserId, $customerId, $us->getLoginUserId(), 
-						$ref, $warehouseId, $receivingType);
+						$ref, $warehouseId, $receivingType, $dataOrg);
 				
 				$sql = "insert into t_ws_bill_detail (id, date_created, goods_id, 
 						goods_count, goods_price, goods_money,
-						show_order, wsbill_id, sn_note) 
-						values ('%s', now(), '%s', %d, %f, %f, %d, '%s', '%s')";
+						show_order, wsbill_id, sn_note, data_org) 
+						values ('%s', now(), '%s', %d, %f, %f, %d, '%s', '%s', '%s')";
 				foreach ( $items as $i => $v ) {
 					$goodsId = $v["goodsId"];
 					if ($goodsId) {
@@ -263,7 +266,7 @@ class WSBillService extends PSIBaseService {
 						$sn = $v["sn"];
 						
 						$db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsPrice, 
-								$goodsMoney, $i, $id, $sn);
+								$goodsMoney, $i, $id, $sn, $dataOrg);
 					}
 				}
 				$sql = "select sum(goods_money) as sum_goods_money from t_ws_bill_detail where wsbill_id = '%s' ";
