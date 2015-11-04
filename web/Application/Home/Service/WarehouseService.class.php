@@ -22,7 +22,18 @@ class WarehouseService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		return M()->query("select id, code, name, inited from t_warehouse order by code");
+		$sql = "select id, code, name, inited from t_warehouse ";
+		$ds = new DataOrgService();
+		$queryParams = array();
+		$rs = $ds->buildSQL(FIdConst::WAREHOUSE, "t_warehouse", array());
+		if ($rs) {
+			$sql .= " where " . $rs[0];
+			$queryParams = $rs[1];
+		}
+		
+		$sql .= " order by code";
+		
+		return M()->query($sql, $queryParams);
 	}
 
 	/**
@@ -70,9 +81,12 @@ class WarehouseService extends PSIBaseService {
 				return $this->bad("编码为 [$code] 的仓库已经存在");
 			}
 			
-			$sql = "insert into t_warehouse(id, code, name, inited, py) 
-					values ('%s', '%s', '%s', 0, '%s' )";
-			$db->execute($sql, $id, $code, $name, $py);
+			$us = new UserService();
+			$dataOrg = $us->getLoginUserDataOrg();
+			
+			$sql = "insert into t_warehouse(id, code, name, inited, py, data_org) 
+					values ('%s', '%s', '%s', 0, '%s', '%s')";
+			$db->execute($sql, $id, $code, $name, $py, $dataOrg);
 			
 			$log = "新增仓库：编码 = {$code},  名称 = {$name}";
 			$bs = new BizlogService();
