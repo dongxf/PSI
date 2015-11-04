@@ -2,6 +2,7 @@
 
 namespace Home\Service;
 
+use Home\Common\FIdConst;
 /**
  * 库存 Service
  *
@@ -14,7 +15,19 @@ class InventoryService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		return M()->query("select id, code, name from t_warehouse order by code");
+		$sql = "select id, code, name from t_warehouse ";
+		$queryParams = array();
+		
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::INVENTORY_QUERY, "t_warehouse");
+		if ($rs) {
+			$sql .= " where " . $rs[0];
+			$queryParams = $rs[1];
+		}
+		
+		$sql .= " order by code";
+		
+		return M()->query($sql, $queryParams);
 	}
 
 	public function inventoryList($params) {

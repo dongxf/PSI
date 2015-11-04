@@ -9,7 +9,11 @@ namespace Home\Service;
  */
 class DataOrgService extends PSIBaseService {
 
-	public function buildSQL($fid, $tableName, $queryParams) {
+	public function buildSQL($fid, $tableName, $queryParams = null) {
+		if (!$queryParams)  {
+			$queryParams = array();
+		}
+		
 		$us = new UserService();
 		$userDataOrg = $us->getLoginUserDataOrg();
 		
