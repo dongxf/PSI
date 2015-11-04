@@ -33,8 +33,8 @@ class WarehouseController extends Controller {
 			$dtFlag = getdate();
 			$this->assign("dtFlag", $dtFlag[0]);
 			
-			$ts = new BizConfigService();
-			$this->assign("warehouseUsesOrg", $ts->warehouseUsesOrg());
+			//$ts = new BizConfigService();
+			$this->assign("warehouseUsesOrg", false);
 			
 			$this->display();
 		} else {

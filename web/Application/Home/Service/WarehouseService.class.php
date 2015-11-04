@@ -210,10 +210,23 @@ class WarehouseService extends PSIBaseService {
 			return M()->query($sql, $key, $key, $key, $userId, $fid, $fid, $userId);
 		} else {
 			$sql = "select id, code, name from t_warehouse 
-					where code like '%s' or name like '%s' or py like '%s' 
-					order by code";
+					where (code like '%s' or name like '%s' or py like '%s' ) ";
 			$key = "%{$queryKey}%";
-			return M()->query($sql, $key, $key, $key);
+			$queryParams = array();
+			$queryParams[] = $key;
+			$queryParams[] = $key;
+			$queryParams[] = $key;
+			
+			$ds = new DataOrgService();
+			$rs = $ds->buildSQL(FIdConst::WAREHOUSE, "t_warehouse", array());
+			if ($rs) {
+				$sql .= " and " . $rs[0];
+				$queryParams = array_merge($queryParams, $rs[1]);
+			}
+			
+			$sql .= " order by code";
+			
+			return M()->query($sql, $queryParams);
 		}
 	}
 
