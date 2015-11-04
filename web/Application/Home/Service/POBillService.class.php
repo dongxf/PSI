@@ -2,6 +2,8 @@
 
 namespace Home\Service;
 
+use Home\Common\FIdConst;
+
 /**
  * 采购订单Service
  *
@@ -60,6 +62,14 @@ class POBillService extends PSIBaseService {
 				from t_po_bill p, t_supplier s, t_org o, t_user u1, t_user u2
 				where (p.supplier_id = s.id) and (p.org_id = o.id)
 					and (p.biz_user_id = u1.id) and (p.input_user_id = u2.id) ";
+		
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::PURCHASE_ORDER, "p");
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = $rs[1];
+		}
+		
 		if ($billStatus != - 1) {
 			$sql .= " and (p.bill_status = %d) ";
 			$queryParams[] = $billStatus;
@@ -126,6 +136,12 @@ class POBillService extends PSIBaseService {
 					and (p.biz_user_id = u1.id) and (p.input_user_id = u2.id)
 				";
 		$queryParams = array();
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::PURCHASE_ORDER, "p");
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = $rs[1];
+		}
 		if ($billStatus != - 1) {
 			$sql .= " and (p.bill_status = %d) ";
 			$queryParams[] = $billStatus;
