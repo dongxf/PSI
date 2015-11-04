@@ -2,6 +2,8 @@
 
 namespace Home\Service;
 
+use Home\Common\FIdConst;
+
 /**
  * 库间调拨Service
  *
@@ -65,6 +67,14 @@ class ITBillService extends PSIBaseService {
 				  and (t.biz_user_id = u.id)
 				  and (t.input_user_id = u1.id) ";
 		$queryParams = array();
+		
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::INVENTORY_TRANSFER, "t");
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = $rs[1];
+		}
+		
 		if ($billStatus != - 1) {
 			$sql .= " and (t.bill_status = %d) ";
 			$queryParams[] = $billStatus;
@@ -118,6 +128,14 @@ class ITBillService extends PSIBaseService {
 				  and (t.input_user_id = u1.id)
 				";
 		$queryParams = array();
+		
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::INVENTORY_TRANSFER, "t");
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = $rs[1];
+		}
+		
 		if ($billStatus != - 1) {
 			$sql .= " and (t.bill_status = %d) ";
 			$queryParams[] = $billStatus;
@@ -250,20 +268,24 @@ class ITBillService extends PSIBaseService {
 				return $this->bad("数据库错误，请联系系统管理员");
 			}
 		} else {
+			$us = new UserService();
+			$dataOrg = $us->getLoginUserDataOrg();
+			
 			// 新增
 			$db->startTrans();
 			try {
 				$sql = "insert into t_it_bill(id, bill_status, bizdt, biz_user_id,
-						date_created, input_user_id, ref, from_warehouse_id, to_warehouse_id)
-						values ('%s', 0, '%s', '%s', now(), '%s', '%s', '%s', '%s')";
+						date_created, input_user_id, ref, from_warehouse_id, to_warehouse_id, data_org)
+						values ('%s', 0, '%s', '%s', now(), '%s', '%s', '%s', '%s', '%s')";
 				$id = $idGen->newId();
 				$ref = $this->genNewBillRef();
 				
 				$db->execute($sql, $id, $bizDT, $bizUserId, $us->getLoginUserId(), $ref, 
-						$fromWarehouseId, $toWarehouseId);
+						$fromWarehouseId, $toWarehouseId, $dataOrg);
 				
-				$sql = "insert into t_it_bill_detail(id, date_created, goods_id, goods_count, show_order, itbill_id)
-						values ('%s', now(), '%s', %d, %d, '%s')";
+				$sql = "insert into t_it_bill_detail(id, date_created, goods_id, goods_count, 
+							show_order, itbill_id, data_org)
+						values ('%s', now(), '%s', %d, %d, '%s', '%s')";
 				foreach ( $items as $i => $v ) {
 					$goodsId = $v["goodsId"];
 					if (! $goodsId) {
@@ -272,7 +294,7 @@ class ITBillService extends PSIBaseService {
 					
 					$goodsCount = $v["goodsCount"];
 					
-					$db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $i, $id);
+					$db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $i, $id, $dataOrg);
 				}
 				
 				$bs = new BizlogService();
