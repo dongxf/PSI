@@ -2,6 +2,7 @@
 
 namespace Home\Service;
 
+use Home\Common\FIdConst;
 /**
  * 库存建账Service
  *
@@ -14,7 +15,19 @@ class InitInventoryService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		return M()->query("select id, code, name, inited from t_warehouse order by code");
+		$sql = "select id, code, name, inited from t_warehouse ";
+		$queryParams = array();
+		
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::INVENTORY_INIT, "t_warehouse", array());
+		if ($rs) {
+			$sql .= " where " . $rs[0];
+			$queryParams = $rs[1];
+		}
+		
+		$sql .= "order by code";
+		
+		return M()->query($sql, $queryParams);
 	}
 
 	public function initInfoList($params) {
@@ -156,15 +169,18 @@ class InitInventoryService extends PSIBaseService {
 		
 		$db->startTrans();
 		try {
+			$us = new UserService();
+			$dataOrg = $us->getLoginUserDataOrg();
+			
 			// 总账
 			$sql = "select id from t_inventory where warehouse_id = '%s' and goods_id = '%s' ";
 			$data = $db->query($sql, $warehouseId, $goodsId);
 			if (! $data) {
 				$sql = "insert into t_inventory (warehouse_id, goods_id, in_count, in_price, 
-						in_money, balance_count, balance_price, balance_money) 
-						values ('%s', '%s', %d, %f, %f, %d, %f, %f) ";
+						in_money, balance_count, balance_price, balance_money, data_org) 
+						values ('%s', '%s', %d, %f, %f, %d, %f, %f, '%s') ";
 				$db->execute($sql, $warehouseId, $goodsId, $goodsCount, $goodsPrice, $goodsMoney, 
-						$goodsCount, $goodsPrice, $goodsMoney);
+						$goodsCount, $goodsPrice, $goodsMoney, $dataOrg);
 			} else {
 				$id = $data[0]["id"];
 				$sql = "update t_inventory  
@@ -182,11 +198,11 @@ class InitInventoryService extends PSIBaseService {
 			if (! $data) {
 				$sql = "insert into t_inventory_detail (warehouse_id, goods_id,  in_count, in_price,
 						in_money, balance_count, balance_price, balance_money,
-						biz_date, biz_user_id, date_created,  ref_number, ref_type)
-						values ('%s', '%s', %d, %f, %f, %d, %f, %f, curdate(), '%s', now(), '', '库存建账')";
+						biz_date, biz_user_id, date_created,  ref_number, ref_type, data_org)
+						values ('%s', '%s', %d, %f, %f, %d, %f, %f, curdate(), '%s', now(), '', '库存建账', '%s')";
 				$us = new UserService();
 				$db->execute($sql, $warehouseId, $goodsId, $goodsCount, $goodsPrice, $goodsMoney, 
-						$goodsCount, $goodsPrice, $goodsMoney, $us->getLoginUserId());
+						$goodsCount, $goodsPrice, $goodsMoney, $us->getLoginUserId(), $dataOrg);
 			} else {
 				$id = $data[0]["id"];
 				$sql = "update t_inventory_detail 
