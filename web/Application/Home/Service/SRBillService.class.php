@@ -2,6 +2,8 @@
 
 namespace Home\Service;
 
+use Home\Common\FIdConst;
+
 /**
  * 销售退货入库单Service
  *
@@ -38,6 +40,14 @@ class SRBillService extends PSIBaseService {
 				 where (w.customer_id = c.id) and (w.biz_user_id = u.id) 
 				 and (w.input_user_id = user.id) and (w.warehouse_id = h.id) ";
 		$queryParams = array();
+		
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::SALE_REJECTION, "w");
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = $rs[1];
+		}
+		
 		if ($billStatus != - 1) {
 			$sql .= " and (w.bill_status = %d) ";
 			$queryParams[] = $billStatus;
@@ -100,6 +110,14 @@ class SRBillService extends PSIBaseService {
 				 where (w.customer_id = c.id) and (w.biz_user_id = u.id) 
 				 and (w.input_user_id = user.id) and (w.warehouse_id = h.id) ";
 		$queryParams = array();
+		
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::SALE_REJECTION, "w");
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = $rs[1];
+		}
+		
 		if ($billStatus != - 1) {
 			$sql .= " and (w.bill_status = %d) ";
 			$queryParams[] = $billStatus;
@@ -284,6 +302,13 @@ class SRBillService extends PSIBaseService {
 				 and (w.bill_status = 1000) ";
 		$queryParamas = array();
 		
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::SALE_REJECTION, "w");
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParamas = $rs[1];
+		}
+		
 		if ($ref) {
 			$sql .= " and (w.ref like '%s') ";
 			$queryParamas[] = "%$ref%";
@@ -336,6 +361,12 @@ class SRBillService extends PSIBaseService {
 				 and (w.input_user_id = user.id) and (w.warehouse_id = h.id) 
 				 and (w.bill_status = 1000) ";
 		$queryParamas = array();
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::SALE_REJECTION, "w");
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParamas = $rs[1];
+		}
 		
 		if ($ref) {
 			$sql .= " and (w.ref like '%s') ";
@@ -530,18 +561,20 @@ class SRBillService extends PSIBaseService {
 				return $this->bad("数据库错误，请联系管理员");
 			}
 		} else {
+			$us = new UserService();
+			$dataOrg = $us->getLoginUserDataOrg();
 			// 新增
 			$db->startTrans();
 			try {
 				$id = $idGen->newId();
 				$ref = $this->genNewBillRef();
 				$sql = "insert into t_sr_bill(id, bill_status, bizdt, biz_user_id, customer_id, 
-						  date_created, input_user_id, ref, warehouse_id, ws_bill_id, payment_type)
+						  date_created, input_user_id, ref, warehouse_id, ws_bill_id, payment_type, data_org)
 						values ('%s', 0, '%s', '%s', '%s', 
-						  now(), '%s', '%s', '%s', '%s', %d)";
-				$us = new UserService();
+						  now(), '%s', '%s', '%s', '%s', %d, '%s')";
+				
 				$db->execute($sql, $id, $bizDT, $bizUserId, $customerId, $us->getLoginUserId(), 
-						$ref, $warehouseId, $wsBillId, $paymentType);
+						$ref, $warehouseId, $wsBillId, $paymentType, $dataOrg);
 				
 				foreach ( $items as $i => $v ) {
 					$wsBillDetailId = $v["id"];
@@ -569,12 +602,12 @@ class SRBillService extends PSIBaseService {
 					$sql = "insert into t_sr_bill_detail(id, date_created, goods_id, goods_count, goods_money,
 						goods_price, inventory_money, inventory_price, rejection_goods_count, 
 						rejection_goods_price, rejection_sale_money, show_order, srbill_id, wsbilldetail_id,
-							sn_note)
+							sn_note, data_org)
 						values('%s', now(), '%s', %d, %f, %f, %f, %f, %d,
-						%f, %f, %d, '%s', '%s', '%s') ";
+						%f, %f, %d, '%s', '%s', '%s', '%s') ";
 					$db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsMoney, 
 							$goodsPrice, $inventoryMoney, $inventoryPrice, $rejCount, $rejPrice, 
-							$rejSaleMoney, $i, $id, $wsBillDetailId, $sn);
+							$rejSaleMoney, $i, $id, $wsBillDetailId, $sn, $dataOrg);
 				}
 				
 				// 更新主表的汇总信息
