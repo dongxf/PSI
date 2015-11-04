@@ -77,7 +77,19 @@ class InitInventoryService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		return M()->query("select id, code, name from t_goods_category order by code");
+		$sql = "select id, code, name from t_goods_category ";
+		$queryParams = array();
+		
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::INVENTORY_INIT, "t_goods_category", array());
+		if ($rs) {
+			$sql .= " where " . $rs[0];
+			$queryParams = $rs[1];
+		}
+		
+		$sql .= " order by code";
+		
+		return M()->query($sql, $queryParams);
 	}
 
 	public function goodsList($params) {
