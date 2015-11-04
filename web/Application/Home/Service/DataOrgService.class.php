@@ -17,9 +17,9 @@ class DataOrgService extends PSIBaseService {
 		if (count($dataOrgList) == 0) {
 			return null; // 没有数据域
 		}
-
+		
 		// data_org is null 是为了兼容之前的版本遗留下的数据
-		$result = " ( " . $tableName . ".data_org is null ";
+		$result = " ( " . $tableName . ".data_org is null or " . $tableName . ".data_org = '' ";
 		foreach ( $dataOrgList as $i => $dataOrg ) {
 			if ($dataOrg == "*") {
 				return null; // 全部数据域
