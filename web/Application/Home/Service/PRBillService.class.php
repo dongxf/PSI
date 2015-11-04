@@ -2,6 +2,8 @@
 
 namespace Home\Service;
 
+use Home\Common\FIdConst;
+
 /**
  * 采购退货出库单Service
  *
@@ -234,6 +236,8 @@ class PRBillService extends PSIBaseService {
 				return $this->sqlError();
 			}
 		} else {
+			$us = new UserService();
+			$dataOrg = $us->getLoginUserDataOrg();
 			// 新增采购退货出库单
 			$db->startTrans();
 			try {
@@ -242,10 +246,11 @@ class PRBillService extends PSIBaseService {
 				
 				// 主表
 				$sql = "insert into t_pr_bill(id, bill_status, bizdt, biz_user_id, supplier_id, date_created,
-							input_user_id, ref, warehouse_id, pw_bill_id, receiving_type)
-						values ('%s', 0, '%s', '%s', '%s', now(), '%s', '%s', '%s', '%s', %d)";
+							input_user_id, ref, warehouse_id, pw_bill_id, receiving_type, data_org)
+						values ('%s', 0, '%s', '%s', '%s', now(), '%s', '%s', '%s', '%s', %d, '%s')";
 				$rc = $db->execute($sql, $id, $bizDT, $bizUserId, $supplierId, 
-						$us->getLoginUserId(), $ref, $warehouseId, $pwBillId, $receivingType);
+						$us->getLoginUserId(), $ref, $warehouseId, $pwBillId, $receivingType, 
+						$dataOrg);
 				if (! $rc) {
 					$db->rollback();
 					return $this->sqlError();
@@ -254,8 +259,8 @@ class PRBillService extends PSIBaseService {
 				// 明细表
 				$sql = "insert into t_pr_bill_detail(id, date_created, goods_id, goods_count, goods_price,
 						goods_money, rejection_goods_count, rejection_goods_price, rejection_money, show_order,
-						prbill_id, pwbilldetail_id)
-						values ('%s', now(), '%s', %d, %f, %f, %d, %f, %f, %d, '%s', '%s')";
+						prbill_id, pwbilldetail_id, data_org)
+						values ('%s', now(), '%s', %d, %f, %f, %d, %f, %f, %d, '%s', '%s', '%s')";
 				foreach ( $items as $i => $v ) {
 					$pwbillDetailId = $v["id"];
 					$goodsId = $v["goodsId"];
@@ -267,7 +272,8 @@ class PRBillService extends PSIBaseService {
 					$rejMoney = $v["rejMoney"];
 					
 					$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsPrice, 
-							$goodsMoney, $rejCount, $rejPrice, $rejMoney, $i, $id, $pwbillDetailId);
+							$goodsMoney, $rejCount, $rejPrice, $rejMoney, $i, $id, $pwbillDetailId, 
+							$dataOrg);
 					if (! $rc) {
 						$db->rollback();
 						return $this->sqlError();
@@ -331,6 +337,12 @@ class PRBillService extends PSIBaseService {
 					and (p.input_user_id = u2.id)
 					and (p.bill_status = 1000)";
 		$queryParamas = array();
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::PURCHASE_REJECTION, "p");
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParamas = $rs[1];
+		}
 		
 		if ($ref) {
 			$sql .= " and (p.ref like '%s') ";
@@ -377,6 +389,12 @@ class PRBillService extends PSIBaseService {
 					and (p.input_user_id = u2.id)
 					and (p.bill_status = 1000)";
 		$queryParamas = array();
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::PURCHASE_REJECTION, "p");
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParamas = $rs[1];
+		}
 		
 		if ($ref) {
 			$sql .= " and (p.ref like '%s') ";
@@ -493,6 +511,14 @@ class PRBillService extends PSIBaseService {
 					and (p.biz_user_id = u1.id)
 					and (p.input_user_id = u2.id)
 					and (p.supplier_id = s.id) ";
+		
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::PURCHASE_REJECTION, "p");
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = $rs[1];
+		}
+		
 		if ($billStatus != - 1) {
 			$sql .= " and (p.bill_status = %d) ";
 			$queryParams[] = $billStatus;
@@ -548,6 +574,13 @@ class PRBillService extends PSIBaseService {
 					and (p.input_user_id = u2.id)
 					and (p.supplier_id = s.id) ";
 		$queryParams = array();
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::PURCHASE_REJECTION, "p");
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = $rs[1];
+		}
+		
 		if ($billStatus != - 1) {
 			$sql .= " and (p.bill_status = %d) ";
 			$queryParams[] = $billStatus;
