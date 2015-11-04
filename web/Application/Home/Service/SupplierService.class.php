@@ -4,6 +4,7 @@ namespace Home\Service;
 
 use Home\Service\IdGenService;
 use Home\Service\BizlogService;
+use Home\Common\FIdConst;
 
 /**
  * 供应商档案Service
@@ -64,6 +65,14 @@ class SupplierService extends PSIBaseService {
 			$queryParam[] = "%{$qq}%";
 			$queryParam[] = "%{$qq}";
 		}
+		
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::SUPPLIER, "c", array());
+		if ($rs) {
+			$sql .= " where " . $rs[0];
+			$queryParam = array_merge($queryParam, $rs[1]);
+		}
+		
 		$sql .= " group by c.id
 				order by c.code";
 		
@@ -130,6 +139,14 @@ class SupplierService extends PSIBaseService {
 			$queryParam[] = "%{$qq}%";
 			$queryParam[] = "%{$qq}";
 		}
+		
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::SUPPLIER, "t_supplier", array());
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParam = array_merge($queryParam, $rs[1]);
+		}
+		
 		$queryParam[] = $start;
 		$queryParam[] = $limit;
 		$sql .= " order by code 
@@ -199,6 +216,12 @@ class SupplierService extends PSIBaseService {
 			$queryParam[] = "%{$qq}%";
 			$queryParam[] = "%{$qq}";
 		}
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::SUPPLIER, "t_supplier", array());
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParam = array_merge($queryParam, $rs[1]);
+		}
 		$data = $db->query($sql, $queryParam);
 		
 		return array(
@@ -249,8 +272,12 @@ class SupplierService extends PSIBaseService {
 			$idGen = new IdGenService();
 			$id = $idGen->newId();
 			
-			$sql = "insert into t_supplier_category (id, code, name) values ('%s', '%s', '%s') ";
-			$db->execute($sql, $id, $code, $name);
+			$us = new UserService();
+			$dataOrg = $us->getLoginUserDataOrg();
+			
+			$sql = "insert into t_supplier_category (id, code, name, data_org) 
+					values ('%s', '%s', '%s', '%s') ";
+			$db->execute($sql, $id, $code, $name, $dataOrg);
 			
 			$log = "新增供应商分类：编码 = $code, 分类名 = $name";
 			$bs = new BizlogService();
@@ -368,16 +395,19 @@ class SupplierService extends PSIBaseService {
 				return $this->bad("编码为 [$code] 的供应商已经存在");
 			}
 			
+			$us = new UserService();
+			$dataOrg = $us->getLoginUserDataOrg();
+			
 			$sql = "insert into t_supplier (id, category_id, code, name, py, contact01, 
 					qq01, tel01, mobile01, contact02, qq02,
 					tel02, mobile02, address, address_shipping,
-					bank_name, bank_account, tax_number, fax, note) 
+					bank_name, bank_account, tax_number, fax, note, data_org) 
 					values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
 							'%s', '%s', '%s', '%s',
-							'%s', '%s', '%s', '%s', '%s')  ";
+							'%s', '%s', '%s', '%s', '%s', '%s')  ";
 			$db->execute($sql, $id, $categoryId, $code, $name, $py, $contact01, $qq01, $tel01, 
 					$mobile01, $contact02, $qq02, $tel02, $mobile02, $address, $addressShipping, 
-					$bankName, $bankAccount, $tax, $fax, $note);
+					$bankName, $bankAccount, $tax, $fax, $note, $dataOrg);
 			
 			$log = "新增供应商：编码 = {$code}, 名称 = {$name}";
 			$bs = new BizlogService();
@@ -526,11 +556,23 @@ class SupplierService extends PSIBaseService {
 		
 		$sql = "select id, code, name, tel01, fax, address_shipping, contact01 
 				from t_supplier
-				where code like '%s' or name like '%s' or py like '%s' 
-				order by code 
-				limit 20";
+				where (code like '%s' or name like '%s' or py like '%s') ";
+		$queryParams = array();
 		$key = "%{$queryKey}%";
-		return M()->query($sql, $key, $key, $key);
+		$queryParams[] = $key;
+		$queryParams[] = $key;
+		$queryParams[] = $key;
+		
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::SUPPLIER, "t_supplier", array());
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = array_merge($queryParams, $rs[1]);
+		}
+		
+		$sql .= " order by code 
+				limit 20";
+		return M()->query($sql, $queryParams);
 	}
 
 	public function supplierInfo($params) {
