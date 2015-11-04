@@ -2,6 +2,8 @@
 
 namespace Home\Service;
 
+use Home\Common\FIdConst;
+
 /**
  * 客户Service
  *
@@ -61,6 +63,14 @@ class CustomerService extends PSIBaseService {
 			$queryParam[] = "%{$qq}%";
 			$queryParam[] = "%{$qq}";
 		}
+		
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::CUSTOMER, "c", array());
+		if ($rs) {
+			$sql .= " where " . $rs[0];
+			$queryParam = array_merge($queryParam, $rs[1]);
+		}
+		
 		$sql .= " group by c.id 
 				 order by c.code";
 		return M()->query($sql, $queryParam);
@@ -367,6 +377,14 @@ class CustomerService extends PSIBaseService {
 			$queryParam[] = "%{$qq}%";
 			$queryParam[] = "%{$qq}";
 		}
+		
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::CUSTOMER, "t_customer", array());
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParam = array_merge($queryParam, $rs[1]);
+		}
+		
 		$sql .= " order by code limit %d, %d";
 		$queryParam[] = $start;
 		$queryParam[] = $limit;
@@ -437,6 +455,14 @@ class CustomerService extends PSIBaseService {
 			$queryParam[] = "%{$qq}%";
 			$queryParam[] = "%{$qq}";
 		}
+		
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::CUSTOMER, "t_customer", array());
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParam = array_merge($queryParam, $rs[1]);
+		}
+		
 		$data = $db->query($sql, $queryParam);
 		
 		return array(
@@ -521,11 +547,26 @@ class CustomerService extends PSIBaseService {
 		
 		$sql = "select id, code, name, mobile01
 				from t_customer 
-				where code like '%s' or name like '%s' or py like '%s' 
-					or mobile01 like '%s' or mobile02 like '%s' 
-				limit 20";
+				where (code like '%s' or name like '%s' or py like '%s' 
+					or mobile01 like '%s' or mobile02 like '%s' ) ";
+		$queryParams = array();
 		$key = "%{$queryKey}%";
-		return M()->query($sql, $key, $key, $key, $key, $key);
+		$queryParams[] = $key;
+		$queryParams[] = $key;
+		$queryParams[] = $key;
+		$queryParams[] = $key;
+		$queryParams[] = $key;
+		
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::CUSTOMER, "t_customer", array());
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = array_merge($queryParams, $rs[1]);
+		}
+		
+		$sql .= " order by code limit 20";
+		
+		return M()->query($sql, $queryParams);
 	}
 
 	public function customerInfo($params) {
