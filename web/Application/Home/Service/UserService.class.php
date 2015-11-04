@@ -919,11 +919,23 @@ class UserService extends PSIBaseService {
 		}
 		
 		$sql = "select id, login_name, name from t_user 
-				where login_name like '%s' or name like '%s' or py like '%s' 
-				order by login_name 
-				limit 20";
+				where (login_name like '%s' or name like '%s' or py like '%s') ";
 		$key = "%{$queryKey}%";
-		$data = M()->query($sql, $key, $key, $key);
+		$queryParams = array();
+		$queryParams[] = $key;
+		$queryParams[] = $key;
+		$queryParams[] = $key;
+		
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::USR_MANAGEMENT, "t_user");
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = array_merge($queryParams, $rs[1]);
+		}
+		
+		$sql .= " order by login_name 
+				limit 20";
+		$data = M()->query($sql, $queryParams);
 		$result = array();
 		foreach ( $data as $i => $v ) {
 			$result[$i]["id"] = $v["id"];
@@ -987,10 +999,11 @@ class UserService extends PSIBaseService {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * 获得当前登录用户的某个功能的数据域
-	 * @param unknown $fid
+	 * 
+	 * @param unknown $fid        	
 	 */
 	public function getDataOrgForFId($fid) {
 		if ($this->isNotOnline()) {
@@ -998,8 +1011,8 @@ class UserService extends PSIBaseService {
 		}
 		
 		$result = array();
-		$loginUserId  = $this->getLoginUserId();
-
+		$loginUserId = $this->getLoginUserId();
+		
 		if ($loginUserId == DemoConst::ADMIN_USER_ID) {
 			// admin 是超级管理员
 			$result[] = "*";
@@ -1015,7 +1028,7 @@ class UserService extends PSIBaseService {
 					and rpd.permission_id = '%s' ";
 		$data = $db->query($sql, $loginUserId, $fid);
 		
-		foreach ($data as $v) {
+		foreach ( $data as $v ) {
 			$result[] = $v["data_org"];
 		}
 		

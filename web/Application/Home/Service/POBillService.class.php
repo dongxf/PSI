@@ -294,16 +294,20 @@ class POBillService extends PSIBaseService {
 			try {
 				$id = $idGen->newId();
 				$ref = $this->genNewBillRef();
+				
+				$us = new UserService();
+				$dataOrg = $us->getLoginUserDataOrg();
+				
 				// 主表
 				$sql = "insert into t_po_bill(id, ref, bill_status, deal_date, biz_dt, org_id, biz_user_id,
 							goods_money, tax, money_with_tax, input_user_id, supplier_id, contact, tel, fax,
-							deal_address, bill_memo, payment_type, date_created)
+							deal_address, bill_memo, payment_type, date_created, data_org)
 						values ('%s', '%s', 0, '%s', '%s', '%s', '%s', 
 							0, 0, 0, '%s', '%s', '%s', '%s', '%s', 
-							'%s', '%s', %d, now())";
+							'%s', '%s', %d, now(), '%s')";
 				$rc = $db->execute($sql, $id, $ref, $dealDate, $dealDate, $orgId, $bizUserId, 
 						$us->getLoginUserId(), $supplierId, $contact, $tel, $fax, $dealAddress, 
-						$billMemo, $paymentType);
+						$billMemo, $paymentType, $dataOrg);
 				if ($rc === false) {
 					$db->rollback();
 					return $this->sqlError(__LINE__);
@@ -323,11 +327,13 @@ class POBillService extends PSIBaseService {
 					$moneyWithTax = $v["moneyWithTax"];
 					
 					$sql = "insert into t_po_bill_detail(id, date_created, goods_id, goods_count, goods_money,
-								goods_price, pobill_id, tax_rate, tax, money_with_tax, pw_count, left_count, show_order)
+								goods_price, pobill_id, tax_rate, tax, money_with_tax, pw_count, left_count, 
+								show_order, data_org)
 							values ('%s', now(), '%s', %d, %f,
-								%f, '%s', %d, %f, %f, 0, %d, %d)";
+								%f, '%s', %d, %f, %f, 0, %d, %d, '%s')";
 					$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsMoney, 
-							$goodsPrice, $id, $taxRate, $tax, $moneyWithTax, $goodsCount, $i);
+							$goodsPrice, $id, $taxRate, $tax, $moneyWithTax, $goodsCount, $i, 
+							$dataOrg);
 					if ($rc === false) {
 						$db->rollback();
 						return $this->sqlError(__LINE__);
