@@ -280,17 +280,20 @@ class PWBillService extends PSIBaseService {
 			}
 		} else {
 			$id = $idGen->newId();
+			$us = new UserService();
+			$dataOrg = $us->getLoginUserDataOrg();
 			
 			$db->startTrans();
 			try {
 				$sql = "insert into t_pw_bill (id, ref, supplier_id, warehouse_id, biz_dt, 
-						biz_user_id, bill_status, date_created, goods_money, input_user_id, payment_type) 
-						values ('%s', '%s', '%s', '%s', '%s', '%s', 0, now(), 0, '%s', %d)";
+						biz_user_id, bill_status, date_created, goods_money, input_user_id, payment_type,
+						data_org) 
+						values ('%s', '%s', '%s', '%s', '%s', '%s', 0, now(), 0, '%s', %d, '%s')";
 				
 				$ref = $this->genNewBillRef();
-				$us = new UserService();
+				
 				$db->execute($sql, $id, $ref, $supplierId, $warehouseId, $bizDT, $bizUserId, 
-						$us->getLoginUserId(), $paymentType);
+						$us->getLoginUserId(), $paymentType, $dataOrg);
 				
 				// 明细记录
 				$items = $bill["items"];
@@ -309,10 +312,10 @@ class PWBillService extends PSIBaseService {
 							
 							$sql = "insert into t_pw_bill_detail 
 									(id, date_created, goods_id, goods_count, goods_price,
-									goods_money,  pwbill_id, show_order)
-									values ('%s', now(), '%s', %d, %f, %f, '%s', %d )";
+									goods_money,  pwbill_id, show_order, data_org)
+									values ('%s', now(), '%s', %d, %f, %f, '%s', %d, '%s')";
 							$db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsPrice, 
-									$goodsMoney, $id, $i);
+									$goodsMoney, $id, $i, $dataOrg);
 						}
 					}
 				}
