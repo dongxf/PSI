@@ -341,6 +341,14 @@ class WSBillService extends PSIBaseService {
 				where (w.customer_id = c.id) and (w.biz_user_id = u.id) 
 				  and (w.input_user_id = user.id) and (w.warehouse_id = h.id) ";
 		$queryParams = array();
+		
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::WAREHOUSING_SALE, "w");
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = $rs[1];
+		}
+		
 		if ($billStatus != - 1) {
 			$sql .= " and (w.bill_status = %d) ";
 			$queryParams[] = $billStatus;
@@ -402,6 +410,14 @@ class WSBillService extends PSIBaseService {
 				where (w.customer_id = c.id) and (w.biz_user_id = u.id) 
 				  and (w.input_user_id = user.id) and (w.warehouse_id = h.id) ";
 		$queryParams = array();
+		
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::WAREHOUSING_SALE, "w");
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = $rs[1];
+		}
+		
 		if ($billStatus != - 1) {
 			$sql .= " and (w.bill_status = %d) ";
 			$queryParams[] = $billStatus;
