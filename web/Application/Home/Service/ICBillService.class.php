@@ -2,6 +2,8 @@
 
 namespace Home\Service;
 
+use Home\Common\FIdConst;
+
 /**
  * 库存盘点Service
  *
@@ -129,6 +131,7 @@ class ICBillService extends PSIBaseService {
 		
 		$idGen = new IdGenService();
 		$us = new UserService();
+		$dataOrg = $us->getLoginUserDataOrg();
 		
 		if ($id) {
 			// 编辑单据
@@ -201,10 +204,10 @@ class ICBillService extends PSIBaseService {
 				
 				// 主表
 				$sql = "insert into t_ic_bill(id, bill_status, bizdt, biz_user_id, date_created, 
-							input_user_id, ref, warehouse_id)
-						values ('%s', 0, '%s', '%s', now(), '%s', '%s', '%s')";
+							input_user_id, ref, warehouse_id, data_org)
+						values ('%s', 0, '%s', '%s', now(), '%s', '%s', '%s', '%s')";
 				$rc = $db->execute($sql, $id, $bizDT, $bizUserId, $us->getLoginUserId(), $ref, 
-						$warehouseId);
+						$warehouseId, $dataOrg);
 				if (! $rc) {
 					$db->rollback();
 					return $this->sqlError();
@@ -212,8 +215,8 @@ class ICBillService extends PSIBaseService {
 				
 				// 明细表
 				$sql = "insert into t_ic_bill_detail(id, date_created, goods_id, goods_count, goods_money,
-							show_order, icbill_id)
-						values ('%s', now(), '%s', %d, %f, %d, '%s')";
+							show_order, icbill_id, data_org)
+						values ('%s', now(), '%s', %d, %f, %d, '%s', '%s')";
 				foreach ( $items as $i => $v ) {
 					$goodsId = $v["goodsId"];
 					if (! $goodsId) {
@@ -223,7 +226,7 @@ class ICBillService extends PSIBaseService {
 					$goodsMoney = $v["goodsMoney"];
 					
 					$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsMoney, 
-							$i, $id);
+							$i, $id, $dataOrg);
 					if (! $rc) {
 						$db->rollback();
 						return $this->sqlError();
@@ -273,6 +276,13 @@ class ICBillService extends PSIBaseService {
 			and (t.input_user_id = u1.id) ";
 		$queryParams = array();
 		
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::INVENTORY_CHECK, "t");
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = $rs[1];
+		}
+		
 		if ($billStatus != - 1) {
 			$sql .= " and (t.bill_status = %d) ";
 			$queryParams[] = $billStatus;
@@ -317,7 +327,14 @@ class ICBillService extends PSIBaseService {
 				  and (t.biz_user_id = u.id)
 				  and (t.input_user_id = u1.id) 
 				";
-			$queryParams = array();
+		$queryParams = array();
+		
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::INVENTORY_CHECK, "t");
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = $rs[1];
+		}
 		
 		if ($billStatus != - 1) {
 			$sql .= " and (t.bill_status = %d) ";
@@ -566,8 +583,8 @@ class ICBillService extends PSIBaseService {
 								    balance_count = %d, balance_price = %f,
 							        balance_money = %f
 								where warehouse_id = '%s' and goods_id = '%s' ";
-						$rc = $db->execute($sql, $totalInCount, $totalInPrice, $totalInMoney, $balanceCount, 
-								$balancePrice, $balanceMoney, $warehouseId, $goodsId);
+						$rc = $db->execute($sql, $totalInCount, $totalInPrice, $totalInMoney, 
+								$balanceCount, $balancePrice, $balanceMoney, $warehouseId, $goodsId);
 						if (! $rc) {
 							$db->rollback();
 							return $this->sqlError();
@@ -610,8 +627,8 @@ class ICBillService extends PSIBaseService {
 								    balance_count = %d, balance_price = %f,
 							        balance_money = %f
 								where warehouse_id = '%s' and goods_id = '%s' ";
-						$rc = $db->execute($sql, $totalOutCount, $totalOutPrice, $totalOutMoney, $balanceCount, 
-								$balancePrice, $balanceMoney, $warehouseId, $goodsId);
+						$rc = $db->execute($sql, $totalOutCount, $totalOutPrice, $totalOutMoney, 
+								$balanceCount, $balancePrice, $balanceMoney, $warehouseId, $goodsId);
 						if (! $rc) {
 							$db->rollback();
 							return $this->sqlError();
