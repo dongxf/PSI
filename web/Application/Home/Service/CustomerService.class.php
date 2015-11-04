@@ -108,8 +108,12 @@ class CustomerService extends PSIBaseService {
 			$idGen = new IdGenService();
 			$id = $idGen->newId();
 			
-			$sql = "insert into t_customer_category (id, code, name) values ('%s', '%s', '%s') ";
-			$db->execute($sql, $id, $code, $name);
+			$us = new UserService();
+			$dataOrg = $us->getLoginUserDataOrg();
+			
+			$sql = "insert into t_customer_category (id, code, name, data_org) 
+					values ('%s', '%s', '%s', '%s') ";
+			$db->execute($sql, $id, $code, $name, $dataOrg);
 			
 			$log = "新增客户分类：编码 = {$code}, 分类名 = {$name}";
 			$bs = new BizlogService();
@@ -228,15 +232,18 @@ class CustomerService extends PSIBaseService {
 				return $this->bad("编码为 [{$code}] 的客户已经存在");
 			}
 			
+			$us = new UserService();
+			$dataOrg = $us->getLoginUserDataOrg();
+			
 			$sql = "insert into t_customer (id, category_id, code, name, py, contact01, 
 					qq01, tel01, mobile01, contact02, qq02, tel02, mobile02, address, address_receipt,
-					bank_name, bank_account, tax_number, fax, note)  
+					bank_name, bank_account, tax_number, fax, note, data_org)  
 					values ('%s', '%s', '%s', '%s', '%s', '%s', 
 							'%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
-							'%s', '%s', '%s', '%s', '%s')  ";
+							'%s', '%s', '%s', '%s', '%s', '%s')  ";
 			$db->execute($sql, $id, $categoryId, $code, $name, $py, $contact01, $qq01, $tel01, 
 					$mobile01, $contact02, $qq02, $tel02, $mobile02, $address, $addressReceipt, 
-					$bankName, $bankAccount, $tax, $fax, $note);
+					$bankName, $bankAccount, $tax, $fax, $note, $dataOrg);
 			
 			$log = "新增客户：编码 = {$code}, 名称 = {$name}";
 			$bs = new BizlogService();
