@@ -2,6 +2,8 @@
 
 namespace Home\Service;
 
+use Home\Common\FIdConst;
+
 /**
  * 应付账款Service
  *
@@ -22,13 +24,31 @@ class PayablesService extends PSIBaseService {
 		
 		$id = $params["id"];
 		if ($id == "supplier") {
-			$data = $db->query("select id, name from t_supplier_category order by code");
+			$sql = "select id, name from t_supplier_category ";
+			$queryParams = array();
+			$ds = new DataOrgService();
+			$rs = $ds->buildSQL(FIdConst::PAYABLES, "t_supplier_category");
+			if ($rs) {
+				$sql .= " where " . $rs[0];
+				$queryParams = $rs[1];
+			}
+			$sql .= " order by code";
+			$data = $db->query($sql, $queryParams);
 			foreach ( $data as $i => $v ) {
 				$result[$i + 1]["id"] = $v["id"];
 				$result[$i + 1]["name"] = $v["name"];
 			}
 		} else {
-			$data = $db->query("select id,  code, name from t_customer_category order by code");
+			$sql = "select id,  code, name from t_customer_category ";
+			$queryParams = array();
+			$ds = new DataOrgService();
+			$rs = $ds->buildSQL(FIdConst::PAYABLES, "t_customer_category");
+			if ($rs) {
+				$sql .= " where " . $rs[0];
+				$queryParams = $rs[1];
+			}
+			$sql .= " order by code";
+			$data = $db->query($sql, $queryParams);
 			foreach ( $data as $i => $v ) {
 				$result[$i + 1]["id"] = $v["id"];
 				$result[$i + 1]["name"] = $v["name"];
@@ -59,6 +79,12 @@ class PayablesService extends PSIBaseService {
 				$sql .= " and s.category_id = '%s' ";
 				$queryParams[] = $categoryId;
 			}
+			$ds = new DataOrgService();
+			$rs = $ds->buildSQL(FIdConst::PAYABLES, "s");
+			if ($rs) {
+				$sql .= " and " . $rs[0];
+				$queryParams = array_merge($queryParams, $rs[1]);
+			}
 			$sql .= " order by s.code 
 					limit %d , %d ";
 			$queryParams[] = $start;
@@ -82,6 +108,12 @@ class PayablesService extends PSIBaseService {
 				$sql .= " and s.category_id = '%s' ";
 				$queryParams[] = $categoryId;
 			}
+			$ds = new DataOrgService();
+			$rs = $ds->buildSQL(FIdConst::PAYABLES, "s");
+			if ($rs) {
+				$sql .= " and " . $rs[0];
+				$queryParams = array_merge($queryParams, $rs[1]);
+			}
 			$data = $db->query($sql, $queryParams);
 			$cnt = $data[0]["cnt"];
 			
@@ -97,6 +129,12 @@ class PayablesService extends PSIBaseService {
 			if ($categoryId) {
 				$sql .= " and s.category_id = '%s' ";
 				$queryParams[] = $categoryId;
+			}
+			$ds = new DataOrgService();
+			$rs = $ds->buildSQL(FIdConst::PAYABLES, "s");
+			if ($rs) {
+				$sql .= " and " . $rs[0];
+				$queryParams = array_merge($queryParams, $rs[1]);
 			}
 			$sql .= " order by s.code 
 					limit %d , %d";
@@ -120,6 +158,12 @@ class PayablesService extends PSIBaseService {
 			if ($categoryId) {
 				$sql .= " and s.category_id = '%s' ";
 				$queryParams[] = $categoryId;
+			}
+			$ds = new DataOrgService();
+			$rs = $ds->buildSQL(FIdConst::PAYABLES, "s");
+			if ($rs) {
+				$sql .= " and " . $rs[0];
+				$queryParams = array_merge($queryParams, $rs[1]);
 			}
 			$data = $db->query($sql, $queryParams);
 			$cnt = $data[0]["cnt"];
