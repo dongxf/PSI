@@ -8,7 +8,7 @@ namespace Home\Service;
  * @author 李静波
  */
 class UpdateDBService extends PSIBaseService {
-	private $CURRENT_DB_VERSION = "20151102-001";
+	private $CURRENT_DB_VERSION = "20151105-001";
 
 	private function tableExists($db, $tableName) {
 		$dbName = C('DB_NAME');
@@ -83,6 +83,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20151016_01($db);
 		$this->update_20151031_01($db);
 		$this->update_20151102_01($db);
+		$this->update_20151105_01($db);
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -94,6 +95,33 @@ class UpdateDBService extends PSIBaseService {
 		$bl->insertBizlog("升级数据库，数据库版本 = " . $this->CURRENT_DB_VERSION);
 		
 		return $this->ok();
+	}
+
+	private function update_20151105_01($db) {
+		// 本次更新： 在途库存、 商品多级分类
+		$tableName = "t_inventory";
+		$columnName = "afloat_count";
+		if (! $this->columnExists($db, $tableName, $columnName)) {
+			$sql = "alter table {$tableName} add {$columnName} decimal(19,2) default null;";
+			$db->execute($sql);
+		}
+		$columnName = "afloat_money";
+		if (! $this->columnExists($db, $tableName, $columnName)) {
+			$sql = "alter table {$tableName} add {$columnName} decimal(19,2) default null;";
+			$db->execute($sql);
+		}
+		$columnName = "afloat_price";
+		if (! $this->columnExists($db, $tableName, $columnName)) {
+			$sql = "alter table {$tableName} add {$columnName} decimal(19,2) default null;";
+			$db->execute($sql);
+		}
+		
+		$tableName = "t_goods_category";
+		$columnName = "full_name";
+		if (! $this->columnExists($db, $tableName, $columnName)) {
+			$sql = "alter table {$tableName} add {$columnName} varchar(1000) default null;";
+			$db->execute($sql);
+		}
 	}
 
 	private function update_20151102_01($db) {
