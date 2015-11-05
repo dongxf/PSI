@@ -253,8 +253,9 @@ class GoodsController extends Controller {
 	public function goodsInfo() {
 		if (IS_POST) {
 			$id = I("post.id");
+			$categoryId = I("post.categoryId");
 			$gs = new GoodsService();
-			$data = $gs->getGoodsInfo($id);
+			$data = $gs->getGoodsInfo($id, $categoryId);
 			$data["units"] = $gs->allUnits();
 			$this->ajaxReturn($data);
 		}

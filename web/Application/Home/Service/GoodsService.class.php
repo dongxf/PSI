@@ -742,19 +742,23 @@ class GoodsService extends PSIBaseService {
 		return $result;
 	}
 
-	public function getGoodsInfo($id) {
+	public function getGoodsInfo($id, $categoryId) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
+		
+		$db = M();
 		
 		$sql = "select category_id, code, name, spec, unit_id, sale_price, purchase_price, 
 					bar_code, memo
 				from t_goods
 				where id = '%s' ";
-		$data = M()->query($sql, $id);
+		$data = $db->query($sql, $id);
 		if ($data) {
 			$result = array();
-			$result["categoryId"] = $data[0]["category_id"];
+			$categoryId = $data[0]["category_id"];
+			$result["categoryId"] = $categoryId;
+			
 			$result["code"] = $data[0]["code"];
 			$result["name"] = $data[0]["name"];
 			$result["spec"] = $data[0]["spec"];
@@ -771,9 +775,22 @@ class GoodsService extends PSIBaseService {
 			$result["barCode"] = $data[0]["bar_code"];
 			$result["memo"] = $data[0]["memo"];
 			
+			$sql = "select full_name from t_goods_category where id = '%s' ";
+			$data = $db->query($sql, $categoryId);
+			if ($data) {
+				$result["categoryName"] = $data[0]["full_name"];
+			}
 			return $result;
 		} else {
-			return array();
+			$result = array();
+			
+			$sql = "select full_name from t_goods_category where id = '%s' ";
+			$data = $db->query($sql, $categoryId);
+			if ($data) {
+				$result["categoryId"] = $categoryId;
+				$result["categoryName"] = $data[0]["full_name"];
+			}
+			return $result;
 		}
 	}
 

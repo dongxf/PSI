@@ -48,8 +48,7 @@ Ext.define("PSI.Goods.GoodsEditForm", {
             }, scope: me
         });
 
-        var categoryStore = me.getParentForm().categoryGrid.getStore();
-        var selectedCategory = me.getParentForm().categoryGrid.getSelectionModel().getSelection();
+        var selectedCategory = me.getParentForm().getCategoryGrid().getSelectionModel().getSelection();
         var defaultCategoryId = null;
         if (selectedCategory != null && selectedCategory.length > 0) {
             defaultCategoryId = selectedCategory[0].get("id");
@@ -88,24 +87,22 @@ Ext.define("PSI.Goods.GoodsEditForm", {
                         },
                         {
                             id: "editCategory",
-                            xtype: "combo",
+                            xtype: "psi_goodscategoryfield",
                             fieldLabel: "商品分类",
                             allowBlank: false,
                             blankText: "没有输入商品分类",
                             beforeLabelTextTpl: PSI.Const.REQUIRED,
-                            valueField: "id",
-                            displayField: "name",
-                            store: categoryStore,
-                            queryMode: "local",
-                            editable: false,
-                            value: defaultCategoryId,
-                            name: "categoryId",
                             listeners: {
                                 specialkey: {
                                     fn: me.onEditSpecialKey,
                                     scope: me
                                 }
                             }
+                        },{
+                        	id: "editCategoryId",
+                        	name: "categoryId",
+                        	xtype: "hidden",
+                        	value: defaultCategoryId
                         },
                         {
                             id: "editCode",
@@ -256,13 +253,15 @@ Ext.define("PSI.Goods.GoodsEditForm", {
         editCode.focus();
         editCode.setValue(editCode.getValue());
 
+        var categoryId = Ext.getCmp("editCategoryId").getValue();
         var el = me.getEl();
         var unitStore = me.unitStore;
         el.mask(PSI.Const.LOADING);
         Ext.Ajax.request({
             url: PSI.Const.BASE_URL + "Home/Goods/goodsInfo",
             params: {
-            	id: me.adding ? null : me.getEntity().get("id")
+            	id: me.adding ? null : me.getEntity().get("id"),
+            	categoryId: categoryId
             },
             method: "POST",
             callback: function (options, success, response) {
@@ -276,7 +275,8 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 
                     if (!me.adding) {
                     	// 编辑商品信息
-                        Ext.getCmp("editCategory").setValue(data.categoryId);
+                        Ext.getCmp("editCategory").setIdValue(data.categoryId);
+                        Ext.getCmp("editCategory").setValue(data.categoryName);
                         Ext.getCmp("editCode").setValue(data.code);
                         Ext.getCmp("editName").setValue(data.name);
                         Ext.getCmp("editSpec").setValue(data.spec);
@@ -291,6 +291,10 @@ Ext.define("PSI.Goods.GoodsEditForm", {
                             var unitId = unitStore.getAt(0).get("id");
                             Ext.getCmp("editUnit").setValue(unitId);
                         }
+                        if (data.categoryId) {
+                            Ext.getCmp("editCategory").setIdValue(data.categoryId);
+                            Ext.getCmp("editCategory").setValue(data.categoryName);
+                        }
                     }
                 }
 
@@ -301,6 +305,9 @@ Ext.define("PSI.Goods.GoodsEditForm", {
     // private
     onOK: function (thenAdd) {
         var me = this;
+        
+        Ext.getCmp("editCategoryId").setValue(Ext.getCmp("editCategory").getIdValue());
+        
         var f = Ext.getCmp("editForm");
         var el = f.getEl();
         el.mask(PSI.Const.SAVING);
