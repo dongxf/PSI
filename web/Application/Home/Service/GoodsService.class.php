@@ -277,6 +277,21 @@ class GoodsService extends PSIBaseService {
 					return $this->bad("上级分类不能是自身");
 				}
 				
+				$tempParentId = $parentId;
+				while ( $tempParentId != null ) {
+					$sql = "select parent_id from t_goods_category where id = '%s' ";
+					$d = $db->query($sql, $tempParentId);
+					if ($d) {
+						$tempParentId = $d[0]["parent_id"];
+						
+						if ($tempParentId == $id) {
+							return $this->bad("不能选择下级分类作为上级分类");
+						}
+					} else {
+						$tempParentId = null;
+					}
+				}
+				
 				$sql = "select full_name from t_goods_category where id = '%s' ";
 				$data = $db->query($sql, $parentId);
 				$fullName = $name;
