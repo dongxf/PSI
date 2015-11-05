@@ -243,13 +243,21 @@ class GoodsService extends PSIBaseService {
 			$dataOrg = $us->getLoginUserDataOrg();
 			
 			if ($parentId) {
-				$sql = "insert into t_goods_category (id, code, name, data_org, parent_id)
-					values ('%s', '%s', '%s', '%s', '%s')";
-				$db->execute($sql, $id, $code, $name, $dataOrg, $parentId);
+				$sql = "select full_name from t_goods_category where id = '%s' ";
+				$data = $db->query($sql, $parentId);
+				$fullName = "";
+				if ($data) {
+					$fullName = $data[0]["full_name"];
+					$fullName .= "\\" . $name;
+				}
+				
+				$sql = "insert into t_goods_category (id, code, name, data_org, parent_id, full_name)
+					values ('%s', '%s', '%s', '%s', '%s', '%s')";
+				$db->execute($sql, $id, $code, $name, $dataOrg, $parentId, $fullName);
 			} else {
-				$sql = "insert into t_goods_category (id, code, name, data_org)
-					values ('%s', '%s', '%s', '%s')";
-				$db->execute($sql, $id, $code, $name, $dataOrg);
+				$sql = "insert into t_goods_category (id, code, name, data_org, full_name)
+					values ('%s', '%s', '%s', '%s', '%s')";
+				$db->execute($sql, $id, $code, $name, $dataOrg, $name);
 			}
 			
 			$log = "新增商品分类: 编码 = {$code}， 分类名称 = {$name}";
