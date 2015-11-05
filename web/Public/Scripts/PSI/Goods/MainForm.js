@@ -5,45 +5,6 @@ Ext.define("PSI.Goods.MainForm", {
     initComponent: function () {
         var me = this;
 
-        Ext.define("PSIGoodsCategory", {
-            extend: "Ext.data.Model",
-            fields: ["id", "code", "name", {name: "cnt", type: "int"}]
-        });
-
-        var categoryGrid = Ext.create("Ext.grid.Panel", {
-            viewConfig: {
-                enableTextSelection: true
-            },
-            title: "商品分类",
-            forceFit: true,
-            columnLines: true,
-            features: [{ftype: "summary"}],
-            columns: [
-                {header: "编码", dataIndex: "code", width: 80, menuDisabled: true, sortable: false},
-                {header: "类别", dataIndex: "name", flex: 1, menuDisabled: true, sortable: false,
-                    summaryRenderer: function() { return "商品种类数合计";}
-                },
-                {header: "商品种类数", dataIndex: "cnt", width: 80, align: "right", 
-                    menuDisabled: true, sortable: false, summaryType: "sum"}
-            ],
-            store: Ext.create("Ext.data.Store", {
-                model: "PSIGoodsCategory",
-                autoLoad: false,
-                data: []
-            }),
-            listeners: {
-                select: {
-                    fn: me.onCategoryGridSelect,
-                    scope: me
-                },
-                itemdblclick: {
-                    fn: me.onEditCategory,
-                    scope: me
-                }
-            }
-        });
-        me.categoryGrid = categoryGrid;
-
         var modelName = "PSIGoods";
         Ext.define(modelName, {
             extend: "Ext.data.Model",
@@ -276,7 +237,7 @@ Ext.define("PSI.Goods.MainForm", {
                             maxWidth: 350,
                             split: true,
                             border: 0,
-                            items: [categoryGrid]
+                            items: [me.getCategoryGrid()]
                         }]
                     }]
         });
@@ -361,7 +322,7 @@ Ext.define("PSI.Goods.MainForm", {
     },
     freshCategoryGrid: function (id) {
     	var me = this;
-        var grid = me.categoryGrid;
+        var grid = me.getCategoryGrid();
         var el = grid.getEl() || Ext.getBody();
         el.mask(PSI.Const.LOADING);
         Ext.Ajax.request({
@@ -393,7 +354,7 @@ Ext.define("PSI.Goods.MainForm", {
     },
     freshGoodsGrid: function () {
         var me = this;
-        var item = me.categoryGrid.getSelectionModel().getSelection();
+        var item = me.getCategoryGrid().getSelectionModel().getSelection();
         if (item == null || item.length != 1) {
             var grid = me.goodsGrid;
             grid.setTitle("商品列表");
@@ -413,7 +374,7 @@ Ext.define("PSI.Goods.MainForm", {
         me.freshGoodsGrid();
     },
     onAddGoods: function () {
-        if (this.categoryGrid.getStore().getCount() == 0) {
+        if (this.getCategoryGrid().getStore().getCount() == 0) {
             PSI.MsgBox.showInfo("没有商品分类，请先新增商品分类");
             return;
         }
@@ -425,7 +386,7 @@ Ext.define("PSI.Goods.MainForm", {
         form.show();
     },
     onEditGoods: function () {
-        var item = this.categoryGrid.getSelectionModel().getSelection();
+        var item = this.getCategoryGrid().getSelectionModel().getSelection();
         if (item == null || item.length != 1) {
             PSI.MsgBox.showInfo("请选择商品分类");
             return;
@@ -500,7 +461,7 @@ Ext.define("PSI.Goods.MainForm", {
     },
     gotoCategoryGridRecord: function (id) {
         var me = this;
-        var grid = me.categoryGrid;
+        var grid = me.getCategoryGrid();
         var store = grid.getStore();
         if (id) {
             var r = store.findExact("id", id);
@@ -526,14 +487,14 @@ Ext.define("PSI.Goods.MainForm", {
     },
     refreshCategoryCount: function() {
         var me = this;
-        var item = me.categoryGrid.getSelectionModel().getSelection();
+        var item = me.getCategoryGrid().getSelectionModel().getSelection();
         if (item == null || item.length != 1) {
             return;
         }
 
-        var category = item[0];
-        category.set("cnt", me.goodsGrid.getStore().getTotalCount());
-        me.categoryGrid.getStore().commitChanges();
+//        var category = item[0];
+//        category.set("cnt", me.goodsGrid.getStore().getTotalCount());
+//        me.categoryGrid.getStore().commitChanges();
     },
     
     onQueryEditSpecialKey: function (field, e) {
@@ -559,7 +520,7 @@ Ext.define("PSI.Goods.MainForm", {
 
     getQueryParam: function() {
     	var me = this;
-        var item = me.categoryGrid.getSelectionModel().getSelection();
+        var item = me.getCategoryGrid().getSelectionModel().getSelection();
         var categoryId;
         if (item == null || item.length != 1) {
             categoryId = null;
@@ -716,15 +677,95 @@ Ext.define("PSI.Goods.MainForm", {
     },
 
     onImportGoods: function () {
-        //if (this.categoryGrid.getStore().getCount() == 0) {
-        //    PSI.MsgBox.showInfo("没有商品分类，请先新增商品分类");
-        //    return;
-        //}
-
         var form = Ext.create("PSI.Goods.GoodsImportForm", {
             parentForm: this
         });
 
         form.show();
+    },
+    
+    getCategoryGrid: function() {
+    	var me = this;
+    	if (me.__categoryGrid) {
+    		return me.__categoryGrid;
+    	}
+
+    	var modelName = "PSIGoodsCategory";
+        Ext.define(modelName, {
+            extend: "Ext.data.Model",
+            fields: ["id", "text", "fullName", "code", "leaf", "children"]
+        });
+
+        var store = Ext.create("Ext.data.TreeStore", {
+            model: modelName,
+            proxy: {
+                type: "ajax",
+                actionMethods: {
+                    read: "POST"
+                },
+                url: PSI.Const.BASE_URL + "Home/Goods/allCategories"
+            }
+        });
+
+        store.on("load", me.onCategoryStoreLoad, me);
+
+        me.__categoryGrid = Ext.create("Ext.tree.Panel", {
+            title: "商品分类",
+            store: store,
+            rootVisible: false,
+            useArrows: true,
+            viewConfig: {
+                loadMask: true
+            },
+            columns: {
+                defaults: {
+                    sortable: false,
+                    menuDisabled: true,
+                    draggable: false
+                },
+                items: [{
+                        xtype: "treecolumn",
+                        text: "分类",
+                        dataIndex: "text",
+                        width: 220
+                    }, {
+                        text: "编码",
+                        dataIndex: "code",
+                        width: 100
+                    }]
+            },
+            listeners: {
+            	select: {
+            		fn: function (rowModel, record) {
+                        me.onCategoryTreeNodeSelect(record);
+                    },
+                    scope: me
+            	}
+            }
+        });
+        
+        me.categoryGrid = me.__categoryGrid;
+        
+        return me.__categoryGrid;
+    },
+    
+    onCategoryStoreLoad: function () {
+    	var me = this;
+        var tree = me.getCategoryGrid();
+        var root = tree.getRootNode();
+        if (root) {
+            var node = root.firstChild;
+            if (node) {
+                //me.onOrgTreeNodeSelect(node);
+            }
+        }
+    },
+    
+    onCategoryTreeNodeSelect: function(record) {
+    	if (!record) {
+    		return;
+    	}
+    	
+    	this.onCategoryGridSelect();
     }
 });

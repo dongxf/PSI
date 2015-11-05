@@ -125,7 +125,8 @@ class GoodsController extends Controller {
 			$params = array(
 					"id" => I("post.id"),
 					"code" => I("post.code"),
-					"name" => I("post.name")
+					"name" => I("post.name"),
+					"parentId" => I("post.parentId")
 			);
 			$gs = new GoodsService();
 			$this->ajaxReturn($gs->editCategory($params));

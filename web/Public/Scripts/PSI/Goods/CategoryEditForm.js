@@ -44,7 +44,7 @@ Ext.define("PSI.Goods.CategoryEditForm", {
             resizable: false,
             onEsc: Ext.emptyFn,
             width: 400,
-            height: 130,
+            height: 160,
             layout: "fit",
             items: [
                 {
@@ -97,6 +97,21 @@ Ext.define("PSI.Goods.CategoryEditForm", {
                                     scope: me
                                 }
                             }
+                        }, {
+                            id: "editParentCategory",
+                            fieldLabel: "上级分类",
+                            xtype: "psi_goodsparentcategoryfield",
+                            listeners: {
+                                specialkey: {
+                                    fn: me.onEditNameSpecialKey,
+                                    scope: me
+                                }
+                            }
+                        },
+                        {
+                        	id: "editParentCategoryId",
+                        	xtype: "hidden",
+                        	name: "parentId"
                         }
                     ],
                     buttons: buttons
@@ -118,6 +133,9 @@ Ext.define("PSI.Goods.CategoryEditForm", {
     // private
     onOK: function (thenAdd) {
         var me = this;
+        
+        Ext.getCmp("editParentCategoryId").setValue(Ext.getCmp("editParentCategory").getIdValue());
+        
         var f = Ext.getCmp("editForm");
         var el = f.getEl();
         el.mask(PSI.Const.SAVING);

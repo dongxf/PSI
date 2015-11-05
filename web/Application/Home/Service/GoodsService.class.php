@@ -101,51 +101,83 @@ class GoodsService extends PSIBaseService {
 		return $this->ok();
 	}
 
+	private function allCategoriesInternal($db, $parentId, $rs) {
+		$result = array();
+		$sql = "select id, code, name, full_name
+				from t_goods_category c
+				where (parent_id = '%s')
+				";
+		$queryParam = array();
+		$queryParam[] = $parentId;
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParam = array_merge($queryParam, $rs[1]);
+		}
+		
+		$sql .= " order by code";
+		$data = $db->query($sql, $queryParam);
+		foreach ( $data as $i => $v ) {
+			$id = $v["id"];
+			$result[$i]["id"] = $v["id"];
+			$result[$i]["text"] = $v["name"];
+			$result[$i]["code"] = $v["code"];
+			$fullName = $v["full_name"];
+			if (! $fullName) {
+				$fullName = $v["name"];
+			}
+			$result[$i]["fullName"] = $fullName;
+			
+			$children = $this->allCategoriesInternal($db, $id, $rs);
+			
+			$result[$i]["children"] = $children;
+			$result[$i]["leaf"] = count($children) == 0;
+			$result[$i]["expanded"] = true;
+		}
+		
+		return $result;
+	}
+
 	public function allCategories($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
 		
-		$code = $params["code"];
-		$name = $params["name"];
-		$spec = $params["spec"];
-		$barCode = $params["barCode"];
-		
-		$sql = "select c.id, c.code, c.name, count(g.id) as cnt 
+		$sql = "select id, code, name, full_name
 				from t_goods_category c
-				left join t_goods g 
-				on (c.id = g.category_id) ";
+				where (parent_id is null)
+				";
 		$queryParam = array();
-		if ($code) {
-			$sql .= " and (g.code like '%s') ";
-			$queryParam[] = "%{$code}%";
-		}
-		if ($name) {
-			$sql .= " and (g.name like '%s' or g.py like '%s') ";
-			$queryParam[] = "%{$name}%";
-			$queryParam[] = "%{$name}%";
-		}
-		if ($spec) {
-			$sql .= " and (g.spec like '%s')";
-			$queryParam[] = "%{$spec}%";
-		}
-		if ($barCode) {
-			$sql .= " and (g.bar_code = '%s') ";
-			$queryParam[] = $barCode;
-		}
-		
-		$p = array();
 		$ds = new DataOrgService();
-		$rs = $ds->buildSQL(FIdConst::GOODS, "c", $p);
+		$rs = $ds->buildSQL(FIdConst::GOODS, "c");
 		if ($rs) {
-			$sql .= " where " . $rs[0];
+			$sql .= " and " . $rs[0];
 			$queryParam = array_merge($queryParam, $rs[1]);
 		}
 		
-		$sql .= " group by c.id 
-				  order by c.code";
+		$sql .= " order by code";
 		
-		return M()->query($sql, $queryParam);
+		$db = M();
+		$data = $db->query($sql, $queryParam);
+		$result = array();
+		foreach ( $data as $i => $v ) {
+			$id = $v["id"];
+			$result[$i]["id"] = $v["id"];
+			$result[$i]["text"] = $v["name"];
+			$result[$i]["code"] = $v["code"];
+			$fullName = $v["full_name"];
+			if (! $fullName) {
+				$fullName = $v["name"];
+			}
+			$result[$i]["fullName"] = $fullName;
+			
+			$children = $this->allCategoriesInternal($db, $id, $rs);
+			
+			$result[$i]["children"] = $children;
+			$result[$i]["leaf"] = count($children) == 0;
+			$result[$i]["expanded"] = true;
+		}
+		
+		return $result;
 	}
 
 	public function editCategory($params) {
@@ -156,8 +188,19 @@ class GoodsService extends PSIBaseService {
 		$id = $params["id"];
 		$code = $params["code"];
 		$name = $params["name"];
+		$parentId = $params["parentId"];
 		
 		$db = M();
+		
+		if ($parentId) {
+			// 检查id是否存在
+			$sql = "select count(*) as cnt from t_goods_category where id = '%s' ";
+			$data = $db->query($sql, $parentId);
+			$cnt = $data[0]["cnt"];
+			if ($cnt != 1) {
+				return $this->bad("上级分类不存在");
+			}
+		}
 		
 		if ($id) {
 			// 编辑
@@ -192,9 +235,15 @@ class GoodsService extends PSIBaseService {
 			$us = new UserService();
 			$dataOrg = $us->getLoginUserDataOrg();
 			
-			$sql = "insert into t_goods_category (id, code, name, data_org) 
+			if ($parentId) {
+				$sql = "insert into t_goods_category (id, code, name, data_org, parent_id)
+					values ('%s', '%s', '%s', '%s', '%s')";
+				$db->execute($sql, $id, $code, $name, $dataOrg, $parentId);
+			} else {
+				$sql = "insert into t_goods_category (id, code, name, data_org)
 					values ('%s', '%s', '%s', '%s')";
-			$db->execute($sql, $id, $code, $name, $dataOrg);
+				$db->execute($sql, $id, $code, $name, $dataOrg);
+			}
 			
 			$log = "新增商品分类: 编码 = {$code}， 分类名称 = {$name}";
 			$bs = new BizlogService();
