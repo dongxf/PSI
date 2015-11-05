@@ -3,6 +3,7 @@
 namespace Home\Service;
 
 use Home\Common\FIdConst;
+
 /**
  * 库存建账Service
  *
@@ -77,7 +78,7 @@ class InitInventoryService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		$sql = "select id, code, name from t_goods_category ";
+		$sql = "select id, code, name, full_name from t_goods_category ";
 		$queryParams = array();
 		
 		$ds = new DataOrgService();
@@ -89,7 +90,20 @@ class InitInventoryService extends PSIBaseService {
 		
 		$sql .= " order by code";
 		
-		return M()->query($sql, $queryParams);
+		$result = array();
+		$db = M();
+		$data = $db->query($sql, $queryParams);
+		foreach ( $data as $i => $v ) {
+			$result[$i]["id"] = $v["id"];
+			$result[$i]["code"] = $v["code"];
+			$fullName = $v["full_name"];
+			if (! $fullName) {
+				$fullName = $v["name"];
+			}
+			$result[$i]["name"] = $fullName;
+		}
+		
+		return $result;
 	}
 
 	public function goodsList($params) {
