@@ -103,7 +103,7 @@ Ext.define("PSI.Goods.CategoryEditForm", {
                             xtype: "psi_goodsparentcategoryfield",
                             listeners: {
                                 specialkey: {
-                                    fn: me.onEditNameSpecialKey,
+                                    fn: me.onEditCategorySpecialKey,
                                     scope: me
                                 }
                             }
@@ -174,6 +174,11 @@ Ext.define("PSI.Goods.CategoryEditForm", {
         }
     },
     onEditNameSpecialKey: function (field, e) {
+        if (e.getKey() == e.ENTER) {
+        	Ext.getCmp("editParentCategory").focus();
+        }
+    },
+    onEditCategorySpecialKey: function (field, e) {
         if (e.getKey() == e.ENTER) {
             var f = Ext.getCmp("editForm");
             if (f.getForm().isValid()) {
