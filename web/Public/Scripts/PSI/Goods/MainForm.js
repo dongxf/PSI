@@ -280,15 +280,8 @@ Ext.define("PSI.Goods.MainForm", {
         var category = item[0];
 
         var store = me.categoryGrid.getStore();
-        var index = store.findExact("id", category.get("id"));
-        index--;
-        var preIndex = null;
-        var preItem = store.getAt(index);
-        if (preItem) {
-            preIndex = preItem.get("id");
-        }
 
-        var info = "请确认是否删除商品分类: <span style='color:red'>" + category.get("name") + "</span>";
+        var info = "请确认是否删除商品分类: <span style='color:red'>" + category.get("text") + "</span>";
         var me = this;
         PSI.MsgBox.confirm(info, function () {
             var el = Ext.getBody();
@@ -304,7 +297,7 @@ Ext.define("PSI.Goods.MainForm", {
                         var data = Ext.JSON.decode(response.responseText);
                         if (data.success) {
                             PSI.MsgBox.tip("成功完成删除操作")
-                            me.freshCategoryGrid(preIndex);
+                            me.freshCategoryGrid();
                         } else {
                             PSI.MsgBox.showInfo(data.msg);
                         }
