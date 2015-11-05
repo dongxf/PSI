@@ -2,6 +2,8 @@
 
 namespace Home\Service;
 
+use Home\Common\FIdConst;
+
 /**
  * 采购入库Service
  *
@@ -37,6 +39,13 @@ class PWBillService extends PSIBaseService {
 				from t_pw_bill p, t_warehouse w, t_supplier s, t_user u1, t_user u2 
 				where (p.warehouse_id = w.id) and (p.supplier_id = s.id) 
 				and (p.biz_user_id = u1.id) and (p.input_user_id = u2.id) ";
+		
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::PURCHASE_WAREHOUSE, "p");
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = $rs[1];
+		}
 		
 		if ($billStatus != - 1) {
 			$sql .= " and (p.bill_status = %d) ";
@@ -93,6 +102,12 @@ class PWBillService extends PSIBaseService {
 				where (p.warehouse_id = w.id) and (p.supplier_id = s.id) 
 				and (p.biz_user_id = u1.id) and (p.input_user_id = u2.id)";
 		$queryParams = array();
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::PURCHASE_WAREHOUSE, "p");
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = $rs[1];
+		}
 		if ($billStatus != - 1) {
 			$sql .= " and (p.bill_status = %d) ";
 			$queryParams[] = $billStatus;
