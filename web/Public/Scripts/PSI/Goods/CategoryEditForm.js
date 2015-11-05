@@ -194,8 +194,37 @@ Ext.define("PSI.Goods.CategoryEditForm", {
         }
     },
     onWndShow: function() {
+    	var me = this;
         var editCode = Ext.getCmp("editCode");
         editCode.focus();
         editCode.setValue(editCode.getValue());
+        
+        if (!me.getEntity()) {
+        	return;
+        }
+        
+        var el = me.getEl();
+        el.mask(PSI.Const.LOADING);
+        Ext.Ajax.request({
+            url: PSI.Const.BASE_URL + "Home/Goods/getCategoryInfo",
+            params: {
+            	id: me.getEntity().get("id")
+            },
+            method: "POST",
+            callback: function (options, success, response) {
+                if (success) {
+                    var data = Ext.JSON.decode(response.responseText);
+
+                    if (data.code) {
+                        Ext.getCmp("editCode").setValue(data.code);
+                        Ext.getCmp("editName").setValue(data.name);
+                        Ext.getCmp("editParentCategory").setIdValue(data.parentId);
+                        Ext.getCmp("editParentCategory").setValue(data.parentName);
+                    }
+                }
+
+                el.unmask();
+            }
+        });
     }
 });

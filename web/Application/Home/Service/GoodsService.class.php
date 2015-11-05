@@ -179,23 +179,24 @@ class GoodsService extends PSIBaseService {
 		
 		return $result;
 	}
-	
+
 	/**
 	 * 同步子分类的full_name字段
-	 * @param unknown $db
-	 * @param unknown $id
+	 *
+	 * @param unknown $db        	
+	 * @param unknown $id        	
 	 */
 	private function updateSubCategoryFullName($db, $id) {
 		$sql = "select full_name from t_goods_category where id = '%s' ";
 		$data = $db->query($sql, $id);
-		if (!$data) {
+		if (! $data) {
 			return;
 		}
 		
 		$fullName = $data[0]["full_name"];
 		$sql = "select id, name from t_goods_category where parent_id = '%s' ";
 		$data = $db->query($sql, $id);
-		foreach ($data as $v) {
+		foreach ( $data as $v ) {
 			$subId = $v["id"];
 			$name = $v["name"];
 			
@@ -207,6 +208,36 @@ class GoodsService extends PSIBaseService {
 			
 			$this->updateSubCategoryFullName($db, $subId); // 递归调用自身
 		}
+	}
+
+	public function getCategoryInfo($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$id = $params["id"];
+		$result = array();
+		
+		$db = M();
+		$sql = "select code, name, parent_id from t_goods_category
+				where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if ($data) {
+			$v = $data[0];
+			$result["code"] = $v["code"];
+			$result["name"] = $v["name"];
+			$parentId = $v["parent_id"];
+			$result["parentId"] = $parentId;
+			if ($parentId) {
+				$sql = "select full_name from t_goods_category where id = '%s' ";
+				$data = $db->query($sql, $parentId);
+				$result["parentName"] = $data[0]["full_name"];
+			} else {
+				$result["parentName"] = null;
+			}
+		}
+		
+		return $result;
 	}
 
 	public function editCategory($params) {

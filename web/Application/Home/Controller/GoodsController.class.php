@@ -134,6 +134,19 @@ class GoodsController extends Controller {
 	}
 
 	/**
+	 * 获得某个分类的信息
+	 */
+	public function getCategoryInfo() {
+		if (IS_POST) {
+			$params = array(
+					"id" => I("post.id")
+			);
+			$gs = new GoodsService();
+			$this->ajaxReturn($gs->getCategoryInfo($params));
+		}
+	}
+
+	/**
 	 * 删除商品分类
 	 */
 	public function deleteCategory() {
@@ -299,22 +312,24 @@ class GoodsController extends Controller {
 		}
 	}
 
-	public function importGoods(){
-		if(IS_POST){
+	public function importGoods() {
+		if (IS_POST) {
 			$upload = new \Think\Upload();
-//			$upload->maxSize = 3145728;
-			$upload->exts = array('xls','xlsx');//允许上传的文件后缀
-			$upload->savePath = '/Goods/';//保存路径
-			//先上传文件
+			// $upload->maxSize = 3145728;
+			$upload->exts = array(
+					'xls',
+					'xlsx'
+			); // 允许上传的文件后缀
+			$upload->savePath = '/Goods/'; // 保存路径
+			                               // 先上传文件
 			$fileInfo = $upload->uploadOne($_FILES['goodsFile']);
-			if( ! $fileInfo ){
+			if (! $fileInfo) {
 				$this->error($upload->getError());
-			}
-			else {
-				$uploadGoodsFile = './Uploads' . $fileInfo['savepath'] . $fileInfo['savename'];//获取上传到服务器文件路径
-				$uploadFileExt = $fileInfo['ext'];//上传文件扩展名
+			} else {
+				$uploadGoodsFile = './Uploads' . $fileInfo['savepath'] . $fileInfo['savename']; // 获取上传到服务器文件路径
+				$uploadFileExt = $fileInfo['ext']; // 上传文件扩展名
 				$gis = new GoodsImportService();
-				$this->ajaxReturn($gis->importGoodsFromExcelFile($uploadGoodsFile,$uploadFileExt));
+				$this->ajaxReturn($gis->importGoodsFromExcelFile($uploadGoodsFile, $uploadFileExt));
 			}
 		}
 	}
