@@ -183,6 +183,7 @@ CREATE TABLE IF NOT EXISTS `t_goods_category` (
   `code` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
   `parent_id` varchar(255) DEFAULT NULL,
+  `full_name` varchar(1000) DEFAULT NULL,
   `data_org` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -250,6 +251,9 @@ CREATE TABLE IF NOT EXISTS `t_inventory` (
   `out_count` decimal(19,2) DEFAULT NULL,
   `out_money` decimal(19,2) DEFAULT NULL,
   `out_price` decimal(19,2) DEFAULT NULL,
+  `afloat_count` decimal(19,2) DEFAULT NULL,
+  `afloat_money` decimal(19,2) DEFAULT NULL,
+  `afloat_price` decimal(19,2) DEFAULT NULL,
   `warehouse_id` varchar(255) NOT NULL,
   `data_org` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
