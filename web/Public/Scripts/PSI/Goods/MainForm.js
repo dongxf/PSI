@@ -245,8 +245,6 @@ Ext.define("PSI.Goods.MainForm", {
         me.callParent(arguments);
         
         me.__queryEditNameList = ["editQueryCode", "editQueryName", "editQuerySpec", "editQueryBarCode"];
-
-        me.freshCategoryGrid(null, true);
     },
     onAddCategory: function () {
         var form = Ext.create("PSI.Goods.CategoryEditForm", {
@@ -322,35 +320,8 @@ Ext.define("PSI.Goods.MainForm", {
     },
     freshCategoryGrid: function (id) {
     	var me = this;
-        var grid = me.getCategoryGrid();
-        var el = grid.getEl() || Ext.getBody();
-        el.mask(PSI.Const.LOADING);
-        Ext.Ajax.request({
-            url: PSI.Const.BASE_URL + "Home/Goods/allCategories",
-            method: "POST",
-            params: me.getQueryParam(),
-            callback: function (options, success, response) {
-                var store = grid.getStore();
-
-                store.removeAll();
-
-                if (success) {
-                    var data = Ext.JSON.decode(response.responseText);
-                    store.add(data);
-
-                    if (id) {
-                        var r = store.findExact("id", id);
-                        if (r != -1) {
-                            grid.getSelectionModel().select(r);
-                        }
-                    } else {
-                        grid.getSelectionModel().select(0);
-                    }
-                }
-
-                el.unmask();
-            }
-        });
+    	var store = me.getCategoryGrid().getStore();
+    	store.load();
     },
     freshGoodsGrid: function () {
         var me = this;

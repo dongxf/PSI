@@ -185,7 +185,7 @@ Ext.define("PSI.Goods.CategoryEditForm", {
     },
     onWndClose: function () {
         if (this.__lastId) {
-            this.getParentForm().freshCategoryGrid(this.__lastId);
+            this.getParentForm().freshCategoryGrid();
         }
     },
     onWndShow: function() {
