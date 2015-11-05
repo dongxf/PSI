@@ -212,10 +212,17 @@ class GoodsService extends PSIBaseService {
 				return $this->bad("编码为 [{$code}] 的分类已经存在");
 			}
 			
-			$sql = "update t_goods_category
-					set code = '%s', name = '%s' 
+			if ($parentId) {
+				$sql = "update t_goods_category
+					set code = '%s', name = '%s', parent_id = '%s'
 					where id = '%s' ";
-			$db->execute($sql, $code, $name, $id);
+				$db->execute($sql, $code, $name, $parentId, $id);
+			} else {
+				$sql = "update t_goods_category
+					set code = '%s', name = '%s', parent_id = null
+					where id = '%s' ";
+				$db->execute($sql, $code, $name, $id);
+			}
 			
 			$log = "编辑商品分类: 编码 = {$code}， 分类名称 = {$name}";
 			$bs = new BizlogService();
