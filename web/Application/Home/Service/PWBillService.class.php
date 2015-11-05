@@ -366,6 +366,18 @@ class PWBillService extends PSIBaseService {
 			}
 		}
 		
+		// 同步库存账中的在途库存
+		$sql = "select goods_id
+				from t_pw_bill_detail
+				where pwbill_id = '%s' 
+				order by show_order";
+		$data = $db->query($sql, $id);
+		foreach ( $data as $v ) {
+			$goodsId = $v["goods_id"];
+			
+			$this->updateAfloatInventory($db, $warehouseId, $goodsId);
+		}
+		
 		return $this->ok($id);
 	}
 
@@ -532,7 +544,7 @@ class PWBillService extends PSIBaseService {
 		}
 		
 		$db = M();
-		$sql = "select ref, bill_status from t_pw_bill where id = '%s' ";
+		$sql = "select ref, bill_status, warehouse_id from t_pw_bill where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if (! $data) {
 			return $this->bad("要删除的采购入库单不存在");
@@ -541,6 +553,17 @@ class PWBillService extends PSIBaseService {
 		$billStatus = $data[0]["bill_status"];
 		if ($billStatus != 0) {
 			return $this->bad("当前采购入库单已经提交入库，不能删除");
+		}
+		$warehouseId = $data[0]["warehouse_id"];
+		
+		$sql = "select goods_id
+				from t_pw_bill_detail
+				where pwbill_id = '%s'
+				order by show_order";
+		$data = $db->query($sql, $id);
+		$goodsIdList = array();
+		foreach ( $data as $v ) {
+			$goodsIdList[] = $v["goods_id"];
 		}
 		
 		$db->startTrans();
@@ -563,6 +586,13 @@ class PWBillService extends PSIBaseService {
 		} catch ( Exception $exc ) {
 			$db->rollback();
 			return $this->bad("数据库错误，请联系管理员");
+		}
+		
+		// 同步库存账中的在途库存
+		foreach ( $goodsIdList as $v ) {
+			$goodsId = $v;
+			
+			$this->updateAfloatInventory($db, $warehouseId, $goodsId);
 		}
 		
 		return $this->ok();
@@ -860,6 +890,66 @@ class PWBillService extends PSIBaseService {
 			return $this->bad("数据库操作错误，请联系管理员");
 		}
 		
+		// 同步库存账中的在途库存
+		$sql = "select goods_id
+				from t_pw_bill_detail
+				where pwbill_id = '%s' 
+				order by show_order";
+		$data = $db->query($sql, $id);
+		foreach ( $data as $v ) {
+			$goodsId = $v["goods_id"];
+			
+			$this->updateAfloatInventory($db, $warehouseId, $goodsId);
+		}
+		
 		return $this->ok($id);
+	}
+
+	/**
+	 * 同步在途库存
+	 */
+	private function updateAfloatInventory($db, $warehouseId, $goodsId) {
+		$sql = "select sum(pd.goods_count) as goods_count, sum(pd.goods_money) as goods_money
+				from t_pw_bill p, t_pw_bill_detail pd
+				where p.id = pd.pwbill_id 
+					and p.warehouse_id = '%s' 
+					and pd.goods_id = '%s'
+					and p.bill_status = 0 ";
+		
+		$data = $db->query($sql, $warehouseId, $goodsId);
+		$count = 0;
+		$price = 0;
+		$money = 0;
+		if ($data) {
+			$count = $data[0]["goods_count"];
+			if (! $count) {
+				$count = 0;
+			}
+			$money = $data[0]["goods_money"];
+			if (! $money) {
+				$money = 0;
+			}
+			
+			if ($count !== 0) {
+				$price = $money / $count;
+			}
+		}
+		
+		$sql = "select id from t_inventory where warehouse_id = '%s' and goods_id = '%s' ";
+		$data = $db->query($sql, $warehouseId, $goodsId);
+		if (! $data) {
+			// 首次有库存记录
+			$sql = "insert into t_inventory (warehouse_id, goods_id, afloat_count, afloat_price,
+						afloat_money, balance_count, balance_price, balance_money)
+					values ('%s', '%s', %d, %f, %f, 0, 0, 0)";
+			return $db->execute($sql, $warehouseId, $goodsId, $count, $price, $money);
+		} else {
+			$sql = "update t_inventory
+					set afloat_count = %d, afloat_price = %f, afloat_money = %f
+					where warehouse_id = '%s' and goods_id = '%s' ";
+			return $db->execute($sql, $count, $price, $money, $warehouseId, $goodsId);
+		}
+		
+		return true;
 	}
 }

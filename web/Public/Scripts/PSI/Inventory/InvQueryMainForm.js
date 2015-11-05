@@ -221,20 +221,17 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 				header : "商品编码",
 				dataIndex : "goodsCode",
 				menuDisabled : true,
-				sortable : false,
-				locked: true
+				sortable : false
 			}, {
 				header : "商品名称",
 				dataIndex : "goodsName",
 				menuDisabled : true,
-				sortable : false,
-				locked: true
+				sortable : false
 			}, {
 				header : "规格型号",
 				dataIndex : "goodsSpec",
 				menuDisabled : true,
-				sortable : false,
-				locked: true
+				sortable : false
 			}, {
 				header : "商品单位",
 				dataIndex : "unitName",
