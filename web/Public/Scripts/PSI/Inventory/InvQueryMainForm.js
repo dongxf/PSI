@@ -18,7 +18,7 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 			fields : [ "id", "goodsId", "goodsCode", "goodsName", "goodsSpec",
 					"unitName", "inCount", "inPrice", "inMoney", "outCount",
 					"outPrice", "outMoney", "balanceCount", "balancePrice",
-					"balanceMoney" ]
+					"balanceMoney", "afloatCount", "afloatMoney", "afloatPrice" ]
 		});
 
 		Ext.define("PSIInventoryDetail", {
@@ -221,23 +221,48 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 				header : "商品编码",
 				dataIndex : "goodsCode",
 				menuDisabled : true,
-				sortable : false
+				sortable : false,
+				locked: true
 			}, {
 				header : "商品名称",
 				dataIndex : "goodsName",
 				menuDisabled : true,
-				sortable : false
+				sortable : false,
+				locked: true
 			}, {
 				header : "规格型号",
 				dataIndex : "goodsSpec",
 				menuDisabled : true,
-				sortable : false
+				sortable : false,
+				locked: true
 			}, {
 				header : "商品单位",
 				dataIndex : "unitName",
 				menuDisabled : true,
 				sortable : false,
 				width : 60
+			}, {
+				header : "在途数量",
+				align : "right",
+				dataIndex : "afloatCount",
+				menuDisabled : true,
+				sortable : false,
+				xtype: "numbercolumn",
+				format: "0"
+			}, {
+				header : "在途单价",
+				align : "right",
+				xtype : "numbercolumn",
+				dataIndex : "afloatPrice",
+				menuDisabled : true,
+				sortable : false
+			}, {
+				header : "在途金额",
+				align : "right",
+				xtype : "numbercolumn",
+				dataIndex : "afloatMoney",
+				menuDisabled : true,
+				sortable : false
 			}, {
 				header : "入库数量",
 				align : "right",

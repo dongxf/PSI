@@ -49,7 +49,8 @@ class InventoryService extends PSIBaseService {
 		
 		$sql = "select g.id, g.code, g.name, g.spec, u.name as unit_name,
 				 v.in_count, v.in_price, v.in_money, v.out_count, v.out_price, v.out_money,
-				 v.balance_count, v.balance_price, v.balance_money 
+				 v.balance_count, v.balance_price, v.balance_money, v.afloat_count,
+					v.afloat_money, v.afloat_price
 				from t_inventory v, t_goods g, t_goods_unit u
 				where (v.warehouse_id = '%s') and (v.goods_id = g.id) and (g.unit_id = u.id) ";
 		if ($code) {
@@ -89,6 +90,9 @@ class InventoryService extends PSIBaseService {
 			$result[$i]["balanceCount"] = $v["balance_count"];
 			$result[$i]["balancePrice"] = $v["balance_price"];
 			$result[$i]["balanceMoney"] = $v["balance_money"];
+			$result[$i]["afloatCount"] = $v["afloat_count"];
+			$result[$i]["afloatPrice"] = $v["afloat_price"];
+			$result[$i]["afloatMoney"] = $v["afloat_money"];
 		}
 		
 		$queryParams = array();
