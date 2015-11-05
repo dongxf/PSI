@@ -648,9 +648,17 @@ class GoodsService extends PSIBaseService {
 				from t_warehouse w
 				left join t_goods_si s
 				on w.id = s.warehouse_id and s.goods_id = '%s'
-				where w.inited = 1
-				order by w.code";
-		$data = $db->query($sql, $id);
+				where w.inited = 1 ";
+		$queryParams = array();
+		$queryParams[] = $id;
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::GOODS, "w");
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = array_merge($queryParams, $rs[1]);
+		}
+		$sql .= " order by w.code";
+		$data = $db->query($sql, $queryParams);
 		$r = array();
 		foreach ( $data as $i => $v ) {
 			$r[$i]["warehouseId"] = $v["warehouse_id"];
