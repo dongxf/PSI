@@ -179,6 +179,35 @@ class GoodsService extends PSIBaseService {
 		
 		return $result;
 	}
+	
+	/**
+	 * 同步子分类的full_name字段
+	 * @param unknown $db
+	 * @param unknown $id
+	 */
+	private function updateSubCategoryFullName($db, $id) {
+		$sql = "select full_name from t_goods_category where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if (!$data) {
+			return;
+		}
+		
+		$fullName = $data[0]["full_name"];
+		$sql = "select id, name from t_goods_category where parent_id = '%s' ";
+		$data = $db->query($sql, $id);
+		foreach ($data as $v) {
+			$subId = $v["id"];
+			$name = $v["name"];
+			
+			$subFullName = $fullName . "\\" . $name;
+			$sql = "update t_goods_category
+					set full_name = '%s'
+					where id = '%s' ";
+			$db->execute($sql, $subFullName, $subId);
+			
+			$this->updateSubCategoryFullName($db, $subId); // 递归调用自身
+		}
+	}
 
 	public function editCategory($params) {
 		if ($this->isNotOnline()) {
@@ -213,16 +242,26 @@ class GoodsService extends PSIBaseService {
 			}
 			
 			if ($parentId) {
+				$sql = "select full_name from t_goods_category where id = '%s' ";
+				$data = $db->query($sql, $parentId);
+				$fullName = $name;
+				if ($data) {
+					$fullName = $data[0]["full_name"] . "\\" . $name;
+				}
+				
 				$sql = "update t_goods_category
-					set code = '%s', name = '%s', parent_id = '%s'
+					set code = '%s', name = '%s', parent_id = '%s', full_name = '%s'
 					where id = '%s' ";
-				$db->execute($sql, $code, $name, $parentId, $id);
+				$db->execute($sql, $code, $name, $parentId, $fullName, $id);
 			} else {
 				$sql = "update t_goods_category
-					set code = '%s', name = '%s', parent_id = null
+					set code = '%s', name = '%s', parent_id = null, full_name = '%s'
 					where id = '%s' ";
-				$db->execute($sql, $code, $name, $id);
+				$db->execute($sql, $code, $name, $name, $id);
 			}
+			
+			// 同步子分类的full_name字段
+			$this->updateSubCategoryFullName($db, $id);
 			
 			$log = "编辑商品分类: 编码 = {$code}， 分类名称 = {$name}";
 			$bs = new BizlogService();
