@@ -184,9 +184,9 @@ Ext.define("PSI.Goods.GoodsEditForm", {
                         },
                         {
                             fieldLabel: "销售价",
-                            allowBlank: false,
-                            blankText: "没有输入销售价",
-                            beforeLabelTextTpl: PSI.Const.REQUIRED,
+//                            allowBlank: false,
+//                            blankText: "没有输入销售价",
+//                            beforeLabelTextTpl: PSI.Const.REQUIRED,
                             xtype: "numberfield",
                             hideTrigger: true,
                             name: "salePrice",
