@@ -8,7 +8,7 @@ namespace Home\Service;
  * @author 李静波
  */
 class UpdateDBService extends PSIBaseService {
-	private $CURRENT_DB_VERSION = "20151106-001";
+	private $CURRENT_DB_VERSION = "20151106-002";
 
 	private function tableExists($db, $tableName) {
 		$dbName = C('DB_NAME');
@@ -85,6 +85,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20151102_01($db);
 		$this->update_20151105_01($db);
 		$this->update_20151106_01($db);
+		$this->update_20151106_02($db);
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -96,6 +97,21 @@ class UpdateDBService extends PSIBaseService {
 		$bl->insertBizlog("升级数据库，数据库版本 = " . $this->CURRENT_DB_VERSION);
 		
 		return $this->ok();
+	}
+
+	private function update_20151106_02($db) {
+		// 本次更新：业务设置去掉仓库设置组织结构；增加存货计价方法
+		$sql = "delete from t_config where id = '1003-01' ";
+		$db->execute($sql);
+		
+		$sql = "select count(*) as cnt from t_config where id = '1003-02' ";
+		$data = $db->query($sql);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_config(id, name, value, note, show_order)
+					values ('1003-02', '存货计价方法', '0', '', 401)";
+			$db->execute($sql);
+		}
 	}
 
 	private function update_20151106_01($db) {

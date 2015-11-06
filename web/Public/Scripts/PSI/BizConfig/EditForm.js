@@ -153,21 +153,21 @@ Ext.define("PSI.BizConfig.EditForm", {
 				        	 ]
 				         },
 				         {
-				        	 title: "库存",
+				        	 title: "存货",
 				        	 layout: "form",
 				        	 iconCls: "PSI-fid1003",
 				        	 items: [{
-									id : "editName1003-01",
+									id : "editName1003-02",
 									xtype : "displayfield"
 								}, {
-									id : "editValue1003-01",
+									id : "editValue1003-02",
 									xtype : "combo",
 									queryMode : "local",
 									editable : false,
 									valueField : "id",
 									store : Ext.create("Ext.data.ArrayStore", {
 										fields : [ "id", "text" ],
-										data : [ [ "0", "仓库不需指定组织机构" ], [ "1", "仓库需指定组织机构" ] ]
+										data : [ [ "0", "移动平均法" ], [ "1", "先进先出法" ] ]
 									}),
 									name : "value1003-01"
 								}
@@ -226,7 +226,7 @@ Ext.define("PSI.BizConfig.EditForm", {
 				'value9000-03': Ext.getCmp("editValue9000-03").getValue(),
 				'value9000-04': Ext.getCmp("editValue9000-04").getValue(),
 				'value9000-05': Ext.getCmp("editValue9000-05").getValue(),
-				'value1003-01': Ext.getCmp("editValue1003-01").getValue(),
+				'value1003-02': Ext.getCmp("editValue1003-02").getValue(),
 				'value2001-01': Ext.getCmp("editValue2001-01").getValue(),
 				'value2002-01': Ext.getCmp("editValue2002-01").getValue(),
 				'value2002-02': Ext.getCmp("editValue2002-02").getValue(),

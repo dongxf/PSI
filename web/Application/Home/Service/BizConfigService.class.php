@@ -31,8 +31,8 @@ class BizConfigService extends PSIBaseService {
 			
 			if ($id == "1001-01") {
 				$result[$i]["displayValue"] = $v["value"] == 1 ? "使用不同计量单位" : "使用同一个计量单位";
-			} else if ($id == "1003-01") {
-				$result[$i]["displayValue"] = $v["value"] == 1 ? "仓库需指定组织机构" : "仓库不需指定组织机构";
+			} else if ($id == "1003-02") {
+				$result[$i]["displayValue"] = $v["value"] == 0 ? "移动平均法" : "先进先出法";
 			} else if ($id == "2002-01") {
 				$result[$i]["displayValue"] = $v["value"] == 1 ? "允许编辑销售单价" : "不允许编辑销售单价";
 			} else if ($id == "2001-01" || $id == "2002-02") {
@@ -84,6 +84,8 @@ class BizConfigService extends PSIBaseService {
 			return $this->notOnlineError();
 		}
 		
+		$db = M();
+		
 		// 检查值是否合法
 		foreach ( $params as $key => $value ) {
 			if ($key == "9001-01") {
@@ -101,9 +103,28 @@ class BizConfigService extends PSIBaseService {
 					$value = "开源进销存PSI";
 				}
 			}
+			
+			if ($key == "1003-02") {
+				// 存货计价方法
+				$sql = "select name, value from t_config where id = '%s' ";
+				$data = $db->query($sql, $key);
+				if (! $data) {
+					continue;
+				}
+				$oldValue = $data[0]["value"];
+				if ($value == $oldValue) {
+					continue;
+				}
+				
+				$sql = "select count(*) as cnt from t_inventory_detail
+						where ref_type <> '库存建账' ";
+				$data = $db->query($sql);
+				$cnt = $data[0]["cnt"];
+				if ($cnt > 0) {
+					return $this->bad("已经有业务发生，不能再调整存货计价方法");
+				}
+			}
 		}
-		
-		$db = M();
 		
 		foreach ( $params as $key => $value ) {
 			$sql = "select name, value from t_config where id = '%s' ";
@@ -133,8 +154,8 @@ class BizConfigService extends PSIBaseService {
 				where id = '%s' ";
 			$db->execute($sql, $value, $key);
 			
-			if ($key == "1003-01") {
-				$v = $value == 1 ? "仓库需指定组织机构" : "仓库不需指定组织机构";
+			if ($key == "1003-02") {
+				$v = $value == 0 ? "移动平均法" : "先进先出法";
 				$log = "把[{$itemName}]设置为[{$v}]";
 				$bs = new BizlogService();
 				$bs->insertBizlog($log, "业务设置");

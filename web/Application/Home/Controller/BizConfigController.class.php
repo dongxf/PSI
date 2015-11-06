@@ -73,7 +73,7 @@ class BizConfigController extends Controller {
 					"9000-03" => I("post.value9000-03"),
 					"9000-04" => I("post.value9000-04"),
 					"9000-05" => I("post.value9000-05"),
-					"1003-01" => I("post.value1003-01"),
+					"1003-02" => I("post.value1003-02"),
 					"2001-01" => I("post.value2001-01"),
 					"2002-01" => I("post.value2002-01"),
 					"2002-02" => I("post.value2002-02"),
