@@ -165,8 +165,8 @@ INSERT INTO `t_permission` (`id`, `fid`, `name`, `note`) VALUES
 ('2027-02', '2027-02', '采购订单 - 生成采购入库单', '采购订单 - 生成采购入库单');
 
 TRUNCATE TABLE `t_role`;
-INSERT INTO `t_role` (`id`, `name`) VALUES
-('A83F617E-A153-11E4-A9B8-782BCBD7746B', '系统管理');
+INSERT INTO `t_role` (`id`, `name`, `data_org`) VALUES
+('A83F617E-A153-11E4-A9B8-782BCBD7746B', '系统管理', '01010001');
 
 TRUNCATE TABLE `t_role_permission`;
 INSERT INTO `t_role_permission` (`role_id`, `permission_id`) VALUES

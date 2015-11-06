@@ -47,6 +47,12 @@ class UserService extends PSIBaseService {
 		}
 		
 		$userId = $this->getLoginUserId();
+		
+		if ($userId == DemoConst::ADMIN_USER_ID) {
+			// admin 用户是超级管理员
+			return true;
+		}
+		
 		$sql = "select count(*) as cnt 
 				from  t_role_user ru, t_role_permission rp, t_permission p 
 				where ru.user_id = '%s' and ru.role_id = rp.role_id 
