@@ -743,6 +743,45 @@ CREATE TABLE IF NOT EXISTS `t_role_permission_dataorg` (
   `data_org` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `t_inventory_fifo`;
+CREATE TABLE IF NOT EXISTS `t_inventory_fifo` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `balance_count` decimal(19,2) NOT NULL,
+  `balance_money` decimal(19,2) NOT NULL,
+  `balance_price` decimal(19,2) NOT NULL,
+  `date_created` datetime DEFAULT NULL,
+  `goods_id` varchar(255) NOT NULL,
+  `in_count` decimal(19,2) DEFAULT NULL,
+  `in_money` decimal(19,2) DEFAULT NULL,
+  `in_price` decimal(19,2) DEFAULT NULL,
+  `out_count` decimal(19,2) DEFAULT NULL,
+  `out_money` decimal(19,2) DEFAULT NULL,
+  `out_price` decimal(19,2) DEFAULT NULL,
+  `in_ref` varchar(255) DEFAULT NULL,
+  `in_ref_type` varchar(255) NOT NULL,
+  `warehouse_id` varchar(255) NOT NULL,
+  `data_org` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+DROP TABLE IF EXISTS `t_inventory_fifo_detail`;
+CREATE TABLE IF NOT EXISTS `t_inventory_fifo_detail` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `balance_count` decimal(19,2) NOT NULL,
+  `balance_money` decimal(19,2) NOT NULL,
+  `balance_price` decimal(19,2) NOT NULL,
+  `date_created` datetime DEFAULT NULL,
+  `goods_id` varchar(255) NOT NULL,
+  `in_count` decimal(19,2) DEFAULT NULL,
+  `in_money` decimal(19,2) DEFAULT NULL,
+  `in_price` decimal(19,2) DEFAULT NULL,
+  `out_count` decimal(19,2) DEFAULT NULL,
+  `out_money` decimal(19,2) DEFAULT NULL,
+  `out_price` decimal(19,2) DEFAULT NULL,
+  `warehouse_id` varchar(255) NOT NULL,
+  `data_org` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
