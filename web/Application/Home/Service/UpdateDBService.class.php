@@ -8,7 +8,7 @@ namespace Home\Service;
  * @author 李静波
  */
 class UpdateDBService extends PSIBaseService {
-	private $CURRENT_DB_VERSION = "20151105-001";
+	private $CURRENT_DB_VERSION = "20151106-001";
 
 	private function tableExists($db, $tableName) {
 		$dbName = C('DB_NAME');
@@ -84,6 +84,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20151031_01($db);
 		$this->update_20151102_01($db);
 		$this->update_20151105_01($db);
+		$this->update_20151106_01($db);
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -95,6 +96,57 @@ class UpdateDBService extends PSIBaseService {
 		$bl->insertBizlog("升级数据库，数据库版本 = " . $this->CURRENT_DB_VERSION);
 		
 		return $this->ok();
+	}
+
+	private function update_20151106_01($db) {
+		// 本次更新：先进先出，新增数据库表
+		$tableName = "t_inventory_fifo";
+		if (! $this->tableExists($db, $tableName)) {
+			$sql = "CREATE TABLE IF NOT EXISTS `t_inventory_fifo` (
+					  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+					  `balance_count` decimal(19,2) NOT NULL,
+					  `balance_money` decimal(19,2) NOT NULL,
+					  `balance_price` decimal(19,2) NOT NULL,
+					  `date_created` datetime DEFAULT NULL,
+					  `goods_id` varchar(255) NOT NULL,
+					  `in_count` decimal(19,2) DEFAULT NULL,
+					  `in_money` decimal(19,2) DEFAULT NULL,
+					  `in_price` decimal(19,2) DEFAULT NULL,
+					  `out_count` decimal(19,2) DEFAULT NULL,
+					  `out_money` decimal(19,2) DEFAULT NULL,
+					  `out_price` decimal(19,2) DEFAULT NULL,
+					  `in_ref` varchar(255) DEFAULT NULL,
+					  `in_ref_type` varchar(255) NOT NULL,
+					  `warehouse_id` varchar(255) NOT NULL,
+					  `data_org` varchar(255) DEFAULT NULL,
+					  PRIMARY KEY (`id`)
+					) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+					";
+			$db->execute($sql);
+		}
+		
+		$tableName = "t_inventory_fifo_detail";
+		if (! $this->tableExists($db, $tableName)) {
+			$sql = "CREATE TABLE IF NOT EXISTS `t_inventory_fifo_detail` (
+					  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+					  `balance_count` decimal(19,2) NOT NULL,
+					  `balance_money` decimal(19,2) NOT NULL,
+					  `balance_price` decimal(19,2) NOT NULL,
+					  `date_created` datetime DEFAULT NULL,
+					  `goods_id` varchar(255) NOT NULL,
+					  `in_count` decimal(19,2) DEFAULT NULL,
+					  `in_money` decimal(19,2) DEFAULT NULL,
+					  `in_price` decimal(19,2) DEFAULT NULL,
+					  `out_count` decimal(19,2) DEFAULT NULL,
+					  `out_money` decimal(19,2) DEFAULT NULL,
+					  `out_price` decimal(19,2) DEFAULT NULL,
+					  `warehouse_id` varchar(255) NOT NULL,
+					  `data_org` varchar(255) DEFAULT NULL,
+					  PRIMARY KEY (`id`)
+					) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+					";
+			$db->execute($sql);
+		}
 	}
 
 	private function update_20151105_01($db) {
