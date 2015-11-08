@@ -8,7 +8,7 @@ namespace Home\Service;
  * @author 李静波
  */
 class UpdateDBService extends PSIBaseService {
-	private $CURRENT_DB_VERSION = "20151106-002";
+	private $CURRENT_DB_VERSION = "20151108-001";
 
 	private function tableExists($db, $tableName) {
 		$dbName = C('DB_NAME');
@@ -86,6 +86,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20151105_01($db);
 		$this->update_20151106_01($db);
 		$this->update_20151106_02($db);
+		$this->update_20151108_01($db);
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -97,6 +98,135 @@ class UpdateDBService extends PSIBaseService {
 		$bl->insertBizlog("升级数据库，数据库版本 = " . $this->CURRENT_DB_VERSION);
 		
 		return $this->ok();
+	}
+
+	private function update_20151108_01($db) {
+		// 本次更新：基础数据在业务单据中的使用权限
+		$fid = "-8999-01";
+		$name = "组织机构在业务单据中的使用权限";
+		$sql = "select count(*) as cnt from t_fid where fid = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_fid(fid, name) values ('%s', '%s')";
+			$db->execute($sql, $fid, $name);
+		}
+		
+		$fid = "-8999-02";
+		$name = "业务员在业务单据中的使用权限";
+		$sql = "select count(*) as cnt from t_fid where fid = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_fid(fid, name) values ('%s', '%s')";
+			$db->execute($sql, $fid, $name);
+		}
+		
+		$fid = "1001-01";
+		$name = "商品在业务单据中的使用权限";
+		$sql = "select count(*) as cnt from t_fid where fid = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_fid(fid, name) values ('%s', '%s')";
+			$db->execute($sql, $fid, $name);
+		}
+		
+		$fid = "1003-01";
+		$name = "仓库在业务单据中的使用权限";
+		$sql = "select count(*) as cnt from t_fid where fid = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_fid(fid, name) values ('%s', '%s')";
+			$db->execute($sql, $fid, $name);
+		}
+		
+		$fid = "1004-01";
+		$name = "供应商档案在业务单据中的使用权限";
+		$sql = "select count(*) as cnt from t_fid where fid = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_fid(fid, name) values ('%s', '%s')";
+			$db->execute($sql, $fid, $name);
+		}
+		
+		$fid = "1007-01";
+		$name = "客户资料在业务单据中的使用权限";
+		$sql = "select count(*) as cnt from t_fid where fid = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_fid(fid, name) values ('%s', '%s')";
+			$db->execute($sql, $fid, $name);
+		}
+		
+		$fid = "-8999-01";
+		$name = "组织机构在业务单据中的使用权限";
+		$sql = "select count(*) as cnt from t_permission where id = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_permission(id, fid, name, note)
+					values ('%s', '%s', '%s', '%s')";
+			$db->execute($sql, $fid, $fid, $name, $name);
+		}
+		
+		$fid = "-8999-02";
+		$name = "业务员在业务单据中的使用权限";
+		$sql = "select count(*) as cnt from t_permission where id = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_permission(id, fid, name, note)
+					values ('%s', '%s', '%s', '%s')";
+			$db->execute($sql, $fid, $fid, $name, $name);
+		}
+		
+		$fid = "1001-01";
+		$name = "商品在业务单据中的使用权限";
+		$sql = "select count(*) as cnt from t_permission where id = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_permission(id, fid, name, note)
+					values ('%s', '%s', '%s', '%s')";
+			$db->execute($sql, $fid, $fid, $name, $name);
+		}
+		
+		$fid = "1003-01";
+		$name = "仓库在业务单据中的使用权限";
+		$sql = "select count(*) as cnt from t_permission where id = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_permission(id, fid, name, note)
+					values ('%s', '%s', '%s', '%s')";
+			$db->execute($sql, $fid, $fid, $name, $name);
+		}
+		
+		$fid = "1004-01";
+		$name = "供应商档案在业务单据中的使用权限";
+		$sql = "select count(*) as cnt from t_permission where id = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_permission(id, fid, name, note)
+					values ('%s', '%s', '%s', '%s')";
+			$db->execute($sql, $fid, $fid, $name, $name);
+		}
+		
+		$fid = "1007-01";
+		$name = "客户资料在业务单据中的使用权限";
+		$sql = "select count(*) as cnt from t_permission where id = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_permission(id, fid, name, note)
+					values ('%s', '%s', '%s', '%s')";
+			$db->execute($sql, $fid, $fid, $name, $name);
+		}
 	}
 
 	private function update_20151106_02($db) {
