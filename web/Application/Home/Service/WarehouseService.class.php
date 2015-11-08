@@ -218,7 +218,7 @@ class WarehouseService extends PSIBaseService {
 			$queryParams[] = $key;
 			
 			$ds = new DataOrgService();
-			$rs = $ds->buildSQL(FIdConst::WAREHOUSE, "t_warehouse", array());
+			$rs = $ds->buildSQL("1003-01", "t_warehouse", array());
 			if ($rs) {
 				$sql .= " and " . $rs[0];
 				$queryParams = array_merge($queryParams, $rs[1]);

@@ -558,7 +558,7 @@ class CustomerService extends PSIBaseService {
 		$queryParams[] = $key;
 		
 		$ds = new DataOrgService();
-		$rs = $ds->buildSQL(FIdConst::CUSTOMER, "t_customer", array());
+		$rs = $ds->buildSQL("1007-01", "t_customer");
 		if ($rs) {
 			$sql .= " and " . $rs[0];
 			$queryParams = array_merge($queryParams, $rs[1]);

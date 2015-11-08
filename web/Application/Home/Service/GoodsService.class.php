@@ -660,14 +660,27 @@ class GoodsService extends PSIBaseService {
 			$queryKey = "";
 		}
 		
+		$key = "%{$queryKey}%";
+		
 		$sql = "select g.id, g.code, g.name, g.spec, u.name as unit_name
 				from t_goods g, t_goods_unit u
 				where (g.unit_id = u.id)
-				and (g.code like '%s' or g.name like '%s' or g.py like '%s') 
-				order by g.code 
+				and (g.code like '%s' or g.name like '%s' or g.py like '%s') ";
+		$queryParams = array();
+		$queryParams[] = $key;
+		$queryParams[] = $key;
+		$queryParams[] = $key;
+		
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL("1001-01", "g");
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = array_merge($queryParams, $rs[1]);
+		}
+		
+		$sql .= " order by g.code 
 				limit 20";
-		$key = "%{$queryKey}%";
-		$data = M()->query($sql, $key, $key, $key);
+		$data = M()->query($sql, $queryParams);
 		$result = array();
 		foreach ( $data as $i => $v ) {
 			$result[$i]["id"] = $v["id"];
@@ -689,14 +702,28 @@ class GoodsService extends PSIBaseService {
 			$queryKey = "";
 		}
 		
+		$key = "%{$queryKey}%";
+		
 		$sql = "select g.id, g.code, g.name, g.spec, u.name as unit_name, g.sale_price, g.memo
 				from t_goods g, t_goods_unit u
 				where (g.unit_id = u.id)
-				and (g.code like '%s' or g.name like '%s' or g.py like '%s') 
-				order by g.code 
+				and (g.code like '%s' or g.name like '%s' or g.py like '%s') ";
+		
+		$queryParams = array();
+		$queryParams[] = $key;
+		$queryParams[] = $key;
+		$queryParams[] = $key;
+		
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL("1001-01", "g");
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = array_merge($queryParams, $rs[1]);
+		}
+		
+		$sql .= " order by g.code 
 				limit 20";
-		$key = "%{$queryKey}%";
-		$data = M()->query($sql, $key, $key, $key);
+		$data = M()->query($sql, $queryParams);
 		$result = array();
 		foreach ( $data as $i => $v ) {
 			$result[$i]["id"] = $v["id"];
@@ -720,13 +747,27 @@ class GoodsService extends PSIBaseService {
 			$queryKey = "";
 		}
 		
+		$key = "%{$queryKey}%";
+		
 		$sql = "select g.id, g.code, g.name, g.spec, u.name as unit_name, g.purchase_price, g.memo
 				from t_goods g, t_goods_unit u
 				where (g.unit_id = u.id)
-				and (g.code like '%s' or g.name like '%s' or g.py like '%s') 
-				order by g.code 
+				and (g.code like '%s' or g.name like '%s' or g.py like '%s') ";
+		
+		$queryParams = array();
+		$queryParams[] = $key;
+		$queryParams[] = $key;
+		$queryParams[] = $key;
+		
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL("1001-01", "g");
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = array_merge($queryParams, $rs[1]);
+		}
+		
+		$sql .= " order by g.code 
 				limit 20";
-		$key = "%{$queryKey}%";
 		$data = M()->query($sql, $key, $key, $key);
 		$result = array();
 		foreach ( $data as $i => $v ) {

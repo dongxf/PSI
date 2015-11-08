@@ -564,7 +564,7 @@ class SupplierService extends PSIBaseService {
 		$queryParams[] = $key;
 		
 		$ds = new DataOrgService();
-		$rs = $ds->buildSQL(FIdConst::SUPPLIER, "t_supplier", array());
+		$rs = $ds->buildSQL("1004-01", "t_supplier", array());
 		if ($rs) {
 			$sql .= " and " . $rs[0];
 			$queryParams = array_merge($queryParams, $rs[1]);

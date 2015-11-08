@@ -933,7 +933,7 @@ class UserService extends PSIBaseService {
 		$queryParams[] = $key;
 		
 		$ds = new DataOrgService();
-		$rs = $ds->buildSQL(FIdConst::USR_MANAGEMENT, "t_user");
+		$rs = $ds->buildSQL("-8999-02", "t_user");
 		if ($rs) {
 			$sql .= " and " . $rs[0];
 			$queryParams = array_merge($queryParams, $rs[1]);
