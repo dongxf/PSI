@@ -169,7 +169,7 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 					labelAlign : "right",
 					labelSeparator : "",
 					fieldLabel : "组织机构",
-					xtype : "psi_orgfield",
+					xtype : "psi_orgwithdataorgfield",
 					colspan: 2,
 					width: 430,
 					allowBlank : false,

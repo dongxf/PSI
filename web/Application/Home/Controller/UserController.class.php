@@ -251,4 +251,14 @@ class UserController extends Controller {
 			$this->ajaxReturn($us->queryData($queryKey));
 		}
 	}
+
+	/**
+	 * 根据数据域返回可用的组织机构
+	 */
+	public function orgWithDataOrg() {
+		if (IS_POST) {
+			$us = new UserService();
+			$this->ajaxReturn($us->orgWithDataOrg());
+		}
+	}
 }

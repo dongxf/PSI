@@ -1008,7 +1008,7 @@ class UserService extends PSIBaseService {
 
 	/**
 	 * 获得当前登录用户的某个功能的数据域
-	 * 
+	 *
 	 * @param unknown $fid        	
 	 */
 	public function getDataOrgForFId($fid) {
@@ -1036,6 +1036,36 @@ class UserService extends PSIBaseService {
 		
 		foreach ( $data as $v ) {
 			$result[] = $v["data_org"];
+		}
+		
+		return $result;
+	}
+
+	public function orgWithDataOrg() {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$sql = "select id, full_name
+				from t_org ";
+		
+		$queryParams = array();
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL("-8999-01", "t_org");
+		if ($rs) {
+			$sql .= " where " . $rs[0];
+			$queryParams = $rs[1];
+		}
+		
+		$sql .= " order by full_name";
+		
+		$db = M();
+		$data = $db->query($sql, $queryParams);
+		
+		$result = array();
+		foreach ( $data as $i => $v ) {
+			$result[$i]["id"] = $v["id"];
+			$result[$i]["fullName"] = $v["full_name"];
 		}
 		
 		return $result;
