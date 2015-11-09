@@ -536,6 +536,10 @@ class WSBillService extends PSIBaseService {
 			return $this->notOnlineError();
 		}
 		
+		$bs = new BizConfigService();
+		// true: 先进先出
+		$fifo = $bs->getInventoryMethod() == 1;
+		
 		$id = $params["id"];
 		
 		$db = M();
@@ -620,63 +624,157 @@ class WSBillService extends PSIBaseService {
 					return $this->bad("商品[{$goodsCode} {$goodsName}]的出库数量需要是正数");
 				}
 				
-				// 库存总账
-				$sql = "select out_count, out_money, balance_count, balance_price,
+				if ($fifo) {
+					// 先进先出法
+					
+					// 库存总账
+					$sql = "select out_count, out_money, balance_count, balance_price,
 						balance_money from t_inventory 
 						where warehouse_id = '%s' and goods_id = '%s' ";
-				$data = $db->query($sql, $warehouseId, $goodsId);
-				if (! $data) {
-					$db->rollback();
-					return $this->bad(
-							"商品 [{$goodsCode} {$goodsName}] 在仓库 [{$warehouseName}] 中没有存货，无法出库");
-				}
-				$balanceCount = $data[0]["balance_count"];
-				if ($balanceCount < $goodsCount) {
-					$db->rollback();
-					return $this->bad(
-							"商品 [{$goodsCode} {$goodsName}] 在仓库 [{$warehouseName}] 中存货数量不足，无法出库");
-				}
-				$balancePrice = $data[0]["balance_price"];
-				$balanceMoney = $data[0]["balance_money"];
-				$outCount = $data[0]["out_count"];
-				$outMoney = $data[0]["out_money"];
-				$balanceCount -= $goodsCount;
-				if ($balanceCount == 0) {
-					// 当全部出库的时候，金额也需要全部转出去
-					$outMoney += $balanceMoney;
-					$outPriceDetail = $balanceMoney / $goodsCount;
-					$outMoneyDetail = $balanceMoney;
-					$balanceMoney = 0;
+					$data = $db->query($sql, $warehouseId, $goodsId);
+					if (! $data) {
+						$db->rollback();
+						return $this->bad(
+								"商品 [{$goodsCode} {$goodsName}] 在仓库 [{$warehouseName}] 中没有存货，无法出库");
+					}
+					$balanceCount = $data[0]["balance_count"];
+					if ($balanceCount < $goodsCount) {
+						$db->rollback();
+						return $this->bad(
+								"商品 [{$goodsCode} {$goodsName}] 在仓库 [{$warehouseName}] 中存货数量不足，无法出库");
+					}
+					
+					$sql = "select id, balance_count, balance_price, balance_money,
+								out_count, out_price, out_money, date_created
+							from t_inventory_fifo
+							where warehouse_id = '%s' and goods_id = '%s'
+								and balance_count > 0
+							order by date_created ";
+					$data = $db->query($sql, $warehouseId, $goodsId);
+					if (! $data) {
+						$db->rollback();
+						return $this->sqlError(__LINE__);
+					}
+					
+					$gc = $goodsCount;
+					$fifoMoney = 0;
+					for($i = 0; $i < count($data); $i ++) {
+						if ($gc == 0) {
+							break;
+						}
+						
+						$fv = $data[$i];
+						$fvCount = $fv["balance_count"];
+						$fvId = $fv["id"];
+						$fvBalancePrice = $fv["balance_price"];
+						$fvBalanceMoney = $fv["balance_money"];
+						
+						if ($fvCount >= $gc) {
+							$fifoMoney += $fvBalancePrice * $gc;
+							
+							$sql = "update t_inventory_fifo
+									set out_count = %d, out_price = %f, out_money = %f,
+										balance_count = %d, balance_price = %f, balance_money = %f
+									where id = %d ";
+							
+							// fifo 的明细记录
+							$sql = "insert into t_inventory_fifo_detail";
+							
+							$gc = 0;
+						} else {
+							$fifoMoney += $fvBalanceMoney;
+							
+							$sql = "update t_inventory_fifo
+									set out_count = in_count, out_price = in_price, out_money = in_money
+										balance_count = 0, balance_money = 0
+									where id = %d ";
+							
+							// fifo 的明细记录
+							$sql = "insert into t_inventory_fifo_detail ";
+							
+							$gc -= $fvCount;
+						}
+					}
+					
+					$fifoPrice = $fifoMoney / $goodsCount;
+					
+					// 更新总账
+					$sql = "update t_inventory
+						set out_count = %d, out_price = %f, out_money = %f,
+						    balance_count = %d, balance_money = %f
+						where warehouse_id = '%s' and goods_id = '%s' ";
+					
+					// 更新明细账
+					$sql = "insert into t_inventory_detail(out_count, out_price, out_money,
+						balance_count, balance_price, balance_money, warehouse_id,
+						goods_id, biz_date, biz_user_id, date_created, ref_number, ref_type)
+						values(%d, %f, %f, %d, %f, %f, '%s', '%s', '%s', '%s', now(), '%s', '销售出库')";
+					
+					// 更新单据本身的记录
+					$sql = "update t_ws_bill_detail 
+						set inventory_price = %f, inventory_money = %f
+						where id = '%s' ";
 				} else {
-					$outMoney += $goodsCount * $balancePrice;
-					$outPriceDetail = $balancePrice;
-					$outMoneyDetail = $goodsCount * $balancePrice;
-					$balanceMoney -= $goodsCount * $balancePrice;
-				}
-				$outCount += $goodsCount;
-				$outPrice = $outMoney / $outCount;
-				
-				$sql = "update t_inventory 
+					// 移动平均法
+					
+					// 库存总账
+					$sql = "select out_count, out_money, balance_count, balance_price,
+						balance_money from t_inventory 
+						where warehouse_id = '%s' and goods_id = '%s' ";
+					$data = $db->query($sql, $warehouseId, $goodsId);
+					if (! $data) {
+						$db->rollback();
+						return $this->bad(
+								"商品 [{$goodsCode} {$goodsName}] 在仓库 [{$warehouseName}] 中没有存货，无法出库");
+					}
+					$balanceCount = $data[0]["balance_count"];
+					if ($balanceCount < $goodsCount) {
+						$db->rollback();
+						return $this->bad(
+								"商品 [{$goodsCode} {$goodsName}] 在仓库 [{$warehouseName}] 中存货数量不足，无法出库");
+					}
+					$balancePrice = $data[0]["balance_price"];
+					$balanceMoney = $data[0]["balance_money"];
+					$outCount = $data[0]["out_count"];
+					$outMoney = $data[0]["out_money"];
+					$balanceCount -= $goodsCount;
+					if ($balanceCount == 0) {
+						// 当全部出库的时候，金额也需要全部转出去
+						$outMoney += $balanceMoney;
+						$outPriceDetail = $balanceMoney / $goodsCount;
+						$outMoneyDetail = $balanceMoney;
+						$balanceMoney = 0;
+					} else {
+						$outMoney += $goodsCount * $balancePrice;
+						$outPriceDetail = $balancePrice;
+						$outMoneyDetail = $goodsCount * $balancePrice;
+						$balanceMoney -= $goodsCount * $balancePrice;
+					}
+					$outCount += $goodsCount;
+					$outPrice = $outMoney / $outCount;
+					
+					$sql = "update t_inventory 
 						set out_count = %d, out_price = %f, out_money = %f,
 						    balance_count = %d, balance_money = %f 
 						where warehouse_id = '%s' and goods_id = '%s' ";
-				$db->execute($sql, $outCount, $outPrice, $outMoney, $balanceCount, $balanceMoney, 
-						$warehouseId, $goodsId);
-				
-				// 库存明细账
-				$sql = "insert into t_inventory_detail(out_count, out_price, out_money, 
+					$db->execute($sql, $outCount, $outPrice, $outMoney, $balanceCount, 
+							$balanceMoney, $warehouseId, $goodsId);
+					
+					// 库存明细账
+					$sql = "insert into t_inventory_detail(out_count, out_price, out_money, 
 						balance_count, balance_price, balance_money, warehouse_id,
 						goods_id, biz_date, biz_user_id, date_created, ref_number, ref_type) 
 						values(%d, %f, %f, %d, %f, %f, '%s', '%s', '%s', '%s', now(), '%s', '销售出库')";
-				$db->execute($sql, $goodsCount, $outPriceDetail, $outMoneyDetail, $balanceCount, 
-						$balancePrice, $balanceMoney, $warehouseId, $goodsId, $bizDT, $bizUserId, 
-						$ref);
-				
-				// 单据本身的记录
-				$sql = "update t_ws_bill_detail 
+					$db->execute($sql, $goodsCount, $outPriceDetail, $outMoneyDetail, $balanceCount, 
+							$balancePrice, $balanceMoney, $warehouseId, $goodsId, $bizDT, $bizUserId, 
+							$ref);
+					
+					// 单据本身的记录
+					$sql = "update t_ws_bill_detail 
 						set inventory_price = %f, inventory_money = %f
 						where id = '%s' ";
-				$db->execute($sql, $outPriceDetail, $outMoneyDetail, $itemId);
+					$db->execute($sql, $outPriceDetail, $outMoneyDetail, $itemId);
+				}
 			}
 			
 			if ($receivingType == 0) {
