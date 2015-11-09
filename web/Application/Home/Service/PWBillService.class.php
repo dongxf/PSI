@@ -614,13 +614,6 @@ class PWBillService extends PSIBaseService {
 	}
 
 	/**
-	 * 用先进先出法记库存账
-	 */
-	private function commitPWBillWithFIFO($id) {
-		return $this->todo();
-	}
-
-	/**
 	 * 提交采购入库单
 	 */
 	public function commitPWBill($id) {
@@ -629,10 +622,9 @@ class PWBillService extends PSIBaseService {
 		}
 		
 		$bs = new BizConfigService();
-		if ($bs->getInventoryMethod() == 1) {
-			// 先进先出法
-			return $this->commitPWBillWithFIFO($id);
-		}
+		
+		// true: 先进先出法
+		$fifo = $bs->getInventoryMethod() == 1;
 		
 		$db = M();
 		$sql = "select ref, warehouse_id, bill_status, biz_dt, biz_user_id,  goods_money, supplier_id,
@@ -763,6 +755,16 @@ class PWBillService extends PSIBaseService {
 				$db->execute($sql, $goodsCount, $goodsPrice, $goodsMoney, $balanceCount, 
 						$balancePrice, $balanceMoney, $warehouseId, $goodsId, $bizDT, $bizUserId, 
 						$ref);
+				
+				// 先进先出
+				if ($fifo) {
+					$sql = "insert into t_inventory_fifo (in_count, in_price, in_money, balance_count,
+							balance_price, balance_money, warehouse_id, goods_id, date_created, in_ref,
+							in_ref_type)
+							values (%d, %f, %f, %d, %f, %f, '%s', '%s', now(), '%s', '采购入库')";
+					$db->execute($sql, $goodsCount, $goodsPrice, $goodsMoney, $balanceCount, 
+							$balancePrice, $balanceMoney, $warehouseId, $goodsId, $ref);
+				}
 			}
 			
 			$sql = "update t_pw_bill set bill_status = 1000 where id = '%s' ";
