@@ -239,4 +239,22 @@ class BizConfigService extends PSIBaseService {
 			return "开源进销存PSI";
 		}
 	}
+
+	/**
+	 * 获得存货计价方法
+	 */
+	public function getInventoryMethod() {
+		$result = 0;
+		
+		$db = M();
+		$sql = "select value from t_config where id = '1003-02' ";
+		$data = $db->query($sql);
+		if (! $data) {
+			return $result;
+		}
+		
+		$result = intval($data[0]["value"]);
+		
+		return $result;
+	}
 }
