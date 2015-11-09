@@ -83,9 +83,6 @@ Ext.define("PSI.Goods.GoodsImportForm", {
         me.callParent(arguments);
     },
     onWndShow: function () {
-        var me = this;
-        var editCode = Ext.getCmp("editFileData");
-        editCode.focus();
     },
     // private
     onOK: function () {
