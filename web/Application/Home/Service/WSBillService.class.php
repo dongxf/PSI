@@ -299,7 +299,8 @@ class WSBillService extends PSIBaseService {
 	 * @return string
 	 */
 	private function genNewBillRef() {
-		$pre = "WS";
+		//$pre = "WS";
+		$pre = "DO";
 		$mid = date("Ymd");
 		
 		$sql = "select ref from t_ws_bill where ref like '%s' order by ref desc limit 1";

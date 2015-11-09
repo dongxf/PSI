@@ -400,7 +400,8 @@ class PWBillService extends PSIBaseService {
 	 * 生成新的采购入库单单号
 	 */
 	private function genNewBillRef() {
-		$pre = "PW";
+		//$pre = "PW";
+		$pre = "WL";
 		$mid = date("Ymd");
 		
 		$sql = "select ref from t_pw_bill where ref like '%s' order by ref desc limit 1";
