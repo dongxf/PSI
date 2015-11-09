@@ -768,7 +768,7 @@ class GoodsService extends PSIBaseService {
 		
 		$sql .= " order by g.code 
 				limit 20";
-		$data = M()->query($sql, $key, $key, $key);
+		$data = M()->query($sql, $queryParams);
 		$result = array();
 		foreach ( $data as $i => $v ) {
 			$result[$i]["id"] = $v["id"];

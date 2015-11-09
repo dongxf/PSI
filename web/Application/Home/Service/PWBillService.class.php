@@ -614,11 +614,24 @@ class PWBillService extends PSIBaseService {
 	}
 
 	/**
+	 * 用先进先出法记库存账
+	 */
+	private function commitPWBillWithFIFO($id) {
+		return $this->todo();
+	}
+
+	/**
 	 * 提交采购入库单
 	 */
 	public function commitPWBill($id) {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
+		}
+		
+		$bs = new BizConfigService();
+		if ($bs->getInventoryMethod() == 1) {
+			// 先进先出法
+			return $this->commitPWBillWithFIFO($id);
 		}
 		
 		$db = M();
