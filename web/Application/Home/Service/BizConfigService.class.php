@@ -242,6 +242,8 @@ class BizConfigService extends PSIBaseService {
 
 	/**
 	 * 获得存货计价方法
+	 * 0： 移动平均法
+	 * 1：先进先出法
 	 */
 	public function getInventoryMethod() {
 		$result = 0;
