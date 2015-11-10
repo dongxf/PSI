@@ -761,6 +761,7 @@ CREATE TABLE IF NOT EXISTS `t_inventory_fifo` (
   `in_ref_type` varchar(255) NOT NULL,
   `warehouse_id` varchar(255) NOT NULL,
   `data_org` varchar(255) DEFAULT NULL,
+  `pwbilldetail_id` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 

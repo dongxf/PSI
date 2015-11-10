@@ -700,6 +700,9 @@ class PRBillService extends PSIBaseService {
 			return $this->notOnlineError();
 		}
 		
+		$bs = new BizConfigService();
+		$fifo = $bs->getInventoryMethod() == 1;
+		
 		$id = $params["id"];
 		$db = M();
 		
