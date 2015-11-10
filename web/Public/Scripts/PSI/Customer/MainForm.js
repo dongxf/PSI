@@ -164,6 +164,7 @@ Ext.define("PSI.Customer.MainForm", {
                 {text: "编辑客户分类", iconCls: "PSI-button-edit", handler: me.onEditCategory, scope: me},
                 {text: "删除客户分类", iconCls: "PSI-button-delete", handler: me.onDeleteCategory, scope: me}, "-",
                 {text: "新增客户", iconCls: "PSI-button-add-detail", handler: me.onAddCustomer, scope: me},
+                {text: "导入客户", iconCls: "PSI-button-add", handler: me.onImportCustomer, scope: me},
                 {text: "修改客户", iconCls: "PSI-button-edit-detail", handler: me.onEditCustomer, scope: me},
                 {text: "删除客户", iconCls: "PSI-button-delete-detail", handler: me.onDeleteCustomer, scope: me}, "-",
                 {
@@ -467,6 +468,13 @@ Ext.define("PSI.Customer.MainForm", {
         }
 
         var form = Ext.create("PSI.Customer.CustomerEditForm", {
+            parentForm: this
+        });
+
+        form.show();
+    },
+    onImportCustomer: function () {
+        var form = Ext.create("PSI.Customer.CustomerImportForm", {
             parentForm: this
         });
 

@@ -1,5 +1,5 @@
-// 商品导入
-Ext.define("PSI.Goods.GoodsImportForm", {
+// 客户导入
+Ext.define("PSI.Customer.CustomerImportForm", {
     extend: "Ext.window.Window",
     config: {
         parentForm: null
@@ -10,7 +10,7 @@ Ext.define("PSI.Goods.GoodsImportForm", {
         var buttons = [];
 
         buttons.push({
-            text: "导入商品",
+            text: "导入客户",
             formBind: true,
             iconCls: "PSI-button-ok",
             handler: function () {
@@ -24,7 +24,7 @@ Ext.define("PSI.Goods.GoodsImportForm", {
 
 
         Ext.apply(me, {
-            title: "导入商品",
+            title: "导入客户",
             modal: true,
             resizable: false,
             onEsc: Ext.emptyFn,
@@ -59,10 +59,10 @@ Ext.define("PSI.Goods.GoodsImportForm", {
                             msgTarget: 'side', //  提示 文字的位置 \title\under\none\side\[element id]
                             allowBlank: false,
                             anchor: '100%',
-                            buttonText: '选择商品文件'
+                            buttonText: '选择客户文件'
                         },
                         {
-                            html: "<a href=../Uploads/Goods/goodsModelFile.xls ><h4>商品导入模板下载</h4></a>",
+                            html: "<a href=../Uploads/Customer/customerModelFile.xls ><h4>客户导入模板下载</h4></a>",
                             border: 0
                         }
                     ],
@@ -83,6 +83,9 @@ Ext.define("PSI.Goods.GoodsImportForm", {
         me.callParent(arguments);
     },
     onWndShow: function () {
+        var me = this;
+        var editCode = Ext.getCmp("editFileData");
+        editCode.focus();
     },
     // private
     onOK: function () {
@@ -91,7 +94,7 @@ Ext.define("PSI.Goods.GoodsImportForm", {
         var el = f.getEl();
         el.mask('正在导入...');
         f.submit({
-            url: PSI.Const.BASE_URL + "Home/Goods/import",
+            url: PSI.Const.BASE_URL + "Home/Customer/import",
             method: "POST",
             success: function (form, action) {
                 el.unmask();

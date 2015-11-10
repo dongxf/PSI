@@ -2,6 +2,7 @@
 
 namespace Home\Controller;
 
+use Home\Service\ImportService;
 use Think\Controller;
 use Home\Service\UserService;
 use Home\Service\CustomerService;
@@ -180,6 +181,34 @@ class CustomerController extends Controller {
 			);
 			$cs = new CustomerService();
 			$this->ajaxReturn($cs->customerInfo($params));
+		}
+	}
+
+	public function import() {
+		if (IS_POST) {
+			$upload = new \Think\Upload();
+			// $upload->maxSize = 3145728;
+			$upload->exts = array(
+				'xls',
+				'xlsx'
+			); // 允许上传的文件后缀
+			$upload->savePath = '/Customer/'; // 保存路径
+			// 先上传文件
+			$fileInfo = $upload->uploadOne($_FILES['data_file']);
+			if (! $fileInfo) {
+//				$this->error($upload->getError());
+				$this->ajaxReturn(array("msg"=>$upload->getError(),"success"=>false));
+			} else {
+				$uploadFileFullPath = './Uploads' . $fileInfo['savepath'] . $fileInfo['savename']; // 获取上传到服务器文件路径
+				$uploadFileExt = $fileInfo['ext']; // 上传文件扩展名
+
+				$params = array(
+					"datafile"=>$uploadFileFullPath,
+					"ext" =>$uploadFileExt
+				);
+				$cs = new ImportService();
+				$this->ajaxReturn($cs->importCustomerFromExcelFile($params));
+			}
 		}
 	}
 }

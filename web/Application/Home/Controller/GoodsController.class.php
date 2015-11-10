@@ -5,7 +5,7 @@ namespace Home\Controller;
 use Think\Controller;
 use Home\Service\UserService;
 use Home\Service\GoodsService;
-use Home\Service\GoodsImportService;
+use Home\Service\ImportService;
 use Home\Common\FIdConst;
 use Home\Service\BizConfigService;
 use Home\Service;
@@ -313,7 +313,7 @@ class GoodsController extends Controller {
 		}
 	}
 
-	public function importGoods() {
+	public function import() {
 		if (IS_POST) {
 			$upload = new \Think\Upload();
 			// $upload->maxSize = 3145728;
@@ -323,14 +323,20 @@ class GoodsController extends Controller {
 			); // 允许上传的文件后缀
 			$upload->savePath = '/Goods/'; // 保存路径
 			                               // 先上传文件
-			$fileInfo = $upload->uploadOne($_FILES['goodsFile']);
+			$fileInfo = $upload->uploadOne($_FILES['data_file']);
 			if (! $fileInfo) {
-				$this->error($upload->getError());
+//				$this->error($upload->getError());
+				$this->ajaxReturn(array("msg"=>$upload->getError(),"success"=>false));
 			} else {
-				$uploadGoodsFile = './Uploads' . $fileInfo['savepath'] . $fileInfo['savename']; // 获取上传到服务器文件路径
+				$uploadFileFullPath = './Uploads' . $fileInfo['savepath'] . $fileInfo['savename']; // 获取上传到服务器文件路径
 				$uploadFileExt = $fileInfo['ext']; // 上传文件扩展名
-				$gis = new GoodsImportService();
-				$this->ajaxReturn($gis->importGoodsFromExcelFile($uploadGoodsFile, $uploadFileExt));
+
+				$params = array(
+					"datafile"=>$uploadFileFullPath,
+					"ext" =>$uploadFileExt
+				);
+				$ims = new ImportService();
+				$this->ajaxReturn($ims->importGoodsFromExcelFile($params));
 			}
 		}
 	}
