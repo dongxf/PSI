@@ -11,12 +11,13 @@ require __DIR__ . '/../Common/Excel/PHPExcel/IOFactory.php';
  *
  * @author James(张健)
  */
-class ImportService  {
+class ImportService {
 
 	/**
 	 * 商品导入Service
-	 * 
-	 * @param	$params
+	 *
+	 * @param
+	 *        	$params
 	 * @return array
 	 * @throws \PHPExcel_Exception
 	 */
@@ -29,16 +30,18 @@ class ImportService  {
 				"msg" => $message,
 				"success" => $success
 		);
-		if (! $dataFile || ! $ext)	return $result;
-
+		if (! $dataFile || ! $ext)
+			return $result;
+		
 		$inputFileType = 'Excel5';
-		if($ext == 'xlsx')	$inputFileType = 'Excel2007';
-
-		//设置php服务器可用内存，上传较大文件时可能会用到
+		if ($ext == 'xlsx')
+			$inputFileType = 'Excel2007';
+			
+			// 设置php服务器可用内存，上传较大文件时可能会用到
 		ini_set('memory_limit', '1024M');
 		ini_set('max_execution_time', 300); // 300 seconds = 5 minutes
-		$objReader  = \PHPExcel_IOFactory::createReader($inputFileType);
-		//设置只读，可取消类似"3.08E-05"之类自动转换的数据格式，避免写库失败
+		$objReader = \PHPExcel_IOFactory::createReader($inputFileType);
+		// 设置只读，可取消类似"3.08E-05"之类自动转换的数据格式，避免写库失败
 		$objReader->setReadDataOnly(true);
 		try {
 			// 载入文件
@@ -49,8 +52,9 @@ class ImportService  {
 			$allRow = $currentSheet->getHighestRow();
 			
 			// 如果没有数据行，直接返回
-			if ($allRow < 2) return $result;
-
+			if ($allRow < 2)
+				return $result;
+			
 			$ps = new PinyinService();
 			$idGen = new IdGenService();
 			$bs = new BizlogService();
@@ -101,7 +105,8 @@ class ImportService  {
 				$memo = $currentSheet->getCell($indexMemo)->getValue();
 				
 				// 如果为空则直接读取下一条记录
-				if (! $category || ! $code || ! $name || ! $unit)	continue;
+				if (! $category || ! $code || ! $name || ! $unit)
+					continue;
 				
 				$unitId = null;
 				$categoryId = null;
@@ -166,8 +171,8 @@ class ImportService  {
 				
 				$insertSql .= $dataSql;
 				// 数据参数加入
-				array_push($params, $id, $code, $name, $spec, $categoryId, $unitId, $salePrice,
-						$py, $purchasePrice, $barcode, $dataOrg, $memo);
+				array_push($params, $id, $code, $name, $spec, $categoryId, $unitId, $salePrice, $py, 
+						$purchasePrice, $barcode, $dataOrg, $memo);
 			}
 			
 			$db->execute(rtrim($insertSql, ','), $params);
@@ -188,7 +193,7 @@ class ImportService  {
 
 	/**
 	 * 客户导入Service
-	 * 
+	 *
 	 * @param
 	 *        	$params
 	 * @return array
@@ -203,18 +208,20 @@ class ImportService  {
 				"msg" => $message,
 				"success" => $success
 		);
-
-		if (! $dataFile || ! $ext)	return $result;
-
+		
+		if (! $dataFile || ! $ext)
+			return $result;
+		
 		$inputFileType = 'Excel5';
-		if($ext == 'xlsx')	$inputFileType = 'Excel2007';
-
-		//设置php服务器可用内存，上传较大文件时可能会用到
+		if ($ext == 'xlsx')
+			$inputFileType = 'Excel2007';
+			
+			// 设置php服务器可用内存，上传较大文件时可能会用到
 		ini_set('memory_limit', '1024M');
 		// Deal with the Fatal error: Maximum execution time of 30 seconds exceeded
 		ini_set('max_execution_time', 300); // 300 seconds = 5 minutes
-		$objReader  = \PHPExcel_IOFactory::createReader($inputFileType);
-		//设置只读，可取消类似"3.08E-05"之类自动转换的数据格式，避免写库失败
+		$objReader = \PHPExcel_IOFactory::createReader($inputFileType);
+		// 设置只读，可取消类似"3.08E-05"之类自动转换的数据格式，避免写库失败
 		$objReader->setReadDataOnly(true);
 		
 		try {
@@ -226,8 +233,9 @@ class ImportService  {
 			$allRow = $currentSheet->getHighestRow();
 			
 			// 如果没有数据行，直接返回
-			if ($allRow < 2) return $result;
-
+			if ($allRow < 2)
+				return $result;
+			
 			$ps = new PinyinService();
 			$idGen = new IdGenService();
 			$bs = new BizlogService();
@@ -309,8 +317,9 @@ class ImportService  {
 				$address = $currentSheet->getCell($indexAddress)->getValue();
 				$initReceivables = $currentSheet->getCell($indexInitReceivables)->getValue();
 				$initRDTValue = $currentSheet->getCell($indexInitReceivablesDt)->getValue();
-				$intRDTSeconds = intval(($initRDTValue - 25569) * 3600 * 24); //转换成1970年以来的秒数
-				$initReceivablesDT = gmdate('Y-m-d', $intRDTSeconds);;//格式化日期
+				$intRDTSeconds = intval(($initRDTValue - 25569) * 3600 * 24); // 转换成1970年以来的秒数
+				$initReceivablesDT = gmdate('Y-m-d', $intRDTSeconds);
+				; // 格式化日期
 				$addressShipping = $currentSheet->getCell($indexAddressShipping)->getValue();
 				$addressReceipt = $currentSheet->getCell($indexAddressReceipt)->getValue();
 				$bankName = $currentSheet->getCell($indexBankName)->getValue();
@@ -352,20 +361,20 @@ class ImportService  {
 				
 				$id = $idGen->newId();
 				$py = $ps->toPY($name);
-
-				$db->execute($insertSql, $id, $categoryId, $code, $name, $py, $contact01, $qq01, $tel01,
-						$mobile01, $contact02, $qq02, $tel02, $mobile02, $address, $initReceivables,
-						$initReceivablesDT, $addressShipping, $addressReceipt, $bankName,
-						$bankAccount, $taxNumber, $fax, $note, $dataOrg);
 				
-//				// Sql
-//				$insertSql .= $dataSql;
-//				// 数据参数加入
-//				array_push($params, $id, $categoryId, $code, $name, $py, $contact01, $qq01, $tel01,
-//						$mobile01, $contact02, $qq02, $tel02, $mobile02, $address, $initReceivables,
-//						$initReceivablesDt, $addressShipping, $addressReceipt, $bankName,
-//						$bankAccount, $taxNumber, $fax, $note, $dataOrg);
-
+				$db->execute($insertSql, $id, $categoryId, $code, $name, $py, $contact01, $qq01, 
+						$tel01, $mobile01, $contact02, $qq02, $tel02, $mobile02, $address, 
+						$initReceivables, $initReceivablesDT, $addressShipping, $addressReceipt, 
+						$bankName, $bankAccount, $taxNumber, $fax, $note, $dataOrg);
+				
+				// // Sql
+				// $insertSql .= $dataSql;
+				// // 数据参数加入
+				// array_push($params, $id, $categoryId, $code, $name, $py, $contact01, $qq01, $tel01,
+				// $mobile01, $contact02, $qq02, $tel02, $mobile02, $address, $initReceivables,
+				// $initReceivablesDt, $addressShipping, $addressReceipt, $bankName,
+				// $bankAccount, $taxNumber, $fax, $note, $dataOrg);
+				
 				// 处理应收账款
 				$initReceivables = floatval($initReceivables);
 				if ($initReceivables && $initReceivablesDT) {
@@ -378,12 +387,12 @@ class ImportService  {
 						// 已经有应收业务发生，就不再更改期初数据
 						return $this->ok($id);
 					}
-
+					
 					$sql = "update t_customer
 					set init_receivables = %f, init_receivables_dt = '%s'
 					where id = '%s' ";
 					$db->execute($sql, $initReceivables, $initReceivablesDT, $id);
-
+					
 					// 应收明细账
 					$sql = "select id from t_receivables_detail
 					where ca_id = '%s' and ca_type = 'customer' and ref_type = '应收账款期初建账' ";
@@ -393,17 +402,18 @@ class ImportService  {
 						$sql = "update t_receivables_detail
 						set rv_money = %f, act_money = 0, balance_money = %f, biz_date ='%s', date_created = now()
 						where id = '%s' ";
-						$db->execute($sql, $initReceivables, $initReceivables, $initReceivablesDT, $rvId);
+						$db->execute($sql, $initReceivables, $initReceivables, $initReceivablesDT, 
+								$rvId);
 					} else {
 						$idGen = new IdGenService();
 						$rvId = $idGen->newId();
 						$sql = "insert into t_receivables_detail (id, rv_money, act_money, balance_money,
 						biz_date, date_created, ca_id, ca_type, ref_number, ref_type)
 						values ('%s', %f, 0, %f, '%s', now(), '%s', 'customer', '%s', '应收账款期初建账') ";
-						$db->execute($sql, $rvId, $initReceivables, $initReceivables, $initReceivablesDT,
-							$id, $id);
+						$db->execute($sql, $rvId, $initReceivables, $initReceivables, 
+								$initReceivablesDT, $id, $id);
 					}
-
+					
 					// 应收总账
 					$sql = "select id from t_receivables where ca_id = '%s' and ca_type = 'customer' ";
 					$data = $db->query($sql, $id);
@@ -429,9 +439,9 @@ class ImportService  {
 			$message = $e;
 		}
 		
-		return  array(
-			"msg" => $message,
-			"success" => $success
+		return array(
+				"msg" => $message,
+				"success" => $success
 		);
 	}
 }
