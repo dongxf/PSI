@@ -644,6 +644,10 @@ class WSBillService extends PSIBaseService {
 						return $this->bad(
 								"商品 [{$goodsCode} {$goodsName}] 在仓库 [{$warehouseName}] 中存货数量不足，无法出库");
 					}
+					$balancePrice = $data[0]["balance_price"];
+					$balanceMoney = $data[0]["balance_money"];
+					$outCount = $data[0]["out_count"];
+					$outMoney = $data[0]["out_money"];
 					
 					$sql = "select id, balance_count, balance_price, balance_money,
 								out_count, out_price, out_money, date_created
@@ -658,7 +662,7 @@ class WSBillService extends PSIBaseService {
 					}
 					
 					$gc = $goodsCount;
-					$fifoMoney = 0;
+					$fifoMoneyTotal = 0;
 					for($i = 0; $i < count($data); $i ++) {
 						if ($gc == 0) {
 							break;
@@ -675,10 +679,13 @@ class WSBillService extends PSIBaseService {
 						
 						if ($fvBalanceCount >= $gc) {
 							if ($fvBalanceCount > $gc) {
-								$fifoMoney += $fvBalancePrice * $gc;
+								$fifoMoney = $fvBalancePrice * $gc;
 							} else {
 								$fifoMoney = $fvBalanceMoney;
 							}
+							$fifoMoneyTotal += $fifoMoney;
+							
+							$fifoPrice = $fifoMoney / $gc;
 							
 							$fvOutCount += $gc;
 							$fvOutMoney += $fifoMoney;
@@ -697,42 +704,69 @@ class WSBillService extends PSIBaseService {
 							// fifo 的明细记录
 							$sql = "insert into t_inventory_fifo_detail(out_count, out_price, out_money,
 									balance_count, balance_price, balance_money, warehouse_id, goods_id,
-									date_created)";
+									date_created) 
+									values (%d, %f, %f, %d, %f, %f, '%s', '%s', '%s')";
+							$db->execute($sql, $gc, $fifoPrice, $fifoMoney, $fvBalanceCount, 
+									$fvBalancePrice, $fvBalanceMoney, $warehouseId, $goodsId, 
+									$fvDateCreated);
 							
 							$gc = 0;
 						} else {
-							$fifoMoney += $fvBalanceMoney;
+							$fifoMoneyTotal += $fvBalanceMoney;
 							
 							$sql = "update t_inventory_fifo
-									set out_count = in_count, out_price = in_price, out_money = in_money
+									set out_count = in_count, out_price = in_price, out_money = in_money,
 										balance_count = 0, balance_money = 0
 									where id = %d ";
+							$db->execute($sql, $fvId);
 							
 							// fifo 的明细记录
-							$sql = "insert into t_inventory_fifo_detail ";
-							
-							$gc -= $fvCount;
+							$sql = "insert into t_inventory_fifo_detail(out_count, out_price, out_money,
+									balance_count, balance_price, balance_money, warehouse_id, goods_id,
+									date_created) 
+									values (%d, %f, %f, %d, %f, %f, '%s', '%s', '%s')";
+							$db->execute($sql, $fvBalanceCount, $fvBalancePrice, $fvBalanceMoney, 0, 
+									0, 0, $warehouseId, $goodsId, $fvDateCreated);
+							$gc -= $fvBalanceCount;
 						}
 					}
 					
-					$fifoPrice = $fifoMoney / $goodsCount;
+					$fifoPrice = $fifoMoneyTotal / $goodsCount;
 					
 					// 更新总账
+					$outCount += $goodsCount;
+					$outMoney += $fifoMoneyTotal;
+					$outPrice = $outMoney / $outCount;
+					$balanceCount -= $goodsCount;
+					if ($balanceCount == 0) {
+						$balanceMoney = 0;
+						$balancePrice = 0;
+					} else {
+						$balanceMoney -= $fifoMoneyTotal;
+						$balancePrice = $balanceMoney / $balanceCount;
+					}
+					
 					$sql = "update t_inventory
 						set out_count = %d, out_price = %f, out_money = %f,
-						    balance_count = %d, balance_money = %f
+						    balance_count = %d, balance_price = %f, balance_money = %f
 						where warehouse_id = '%s' and goods_id = '%s' ";
+					$db->execute($sql, $outCount, $outPrice, $outMoney, $balanceCount, 
+							$balancePrice, $balanceMoney, $warehouseId, $goodsId);
 					
 					// 更新明细账
 					$sql = "insert into t_inventory_detail(out_count, out_price, out_money,
 						balance_count, balance_price, balance_money, warehouse_id,
 						goods_id, biz_date, biz_user_id, date_created, ref_number, ref_type)
 						values(%d, %f, %f, %d, %f, %f, '%s', '%s', '%s', '%s', now(), '%s', '销售出库')";
+					$db->execute($sql, $goodsCount, $fifoPrice, $fifoMoneyTotal, $balanceCount, 
+							$balancePrice, $balanceMoney, $warehouseId, $goodsId, $bizDT, $bizUserId, 
+							$ref);
 					
 					// 更新单据本身的记录
 					$sql = "update t_ws_bill_detail 
 						set inventory_price = %f, inventory_money = %f
 						where id = '%s' ";
+					$db->execute($sql, $fifoPrice, $fifoMoneyTotal, $id);
 				} else {
 					// 移动平均法
 					

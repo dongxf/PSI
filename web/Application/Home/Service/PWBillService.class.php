@@ -764,15 +764,15 @@ class PWBillService extends PSIBaseService {
 							balance_price, balance_money, warehouse_id, goods_id, date_created, in_ref,
 							in_ref_type)
 							values (%d, %f, %f, %d, %f, %f, '%s', '%s', '%s', '%s', '采购入库')";
-					$db->execute($sql, $goodsCount, $goodsPrice, $goodsMoney, $balanceCount, 
-							$balancePrice, $balanceMoney, $warehouseId, $goodsId, $dt, $ref);
+					$db->execute($sql, $goodsCount, $goodsPrice, $goodsMoney, $goodsCount, 
+							$goodsPrice, $goodsMoney, $warehouseId, $goodsId, $dt, $ref);
 					
 					// fifo 明细记录
 					$sql = "insert into t_inventory_fifo_detail(in_count, in_price, in_money, balance_count,
 							balance_price, balance_money, warehouse_id, goods_id, date_created)
 							values (%d, %f, %f, %d, %f, %f, '%s', '%s', '%s')";
-					$db->execute($sql, $goodsCount, $goodsPrice, $goodsMoney, $balanceCount, 
-							$balancePrice, $balanceMoney, $warehouseId, $goodsId, $dt);
+					$db->execute($sql, $goodsCount, $goodsPrice, $goodsMoney, $goodsCount, 
+							$goodsPrice, $goodsMoney, $warehouseId, $goodsId, $dt);
 				}
 			}
 			
