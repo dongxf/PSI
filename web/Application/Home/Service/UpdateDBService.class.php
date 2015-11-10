@@ -8,7 +8,7 @@ namespace Home\Service;
  * @author 李静波
  */
 class UpdateDBService extends PSIBaseService {
-	private $CURRENT_DB_VERSION = "20151108-001";
+	private $CURRENT_DB_VERSION = "20151110-001";
 
 	private function tableExists($db, $tableName) {
 		$dbName = C('DB_NAME');
@@ -87,6 +87,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20151106_01($db);
 		$this->update_20151106_02($db);
 		$this->update_20151108_01($db);
+		$this->update_20151110_01($db);
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -98,6 +99,23 @@ class UpdateDBService extends PSIBaseService {
 		$bl->insertBizlog("升级数据库，数据库版本 = " . $this->CURRENT_DB_VERSION);
 		
 		return $this->ok();
+	}
+
+	private function update_20151110_01($db) {
+		// 本次更新： t_inventory_fifo、 t_inventory_fifo_detail表增加字段 pwbilldetail_id
+		$tableName = "t_inventory_fifo";
+		$columnName = "pwbilldetail_id";
+		if (! $this->columnExists($db, $tableName, $columnName)) {
+			$sql = "alter table {$tableName} add {$columnName} varchar(255) default null;";
+			$db->execute($sql);
+		}
+		
+		$tableName = "t_inventory_fifo_detail";
+		$columnName = "pwbilldetail_id";
+		if (! $this->columnExists($db, $tableName, $columnName)) {
+			$sql = "alter table {$tableName} add {$columnName} varchar(255) default null;";
+			$db->execute($sql);
+		}
 	}
 
 	private function update_20151108_01($db) {
