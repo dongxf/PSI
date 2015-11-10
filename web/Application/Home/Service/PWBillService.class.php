@@ -660,7 +660,7 @@ class PWBillService extends PSIBaseService {
 			return $this->bad("仓库 [{$data[0]['name']}] 还没有完成建账，不能做采购入库的操作");
 		}
 		
-		$sql = "select goods_id, goods_count, goods_price, goods_money 
+		$sql = "select goods_id, goods_count, goods_price, goods_money, id 
 				from t_pw_bill_detail 
 				where pwbill_id = '%s' order by show_order";
 		$items = $db->query($sql, $id);
@@ -696,6 +696,8 @@ class PWBillService extends PSIBaseService {
 		$db->startTrans();
 		try {
 			foreach ( $items as $v ) {
+				$pwbilldetailId = $v["id"];
+				
 				$goodsCount = intval($v["goods_count"]);
 				$goodsPrice = floatval($v["goods_price"]);
 				$goodsMoney = floatval($v["goods_money"]);
@@ -762,17 +764,18 @@ class PWBillService extends PSIBaseService {
 					$dt = date("Y-m-d H:i:s");
 					$sql = "insert into t_inventory_fifo (in_count, in_price, in_money, balance_count,
 							balance_price, balance_money, warehouse_id, goods_id, date_created, in_ref,
-							in_ref_type)
-							values (%d, %f, %f, %d, %f, %f, '%s', '%s', '%s', '%s', '采购入库')";
+							in_ref_type, pwbilldetail_id)
+							values (%d, %f, %f, %d, %f, %f, '%s', '%s', '%s', '%s', '采购入库', '%s')";
 					$db->execute($sql, $goodsCount, $goodsPrice, $goodsMoney, $goodsCount, 
-							$goodsPrice, $goodsMoney, $warehouseId, $goodsId, $dt, $ref);
+							$goodsPrice, $goodsMoney, $warehouseId, $goodsId, $dt, $ref, 
+							$pwbilldetailId);
 					
 					// fifo 明细记录
 					$sql = "insert into t_inventory_fifo_detail(in_count, in_price, in_money, balance_count,
-							balance_price, balance_money, warehouse_id, goods_id, date_created)
-							values (%d, %f, %f, %d, %f, %f, '%s', '%s', '%s')";
+							balance_price, balance_money, warehouse_id, goods_id, date_created, pwbilldetail_id)
+							values (%d, %f, %f, %d, %f, %f, '%s', '%s', '%s', '%s')";
 					$db->execute($sql, $goodsCount, $goodsPrice, $goodsMoney, $goodsCount, 
-							$goodsPrice, $goodsMoney, $warehouseId, $goodsId, $dt);
+							$goodsPrice, $goodsMoney, $warehouseId, $goodsId, $dt, $pwbilldetailId);
 				}
 			}
 			
