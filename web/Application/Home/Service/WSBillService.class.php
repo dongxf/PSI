@@ -299,7 +299,7 @@ class WSBillService extends PSIBaseService {
 	 * @return string
 	 */
 	private function genNewBillRef() {
-		//$pre = "WS";
+		// $pre = "WS";
 		$pre = "DO";
 		$mid = date("Ymd");
 		
@@ -665,21 +665,39 @@ class WSBillService extends PSIBaseService {
 						}
 						
 						$fv = $data[$i];
-						$fvCount = $fv["balance_count"];
+						$fvBalanceCount = $fv["balance_count"];
 						$fvId = $fv["id"];
 						$fvBalancePrice = $fv["balance_price"];
 						$fvBalanceMoney = $fv["balance_money"];
+						$fvOutCount = $fv["out_count"];
+						$fvOutMoney = $fv["out_money"];
+						$fvDateCreated = $fv["date_created"];
 						
-						if ($fvCount >= $gc) {
-							$fifoMoney += $fvBalancePrice * $gc;
+						if ($fvBalanceCount >= $gc) {
+							if ($fvBalanceCount > $gc) {
+								$fifoMoney += $fvBalancePrice * $gc;
+							} else {
+								$fifoMoney = $fvBalanceMoney;
+							}
+							
+							$fvOutCount += $gc;
+							$fvOutMoney += $fifoMoney;
+							$fvOutPrice = $fvOutMoney / $fvOutCount;
+							
+							$fvBalanceCount -= $gc;
+							$fvBalanceMoney -= $fifoMoney;
 							
 							$sql = "update t_inventory_fifo
 									set out_count = %d, out_price = %f, out_money = %f,
-										balance_count = %d, balance_price = %f, balance_money = %f
+										balance_count = %d, balance_money = %f
 									where id = %d ";
+							$db->execute($sql, $fvOutCount, $fvOutPrice, $fvOutMoney, 
+									$fvBalanceCount, $fvBalanceMoney, $fvId);
 							
 							// fifo 的明细记录
-							$sql = "insert into t_inventory_fifo_detail";
+							$sql = "insert into t_inventory_fifo_detail(out_count, out_price, out_money,
+									balance_count, balance_price, balance_money, warehouse_id, goods_id,
+									date_created)";
 							
 							$gc = 0;
 						} else {
