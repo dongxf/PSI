@@ -17,7 +17,9 @@ class ICBillService extends PSIBaseService {
 	 * @return string
 	 */
 	private function genNewBillRef() {
-		$pre = "IC";
+		$bs = new BizConfigService();
+		$pre = $bs->getICBillRefPre();
+		
 		$mid = date("Ymd");
 		
 		$sql = "select ref from t_ic_bill where ref like '%s' order by ref desc limit 1";
@@ -304,7 +306,7 @@ class ICBillService extends PSIBaseService {
 			$queryParams[] = $warehouseId;
 		}
 		
-		$sql .= " order by t.ref desc
+		$sql .= " order by t.bizdt desc, t.ref desc
 			limit %d , %d ";
 		$queryParams[] = $start;
 		$queryParams[] = $limit;

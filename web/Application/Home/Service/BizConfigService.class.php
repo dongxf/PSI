@@ -410,4 +410,25 @@ class BizConfigService extends PSIBaseService {
 		
 		return $result;
 	}
+
+	/**
+	 * 获得盘点单单号前缀
+	 */
+	public function getICBillRefPre() {
+		$result = "IC";
+		
+		$db = M();
+		$id = "9003-07";
+		$sql = "select value from t_config where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if ($data) {
+			$result = $data[0]["value"];
+			
+			if ($result == null || $result == "") {
+				$result = "IC";
+			}
+		}
+		
+		return $result;
+	}
 }
