@@ -8,7 +8,7 @@ namespace Home\Service;
  * @author 李静波
  */
 class UpdateDBService extends PSIBaseService {
-	private $CURRENT_DB_VERSION = "20151110-002";
+	private $CURRENT_DB_VERSION = "20151111-001";
 
 	private function tableExists($db, $tableName) {
 		$dbName = C('DB_NAME');
@@ -89,6 +89,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20151108_01($db);
 		$this->update_20151110_01($db);
 		$this->update_20151110_02($db);
+		$this->update_20151111_01($db);
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -100,6 +101,100 @@ class UpdateDBService extends PSIBaseService {
 		$bl->insertBizlog("升级数据库，数据库版本 = " . $this->CURRENT_DB_VERSION);
 		
 		return $this->ok();
+	}
+
+	private function update_20151111_01($db) {
+		// 本次更新：t_config表：单号前缀自定义
+		$id = "9003-01";
+		$name = "采购订单单号前缀";
+		$value = "PO";
+		$showOrder = 601;
+		$sql = "select count(*) as cnt from t_config where id = '%s' ";
+		$data = $db->query($sql, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_config (id, name, value, note, show_order)
+					values ('%s', '%s', '%s', '', %d)";
+			$db->execute($sql, $id, $name, $value, $showOrder);
+		}
+		
+		$id = "9003-02";
+		$name = "采购入库单单号前缀";
+		$value = "PW";
+		$showOrder = 602;
+		$sql = "select count(*) as cnt from t_config where id = '%s' ";
+		$data = $db->query($sql, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_config (id, name, value, note, show_order)
+					values ('%s', '%s', '%s', '', %d)";
+			$db->execute($sql, $id, $name, $value, $showOrder);
+		}
+		
+		$id = "9003-03";
+		$name = "采购退货出库单单号前缀";
+		$value = "PR";
+		$showOrder = 603;
+		$sql = "select count(*) as cnt from t_config where id = '%s' ";
+		$data = $db->query($sql, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_config (id, name, value, note, show_order)
+					values ('%s', '%s', '%s', '', %d)";
+			$db->execute($sql, $id, $name, $value, $showOrder);
+		}
+		
+		$id = "9003-04";
+		$name = "销售出库单单号前缀";
+		$value = "WS";
+		$showOrder = 604;
+		$sql = "select count(*) as cnt from t_config where id = '%s' ";
+		$data = $db->query($sql, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_config (id, name, value, note, show_order)
+					values ('%s', '%s', '%s', '', %d)";
+			$db->execute($sql, $id, $name, $value, $showOrder);
+		}
+		
+		$id = "9003-05";
+		$name = "销售退货入库单单号前缀";
+		$value = "SR";
+		$showOrder = 605;
+		$sql = "select count(*) as cnt from t_config where id = '%s' ";
+		$data = $db->query($sql, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_config (id, name, value, note, show_order)
+					values ('%s', '%s', '%s', '', %d)";
+			$db->execute($sql, $id, $name, $value, $showOrder);
+		}
+		
+		$id = "9003-06";
+		$name = "调拨单单号前缀";
+		$value = "IT";
+		$showOrder = 606;
+		$sql = "select count(*) as cnt from t_config where id = '%s' ";
+		$data = $db->query($sql, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_config (id, name, value, note, show_order)
+					values ('%s', '%s', '%s', '', %d)";
+			$db->execute($sql, $id, $name, $value, $showOrder);
+		}
+		
+		$id = "9003-07";
+		$name = "盘点单单号前缀";
+		$value = "IC";
+		$showOrder = 607;
+		$sql = "select count(*) as cnt from t_config where id = '%s' ";
+		$data = $db->query($sql, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_config (id, name, value, note, show_order)
+					values ('%s', '%s', '%s', '', %d)";
+			$db->execute($sql, $id, $name, $value, $showOrder);
+		}
 	}
 
 	private function update_20151110_02($db) {
