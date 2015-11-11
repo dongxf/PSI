@@ -17,7 +17,9 @@ class PRBillService extends PSIBaseService {
 	 * @return string
 	 */
 	private function genNewBillRef() {
-		$pre = "PR";
+		$bs = new BizConfigService();
+		$pre = $bs->getPRBillRefPre();
+		
 		$mid = date("Ymd");
 		
 		$sql = "select ref from t_pr_bill where ref like '%s' order by ref desc limit 1";
@@ -548,7 +550,7 @@ class PRBillService extends PSIBaseService {
 			$queryParams[] = $receivingType;
 		}
 		
-		$sql .= " order by p.ref desc
+		$sql .= " order by p.bizdt desc, p.ref desc
 				limit %d, %d";
 		$queryParams[] = $start;
 		$queryParams[] = $limit;

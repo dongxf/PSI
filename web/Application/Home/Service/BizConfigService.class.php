@@ -326,4 +326,25 @@ class BizConfigService extends PSIBaseService {
 		
 		return $result;
 	}
+	
+	/**
+	 * 获得采购退货出库单单号前缀
+	 */
+	public function getPRBillRefPre() {
+		$result = "PR";
+		
+		$db = M();
+		$id = "9003-03";
+		$sql = "select value from t_config where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if ($data) {
+			$result = $data[0]["value"];
+			
+			if ($result == null || $result == "") {
+				$result = "PR";
+			}
+		}
+		
+		return $result;
+	}
 }
