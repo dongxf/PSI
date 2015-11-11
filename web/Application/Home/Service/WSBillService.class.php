@@ -385,7 +385,7 @@ class WSBillService extends PSIBaseService {
 			$queryParams[] = $receivingType;
 		}
 		
-		$sql .= " order by w.ref desc 
+		$sql .= " order by w.bizdt desc, w.ref desc 
 				limit %d, %d";
 		$queryParams[] = $start;
 		$queryParams[] = $limit;
