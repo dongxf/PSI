@@ -15,7 +15,9 @@ class POBillService extends PSIBaseService {
 	 * 生成新的采购订单号
 	 */
 	private function genNewBillRef() {
-		$pre = "PO";
+		$bs = new BizConfigService();
+		$pre = $bs->getPOBillRefPre();
+		
 		$mid = date("Ymd");
 		
 		$sql = "select ref from t_po_bill where ref like '%s' order by ref desc limit 1";
@@ -94,7 +96,7 @@ class POBillService extends PSIBaseService {
 			$sql .= " and (p.payment_type = %d) ";
 			$queryParams[] = $paymentType;
 		}
-		$sql .= " order by p.ref desc 
+		$sql .= " order by p.deal_date desc, p.ref desc 
 				  limit %d , %d";
 		$queryParams[] = $start;
 		$queryParams[] = $limit;

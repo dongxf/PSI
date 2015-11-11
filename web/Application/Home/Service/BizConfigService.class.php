@@ -284,4 +284,25 @@ class BizConfigService extends PSIBaseService {
 		
 		return $result;
 	}
+
+	/**
+	 * 获得采购订单单号前缀
+	 */
+	public function getPOBillRefPre() {
+		$result = "PO";
+		
+		$db = M();
+		$id = "9003-01";
+		$sql = "select value from t_config where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if ($data) {
+			$result = $data[0]["value"];
+			
+			if ($result == null || $result == "") {
+				$result = "PO";
+			}
+		}
+		
+		return $result;
+	}
 }
