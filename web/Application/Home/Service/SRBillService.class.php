@@ -84,7 +84,7 @@ class SRBillService extends PSIBaseService {
 			$queryParams[] = $paymentType;
 		}
 		
-		$sql .= " order by w.ref desc 
+		$sql .= " order by w.bizdt desc, w.ref desc 
 				 limit %d, %d";
 		$queryParams[] = $start;
 		$queryParams[] = $limit;
@@ -698,7 +698,9 @@ class SRBillService extends PSIBaseService {
 	 * @return string
 	 */
 	private function genNewBillRef() {
-		$pre = "SR";
+		$bs = new BizConfigService();
+		$pre = $bs->getSRBillRefPre();
+		
 		$mid = date("Ymd");
 		
 		$sql = "select ref from t_sr_bill where ref like '%s' order by ref desc limit 1";
