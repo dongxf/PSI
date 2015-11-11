@@ -17,7 +17,9 @@ class ITBillService extends PSIBaseService {
 	 * @return string
 	 */
 	private function genNewBillRef() {
-		$pre = "IT";
+		$bs = new BizConfigService();
+		$pre = $bs->getITBillRefPre();
+		
 		$mid = date("Ymd");
 		
 		$sql = "select ref from t_it_bill where ref like '%s' order by ref desc limit 1";
@@ -100,7 +102,7 @@ class ITBillService extends PSIBaseService {
 			$queryParams[] = $toWarehouseId;
 		}
 		
-		$sql .= " order by t.ref desc
+		$sql .= " order by t.bizdt desc, t.ref desc
 				limit %d , %d
 				";
 		$queryParams[] = $start;

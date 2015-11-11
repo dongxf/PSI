@@ -326,7 +326,7 @@ class BizConfigService extends PSIBaseService {
 		
 		return $result;
 	}
-	
+
 	/**
 	 * 获得采购退货出库单单号前缀
 	 */
@@ -347,46 +347,67 @@ class BizConfigService extends PSIBaseService {
 		
 		return $result;
 	}
-	
+
 	/**
 	 * 获得销售出库单单号前缀
 	 */
 	public function getWSBillRefPre() {
 		$result = "WS";
-	
+		
 		$db = M();
 		$id = "9003-04";
 		$sql = "select value from t_config where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if ($data) {
 			$result = $data[0]["value"];
-				
+			
 			if ($result == null || $result == "") {
 				$result = "WS";
 			}
 		}
-	
+		
 		return $result;
 	}
-	
+
 	/**
 	 * 获得销售退货入库单单号前缀
 	 */
 	public function getSRBillRefPre() {
 		$result = "SR";
-	
+		
 		$db = M();
 		$id = "9003-05";
 		$sql = "select value from t_config where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if ($data) {
 			$result = $data[0]["value"];
-	
+			
 			if ($result == null || $result == "") {
 				$result = "SR";
 			}
 		}
-	
+		
+		return $result;
+	}
+
+	/**
+	 * 获得调拨单单号前缀
+	 */
+	public function getITBillRefPre() {
+		$result = "IT";
+		
+		$db = M();
+		$id = "9003-06";
+		$sql = "select value from t_config where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if ($data) {
+			$result = $data[0]["value"];
+			
+			if ($result == null || $result == "") {
+				$result = "IT";
+			}
+		}
+		
 		return $result;
 	}
 }
