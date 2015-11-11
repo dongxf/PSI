@@ -347,4 +347,25 @@ class BizConfigService extends PSIBaseService {
 		
 		return $result;
 	}
+	
+	/**
+	 * 获得销售出库单单号前缀
+	 */
+	public function getWSBillRefPre() {
+		$result = "WS";
+	
+		$db = M();
+		$id = "9003-04";
+		$sql = "select value from t_config where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if ($data) {
+			$result = $data[0]["value"];
+				
+			if ($result == null || $result == "") {
+				$result = "WS";
+			}
+		}
+	
+		return $result;
+	}
 }
