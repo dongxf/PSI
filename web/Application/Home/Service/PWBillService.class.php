@@ -76,7 +76,7 @@ class PWBillService extends PSIBaseService {
 			$queryParams[] = $paymentType;
 		}
 		
-		$sql .= " order by p.ref desc 
+		$sql .= " order by p.biz_dt desc, p.ref desc 
 				limit %d, %d";
 		$queryParams[] = $start;
 		$queryParams[] = $limit;
@@ -400,8 +400,9 @@ class PWBillService extends PSIBaseService {
 	 * 生成新的采购入库单单号
 	 */
 	private function genNewBillRef() {
-		// $pre = "PW";
-		$pre = "WL";
+		$bs = new BizConfigService();
+		$pre = $bs->getPWBillRefPre();
+		
 		$mid = date("Ymd");
 		
 		$sql = "select ref from t_pw_bill where ref like '%s' order by ref desc limit 1";
