@@ -78,7 +78,14 @@ class BizConfigController extends Controller {
 					"2002-01" => I("post.value2002-01"),
 					"2002-02" => I("post.value2002-02"),
 					"9001-01" => I("post.value9001-01"),
-					"9002-01" => I("post.value9002-01")
+					"9002-01" => I("post.value9002-01"),
+					"9003-01" => I("post.value9003-01"),
+					"9003-02" => I("post.value9003-02"),
+					"9003-03" => I("post.value9003-03"),
+					"9003-04" => I("post.value9003-04"),
+					"9003-05" => I("post.value9003-05"),
+					"9003-06" => I("post.value9003-06"),
+					"9003-07" => I("post.value9003-07")
 			);
 			
 			$this->ajaxReturn($bs->edit($params));

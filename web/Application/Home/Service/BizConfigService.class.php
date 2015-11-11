@@ -86,6 +86,16 @@ class BizConfigService extends PSIBaseService {
 		
 		$db = M();
 		
+		$refPreList = array(
+				"9003-01",
+				"9003-02",
+				"9003-03",
+				"9003-04",
+				"9003-05",
+				"9003-06",
+				"9003-07"
+		);
+		
 		// 检查值是否合法
 		foreach ( $params as $key => $value ) {
 			if ($key == "9001-01") {
@@ -124,6 +134,12 @@ class BizConfigService extends PSIBaseService {
 					return $this->bad("已经有业务发生，不能再调整存货计价方法");
 				}
 			}
+			
+			if (in_array($key, $refPreList)) {
+				if ($value == null || $value == "") {
+					return $this->bad("单号前缀不能为空");
+				}
+			}
 		}
 		
 		foreach ( $params as $key => $value ) {
@@ -148,6 +164,15 @@ class BizConfigService extends PSIBaseService {
 				if ($this->isDemo()) {
 					return $this->bad("在演示环境下不能修改产品名称，请原谅。");
 				}
+			}
+			
+			if (in_array($key, $refPreList)) {
+				if ($this->isDemo()) {
+					return $this->bad("在演示环境下不能修改单号前缀，请原谅。");
+				}
+				
+				// 单号前缀保持大写
+				$value = strtoupper($value);
 			}
 			
 			$sql = "update t_config set value = '%s'

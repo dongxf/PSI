@@ -56,8 +56,8 @@ Ext.define("PSI.BizConfig.EditForm", {
 			title : "业务设置",
 			modal : true,
 			onEsc : Ext.emptyFn,
-			width : 420,
-			height : 350,
+			width : 500,
+			height : 450,
 			layout : "fit",
 			items : [ {
 				xtype : "tabpanel",
@@ -188,6 +188,52 @@ Ext.define("PSI.BizConfig.EditForm", {
 				        	         }
 				        	 ]
 				         }, {
+				        	title: "单号前缀",
+				        	layout: "form",
+				        	items: [{
+		        	        	 id: "editName9003-01",
+		        	        	 xtype: "displayfield"
+		        	         }, {
+		        	        	 id: "editValue9003-01",
+		        	        	 xtype: "textfield"
+		        	         }, {
+		        	        	 id: "editName9003-02",
+		        	        	 xtype: "displayfield"
+		        	         }, {
+		        	        	 id: "editValue9003-02",
+		        	        	 xtype: "textfield"
+		        	         }, {
+		        	        	 id: "editName9003-03",
+		        	        	 xtype: "displayfield"
+		        	         }, {
+		        	        	 id: "editValue9003-03",
+		        	        	 xtype: "textfield"
+		        	         }, {
+		        	        	 id: "editName9003-04",
+		        	        	 xtype: "displayfield"
+		        	         }, {
+		        	        	 id: "editValue9003-04",
+		        	        	 xtype: "textfield"
+		        	         }, {
+		        	        	 id: "editName9003-05",
+		        	        	 xtype: "displayfield"
+		        	         }, {
+		        	        	 id: "editValue9003-05",
+		        	        	 xtype: "textfield"
+		        	         }, {
+		        	        	 id: "editName9003-06",
+		        	        	 xtype: "displayfield"
+		        	         }, {
+		        	        	 id: "editValue9003-06",
+		        	        	 xtype: "textfield"
+		        	         }, {
+		        	        	 id: "editName9003-07",
+		        	        	 xtype: "displayfield"
+		        	         }, {
+		        	        	 id: "editValue9003-07",
+		        	        	 xtype: "textfield"
+		        	         }]
+				         }, {
 				        	 title: "系统",
 				        	 iconCls: "PSI-fid-9994",
 				        	 layout: "form",
@@ -231,7 +277,14 @@ Ext.define("PSI.BizConfig.EditForm", {
 				'value2002-01': Ext.getCmp("editValue2002-01").getValue(),
 				'value2002-02': Ext.getCmp("editValue2002-02").getValue(),
 				'value9001-01': Ext.getCmp("editValue9001-01").getValue(),
-				'value9002-01': Ext.getCmp("editValue9002-01").getValue()
+				'value9002-01': Ext.getCmp("editValue9002-01").getValue(),
+				'value9003-01': Ext.getCmp("editValue9003-01").getValue(),
+				'value9003-02': Ext.getCmp("editValue9003-02").getValue(),
+				'value9003-03': Ext.getCmp("editValue9003-03").getValue(),
+				'value9003-04': Ext.getCmp("editValue9003-04").getValue(),
+				'value9003-05': Ext.getCmp("editValue9003-05").getValue(),
+				'value9003-06': Ext.getCmp("editValue9003-06").getValue(),
+				'value9003-07': Ext.getCmp("editValue9003-07").getValue()
 		};
 		
 		return result;
