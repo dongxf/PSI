@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS `t_biz_log` (
   `user_id` varchar(255) NOT NULL,
   `log_category` varchar(50) NOT NULL,
   `data_org` varchar(255) DEFAULT NULL,
+  `ip_from` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
