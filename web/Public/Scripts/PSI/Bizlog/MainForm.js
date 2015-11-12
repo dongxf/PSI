@@ -5,7 +5,8 @@ Ext.define("PSI.Bizlog.MainForm", {
         var me = this;
         Ext.define("PSILog", {
             extend: "Ext.data.Model",
-            fields: ["id", "loginName", "userName", "ip", "content", "dt", "logCategory"],
+            fields: ["id", "loginName", "userName", "ip", "ipFrom", 
+                     "content", "dt", "logCategory"],
             idProperty: "id"
         });
         var store = Ext.create("Ext.data.Store", {
@@ -39,6 +40,7 @@ Ext.define("PSI.Bizlog.MainForm", {
                 {text: "登录名", dataIndex: "loginName", width: 60, menuDisabled: true, sortable: false},
                 {text: "姓名", dataIndex: "userName", width: 80, menuDisabled: true, sortable: false},
                 {text: "IP", dataIndex: "ip", width: 120, menuDisabled: true, sortable: false},
+                {text: "IP所属地", dataIndex: "ipFrom", width: 200, menuDisabled: true, sortable: false},
                 {text: "日志分类", dataIndex: "logCategory", width: 150, menuDisabled: true, sortable: false},
                 {text: "日志内容", dataIndex: "content", flex: 1, menuDisabled: true, sortable: false},
                 {text: "日志记录时间", dataIndex: "dt", width: 140, menuDisabled: true, sortable: false}

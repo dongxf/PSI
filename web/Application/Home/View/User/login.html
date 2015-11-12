@@ -55,13 +55,26 @@
 <link href="{$uri}Public/Content/icons.css" rel="stylesheet" type="text/css"/>
 
 <script src="{$uri}Public/Scripts/PSI/User/LoginForm.js?dt={$dtFlag}" type="text/javascript"></script>
+
+<script type="text/javascript" src="http://pv.sohu.com/cityjson?ie=utf-8" charset="gb2312"></script>	
+
 	
 <script type="text/javascript">
     Ext.onReady(function () {
+    	var ip = "";
+    	var cname = "";
+    	if (window.returnCitySN){
+    		ip = returnCitySN.cip;
+    		cname = returnCitySN.cname;
+    	}
+
+    	
 		PSI.Const.BASE_URL = "{$uri}";
         var form = Ext.create("PSI.User.LoginForm", {
                demoInfo: "{$demoInfo}",
-               productionName: "{$productionName}"
+               productionName: "{$productionName}",
+               ip: ip,
+               cname: cname
            });
         form.show();
 

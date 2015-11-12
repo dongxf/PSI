@@ -25,7 +25,8 @@ class BizlogService extends PSIBaseService {
 		
 		$db = M();
 		
-		$sql = "select b.id, u.login_name, u.name, b.ip, b.info, b.date_created, b.log_category 
+		$sql = "select b.id, u.login_name, u.name, b.ip, b.info, b.date_created, 
+					b.log_category, b.ip_from 
 				from t_biz_log b, t_user u
 				where b.user_id = u.id ";
 		$queryParams = array();
@@ -49,6 +50,7 @@ class BizlogService extends PSIBaseService {
 			$result[$i]["loginName"] = $v["login_name"];
 			$result[$i]["userName"] = $v["name"];
 			$result[$i]["ip"] = $v["ip"];
+			$result[$i]["ipFrom"] = $v["ip_from"];
 			$result[$i]["content"] = $v["info"];
 			$result[$i]["dt"] = $v["date_created"];
 			$result[$i]["logCategory"] = $v["log_category"];
@@ -91,10 +93,16 @@ class BizlogService extends PSIBaseService {
 			
 			$dataOrg = $us->getLoginUserDataOrg();
 			
-			$sql = "insert into t_biz_log (user_id, info, ip, date_created, log_category, data_org) 
-					values ('%s', '%s', '%s',  now(), '%s', '%s')";
-			M()->execute($sql, $us->getLoginUserId(), $log, $this->getClientIP(), $category, 
-					$dataOrg);
+			$ip = session("PSI_login_user_ip");
+			if ($ip == null || $ip == "") {
+				$ip = $this->getClientIP();
+			}
+			
+			$ipFrom = session("PSI_login_user_ip_from");
+			
+			$sql = "insert into t_biz_log (user_id, info, ip, date_created, log_category, data_org, ip_from) 
+					values ('%s', '%s', '%s',  now(), '%s', '%s', '%s')";
+			M()->execute($sql, $us->getLoginUserId(), $log, $ip, $category, $dataOrg, $ipFrom);
 		} catch ( Exception $ex ) {
 		}
 	}

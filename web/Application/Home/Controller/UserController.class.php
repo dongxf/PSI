@@ -104,6 +104,12 @@ class UserController extends Controller {
 			$loginName = I("post.loginName");
 			$password = I("post.password");
 			$fromDevice = I("post.fromDevice");
+			$ip = I("post.ip");
+			$ipFrom = I("post.ipFrom");
+			
+			session("PSI_login_user_ip", $ip);
+			session("PSI_login_user_ip_from", $ipFrom);
+			
 			$us = new UserService();
 			$this->ajaxReturn($us->doLogin($loginName, $password, $fromDevice));
 		}

@@ -4,7 +4,9 @@ Ext.define("PSI.User.LoginForm", {
     
     config: {
         demoInfo: "",
-        productionName: ""
+        productionName: "",
+        ip: "",
+        cname: ""
     },
 
     modal: true,
@@ -83,6 +85,14 @@ Ext.define("PSI.User.LoginForm", {
                 },{
                     xtype: "displayfield",
                     value: me.getDemoInfo()
+                },{
+                	xtype: "hidden",
+                	name: "ip",
+                	value: me.getIp()
+                },{
+                	xtype: "hidden",
+                	name: "ipFrom",
+                	value: me.getCname()
                 }],
                 buttons: [{
                     text: "登录",
