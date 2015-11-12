@@ -136,9 +136,6 @@ Ext.define("PSI.Customer.CustomerEditForm", {
                         },{
                             id: "editContact01",
                             fieldLabel: "联系人",
-                            allowBlank: false,
-                            blankText: "没有输入联系人",
-                            beforeLabelTextTpl: PSI.Const.REQUIRED,
                             name: "contact01",
                             value: entity == null ? null : entity.get("contact01"),
                             listeners: {
@@ -151,9 +148,6 @@ Ext.define("PSI.Customer.CustomerEditForm", {
                         {
                             id: "editMobile01",
                             fieldLabel: "手机",
-                            allowBlank: false,
-                            blankText: "没有输入手机",
-                            beforeLabelTextTpl: PSI.Const.REQUIRED,
                             name: "mobile01",
                             value: entity == null ? null : entity.get("mobile01"),
                             listeners: {
@@ -237,9 +231,6 @@ Ext.define("PSI.Customer.CustomerEditForm", {
                         },{
                             id: "editAddressReceipt",
                             fieldLabel: "收货地址",
-                            allowBlank: false,
-                            blankText: "没有输入收货地址",
-                            beforeLabelTextTpl: PSI.Const.REQUIRED,
                             name: "addressReceipt",
                             value: entity == null ? null : entity.get("addressReceipt"),
                             listeners: {
@@ -290,9 +281,6 @@ Ext.define("PSI.Customer.CustomerEditForm", {
                         {
                             id: "editFax",
                             fieldLabel: "传真",
-                            allowBlank: false,
-                            blankText: "没有输入传真",
-                            beforeLabelTextTpl: PSI.Const.REQUIRED,
                             name: "fax",
                             value: entity == null ? null : entity.get("fax"),
                             listeners: {

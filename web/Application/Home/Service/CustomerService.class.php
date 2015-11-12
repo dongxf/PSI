@@ -196,6 +196,9 @@ class CustomerService extends PSIBaseService {
 		
 		$db = M();
 		
+		$us = new UserService();
+		$dataOrg = $us->getLoginUserDataOrg();
+		
 		$sql = "select count(*) as cnt from t_customer_category where id = '%s' ";
 		$data = $db->query($sql, $categoryId);
 		$cnt = $data[0]["cnt"];
@@ -241,9 +244,6 @@ class CustomerService extends PSIBaseService {
 			if ($cnt > 0) {
 				return $this->bad("编码为 [{$code}] 的客户已经存在");
 			}
-			
-			$us = new UserService();
-			$dataOrg = $us->getLoginUserDataOrg();
 			
 			$sql = "insert into t_customer (id, category_id, code, name, py, contact01, 
 					qq01, tel01, mobile01, contact02, qq02, tel02, mobile02, address, address_receipt,
@@ -292,10 +292,10 @@ class CustomerService extends PSIBaseService {
 				$idGen = new IdGenService();
 				$rvId = $idGen->newId();
 				$sql = "insert into t_receivables_detail (id, rv_money, act_money, balance_money,
-						biz_date, date_created, ca_id, ca_type, ref_number, ref_type)
-						values ('%s', %f, 0, %f, '%s', now(), '%s', 'customer', '%s', '应收账款期初建账') ";
+						biz_date, date_created, ca_id, ca_type, ref_number, ref_type, data_org)
+						values ('%s', %f, 0, %f, '%s', now(), '%s', 'customer', '%s', '应收账款期初建账', '%s') ";
 				$db->execute($sql, $rvId, $initReceivables, $initReceivables, $initReceivablesDT, 
-						$id, $id);
+						$id, $id, $dataOrg);
 			}
 			
 			// 应收总账
@@ -311,8 +311,8 @@ class CustomerService extends PSIBaseService {
 				$idGen = new IdGenService();
 				$rvId = $idGen->newId();
 				$sql = "insert into t_receivables (id, rv_money, act_money, balance_money,
-						ca_id, ca_type) values ('%s', %f, 0, %f, '%s', 'customer')";
-				$db->execute($sql, $rvId, $initReceivables, $initReceivables, $id);
+						ca_id, ca_type, data_org) values ('%s', %f, 0, %f, '%s', 'customer', '%s')";
+				$db->execute($sql, $rvId, $initReceivables, $initReceivables, $id, $dataOrg);
 			}
 		}
 		
