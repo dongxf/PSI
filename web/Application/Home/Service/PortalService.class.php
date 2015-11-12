@@ -195,7 +195,17 @@ class PortalService extends PSIBaseService {
 					where w.bill_status = 1000
 						and year(w.biz_dt) = %d
 						and month(w.biz_dt) = %d";
-			$data = $db->query($sql, $year, $month);
+			$queryParams = array();
+			$queryParams[] = $year;
+			$queryParams[] = $month;
+			$ds = new DataOrgService();
+			$rs = $ds->buildSQL(FIdConst::PORTAL_PURCHASE, "w");
+			if ($rs) {
+				$sql .= " and " . $rs[0];
+				$queryParams = array_merge($queryParams, $rs[1]);
+			}
+			
+			$data = $db->query($sql, $queryParams);
 			$goodsMoney = $data[0]["goods_money"];
 			if (! $goodsMoney) {
 				$goodsMoney = 0;
@@ -207,7 +217,17 @@ class PortalService extends PSIBaseService {
 					where s.bill_status = 1000
 						and year(s.bizdt) = %d
 						and month(s.bizdt) = %d";
-			$data = $db->query($sql, $year, $month);
+			$queryParams = array();
+			$queryParams[] = $year;
+			$queryParams[] = $month;
+			$ds = new DataOrgService();
+			$rs = $ds->buildSQL(FIdConst::PORTAL_PURCHASE, "s");
+			if ($rs) {
+				$sql .= " and " . $rs[0];
+				$queryParams = array_merge($queryParams, $rs[1]);
+			}
+			
+			$data = $db->query($sql, $queryParams);
 			$rejMoney = $data[0]["rej_money"];
 			if (! $rejMoney) {
 				$rejMoney = 0;
@@ -241,8 +261,15 @@ class PortalService extends PSIBaseService {
 		// 应收账款
 		$result[0]["item"] = "应收账款";
 		$sql = "select sum(balance_money) as balance_money
-				from t_receivables";
-		$data = $db->query($sql);
+				from t_receivables ";
+		$queryParams = array();
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::PORTAL_MONEY, "t_receivables");
+		if ($rs) {
+			$sql .= " where " . $rs[0];
+			$queryParams = $rs[1];
+		}
+		$data = $db->query($sql, $queryParams);
 		$balance = $data[0]["balance_money"];
 		if (! $balance) {
 			$balance = 0;
@@ -253,7 +280,14 @@ class PortalService extends PSIBaseService {
 		$sql = "select sum(balance_money) as balance_money
 				from t_receivables_detail
 				where datediff(current_date(), biz_date) < 30";
-		$data = $db->query($sql);
+		$queryParams = array();
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::PORTAL_MONEY, "t_receivables_detail");
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = $rs[1];
+		}
+		$data = $db->query($sql, $queryParams);
 		$balance = $data[0]["balance_money"];
 		if (! $balance) {
 			$balance = 0;
@@ -265,7 +299,14 @@ class PortalService extends PSIBaseService {
 				from t_receivables_detail
 				where datediff(current_date(), biz_date) <= 60
 					and datediff(current_date(), biz_date) >= 30";
-		$data = $db->query($sql);
+		$queryParams = array();
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::PORTAL_MONEY, "t_receivables_detail");
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = $rs[1];
+		}
+		$data = $db->query($sql, $queryParams);
 		$balance = $data[0]["balance_money"];
 		if (! $balance) {
 			$balance = 0;
@@ -277,7 +318,14 @@ class PortalService extends PSIBaseService {
 				from t_receivables_detail
 				where datediff(current_date(), biz_date) <= 90
 					and datediff(current_date(), biz_date) > 60";
-		$data = $db->query($sql);
+		$queryParams = array();
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::PORTAL_MONEY, "t_receivables_detail");
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = $rs[1];
+		}
+		$data = $db->query($sql, $queryParams);
 		$balance = $data[0]["balance_money"];
 		if (! $balance) {
 			$balance = 0;
@@ -288,7 +336,14 @@ class PortalService extends PSIBaseService {
 		$sql = "select sum(balance_money) as balance_money
 				from t_receivables_detail
 				where datediff(current_date(), biz_date) > 90";
-		$data = $db->query($sql);
+		$queryParams = array();
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::PORTAL_MONEY, "t_receivables_detail");
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = $rs[1];
+		}
+		$data = $db->query($sql, $queryParams);
 		$balance = $data[0]["balance_money"];
 		if (! $balance) {
 			$balance = 0;
@@ -298,8 +353,15 @@ class PortalService extends PSIBaseService {
 		// 应付账款
 		$result[1]["item"] = "应付账款";
 		$sql = "select sum(balance_money) as balance_money
-				from t_payables";
-		$data = $db->query($sql);
+				from t_payables ";
+		$queryParams = array();
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::PORTAL_MONEY, "t_payables");
+		if ($rs) {
+			$sql .= " where " . $rs[0];
+			$queryParams = $rs[1];
+		}
+		$data = $db->query($sql, $queryParams);
 		$balance = $data[0]["balance_money"];
 		if (! $balance) {
 			$balance = 0;
@@ -310,7 +372,14 @@ class PortalService extends PSIBaseService {
 		$sql = "select sum(balance_money) as balance_money
 				from t_payables_detail
 				where datediff(current_date(), biz_date) < 30";
-		$data = $db->query($sql);
+		$queryParams = array();
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::PORTAL_MONEY, "t_payables_detail");
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = array_merge($queryParams, $rs[1]);
+		}
+		$data = $db->query($sql, $queryParams);
 		$balance = $data[0]["balance_money"];
 		if (! $balance) {
 			$balance = 0;
@@ -322,7 +391,14 @@ class PortalService extends PSIBaseService {
 				from t_payables_detail
 				where datediff(current_date(), biz_date) <= 60
 					and datediff(current_date(), biz_date) >= 30";
-		$data = $db->query($sql);
+		$queryParams = array();
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::PORTAL_MONEY, "t_payables_detail");
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = array_merge($queryParams, $rs[1]);
+		}
+		$data = $db->query($sql, $queryParams);
 		$balance = $data[0]["balance_money"];
 		if (! $balance) {
 			$balance = 0;
@@ -334,7 +410,14 @@ class PortalService extends PSIBaseService {
 				from t_payables_detail
 				where datediff(current_date(), biz_date) <= 90
 					and datediff(current_date(), biz_date) > 60";
-		$data = $db->query($sql);
+		$queryParams = array();
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::PORTAL_MONEY, "t_payables_detail");
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = array_merge($queryParams, $rs[1]);
+		}
+		$data = $db->query($sql, $queryParams);
 		$balance = $data[0]["balance_money"];
 		if (! $balance) {
 			$balance = 0;
@@ -345,7 +428,14 @@ class PortalService extends PSIBaseService {
 		$sql = "select sum(balance_money) as balance_money
 				from t_payables_detail
 				where datediff(current_date(), biz_date) > 90";
-		$data = $db->query($sql);
+		$queryParams = array();
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::PORTAL_MONEY, "t_payables_detail");
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = array_merge($queryParams, $rs[1]);
+		}
+		$data = $db->query($sql, $queryParams);
 		$balance = $data[0]["balance_money"];
 		if (! $balance) {
 			$balance = 0;
