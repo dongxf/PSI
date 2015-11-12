@@ -2,6 +2,8 @@
 
 namespace Home\Service;
 
+use Home\Common\FIdConst;
+
 /**
  * Portal Service
  *
@@ -19,9 +21,17 @@ class PortalService extends PSIBaseService {
 		$db = M();
 		$sql = "select id, name 
 				from t_warehouse 
-				where inited = 1
-				order by code";
-		$data = $db->query($sql);
+				where (inited = 1) ";
+		$queryParams = array();
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::PORTAL_INVENTORY, "t_warehouse");
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = $rs[1];
+		}
+		
+		$sql .= " order by code ";
+		$data = $db->query($sql, $queryParams);
 		foreach ( $data as $i => $v ) {
 			$result[$i]["warehouseName"] = $v["name"];
 			$warehouseId = $v["id"];
@@ -87,7 +97,17 @@ class PortalService extends PSIBaseService {
 					where w.bill_status = 1000
 						and year(w.bizdt) = %d
 						and month(w.bizdt) = %d";
-			$data = $db->query($sql, $year, $month);
+			$queryParams = array();
+			$queryParams[] = $year;
+			$queryParams[] = $month;
+			$ds = new DataOrgService();
+			$rs = $ds->buildSQL(FIdConst::PORTAL_SALE, "w");
+			if ($rs) {
+				$sql .= " and " . $rs[0];
+				$queryParams = array_merge($queryParams, $rs[1]);
+			}
+			
+			$data = $db->query($sql, $queryParams);
 			$saleMoney = $data[0]["sale_money"];
 			if (! $saleMoney) {
 				$saleMoney = 0;
@@ -104,7 +124,17 @@ class PortalService extends PSIBaseService {
 					where s.bill_status = 1000
 						and year(s.bizdt) = %d
 						and month(s.bizdt) = %d";
-			$data = $db->query($sql, $year, $month);
+			$queryParams = array();
+			$queryParams[] = $year;
+			$queryParams[] = $month;
+			$ds = new DataOrgService();
+			$rs = $ds->buildSQL(FIdConst::PORTAL_SALE, "s");
+			if ($rs) {
+				$sql .= " and " . $rs[0];
+				$queryParams = array_merge($queryParams, $rs[1]);
+			}
+			
+			$data = $db->query($sql, $queryParams);
 			$rejSaleMoney = $data[0]["rej_sale_money"];
 			if (! $rejSaleMoney) {
 				$rejSaleMoney = 0;
