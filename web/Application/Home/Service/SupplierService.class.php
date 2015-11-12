@@ -348,6 +348,8 @@ class SupplierService extends PSIBaseService {
 		$categoryId = $params["categoryId"];
 		
 		$db = M();
+		$us = new UserService();
+		$dataOrg = $us->getLoginUserDataOrg();
 		
 		$sql = "select count(*) as cnt from t_supplier_category where id = '%s' ";
 		$data = $db->query($sql, $categoryId);
@@ -394,9 +396,6 @@ class SupplierService extends PSIBaseService {
 			if ($cnt > 0) {
 				return $this->bad("编码为 [$code] 的供应商已经存在");
 			}
-			
-			$us = new UserService();
-			$dataOrg = $us->getLoginUserDataOrg();
 			
 			$sql = "insert into t_supplier (id, category_id, code, name, py, contact01, 
 					qq01, tel01, mobile01, contact02, qq02,
@@ -447,9 +446,10 @@ class SupplierService extends PSIBaseService {
 				$idGen = new IdGenService();
 				$payId = $idGen->newId();
 				$sql = "insert into t_payables_detail (id, pay_money, act_money, balance_money, ca_id,
-						ca_type, ref_type, ref_number, biz_date, date_created) 
-						values ('%s', %f, 0, %f, '%s', 'supplier', '应付账款期初建账', '%s', '%s', now()) ";
-				$db->execute($sql, $payId, $initPayables, $initPayables, $id, $id, $initPayablesDT);
+						ca_type, ref_type, ref_number, biz_date, date_created, data_org) 
+						values ('%s', %f, 0, %f, '%s', 'supplier', '应付账款期初建账', '%s', '%s', now(), '%s') ";
+				$db->execute($sql, $payId, $initPayables, $initPayables, $id, $id, $initPayablesDT, 
+						$dataOrg);
 			}
 			
 			// 应付总账
@@ -464,9 +464,9 @@ class SupplierService extends PSIBaseService {
 			} else {
 				$idGen = new IdGenService();
 				$pId = $idGen->newId();
-				$sql = "insert into t_payables (id, pay_money, act_money, balance_money, ca_id, ca_type)
-						values ('%s', %f, 0, %f, '%s', 'supplier') ";
-				$db->execute($sql, $pId, $initPayables, $initPayables, $id, $initPayablesDT);
+				$sql = "insert into t_payables (id, pay_money, act_money, balance_money, ca_id, ca_type, data_org)
+						values ('%s', %f, 0, %f, '%s', 'supplier', '%s') ";
+				$db->execute($sql, $pId, $initPayables, $initPayables, $id, $dataOrg);
 			}
 		}
 		
