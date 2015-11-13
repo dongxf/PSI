@@ -356,7 +356,8 @@ Ext.define("PSI.Purchase.PWEditForm", {
 		Ext.define(modelName, {
 			extend : "Ext.data.Model",
 			fields : [ "id", "goodsId", "goodsCode", "goodsName", "goodsSpec",
-					"unitName", "goodsCount", {name: "goodsMoney", type: "float"}, "goodsPrice" ]
+					"unitName", "goodsCount", {name: "goodsMoney", type: "float"}, 
+					"goodsPrice", "memo" ]
 		});
 		var store = Ext.create("Ext.data.Store", {
 			autoLoad : false,
@@ -456,6 +457,17 @@ Ext.define("PSI.Purchase.PWEditForm", {
 						summaryType: "sum"
 					},
 					{
+						header : "备注",
+						dataIndex : "memo",
+						menuDisabled : true,
+						sortable : false,
+						draggable: false,
+						width : 200,
+						editor: {
+	                		xtype: "textfield"
+	                	}
+					},
+					{
 						header : "",
 						id: "columnActionDelete",
 						align : "center",
@@ -549,11 +561,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 		var fieldName = e.field;
 		var goods = e.record;
 		var oldValue = e.originalValue;
-		if (fieldName == "goodsMoney") {
-			if (goods.get(fieldName) != (new Number(oldValue)).toFixed(2)) {
-				me.calcPrice(goods);
-			}
-
+		if (fieldName == "memo") {
 			var store = me.getGoodsGrid().getStore();
 			if (e.rowIdx == store.getCount() - 1) {
 				store.add({});
@@ -561,6 +569,10 @@ Ext.define("PSI.Purchase.PWEditForm", {
 			e.rowIdx += 1;
 			me.getGoodsGrid().getSelectionModel().select(e.rowIdx);
 			me.__cellEditing.startEdit(e.rowIdx, 1);
+		} else if (fieldName == "goodsMoney") {
+			if (goods.get(fieldName) != (new Number(oldValue)).toFixed(2)) {
+				me.calcPrice(goods);
+			}
 		} else if (fieldName == "goodsCount") {
 			if (goods.get(fieldName) != oldValue) {
 				me.calcMoney(goods);
@@ -613,7 +625,8 @@ Ext.define("PSI.Purchase.PWEditForm", {
 				goodsId : item.get("goodsId"),
 				goodsCount : item.get("goodsCount"),
 				goodsPrice : item.get("goodsPrice"),
-				goodsMoney: item.get("goodsMoney")
+				goodsMoney: item.get("goodsMoney"),
+				memo: item.get("memo")
 			});
 		}
 

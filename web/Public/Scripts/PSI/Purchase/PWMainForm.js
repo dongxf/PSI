@@ -291,7 +291,7 @@ Ext.define("PSI.Purchase.PWMainForm", {
         Ext.define(modelName, {
             extend: "Ext.data.Model",
             fields: ["id", "goodsCode", "goodsName", "goodsSpec", "unitName", "goodsCount",
-                "goodsMoney", "goodsPrice"]
+                "goodsMoney", "goodsPrice", "memo"]
         });
         var store = Ext.create("Ext.data.Store", {
             autoLoad: false,
@@ -313,7 +313,8 @@ Ext.define("PSI.Purchase.PWMainForm", {
                 {header: "采购数量", dataIndex: "goodsCount", menuDisabled: true, sortable: false, align: "right"},
                 {header: "单位", dataIndex: "unitName", menuDisabled: true, sortable: false, width: 60},
                 {header: "采购单价", dataIndex: "goodsPrice", menuDisabled: true, sortable: false, align: "right", xtype: "numbercolumn", width: 150},
-                {header: "采购金额", dataIndex: "goodsMoney", menuDisabled: true, sortable: false, align: "right", xtype: "numbercolumn", width: 150}
+                {header: "采购金额", dataIndex: "goodsMoney", menuDisabled: true, sortable: false, align: "right", xtype: "numbercolumn", width: 150},
+                {header: "备注", dataIndex: "memo", menuDisabled: true, sortable: false, width: 200}
             ],
             store: store
         });

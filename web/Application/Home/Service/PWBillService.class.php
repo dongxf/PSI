@@ -155,7 +155,7 @@ class PWBillService extends PSIBaseService {
 		}
 		
 		$sql = "select p.id, g.code, g.name, g.spec, u.name as unit_name, p.goods_count, p.goods_price, 
-					p.goods_money 
+					p.goods_money, p.memo 
 				from t_pw_bill_detail p, t_goods g, t_goods_unit u 
 				where p.pwbill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id 
 				order by p.show_order ";
@@ -171,6 +171,7 @@ class PWBillService extends PSIBaseService {
 			$result[$i]["goodsCount"] = $v["goods_count"];
 			$result[$i]["goodsMoney"] = $v["goods_money"];
 			$result[$i]["goodsPrice"] = $v["goods_price"];
+			$result[$i]["memo"] = $v["memo"];
 		}
 		
 		return $result;
@@ -227,6 +228,8 @@ class PWBillService extends PSIBaseService {
 		}
 		
 		$idGen = new IdGenService();
+		$us = new UserService();
+		$dataOrg = $us->getLoginUserDataOrg();
 		
 		if ($id) {
 			// 编辑
@@ -251,6 +254,7 @@ class PWBillService extends PSIBaseService {
 				foreach ( $items as $i => $item ) {
 					$goodsId = $item["goodsId"];
 					$goodsCount = intval($item["goodsCount"]);
+					$memo = $item["memo"];
 					if ($goodsId != null && $goodsCount != 0) {
 						// 检查商品是否存在
 						$sql = "select count(*) as cnt from t_goods where id = '%s' ";
@@ -262,10 +266,10 @@ class PWBillService extends PSIBaseService {
 							$goodsMoney = $item["goodsMoney"];
 							
 							$sql = "insert into t_pw_bill_detail (id, date_created, goods_id, goods_count, goods_price,
-									goods_money,  pwbill_id, show_order)
-									values ('%s', now(), '%s', %d, %f, %f, '%s', %d )";
+									goods_money,  pwbill_id, show_order, data_org, memo)
+									values ('%s', now(), '%s', %d, %f, %f, '%s', %d, '%s', '%s')";
 							$db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsPrice, 
-									$goodsMoney, $id, $i);
+									$goodsMoney, $id, $i, $dataOrg, $memo);
 						}
 					}
 				}
@@ -295,8 +299,6 @@ class PWBillService extends PSIBaseService {
 			}
 		} else {
 			$id = $idGen->newId();
-			$us = new UserService();
-			$dataOrg = $us->getLoginUserDataOrg();
 			
 			$db->startTrans();
 			try {
@@ -315,6 +317,7 @@ class PWBillService extends PSIBaseService {
 				foreach ( $items as $i => $item ) {
 					$goodsId = $item["goodsId"];
 					$goodsCount = intval($item["goodsCount"]);
+					$memo = $item["memo"];
 					if ($goodsId != null && $goodsCount != 0) {
 						// 检查商品是否存在
 						$sql = "select count(*) as cnt from t_goods where id = '%s' ";
@@ -327,10 +330,10 @@ class PWBillService extends PSIBaseService {
 							
 							$sql = "insert into t_pw_bill_detail 
 									(id, date_created, goods_id, goods_count, goods_price,
-									goods_money,  pwbill_id, show_order, data_org)
-									values ('%s', now(), '%s', %d, %f, %f, '%s', %d, '%s')";
+									goods_money,  pwbill_id, show_order, data_org, memo)
+									values ('%s', now(), '%s', %d, %f, %f, '%s', %d, '%s', '%s')";
 							$db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsPrice, 
-									$goodsMoney, $id, $i, $dataOrg);
+									$goodsMoney, $id, $i, $dataOrg, $memo);
 						}
 					}
 				}
@@ -454,7 +457,7 @@ class PWBillService extends PSIBaseService {
 			// 采购的商品明细
 			$items = array();
 			$sql = "select p.id, p.goods_id, g.code, g.name, g.spec, u.name as unit_name, 
-					p.goods_count, p.goods_price, p.goods_money 
+					p.goods_count, p.goods_price, p.goods_money, p.memo 
 					from t_pw_bill_detail p, t_goods g, t_goods_unit u 
 					where p.goods_Id = g.id and g.unit_id = u.id and p.pwbill_id = '%s' 
 					order by p.show_order";
@@ -469,6 +472,7 @@ class PWBillService extends PSIBaseService {
 				$items[$i]["goodsCount"] = $v["goods_count"];
 				$items[$i]["goodsPrice"] = $v["goods_price"];
 				$items[$i]["goodsMoney"] = $v["goods_money"];
+				$items[$i]["memo"] = $v["memo"];
 			}
 			
 			$result["items"] = $items;
