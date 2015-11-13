@@ -38,9 +38,10 @@ class BillViewService extends PSIBaseService {
 			$result["bizUserName"] = $v["biz_user_name"];
 			$result["bizDT"] = date("Y-m-d", strtotime($v["biz_dt"]));
 			
+			// 明细记录
 			$items = array();
 			$sql = "select p.id, p.goods_id, g.code, g.name, g.spec, u.name as unit_name,
-					p.goods_count, p.goods_price, p.goods_money
+					p.goods_count, p.goods_price, p.goods_money, p.memo
 					from t_pw_bill_detail p, t_goods g, t_goods_unit u
 					where p.goods_Id = g.id and g.unit_id = u.id and p.pwbill_id = '%s'
 					order by p.show_order";
@@ -55,6 +56,7 @@ class BillViewService extends PSIBaseService {
 				$items[$i]["goodsCount"] = $v["goods_count"];
 				$items[$i]["goodsPrice"] = $v["goods_price"];
 				$items[$i]["goodsMoney"] = $v["goods_money"];
+				$items[$i]["memo"] = $v["memo"];
 			}
 			
 			$result["items"] = $items;

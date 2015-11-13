@@ -124,7 +124,8 @@ Ext.define("PSI.Bill.PWViewForm", {
 		Ext.define(modelName, {
 			extend : "Ext.data.Model",
 			fields : [ "id", "goodsId", "goodsCode", "goodsName", "goodsSpec",
-					"unitName", "goodsCount", "goodsMoney", "goodsPrice" ]
+					"unitName", "goodsCount", "goodsMoney", "goodsPrice",
+					"memo"]
 		});
 		var store = Ext.create("Ext.data.Store", {
 			autoLoad : false,
@@ -193,6 +194,13 @@ Ext.define("PSI.Bill.PWViewForm", {
 						align : "right",
 						xtype : "numbercolumn",
 						width : 120
+					},
+					{
+						header : "备注",
+						dataIndex : "memo",
+						menuDisabled : true,
+						sortable : false,
+						width : 200
 					}],
 			store : store
 		});
