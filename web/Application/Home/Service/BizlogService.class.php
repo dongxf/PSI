@@ -11,6 +11,19 @@ use Home\Common\FIdConst;
  */
 class BizlogService extends PSIBaseService {
 
+	private function columnExists($db, $tableName, $columnName) {
+		$dbName = C('DB_NAME');
+		
+		$sql = "select count(*) as cnt
+				from information_schema.columns
+				where table_schema = '%s'
+					and table_name = '%s'
+					and column_name = '%s' ";
+		$data = $db->query($sql, $dbName, $tableName, $columnName);
+		$cnt = $data[0]["cnt"];
+		return $cnt == 1;
+	}
+
 	/**
 	 * 返回日志列表
 	 */
@@ -91,8 +104,6 @@ class BizlogService extends PSIBaseService {
 				return;
 			}
 			
-			$dataOrg = $us->getLoginUserDataOrg();
-			
 			$ip = session("PSI_login_user_ip");
 			if ($ip == null || $ip == "") {
 				$ip = $this->getClientIP();
@@ -100,9 +111,22 @@ class BizlogService extends PSIBaseService {
 			
 			$ipFrom = session("PSI_login_user_ip_from");
 			
-			$sql = "insert into t_biz_log (user_id, info, ip, date_created, log_category, data_org, ip_from) 
+			$db = M();
+			$hasDataOrgColumn = $this->columnExists($db, "t_biz_log", "data_org");
+			$hasIpFromColumn = $this->columnExists($db, "t_biz_log", "ip_from");
+			
+			if ($hasDataOrgColumn && $hasIpFromColumn) {
+				$dataOrg = $us->getLoginUserDataOrg();
+				$sql = "insert into t_biz_log (user_id, info, ip, date_created, log_category, data_org, ip_from)
 					values ('%s', '%s', '%s',  now(), '%s', '%s', '%s')";
-			M()->execute($sql, $us->getLoginUserId(), $log, $ip, $category, $dataOrg, $ipFrom);
+				$db->execute($sql, $us->getLoginUserId(), $log, $ip, $category, $dataOrg, $ipFrom);
+			} else {
+				// 兼容旧代码
+				
+				$sql = "insert into t_biz_log (user_id, info, ip, date_created, log_category)
+					values ('%s', '%s', '%s',  now(), '%s')";
+				$db->execute($sql, $us->getLoginUserId(), $log, $ip, $category);
+			}
 		} catch ( Exception $ex ) {
 		}
 	}
