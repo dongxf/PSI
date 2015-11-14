@@ -9,6 +9,13 @@
 
 		<link rel="stylesheet" href="{$uri}Public/mui/css/mui.min.css">
 		<script src="{$uri}Public/mui/js/mui.min.js"></script>
+        <script src="{$uri}Public/mui/js/app.js"></script>
+        <script>
+             var settings=getSettings();
+             var session = getSession();
+             if(!session && !settings.autoLogin)
+                location.replace("{$uri}mobile/login/login");
+        </script>
 		<style>
 			html,body {
 				background-color: #efeff4;

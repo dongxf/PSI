@@ -16,9 +16,7 @@ $_root = ($_root == '/' || $_root == '\\') ? '' : $_root;
 
 $detect = new Mobile_Detect();
 if ($detect->isMobile()) {
-// 在移动端还没有开发完之前，临时注释掉
-//	header('Location: ' . $_root . '/web/Mobile');
-	header('Location: ' . $_root . '/web/');
+	header('Location: ' . $_root . '/web/Mobile');
 } else {
 	header('Location: ' . $_root . '/web/');
 }
