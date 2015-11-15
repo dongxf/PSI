@@ -13,7 +13,8 @@
         <script>
              var settings=getSettings();
              var session = getSession();
-             if(!session && !settings.autoLogin)
+             var state = getState();
+             if(!session && !(settings.autoLogin && state.token))
                 location.replace("{$uri}mobile/login/login");
         </script>
 		<style>
