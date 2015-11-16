@@ -795,66 +795,71 @@ class PRBillService extends PSIBaseService {
 					return $this->bad("第{$index}条记录的退货数量不能大于采购数量");
 				}
 				
-				// 库存总账
-				$sql = "select balance_count, balance_price, balance_money,
+				if ($fifo) {
+					// 先进先出
+				} else {
+					// 移动平均法
+					// 库存总账
+					$sql = "select balance_count, balance_price, balance_money,
 							out_count, out_money
 						from t_inventory
 						where warehouse_id = '%s' and goods_id = '%s' ";
-				$data = $db->query($sql, $warehouseId, $goodsId);
-				if (! $data) {
-					$db->rollback();
-					$index = $i + 1;
-					return $this->bad("第{$index}条商品库存不足，无法退货");
-				}
-				$balanceCount = $data[0]["balance_count"];
-				$balancePrice = $data[0]["balance_price"];
-				$balanceMoney = $data[0]["balance_money"];
-				if ($rejCount > $balanceCount) {
-					$db->rollback();
-					$index = $i + 1;
-					return $this->bad("第{$index}条商品库存不足，无法退货");
-				}
-				$totalOutCount = $data[0]["out_count"];
-				$totalOutMoney = $data[0]["out_money"];
-				
-				$outCount = $rejCount;
-				$outMoney = $goodsPricePurchase * $outCount;
-				$outPrice = $goodsPricePurchase;
-				
-				$totalOutCount += $outCount;
-				$totalOutMoney += $outMoney;
-				$totalOutPrice = $totalOutMoney / $totalOutCount;
-				$balanceCount -= $outCount;
-				if ($balanceCount == 0) {
-					$balanceMoney -= $outMoney;
-					$balancePrice = 0;
-				} else {
-					$balanceMoney -= $outMoney;
-					$balancePrice = $balanceMoney / $balanceCount;
-				}
-				
-				$sql = "update t_inventory
+					$data = $db->query($sql, $warehouseId, $goodsId);
+					if (! $data) {
+						$db->rollback();
+						$index = $i + 1;
+						return $this->bad("第{$index}条商品库存不足，无法退货");
+					}
+					$balanceCount = $data[0]["balance_count"];
+					$balancePrice = $data[0]["balance_price"];
+					$balanceMoney = $data[0]["balance_money"];
+					if ($rejCount > $balanceCount) {
+						$db->rollback();
+						$index = $i + 1;
+						return $this->bad("第{$index}条商品库存不足，无法退货");
+					}
+					$totalOutCount = $data[0]["out_count"];
+					$totalOutMoney = $data[0]["out_money"];
+					
+					$outCount = $rejCount;
+					$outMoney = $goodsPricePurchase * $outCount;
+					$outPrice = $goodsPricePurchase;
+					
+					$totalOutCount += $outCount;
+					$totalOutMoney += $outMoney;
+					$totalOutPrice = $totalOutMoney / $totalOutCount;
+					$balanceCount -= $outCount;
+					if ($balanceCount == 0) {
+						$balanceMoney -= $outMoney;
+						$balancePrice = 0;
+					} else {
+						$balanceMoney -= $outMoney;
+						$balancePrice = $balanceMoney / $balanceCount;
+					}
+					
+					$sql = "update t_inventory
 						set out_count = %d, out_price = %f, out_money = %f,
 							balance_count = %d, balance_price = %f, balance_money = %f
 						where warehouse_id = '%s' and goods_id = '%s' ";
-				$rc = $db->execute($sql, $totalOutCount, $totalOutPrice, $totalOutMoney, 
-						$balanceCount, $balancePrice, $balanceMoney, $warehouseId, $goodsId);
-				if (! $rc) {
-					$db->rollback();
-					return $this->sqlError();
-				}
-				
-				// 库存明细账
-				$sql = "insert into t_inventory_detail(out_count, out_price, out_money, balance_count,
+					$rc = $db->execute($sql, $totalOutCount, $totalOutPrice, $totalOutMoney, 
+							$balanceCount, $balancePrice, $balanceMoney, $warehouseId, $goodsId);
+					if ($rc === false) {
+						$db->rollback();
+						return $this->sqlError();
+					}
+					
+					// 库存明细账
+					$sql = "insert into t_inventory_detail(out_count, out_price, out_money, balance_count,
 							balance_price, balance_money, warehouse_id, goods_id, biz_date, biz_user_id,
 							date_created, ref_number, ref_type)
 						values (%d, %f, %f, %d, %f, %f, '%s', '%s', '%s', '%s', now(), '%s', '采购退货出库')";
-				$rc = $db->execute($sql, $outCount, $outPrice, $outMoney, $balanceCount, 
-						$balancePrice, $balanceMoney, $warehouseId, $goodsId, $bizDT, $bizUserId, 
-						$ref);
-				if (! $rc) {
-					$db->rollback();
-					return $this->sqlError();
+					$rc = $db->execute($sql, $outCount, $outPrice, $outMoney, $balanceCount, 
+							$balancePrice, $balanceMoney, $warehouseId, $goodsId, $bizDT, $bizUserId, 
+							$ref);
+					if ($rc === false) {
+						$db->rollback();
+						return $this->sqlError();
+					}
 				}
 			}
 			
