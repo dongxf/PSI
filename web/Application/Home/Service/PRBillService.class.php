@@ -768,7 +768,7 @@ class PRBillService extends PSIBaseService {
 			
 			$sql = "select goods_id, rejection_goods_count as rej_count,
 						rejection_money as rej_money,
-						goods_count, goods_price
+						goods_count, goods_price, pwbilldetail_id
 					from t_pr_bill_detail
 					where prbill_id = '%s'
 					order by show_order";
@@ -779,6 +779,8 @@ class PRBillService extends PSIBaseService {
 				$rejMoney = $v["rej_money"];
 				$goodsCount = $v["goods_count"];
 				$goodsPricePurchase = $v["goods_price"];
+				
+				$pwbillDetailId = $v["pwbilldetail_id"];
 				
 				if ($rejCount == 0) {
 					continue;
@@ -797,8 +799,131 @@ class PRBillService extends PSIBaseService {
 				
 				if ($fifo) {
 					// 先进先出
+					
+					$sql = "select balance_count, balance_price, balance_money,
+								out_count, out_money, date_created
+							from t_inventory_fifo
+							where pwbilldetail_id = '%s' ";
+					$data = $db->query($sql, $pwbillDetailId);
+					if (! $data) {
+						$db->rollback();
+						$index = $i + 1;
+						return $this->bad("第{$index}条商品库存不足，无法退货");
+					}
+					$fifoDateCreated = $data[0]["date_created"];
+					$fifoOutCount = $data[0]["out_count"];
+					if (! $fifoOutCount) {
+						$fifoOutCount = 0;
+					}
+					$fifoOutMoney = $data[0]["out_money"];
+					if (! $fifoOutMoney) {
+						$fifoOutMoney = 0;
+					}
+					$fifoBalanceCount = $data[0]["balance_count"];
+					if ($fifoBalanceCount < $rejCount) {
+						$db->rollback();
+						$index = $i + 1;
+						return $this->bad("第{$index}条商品库存不足，无法退货");
+					}
+					$fifoBalancePrice = $data[0]["balance_price"];
+					$fifoBalanceMoney = $data[0]["balance_money"];
+					$outMoney = 0;
+					if ($rejCount == $fifoBalanceCount) {
+						$outMoney = $fifoBalanceMoney;
+					} else {
+						$outMoney = $fifoBalancePrice * $rejCount;
+					}
+					
+					// 库存总账
+					$sql = "select balance_count, balance_price, balance_money,
+							out_count, out_money
+						from t_inventory
+						where warehouse_id = '%s' and goods_id = '%s' ";
+					$data = $db->query($sql, $warehouseId, $goodsId);
+					if (! $data) {
+						$db->rollback();
+						$index = $i + 1;
+						return $this->bad("第{$index}条商品库存不足，无法退货");
+					}
+					$balanceCount = $data[0]["balance_count"];
+					$balancePrice = $data[0]["balance_price"];
+					$balanceMoney = $data[0]["balance_money"];
+					
+					$totalOutCount = $data[0]["out_count"];
+					$totalOutMoney = $data[0]["out_money"];
+					
+					$outCount = $rejCount;
+					$outPrice = $outMoney / $rejCount;
+					
+					$totalOutCount += $outCount;
+					$totalOutMoney += $outMoney;
+					$totalOutPrice = $totalOutMoney / $totalOutCount;
+					$balanceCount -= $outCount;
+					if ($balanceCount == 0) {
+						$balanceMoney -= $outMoney;
+						$balancePrice = 0;
+					} else {
+						$balanceMoney -= $outMoney;
+						$balancePrice = $balanceMoney / $balanceCount;
+					}
+					
+					$sql = "update t_inventory
+						set out_count = %d, out_price = %f, out_money = %f,
+							balance_count = %d, balance_price = %f, balance_money = %f
+						where warehouse_id = '%s' and goods_id = '%s' ";
+					$rc = $db->execute($sql, $totalOutCount, $totalOutPrice, $totalOutMoney, 
+							$balanceCount, $balancePrice, $balanceMoney, $warehouseId, $goodsId);
+					if ($rc === false) {
+						$db->rollback();
+						return $this->sqlError();
+					}
+					
+					// 库存明细账
+					$sql = "insert into t_inventory_detail(out_count, out_price, out_money, balance_count,
+							balance_price, balance_money, warehouse_id, goods_id, biz_date, biz_user_id,
+							date_created, ref_number, ref_type)
+						values (%d, %f, %f, %d, %f, %f, '%s', '%s', '%s', '%s', now(), '%s', '采购退货出库')";
+					$rc = $db->execute($sql, $outCount, $outPrice, $outMoney, $balanceCount, 
+							$balancePrice, $balanceMoney, $warehouseId, $goodsId, $bizDT, $bizUserId, 
+							$ref);
+					if ($rc === false) {
+						$db->rollback();
+						return $this->sqlError();
+					}
+					
+					// fifo
+					$fvOutCount = $outCount + $fifoOutCount;
+					$fvOutMoney = $outMoney + $fifoOutMoney;
+					$fvBalanceCount = $fifoBalanceCount - $outCount;
+					$fvBalanceMoney = 0;
+					if ($fvBalanceCount > 0) {
+						$fvBalanceMoney = $fifoBalanceMoney - $outMoney;
+					}
+					$sql = "update t_inventory_fifo
+							set out_count = %d, out_price = %f, out_money = %f, balance_count = %d,
+								balance_money = %f
+							where pwbilldetail_id = '%s' ";
+					$rc = $db->execute($sql, $fvOutCount, $fvOutMoney / $fvOutCount, $fvOutMoney, 
+							$fvBalanceCount, $fvBalanceMoney, $pwbillDetailId);
+					if ($rc === false) {
+						$db->rollback();
+						return $this->sqlError(__LINE__);
+					}
+					
+					// fifo的明细记录
+					$sql = "insert into t_inventory_fifo_detail(date_created, 
+								out_count, out_price, out_money, balance_count, balance_price, balance_money,
+								warehouse_id, goods_id)
+							values ('%s', %d, %f, %f, %d, %f, %f, '%s', '%s')";
+					$rc = $db->execute($sql, $fifoDateCreated, $outCount, $outPrice, $outMoney, 
+							$fvBalanceCount, $outPrice, $fvBalanceMoney, $warehouseId, $goodsId);
+					if ($rc === false) {
+						$db->rollback();
+						return $this->sqlError(__LINE__);
+					}
 				} else {
 					// 移动平均法
+					
 					// 库存总账
 					$sql = "select balance_count, balance_price, balance_money,
 							out_count, out_money
@@ -845,7 +970,7 @@ class PRBillService extends PSIBaseService {
 							$balanceCount, $balancePrice, $balanceMoney, $warehouseId, $goodsId);
 					if ($rc === false) {
 						$db->rollback();
-						return $this->sqlError();
+						return $this->sqlError(__LINE__);
 					}
 					
 					// 库存明细账
