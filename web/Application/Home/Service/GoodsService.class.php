@@ -170,7 +170,7 @@ class GoodsService extends PSIBaseService {
 			}
 			$result[$i]["fullName"] = $fullName;
 			
-			$children = $this->allCategoriesInternal($db, $id, $rs); // 自身递归调用
+			$children = $this->allCategoriesInternal($db, $id, $rs, $params); // 自身递归调用
 			
 			$result[$i]["children"] = $children;
 			$result[$i]["leaf"] = count($children) == 0;

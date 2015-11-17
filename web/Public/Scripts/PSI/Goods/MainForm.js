@@ -550,7 +550,12 @@ Ext.define("PSI.Goods.MainForm", {
     },
 
     onQuery: function() {
-    	this.freshCategoryGrid();
+    	var me = this;
+    	
+    	me.goodsGrid.getStore().removeAll();
+    	me.getSIGrid().getStore().removeAll();
+    	
+    	me.freshCategoryGrid();
     },
     
     onClearQuery: function() {
@@ -739,7 +744,10 @@ Ext.define("PSI.Goods.MainForm", {
                         text: "商品种类数",
                         dataIndex: "cnt",
                         align: "right",
-                        width: 80
+                        width: 80,
+                        renderer: function(value) {
+                        	return value == 0 ? "" : value;
+                        }
                     }]
             },
             listeners: {
