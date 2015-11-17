@@ -74,7 +74,7 @@ INSERT INTO `t_goods_category` (`id`, `code`, `name`) VALUES
 ('89BCA8E9-B3F3-11E4-9DEA-782BCBD7746B', '4', '个护健康'),
 ('953219F9-B3F3-11E4-9DEA-782BCBD7746B', '5', '五金家装');
 
-update t_goods_category set data_org = '01010001' ;
+update t_goods_category set data_org = '01010001', full_name = name ;
 
 TRUNCATE TABLE `t_goods_unit`;
 INSERT INTO `t_goods_unit` (`id`, `name`) VALUES

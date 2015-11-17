@@ -139,7 +139,12 @@ class GoodsService extends PSIBaseService {
 		return $this->ok();
 	}
 
-	private function allCategoriesInternal($db, $parentId, $rs) {
+	private function allCategoriesInternal($db, $parentId, $rs, $params) {
+		$code = $params["code"];
+		$name = $params["name"];
+		$spec = $params["spec"];
+		$barCode = $params["barCode"];
+		
 		$result = array();
 		$sql = "select id, code, name, full_name
 				from t_goods_category c
@@ -170,6 +175,35 @@ class GoodsService extends PSIBaseService {
 			$result[$i]["children"] = $children;
 			$result[$i]["leaf"] = count($children) == 0;
 			$result[$i]["expanded"] = true;
+			
+			$sql = "select count(*) as cnt
+					from t_goods c
+					where c.category_id = '%s' ";
+			$queryParam = array();
+			$queryParam[] = $id;
+			if ($rs) {
+				$sql .= " and " . $rs[0];
+				$queryParam = array_merge($queryParam, $rs[1]);
+			}
+			if ($code) {
+				$sql .= " and (c.code like '%s') ";
+				$queryParam[] = "%{$code}%";
+			}
+			if ($name) {
+				$sql .= " and (c.name like '%s' or c.py like '%s') ";
+				$queryParam[] = "%{$name}%";
+				$queryParam[] = "%{$name}%";
+			}
+			if ($spec) {
+				$sql .= " and (c.spec like '%s')";
+				$queryParam[] = "%{$spec}%";
+			}
+			if ($barCode) {
+				$sql .= " and (c.bar_code = '%s') ";
+				$queryParam[] = $barCode;
+			}
+			$data = $db->query($sql, $queryParam);
+			$result[$i]["cnt"] = $data[0]["cnt"];
 		}
 		
 		return $result;
@@ -182,6 +216,11 @@ class GoodsService extends PSIBaseService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
+		
+		$code = $params["code"];
+		$name = $params["name"];
+		$spec = $params["spec"];
+		$barCode = $params["barCode"];
 		
 		$sql = "select id, code, name, full_name
 				from t_goods_category c
@@ -211,11 +250,40 @@ class GoodsService extends PSIBaseService {
 			}
 			$result[$i]["fullName"] = $fullName;
 			
-			$children = $this->allCategoriesInternal($db, $id, $rs);
+			$children = $this->allCategoriesInternal($db, $id, $rs, $params);
 			
 			$result[$i]["children"] = $children;
 			$result[$i]["leaf"] = count($children) == 0;
 			$result[$i]["expanded"] = true;
+			
+			$sql = "select count(*) as cnt 
+					from t_goods c
+					where c.category_id = '%s' ";
+			$queryParam = array();
+			$queryParam[] = $id;
+			if ($rs) {
+				$sql .= " and " . $rs[0];
+				$queryParam = array_merge($queryParam, $rs[1]);
+			}
+			if ($code) {
+				$sql .= " and (c.code like '%s') ";
+				$queryParam[] = "%{$code}%";
+			}
+			if ($name) {
+				$sql .= " and (c.name like '%s' or c.py like '%s') ";
+				$queryParam[] = "%{$name}%";
+				$queryParam[] = "%{$name}%";
+			}
+			if ($spec) {
+				$sql .= " and (c.spec like '%s')";
+				$queryParam[] = "%{$spec}%";
+			}
+			if ($barCode) {
+				$sql .= " and (c.bar_code = '%s') ";
+				$queryParam[] = $barCode;
+			}
+			$data = $db->query($sql, $queryParam);
+			$result[$i]["cnt"] = $data[0]["cnt"];
 		}
 		
 		return $result;

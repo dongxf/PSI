@@ -232,9 +232,7 @@ Ext.define("PSI.Goods.MainForm", {
                             xtype: "panel",
                             region: "west",
                             layout: "fit",
-                            width: 300,
-                            minWidth: 200,
-                            maxWidth: 350,
+                            width: 430,
                             split: true,
                             border: 0,
                             items: [me.getCategoryGrid()]
@@ -456,9 +454,9 @@ Ext.define("PSI.Goods.MainForm", {
             return;
         }
 
-//        var category = item[0];
-//        category.set("cnt", me.goodsGrid.getStore().getTotalCount());
-//        me.categoryGrid.getStore().commitChanges();
+        //var category = item[0];
+        //category.set("cnt", me.goodsGrid.getStore().getTotalCount());
+        //me.getCategoryGrid().getStore().commitChanges();
     },
     
     onQueryEditSpecialKey: function (field, e) {
@@ -480,6 +478,38 @@ Ext.define("PSI.Goods.MainForm", {
         if (e.getKey() === e.ENTER) {
         	this.onQuery();
         }
+    },
+
+    getQueryParamForCategory: function() {
+    	var me = this;
+        var result = {
+        };
+        
+        if (Ext.getCmp("editQueryCode") == null) {
+        	return result;
+        }
+        
+        var code = Ext.getCmp("editQueryCode").getValue();
+        if (code) {
+        	result.code = code;
+        }
+        
+        var name = Ext.getCmp("editQueryName").getValue();
+        if (name) {
+        	result.name = name;
+        }
+        
+        var spec = Ext.getCmp("editQuerySpec").getValue();
+        if (spec) {
+        	result.spec = spec;
+        }
+        
+        var barCode = Ext.getCmp("editQueryBarCode").getValue();
+        if (barCode) {
+        	result.barCode = barCode;
+        }
+        
+        return result;
     },
 
     getQueryParam: function() {
@@ -657,7 +687,7 @@ Ext.define("PSI.Goods.MainForm", {
     	var modelName = "PSIGoodsCategory";
         Ext.define(modelName, {
             extend: "Ext.data.Model",
-            fields: ["id", "text", "fullName", "code", "leaf", "children"]
+            fields: ["id", "text", "fullName", "code", "cnt", "leaf", "children"]
         });
 
         var store = Ext.create("Ext.data.TreeStore", {
@@ -668,7 +698,16 @@ Ext.define("PSI.Goods.MainForm", {
                     read: "POST"
                 },
                 url: PSI.Const.BASE_URL + "Home/Goods/allCategories"
+            },
+            listeners: {
+                beforeload: {
+                    fn: function () {
+                    	store.proxy.extraParams = me.getQueryParamForCategory();
+                    },
+                    scope: me
+                }
             }
+
         });
 
         store.on("load", me.onCategoryStoreLoad, me);
@@ -696,6 +735,11 @@ Ext.define("PSI.Goods.MainForm", {
                         text: "编码",
                         dataIndex: "code",
                         width: 100
+                    }, {
+                        text: "商品种类数",
+                        dataIndex: "cnt",
+                        align: "right",
+                        width: 80
                     }]
             },
             listeners: {
