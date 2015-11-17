@@ -98,36 +98,33 @@ class BizlogService extends PSIBaseService {
 	 *        	日志分类
 	 */
 	public function insertBizlog($log, $category = "系统") {
-		try {
-			$us = new UserService();
-			if ($us->getLoginUserId() == null) {
-				return;
-			}
-			
-			$ip = session("PSI_login_user_ip");
-			if ($ip == null || $ip == "") {
-				$ip = $this->getClientIP();
-			}
-			
-			$ipFrom = session("PSI_login_user_ip_from");
-			
-			$db = M();
-			$hasDataOrgColumn = $this->columnExists($db, "t_biz_log", "data_org");
-			$hasIpFromColumn = $this->columnExists($db, "t_biz_log", "ip_from");
-			
-			if ($hasDataOrgColumn && $hasIpFromColumn) {
-				$dataOrg = $us->getLoginUserDataOrg();
-				$sql = "insert into t_biz_log (user_id, info, ip, date_created, log_category, data_org, ip_from)
+		$us = new UserService();
+		if ($us->getLoginUserId() == null) {
+			return;
+		}
+		
+		$ip = session("PSI_login_user_ip");
+		if ($ip == null || $ip == "") {
+			$ip = $this->getClientIP();
+		}
+		
+		$ipFrom = session("PSI_login_user_ip_from");
+		
+		$db = M();
+		$hasDataOrgColumn = $this->columnExists($db, "t_biz_log", "data_org");
+		$hasIpFromColumn = $this->columnExists($db, "t_biz_log", "ip_from");
+		
+		if ($hasDataOrgColumn && $hasIpFromColumn) {
+			$dataOrg = $us->getLoginUserDataOrg();
+			$sql = "insert into t_biz_log (user_id, info, ip, date_created, log_category, data_org, ip_from)
 					values ('%s', '%s', '%s',  now(), '%s', '%s', '%s')";
-				$db->execute($sql, $us->getLoginUserId(), $log, $ip, $category, $dataOrg, $ipFrom);
-			} else {
-				// 兼容旧代码
-				
-				$sql = "insert into t_biz_log (user_id, info, ip, date_created, log_category)
+			$db->execute($sql, $us->getLoginUserId(), $log, $ip, $category, $dataOrg, $ipFrom);
+		} else {
+			// 兼容旧代码
+			
+			$sql = "insert into t_biz_log (user_id, info, ip, date_created, log_category)
 					values ('%s', '%s', '%s',  now(), '%s')";
-				$db->execute($sql, $us->getLoginUserId(), $log, $ip, $category);
-			}
-		} catch ( Exception $ex ) {
+			$db->execute($sql, $us->getLoginUserId(), $log, $ip, $category);
 		}
 	}
 

@@ -19,6 +19,9 @@ class GoodsService extends PSIBaseService {
 		return M()->query("select id, name from t_goods_unit order by name");
 	}
 
+	/**
+	 * 新建或者编辑 商品计量单位
+	 */
 	public function editUnit($params) {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
@@ -39,12 +42,20 @@ class GoodsService extends PSIBaseService {
 				return $this->bad("计量单位 [$name] 已经存在");
 			}
 			
+			$db->startTrans();
+			
 			$sql = "update t_goods_unit set name = '%s' where id = '%s' ";
-			$db->execute($sql, $name, $id);
+			$rc = $db->execute($sql, $name, $id);
+			if ($rc === false) {
+				$db->rollback();
+				return $this->sqlError(__LINE__);
+			}
 			
 			$log = "编辑计量单位: $name";
 			$bs = new BizlogService();
 			$bs->insertBizlog($log, "基础数据-商品计量单位");
+			
+			$db->commit();
 		} else {
 			// 新增
 			// 检查计量单位是否存在
@@ -55,14 +66,22 @@ class GoodsService extends PSIBaseService {
 				return $this->bad("计量单位 [$name] 已经存在");
 			}
 			
+			$db->startTrans();
+			
 			$idGen = new IdGenService();
 			$id = $idGen->newId();
 			$sql = "insert into t_goods_unit(id, name) values ('%s', '%s') ";
-			$db->execute($sql, $id, $name);
+			$rc = $db->execute($sql, $id, $name);
+			if ($rc === false) {
+				$db->rollback();
+				return $this->sqlError(__LINE__);
+			}
 			
 			$log = "新增计量单位: $name";
 			$bs = new BizlogService();
 			$bs->insertBizlog($log, "基础数据-商品计量单位");
+			
+			$db->commit();
 		}
 		
 		return $this->ok($id);
@@ -91,12 +110,20 @@ class GoodsService extends PSIBaseService {
 			return $this->bad("商品计量单位 [$name] 已经被使用，不能删除");
 		}
 		
+		$db->startTrans();
+		
 		$sql = "delete from t_goods_unit where id = '%s' ";
-		$db->execute($sql, $id);
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			$db->rollback();
+			return $this->sqlError(__LINE__);
+		}
 		
 		$log = "删除商品计量单位: $name";
 		$bs = new BizlogService();
 		$bs->insertBizlog($log, "基础数据-商品计量单位");
+		
+		$db->commit();
 		
 		return $this->ok();
 	}
