@@ -16,7 +16,12 @@ class GoodsService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		return M()->query("select id, name from t_goods_unit order by name");
+		$db = M();
+		$sql = "select id, name 
+				from t_goods_unit 
+				order by convert(name USING gbk) collate gbk_chinese_ci";
+		
+		return $db->query($sql);
 	}
 
 	/**
