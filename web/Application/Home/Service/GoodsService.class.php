@@ -11,6 +11,9 @@ use Home\Common\FIdConst;
  */
 class GoodsService extends PSIBaseService {
 
+	/**
+	 * 返回所有商品计量单位
+	 */
 	public function allUnits() {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
@@ -92,6 +95,9 @@ class GoodsService extends PSIBaseService {
 		return $this->ok($id);
 	}
 
+	/**
+	 * 删除商品计量单位
+	 */
 	public function deleteUnit($params) {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
@@ -169,6 +175,9 @@ class GoodsService extends PSIBaseService {
 		return $result;
 	}
 
+	/**
+	 * 返回所有的商品分类
+	 */
 	public function allCategories($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
@@ -214,9 +223,6 @@ class GoodsService extends PSIBaseService {
 
 	/**
 	 * 同步子分类的full_name字段
-	 *
-	 * @param unknown $db        	
-	 * @param unknown $id        	
 	 */
 	private function updateSubCategoryFullName($db, $id) {
 		$sql = "select full_name from t_goods_category where id = '%s' ";
@@ -272,6 +278,9 @@ class GoodsService extends PSIBaseService {
 		return $result;
 	}
 
+	/**
+	 * 新建或者编辑商品分类
+	 */
 	public function editCategory($params) {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
@@ -388,6 +397,9 @@ class GoodsService extends PSIBaseService {
 		return $this->ok($id);
 	}
 
+	/**
+	 * 删除商品分类
+	 */
 	public function deleteCategory($params) {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
@@ -411,12 +423,20 @@ class GoodsService extends PSIBaseService {
 			return $this->bad("还有属于商品分类 [{$name}] 的商品，不能删除该分类");
 		}
 		
+		$db->startTrans();
+		
 		$sql = "delete from t_goods_category where id = '%s' ";
-		$db->execute($sql, $id);
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			$db->rollback();
+			return $this->sqlError(__LINE__);
+		}
 		
 		$log = "删除商品分类：  编码 = {$code}， 分类名称 = {$name}";
 		$bs = new BizlogService();
 		$bs->insertBizlog($log, "基础数据-商品");
+		
+		$db->commit();
 		
 		return $this->ok();
 	}
@@ -952,14 +972,25 @@ class GoodsService extends PSIBaseService {
 		}
 		$goodsUnitName = $data[0]["name"];
 		
-		$sql = "select w.id as warehouse_id, w.code as warehouse_code, w.name as warehouse_name,
+		$sql = "select w.id as warehouse_id, w.code as warehouse_code, 
+					w.name as warehouse_name,
 					s.safety_inventory, s.inventory_upper
 				from t_warehouse w
 				left join t_goods_si s
 				on w.id = s.warehouse_id and s.goods_id = '%s'
-				where w.inited = 1
-				order by w.code";
-		$data = $db->query($sql, $id);
+				where w.inited = 1 ";
+		$queryParams = array();
+		$queryParams[] = $id;
+		
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::GOODS, "w");
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = array_merge($queryParams, $rs[1]);
+		}
+		
+		$sql .= " order by w.code ";
+		$data = $db->query($sql, $queryParams);
 		foreach ( $data as $i => $v ) {
 			$result[$i]["warehouseId"] = $v["warehouse_id"];
 			$result[$i]["warehouseCode"] = $v["warehouse_code"];
