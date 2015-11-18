@@ -48,7 +48,7 @@ class GoodsController extends PSIBaseController {
 			
 			$this->display();
 		} else {
-			redirect("Home/User/login");
+			redirect(__ROOT__ . "Home/User/login");
 		}
 	}
 
@@ -301,10 +301,13 @@ class GoodsController extends PSIBaseController {
 		}
 	}
 
+	/**
+	 * 通过Excel导入商品
+	 */
 	public function import() {
 		if (IS_POST) {
 			$upload = new \Think\Upload();
-			// $upload->maxSize = 3145728;
+			
 			$upload->exts = array(
 					'xls',
 					'xlsx'
@@ -313,11 +316,11 @@ class GoodsController extends PSIBaseController {
 			                               // 先上传文件
 			$fileInfo = $upload->uploadOne($_FILES['data_file']);
 			if (! $fileInfo) {
-				// $this->error($upload->getError());
-				$this->ajaxReturn(array(
-						"msg" => $upload->getError(),
-						"success" => false
-				));
+				$this->ajaxReturn(
+						array(
+								"msg" => $upload->getError(),
+								"success" => false
+						));
 			} else {
 				$uploadFileFullPath = './Uploads' . $fileInfo['savepath'] . $fileInfo['savename']; // 获取上传到服务器文件路径
 				$uploadFileExt = $fileInfo['ext']; // 上传文件扩展名
