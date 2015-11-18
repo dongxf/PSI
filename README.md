@@ -14,7 +14,7 @@
 
 PSI演示
 -------------
->PSI的演示见：<a href = 'http://psi.oschina.mopaas.com' target = '_blank'>http://psi.oschina.mopaas.com</a>
+>PSI的演示见：<a href = 'http://psi.oschina.mopaas.com' target = '_blank'>http://psi.tiger.mopaasapp.com</a>
 
 PSI 2015 下载地址
 -------------
