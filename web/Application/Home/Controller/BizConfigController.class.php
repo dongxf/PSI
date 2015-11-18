@@ -13,7 +13,7 @@ use Home\Common\FIdConst;
  * @author 李静波
  *        
  */
-class BizConfigController extends Controller {
+class BizConfigController extends PSIBaseController {
 
 	/**
 	 * 业务设置 - 主页面
@@ -22,16 +22,10 @@ class BizConfigController extends Controller {
 		$us = new UserService();
 		
 		if ($us->hasPermission(FIdConst::BIZ_CONFIG)) {
-			$bcs = new BizConfigService();
-			$this->assign("productionName", $bcs->getProductionName());
+			$this->initVar();
 			
 			$this->assign("title", "业务设置");
-			$this->assign("uri", __ROOT__ . "/");
 			
-			$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
-			
-			$dtFlag = getdate();
-			$this->assign("dtFlag", $dtFlag[0]);
 			$this->display();
 		} else {
 			redirect(__ROOT__ . "/Home/User/login");
