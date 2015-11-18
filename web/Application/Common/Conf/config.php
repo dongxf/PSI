@@ -1,5 +1,19 @@
 <?php
 
+function PSI_getMoPaasV2MySQLConfig() {
+	$services = getenv("VCAP_SERVICES");
+	$services_json = json_decode($services, true);
+	$mysql_config = $services_json["MySQL-5.5"][0]["credentials"];
+	
+	return $mysql_config;
+	// ** MySQL settings from resource descriptor ** //
+// 	define('DB_NAME', $mysql_config["name"]);
+// 	define('DB_USER', $mysql_config["user"]);
+// 	define('DB_PASSWORD', $mysql_config["password"]);
+// 	define('DB_HOST', $mysql_config["hostname"]);
+// 	define('DB_PORT', $mysql_config["port"]);
+}
+
 function PSI_getHost() {
 	// MoPaaS V1
 	$host = getenv("MOPAAS_MYSQL22118_HOST");
@@ -7,40 +21,74 @@ function PSI_getHost() {
 		return $host;
 	}
 	
+	// MoPaaS V2
+	$cfg = PSI_getMoPaasV2MySQLConfig();
+	if ($cfg) {
+		return $cfg["hostname"];
+	}
+	
 	return "localhost";
 }
 
 function PSI_getDBName() {
+	// MoPaaS V1
 	$name = getenv("MOPAAS_MYSQL22118_NAME");
 	if ($name) {
 		return $name;
+	}
+	
+	// MoPaaS V2
+	$cfg = PSI_getMoPaasV2MySQLConfig();
+	if ($cfg) {
+		return $cfg["name"];
 	}
 	
 	return "psi";
 }
 
 function PSI_getUser() {
+	// MoPaaS V1
 	$user = getenv("MOPAAS_MYSQL22118_USER");
 	if ($user) {
 		return $user;
+	}
+	
+	// MoPaaS V2
+	$cfg = PSI_getMoPaasV2MySQLConfig();
+	if ($cfg) {
+		return $cfg["user"];
 	}
 	
 	return "root";
 }
 
 function PSI_getPassword() {
+	// MoPaaS V1
 	$password = getenv("MOPAAS_MYSQL22118_PASSWORD");
 	if ($password) {
 		return $password;
+	}
+	
+	// MoPaaS V2
+	$cfg = PSI_getMoPaasV2MySQLConfig();
+	if ($cfg) {
+		return $cfg["password"];
 	}
 	
 	return "";
 }
 
 function PSI_getPort() {
+	// MoPaaS V1
 	$port = getenv("MOPAAS_MYSQL22118_PORT");
 	if ($port) {
 		return $port;
+	}
+	
+	// MoPaaS V2
+	$cfg = PSI_getMoPaasV2MySQLConfig();
+	if ($cfg) {
+		return $cfg["port"];
 	}
 	
 	return 3306;
