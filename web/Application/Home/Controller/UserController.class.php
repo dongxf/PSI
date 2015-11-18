@@ -13,7 +13,7 @@ use Home\Service\BizConfigService;
  * @author 李静波
  *        
  */
-class UserController extends Controller {
+class UserController extends PSIBaseController {
 
 	/**
 	 * 用户管理-主页面
@@ -22,14 +22,9 @@ class UserController extends Controller {
 		$us = new UserService();
 		
 		if ($us->hasPermission(FIdConst::USR_MANAGEMENT)) {
-			$bcs = new BizConfigService();
-			$this->assign("productionName", $bcs->getProductionName());
+			$this->initVar();
 			
-			$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
 			$this->assign("title", "用户管理");
-			$this->assign("uri", __ROOT__ . "/");
-			$dtFlag = getdate();
-			$this->assign("dtFlag", $dtFlag[0]);
 			
 			$this->display();
 		} else {
@@ -64,15 +59,13 @@ class UserController extends Controller {
 		$us = new UserService();
 		
 		if ($us->hasPermission(FIdConst::CHANGE_MY_PASSWORD)) {
-			$bcs = new BizConfigService();
-			$this->assign("productionName", $bcs->getProductionName());
+			$this->initVar();
+			
 			$this->assign("loginUserId", $us->getLoginUserId());
 			$this->assign("loginName", $us->getLoginName());
 			$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
 			$this->assign("title", "修改我的密码");
-			$this->assign("uri", __ROOT__ . "/");
-			$dtFlag = getdate();
-			$this->assign("dtFlag", $dtFlag[0]);
+			
 			$this->display();
 		} else {
 			redirect(__ROOT__ . "/");
