@@ -509,6 +509,9 @@ class GoodsService extends PSIBaseService {
 		return $this->ok();
 	}
 
+	/**
+	 * 商品列表
+	 */
 	public function goodsList($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
@@ -1165,6 +1168,54 @@ class GoodsService extends PSIBaseService {
 			$result["salePrice"] = $data[0]["sale_price"];
 			$result["unitName"] = $data[0]["unit_name"];
 		}
+		
+		return $result;
+	}
+
+	public function getTotalGoodsCount($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$db = M();
+		
+		$code = $params["code"];
+		$name = $params["name"];
+		$spec = $params["spec"];
+		$barCode = $params["barCode"];
+		
+		$sql = "select count(*) as cnt
+					from t_goods c
+					where (1 = 1) ";
+		$queryParam = array();
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::GOODS, "c");
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParam = array_merge($queryParam, $rs[1]);
+		}
+		if ($code) {
+			$sql .= " and (c.code like '%s') ";
+			$queryParam[] = "%{$code}%";
+		}
+		if ($name) {
+			$sql .= " and (c.name like '%s' or c.py like '%s') ";
+			$queryParam[] = "%{$name}%";
+			$queryParam[] = "%{$name}%";
+		}
+		if ($spec) {
+			$sql .= " and (c.spec like '%s')";
+			$queryParam[] = "%{$spec}%";
+		}
+		if ($barCode) {
+			$sql .= " and (c.bar_code = '%s') ";
+			$queryParam[] = $barCode;
+		}
+		$data = $db->query($sql, $queryParam);
+		
+		$result = array();
+		
+		$result["cnt"] = $data[0]["cnt"];
 		
 		return $result;
 	}

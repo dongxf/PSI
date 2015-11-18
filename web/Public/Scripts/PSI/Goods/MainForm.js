@@ -242,6 +242,8 @@ Ext.define("PSI.Goods.MainForm", {
 
         me.callParent(arguments);
         
+        me.queryTotalGoodsCount();
+        
         me.__queryEditNameList = ["editQueryCode", "editQueryName", "editQuerySpec", "editQueryBarCode"];
     },
     onAddCategory: function () {
@@ -555,6 +557,8 @@ Ext.define("PSI.Goods.MainForm", {
     	me.goodsGrid.getStore().removeAll();
     	me.getSIGrid().getStore().removeAll();
     	
+    	me.queryTotalGoodsCount();
+    	
     	me.freshCategoryGrid();
     },
     
@@ -725,6 +729,11 @@ Ext.define("PSI.Goods.MainForm", {
             viewConfig: {
                 loadMask: true
             },
+            bbar: [{
+            	id: "fieldTotalGoodsCount",
+            	xtype: "displayfield",
+            	value: "共用商品0种"
+            }],
             columns: {
                 defaults: {
                     sortable: false,
@@ -783,5 +792,21 @@ Ext.define("PSI.Goods.MainForm", {
     	}
     	
     	this.onCategoryGridSelect();
+    },
+    
+    queryTotalGoodsCount: function() {
+    	var me = this;
+        Ext.Ajax.request({
+            url: PSI.Const.BASE_URL + "Home/Goods/getTotalGoodsCount",
+            method: "POST",
+            params: me.getQueryParamForCategory(),
+            callback: function (options, success, response) {
+
+                if (success) {
+                    var data = Ext.JSON.decode(response.responseText);
+                    Ext.getCmp("fieldTotalGoodsCount").setValue("共有商品" + data.cnt + "种");
+                }
+            }
+        });
     }
 });

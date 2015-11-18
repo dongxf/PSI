@@ -334,4 +334,18 @@ class GoodsController extends PSIBaseController {
 			}
 		}
 	}
+
+	public function getTotalGoodsCount() {
+		if (IS_POST) {
+			$params = array(
+					"code" => I("post.code"),
+					"name" => I("post.name"),
+					"spec" => I("post.spec"),
+					"barCode" => I("post.barCode")
+			);
+			
+			$gs = new GoodsService();
+			$this->ajaxReturn($gs->getTotalGoodsCount($params));
+		}
+	}
 }
