@@ -1,12 +1,6 @@
 <layout name="layout" />
 
-<if condition="$warehouseUsesOrg eq true">
-<script src="{$uri}Public/Scripts/PSI/Warehouse/MainFormWithOrg.js?dt={$dtFlag}" type="text/javascript"></script>
-<script src="{$uri}Public/Scripts/PSI/Warehouse/EditOrgForm.js?dt={$dtFlag}" type="text/javascript"></script>
-<script src="{$uri}Public/Scripts/PSI/Warehouse/OrgViewForm.js?dt={$dtFlag}" type="text/javascript"></script>
-<else />
 <script src="{$uri}Public/Scripts/PSI/Warehouse/MainForm.js?dt={$dtFlag}" type="text/javascript"></script>
-</if>
 <script src="{$uri}Public/Scripts/PSI/Warehouse/EditForm.js?dt={$dtFlag}" type="text/javascript"></script>
 
 <script>
@@ -17,11 +11,7 @@
         });
 
         
-        <if condition="$warehouseUsesOrg eq true">
-        	app.add(Ext.create("PSI.Warehouse.MainFormWithOrg"));
-        <else />
-        	app.add(Ext.create("PSI.Warehouse.MainForm"));
-        </if>
+        app.add(Ext.create("PSI.Warehouse.MainForm"));
 
         app.setAppHeader({
             title: "{$title}",

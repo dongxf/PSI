@@ -14,7 +14,7 @@ use Home\Service\BizConfigService;
  * @author 李静波
  *        
  */
-class WarehouseController extends Controller {
+class WarehouseController extends PSIBaseController {
 
 	/**
 	 * 仓库 - 主页面
@@ -23,17 +23,10 @@ class WarehouseController extends Controller {
 		$us = new UserService();
 		
 		if ($us->hasPermission(FIdConst::WAREHOUSE)) {
-			$bcs = new BizConfigService();
-			$this->assign("productionName", $bcs->getProductionName());
+			$this->initVar();
 			
 			$this->assign("title", "仓库");
-			$this->assign("uri", __ROOT__ . "/");
 			
-			$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
-			$dtFlag = getdate();
-			$this->assign("dtFlag", $dtFlag[0]);
-			
-			//$ts = new BizConfigService();
 			$this->assign("warehouseUsesOrg", false);
 			
 			$this->display();
