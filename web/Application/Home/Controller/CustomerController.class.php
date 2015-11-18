@@ -15,7 +15,7 @@ use Home\Service\BizConfigService;
  * @author 李静波
  *        
  */
-class CustomerController extends Controller {
+class CustomerController extends PSIBaseController {
 
 	/**
 	 * 客户资料 - 主页面
@@ -24,16 +24,9 @@ class CustomerController extends Controller {
 		$us = new UserService();
 		
 		if ($us->hasPermission(FIdConst::CUSTOMER)) {
-			$bcs = new BizConfigService();
-			$this->assign("productionName", $bcs->getProductionName());
+			$this->initVar();
 			
 			$this->assign("title", "客户资料");
-			$this->assign("uri", __ROOT__ . "/");
-			
-			$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
-			
-			$dtFlag = getdate();
-			$this->assign("dtFlag", $dtFlag[0]);
 			
 			$this->display();
 		} else {
@@ -184,27 +177,33 @@ class CustomerController extends Controller {
 		}
 	}
 
+	/**
+	 * 通过Excel导入客户资料
+	 */
 	public function import() {
 		if (IS_POST) {
 			$upload = new \Think\Upload();
-			// $upload->maxSize = 3145728;
+			
 			$upload->exts = array(
-				'xls',
-				'xlsx'
+					'xls',
+					'xlsx'
 			); // 允许上传的文件后缀
 			$upload->savePath = '/Customer/'; // 保存路径
-			// 先上传文件
+			                                  // 先上传文件
 			$fileInfo = $upload->uploadOne($_FILES['data_file']);
 			if (! $fileInfo) {
-//				$this->error($upload->getError());
-				$this->ajaxReturn(array("msg"=>$upload->getError(),"success"=>false));
+				$this->ajaxReturn(
+						array(
+								"msg" => $upload->getError(),
+								"success" => false
+						));
 			} else {
 				$uploadFileFullPath = './Uploads' . $fileInfo['savepath'] . $fileInfo['savename']; // 获取上传到服务器文件路径
 				$uploadFileExt = $fileInfo['ext']; // 上传文件扩展名
-
+				
 				$params = array(
-					"datafile"=>$uploadFileFullPath,
-					"ext" =>$uploadFileExt
+						"datafile" => $uploadFileFullPath,
+						"ext" => $uploadFileExt
 				);
 				$cs = new ImportService();
 				$this->ajaxReturn($cs->importCustomerFromExcelFile($params));

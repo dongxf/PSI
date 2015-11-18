@@ -14,7 +14,7 @@ use Home\Service\BizConfigService;
  * @author 李静波
  *        
  */
-class PermissionController extends Controller {
+class PermissionController extends PSIBaseController {
 
 	/**
 	 * 权限管理 - 主页面
@@ -23,14 +23,9 @@ class PermissionController extends Controller {
 		$us = new UserService();
 		
 		if ($us->hasPermission(FIdConst::PERMISSION_MANAGEMENT)) {
-			$bcs = new BizConfigService();
-			$this->assign("productionName", $bcs->getProductionName());
-			$this->assign("title", "权限管理");
-			$this->assign("uri", __ROOT__ . "/");
+			$this->initVar();
 			
-			$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
-			$dtFlag = getdate();
-			$this->assign("dtFlag", $dtFlag[0]);
+			$this->assign("title", "权限管理");
 			
 			$this->display();
 		} else {

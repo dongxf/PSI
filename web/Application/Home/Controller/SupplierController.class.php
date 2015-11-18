@@ -14,7 +14,7 @@ use Home\Service\BizConfigService;
  * @author 李静波
  *        
  */
-class SupplierController extends Controller {
+class SupplierController extends PSIBaseController {
 
 	/**
 	 * 供应商档案 - 主页面
@@ -23,15 +23,9 @@ class SupplierController extends Controller {
 		$us = new UserService();
 		
 		if ($us->hasPermission(FIdConst::SUPPLIER)) {
-			$bcs = new BizConfigService();
-			$this->assign("productionName", $bcs->getProductionName());
+			$this->initVar();
 			
 			$this->assign("title", "供应商档案");
-			$this->assign("uri", __ROOT__ . "/");
-			
-			$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
-			$dtFlag = getdate();
-			$this->assign("dtFlag", $dtFlag[0]);
 			
 			$this->display();
 		} else {
