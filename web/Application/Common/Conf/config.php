@@ -6,12 +6,6 @@ function PSI_getMoPaasV2MySQLConfig() {
 	$mysql_config = $services_json["MySQL-5.5"][0]["credentials"];
 	
 	return $mysql_config;
-	// ** MySQL settings from resource descriptor ** //
-// 	define('DB_NAME', $mysql_config["name"]);
-// 	define('DB_USER', $mysql_config["user"]);
-// 	define('DB_PASSWORD', $mysql_config["password"]);
-// 	define('DB_HOST', $mysql_config["hostname"]);
-// 	define('DB_PORT', $mysql_config["port"]);
 }
 
 function PSI_getHost() {
