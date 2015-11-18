@@ -15,7 +15,7 @@ use Home\Service\BizConfigService;
  * @author 李静波
  *        
  */
-class BizlogController extends Controller {
+class BizlogController extends PSIBaseController {
 
 	/**
 	 * 业务日志 - 主页面
@@ -24,16 +24,9 @@ class BizlogController extends Controller {
 		$us = new UserService();
 		
 		if ($us->hasPermission(FIdConst::BIZ_LOG)) {
-			$bcs = new BizConfigService();
-			$this->assign("productionName", $bcs->getProductionName());
+			$this->initVar();
 			
 			$this->assign("title", "业务日志");
-			$this->assign("uri", __ROOT__ . "/");
-			
-			$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
-			
-			$dtFlag = getdate();
-			$this->assign("dtFlag", $dtFlag[0]);
 			
 			$this->display();
 		} else {
