@@ -27,8 +27,6 @@ class WarehouseController extends PSIBaseController {
 			
 			$this->assign("title", "仓库");
 			
-			$this->assign("warehouseUsesOrg", false);
-			
 			$this->display();
 		} else {
 			redirect(__ROOT__ . "/Home/User/login");
@@ -82,72 +80,6 @@ class WarehouseController extends PSIBaseController {
 			$fid = I("post.fid");
 			$ws = new WarehouseService();
 			$this->ajaxReturn($ws->queryData($queryKey, $fid));
-		}
-	}
-
-	/**
-	 * 使用仓库的组织机构列表
-	 */
-	public function warehouseOrgList() {
-		if (IS_POST) {
-			$params = array(
-					"warehouseId" => I("post.warehouseId"),
-					"fid" => I("post.fid")
-			);
-			$ws = new WarehouseService();
-			$this->ajaxReturn($ws->warehouseOrgList($params));
-		}
-	}
-
-	/**
-	 * 查询组织机构树
-	 */
-	public function allOrgs() {
-		$ws = new WarehouseService();
-		
-		$this->ajaxReturn($ws->allOrgs());
-	}
-
-	/**
-	 * 为仓库增加组织机构
-	 */
-	public function addOrg() {
-		if (IS_POST) {
-			$params = array(
-					"warehouseId" => I("post.warehouseId"),
-					"fid" => I("post.fid"),
-					"orgId" => I("post.orgId")
-			);
-			$ws = new WarehouseService();
-			$this->ajaxReturn($ws->addOrg($params));
-		}
-	}
-
-	/**
-	 * 为仓库移走组织机构
-	 */
-	public function deleteOrg() {
-		if (IS_POST) {
-			$params = array(
-					"warehouseId" => I("post.warehouseId"),
-					"fid" => I("post.fid"),
-					"orgId" => I("post.orgId")
-			);
-			$ws = new WarehouseService();
-			$this->ajaxReturn($ws->deleteOrg($params));
-		}
-	}
-
-	/**
-	 * 从组织机构的视角查看仓库信息
-	 */
-	public function orgViewWarehouseList() {
-		if (IS_POST) {
-			$params = array(
-					"orgId" => I("post.orgId")
-			);
-			$ws = new WarehouseService();
-			$this->ajaxReturn($ws->orgViewWarehouseList($params));
 		}
 	}
 }
