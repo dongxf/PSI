@@ -126,6 +126,10 @@ class BizConfigService extends PSIBaseService {
 					continue;
 				}
 				
+				if ($value == "1") {
+					return $this->bad("当前版本还不支持先进先出法");
+				}
+				
 				$sql = "select count(*) as cnt from t_inventory_detail
 						where ref_type <> '库存建账' ";
 				$data = $db->query($sql);
@@ -271,16 +275,17 @@ class BizConfigService extends PSIBaseService {
 	 * 1：先进先出法
 	 */
 	public function getInventoryMethod() {
+		// 2015-11-19 为发布稳定版本，临时取消先进先出法
 		$result = 0;
 		
-		$db = M();
-		$sql = "select value from t_config where id = '1003-02' ";
-		$data = $db->query($sql);
-		if (! $data) {
-			return $result;
-		}
+		// $db = M();
+		// $sql = "select value from t_config where id = '1003-02' ";
+		// $data = $db->query($sql);
+		// if (! $data) {
+		// return $result;
+		// }
 		
-		$result = intval($data[0]["value"]);
+		// $result = intval($data[0]["value"]);
 		
 		return $result;
 	}
