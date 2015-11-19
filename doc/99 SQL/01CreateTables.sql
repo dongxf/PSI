@@ -720,6 +720,7 @@ CREATE TABLE IF NOT EXISTS `t_po_bill` (
   `confirm_user_id` varchar(255) DEFAULT NULL,
   `confirm_date` datetime DEFAULT NULL,
   `data_org` varchar(255) DEFAULT NULL,
+  `company_id` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
