@@ -8,7 +8,7 @@ namespace Home\Service;
  * @author 李静波
  */
 class UpdateDBService extends PSIBaseService {
-	private $CURRENT_DB_VERSION = "20151113-001";
+	private $CURRENT_DB_VERSION = "20151119-001";
 
 	private function tableExists($db, $tableName) {
 		$dbName = C('DB_NAME');
@@ -92,6 +92,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20151111_01($db);
 		$this->update_20151112_01($db);
 		$this->update_20151113_01($db);
+		$this->update_20151119_01($db);
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -103,6 +104,35 @@ class UpdateDBService extends PSIBaseService {
 		$bl->insertBizlog("升级数据库，数据库版本 = " . $this->CURRENT_DB_VERSION);
 		
 		return $this->ok();
+	}
+
+	private function update_20151119_01($db) {
+		// 本次更新：和资金相关的表增加 company_id 字段
+		$tableList = array(
+				"t_cash",
+				"t_cash_detail",
+				"t_payables",
+				"t_payables_detail",
+				"t_pre_payment",
+				"t_pre_payment_detail",
+				"t_pre_receiving",
+				"t_pre_receiving_detail",
+				"t_receivables",
+				"t_receivables_detail"
+		);
+		
+		$columnName = "company_id";
+		
+		foreach ( $tableList as $tableName ) {
+			if (! $this->tableExists($db, $tableName)) {
+				continue;
+			}
+			
+			if (! $this->columnExists($db, $tableName, $columnName)) {
+				$sql = "alter table {$tableName} add {$columnName} varchar(255) default null;";
+				$db->execute($sql);
+			}
+		}
 	}
 
 	private function update_20151113_01($db) {
