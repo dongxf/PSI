@@ -8,7 +8,7 @@ namespace Home\Service;
  * @author 李静波
  */
 class UpdateDBService extends PSIBaseService {
-	private $CURRENT_DB_VERSION = "20151119-001";
+	private $CURRENT_DB_VERSION = "20151119-002";
 
 	private function tableExists($db, $tableName) {
 		$dbName = C('DB_NAME');
