@@ -26,4 +26,11 @@ class PSIBaseController extends Controller {
 		$dtFlag = getdate();
 		$this->assign("dtFlag", $dtFlag[0]);
 	}
+	
+	/**
+	 * 跳转到登录页面
+	 */
+	protected function gotoLoginPage() {
+		redirect(__ROOT__ . "/Home/User/login");
+	}
 }

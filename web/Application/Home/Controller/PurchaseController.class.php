@@ -15,7 +15,7 @@ use Home\Service\BizConfigService;
  * @author 李静波
  *        
  */
-class PurchaseController extends Controller {
+class PurchaseController extends PSIBaseController {
 
 	/**
 	 * 采购入库单主页面
@@ -24,18 +24,13 @@ class PurchaseController extends Controller {
 		$us = new UserService();
 		
 		if ($us->hasPermission(FIdConst::PURCHASE_WAREHOUSE)) {
-			$bcs = new BizConfigService();
-			$this->assign("productionName", $bcs->getProductionName());
+			$this->initVar();
 			
 			$this->assign("title", "采购入库");
-			$this->assign("uri", __ROOT__ . "/");
 			
-			$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
-			$dtFlag = getdate();
-			$this->assign("dtFlag", $dtFlag[0]);
 			$this->display();
 		} else {
-			redirect(__ROOT__ . "/Home/User/login");
+			$this->gotoLoginPage();
 		}
 	}
 
@@ -126,23 +121,18 @@ class PurchaseController extends Controller {
 		$us = new UserService();
 		
 		if ($us->hasPermission(FIdConst::PURCHASE_ORDER)) {
-			$bcs = new BizConfigService();
-			$this->assign("productionName", $bcs->getProductionName());
+			$this->initVar();
 			
 			$this->assign("title", "采购订单");
-			$this->assign("uri", __ROOT__ . "/");
 			
 			$this->assign("pConfirm", 
 					$us->hasPermission(FIdConst::PURCHASE_ORDER_CONFIRM) ? "1" : "0");
 			$this->assign("pGenPWBill", 
 					$us->hasPermission(FIdConst::PURCHASE_ORDER_GEN_PWBILL) ? "1" : "0");
 			
-			$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
-			$dtFlag = getdate();
-			$this->assign("dtFlag", $dtFlag[0]);
 			$this->display();
 		} else {
-			redirect(__ROOT__ . "/Home/User/login");
+			$this->gotoLoginPage();
 		}
 	}
 
