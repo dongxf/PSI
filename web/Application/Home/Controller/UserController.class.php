@@ -28,7 +28,7 @@ class UserController extends PSIBaseController {
 			
 			$this->display();
 		} else {
-			redirect(__ROOT__ . "/");
+			$this->gotoLoginPage();
 		}
 	}
 
@@ -37,15 +37,14 @@ class UserController extends PSIBaseController {
 	 */
 	public function login() {
 		if (session("loginUserId")) {
+			// 已经登录了，就返回首页
 			redirect(__ROOT__);
 		}
 		
-		$bcs = new BizConfigService();
-		$this->assign("productionName", $bcs->getProductionName());
+		$this->initVar();
+		
 		$this->assign("title", "登录");
-		$this->assign("uri", __ROOT__ . "/");
-		$dtFlag = getdate();
-		$this->assign("dtFlag", $dtFlag[0]);
+		
 		$us = new UserService();
 		$this->assign("demoInfo", $us->getDemoLoginInfo());
 		
@@ -68,7 +67,7 @@ class UserController extends PSIBaseController {
 			
 			$this->display();
 		} else {
-			redirect(__ROOT__ . "/");
+			$this->gotoLoginPage();
 		}
 	}
 

@@ -30,7 +30,7 @@ class CustomerController extends PSIBaseController {
 			
 			$this->display();
 		} else {
-			redirect(__ROOT__ . "/Home/User/login");
+			$this->gotoLoginPage();
 		}
 	}
 
