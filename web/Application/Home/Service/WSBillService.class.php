@@ -705,11 +705,11 @@ class WSBillService extends PSIBaseService {
 							// fifo 的明细记录
 							$sql = "insert into t_inventory_fifo_detail(out_count, out_price, out_money,
 									balance_count, balance_price, balance_money, warehouse_id, goods_id,
-									date_created) 
-									values (%d, %f, %f, %d, %f, %f, '%s', '%s', '%s')";
+									date_created, wsbilldetail_id) 
+									values (%d, %f, %f, %d, %f, %f, '%s', '%s', '%s', '%s')";
 							$db->execute($sql, $gc, $fifoPrice, $fifoMoney, $fvBalanceCount, 
 									$fvBalancePrice, $fvBalanceMoney, $warehouseId, $goodsId, 
-									$fvDateCreated);
+									$fvDateCreated, $itemId);
 							
 							$gc = 0;
 						} else {
@@ -724,10 +724,10 @@ class WSBillService extends PSIBaseService {
 							// fifo 的明细记录
 							$sql = "insert into t_inventory_fifo_detail(out_count, out_price, out_money,
 									balance_count, balance_price, balance_money, warehouse_id, goods_id,
-									date_created) 
-									values (%d, %f, %f, %d, %f, %f, '%s', '%s', '%s')";
+									date_created, wsbilldetail_id) 
+									values (%d, %f, %f, %d, %f, %f, '%s', '%s', '%s', '%s')";
 							$db->execute($sql, $fvBalanceCount, $fvBalancePrice, $fvBalanceMoney, 0, 
-									0, 0, $warehouseId, $goodsId, $fvDateCreated);
+									0, 0, $warehouseId, $goodsId, $fvDateCreated, $itemId);
 							$gc -= $fvBalanceCount;
 						}
 					}
