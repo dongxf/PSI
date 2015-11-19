@@ -15,7 +15,7 @@ use Home\Service\BizConfigService;
  * @author 李静波
  *        
  */
-class PurchaseRejController extends Controller {
+class PurchaseRejController extends PSIBaseController {
 
 	/**
 	 * 采购退货出库 - 主页面
@@ -24,19 +24,13 @@ class PurchaseRejController extends Controller {
 		$us = new UserService();
 		
 		if ($us->hasPermission(FIdConst::PURCHASE_REJECTION)) {
-			$bcs = new BizConfigService();
-			$this->assign("productionName", $bcs->getProductionName());
+			$this->initVar();
 			
 			$this->assign("title", "采购退货出库");
-			$this->assign("uri", __ROOT__ . "/");
-			
-			$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
-			$dtFlag = getdate();
-			$this->assign("dtFlag", $dtFlag[0]);
 			
 			$this->display();
 		} else {
-			redirect(__ROOT__ . "/Home/User/login");
+			$this->gotoLoginPage();
 		}
 	}
 
