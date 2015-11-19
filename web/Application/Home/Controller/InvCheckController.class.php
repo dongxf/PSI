@@ -15,7 +15,7 @@ use Home\Service\BizConfigService;
  * @author 李静波
  *        
  */
-class InvCheckController extends Controller {
+class InvCheckController extends PSIBaseController {
 
 	/**
 	 * 库存盘点 - 主页面
@@ -24,19 +24,13 @@ class InvCheckController extends Controller {
 		$us = new UserService();
 		
 		if ($us->hasPermission(FIdConst::INVENTORY_CHECK)) {
-			$bcs = new BizConfigService();
-			$this->assign("productionName", $bcs->getProductionName());
+			$this->initVar();
 			
 			$this->assign("title", "库存盘点");
-			$this->assign("uri", __ROOT__ . "/");
-			
-			$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
-			$dtFlag = getdate();
-			$this->assign("dtFlag", $dtFlag[0]);
 			
 			$this->display();
 		} else {
-			redirect(__ROOT__ . "/Home/User/login");
+			$this->gotoLoginPage();
 		}
 	}
 

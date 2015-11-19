@@ -15,7 +15,7 @@ use Home\Service\BizConfigService;
  * @author 李静波
  *        
  */
-class InvTransferController extends Controller {
+class InvTransferController extends PSIBaseController {
 
 	/**
 	 * 库间调拨 - 首页
@@ -24,19 +24,13 @@ class InvTransferController extends Controller {
 		$us = new UserService();
 		
 		if ($us->hasPermission(FIdConst::INVENTORY_TRANSFER)) {
-			$bcs = new BizConfigService();
-			$this->assign("productionName", $bcs->getProductionName());
+			$this->initVar();
 			
 			$this->assign("title", "库间调拨");
-			$this->assign("uri", __ROOT__ . "/");
-			
-			$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
-			$dtFlag = getdate();
-			$this->assign("dtFlag", $dtFlag[0]);
 			
 			$this->display();
 		} else {
-			redirect(__ROOT__ . "/Home/User/login");
+			$this->gotoLoginPage();
 		}
 	}
 
