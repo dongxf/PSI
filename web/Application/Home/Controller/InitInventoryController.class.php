@@ -11,7 +11,7 @@ use Home\Service\InitInventoryService;
  * @author 李静波
  *        
  */
-class InitInventoryController extends Controller {
+class InitInventoryController extends PSIBaseController {
 
 	/**
 	 * 查询仓库列表

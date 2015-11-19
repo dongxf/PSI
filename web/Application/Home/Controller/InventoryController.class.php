@@ -14,7 +14,7 @@ use Home\Service\BizConfigService;
  * @author 李静波
  *        
  */
-class InventoryController extends Controller {
+class InventoryController extends PSIBaseController {
 
 	/**
 	 * 库存建账 - 主页面
@@ -23,19 +23,13 @@ class InventoryController extends Controller {
 		$us = new UserService();
 		
 		if ($us->hasPermission(FIdConst::INVENTORY_INIT)) {
-			$bcs = new BizConfigService();
-			$this->assign("productionName", $bcs->getProductionName());
+			$this->initVar();
 			
 			$this->assign("title", "库存建账");
-			$this->assign("uri", __ROOT__ . "/");
-			
-			$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
-			$dtFlag = getdate();
-			$this->assign("dtFlag", $dtFlag[0]);
 			
 			$this->display();
 		} else {
-			redirect(__ROOT__ . "/Home/User/login");
+			$this->gotoLoginPage();
 		}
 	}
 
@@ -46,19 +40,13 @@ class InventoryController extends Controller {
 		$us = new UserService();
 		
 		if ($us->hasPermission(FIdConst::INVENTORY_QUERY)) {
-			$bcs = new BizConfigService();
-			$this->assign("productionName", $bcs->getProductionName());
+			$this->initVar();
 			
 			$this->assign("title", "库存账查询");
-			$this->assign("uri", __ROOT__ . "/");
-			
-			$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
-			$dtFlag = getdate();
-			$this->assign("dtFlag", $dtFlag[0]);
 			
 			$this->display();
 		} else {
-			redirect(__ROOT__ . "/Home/User/login");
+			$this->gotoLoginPage();
 		}
 	}
 
