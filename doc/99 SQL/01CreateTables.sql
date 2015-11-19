@@ -613,6 +613,7 @@ CREATE TABLE IF NOT EXISTS `t_cash` (
   `out_money` decimal(19,2) DEFAULT NULL,
   `balance_money` decimal(19,2) NOT NULL,
   `data_org` varchar(255) DEFAULT NULL,
+  `company_id` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -627,6 +628,7 @@ CREATE TABLE IF NOT EXISTS `t_cash_detail` (
   `ref_type` varchar(255) NOT NULL,
   `date_created` datetime NOT NULL,
   `data_org` varchar(255) DEFAULT NULL,
+  `company_id` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
