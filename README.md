@@ -81,7 +81,7 @@ PSI的开源协议
 >
 >5、乱码 / pinyin_php (https://git.oschina.net/cik/pinyin_php)
 >
->6、PHPExcel (http://phpexcel.codeplex.com/)
+>6、PHPExcel (https://github.com/PHPOffice/PHPExcel)
 >
 >7、TCPDF (http://www.tcpdf.org/)
 >
