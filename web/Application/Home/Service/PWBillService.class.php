@@ -232,7 +232,7 @@ class PWBillService extends PSIBaseService {
 		$dataOrg = $us->getLoginUserDataOrg();
 		
 		if ($id) {
-			// 编辑
+			// 编辑采购入库单
 			$sql = "select ref, bill_status from t_pw_bill where id = '%s' ";
 			$data = $db->query($sql, $id);
 			if (! $data) {
@@ -245,156 +245,147 @@ class PWBillService extends PSIBaseService {
 			}
 			
 			$db->startTrans();
-			try {
-				$sql = "delete from t_pw_bill_detail where pwbill_id = '%s' ";
-				$db->execute($sql, $id);
-				
-				// 明细记录
-				$items = $bill["items"];
-				foreach ( $items as $i => $item ) {
-					$goodsId = $item["goodsId"];
-					$goodsCount = intval($item["goodsCount"]);
-					$memo = $item["memo"];
-					if ($goodsId != null && $goodsCount != 0) {
-						// 检查商品是否存在
-						$sql = "select count(*) as cnt from t_goods where id = '%s' ";
-						$data = $db->query($sql, $goodsId);
-						$cnt = $data[0]["cnt"];
-						if ($cnt == 1) {
-							
-							$goodsPrice = $item["goodsPrice"];
-							$goodsMoney = $item["goodsMoney"];
-							
-							$sql = "insert into t_pw_bill_detail (id, date_created, goods_id, goods_count, goods_price,
+			
+			$sql = "delete from t_pw_bill_detail where pwbill_id = '%s' ";
+			$db->execute($sql, $id);
+			
+			// 明细记录
+			$items = $bill["items"];
+			foreach ( $items as $i => $item ) {
+				$goodsId = $item["goodsId"];
+				$goodsCount = intval($item["goodsCount"]);
+				$memo = $item["memo"];
+				if ($goodsId != null && $goodsCount != 0) {
+					// 检查商品是否存在
+					$sql = "select count(*) as cnt from t_goods where id = '%s' ";
+					$data = $db->query($sql, $goodsId);
+					$cnt = $data[0]["cnt"];
+					if ($cnt == 1) {
+						
+						$goodsPrice = $item["goodsPrice"];
+						$goodsMoney = $item["goodsMoney"];
+						
+						$sql = "insert into t_pw_bill_detail (id, date_created, goods_id, goods_count, goods_price,
 									goods_money,  pwbill_id, show_order, data_org, memo)
 									values ('%s', now(), '%s', %d, %f, %f, '%s', %d, '%s', '%s')";
-							$db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsPrice, 
-									$goodsMoney, $id, $i, $dataOrg, $memo);
-						}
+						$db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsPrice, 
+								$goodsMoney, $id, $i, $dataOrg, $memo);
 					}
 				}
-				
-				$sql = "select sum(goods_money) as goods_money from t_pw_bill_detail 
+			}
+			
+			$sql = "select sum(goods_money) as goods_money from t_pw_bill_detail 
 						where pwbill_id = '%s' ";
-				$data = $db->query($sql, $id);
-				$totalMoney = $data[0]["goods_money"];
-				if (! $totalMoney) {
-					$totalMoney = 0;
-				}
-				$sql = "update t_pw_bill 
+			$data = $db->query($sql, $id);
+			$totalMoney = $data[0]["goods_money"];
+			if (! $totalMoney) {
+				$totalMoney = 0;
+			}
+			$sql = "update t_pw_bill 
 						set goods_money = %f, warehouse_id = '%s', 
 							supplier_id = '%s', biz_dt = '%s',
 							biz_user_id = '%s', payment_type = %d
 						where id = '%s' ";
-				$db->execute($sql, $totalMoney, $warehouseId, $supplierId, $bizDT, $bizUserId, 
-						$paymentType, $id);
-				
-				$log = "编辑采购入库单: 单号 = {$ref}";
-				$bs = new BizlogService();
-				$bs->insertBizlog($log, "采购入库");
-				$db->commit();
-			} catch ( Exception $exc ) {
-				$db->rollback();
-				return $this->bad("数据库操作错误，请联系管理员");
-			}
+			$db->execute($sql, $totalMoney, $warehouseId, $supplierId, $bizDT, $bizUserId, 
+					$paymentType, $id);
+			
+			$log = "编辑采购入库单: 单号 = {$ref}";
+			$bs = new BizlogService();
+			$bs->insertBizlog($log, "采购入库");
+			$db->commit();
 		} else {
 			$companyId = $us->getCompanyId();
 			
 			$id = $idGen->newId();
 			
 			$db->startTrans();
-			try {
-				$sql = "insert into t_pw_bill (id, ref, supplier_id, warehouse_id, biz_dt, 
+			
+			$sql = "insert into t_pw_bill (id, ref, supplier_id, warehouse_id, biz_dt, 
 						biz_user_id, bill_status, date_created, goods_money, input_user_id, payment_type,
 						data_org, company_id) 
 						values ('%s', '%s', '%s', '%s', '%s', '%s', 0, now(), 0, '%s', %d, '%s', '%s')";
-				
-				$ref = $this->genNewBillRef();
-				
-				$db->execute($sql, $id, $ref, $supplierId, $warehouseId, $bizDT, $bizUserId, 
-						$us->getLoginUserId(), $paymentType, $dataOrg, $companyId);
-				
-				// 明细记录
-				$items = $bill["items"];
-				foreach ( $items as $i => $item ) {
-					$goodsId = $item["goodsId"];
-					$goodsCount = intval($item["goodsCount"]);
-					$memo = $item["memo"];
-					if ($goodsId != null && $goodsCount != 0) {
-						// 检查商品是否存在
-						$sql = "select count(*) as cnt from t_goods where id = '%s' ";
-						$data = $db->query($sql, $goodsId);
-						$cnt = $data[0]["cnt"];
-						if ($cnt == 1) {
-							
-							$goodsPrice = $item["goodsPrice"];
-							$goodsMoney = $item["goodsMoney"];
-							
-							$sql = "insert into t_pw_bill_detail 
+			
+			$ref = $this->genNewBillRef();
+			
+			$db->execute($sql, $id, $ref, $supplierId, $warehouseId, $bizDT, $bizUserId, 
+					$us->getLoginUserId(), $paymentType, $dataOrg, $companyId);
+			
+			// 明细记录
+			$items = $bill["items"];
+			foreach ( $items as $i => $item ) {
+				$goodsId = $item["goodsId"];
+				$goodsCount = intval($item["goodsCount"]);
+				$memo = $item["memo"];
+				if ($goodsId != null && $goodsCount != 0) {
+					// 检查商品是否存在
+					$sql = "select count(*) as cnt from t_goods where id = '%s' ";
+					$data = $db->query($sql, $goodsId);
+					$cnt = $data[0]["cnt"];
+					if ($cnt == 1) {
+						
+						$goodsPrice = $item["goodsPrice"];
+						$goodsMoney = $item["goodsMoney"];
+						
+						$sql = "insert into t_pw_bill_detail 
 									(id, date_created, goods_id, goods_count, goods_price,
 									goods_money,  pwbill_id, show_order, data_org, memo)
 									values ('%s', now(), '%s', %d, %f, %f, '%s', %d, '%s', '%s')";
-							$db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsPrice, 
-									$goodsMoney, $id, $i, $dataOrg, $memo);
-						}
+						$db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsPrice, 
+								$goodsMoney, $id, $i, $dataOrg, $memo);
 					}
 				}
-				
-				$sql = "select sum(goods_money) as goods_money from t_pw_bill_detail 
+			}
+			
+			$sql = "select sum(goods_money) as goods_money from t_pw_bill_detail 
 						where pwbill_id = '%s' ";
-				$data = $db->query($sql, $id);
-				$totalMoney = $data[0]["goods_money"];
-				if (! $totalMoney) {
-					$totalMoney = 0;
-				}
-				$sql = "update t_pw_bill
+			$data = $db->query($sql, $id);
+			$totalMoney = $data[0]["goods_money"];
+			if (! $totalMoney) {
+				$totalMoney = 0;
+			}
+			$sql = "update t_pw_bill
 						set goods_money = %f 
 						where id = '%s' ";
-				$db->execute($sql, $totalMoney, $id);
+			$db->execute($sql, $totalMoney, $id);
+			
+			if ($pobillRef) {
+				// 从采购订单生成采购入库单
+				$sql = "select id, company_id from t_po_bill where ref = '%s' ";
+				$data = $db->query($sql, $pobillRef);
+				if (! $data) {
+					$db->rollback();
+					return $this->sqlError(__LINE__);
+				}
+				$pobillId = $data[0]["id"];
+				$companyId = $data[0]["company_id"];
 				
-				if ($pobillRef) {
-					// 从采购订单生成采购入库单
-					$sql = "select id, company_id from t_po_bill where ref = '%s' ";
-					$data = $db->query($sql, $pobillRef);
-					if (! $data) {
-						$db->rollback();
-						return $this->sqlError(__LINE__);
-					}
-					$pobillId = $data[0]["id"];
-					$companyId = $data[0]["company_id"];
-					
-					$sql = "update t_pw_bill
+				$sql = "update t_pw_bill
 							set company_id = '%s'
 							where id = '%s' ";
-					$rc = $db->execute($sql, $companyId, $id);
-					if ($rc === false) {
-						$db->rollback();
-						return $this->sqlError(__LINE__);
-					}
-					
-					$sql = "insert into t_po_pw(po_id, pw_id) values('%s', '%s')";
-					$rc = $db->execute($sql, $pobillId, $id);
-					if (! $rc) {
-						$db->rollback();
-						return $this->sqlError(__LINE__);
-					}
-					
-					$log = "从采购订单(单号：{$pobillRef})生成采购入库单: 单号 = {$ref}";
-					$bs = new BizlogService();
-					$bs->insertBizlog($log, "采购订单");
-				} else {
-					// 手工新建采购入库单
-					$log = "新建采购入库单: 单号 = {$ref}";
-					$bs = new BizlogService();
-					$bs->insertBizlog($log, "采购入库");
+				$rc = $db->execute($sql, $companyId, $id);
+				if ($rc === false) {
+					$db->rollback();
+					return $this->sqlError(__LINE__);
 				}
 				
-				$db->commit();
-			} catch ( Exception $exc ) {
-				$db->rollback();
+				$sql = "insert into t_po_pw(po_id, pw_id) values('%s', '%s')";
+				$rc = $db->execute($sql, $pobillId, $id);
+				if (! $rc) {
+					$db->rollback();
+					return $this->sqlError(__LINE__);
+				}
 				
-				return $this->sqlError();
+				$log = "从采购订单(单号：{$pobillRef})生成采购入库单: 单号 = {$ref}";
+				$bs = new BizlogService();
+				$bs->insertBizlog($log, "采购订单");
+			} else {
+				// 手工新建采购入库单
+				$log = "新建采购入库单: 单号 = {$ref}";
+				$bs = new BizlogService();
+				$bs->insertBizlog($log, "采购入库");
 			}
+			
+			$db->commit();
 		}
 		
 		// 同步库存账中的在途库存

@@ -230,13 +230,17 @@ class POBillService extends PSIBaseService {
 		
 		if ($id) {
 			// 编辑
-			$sql = "select ref, data_org from t_po_bill where id = '%s' ";
+			$sql = "select ref, data_org, bill_status from t_po_bill where id = '%s' ";
 			$data = $db->query($sql, $id);
 			if (! $data) {
 				return $this->bad("要编辑的采购订单不存在");
 			}
 			$ref = $data[0]["ref"];
 			$dataOrg = $data[0]["data_org"];
+			$billStatus = $data[0]["bill_status"];
+			if ($billStatus != 0) {
+				return $this->bad("当前采购订单已经审核，不能再编辑");
+			}
 			
 			$db->startTrans();
 			
