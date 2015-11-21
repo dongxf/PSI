@@ -13,6 +13,7 @@ use Home\Common\FIdConst;
  * @author 李静波
  */
 class WarehouseService extends PSIBaseService {
+	private $LOG_CATEGORY = "基础数据-仓库";
 
 	/**
 	 * 所有仓库的列表信息
@@ -51,6 +52,10 @@ class WarehouseService extends PSIBaseService {
 		$py = $ps->toPY($name);
 		$db = M();
 		
+		$db->startTrans();
+		
+		$log = null;
+		
 		if ($id) {
 			// 修改
 			// 检查同编号的仓库是否存在
@@ -58,16 +63,20 @@ class WarehouseService extends PSIBaseService {
 			$data = $db->query($sql, $code, $id);
 			$cnt = $data[0]["cnt"];
 			if ($cnt > 0) {
+				$db->rollback();
 				return $this->bad("编码为 [$code] 的仓库已经存在");
 			}
 			
 			$sql = "update t_warehouse 
 					set code = '%s', name = '%s', py = '%s' 
 					where id = '%s' ";
-			$db->execute($sql, $code, $name, $py, $id);
+			$rc = $db->execute($sql, $code, $name, $py, $id);
+			if ($rc === false) {
+				$db->rollback();
+				return $this->sqlError(__LINE__);
+			}
+			
 			$log = "编辑仓库：编码 = $code,  名称 = $name";
-			$bs = new BizlogService();
-			$bs->insertBizlog($log, "基础数据-仓库");
 		} else {
 			// 新增
 			$idGen = new IdGenService();
@@ -78,6 +87,7 @@ class WarehouseService extends PSIBaseService {
 			$data = $db->query($sql, $code);
 			$cnt = $data[0]["cnt"];
 			if ($cnt > 0) {
+				$db->rollback();
 				return $this->bad("编码为 [$code] 的仓库已经存在");
 			}
 			
@@ -86,12 +96,22 @@ class WarehouseService extends PSIBaseService {
 			
 			$sql = "insert into t_warehouse(id, code, name, inited, py, data_org) 
 					values ('%s', '%s', '%s', 0, '%s', '%s')";
-			$db->execute($sql, $id, $code, $name, $py, $dataOrg);
+			$rc = $db->execute($sql, $id, $code, $name, $py, $dataOrg);
+			if ($rc === false) {
+				$db->rollback();
+				return $this->sqlError(__LINE__);
+			}
 			
 			$log = "新增仓库：编码 = {$code},  名称 = {$name}";
-			$bs = new BizlogService();
-			$bs->insertBizlog($log, "基础数据-仓库");
 		}
+		
+		// 记录业务日志
+		if ($log) {
+			$bs = new BizlogService();
+			$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		}
+		
+		$db->commit();
 		
 		return $this->ok($id);
 	}
@@ -107,9 +127,12 @@ class WarehouseService extends PSIBaseService {
 		$id = $params["id"];
 		
 		$db = M();
+		$db->startTrans();
+		
 		$sql = "select code, name, inited from t_warehouse where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if (! $data) {
+			$db->rollback();
 			return $this->bad("要删除的仓库不存在");
 		}
 		
@@ -117,6 +140,7 @@ class WarehouseService extends PSIBaseService {
 		$warehouse = $data[0];
 		$warehouseName = $warehouse["name"];
 		if ($warehouse["inited"] == 1) {
+			$db->rollback();
 			return $this->bad("仓库[{$warehouseName}]已经建账，不能删除");
 		}
 		
@@ -125,6 +149,7 @@ class WarehouseService extends PSIBaseService {
 		$data = $db->query($sql, $id);
 		$cnt = $data[0]["cnt"];
 		if ($cnt > 0) {
+			$db->rollback();
 			return $this->bad("仓库[$warehouseName]已经在采购入库单中使用，不能删除");
 		}
 		
@@ -133,6 +158,7 @@ class WarehouseService extends PSIBaseService {
 		$data = $db->query($sql, $id);
 		$cnt = $data[0]["cnt"];
 		if ($cnt > 0) {
+			$db->rollback();
 			return $this->bad("仓库[$warehouseName]已经在采购退货出库单中使用，不能删除");
 		}
 		
@@ -141,6 +167,7 @@ class WarehouseService extends PSIBaseService {
 		$data = $db->query($sql, $id);
 		$cnt = $data[0]["cnt"];
 		if ($cnt > 0) {
+			$db->rollback();
 			return $this->bad("仓库[$warehouseName]已经在销售出库单中使用，不能删除");
 		}
 		
@@ -149,6 +176,7 @@ class WarehouseService extends PSIBaseService {
 		$data = $db->query($sql, $id);
 		$cnt = $data[0]["cnt"];
 		if ($cnt > 0) {
+			$db->rollback();
 			return $this->bad("仓库[$warehouseName]已经在销售退货入库单中使用，不能删除");
 		}
 		
@@ -158,6 +186,7 @@ class WarehouseService extends PSIBaseService {
 		$data = $db->query($sql, $id, $id);
 		$cnt = $data[0]["cnt"];
 		if ($cnt > 0) {
+			$db->rollback();
 			return $this->bad("仓库[$warehouseName]已经在调拨单中使用，不能删除");
 		}
 		
@@ -166,15 +195,22 @@ class WarehouseService extends PSIBaseService {
 		$data = $db->query($sql, $id);
 		$cnt = $data[0]["cnt"];
 		if ($cnt > 0) {
+			$db->rollback();
 			return $this->bad("仓库[$warehouseName]已经在盘点单中使用，不能删除");
 		}
 		
 		$sql = "delete from t_warehouse where id = '%s' ";
-		$db->execute($sql, $id);
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			$db->rollback();
+			return $this->sqlError(__LINE__);
+		}
 		
 		$log = "删除仓库： 编码 = {$warehouse['code']}， 名称 = {$warehouse['name']}";
 		$bs = new BizlogService();
-		$bs->insertBizlog($log, "基础数据-仓库");
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$db->commit();
 		
 		return $this->ok();
 	}
