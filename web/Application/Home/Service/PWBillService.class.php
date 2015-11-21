@@ -799,8 +799,12 @@ class PWBillService extends PSIBaseService {
 							set in_count = %d, in_price = %f, in_money = %f,
 							balance_count = %d, balance_price = %f, balance_money = %f 
 							where warehouse_id = '%s' and goods_id = '%s' ";
-				$db->execute($sql, $inCount, $inPrice, $inMoney, $balanceCount, $balancePrice, 
+				$rc = $db->execute($sql, $inCount, $inPrice, $inMoney, $balanceCount, $balancePrice, 
 						$balanceMoney, $warehouseId, $goodsId);
+				if ($rc === false) {
+					$db->rollback();
+					return $this->sqlError(__LINE__);
+				}
 			} else {
 				$inCount = $goodsCount;
 				$inMoney = $goodsMoney;
@@ -812,8 +816,12 @@ class PWBillService extends PSIBaseService {
 				$sql = "insert into t_inventory (in_count, in_price, in_money, balance_count,
 							balance_price, balance_money, warehouse_id, goods_id)
 							values (%d, %f, %f, %d, %f, %f, '%s', '%s')";
-				$db->execute($sql, $inCount, $inPrice, $inMoney, $balanceCount, $balancePrice, 
+				$rc = $db->execute($sql, $inCount, $inPrice, $inMoney, $balanceCount, $balancePrice, 
 						$balanceMoney, $warehouseId, $goodsId);
+				if ($rc === false) {
+					$db->rollback();
+					return $this->sqlError(__LINE__);
+				}
 			}
 			
 			// 库存明细账
@@ -821,8 +829,12 @@ class PWBillService extends PSIBaseService {
 						balance_price, balance_money, warehouse_id, goods_id, biz_date,
 						biz_user_id, date_created, ref_number, ref_type)
 						values (%d, %f, %f, %d, %f, %f, '%s', '%s', '%s', '%s', now(), '%s', '采购入库')";
-			$db->execute($sql, $goodsCount, $goodsPrice, $goodsMoney, $balanceCount, $balancePrice, 
-					$balanceMoney, $warehouseId, $goodsId, $bizDT, $bizUserId, $ref);
+			$rc = $db->execute($sql, $goodsCount, $goodsPrice, $goodsMoney, $balanceCount, 
+					$balancePrice, $balanceMoney, $warehouseId, $goodsId, $bizDT, $bizUserId, $ref);
+			if ($rc === false) {
+				$db->rollback();
+				return $this->sqlError(__LINE__);
+			}
 			
 			// 先进先出
 			if ($fifo) {
@@ -831,20 +843,32 @@ class PWBillService extends PSIBaseService {
 							balance_price, balance_money, warehouse_id, goods_id, date_created, in_ref,
 							in_ref_type, pwbilldetail_id)
 							values (%d, %f, %f, %d, %f, %f, '%s', '%s', '%s', '%s', '采购入库', '%s')";
-				$db->execute($sql, $goodsCount, $goodsPrice, $goodsMoney, $goodsCount, $goodsPrice, 
-						$goodsMoney, $warehouseId, $goodsId, $dt, $ref, $pwbilldetailId);
+				$rc = $db->execute($sql, $goodsCount, $goodsPrice, $goodsMoney, $goodsCount, 
+						$goodsPrice, $goodsMoney, $warehouseId, $goodsId, $dt, $ref, $pwbilldetailId);
+				if ($rc === false) {
+					$db->rollback();
+					return $this->sqlError(__LINE__);
+				}
 				
 				// fifo 明细记录
 				$sql = "insert into t_inventory_fifo_detail(in_count, in_price, in_money, balance_count,
 							balance_price, balance_money, warehouse_id, goods_id, date_created, pwbilldetail_id)
 							values (%d, %f, %f, %d, %f, %f, '%s', '%s', '%s', '%s')";
-				$db->execute($sql, $goodsCount, $goodsPrice, $goodsMoney, $goodsCount, $goodsPrice, 
-						$goodsMoney, $warehouseId, $goodsId, $dt, $pwbilldetailId);
+				$rc = $db->execute($sql, $goodsCount, $goodsPrice, $goodsMoney, $goodsCount, 
+						$goodsPrice, $goodsMoney, $warehouseId, $goodsId, $dt, $pwbilldetailId);
+				if ($rc === false) {
+					$db->rollback();
+					return $this->sqlError(__LINE__);
+				}
 			}
 		}
 		
 		$sql = "update t_pw_bill set bill_status = 1000 where id = '%s' ";
-		$db->execute($sql, $id);
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			$db->rollback();
+			return $this->sqlError(__LINE__);
+		}
 		
 		if ($paymentType == 0) {
 			// 记应付账款
@@ -853,8 +877,13 @@ class PWBillService extends PSIBaseService {
 					ca_id, ca_type, date_created, ref_number, ref_type, biz_date)
 					values ('%s', %f, 0, %f, '%s', 'supplier', now(), '%s', '采购入库', '%s')";
 			$idGen = new IdGenService();
-			$db->execute($sql, $idGen->newId(), $billPayables, $billPayables, $supplierId, $ref, 
-					$bizDT);
+			$rc = $db->execute($sql, $idGen->newId(), $billPayables, $billPayables, $supplierId, 
+					$ref, $bizDT);
+			if ($rc === false) {
+				$db->rollback();
+				return $this->sqlError(__LINE__);
+			}
+			
 			// 应付总账
 			$sql = "select id, pay_money 
 					from t_payables 
@@ -868,14 +897,22 @@ class PWBillService extends PSIBaseService {
 				$sql = "update t_payables 
 						set pay_money = %f, balance_money = %f 
 						where id = '%s' ";
-				$db->execute($sql, $payMoney, $payMoney, $pId);
+				$rc = $db->execute($sql, $payMoney, $payMoney, $pId);
+				if ($rc === false) {
+					$db->rollback();
+					return $this->sqlError(__LINE__);
+				}
 			} else {
 				$payMoney = $billPayables;
 				
 				$sql = "insert into t_payables (id, pay_money, act_money, balance_money, 
 						ca_id, ca_type) 
 						values ('%s', %f, 0, %f, '%s', 'supplier')";
-				$db->execute($sql, $idGen->newId(), $payMoney, $payMoney, $supplierId);
+				$rc = $db->execute($sql, $idGen->newId(), $payMoney, $payMoney, $supplierId);
+				if ($rc === false) {
+					$db->rollback();
+					return $this->sqlError(__LINE__);
+				}
 			}
 		} else if ($paymentType == 1) {
 			// 现金付款
@@ -903,38 +940,62 @@ class PWBillService extends PSIBaseService {
 				$balanceCash = $sumInMoney - $sumOutMoney - $outCash;
 				$sql = "insert into t_cash(out_money, balance_money, biz_date)
 							values (%f, %f, '%s')";
-				$db->execute($sql, $outCash, $balanceCash, $bizDT);
+				$rc = $db->execute($sql, $outCash, $balanceCash, $bizDT);
+				if ($rc === false) {
+					$db->rollback();
+					return $this->sqlError(__LINE__);
+				}
 				
 				// 记现金明细账
 				$sql = "insert into t_cash_detail(out_money, balance_money, biz_date, ref_type, 
 								ref_number, date_created)
 							values (%f, %f, '%s', '采购入库', '%s', now())";
-				$db->execute($sql, $outCash, $balanceCash, $bizDT, $ref);
+				$rc = $db->execute($sql, $outCash, $balanceCash, $bizDT, $ref);
+				if ($rc === false) {
+					$db->rollback();
+					return $this->sqlError(__LINE__);
+				}
 			} else {
 				$balanceCash = $data[0]["balance_money"] - $outCash;
 				$sumOutMoney = $data[0]["out_money"] + $outCash;
 				$sql = "update t_cash
 							set out_money = %f, balance_money = %f
 							where biz_date = '%s' ";
-				$db->execute($sql, $sumOutMoney, $balanceCash, $bizDT);
+				$rc = $db->execute($sql, $sumOutMoney, $balanceCash, $bizDT);
+				if ($rc === false) {
+					$db->rollback();
+					return $this->sqlError(__LINE__);
+				}
 				
 				// 记现金明细账
 				$sql = "insert into t_cash_detail(out_money, balance_money, biz_date, ref_type, 
 								ref_number, date_created)
 							values (%f, %f, '%s', '采购入库', '%s', now())";
-				$db->execute($sql, $outCash, $balanceCash, $bizDT, $ref);
+				$rc = $db->execute($sql, $outCash, $balanceCash, $bizDT, $ref);
+				if ($rc === false) {
+					$db->rollback();
+					return $this->sqlError(__LINE__);
+				}
 			}
 			
 			// 调整业务日期之后的现金总账和明细账的余额
 			$sql = "update t_cash
 							set balance_money = balance_money - %f
 							where biz_date > '%s' ";
-			$db->execute($sql, $outCash, $bizDT);
+			$rc = $db->execute($sql, $outCash, $bizDT);
+			if ($rc === false) {
+				$db->rollback();
+				return $this->sqlError(__LINE__);
+			}
 			
 			$sql = "update t_cash_detail
 							set balance_money = balance_money - %f
 							where biz_date > '%s' ";
-			$db->execute($sql, $outCash, $bizDT);
+			$rc = $db->execute($sql, $outCash, $bizDT);
+			if ($rc === false) {
+				$db->rollback();
+				return $this->sqlError(__LINE__);
+			}
 		} else if ($paymentType == 2) {
 			// 2: 预付款
 			
