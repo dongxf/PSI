@@ -298,19 +298,21 @@ class PWBillService extends PSIBaseService {
 				return $this->bad("数据库操作错误，请联系管理员");
 			}
 		} else {
+			$companyId = $us->getCompanyId();
+			
 			$id = $idGen->newId();
 			
 			$db->startTrans();
 			try {
 				$sql = "insert into t_pw_bill (id, ref, supplier_id, warehouse_id, biz_dt, 
 						biz_user_id, bill_status, date_created, goods_money, input_user_id, payment_type,
-						data_org) 
-						values ('%s', '%s', '%s', '%s', '%s', '%s', 0, now(), 0, '%s', %d, '%s')";
+						data_org, company_id) 
+						values ('%s', '%s', '%s', '%s', '%s', '%s', 0, now(), 0, '%s', %d, '%s', '%s')";
 				
 				$ref = $this->genNewBillRef();
 				
 				$db->execute($sql, $id, $ref, $supplierId, $warehouseId, $bizDT, $bizUserId, 
-						$us->getLoginUserId(), $paymentType, $dataOrg);
+						$us->getLoginUserId(), $paymentType, $dataOrg, $companyId);
 				
 				// 明细记录
 				$items = $bill["items"];
