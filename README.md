@@ -23,7 +23,7 @@ PSI 2015 下载地址
 
 源代码下载地址
 -------------
->源码下载地址：http://git.oschina.net/crm8000/PSI/repository/archive?ref=master
+>源码下载地址：http://git.oschina.net/crm8000/PSI/repository/archive/master
 
 通过PSI源码在本地安装
 -------------
