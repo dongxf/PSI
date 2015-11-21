@@ -687,7 +687,7 @@ class PWBillService extends PSIBaseService {
 		$db->startTrans();
 		
 		$sql = "select ref, warehouse_id, bill_status, biz_dt, biz_user_id,  goods_money, supplier_id,
-					payment_type
+					payment_type, company_id
 				from t_pw_bill 
 				where id = '%s' ";
 		$data = $db->query($sql, $id);
@@ -709,6 +709,7 @@ class PWBillService extends PSIBaseService {
 		$supplierId = $data[0]["supplier_id"];
 		$warehouseId = $data[0]["warehouse_id"];
 		$paymentType = $data[0]["payment_type"];
+		$companyId = $data[0]["company_id"];
 		
 		$sql = "select name, inited from t_warehouse where id = '%s' ";
 		$data = $db->query($sql, $warehouseId);
