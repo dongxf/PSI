@@ -223,6 +223,11 @@ class POBillService extends PSIBaseService {
 		
 		$idGen = new IdGenService();
 		
+		$companyId = $us->getCompanyId();
+		if (! $companyId) {
+			return $this->bad("所属公司不存在");
+		}
+		
 		if ($id) {
 			// 编辑
 			$sql = "select ref from t_po_bill where id = '%s' ";
@@ -319,13 +324,13 @@ class POBillService extends PSIBaseService {
 				// 主表
 				$sql = "insert into t_po_bill(id, ref, bill_status, deal_date, biz_dt, org_id, biz_user_id,
 							goods_money, tax, money_with_tax, input_user_id, supplier_id, contact, tel, fax,
-							deal_address, bill_memo, payment_type, date_created, data_org)
+							deal_address, bill_memo, payment_type, date_created, data_org, company_id)
 						values ('%s', '%s', 0, '%s', '%s', '%s', '%s', 
 							0, 0, 0, '%s', '%s', '%s', '%s', '%s', 
-							'%s', '%s', %d, now(), '%s')";
+							'%s', '%s', %d, now(), '%s', '%s')";
 				$rc = $db->execute($sql, $id, $ref, $dealDate, $dealDate, $orgId, $bizUserId, 
 						$us->getLoginUserId(), $supplierId, $contact, $tel, $fax, $dealAddress, 
-						$billMemo, $paymentType, $dataOrg);
+						$billMemo, $paymentType, $dataOrg, $companyId);
 				if ($rc === false) {
 					$db->rollback();
 					return $this->sqlError(__LINE__);
