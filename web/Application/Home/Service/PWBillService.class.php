@@ -352,18 +352,29 @@ class PWBillService extends PSIBaseService {
 				
 				if ($pobillRef) {
 					// 从采购订单生成采购入库单
-					$sql = "select id from t_po_bill where ref = '%s' ";
+					$sql = "select id, company_id from t_po_bill where ref = '%s' ";
 					$data = $db->query($sql, $pobillRef);
 					if (! $data) {
 						$db->rollback();
-						return $this->sqlError();
+						return $this->sqlError(__LINE__);
 					}
 					$pobillId = $data[0]["id"];
+					$companyId = $data[0]["company_id"];
+					
+					$sql = "update t_pw_bill
+							set company_id = '%s'
+							where id = '%s' ";
+					$rc = $db->execute($sql, $companyId, $id);
+					if ($rc === false) {
+						$db->rollback();
+						return $this->sqlError(__LINE__);
+					}
+					
 					$sql = "insert into t_po_pw(po_id, pw_id) values('%s', '%s')";
 					$rc = $db->execute($sql, $pobillId, $id);
 					if (! $rc) {
 						$db->rollback();
-						return $this->sqlError();
+						return $this->sqlError(__LINE__);
 					}
 					
 					$log = "从采购订单(单号：{$pobillRef})生成采购入库单: 单号 = {$ref}";
