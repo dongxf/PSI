@@ -10,6 +10,8 @@ use Home\Common\FIdConst;
  * @author 李静波
  */
 class PWBillService extends PSIBaseService {
+	
+	private $LOG_CATEGORY = "采购入库";
 
 	/**
 	 * 获得采购入库单主表列表
@@ -227,27 +229,36 @@ class PWBillService extends PSIBaseService {
 			return $this->bad("业务日期不正确");
 		}
 		
+		$db->startTrans();
+		
 		$idGen = new IdGenService();
 		$us = new UserService();
 		$dataOrg = $us->getLoginUserDataOrg();
 		
+		$log = null;
+		
 		if ($id) {
 			// 编辑采购入库单
-			$sql = "select ref, bill_status from t_pw_bill where id = '%s' ";
+			$sql = "select ref, bill_status, data_org from t_pw_bill where id = '%s' ";
 			$data = $db->query($sql, $id);
 			if (! $data) {
+				$db->rollback();
 				return $this->bad("要编辑的采购入库单不存在");
 			}
+			$dataOrg = $data[0]["data_org"];
 			$billStatus = $data[0]["bill_status"];
 			$ref = $data[0]["ref"];
 			if ($billStatus != 0) {
+				$db->rollback();
 				return $this->bad("当前采购入库单已经提交入库，不能再编辑");
 			}
 			
-			$db->startTrans();
-			
 			$sql = "delete from t_pw_bill_detail where pwbill_id = '%s' ";
-			$db->execute($sql, $id);
+			$rc = $db->execute($sql, $id);
+			if ($rc === false) {
+				$db->rollback();
+				return $this->sqlError(__LINE__);
+			}
 			
 			// 明细记录
 			$items = $bill["items"];
@@ -261,15 +272,18 @@ class PWBillService extends PSIBaseService {
 					$data = $db->query($sql, $goodsId);
 					$cnt = $data[0]["cnt"];
 					if ($cnt == 1) {
-						
 						$goodsPrice = $item["goodsPrice"];
 						$goodsMoney = $item["goodsMoney"];
 						
 						$sql = "insert into t_pw_bill_detail (id, date_created, goods_id, goods_count, goods_price,
 									goods_money,  pwbill_id, show_order, data_org, memo)
 									values ('%s', now(), '%s', %d, %f, %f, '%s', %d, '%s', '%s')";
-						$db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsPrice, 
-								$goodsMoney, $id, $i, $dataOrg, $memo);
+						$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, 
+								$goodsPrice, $goodsMoney, $id, $i, $dataOrg, $memo);
+						if ($rc === false) {
+							$db->rollback();
+							return $this->sqlError(__LINE__);
+						}
 					}
 				}
 			}
@@ -286,19 +300,20 @@ class PWBillService extends PSIBaseService {
 							supplier_id = '%s', biz_dt = '%s',
 							biz_user_id = '%s', payment_type = %d
 						where id = '%s' ";
-			$db->execute($sql, $totalMoney, $warehouseId, $supplierId, $bizDT, $bizUserId, 
+			$rc = $db->execute($sql, $totalMoney, $warehouseId, $supplierId, $bizDT, $bizUserId, 
 					$paymentType, $id);
+			if ($rc === false) {
+				$db->rollback();
+				return $this->sqlError(__LINE__);
+			}
 			
 			$log = "编辑采购入库单: 单号 = {$ref}";
-			$bs = new BizlogService();
-			$bs->insertBizlog($log, "采购入库");
-			$db->commit();
 		} else {
+			// 新建采购入库单
+			
 			$companyId = $us->getCompanyId();
 			
 			$id = $idGen->newId();
-			
-			$db->startTrans();
 			
 			$sql = "insert into t_pw_bill (id, ref, supplier_id, warehouse_id, biz_dt, 
 						biz_user_id, bill_status, date_created, goods_money, input_user_id, payment_type,
@@ -307,8 +322,12 @@ class PWBillService extends PSIBaseService {
 			
 			$ref = $this->genNewBillRef();
 			
-			$db->execute($sql, $id, $ref, $supplierId, $warehouseId, $bizDT, $bizUserId, 
+			$rc = $db->execute($sql, $id, $ref, $supplierId, $warehouseId, $bizDT, $bizUserId, 
 					$us->getLoginUserId(), $paymentType, $dataOrg, $companyId);
+			if ($rc === false) {
+				$db->rollback();
+				return $this->sqlError(__LINE__);
+			}
 			
 			// 明细记录
 			$items = $bill["items"];
@@ -330,8 +349,12 @@ class PWBillService extends PSIBaseService {
 									(id, date_created, goods_id, goods_count, goods_price,
 									goods_money,  pwbill_id, show_order, data_org, memo)
 									values ('%s', now(), '%s', %d, %f, %f, '%s', %d, '%s', '%s')";
-						$db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsPrice, 
-								$goodsMoney, $id, $i, $dataOrg, $memo);
+						$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, 
+								$goodsPrice, $goodsMoney, $id, $i, $dataOrg, $memo);
+						if ($rc === false) {
+							$db->rollback();
+							return $this->sqlError(__LINE__);
+						}
 					}
 				}
 			}
@@ -346,7 +369,11 @@ class PWBillService extends PSIBaseService {
 			$sql = "update t_pw_bill
 						set goods_money = %f 
 						where id = '%s' ";
-			$db->execute($sql, $totalMoney, $id);
+			$rc = $db->execute($sql, $totalMoney, $id);
+			if ($rc === false) {
+				$db->rollback();
+				return $this->sqlError(__LINE__);
+			}
 			
 			if ($pobillRef) {
 				// 从采购订单生成采购入库单
@@ -376,16 +403,10 @@ class PWBillService extends PSIBaseService {
 				}
 				
 				$log = "从采购订单(单号：{$pobillRef})生成采购入库单: 单号 = {$ref}";
-				$bs = new BizlogService();
-				$bs->insertBizlog($log, "采购订单");
 			} else {
 				// 手工新建采购入库单
 				$log = "新建采购入库单: 单号 = {$ref}";
-				$bs = new BizlogService();
-				$bs->insertBizlog($log, "采购入库");
 			}
-			
-			$db->commit();
 		}
 		
 		// 同步库存账中的在途库存
@@ -397,8 +418,20 @@ class PWBillService extends PSIBaseService {
 		foreach ( $data as $v ) {
 			$goodsId = $v["goods_id"];
 			
-			$this->updateAfloatInventory($db, $warehouseId, $goodsId);
+			$rc = $this->updateAfloatInventory($db, $warehouseId, $goodsId);
+			if ($rc === false) {
+				$db->rollback();
+				return $this->sqlError(__LINE__);
+			}
 		}
+		
+		// 记录业务日志
+		if ($log) {
+			$bs = new BizlogService();
+			$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		}
+		
+		$db->commit();
 		
 		return $this->ok($id);
 	}
