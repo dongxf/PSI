@@ -10,7 +10,6 @@ use Home\Common\FIdConst;
  * @author 李静波
  */
 class PWBillService extends PSIBaseService {
-	
 	private $LOG_CATEGORY = "采购入库";
 
 	/**
@@ -602,14 +601,18 @@ class PWBillService extends PSIBaseService {
 		}
 		
 		$db = M();
+		$db->startTrans();
+		
 		$sql = "select ref, bill_status, warehouse_id from t_pw_bill where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if (! $data) {
+			$db->rollback();
 			return $this->bad("要删除的采购入库单不存在");
 		}
 		$ref = $data[0]["ref"];
 		$billStatus = $data[0]["bill_status"];
 		if ($billStatus != 0) {
+			$db->rollback();
 			return $this->bad("当前采购入库单已经提交入库，不能删除");
 		}
 		$warehouseId = $data[0]["warehouse_id"];
@@ -624,34 +627,45 @@ class PWBillService extends PSIBaseService {
 			$goodsIdList[] = $v["goods_id"];
 		}
 		
-		$db->startTrans();
-		try {
-			$sql = "delete from t_pw_bill_detail where pwbill_id = '%s' ";
-			$db->execute($sql, $id);
-			
-			$sql = "delete from t_pw_bill where id = '%s' ";
-			$db->execute($sql, $id);
-			
-			// 删除从采购订单生成的记录
-			$sql = "delete from t_po_pw where pw_id = '%s' ";
-			$db->execute($sql, $id);
-			
-			$log = "删除采购入库单: 单号 = {$ref}";
-			$bs = new BizlogService();
-			$bs->insertBizlog($log, "采购入库");
-			
-			$db->commit();
-		} catch ( Exception $exc ) {
+		$sql = "delete from t_pw_bill_detail where pwbill_id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
 			$db->rollback();
-			return $this->bad("数据库错误，请联系管理员");
+			return $this->sqlError(__LINE__);
+		}
+		
+		$sql = "delete from t_pw_bill where id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			$db->rollback();
+			return $this->sqlError(__LINE__);
+		}
+		
+		// 删除从采购订单生成的记录
+		$sql = "delete from t_po_pw where pw_id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			$db->rollback();
+			return $this->sqlError(__LINE__);
 		}
 		
 		// 同步库存账中的在途库存
 		foreach ( $goodsIdList as $v ) {
 			$goodsId = $v;
 			
-			$this->updateAfloatInventory($db, $warehouseId, $goodsId);
+			$rc = $this->updateAfloatInventory($db, $warehouseId, $goodsId);
+			if ($rc === false) {
+				$db->rollback();
+				return $this->sqlError(__LINE__);
+			}
 		}
+		
+		// 记录业务日志
+		$log = "删除采购入库单: 单号 = {$ref}";
+		$bs = new BizlogService();
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$db->commit();
 		
 		return $this->ok();
 	}
