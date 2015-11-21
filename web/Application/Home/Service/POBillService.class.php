@@ -10,6 +10,7 @@ use Home\Common\FIdConst;
  * @author 李静波
  */
 class POBillService extends PSIBaseService {
+	private $LOG_CATEGORY = "采购订单";
 
 	/**
 	 * 生成新的采购订单号
@@ -192,24 +193,30 @@ class POBillService extends PSIBaseService {
 		
 		$db = M();
 		
+		$db->startTrans();
+		
 		$id = $bill["id"];
 		$dealDate = $bill["dealDate"];
 		if (! $this->dateIsValid($dealDate)) {
+			$db->rollback();
 			return $this->bad("交货日期不正确");
 		}
 		
 		$supplierId = $bill["supplierId"];
 		$ss = new SupplierService();
 		if (! $ss->supplierExists($supplierId, $db)) {
+			$db->rollback();
 			return $this->bad("供应商不存在");
 		}
 		$orgId = $bill["orgId"];
 		$us = new UserService();
 		if (! $us->orgExists($orgId, $db)) {
+			$db->rollback();
 			return $this->bad("组织机构不存在");
 		}
 		$bizUserId = $bill["bizUserId"];
 		if (! $us->userExists($bizUserId, $db)) {
+			$db->rollback();
 			return $this->bad("业务员不存在");
 		}
 		$paymentType = $bill["paymentType"];
@@ -225,24 +232,26 @@ class POBillService extends PSIBaseService {
 		
 		$companyId = $us->getCompanyId();
 		if (! $companyId) {
+			$db->rollback();
 			return $this->bad("所属公司不存在");
 		}
 		
+		$log = null;
 		if ($id) {
 			// 编辑
 			$sql = "select ref, data_org, bill_status from t_po_bill where id = '%s' ";
 			$data = $db->query($sql, $id);
 			if (! $data) {
+				$db->rollback();
 				return $this->bad("要编辑的采购订单不存在");
 			}
 			$ref = $data[0]["ref"];
 			$dataOrg = $data[0]["data_org"];
 			$billStatus = $data[0]["bill_status"];
 			if ($billStatus != 0) {
+				$db->rollback();
 				return $this->bad("当前采购订单已经审核，不能再编辑");
 			}
-			
-			$db->startTrans();
 			
 			$sql = "delete from t_po_bill_detail where pobill_id = '%s' ";
 			$rc = $db->execute($sql, $id);
@@ -296,12 +305,12 @@ class POBillService extends PSIBaseService {
 			}
 			
 			$sql = "update t_po_bill
-						set goods_money = %f, tax = %f, money_with_tax = %f,
-							deal_date = '%s', supplier_id = '%s',
-							deal_address = '%s', contact = '%s', tel = '%s', fax = '%s',
-							org_id = '%s', biz_user_id = '%s', payment_type = %d,
-							bill_memo = '%s', input_user_id = '%s', date_created = now()
-						where id = '%s' ";
+					set goods_money = %f, tax = %f, money_with_tax = %f,
+						deal_date = '%s', supplier_id = '%s',
+						deal_address = '%s', contact = '%s', tel = '%s', fax = '%s',
+						org_id = '%s', biz_user_id = '%s', payment_type = %d,
+						bill_memo = '%s', input_user_id = '%s', date_created = now()
+					where id = '%s' ";
 			$rc = $db->execute($sql, $sumGoodsMoney, $sumTax, $sumMoneyWithTax, $dealDate, 
 					$supplierId, $dealAddress, $contact, $tel, $fax, $orgId, $bizUserId, 
 					$paymentType, $billMemo, $us->getLoginUserId(), $id);
@@ -310,16 +319,9 @@ class POBillService extends PSIBaseService {
 				return $this->sqlError(__LINE__);
 			}
 			
-			// 记录业务日志
 			$log = "编辑采购订单，单号：{$ref}";
-			$bs = new BizlogService();
-			$bs->insertBizlog($log, "采购订单");
-			
-			$db->commit();
 		} else {
 			// 新建采购订单
-			
-			$db->startTrans();
 			
 			$id = $idGen->newId();
 			$ref = $this->genNewBillRef();
@@ -396,13 +398,16 @@ class POBillService extends PSIBaseService {
 				return $this->sqlError(__LINE__);
 			}
 			
-			// 记录业务日志
 			$log = "新建采购订单，单号：{$ref}";
-			$bs = new BizlogService();
-			$bs->insertBizlog($log, "采购订单");
-			
-			$db->commit();
 		}
+		
+		// 记录业务日志
+		if ($log) {
+			$bs = new BizlogService();
+			$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		}
+		
+		$db->commit();
 		
 		return $this->ok($id);
 	}
@@ -541,42 +546,38 @@ class POBillService extends PSIBaseService {
 		$db = M();
 		
 		$db->startTrans();
-		try {
-			$sql = "select ref, bill_status from t_po_bill where id = '%s' ";
-			$data = $db->query($sql, $id);
-			if (! $data) {
-				$db->rollback();
-				return $this->bad("要审核的采购订单不存在");
-			}
-			$ref = $data[0]["ref"];
-			$billStatus = $data[0]["bill_status"];
-			if ($billStatus > 0) {
-				$db->rollback();
-				return $this->bad("采购订单(单号：$ref)已经被审核，不能再次审核");
-			}
-			
-			$sql = "update t_po_bill
+		
+		$sql = "select ref, bill_status from t_po_bill where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if (! $data) {
+			$db->rollback();
+			return $this->bad("要审核的采购订单不存在");
+		}
+		$ref = $data[0]["ref"];
+		$billStatus = $data[0]["bill_status"];
+		if ($billStatus > 0) {
+			$db->rollback();
+			return $this->bad("采购订单(单号：$ref)已经被审核，不能再次审核");
+		}
+		
+		$sql = "update t_po_bill
 					set bill_status = 1000,
 						confirm_user_id = '%s',
 						confirm_date = now()
 					where id = '%s' ";
-			$us = new UserService();
-			$rc = $db->execute($sql, $us->getLoginUserId(), $id);
-			if ($rc === false) {
-				$db->rollback();
-				return $this->sqlError(__LINE__);
-			}
-			
-			// 记录业务日志
-			$log = "审核采购订单，单号：{$ref}";
-			$bs = new BizlogService();
-			$bs->insertBizlog($log, "采购订单");
-			
-			$db->commit();
-		} catch ( Exception $e ) {
+		$us = new UserService();
+		$rc = $db->execute($sql, $us->getLoginUserId(), $id);
+		if ($rc === false) {
 			$db->rollback();
-			return $this->sqlError();
+			return $this->sqlError(__LINE__);
 		}
+		
+		// 记录业务日志
+		$log = "审核采购订单，单号：{$ref}";
+		$bs = new BizlogService();
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$db->commit();
 		
 		return $this->ok($id);
 	}
@@ -623,7 +624,7 @@ class POBillService extends PSIBaseService {
 		
 		$log = "删除采购订单，单号：{$ref}";
 		$bs = new BizlogService();
-		$bs->insertBizlog($log, "采购订单");
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		
 		$db->commit();
 		
@@ -676,7 +677,7 @@ class POBillService extends PSIBaseService {
 		// 记录业务日志
 		$log = "取消审核采购订单，单号：{$ref}";
 		$bs = new BizlogService();
-		$bs->insertBizlog($log, "采购订单");
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		
 		$db->commit();
 		
