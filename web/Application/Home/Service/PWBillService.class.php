@@ -874,11 +874,11 @@ class PWBillService extends PSIBaseService {
 			// 记应付账款
 			// 应付明细账
 			$sql = "insert into t_payables_detail (id, pay_money, act_money, balance_money,
-					ca_id, ca_type, date_created, ref_number, ref_type, biz_date)
-					values ('%s', %f, 0, %f, '%s', 'supplier', now(), '%s', '采购入库', '%s')";
+					ca_id, ca_type, date_created, ref_number, ref_type, biz_date, company_id)
+					values ('%s', %f, 0, %f, '%s', 'supplier', now(), '%s', '采购入库', '%s', '%s')";
 			$idGen = new IdGenService();
 			$rc = $db->execute($sql, $idGen->newId(), $billPayables, $billPayables, $supplierId, 
-					$ref, $bizDT);
+					$ref, $bizDT, $companyId);
 			if ($rc === false) {
 				$db->rollback();
 				return $this->sqlError(__LINE__);
@@ -887,8 +887,8 @@ class PWBillService extends PSIBaseService {
 			// 应付总账
 			$sql = "select id, pay_money 
 					from t_payables 
-					where ca_id = '%s' and ca_type = 'supplier' ";
-			$data = $db->query($sql, $supplierId);
+					where ca_id = '%s' and ca_type = 'supplier' and company_id = '%s' ";
+			$data = $db->query($sql, $supplierId, $companyId);
 			if ($data) {
 				$pId = $data[0]["id"];
 				$payMoney = floatval($data[0]["pay_money"]);
@@ -906,9 +906,10 @@ class PWBillService extends PSIBaseService {
 				$payMoney = $billPayables;
 				
 				$sql = "insert into t_payables (id, pay_money, act_money, balance_money, 
-						ca_id, ca_type) 
-						values ('%s', %f, 0, %f, '%s', 'supplier')";
-				$rc = $db->execute($sql, $idGen->newId(), $payMoney, $payMoney, $supplierId);
+						ca_id, ca_type, company_id) 
+						values ('%s', %f, 0, %f, '%s', 'supplier', '%s')";
+				$rc = $db->execute($sql, $idGen->newId(), $payMoney, $payMoney, $supplierId, 
+						$companyId);
 				if ($rc === false) {
 					$db->rollback();
 					return $this->sqlError(__LINE__);
@@ -919,15 +920,17 @@ class PWBillService extends PSIBaseService {
 			
 			$outCash = $billPayables;
 			
-			$sql = "select in_money, out_money, balance_money from t_cash where biz_date = '%s' ";
-			$data = $db->query($sql, $bizDT);
+			$sql = "select in_money, out_money, balance_money 
+					from t_cash 
+					where biz_date = '%s' and company_id = '%s' ";
+			$data = $db->query($sql, $bizDT, $companyId);
 			if (! $data) {
 				// 当天首次发生现金业务
 				
 				$sql = "select sum(in_money) as sum_in_money, sum(out_money) as sum_out_money
 							from t_cash
-							where biz_date <= '%s' ";
-				$data = $db->query($sql, $bizDT);
+							where biz_date <= '%s' and company_id = '%s' ";
+				$data = $db->query($sql, $bizDT, $companyId);
 				$sumInMoney = $data[0]["sum_in_money"];
 				$sumOutMoney = $data[0]["sum_out_money"];
 				if (! $sumInMoney) {
@@ -938,9 +941,9 @@ class PWBillService extends PSIBaseService {
 				}
 				
 				$balanceCash = $sumInMoney - $sumOutMoney - $outCash;
-				$sql = "insert into t_cash(out_money, balance_money, biz_date)
-							values (%f, %f, '%s')";
-				$rc = $db->execute($sql, $outCash, $balanceCash, $bizDT);
+				$sql = "insert into t_cash(out_money, balance_money, biz_date, company_id)
+							values (%f, %f, '%s', '%s')";
+				$rc = $db->execute($sql, $outCash, $balanceCash, $bizDT, $companyId);
 				if ($rc === false) {
 					$db->rollback();
 					return $this->sqlError(__LINE__);
@@ -948,9 +951,9 @@ class PWBillService extends PSIBaseService {
 				
 				// 记现金明细账
 				$sql = "insert into t_cash_detail(out_money, balance_money, biz_date, ref_type, 
-								ref_number, date_created)
-							values (%f, %f, '%s', '采购入库', '%s', now())";
-				$rc = $db->execute($sql, $outCash, $balanceCash, $bizDT, $ref);
+								ref_number, date_created, company_id)
+							values (%f, %f, '%s', '采购入库', '%s', now(), '%s')";
+				$rc = $db->execute($sql, $outCash, $balanceCash, $bizDT, $ref, $companyId);
 				if ($rc === false) {
 					$db->rollback();
 					return $this->sqlError(__LINE__);
@@ -960,8 +963,8 @@ class PWBillService extends PSIBaseService {
 				$sumOutMoney = $data[0]["out_money"] + $outCash;
 				$sql = "update t_cash
 							set out_money = %f, balance_money = %f
-							where biz_date = '%s' ";
-				$rc = $db->execute($sql, $sumOutMoney, $balanceCash, $bizDT);
+							where biz_date = '%s' and company_id = '%s' ";
+				$rc = $db->execute($sql, $sumOutMoney, $balanceCash, $bizDT, $companyId);
 				if ($rc === false) {
 					$db->rollback();
 					return $this->sqlError(__LINE__);
@@ -969,9 +972,9 @@ class PWBillService extends PSIBaseService {
 				
 				// 记现金明细账
 				$sql = "insert into t_cash_detail(out_money, balance_money, biz_date, ref_type, 
-								ref_number, date_created)
-							values (%f, %f, '%s', '采购入库', '%s', now())";
-				$rc = $db->execute($sql, $outCash, $balanceCash, $bizDT, $ref);
+								ref_number, date_created, company_id)
+							values (%f, %f, '%s', '采购入库', '%s', now(), '%s')";
+				$rc = $db->execute($sql, $outCash, $balanceCash, $bizDT, $ref, $companyId);
 				if ($rc === false) {
 					$db->rollback();
 					return $this->sqlError(__LINE__);
@@ -981,8 +984,8 @@ class PWBillService extends PSIBaseService {
 			// 调整业务日期之后的现金总账和明细账的余额
 			$sql = "update t_cash
 							set balance_money = balance_money - %f
-							where biz_date > '%s' ";
-			$rc = $db->execute($sql, $outCash, $bizDT);
+							where biz_date > '%s' and company_id = '%s' ";
+			$rc = $db->execute($sql, $outCash, $bizDT, $companyId);
 			if ($rc === false) {
 				$db->rollback();
 				return $this->sqlError(__LINE__);
@@ -990,8 +993,8 @@ class PWBillService extends PSIBaseService {
 			
 			$sql = "update t_cash_detail
 							set balance_money = balance_money - %f
-							where biz_date > '%s' ";
-			$rc = $db->execute($sql, $outCash, $bizDT);
+							where biz_date > '%s' and company_id = '%s' ";
+			$rc = $db->execute($sql, $outCash, $bizDT, $companyId);
 			if ($rc === false) {
 				$db->rollback();
 				return $this->sqlError(__LINE__);
@@ -1002,8 +1005,8 @@ class PWBillService extends PSIBaseService {
 			$outMoney = $billPayables;
 			
 			$sql = "select out_money, balance_money from t_pre_payment
-						where supplier_id = '%s' ";
-			$data = $db->query($sql, $supplierId);
+						where supplier_id = '%s' and company_id = '%s' ";
+			$data = $db->query($sql, $supplierId, $companyId);
 			$totalOutMoney = $data[0]["out_money"];
 			$totalBalanceMoney = $data[0]["balance_money"];
 			if (! $totalOutMoney) {
@@ -1023,10 +1026,10 @@ class PWBillService extends PSIBaseService {
 			// 预付款总账
 			$sql = "update t_pre_payment
 						set out_money = %f, balance_money = %f
-						where supplier_id = '%s' ";
+						where supplier_id = '%s' and company_id = '%s' ";
 			$totalOutMoney += $outMoney;
 			$totalBalanceMoney -= $outMoney;
-			$rc = $db->execute($sql, $totalOutMoney, $totalBalanceMoney, $supplierId);
+			$rc = $db->execute($sql, $totalOutMoney, $totalBalanceMoney, $supplierId, $companyId);
 			if (! $rc) {
 				$db->rollback();
 				return $this->sqlError();
@@ -1034,12 +1037,13 @@ class PWBillService extends PSIBaseService {
 			
 			// 预付款明细账
 			$sql = "insert into t_pre_payment_detail(id, supplier_id, out_money, balance_money,
-							biz_date, date_created, ref_number, ref_type, biz_user_id, input_user_id)
-						values ('%s', '%s', %f, %f, '%s', now(), '%s', '采购入库', '%s', '%s')";
+						biz_date, date_created, ref_number, ref_type, biz_user_id, input_user_id,
+						company_id)
+						values ('%s', '%s', %f, %f, '%s', now(), '%s', '采购入库', '%s', '%s', '%s')";
 			$idGen = new IdGenService();
 			$us = new UserService();
 			$rc = $db->execute($sql, $idGen->newId(), $supplierId, $outMoney, $totalBalanceMoney, 
-					$bizDT, $ref, $bizUserId, $us->getLoginUserId());
+					$bizDT, $ref, $bizUserId, $us->getLoginUserId(), $companyId);
 			if (! $rc) {
 				$db->rollback();
 				return $this->sqlError();
