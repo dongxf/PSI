@@ -684,6 +684,8 @@ class PWBillService extends PSIBaseService {
 		$fifo = $bs->getInventoryMethod() == 1;
 		
 		$db = M();
+		$db->startTrans();
+		
 		$sql = "select ref, warehouse_id, bill_status, biz_dt, biz_user_id,  goods_money, supplier_id,
 					payment_type
 				from t_pw_bill 
@@ -691,10 +693,12 @@ class PWBillService extends PSIBaseService {
 		$data = $db->query($sql, $id);
 		
 		if (! $data) {
+			$db->rollback();
 			return $this->bad("要提交的采购入库单不存在");
 		}
 		$billStatus = $data[0]["bill_status"];
 		if ($billStatus != 0) {
+			$db->rollback();
 			return $this->bad("采购入库单已经提交入库，不能再次提交");
 		}
 		
@@ -709,10 +713,12 @@ class PWBillService extends PSIBaseService {
 		$sql = "select name, inited from t_warehouse where id = '%s' ";
 		$data = $db->query($sql, $warehouseId);
 		if (! $data) {
+			$db->rollback();
 			return $this->bad("要入库的仓库不存在");
 		}
 		$inited = $data[0]["inited"];
 		if ($inited == 0) {
+			$db->rollback();
 			return $this->bad("仓库 [{$data[0]['name']}] 还没有完成建账，不能做采购入库的操作");
 		}
 		
@@ -721,6 +727,7 @@ class PWBillService extends PSIBaseService {
 				where pwbill_id = '%s' order by show_order";
 		$items = $db->query($sql, $id);
 		if (! $items) {
+			$db->rollback();
 			return $this->bad("采购入库单没有采购明细记录，不能入库");
 		}
 		
@@ -728,14 +735,17 @@ class PWBillService extends PSIBaseService {
 		foreach ( $items as $v ) {
 			$goodsCount = intval($v["goods_count"]);
 			if ($goodsCount <= 0) {
+				$db->rollback();
 				return $this->bad("采购数量不能小于0");
 			}
 			$goodsPrice = floatval($v["goods_price"]);
 			if ($goodsPrice < 0) {
+				$db->rollback();
 				return $this->bad("采购单价不能为负数");
 			}
 			$goodsMoney = floatval($v["goods_money"]);
 			if ($goodsMoney < 0) {
+				$db->rollback();
 				return $this->bad("采购金额不能为负数");
 			}
 		}
@@ -746,246 +756,232 @@ class PWBillService extends PSIBaseService {
 				2
 		);
 		if (! in_array($paymentType, $allPaymentType)) {
+			$db->rollback();
 			return $this->bad("付款方式填写不正确，无法提交");
 		}
 		
-		$db->startTrans();
-		try {
-			foreach ( $items as $v ) {
-				$pwbilldetailId = $v["id"];
-				
-				$goodsCount = intval($v["goods_count"]);
-				$goodsPrice = floatval($v["goods_price"]);
-				$goodsMoney = floatval($v["goods_money"]);
-				if ($goodsCount != 0) {
-					$goodsPrice = $goodsMoney / $goodsCount;
-				}
-				
-				$goodsId = $v["goods_id"];
-				
-				$balanceCount = 0;
-				$balanceMoney = 0;
-				$balancePrice = (float)0;
-				// 库存总账
-				$sql = "select in_count, in_money, balance_count, balance_money 
+		foreach ( $items as $v ) {
+			$pwbilldetailId = $v["id"];
+			
+			$goodsCount = intval($v["goods_count"]);
+			$goodsPrice = floatval($v["goods_price"]);
+			$goodsMoney = floatval($v["goods_money"]);
+			if ($goodsCount != 0) {
+				$goodsPrice = $goodsMoney / $goodsCount;
+			}
+			
+			$goodsId = $v["goods_id"];
+			
+			$balanceCount = 0;
+			$balanceMoney = 0;
+			$balancePrice = (float)0;
+			// 库存总账
+			$sql = "select in_count, in_money, balance_count, balance_money 
 						from t_inventory 
 						where warehouse_id = '%s' and goods_id = '%s' ";
-				$data = $db->query($sql, $warehouseId, $goodsId);
-				if ($data) {
-					$inCount = intval($data[0]["in_count"]);
-					$inMoney = floatval($data[0]["in_money"]);
-					$balanceCount = intval($data[0]["balance_count"]);
-					$balanceMoney = floatval($data[0]["balance_money"]);
-					
-					$inCount += $goodsCount;
-					$inMoney += $goodsMoney;
-					$inPrice = $inMoney / $inCount;
-					
-					$balanceCount += $goodsCount;
-					$balanceMoney += $goodsMoney;
-					$balancePrice = $balanceMoney / $balanceCount;
-					
-					$sql = "update t_inventory 
+			$data = $db->query($sql, $warehouseId, $goodsId);
+			if ($data) {
+				$inCount = intval($data[0]["in_count"]);
+				$inMoney = floatval($data[0]["in_money"]);
+				$balanceCount = intval($data[0]["balance_count"]);
+				$balanceMoney = floatval($data[0]["balance_money"]);
+				
+				$inCount += $goodsCount;
+				$inMoney += $goodsMoney;
+				$inPrice = $inMoney / $inCount;
+				
+				$balanceCount += $goodsCount;
+				$balanceMoney += $goodsMoney;
+				$balancePrice = $balanceMoney / $balanceCount;
+				
+				$sql = "update t_inventory 
 							set in_count = %d, in_price = %f, in_money = %f,
 							balance_count = %d, balance_price = %f, balance_money = %f 
 							where warehouse_id = '%s' and goods_id = '%s' ";
-					$db->execute($sql, $inCount, $inPrice, $inMoney, $balanceCount, $balancePrice, 
-							$balanceMoney, $warehouseId, $goodsId);
-				} else {
-					$inCount = $goodsCount;
-					$inMoney = $goodsMoney;
-					$inPrice = $inMoney / $inCount;
-					$balanceCount += $goodsCount;
-					$balanceMoney += $goodsMoney;
-					$balancePrice = $balanceMoney / $balanceCount;
-					
-					$sql = "insert into t_inventory (in_count, in_price, in_money, balance_count,
+				$db->execute($sql, $inCount, $inPrice, $inMoney, $balanceCount, $balancePrice, 
+						$balanceMoney, $warehouseId, $goodsId);
+			} else {
+				$inCount = $goodsCount;
+				$inMoney = $goodsMoney;
+				$inPrice = $inMoney / $inCount;
+				$balanceCount += $goodsCount;
+				$balanceMoney += $goodsMoney;
+				$balancePrice = $balanceMoney / $balanceCount;
+				
+				$sql = "insert into t_inventory (in_count, in_price, in_money, balance_count,
 							balance_price, balance_money, warehouse_id, goods_id)
 							values (%d, %f, %f, %d, %f, %f, '%s', '%s')";
-					$db->execute($sql, $inCount, $inPrice, $inMoney, $balanceCount, $balancePrice, 
-							$balanceMoney, $warehouseId, $goodsId);
-				}
-				
-				// 库存明细账
-				$sql = "insert into t_inventory_detail (in_count, in_price, in_money, balance_count,
+				$db->execute($sql, $inCount, $inPrice, $inMoney, $balanceCount, $balancePrice, 
+						$balanceMoney, $warehouseId, $goodsId);
+			}
+			
+			// 库存明细账
+			$sql = "insert into t_inventory_detail (in_count, in_price, in_money, balance_count,
 						balance_price, balance_money, warehouse_id, goods_id, biz_date,
 						biz_user_id, date_created, ref_number, ref_type)
 						values (%d, %f, %f, %d, %f, %f, '%s', '%s', '%s', '%s', now(), '%s', '采购入库')";
-				$db->execute($sql, $goodsCount, $goodsPrice, $goodsMoney, $balanceCount, 
-						$balancePrice, $balanceMoney, $warehouseId, $goodsId, $bizDT, $bizUserId, 
-						$ref);
-				
-				// 先进先出
-				if ($fifo) {
-					$dt = date("Y-m-d H:i:s");
-					$sql = "insert into t_inventory_fifo (in_count, in_price, in_money, balance_count,
+			$db->execute($sql, $goodsCount, $goodsPrice, $goodsMoney, $balanceCount, $balancePrice, 
+					$balanceMoney, $warehouseId, $goodsId, $bizDT, $bizUserId, $ref);
+			
+			// 先进先出
+			if ($fifo) {
+				$dt = date("Y-m-d H:i:s");
+				$sql = "insert into t_inventory_fifo (in_count, in_price, in_money, balance_count,
 							balance_price, balance_money, warehouse_id, goods_id, date_created, in_ref,
 							in_ref_type, pwbilldetail_id)
 							values (%d, %f, %f, %d, %f, %f, '%s', '%s', '%s', '%s', '采购入库', '%s')";
-					$db->execute($sql, $goodsCount, $goodsPrice, $goodsMoney, $goodsCount, 
-							$goodsPrice, $goodsMoney, $warehouseId, $goodsId, $dt, $ref, 
-							$pwbilldetailId);
-					
-					// fifo 明细记录
-					$sql = "insert into t_inventory_fifo_detail(in_count, in_price, in_money, balance_count,
+				$db->execute($sql, $goodsCount, $goodsPrice, $goodsMoney, $goodsCount, $goodsPrice, 
+						$goodsMoney, $warehouseId, $goodsId, $dt, $ref, $pwbilldetailId);
+				
+				// fifo 明细记录
+				$sql = "insert into t_inventory_fifo_detail(in_count, in_price, in_money, balance_count,
 							balance_price, balance_money, warehouse_id, goods_id, date_created, pwbilldetail_id)
 							values (%d, %f, %f, %d, %f, %f, '%s', '%s', '%s', '%s')";
-					$db->execute($sql, $goodsCount, $goodsPrice, $goodsMoney, $goodsCount, 
-							$goodsPrice, $goodsMoney, $warehouseId, $goodsId, $dt, $pwbilldetailId);
-				}
+				$db->execute($sql, $goodsCount, $goodsPrice, $goodsMoney, $goodsCount, $goodsPrice, 
+						$goodsMoney, $warehouseId, $goodsId, $dt, $pwbilldetailId);
 			}
-			
-			$sql = "update t_pw_bill set bill_status = 1000 where id = '%s' ";
-			$db->execute($sql, $id);
-			
-			if ($paymentType == 0) {
-				// 记应付账款
-				// 应付明细账
-				$sql = "insert into t_payables_detail (id, pay_money, act_money, balance_money,
+		}
+		
+		$sql = "update t_pw_bill set bill_status = 1000 where id = '%s' ";
+		$db->execute($sql, $id);
+		
+		if ($paymentType == 0) {
+			// 记应付账款
+			// 应付明细账
+			$sql = "insert into t_payables_detail (id, pay_money, act_money, balance_money,
 					ca_id, ca_type, date_created, ref_number, ref_type, biz_date)
 					values ('%s', %f, 0, %f, '%s', 'supplier', now(), '%s', '采购入库', '%s')";
-				$idGen = new IdGenService();
-				$db->execute($sql, $idGen->newId(), $billPayables, $billPayables, $supplierId, $ref, 
-						$bizDT);
-				// 应付总账
-				$sql = "select id, pay_money 
+			$idGen = new IdGenService();
+			$db->execute($sql, $idGen->newId(), $billPayables, $billPayables, $supplierId, $ref, 
+					$bizDT);
+			// 应付总账
+			$sql = "select id, pay_money 
 					from t_payables 
 					where ca_id = '%s' and ca_type = 'supplier' ";
-				$data = $db->query($sql, $supplierId);
-				if ($data) {
-					$pId = $data[0]["id"];
-					$payMoney = floatval($data[0]["pay_money"]);
-					$payMoney += $billPayables;
-					
-					$sql = "update t_payables 
+			$data = $db->query($sql, $supplierId);
+			if ($data) {
+				$pId = $data[0]["id"];
+				$payMoney = floatval($data[0]["pay_money"]);
+				$payMoney += $billPayables;
+				
+				$sql = "update t_payables 
 						set pay_money = %f, balance_money = %f 
 						where id = '%s' ";
-					$db->execute($sql, $payMoney, $payMoney, $pId);
-				} else {
-					$payMoney = $billPayables;
-					
-					$sql = "insert into t_payables (id, pay_money, act_money, balance_money, 
+				$db->execute($sql, $payMoney, $payMoney, $pId);
+			} else {
+				$payMoney = $billPayables;
+				
+				$sql = "insert into t_payables (id, pay_money, act_money, balance_money, 
 						ca_id, ca_type) 
 						values ('%s', %f, 0, %f, '%s', 'supplier')";
-					$db->execute($sql, $idGen->newId(), $payMoney, $payMoney, $supplierId);
-				}
-			} else if ($paymentType == 1) {
-				// 现金付款
+				$db->execute($sql, $idGen->newId(), $payMoney, $payMoney, $supplierId);
+			}
+		} else if ($paymentType == 1) {
+			// 现金付款
+			
+			$outCash = $billPayables;
+			
+			$sql = "select in_money, out_money, balance_money from t_cash where biz_date = '%s' ";
+			$data = $db->query($sql, $bizDT);
+			if (! $data) {
+				// 当天首次发生现金业务
 				
-				$outCash = $billPayables;
-				
-				$sql = "select in_money, out_money, balance_money from t_cash where biz_date = '%s' ";
-				$data = $db->query($sql, $bizDT);
-				if (! $data) {
-					// 当天首次发生现金业务
-					
-					$sql = "select sum(in_money) as sum_in_money, sum(out_money) as sum_out_money
+				$sql = "select sum(in_money) as sum_in_money, sum(out_money) as sum_out_money
 							from t_cash
 							where biz_date <= '%s' ";
-					$data = $db->query($sql, $bizDT);
-					$sumInMoney = $data[0]["sum_in_money"];
-					$sumOutMoney = $data[0]["sum_out_money"];
-					if (! $sumInMoney) {
-						$sumInMoney = 0;
-					}
-					if (! $sumOutMoney) {
-						$sumOutMoney = 0;
-					}
-					
-					$balanceCash = $sumInMoney - $sumOutMoney - $outCash;
-					$sql = "insert into t_cash(out_money, balance_money, biz_date)
+				$data = $db->query($sql, $bizDT);
+				$sumInMoney = $data[0]["sum_in_money"];
+				$sumOutMoney = $data[0]["sum_out_money"];
+				if (! $sumInMoney) {
+					$sumInMoney = 0;
+				}
+				if (! $sumOutMoney) {
+					$sumOutMoney = 0;
+				}
+				
+				$balanceCash = $sumInMoney - $sumOutMoney - $outCash;
+				$sql = "insert into t_cash(out_money, balance_money, biz_date)
 							values (%f, %f, '%s')";
-					$db->execute($sql, $outCash, $balanceCash, $bizDT);
-					
-					// 记现金明细账
-					$sql = "insert into t_cash_detail(out_money, balance_money, biz_date, ref_type, 
+				$db->execute($sql, $outCash, $balanceCash, $bizDT);
+				
+				// 记现金明细账
+				$sql = "insert into t_cash_detail(out_money, balance_money, biz_date, ref_type, 
 								ref_number, date_created)
 							values (%f, %f, '%s', '采购入库', '%s', now())";
-					$db->execute($sql, $outCash, $balanceCash, $bizDT, $ref);
-				} else {
-					$balanceCash = $data[0]["balance_money"] - $outCash;
-					$sumOutMoney = $data[0]["out_money"] + $outCash;
-					$sql = "update t_cash
+				$db->execute($sql, $outCash, $balanceCash, $bizDT, $ref);
+			} else {
+				$balanceCash = $data[0]["balance_money"] - $outCash;
+				$sumOutMoney = $data[0]["out_money"] + $outCash;
+				$sql = "update t_cash
 							set out_money = %f, balance_money = %f
 							where biz_date = '%s' ";
-					$db->execute($sql, $sumOutMoney, $balanceCash, $bizDT);
-					
-					// 记现金明细账
-					$sql = "insert into t_cash_detail(out_money, balance_money, biz_date, ref_type, 
+				$db->execute($sql, $sumOutMoney, $balanceCash, $bizDT);
+				
+				// 记现金明细账
+				$sql = "insert into t_cash_detail(out_money, balance_money, biz_date, ref_type, 
 								ref_number, date_created)
 							values (%f, %f, '%s', '采购入库', '%s', now())";
-					$db->execute($sql, $outCash, $balanceCash, $bizDT, $ref);
-				}
-				
-				// 调整业务日期之后的现金总账和明细账的余额
-				$sql = "update t_cash
-							set balance_money = balance_money - %f
-							where biz_date > '%s' ";
-				$db->execute($sql, $outCash, $bizDT);
-				
-				$sql = "update t_cash_detail
-							set balance_money = balance_money - %f
-							where biz_date > '%s' ";
-				$db->execute($sql, $outCash, $bizDT);
-			} else if ($paymentType == 2) {
-				// 2: 预付款
-				
-				$outMoney = $billPayables;
-				
-				$sql = "select out_money, balance_money from t_pre_payment
-						where supplier_id = '%s' ";
-				$data = $db->query($sql, $supplierId);
-				$totalOutMoney = $data[0]["out_money"];
-				$totalBalanceMoney = $data[0]["balance_money"];
-				if (! $totalOutMoney) {
-					$totalOutMoney = 0;
-				}
-				if (! $totalBalanceMoney) {
-					$totalBalanceMoney = 0;
-				}
-				if ($outMoney > $totalBalanceMoney) {
-					$db->rollback();
-					$ss = new SupplierService();
-					$supplierName = $ss->getSupplierNameById($supplierId, $db);
-					return $this->bad(
-							"供应商[{$supplierName}]预付款余额不足，无法完成支付<br/><br/>余额:{$totalBalanceMoney}元，付款金额:{$outMoney}元");
-				}
-				
-				// 预付款总账
-				$sql = "update t_pre_payment
-						set out_money = %f, balance_money = %f
-						where supplier_id = '%s' ";
-				$totalOutMoney += $outMoney;
-				$totalBalanceMoney -= $outMoney;
-				$rc = $db->execute($sql, $totalOutMoney, $totalBalanceMoney, $supplierId);
-				if (! $rc) {
-					$db->rollback();
-					return $this->sqlError();
-				}
-				
-				// 预付款明细账
-				$sql = "insert into t_pre_payment_detail(id, supplier_id, out_money, balance_money,
-							biz_date, date_created, ref_number, ref_type, biz_user_id, input_user_id)
-						values ('%s', '%s', %f, %f, '%s', now(), '%s', '采购入库', '%s', '%s')";
-				$idGen = new IdGenService();
-				$us = new UserService();
-				$rc = $db->execute($sql, $idGen->newId(), $supplierId, $outMoney, 
-						$totalBalanceMoney, $bizDT, $ref, $bizUserId, $us->getLoginUserId());
-				if (! $rc) {
-					$db->rollback();
-					return $this->sqlError();
-				}
+				$db->execute($sql, $outCash, $balanceCash, $bizDT, $ref);
 			}
 			
-			// 日志
-			$log = "提交采购入库单: 单号 = {$ref}";
-			$bs = new BizlogService();
-			$bs->insertBizlog($log, "采购入库");
+			// 调整业务日期之后的现金总账和明细账的余额
+			$sql = "update t_cash
+							set balance_money = balance_money - %f
+							where biz_date > '%s' ";
+			$db->execute($sql, $outCash, $bizDT);
 			
-			$db->commit();
-		} catch ( Exception $exc ) {
-			$db->rollback();
-			return $this->bad("数据库操作错误，请联系管理员");
+			$sql = "update t_cash_detail
+							set balance_money = balance_money - %f
+							where biz_date > '%s' ";
+			$db->execute($sql, $outCash, $bizDT);
+		} else if ($paymentType == 2) {
+			// 2: 预付款
+			
+			$outMoney = $billPayables;
+			
+			$sql = "select out_money, balance_money from t_pre_payment
+						where supplier_id = '%s' ";
+			$data = $db->query($sql, $supplierId);
+			$totalOutMoney = $data[0]["out_money"];
+			$totalBalanceMoney = $data[0]["balance_money"];
+			if (! $totalOutMoney) {
+				$totalOutMoney = 0;
+			}
+			if (! $totalBalanceMoney) {
+				$totalBalanceMoney = 0;
+			}
+			if ($outMoney > $totalBalanceMoney) {
+				$db->rollback();
+				$ss = new SupplierService();
+				$supplierName = $ss->getSupplierNameById($supplierId, $db);
+				return $this->bad(
+						"供应商[{$supplierName}]预付款余额不足，无法完成支付<br/><br/>余额:{$totalBalanceMoney}元，付款金额:{$outMoney}元");
+			}
+			
+			// 预付款总账
+			$sql = "update t_pre_payment
+						set out_money = %f, balance_money = %f
+						where supplier_id = '%s' ";
+			$totalOutMoney += $outMoney;
+			$totalBalanceMoney -= $outMoney;
+			$rc = $db->execute($sql, $totalOutMoney, $totalBalanceMoney, $supplierId);
+			if (! $rc) {
+				$db->rollback();
+				return $this->sqlError();
+			}
+			
+			// 预付款明细账
+			$sql = "insert into t_pre_payment_detail(id, supplier_id, out_money, balance_money,
+							biz_date, date_created, ref_number, ref_type, biz_user_id, input_user_id)
+						values ('%s', '%s', %f, %f, '%s', now(), '%s', '采购入库', '%s', '%s')";
+			$idGen = new IdGenService();
+			$us = new UserService();
+			$rc = $db->execute($sql, $idGen->newId(), $supplierId, $outMoney, $totalBalanceMoney, 
+					$bizDT, $ref, $bizUserId, $us->getLoginUserId());
+			if (! $rc) {
+				$db->rollback();
+				return $this->sqlError();
+			}
 		}
 		
 		// 同步库存账中的在途库存
@@ -997,8 +993,19 @@ class PWBillService extends PSIBaseService {
 		foreach ( $data as $v ) {
 			$goodsId = $v["goods_id"];
 			
-			$this->updateAfloatInventory($db, $warehouseId, $goodsId);
+			$rc = $this->updateAfloatInventory($db, $warehouseId, $goodsId);
+			if ($rc === false) {
+				$db->rollback();
+				return $this->sqlError(__LINE__);
+			}
 		}
+		
+		// 业务日志
+		$log = "提交采购入库单: 单号 = {$ref}";
+		$bs = new BizlogService();
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$db->commit();
 		
 		return $this->ok($id);
 	}
