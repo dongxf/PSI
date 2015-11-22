@@ -14,19 +14,26 @@ use Home\Service\UserService;
  */
 class PSIBaseController extends Controller {
 
+	/**
+	 * 初始化每个页面都需要的参数值
+	 */
 	protected function initVar() {
+		// 产品名称
 		$bcs = new BizConfigService();
 		$this->assign("productionName", $bcs->getProductionName());
 		
+		// JS调用的base uri
 		$this->assign("uri", __ROOT__ . "/");
 		
+		// 当前登录用户名
 		$us = new UserService();
 		$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
 		
+		// 时间标志，用于浏览器及时刷新JS文件
 		$dtFlag = getdate();
 		$this->assign("dtFlag", $dtFlag[0]);
 	}
-	
+
 	/**
 	 * 跳转到登录页面
 	 */
