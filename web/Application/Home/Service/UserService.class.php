@@ -11,6 +11,7 @@ use Home\Common\FIdConst;
  * @author 李静波
  */
 class UserService extends PSIBaseService {
+	private $LOG_CATEGORY = "用户管理";
 
 	public function getDemoLoginInfo() {
 		if ($this->isDemo()) {
@@ -253,7 +254,7 @@ class UserService extends PSIBaseService {
 		$data = $db->query($sql, $id);
 		
 		if (! $data) {
-			return;
+			return true;
 		}
 		
 		$fullName = $data[0]["full_name"];
@@ -265,10 +266,18 @@ class UserService extends PSIBaseService {
 			$nameChild = $v["name"];
 			$fullNameChild = $fullName . "\\" . $nameChild;
 			$sql = "update t_org set full_name = '%s' where id = '%s' ";
-			$db->execute($sql, $fullNameChild, $idChild);
+			$rc = $db->execute($sql, $fullNameChild, $idChild);
+			if ($rc === false) {
+				return false;
+			}
 			
-			$this->modifyFullName($db, $idChild); // 递归调用自身
+			$rc = $this->modifyFullName($db, $idChild); // 递归调用自身
+			if ($rc === false) {
+				return false;
+			}
 		}
+		
+		return true;
 	}
 
 	private function modifyDataOrg($db, $parentId, $id) {
@@ -301,7 +310,10 @@ class UserService extends PSIBaseService {
 		$sql = "update t_org
 				set data_org = '%s'
 				where id = '%s' ";
-		$db->execute($sql, $dataOrg, $id);
+		$rc = $db->execute($sql, $dataOrg, $id);
+		if ($rc === false) {
+			return false;
+		}
 		
 		// 修改 人员的数据域
 		$sql = "select id from t_user
@@ -316,11 +328,20 @@ class UserService extends PSIBaseService {
 			$sql = "update t_user
 					set data_org = '%s'
 					where id = '%s' ";
-			$db->execute($sql, $udo, $userId);
+			$rc = $db->execute($sql, $udo, $userId);
+			if ($rc === false) {
+				return false;
+			}
 		}
 		
 		// 修改下级组织机构的数据域
-		$this->modifySubDataOrg($db, $dataOrg, $id);
+		$rc = $this->modifySubDataOrg($db, $dataOrg, $id);
+		
+		if ($rc === false) {
+			return false;
+		}
+		
+		return true;
 	}
 
 	private function modifySubDataOrg($db, $parentDataOrg, $parentId) {
@@ -349,11 +370,19 @@ class UserService extends PSIBaseService {
 				$sql = "update t_user
 					set data_org = '%s'
 					where id = '%s' ";
-				$db->execute($sql, $udo, $userId);
+				$rc = $db->execute($sql, $udo, $userId);
+				if ($rc === false) {
+					return false;
+				}
 			}
 			
-			$this->modifySubDataOrg($db, $dataOrg, $subId); // 递归调用自身
+			$rc = $this->modifySubDataOrg($db, $dataOrg, $subId); // 递归调用自身
+			if ($rc === false) {
+				return false;
+			}
 		}
+		
+		return true;
 	}
 
 	public function editOrg($id, $name, $parentId, $orgCode) {
@@ -370,16 +399,23 @@ class UserService extends PSIBaseService {
 			}
 		}
 		
+		$db = M();
+		$db->startTrans();
+		
+		$log = null;
+		
 		if ($id) {
 			// 编辑
 			if ($parentId == $id) {
+				$db->rollback();
 				return $this->bad("上级组织不能是自身");
 			}
 			$fullName = "";
-			$db = M();
+			
 			$sql = "select parent_id from t_org where id = '%s' ";
 			$data = $db->query($sql, $id);
 			if (! $data) {
+				$db->rollback();
 				return $this->bad("要编辑的组织机构不存在");
 			}
 			$oldParentId = $data[0]["parent_id"];
@@ -393,7 +429,11 @@ class UserService extends PSIBaseService {
 				$sql = "update t_org 
 						set name = '%s', full_name = '%s', org_code = '%s', parent_id = null 
 						where id = '%s' ";
-				$db->execute($sql, $name, $fullName, $orgCode, $id);
+				$rc = $db->execute($sql, $name, $fullName, $orgCode, $id);
+				if ($rc === false) {
+					$db->rollback();
+					return $this->sqlError(__LINE__);
+				}
 			} else {
 				$tempParentId = $parentId;
 				while ( $tempParentId != null ) {
@@ -403,6 +443,7 @@ class UserService extends PSIBaseService {
 						$tempParentId = $d[0]["parent_id"];
 						
 						if ($tempParentId == $id) {
+							$db->rollback();
 							return $this->bad("不能选择下级组织作为上级组织");
 						}
 					} else {
@@ -419,31 +460,39 @@ class UserService extends PSIBaseService {
 					$sql = "update t_org 
 							set name = '%s', full_name = '%s', org_code = '%s', parent_id = '%s' 
 							where id = '%s' ";
-					$db->execute($sql, $name, $fullName, $orgCode, $parentId, $id);
+					$rc = $db->execute($sql, $name, $fullName, $orgCode, $parentId, $id);
+					if ($rc === false) {
+						$db->rollback();
+						return $this->sqlError(__LINE__);
+					}
 					
 					$log = "编辑组织机构：名称 = {$name} 编码 = {$orgCode}";
-					$bs = new BizlogService();
-					$bs->insertBizlog($log, "用户管理");
 				} else {
+					$db->rollback();
 					return $this->bad("上级组织不存在");
 				}
 			}
 			
 			if ($oldParentId != $parentId) {
 				// 上级组织机构发生了变化，这个时候，需要调整数据域
-				$this->modifyDataOrg($db, $parentId, $id);
+				$rc = $this->modifyDataOrg($db, $parentId, $id);
+				if ($rc === false) {
+					$db->rollback();
+					return $this->sqlError(__LINE__);
+				}
 			}
 			
 			// 同步下级组织的full_name字段
-			$this->modifyFullName($db, $id);
-			
-			return $this->OK($id);
+			$rc = $this->modifyFullName($db, $id);
+			if ($rc === false) {
+				$db->rollback();
+				return $this->sqlError(__LINE__);
+			}
 		} else {
 			// 新增
 			$idGenService = new IdGenService();
 			$id = $idGenService->newId();
 			
-			$db = M();
 			$sql = "select full_name from t_org where id = '%s' ";
 			$parentOrg = $db->query($sql, $parentId);
 			$fullName = "";
@@ -467,7 +516,11 @@ class UserService extends PSIBaseService {
 				$sql = "insert into t_org (id, name, full_name, org_code, parent_id, data_org) 
 						values ('%s', '%s', '%s', '%s', null, '%s')";
 				
-				$db->execute($sql, $id, $name, $fullName, $orgCode, $dataOrg);
+				$rc = $db->execute($sql, $id, $name, $fullName, $orgCode, $dataOrg);
+				if ($rc === false) {
+					$db->rollback();
+					return $this->sqlError(__LINE__);
+				}
 			} else {
 				$dataOrg = "";
 				$sql = "select data_org from t_org
@@ -480,6 +533,7 @@ class UserService extends PSIBaseService {
 					$sql = "select data_org from t_org where id = '%s' ";
 					$data = $db->query($sql, $parentId);
 					if (! $data) {
+						$db->rollback();
 						return $this->bad("上级组织机构不存在");
 					}
 					$dataOrg = $data[0]["data_org"] . "01";
@@ -488,13 +542,23 @@ class UserService extends PSIBaseService {
 				$sql = "insert into t_org (id, name, full_name, org_code, parent_id, data_org) 
 						values ('%s', '%s', '%s', '%s', '%s', '%s')";
 				
-				$db->execute($sql, $id, $name, $fullName, $orgCode, $parentId, $dataOrg);
+				$rc = $db->execute($sql, $id, $name, $fullName, $orgCode, $parentId, $dataOrg);
+				if ($rc === false) {
+					$db->rollback();
+					return $this->sqlError(__LINE__);
+				}
 			}
 			
 			$log = "新增组织机构：名称 = {$name} 编码 = {$orgCode}";
-			$bs = new BizlogService();
-			$bs->insertBizlog($log, "用户管理");
 		}
+		
+		// 记录业务日志
+		if ($log) {
+			$bs = new BizlogService();
+			$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		}
+		
+		$db->commit();
 		
 		return $this->ok($id);
 	}
@@ -536,9 +600,12 @@ class UserService extends PSIBaseService {
 		}
 		
 		$db = M();
+		$db->startTrans();
+		
 		$sql = "select name, org_code from t_org where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if (! $data) {
+			$db->rollback();
 			return $this->bad("要删除的组织机构不存在");
 		}
 		$name = $data[0]["name"];
@@ -548,6 +615,7 @@ class UserService extends PSIBaseService {
 		$data = $db->query($sql, $id);
 		$cnt = $data[0]["cnt"];
 		if ($cnt > 0) {
+			$db->rollback();
 			return $this->bad("当前组织机构还有下级组织，不能删除");
 		}
 		
@@ -555,6 +623,7 @@ class UserService extends PSIBaseService {
 		$data = $db->query($sql, $id);
 		$cnt = $data[0]["cnt"];
 		if ($cnt > 0) {
+			$db->rollback();
 			return $this->bad("当前组织机构还有用户，不能删除");
 		}
 		
@@ -563,15 +632,22 @@ class UserService extends PSIBaseService {
 		$data = $db->query($sql, $id);
 		$cnt = $data[0]["cnt"];
 		if ($cnt > 0) {
+			$db->rollback();
 			return $this->bad("当前组织机构在采购订单中使用了，不能删除");
 		}
 		
 		$sql = "delete from t_org where id = '%s' ";
-		$db->execute($sql, $id);
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			$db->rollback();
+			return $this->sqlError(__LINE__);
+		}
 		
 		$log = "删除组织机构： 名称 = {$name} 编码  = {$orgCode}";
 		$bs = new BizlogService();
-		$bs->insertBizlog($log, "用户管理");
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$db->commit();
 		
 		return $this->ok();
 	}
