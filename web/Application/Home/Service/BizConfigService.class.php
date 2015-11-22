@@ -223,24 +223,6 @@ class BizConfigService extends PSIBaseService {
 	}
 
 	/**
-	 * 仓库是否需要设置组织机构
-	 *
-	 * @return true 仓库需要设置组织机构
-	 */
-	public function warehouseUsesOrg() {
-		// 2015-11-04: 使用数据域后，就不需要这个功能了
-		return false;
-		
-		// $sql = "select value from t_config where id = '1003-01' ";
-		// $data = M()->query($sql);
-		// if ($data) {
-		// return $data[0]["value"] == "1";
-		// } else {
-		// return false;
-		// }
-	}
-
-	/**
 	 * 获得增值税税率
 	 */
 	public function getTaxRate() {
