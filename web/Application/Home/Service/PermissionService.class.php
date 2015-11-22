@@ -11,6 +11,7 @@ use Home\Common\FIdConst;
  * @author 李静波
  */
 class PermissionService extends PSIBaseService {
+	private $LOG_CATEGORY = "权限管理";
 
 	public function roleList() {
 		if ($this->isNotOnline()) {
@@ -111,123 +112,160 @@ class PermissionService extends PSIBaseService {
 		}
 		
 		$db = M();
+		$db->startTrans();
 		
 		$pid = explode(",", $permissionIdList);
 		$doList = explode(",", $dataOrgList);
 		$uid = explode(",", $userIdList);
 		
 		if ($id) {
-			// 编辑
-			$db->startTrans();
-			try {
-				$sql = "update t_role set name = '%s' where id = '%s' ";
-				$db->execute($sql, $name, $id);
-				
-				$sql = "delete from t_role_permission where role_id = '%s' ";
-				$db->execute($sql, $id);
-				$sql = "delete from t_role_user where role_id = '%s' ";
-				$db->execute($sql, $id);
-				
-				if ($pid) {
-					foreach ( $pid as $i => $v ) {
-						$sql = "insert into t_role_permission (role_id, permission_id) 
+			// 编辑角色
+			
+			$sql = "update t_role set name = '%s' where id = '%s' ";
+			$rc = $db->execute($sql, $name, $id);
+			if ($rc === false) {
+				$db->rollback();
+				return $this->sqlError(__LINE__);
+			}
+			
+			$sql = "delete from t_role_permission where role_id = '%s' ";
+			$rc = $db->execute($sql, $id);
+			if ($rc === false) {
+				$db->rollback();
+				return $this->sqlError(__LINE__);
+			}
+			
+			$sql = "delete from t_role_user where role_id = '%s' ";
+			$rc = $db->execute($sql, $id);
+			if ($rc === false) {
+				$db->rollback();
+				return $this->sqlError(__LINE__);
+			}
+			
+			if ($pid) {
+				foreach ( $pid as $i => $v ) {
+					$sql = "insert into t_role_permission (role_id, permission_id) 
 								values ('%s', '%s')";
-						$db->execute($sql, $id, $v);
-						
-						// 权限的数据域
-						$sql = "delete from t_role_permission_dataorg 
+					$rc = $db->execute($sql, $id, $v);
+					if ($rc === false) {
+						$db->rollback();
+						return $this->sqlError(__LINE__);
+					}
+					
+					// 权限的数据域
+					$sql = "delete from t_role_permission_dataorg 
 								where role_id = '%s' and permission_id = '%s' ";
-						$db->execute($sql, $id, $v);
+					$rc = $db->execute($sql, $id, $v);
+					if ($rc === false) {
+						$db->rollback();
+						return $this->sqlError(__LINE__);
+					}
+					
+					$dataOrg = $doList[$i];
+					$oList = explode(";", $dataOrg);
+					foreach ( $oList as $item ) {
+						if (! $item) {
+							continue;
+						}
 						
-						$dataOrg = $doList[$i];
-						$oList = explode(";", $dataOrg);
-						foreach ( $oList as $item ) {
-							if (! $item) {
-								continue;
-							}
-							
-							$sql = "insert into t_role_permission_dataorg(role_id, permission_id, data_org)
+						$sql = "insert into t_role_permission_dataorg(role_id, permission_id, data_org)
 									values ('%s', '%s', '%s')";
-							$db->execute($sql, $id, $v, $item);
+						$rc = $db->execute($sql, $id, $v, $item);
+						if ($rc === false) {
+							$db->rollback();
+							return $this->sqlError(__LINE__);
 						}
 					}
 				}
-				
-				if ($uid) {
-					foreach ( $uid as $v ) {
-						$sql = "insert into t_role_user (role_id, user_id) 
+			}
+			
+			if ($uid) {
+				foreach ( $uid as $v ) {
+					$sql = "insert into t_role_user (role_id, user_id) 
 								values ('%s', '%s') ";
-						$db->execute($sql, $id, $v);
+					$rc = $db->execute($sql, $id, $v);
+					if ($rc === false) {
+						$db->rollback();
+						return $this->sqlError(__LINE__);
 					}
 				}
-				
-				$log = "编辑角色[{$name}]";
-				$bs = new BizlogService();
-				$bs->insertBizlog($log, "权限管理");
-				
-				$db->commit();
-			} catch ( Exception $exc ) {
-				$db->rollback();
-				
-				return $this->bad("数据库操作错误，请联系管理员");
 			}
+			
+			$log = "编辑角色[{$name}]";
 		} else {
-			// 新增
+			// 新增角色
 			
 			$idGen = new IdGenService();
 			$id = $idGen->newId();
 			$us = new UserService();
 			$loginUserDataOrg = $us->getLoginUserDataOrg();
 			
-			$db->startTrans();
-			try {
-				$sql = "insert into t_role (id, name, data_org) values ('%s', '%s', '%s') ";
-				$db->execute($sql, $id, $name, $loginUserDataOrg);
-				
-				if ($pid) {
-					foreach ( $pid as $i => $v ) {
-						$sql = "insert into t_role_permission (role_id, permission_id) 
+			$sql = "insert into t_role (id, name, data_org) values ('%s', '%s', '%s') ";
+			$rc = $db->execute($sql, $id, $name, $loginUserDataOrg);
+			if ($rc === false) {
+				$db->rollback();
+				return $this->sqlError(__LINE__);
+			}
+			
+			if ($pid) {
+				foreach ( $pid as $i => $v ) {
+					$sql = "insert into t_role_permission (role_id, permission_id) 
 								values ('%s', '%s')";
-						$db->execute($sql, $id, $v);
-						
-						// 权限的数据域
-						$sql = "delete from t_role_permission_dataorg 
+					$rc = $db->execute($sql, $id, $v);
+					if ($rc === false) {
+						$db->rollback();
+						return $this->sqlError(__LINE__);
+					}
+					
+					// 权限的数据域
+					$sql = "delete from t_role_permission_dataorg 
 								where role_id = '%s' and permission_id = '%s' ";
-						$db->execute($sql, $id, $v);
+					$rc = $db->execute($sql, $id, $v);
+					if ($rc === false) {
+						$db->rollback();
+						return $this->sqlError(__LINE__);
+					}
+					
+					$dataOrg = $doList[$i];
+					$oList = explode(";", $dataOrg);
+					foreach ( $oList as $item ) {
+						if (! $item) {
+							continue;
+						}
 						
-						$dataOrg = $doList[$i];
-						$oList = explode(";", $dataOrg);
-						foreach ( $oList as $item ) {
-							if (! $item) {
-								continue;
-							}
-							
-							$sql = "insert into t_role_permission_dataorg(role_id, permission_id, data_org)
+						$sql = "insert into t_role_permission_dataorg(role_id, permission_id, data_org)
 									values ('%s', '%s', '%s')";
-							$db->execute($sql, $id, $v, $item);
+						$rc = $db->execute($sql, $id, $v, $item);
+						if ($rc === false) {
+							$db->rollback();
+							return $this->sqlError(__LINE__);
 						}
 					}
 				}
-				
-				if ($uid) {
-					foreach ( $uid as $v ) {
-						$sql = "insert into t_role_user (role_id, user_id) 
+			}
+			
+			if ($uid) {
+				foreach ( $uid as $v ) {
+					$sql = "insert into t_role_user (role_id, user_id) 
 								values ('%s', '%s') ";
-						$db->execute($sql, $id, $v);
+					$rc = $db->execute($sql, $id, $v);
+					if ($rc === false) {
+						$db->rollback();
+						return $this->sqlError(__LINE__);
 					}
 				}
-				
-				$log = "新增角色[{$name}]";
-				$bs = new BizlogService();
-				$bs->insertBizlog($log, "权限管理");
-				
-				$db->commit();
-			} catch ( Exception $exc ) {
-				$db->rollback();
-				
-				return $this->bad("数据库操作错误，请联系管理员");
 			}
+			
+			$log = "新增角色[{$name}]";
 		}
+		
+		// 记录业务日志
+		if ($log) {
+			$bs = new BizlogService();
+			$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		}
+		
+		$db->commit();
 		
 		return $this->ok($id);
 	}
@@ -314,34 +352,42 @@ class PermissionService extends PSIBaseService {
 		}
 		
 		$db = M();
+		$db->startTrans();
+		
 		$sql = "select name from t_role where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if (! $data) {
+			$db->rollback();
 			return $this->bad("要删除的角色不存在");
 		}
 		$roleName = $data[0]["name"];
 		
-		$db->startTrans();
-		try {
-			$sql = "delete from t_role_permission where role_id = '%s' ";
-			$db->execute($sql, $id);
-			
-			$sql = "delete from t_role_user  where role_id = '%s' ";
-			$db->execute($sql, $id);
-			
-			$sql = "delete from t_role where id = '%s' ";
-			$db->execute($sql, $id);
-			
-			$log = "删除角色[{$roleName}]";
-			$bs = new BizlogService();
-			$bs->insertBizlog($log, "权限管理");
-			
-			$db->commit();
-		} catch ( Exception $exc ) {
+		$sql = "delete from t_role_permission where role_id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
 			$db->rollback();
-			
-			return $this->bad("数据库错误，请联系管理员");
+			return $this->sqlError(__LINE__);
 		}
+		
+		$sql = "delete from t_role_user  where role_id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			$db->rollback();
+			return $this->sqlError(__LINE__);
+		}
+		
+		$sql = "delete from t_role where id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			$db->rollback();
+			return $this->sqlError(__LINE__);
+		}
+		
+		$log = "删除角色[{$roleName}]";
+		$bs = new BizlogService();
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$db->commit();
 		
 		return $this->ok();
 	}
