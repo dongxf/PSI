@@ -682,14 +682,17 @@ class UserService extends PSIBaseService {
 		$pys = new PinyinService();
 		$py = $pys->toPY($name);
 		
+		$db = M();
+		$db->startTrans();
+		
 		if ($id) {
 			// 修改
 			// 检查登录名是否被使用
-			$db = M();
 			$sql = "select count(*) as cnt from t_user where login_name = '%s' and id <> '%s' ";
 			$data = $db->query($sql, $loginName, $id);
 			$cnt = $data[0]["cnt"];
 			if ($cnt > 0) {
+				$db->rollback();
 				return $this->bad("登录名 [$loginName] 已经存在");
 			}
 			
@@ -698,6 +701,7 @@ class UserService extends PSIBaseService {
 			$data = $db->query($sql, $orgId);
 			$cnt = $data[0]["cnt"];
 			if ($cnt != 1) {
+				$db->rollback();
 				return $this->bad("组织机构不存在");
 			}
 			
@@ -724,8 +728,12 @@ class UserService extends PSIBaseService {
 					    gender = '%s', birthday = '%s', id_card_number = '%s',
 					    tel = '%s', tel02 = '%s', address = '%s', data_org = '%s'
 					where id = '%s' ";
-				$db->execute($sql, $loginName, $name, $orgCode, $orgId, $enabled, $py, $gender, 
-						$birthday, $idCardNumber, $tel, $tel02, $address, $dataOrg, $id);
+				$rc = $db->execute($sql, $loginName, $name, $orgCode, $orgId, $enabled, $py, 
+						$gender, $birthday, $idCardNumber, $tel, $tel02, $address, $dataOrg, $id);
+				if ($rc === false) {
+					$db->rollback();
+					return $this->sqlError(__LINE__);
+				}
 			} else {
 				$sql = "update t_user
 					set login_name = '%s', name = '%s', org_code = '%s',
@@ -733,21 +741,23 @@ class UserService extends PSIBaseService {
 					    gender = '%s', birthday = '%s', id_card_number = '%s',
 					    tel = '%s', tel02 = '%s', address = '%s'
 					where id = '%s' ";
-				$db->execute($sql, $loginName, $name, $orgCode, $orgId, $enabled, $py, $gender, 
-						$birthday, $idCardNumber, $tel, $tel02, $address, $id);
+				$rc = $db->execute($sql, $loginName, $name, $orgCode, $orgId, $enabled, $py, 
+						$gender, $birthday, $idCardNumber, $tel, $tel02, $address, $id);
+				if ($rc === false) {
+					$db->rollback();
+					return $this->sqlError(__LINE__);
+				}
 			}
 			
 			$log = "编辑用户： 登录名 = {$loginName} 姓名 = {$name} 编码 = {$orgCode}";
-			$bs = new BizlogService();
-			$bs->insertBizlog($log, "用户管理");
 		} else {
 			// 新建
 			// 检查登录名是否被使用
-			$db = M();
 			$sql = "select count(*) as cnt from t_user where login_name = '%s' ";
 			$data = $db->query($sql, $loginName);
 			$cnt = $data[0]["cnt"];
 			if ($cnt > 0) {
+				$db->rollback();
 				return $this->bad("登录名 [$loginName] 已经存在");
 			}
 			
@@ -756,6 +766,7 @@ class UserService extends PSIBaseService {
 			$data = $db->query($sql, $orgId);
 			$cnt = $data[0]["cnt"];
 			if ($cnt != 1) {
+				$db->rollback();
 				return $this->bad("组织机构不存在");
 			}
 			
@@ -777,6 +788,7 @@ class UserService extends PSIBaseService {
 				if ($data) {
 					$dataOrg = $data[0]["data_org"] . "0001";
 				} else {
+					$db->rollback();
 					return $this->bad("组织机构不存在");
 				}
 			}
@@ -788,13 +800,23 @@ class UserService extends PSIBaseService {
 					gender, birthday, id_card_number, tel, tel02, address, data_org) 
 					values ('%s', '%s', '%s', '%s', '%s', %d, '%s', '%s',
 					'%s', '%s', '%s', '%s', '%s', '%s', '%s') ";
-			$db->execute($sql, $id, $loginName, $name, $orgCode, $orgId, $enabled, $password, $py, 
-					$gender, $birthday, $idCardNumber, $tel, $tel02, $address, $dataOrg);
+			$rc = $db->execute($sql, $id, $loginName, $name, $orgCode, $orgId, $enabled, $password, 
+					$py, $gender, $birthday, $idCardNumber, $tel, $tel02, $address, $dataOrg);
+			if ($rc === false) {
+				$db->rollback();
+				return $this->sqlError(__LINE__);
+			}
 			
 			$log = "新建用户： 登录名 = {$loginName} 姓名 = {$name} 编码 = {$orgCode}";
-			$bs = new BizlogService();
-			$bs->insertBizlog($log, "用户管理");
 		}
+		
+		// 记录业务日志
+		if ($log) {
+			$bs = new BizlogService();
+			$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		}
+		
+		$db->commit();
 		
 		return $this->ok($id);
 	}
@@ -809,15 +831,18 @@ class UserService extends PSIBaseService {
 		
 		$id = $params["id"];
 		
-		if ($id == "6C2A09CD-A129-11E4-9B6A-782BCBD7746B") {
+		if ($id == DemoConst::ADMIN_USER_ID) {
 			return $this->bad("不能删除系统管理员用户");
 		}
 		
 		// 检查用户是否存在，以及是否能删除
 		$db = M();
+		$db->startTrans();
+		
 		$sql = "select name from t_user where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if (! $data) {
+			$db->rollback();
 			return $this->bad("要删除的用户不存在");
 		}
 		$userName = $data[0]["name"];
@@ -827,6 +852,7 @@ class UserService extends PSIBaseService {
 		$data = $db->query($sql, $id, $id);
 		$cnt = $data[0]["cnt"];
 		if ($cnt > 0) {
+			$db->rollback();
 			return $this->bad("用户[{$userName}]已经在采购入库单中使用了，不能删除");
 		}
 		
@@ -835,6 +861,7 @@ class UserService extends PSIBaseService {
 		$data = $db->query($sql, $id, $id);
 		$cnt = $data[0]["cnt"];
 		if ($cnt > 0) {
+			$db->rollback();
 			return $this->bad("用户[{$userName}]已经在销售出库单中使用了，不能删除");
 		}
 		
@@ -843,6 +870,7 @@ class UserService extends PSIBaseService {
 		$data = $db->query($sql, $id, $id);
 		$cnt = $data[0]["cnt"];
 		if ($cnt > 0) {
+			$db->rollback();
 			return $this->bad("用户[{$userName}]已经在销售退货入库单中使用了，不能删除");
 		}
 		
@@ -851,6 +879,7 @@ class UserService extends PSIBaseService {
 		$data = $db->query($sql, $id, $id);
 		$cnt = $data[0]["cnt"];
 		if ($cnt > 0) {
+			$db->rollback();
 			return $this->bad("用户[{$userName}]已经在采购退货出库单中使用了，不能删除");
 		}
 		
@@ -859,6 +888,7 @@ class UserService extends PSIBaseService {
 		$data = $db->query($sql, $id, $id);
 		$cnt = $data[0]["cnt"];
 		if ($cnt > 0) {
+			$db->rollback();
 			return $this->bad("用户[{$userName}]已经在调拨单中使用了，不能删除");
 		}
 		
@@ -867,6 +897,7 @@ class UserService extends PSIBaseService {
 		$data = $db->query($sql, $id, $id);
 		$cnt = $data[0]["cnt"];
 		if ($cnt > 0) {
+			$db->rollback();
 			return $this->bad("用户[{$userName}]已经在盘点单中使用了，不能删除");
 		}
 		
@@ -875,6 +906,7 @@ class UserService extends PSIBaseService {
 		$data = $db->query($sql, $id, $id);
 		$cnt = $data[0]["cnt"];
 		if ($cnt > 0) {
+			$db->rollback();
 			return $this->bad("用户[{$userName}]已经在收款记录中使用了，不能删除");
 		}
 		
@@ -883,6 +915,7 @@ class UserService extends PSIBaseService {
 		$data = $db->query($sql, $id, $id);
 		$cnt = $data[0]["cnt"];
 		if ($cnt > 0) {
+			$db->rollback();
 			return $this->bad("用户[{$userName}]已经在盘点单中使用了，不能删除");
 		}
 		
@@ -891,16 +924,24 @@ class UserService extends PSIBaseService {
 		$data = $db->query($sql, $id, $id);
 		$cnt = $data[0]["cnt"];
 		if ($cnt > 0) {
+			$db->rollback();
 			return $this->bad("用户[{$userName}]已经在采购订单中使用了，不能删除");
 		}
 		
 		// TODO 如果增加了其他单据，同样需要做出判断是否使用了该用户
 		
 		$sql = "delete from t_user where id = '%s' ";
-		$db->execute($sql, $id);
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			$db->rollback();
+			return $this->sqlError(__LINE__);
+		}
 		
 		$bs = new BizlogService();
-		$bs->insertBizlog("删除用户[{$userName}]", "用户管理");
+		$bs->insertBizlog("删除用户[{$userName}]", $this->LOG_CATEGORY);
+		
+		$db->commit();
+		
 		return $this->ok();
 	}
 
@@ -921,20 +962,31 @@ class UserService extends PSIBaseService {
 		}
 		
 		$db = M();
+		$db->startTrans();
+		
 		$sql = "select login_name, name from t_user where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if (! $data) {
+			$db->rollback();
 			return $this->bad("要修改密码的用户不存在");
 		}
 		$loginName = $data[0]["login_name"];
 		$name = $data[0]["name"];
 		
-		$sql = "update t_user " . " set password = '%s' " . " where id = '%s' ";
-		$db->execute($sql, md5($password), $id);
+		$sql = "update t_user 
+				set password = '%s' 
+				where id = '%s' ";
+		$rc = $db->execute($sql, md5($password), $id);
+		if ($rc === false) {
+			$db->rollback();
+			return $this->sqlError(__LINE__);
+		}
 		
 		$log = "修改用户[登录名 ={$loginName} 姓名 = {$name}]的密码";
 		$bs = new BizlogService();
-		$bs->insertBizlog($log, "用户管理");
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$db->commit();
 		
 		return $this->ok($id);
 	}
