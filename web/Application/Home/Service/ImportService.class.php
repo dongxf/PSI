@@ -11,7 +11,7 @@ require __DIR__ . '/../Common/Excel/PHPExcel/IOFactory.php';
  *
  * @author James(张健)
  */
-class ImportService {
+class ImportService extends PSIBaseService {
 
 	/**
 	 * 商品导入Service
@@ -245,15 +245,17 @@ class ImportService {
 			
 			$us = new UserService();
 			$dataOrg = $us->getLoginUserDataOrg();
+			$companyId = $us->getCompanyId();
 			
-			$insertSql = "insert into t_customer (id, category_id, code, `name`, py
-			,contact01,qq01, tel01, mobile01, contact02, qq02, tel02, mobile02, address
-			,init_receivables,init_receivables_dt,address_shipping,address_receipt
-			,bank_name, bank_account, tax_number, fax, note, data_org)
-			values('%s', '%s', '%s', '%s', '%s'
-			,'%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s'
-			,'%s', '%s', '%s', '%s'
-			,'%s', '%s', '%s', '%s', '%s', '%s')";
+			$insertSql = "
+				insert into t_customer (id, category_id, code, name, py,
+					contact01, qq01, tel01, mobile01, contact02, qq02, tel02, mobile02, address,
+					address_shipping, address_receipt,
+					bank_name, bank_account, tax_number, fax, note, data_org)
+				values('%s', '%s', '%s', '%s', '%s',
+					'%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
+					'%s', '%s',
+					'%s', '%s', '%s', '%s', '%s', '%s')";
 			/**
 			 * 单元格定义
 			 * A category 客户分类编码
@@ -317,8 +319,15 @@ class ImportService {
 				$address = $currentSheet->getCell($indexAddress)->getValue();
 				$initReceivables = $currentSheet->getCell($indexInitReceivables)->getValue();
 				$initRDTValue = $currentSheet->getCell($indexInitReceivablesDt)->getValue();
-				$intRDTSeconds = intval(($initRDTValue - 25569) * 3600 * 24); // 转换成1970年以来的秒数
-				$initReceivablesDT = gmdate('Y-m-d', $intRDTSeconds);
+				$initReceivablesDT = null;
+				if ($initRDTValue) {
+					$intRDTSeconds = intval(($initRDTValue - 25569) * 3600 * 24); // 转换成1970年以来的秒数
+					$initReceivablesDT = gmdate('Y-m-d', $intRDTSeconds);
+					if ($initReceivablesDT == "1970-01-01") {
+						$initReceivablesDT = null;
+					}
+				}
+				
 				; // 格式化日期
 				$addressShipping = $currentSheet->getCell($indexAddressShipping)->getValue();
 				$addressReceipt = $currentSheet->getCell($indexAddressReceipt)->getValue();
@@ -364,76 +373,77 @@ class ImportService {
 				
 				$db->execute($insertSql, $id, $categoryId, $code, $name, $py, $contact01, $qq01, 
 						$tel01, $mobile01, $contact02, $qq02, $tel02, $mobile02, $address, 
-						$initReceivables, $initReceivablesDT, $addressShipping, $addressReceipt, 
-						$bankName, $bankAccount, $taxNumber, $fax, $note, $dataOrg);
-				
-				// // Sql
-				// $insertSql .= $dataSql;
-				// // 数据参数加入
-				// array_push($params, $id, $categoryId, $code, $name, $py, $contact01, $qq01, $tel01,
-				// $mobile01, $contact02, $qq02, $tel02, $mobile02, $address, $initReceivables,
-				// $initReceivablesDt, $addressShipping, $addressReceipt, $bankName,
-				// $bankAccount, $taxNumber, $fax, $note, $dataOrg);
+						$addressShipping, $addressReceipt, $bankName, $bankAccount, $taxNumber, $fax, 
+						$note, $dataOrg);
 				
 				// 处理应收账款
 				$initReceivables = floatval($initReceivables);
-				if ($initReceivables && $initReceivablesDT) {
+				
+				if ($initReceivables && $initReceivablesDT && $this->dateIsValid($initReceivablesDT)) {
 					$sql = "select count(*) as cnt
 					from t_receivables_detail
-					where ca_id = '%s' and ca_type = 'customer' and ref_type <> '应收账款期初建账' ";
-					$data = $db->query($sql, $id);
+					where ca_id = '%s' and ca_type = 'customer' and ref_type <> '应收账款期初建账' 
+							and company_id = '%s' ";
+					$data = $db->query($sql, $id, $companyId);
 					$cnt = $data[0]["cnt"];
 					if ($cnt > 0) {
 						// 已经有应收业务发生，就不再更改期初数据
-						return $this->ok($id);
+						continue;
 					}
 					
 					$sql = "update t_customer
-					set init_receivables = %f, init_receivables_dt = '%s'
-					where id = '%s' ";
+							set init_receivables = %f, init_receivables_dt = '%s'
+							where id = '%s' ";
 					$db->execute($sql, $initReceivables, $initReceivablesDT, $id);
 					
 					// 应收明细账
 					$sql = "select id from t_receivables_detail
-					where ca_id = '%s' and ca_type = 'customer' and ref_type = '应收账款期初建账' ";
-					$data = $db->query($sql, $id);
+							where ca_id = '%s' and ca_type = 'customer' and ref_type = '应收账款期初建账' 
+							and company_id = '%s' ";
+					$data = $db->query($sql, $id, $companyId);
 					if ($data) {
 						$rvId = $data[0]["id"];
 						$sql = "update t_receivables_detail
-						set rv_money = %f, act_money = 0, balance_money = %f, biz_date ='%s', date_created = now()
-						where id = '%s' ";
+								set rv_money = %f, act_money = 0, balance_money = %f, biz_date ='%s', 
+									date_created = now()
+								where id = '%s' ";
 						$db->execute($sql, $initReceivables, $initReceivables, $initReceivablesDT, 
 								$rvId);
 					} else {
 						$idGen = new IdGenService();
 						$rvId = $idGen->newId();
 						$sql = "insert into t_receivables_detail (id, rv_money, act_money, balance_money,
-						biz_date, date_created, ca_id, ca_type, ref_number, ref_type)
-						values ('%s', %f, 0, %f, '%s', now(), '%s', 'customer', '%s', '应收账款期初建账') ";
+						biz_date, date_created, ca_id, ca_type, ref_number, ref_type, company_id)
+						values ('%s', %f, 0, %f, '%s', now(), '%s', 'customer', '%s', '应收账款期初建账', '%s') ";
 						$db->execute($sql, $rvId, $initReceivables, $initReceivables, 
-								$initReceivablesDT, $id, $id);
+								$initReceivablesDT, $id, $id, $companyId);
 					}
 					
 					// 应收总账
-					$sql = "select id from t_receivables where ca_id = '%s' and ca_type = 'customer' ";
-					$data = $db->query($sql, $id);
+					$sql = "select id from t_receivables 
+							where ca_id = '%s' and ca_type = 'customer' 
+								and company_id = '%s' ";
+					$data = $db->query($sql, $id, $companyId);
 					if ($data) {
 						$rvId = $data[0]["id"];
 						$sql = "update t_receivables
-						set rv_money = %f, act_money = 0, balance_money = %f
-						where id = '%s' ";
+							set rv_money = %f, act_money = 0, balance_money = %f
+							where id = '%s' ";
 						$db->execute($sql, $initReceivables, $initReceivables, $rvId);
 					} else {
 						$idGen = new IdGenService();
 						$rvId = $idGen->newId();
 						$sql = "insert into t_receivables (id, rv_money, act_money, balance_money,
-						ca_id, ca_type) values ('%s', %f, 0, %f, '%s', 'customer')";
-						$db->execute($sql, $rvId, $initReceivables, $initReceivables, $id);
+								ca_id, ca_type, company_id) 
+								values ('%s', %f, 0, %f, '%s', 'customer', '%s')";
+						$db->execute($sql, $rvId, $initReceivables, $initReceivables, $id, 
+								$companyId);
 					}
 				}
-			}
-			$log = "导入方式新增客户;{$dataFile}";
-			$bs->insertBizlog($log, "基础数据-客户");
+			} // for
+			
+			$log = "导入方式新增客户";
+			$bs->insertBizlog($log, "客户关系-客户资料");
 		} catch ( Exception $e ) {
 			$success = false;
 			$message = $e;
