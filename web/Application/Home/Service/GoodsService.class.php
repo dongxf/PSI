@@ -10,6 +10,8 @@ use Home\Common\FIdConst;
  * @author 李静波
  */
 class GoodsService extends PSIBaseService {
+	private $LOG_CATEGORY_GOODS = "基础数据-商品";
+	private $LOG_CATEGORY_UNIT = "基础数据-商品计量单位";
 
 	/**
 	 * 返回所有商品计量单位
@@ -39,6 +41,9 @@ class GoodsService extends PSIBaseService {
 		$name = $params["name"];
 		
 		$db = M();
+		$db->startTrans();
+		
+		$log = null;
 		
 		if ($id) {
 			// 编辑
@@ -47,10 +52,9 @@ class GoodsService extends PSIBaseService {
 			$data = $db->query($sql, $name, $id);
 			$cnt = $data[0]["cnt"];
 			if ($cnt > 0) {
+				$db->rollback();
 				return $this->bad("计量单位 [$name] 已经存在");
 			}
-			
-			$db->startTrans();
 			
 			$sql = "update t_goods_unit set name = '%s' where id = '%s' ";
 			$rc = $db->execute($sql, $name, $id);
@@ -60,10 +64,6 @@ class GoodsService extends PSIBaseService {
 			}
 			
 			$log = "编辑计量单位: $name";
-			$bs = new BizlogService();
-			$bs->insertBizlog($log, "基础数据-商品计量单位");
-			
-			$db->commit();
 		} else {
 			// 新增
 			// 检查计量单位是否存在
@@ -71,10 +71,9 @@ class GoodsService extends PSIBaseService {
 			$data = $db->query($sql, $name);
 			$cnt = $data[0]["cnt"];
 			if ($cnt > 0) {
+				$db->rollback();
 				return $this->bad("计量单位 [$name] 已经存在");
 			}
-			
-			$db->startTrans();
 			
 			$idGen = new IdGenService();
 			$id = $idGen->newId();
@@ -86,11 +85,15 @@ class GoodsService extends PSIBaseService {
 			}
 			
 			$log = "新增计量单位: $name";
-			$bs = new BizlogService();
-			$bs->insertBizlog($log, "基础数据-商品计量单位");
-			
-			$db->commit();
 		}
+		
+		// 记录业务日志
+		if ($log) {
+			$bs = new BizlogService();
+			$bs->insertBizlog($log, $this->LOG_CATEGORY_UNIT);
+		}
+		
+		$db->commit();
 		
 		return $this->ok($id);
 	}
@@ -106,9 +109,12 @@ class GoodsService extends PSIBaseService {
 		$id = $params["id"];
 		
 		$db = M();
+		$db->startTrans();
+		
 		$sql = "select name from t_goods_unit where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if (! $data) {
+			$db->rollback();
 			return $this->bad("要删除的商品计量单位不存在");
 		}
 		$name = $data[0]["name"];
@@ -118,10 +124,9 @@ class GoodsService extends PSIBaseService {
 		$data = $db->query($sql, $id);
 		$cnt = $data[0]["cnt"];
 		if ($cnt > 0) {
+			$db->rollback();
 			return $this->bad("商品计量单位 [$name] 已经被使用，不能删除");
 		}
-		
-		$db->startTrans();
 		
 		$sql = "delete from t_goods_unit where id = '%s' ";
 		$rc = $db->execute($sql, $id);
@@ -132,7 +137,7 @@ class GoodsService extends PSIBaseService {
 		
 		$log = "删除商品计量单位: $name";
 		$bs = new BizlogService();
-		$bs->insertBizlog($log, "基础数据-商品计量单位");
+		$bs->insertBizlog($log, $this->LOG_CATEGORY_UNIT);
 		
 		$db->commit();
 		
