@@ -236,6 +236,7 @@ class CustomerService extends PSIBaseService {
 		
 		$us = new UserService();
 		$dataOrg = $us->getLoginUserDataOrg();
+		$companyId = $us->getCompanyId();
 		
 		$sql = "select count(*) as cnt from t_customer_category where id = '%s' ";
 		$data = $db->query($sql, $categoryId);
@@ -318,8 +319,9 @@ class CustomerService extends PSIBaseService {
 		if ($initReceivables && $initReceivablesDT) {
 			$sql = "select count(*) as cnt 
 					from t_receivables_detail 
-					where ca_id = '%s' and ca_type = 'customer' and ref_type <> '应收账款期初建账' ";
-			$data = $db->query($sql, $id);
+					where ca_id = '%s' and ca_type = 'customer' and ref_type <> '应收账款期初建账' 
+						and company_id = '%s' ";
+			$data = $db->query($sql, $id, $companyId);
 			$cnt = $data[0]["cnt"];
 			if ($cnt > 0) {
 				// 已经有应收业务发生，就不再更改期初数据
@@ -338,8 +340,9 @@ class CustomerService extends PSIBaseService {
 			
 			// 应收明细账
 			$sql = "select id from t_receivables_detail 
-					where ca_id = '%s' and ca_type = 'customer' and ref_type = '应收账款期初建账' ";
-			$data = $db->query($sql, $id);
+					where ca_id = '%s' and ca_type = 'customer' and ref_type = '应收账款期初建账' 
+						and company_id = '%s' ";
+			$data = $db->query($sql, $id, $companyId);
 			if ($data) {
 				$rvId = $data[0]["id"];
 				$sql = "update t_receivables_detail
@@ -355,10 +358,10 @@ class CustomerService extends PSIBaseService {
 				$idGen = new IdGenService();
 				$rvId = $idGen->newId();
 				$sql = "insert into t_receivables_detail (id, rv_money, act_money, balance_money,
-						biz_date, date_created, ca_id, ca_type, ref_number, ref_type, data_org)
-						values ('%s', %f, 0, %f, '%s', now(), '%s', 'customer', '%s', '应收账款期初建账', '%s') ";
+						biz_date, date_created, ca_id, ca_type, ref_number, ref_type, data_org, company_id)
+						values ('%s', %f, 0, %f, '%s', now(), '%s', 'customer', '%s', '应收账款期初建账', '%s', '%s') ";
 				$rc = $db->execute($sql, $rvId, $initReceivables, $initReceivables, 
-						$initReceivablesDT, $id, $id, $dataOrg);
+						$initReceivablesDT, $id, $id, $dataOrg, $companyId);
 				if ($rc === false) {
 					$db->rollback();
 					return $this->sqlError(__LINE__);
@@ -366,8 +369,10 @@ class CustomerService extends PSIBaseService {
 			}
 			
 			// 应收总账
-			$sql = "select id from t_receivables where ca_id = '%s' and ca_type = 'customer' ";
-			$data = $db->query($sql, $id);
+			$sql = "select id from t_receivables 
+					where ca_id = '%s' and ca_type = 'customer' 
+						and company_id = '%s' ";
+			$data = $db->query($sql, $id, $companyId);
 			if ($data) {
 				$rvId = $data[0]["id"];
 				$sql = "update t_receivables 
@@ -382,8 +387,9 @@ class CustomerService extends PSIBaseService {
 				$idGen = new IdGenService();
 				$rvId = $idGen->newId();
 				$sql = "insert into t_receivables (id, rv_money, act_money, balance_money,
-						ca_id, ca_type, data_org) values ('%s', %f, 0, %f, '%s', 'customer', '%s')";
-				$rc = $db->execute($sql, $rvId, $initReceivables, $initReceivables, $id, $dataOrg);
+							ca_id, ca_type, data_org, company_id) 
+						values ('%s', %f, 0, %f, '%s', 'customer', '%s', '%s')";
+				$rc = $db->execute($sql, $rvId, $initReceivables, $initReceivables, $id, $dataOrg, $companyId);
 				if ($rc === false) {
 					$db->rollback();
 					return $this->sqlError(__LINE__);
