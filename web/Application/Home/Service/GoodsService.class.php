@@ -301,7 +301,7 @@ class GoodsService extends PSIBaseService {
 		$sql = "select full_name from t_goods_category where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if (! $data) {
-			return;
+			return true;
 		}
 		
 		$fullName = $data[0]["full_name"];
@@ -315,12 +315,23 @@ class GoodsService extends PSIBaseService {
 			$sql = "update t_goods_category
 					set full_name = '%s'
 					where id = '%s' ";
-			$db->execute($sql, $subFullName, $subId);
+			$rc = $db->execute($sql, $subFullName, $subId);
+			if ($rc === false) {
+				return false;
+			}
 			
-			$this->updateSubCategoryFullName($db, $subId); // 递归调用自身
+			$rc = $this->updateSubCategoryFullName($db, $subId); // 递归调用自身
+			if ($rc === false) {
+				return false;
+			}
 		}
+		
+		return true;
 	}
 
+	/**
+	 * 获得某个商品分类的详情
+	 */
 	public function getCategoryInfo($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
@@ -365,6 +376,7 @@ class GoodsService extends PSIBaseService {
 		$parentId = $params["parentId"];
 		
 		$db = M();
+		$db->startTrans();
 		
 		if ($parentId) {
 			// 检查id是否存在
@@ -372,6 +384,7 @@ class GoodsService extends PSIBaseService {
 			$data = $db->query($sql, $parentId);
 			$cnt = $data[0]["cnt"];
 			if ($cnt != 1) {
+				$db->rollback();
 				return $this->bad("上级分类不存在");
 			}
 		}
@@ -383,11 +396,13 @@ class GoodsService extends PSIBaseService {
 			$data = $db->query($sql, $code, $id);
 			$cnt = $data[0]["cnt"];
 			if ($cnt > 0) {
+				$db->rollback();
 				return $this->bad("编码为 [{$code}] 的分类已经存在");
 			}
 			
 			if ($parentId) {
 				if ($parentId == $id) {
+					$db->rollback();
 					return $this->bad("上级分类不能是自身");
 				}
 				
@@ -399,6 +414,7 @@ class GoodsService extends PSIBaseService {
 						$tempParentId = $d[0]["parent_id"];
 						
 						if ($tempParentId == $id) {
+							$db->rollback();
 							return $this->bad("不能选择下级分类作为上级分类");
 						}
 					} else {
@@ -416,20 +432,30 @@ class GoodsService extends PSIBaseService {
 				$sql = "update t_goods_category
 					set code = '%s', name = '%s', parent_id = '%s', full_name = '%s'
 					where id = '%s' ";
-				$db->execute($sql, $code, $name, $parentId, $fullName, $id);
+				$rc = $db->execute($sql, $code, $name, $parentId, $fullName, $id);
+				if ($rc === false) {
+					$db->rollback();
+					return $this->sqlError(__LINE__);
+				}
 			} else {
 				$sql = "update t_goods_category
 					set code = '%s', name = '%s', parent_id = null, full_name = '%s'
 					where id = '%s' ";
-				$db->execute($sql, $code, $name, $name, $id);
+				$rc = $db->execute($sql, $code, $name, $name, $id);
+				if ($rc === false) {
+					$db->rollback();
+					return $this->sqlError(__LINE__);
+				}
 			}
 			
 			// 同步子分类的full_name字段
-			$this->updateSubCategoryFullName($db, $id);
+			$rc = $this->updateSubCategoryFullName($db, $id);
+			if ($rc === false) {
+				$db->rollback();
+				return $this->sqlError(__LINE__);
+			}
 			
 			$log = "编辑商品分类: 编码 = {$code}， 分类名称 = {$name}";
-			$bs = new BizlogService();
-			$bs->insertBizlog($log, "基础数据-商品");
 		} else {
 			// 新增
 			// 检查同编码的分类是否存在
@@ -437,6 +463,7 @@ class GoodsService extends PSIBaseService {
 			$data = $db->query($sql, $code);
 			$cnt = $data[0]["cnt"];
 			if ($cnt > 0) {
+				$db->rollback();
 				return $this->bad("编码为 [{$code}] 的分类已经存在");
 			}
 			
@@ -456,17 +483,32 @@ class GoodsService extends PSIBaseService {
 				
 				$sql = "insert into t_goods_category (id, code, name, data_org, parent_id, full_name)
 					values ('%s', '%s', '%s', '%s', '%s', '%s')";
-				$db->execute($sql, $id, $code, $name, $dataOrg, $parentId, $fullName);
+				$rc = $db->execute($sql, $id, $code, $name, $dataOrg, $parentId, $fullName);
+				if ($rc === false) {
+					$db->rollback();
+					return $this->sqlError(__LINE__);
+				}
 			} else {
 				$sql = "insert into t_goods_category (id, code, name, data_org, full_name)
 					values ('%s', '%s', '%s', '%s', '%s')";
-				$db->execute($sql, $id, $code, $name, $dataOrg, $name);
+				$rc = $db->execute($sql, $id, $code, $name, $dataOrg, $name);
+				if ($rc === false) {
+					$db->rollback();
+					return $this->sqlError(__LINE__);
+				}
 			}
 			
 			$log = "新增商品分类: 编码 = {$code}， 分类名称 = {$name}";
-			$bs = new BizlogService();
-			$bs->insertBizlog($log, "基础数据-商品");
 		}
+		
+		// 记录业务日志
+		if ($log) {
+			$bs = new BizlogService();
+			$bs->insertBizlog($log, $this->LOG_CATEGORY_GOODS);
+		}
+		
+		$db->commit();
+		
 		return $this->ok($id);
 	}
 
@@ -481,9 +523,12 @@ class GoodsService extends PSIBaseService {
 		$id = $params["id"];
 		
 		$db = M();
+		$db->startTrans();
+		
 		$sql = "select code, name from t_goods_category where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if (! $data) {
+			$db->rollback();
 			return $this->bad("要删除的商品分类不存在");
 		}
 		$code = $data[0]["code"];
@@ -493,10 +538,9 @@ class GoodsService extends PSIBaseService {
 		$data = $db->query($sql, $id);
 		$cnt = $data[0]["cnt"];
 		if ($cnt > 0) {
+			$db->rollback();
 			return $this->bad("还有属于商品分类 [{$name}] 的商品，不能删除该分类");
 		}
-		
-		$db->startTrans();
 		
 		$sql = "delete from t_goods_category where id = '%s' ";
 		$rc = $db->execute($sql, $id);
@@ -507,7 +551,7 @@ class GoodsService extends PSIBaseService {
 		
 		$log = "删除商品分类：  编码 = {$code}， 分类名称 = {$name}";
 		$bs = new BizlogService();
-		$bs->insertBizlog($log, "基础数据-商品");
+		$bs->insertBizlog($log, $this->LOG_CATEGORY_GOODS);
 		
 		$db->commit();
 		
@@ -619,6 +663,9 @@ class GoodsService extends PSIBaseService {
 		);
 	}
 
+	/**
+	 * 新建或编辑商品
+	 */
 	public function editGoods($params) {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
@@ -636,14 +683,18 @@ class GoodsService extends PSIBaseService {
 		$memo = $params["memo"];
 		
 		$db = M();
+		$db->startTrans();
+		
 		$sql = "select name from t_goods_unit where id = '%s' ";
 		$data = $db->query($sql, $unitId);
 		if (! $data) {
+			$db->rollback();
 			return $this->bad("计量单位不存在");
 		}
 		$sql = "select name from t_goods_category where id = '%s' ";
 		$data = $db->query($sql, $categoryId);
 		if (! $data) {
+			$db->rollback();
 			return $this->bad("商品分类不存在");
 		}
 		
@@ -654,6 +705,7 @@ class GoodsService extends PSIBaseService {
 			$data = $db->query($sql, $code, $id);
 			$cnt = $data[0]["cnt"];
 			if ($cnt > 0) {
+				$db->rollback();
 				return $this->bad("编码为 [{$code}]的商品已经存在");
 			}
 			
@@ -663,6 +715,7 @@ class GoodsService extends PSIBaseService {
 				$data = $db->query($sql, $barCode, $id);
 				$cnt = $data[0]["cnt"];
 				if ($cnt != 0) {
+					$db->rollback();
 					return $this->bad("条形码[{$barCode}]已经被其他商品使用");
 				}
 			}
@@ -676,12 +729,14 @@ class GoodsService extends PSIBaseService {
 						bar_code = '%s', memo = '%s'
 					where id = '%s' ";
 			
-			$db->execute($sql, $code, $name, $spec, $categoryId, $unitId, $salePrice, $py, 
+			$rc = $db->execute($sql, $code, $name, $spec, $categoryId, $unitId, $salePrice, $py, 
 					$purchasePrice, $barCode, $memo, $id);
+			if ($rc === false) {
+				$db->rollback();
+				return $this->sqlError(__LINE__);
+			}
 			
 			$log = "编辑商品: 商品编码 = {$code}, 品名 = {$name}, 规格型号 = {$spec}";
-			$bs = new BizlogService();
-			$bs->insertBizlog($log, "基础数据-商品");
 		} else {
 			// 新增
 			// 检查商品编码是否唯一
@@ -689,6 +744,7 @@ class GoodsService extends PSIBaseService {
 			$data = $db->query($sql, $code);
 			$cnt = $data[0]["cnt"];
 			if ($cnt > 0) {
+				$db->rollback();
 				return $this->bad("编码为 [{$code}]的商品已经存在");
 			}
 			
@@ -698,6 +754,7 @@ class GoodsService extends PSIBaseService {
 				$data = $db->query($sql, $barCode);
 				$cnt = $data[0]["cnt"];
 				if ($cnt != 0) {
+					$db->rollback();
 					return $this->bad("条形码[{$barCode}]已经被其他商品使用");
 				}
 			}
@@ -712,17 +769,30 @@ class GoodsService extends PSIBaseService {
 			$sql = "insert into t_goods (id, code, name, spec, category_id, unit_id, sale_price, 
 						py, purchase_price, bar_code, memo, data_org)
 					values ('%s', '%s', '%s', '%s', '%s', '%s', %f, '%s', %f, '%s', '%s', '%s')";
-			$db->execute($sql, $id, $code, $name, $spec, $categoryId, $unitId, $salePrice, $py, 
-					$purchasePrice, $barCode, $memo, $dataOrg);
+			$rc = $db->execute($sql, $id, $code, $name, $spec, $categoryId, $unitId, $salePrice, 
+					$py, $purchasePrice, $barCode, $memo, $dataOrg);
+			if ($rc === false) {
+				$db->rollback();
+				return $this->sqlError(__LINE__);
+			}
 			
 			$log = "新增商品: 商品编码 = {$code}, 品名 = {$name}, 规格型号 = {$spec}";
-			$bs = new BizlogService();
-			$bs->insertBizlog($log, "基础数据-商品");
 		}
+		
+		// 记录业务日志
+		if ($log) {
+			$bs = new BizlogService();
+			$bs->insertBizlog($log, $this->LOG_CATEGORY_GOODS);
+		}
+		
+		$db->commit();
 		
 		return $this->ok($id);
 	}
 
+	/**
+	 * 删除商品
+	 */
 	public function deleteGoods($params) {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
@@ -731,9 +801,12 @@ class GoodsService extends PSIBaseService {
 		$id = $params["id"];
 		
 		$db = M();
+		$db->startTrans();
+		
 		$sql = "select code, name, spec from t_goods where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if (! $data) {
+			$db->rollback();
 			return $this->bad("要删除的商品不存在");
 		}
 		$code = $data[0]["code"];
@@ -745,6 +818,7 @@ class GoodsService extends PSIBaseService {
 		$data = $db->query($sql, $id);
 		$cnt = $data[0]["cnt"];
 		if ($cnt > 0) {
+			$db->rollback();
 			return $this->bad("商品[{$code} {$name}]已经在采购订单中使用了，不能删除");
 		}
 		
@@ -752,6 +826,7 @@ class GoodsService extends PSIBaseService {
 		$data = $db->query($sql, $id);
 		$cnt = $data[0]["cnt"];
 		if ($cnt > 0) {
+			$db->rollback();
 			return $this->bad("商品[{$code} {$name}]已经在采购入库单中使用了，不能删除");
 		}
 		
@@ -759,6 +834,7 @@ class GoodsService extends PSIBaseService {
 		$data = $db->query($sql, $id);
 		$cnt = $data[0]["cnt"];
 		if ($cnt > 0) {
+			$db->rollback();
 			return $this->bad("商品[{$code} {$name}]已经在销售出库单中使用了，不能删除");
 		}
 		
@@ -766,19 +842,29 @@ class GoodsService extends PSIBaseService {
 		$data = $db->query($sql, $id);
 		$cnt = $data[0]["cnt"];
 		if ($cnt > 0) {
+			$db->rollback();
 			return $this->bad("商品[{$code} {$name}]在业务中已经使用了，不能删除");
 		}
 		
 		$sql = "delete from t_goods where id = '%s' ";
-		$db->execute($sql, $id);
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			$db->rollback();
+			return $this->sqlError(__LINE__);
+		}
 		
 		$log = "删除商品： 商品编码 = {$code}， 品名 = {$name}，规格型号 = {$spec}";
 		$bs = new BizlogService();
-		$bs->insertBizlog($log, "基础数据-商品");
+		$bs->insertBizlog($log, $this->LOG_CATEGORY_GOODS);
+		
+		$db->commit();
 		
 		return $this->ok();
 	}
 
+	/**
+	 * 商品字段，查询数据
+	 */
 	public function queryData($queryKey) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
@@ -821,6 +907,11 @@ class GoodsService extends PSIBaseService {
 		return $result;
 	}
 
+	/**
+	 * 商品字段，查询数据
+	 *
+	 * @param unknown $queryKey        	
+	 */
 	public function queryDataWithSalePrice($queryKey) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
@@ -866,6 +957,9 @@ class GoodsService extends PSIBaseService {
 		return $result;
 	}
 
+	/**
+	 * 商品字段，查询数据
+	 */
 	public function queryDataWithPurchasePrice($queryKey) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
@@ -911,6 +1005,9 @@ class GoodsService extends PSIBaseService {
 		return $result;
 	}
 
+	/**
+	 * 获得某个商品的详情
+	 */
 	public function getGoodsInfo($id, $categoryId) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
@@ -963,6 +1060,9 @@ class GoodsService extends PSIBaseService {
 		}
 	}
 
+	/**
+	 * 获得某个商品的安全库存列表
+	 */
 	public function goodsSafetyInventoryList($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
@@ -1029,6 +1129,9 @@ class GoodsService extends PSIBaseService {
 		return $result;
 	}
 
+	/**
+	 * 获得某个商品安全库存的详情
+	 */
 	public function siInfo($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
@@ -1079,6 +1182,9 @@ class GoodsService extends PSIBaseService {
 		return $result;
 	}
 
+	/**
+	 * 设置商品的安全
+	 */
 	public function editSafetyInventory($params) {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
@@ -1098,58 +1204,61 @@ class GoodsService extends PSIBaseService {
 		$idGen = new IdGenService();
 		
 		$db->startTrans();
-		try {
-			$sql = "select code, name, spec from t_goods where id = '%s'";
-			$data = $db->query($sql, $id);
-			if (! $data) {
-				$db->rollback();
-				return $this->bad("商品不存在，无法设置商品安全库存");
-			}
-			$goodsCode = $data[0]["code"];
-			$goodsName = $data[0]["name"];
-			$goodsSpec = $data[0]["spec"];
-			
-			$sql = "delete from t_goods_si where goods_id = '%s' ";
-			$db->execute($sql, $id);
-			
-			foreach ( $items as $v ) {
-				$warehouseId = $v["warehouseId"];
-				$si = $v["si"];
-				if (! $si) {
-					$si = 0;
-				}
-				if ($si < 0) {
-					$si = 0;
-				}
-				$upper = $v["invUpper"];
-				if (! $upper) {
-					$upper = 0;
-				}
-				if ($upper < 0) {
-					$upper = 0;
-				}
-				$sql = "insert into t_goods_si(id, goods_id, warehouse_id, safety_inventory, inventory_upper)
-						values ('%s', '%s', '%s', %d, %d)";
-				$rc = $db->execute($sql, $idGen->newId(), $id, $warehouseId, $si, $upper);
-				if (! $rc) {
-					$db->rollback();
-					return $this->sqlError();
-				}
-			}
-			
-			$bs = new BizlogService();
-			$log = "为商品[$goodsCode $goodsName $goodsSpec]设置安全库存";
-			$bs->insertBizlog($log, "基础数据-商品");
-			
-			$db->commit();
-		} catch ( Exception $e ) {
+		
+		$sql = "select code, name, spec from t_goods where id = '%s'";
+		$data = $db->query($sql, $id);
+		if (! $data) {
 			$db->rollback();
-			return $this->sqlError();
+			return $this->bad("商品不存在，无法设置商品安全库存");
 		}
+		$goodsCode = $data[0]["code"];
+		$goodsName = $data[0]["name"];
+		$goodsSpec = $data[0]["spec"];
+		
+		$sql = "delete from t_goods_si where goods_id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			$db->rollback();
+			return $this->sqlError(__LINE__);
+		}
+		
+		foreach ( $items as $v ) {
+			$warehouseId = $v["warehouseId"];
+			$si = $v["si"];
+			if (! $si) {
+				$si = 0;
+			}
+			if ($si < 0) {
+				$si = 0;
+			}
+			$upper = $v["invUpper"];
+			if (! $upper) {
+				$upper = 0;
+			}
+			if ($upper < 0) {
+				$upper = 0;
+			}
+			$sql = "insert into t_goods_si(id, goods_id, warehouse_id, safety_inventory, inventory_upper)
+						values ('%s', '%s', '%s', %d, %d)";
+			$rc = $db->execute($sql, $idGen->newId(), $id, $warehouseId, $si, $upper);
+			if ($rc === false) {
+				$db->rollback();
+				return $this->sqlError(__LINE__);
+			}
+		}
+		
+		$bs = new BizlogService();
+		$log = "为商品[$goodsCode $goodsName $goodsSpec]设置安全库存";
+		$bs->insertBizlog($log, $this->LOG_CATEGORY_GOODS);
+		
+		$db->commit();
 		
 		return $this->ok();
 	}
 
+	/**
+	 * 通过条形码查询商品信息
+	 */
 	public function queryGoodsInfoByBarcode($params) {
 		$barcode = $params["barcode"];
 		
@@ -1177,6 +1286,9 @@ class GoodsService extends PSIBaseService {
 		return $result;
 	}
 
+	/**
+	 * 查收商品种类总数
+	 */
 	public function getTotalGoodsCount($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
