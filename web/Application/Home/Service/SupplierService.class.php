@@ -395,6 +395,7 @@ class SupplierService extends PSIBaseService {
 		
 		$us = new UserService();
 		$dataOrg = $us->getLoginUserDataOrg();
+		$companyId = $us->getCompanyId();
 		
 		$sql = "select count(*) as cnt from t_supplier_category where id = '%s' ";
 		$data = $db->query($sql, $categoryId);
@@ -479,8 +480,9 @@ class SupplierService extends PSIBaseService {
 		if ($initPayables && $initPayablesDT) {
 			$sql = "select count(*) as cnt 
 					from t_payables_detail 
-					where ca_id = '%s' and ca_type = 'supplier' and ref_type <> '应付账款期初建账' ";
-			$data = $db->query($sql, $id);
+					where ca_id = '%s' and ca_type = 'supplier' and ref_type <> '应付账款期初建账' 
+						and company_id = '%s' ";
+			$data = $db->query($sql, $id, $companyId);
 			$cnt = $data[0]["cnt"];
 			if ($cnt > 0) {
 				// 已经有往来业务发生，就不能修改应付账了
@@ -499,8 +501,9 @@ class SupplierService extends PSIBaseService {
 			
 			// 应付明细账
 			$sql = "select id from t_payables_detail 
-					where ca_id = '%s' and ca_type = 'supplier' and ref_type = '应付账款期初建账' ";
-			$data = $db->query($sql, $id);
+					where ca_id = '%s' and ca_type = 'supplier' and ref_type = '应付账款期初建账' 
+						and company_id = '%s' ";
+			$data = $db->query($sql, $id, $companyId);
 			if ($data) {
 				$payId = $data[0]["id"];
 				$sql = "update t_payables_detail 
@@ -515,10 +518,10 @@ class SupplierService extends PSIBaseService {
 				$idGen = new IdGenService();
 				$payId = $idGen->newId();
 				$sql = "insert into t_payables_detail (id, pay_money, act_money, balance_money, ca_id,
-						ca_type, ref_type, ref_number, biz_date, date_created, data_org) 
-						values ('%s', %f, 0, %f, '%s', 'supplier', '应付账款期初建账', '%s', '%s', now(), '%s') ";
+						ca_type, ref_type, ref_number, biz_date, date_created, data_org, company_id) 
+						values ('%s', %f, 0, %f, '%s', 'supplier', '应付账款期初建账', '%s', '%s', now(), '%s', '%s') ";
 				$rc = $db->execute($sql, $payId, $initPayables, $initPayables, $id, $id, 
-						$initPayablesDT, $dataOrg);
+						$initPayablesDT, $dataOrg, $companyId);
 				if ($rc === false) {
 					$db->rollback();
 					return $this->sqlError(__LINE__);
@@ -526,8 +529,10 @@ class SupplierService extends PSIBaseService {
 			}
 			
 			// 应付总账
-			$sql = "select id from t_payables where ca_id = '%s' and ca_type = 'supplier' ";
-			$data = $db->query($sql, $id);
+			$sql = "select id from t_payables 
+					where ca_id = '%s' and ca_type = 'supplier' 
+						and company_id = '%s' ";
+			$data = $db->query($sql, $id, $companyId);
 			if ($data) {
 				$pId = $data[0]["id"];
 				$sql = "update t_payables 
@@ -541,9 +546,10 @@ class SupplierService extends PSIBaseService {
 			} else {
 				$idGen = new IdGenService();
 				$pId = $idGen->newId();
-				$sql = "insert into t_payables (id, pay_money, act_money, balance_money, ca_id, ca_type, data_org)
-						values ('%s', %f, 0, %f, '%s', 'supplier', '%s') ";
-				$rc = $db->execute($sql, $pId, $initPayables, $initPayables, $id, $dataOrg);
+				$sql = "insert into t_payables (id, pay_money, act_money, balance_money, ca_id, 
+							ca_type, data_org, company_id)
+						values ('%s', %f, 0, %f, '%s', 'supplier', '%s', '%s') ";
+				$rc = $db->execute($sql, $pId, $initPayables, $initPayables, $id, $dataOrg, $companyId);
 				if ($rc === false) {
 					$db->rollback();
 					return $this->sqlError(__LINE__);
