@@ -10,6 +10,7 @@ use Home\Common\FIdConst;
  * @author 李静波
  */
 class WSBillService extends PSIBaseService {
+	private $LOG_CATEGORY = "销售出库";
 
 	public function wsBillInfo($params) {
 		if ($this->isNotOnline()) {
@@ -140,12 +141,14 @@ class WSBillService extends PSIBaseService {
 		$items = $bill["items"];
 		
 		$db = M();
+		$db->startTrans();
 		
 		// 检查客户
 		$sql = "select count(*) as cnt from t_customer where id = '%s' ";
 		$data = $db->query($sql, $customerId);
 		$cnt = $data[0]["cnt"];
 		if ($cnt != 1) {
+			$db->rollback();
 			return $this->bad("选择的客户不存在，无法保存数据");
 		}
 		
@@ -154,6 +157,7 @@ class WSBillService extends PSIBaseService {
 		$data = $db->query($sql, $warehouseId);
 		$cnt = $data[0]["cnt"];
 		if ($cnt != 1) {
+			$db->rollback();
 			return $this->bad("选择的仓库不存在，无法保存数据");
 		}
 		
@@ -162,125 +166,147 @@ class WSBillService extends PSIBaseService {
 		$data = $db->query($sql, $bizUserId);
 		$cnt = $data[0]["cnt"];
 		if ($cnt != 1) {
+			$db->rollback();
 			return $this->bad("选择的业务员不存在，无法保存数据");
 		}
 		
 		// 检查业务日期
 		if (! $this->dateIsValid($bizDT)) {
+			$db->rollback();
 			return $this->bad("业务日期不正确");
 		}
 		
 		$idGen = new IdGenService();
+		
+		$log = null;
+		
 		if ($id) {
 			// 编辑
-			$sql = "select ref, bill_status from t_ws_bill where id = '%s' ";
+			$sql = "select ref, bill_status, data_org from t_ws_bill where id = '%s' ";
 			$data = $db->query($sql, $id);
 			if (! $data) {
+				$db->rollback();
 				return $this->bad("要编辑的销售出库单不存在");
 			}
 			$ref = $data[0]["ref"];
 			$billStatus = $data[0]["bill_status"];
 			if ($billStatus != 0) {
+				$db->rollback();
 				return $this->bad("销售出库单[单号：{$ref}]已经提交出库了，不能再编辑");
 			}
+			$dataOrg = $data[0]["data_org"];
 			
-			$db->startTrans();
-			try {
-				$sql = "delete from t_ws_bill_detail where wsbill_id = '%s' ";
-				$db->execute($sql, $id);
-				$sql = "insert into t_ws_bill_detail (id, date_created, goods_id, 
-						goods_count, goods_price, goods_money,
-						show_order, wsbill_id, sn_note) 
-						values ('%s', now(), '%s', %d, %f, %f, %d, '%s', '%s')";
-				foreach ( $items as $i => $v ) {
-					$goodsId = $v["goodsId"];
-					if ($goodsId) {
-						$goodsCount = intval($v["goodsCount"]);
-						$goodsPrice = floatval($v["goodsPrice"]);
-						$goodsMoney = floatval($v["goodsMoney"]);
-						
-						$sn = $v["sn"];
-						
-						$db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsPrice, 
-								$goodsMoney, $i, $id, $sn);
-					}
-				}
-				$sql = "select sum(goods_money) as sum_goods_money from t_ws_bill_detail where wsbill_id = '%s' ";
-				$data = $db->query($sql, $id);
-				$sumGoodsMoney = $data[0]["sum_goods_money"];
-				if (! $sumGoodsMoney) {
-					$sumGoodsMoney = 0;
-				}
-				
-				$sql = "update t_ws_bill 
-						set sale_money = %f, customer_id = '%s', warehouse_id = '%s', 
-						biz_user_id = '%s', bizdt = '%s', receiving_type = %d 
-						where id = '%s' ";
-				$db->execute($sql, $sumGoodsMoney, $customerId, $warehouseId, $bizUserId, $bizDT, 
-						$receivingType, $id);
-				
-				$log = "编辑销售出库单，单号 = {$ref}";
-				$bs = new BizlogService();
-				$bs->insertBizlog($log, "销售出库");
-				
-				$db->commit();
-			} catch ( Exception $ex ) {
+			$sql = "delete from t_ws_bill_detail where wsbill_id = '%s' ";
+			$rc = $db->execute($sql, $id);
+			if ($rc === false) {
 				$db->rollback();
-				return $this->bad("数据库错误，请联系管理员");
+				return $this->sqlError(__LINE__);
 			}
-		} else {
-			$us = new UserService();
-			$dataOrg = $us->getLoginUserDataOrg();
 			
-			// 新增
-			$db->startTrans();
-			try {
-				$id = $idGen->newId();
-				$ref = $this->genNewBillRef();
-				$sql = "insert into t_ws_bill(id, bill_status, bizdt, biz_user_id, customer_id,  date_created,
-						input_user_id, ref, warehouse_id, receiving_type, data_org) 
-						values ('%s', 0, '%s', '%s', '%s', now(), '%s', '%s', '%s', %d, '%s')";
-				
-				$db->execute($sql, $id, $bizDT, $bizUserId, $customerId, $us->getLoginUserId(), 
-						$ref, $warehouseId, $receivingType, $dataOrg);
-				
-				$sql = "insert into t_ws_bill_detail (id, date_created, goods_id, 
+			$sql = "insert into t_ws_bill_detail (id, date_created, goods_id, 
 						goods_count, goods_price, goods_money,
 						show_order, wsbill_id, sn_note, data_org) 
 						values ('%s', now(), '%s', %d, %f, %f, %d, '%s', '%s', '%s')";
-				foreach ( $items as $i => $v ) {
-					$goodsId = $v["goodsId"];
-					if ($goodsId) {
-						$goodsCount = intval($v["goodsCount"]);
-						$goodsPrice = floatval($v["goodsPrice"]);
-						$goodsMoney = floatval($v["goodsMoney"]);
-						
-						$sn = $v["sn"];
-						
-						$db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsPrice, 
-								$goodsMoney, $i, $id, $sn, $dataOrg);
+			foreach ( $items as $i => $v ) {
+				$goodsId = $v["goodsId"];
+				if ($goodsId) {
+					$goodsCount = intval($v["goodsCount"]);
+					$goodsPrice = floatval($v["goodsPrice"]);
+					$goodsMoney = floatval($v["goodsMoney"]);
+					
+					$sn = $v["sn"];
+					
+					$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsPrice, 
+							$goodsMoney, $i, $id, $sn, $dataOrg);
+					if ($rc === false) {
+						$db->rollback();
+						return $this->sqlError(__LINE__);
 					}
 				}
-				$sql = "select sum(goods_money) as sum_goods_money from t_ws_bill_detail where wsbill_id = '%s' ";
-				$data = $db->query($sql, $id);
-				$sumGoodsMoney = $data[0]["sum_goods_money"];
-				if (! $sumGoodsMoney) {
-					$sumGoodsMoney = 0;
-				}
-				
-				$sql = "update t_ws_bill set sale_money = %f where id = '%s' ";
-				$db->execute($sql, $sumGoodsMoney, $id);
-				
-				$log = "新增销售出库单，单号 = {$ref}";
-				$bs = new BizlogService();
-				$bs->insertBizlog($log, "销售出库");
-				
-				$db->commit();
-			} catch ( Exception $ex ) {
-				$db->rollback();
-				return $this->bad("数据库错误，请联系管理员");
 			}
+			$sql = "select sum(goods_money) as sum_goods_money from t_ws_bill_detail where wsbill_id = '%s' ";
+			$data = $db->query($sql, $id);
+			$sumGoodsMoney = $data[0]["sum_goods_money"];
+			if (! $sumGoodsMoney) {
+				$sumGoodsMoney = 0;
+			}
+			
+			$sql = "update t_ws_bill 
+						set sale_money = %f, customer_id = '%s', warehouse_id = '%s', 
+						biz_user_id = '%s', bizdt = '%s', receiving_type = %d 
+						where id = '%s' ";
+			$rc = $db->execute($sql, $sumGoodsMoney, $customerId, $warehouseId, $bizUserId, $bizDT, 
+					$receivingType, $id);
+			if ($rc === false) {
+				$db->rollback();
+				return $this->sqlError(__LINE__);
+			}
+			
+			$log = "编辑销售出库单，单号 = {$ref}";
+		} else {
+			$us = new UserService();
+			$dataOrg = $us->getLoginUserDataOrg();
+			$companyId = $us->getCompanyId();
+			
+			// 新增
+			$id = $idGen->newId();
+			$ref = $this->genNewBillRef();
+			$sql = "insert into t_ws_bill(id, bill_status, bizdt, biz_user_id, customer_id,  date_created,
+						input_user_id, ref, warehouse_id, receiving_type, data_org, company_id) 
+						values ('%s', 0, '%s', '%s', '%s', now(), '%s', '%s', '%s', %d, '%s', '%s')";
+			
+			$rc = $db->execute($sql, $id, $bizDT, $bizUserId, $customerId, $us->getLoginUserId(), 
+					$ref, $warehouseId, $receivingType, $dataOrg, $companyId);
+			if ($rc === false) {
+				$db->rollback();
+				return $this->sqlError(__LINE__);
+			}
+			
+			$sql = "insert into t_ws_bill_detail (id, date_created, goods_id, 
+						goods_count, goods_price, goods_money,
+						show_order, wsbill_id, sn_note, data_org) 
+						values ('%s', now(), '%s', %d, %f, %f, %d, '%s', '%s', '%s')";
+			foreach ( $items as $i => $v ) {
+				$goodsId = $v["goodsId"];
+				if ($goodsId) {
+					$goodsCount = intval($v["goodsCount"]);
+					$goodsPrice = floatval($v["goodsPrice"]);
+					$goodsMoney = floatval($v["goodsMoney"]);
+					
+					$sn = $v["sn"];
+					
+					$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsPrice, 
+							$goodsMoney, $i, $id, $sn, $dataOrg);
+					if ($rc === false) {
+						$db->rollback();
+						return $this->sqlError(__LINE__);
+					}
+				}
+			}
+			$sql = "select sum(goods_money) as sum_goods_money from t_ws_bill_detail where wsbill_id = '%s' ";
+			$data = $db->query($sql, $id);
+			$sumGoodsMoney = $data[0]["sum_goods_money"];
+			if (! $sumGoodsMoney) {
+				$sumGoodsMoney = 0;
+			}
+			
+			$sql = "update t_ws_bill set sale_money = %f where id = '%s' ";
+			$rc = $db->execute($sql, $sumGoodsMoney, $id);
+			if ($rc === false) {
+				$db->rollback();
+				return $this->sqlError(__LINE__);
+			}
+			
+			$log = "新增销售出库单，单号 = {$ref}";
 		}
+		
+		// 记录业务日志
+		if ($log) {
+			$bs = new BizlogService();
+			$bs->insertBizlog($log, "销售出库");
+		}
+		
+		$db->commit();
 		
 		return $this->ok($id);
 	}
