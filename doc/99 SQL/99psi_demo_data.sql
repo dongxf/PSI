@@ -85,25 +85,25 @@ TRUNCATE TABLE `t_payables`;
 INSERT INTO `t_payables` (`id`, `act_money`, `balance_money`, `ca_id`, `ca_type`, `pay_money`) VALUES
 ('88072F8B-B80F-11E4-8FC9-782BCBD7746B', '0.00', '5000.00', '87D62652-B80F-11E4-8FC9-782BCBD7746B', 'supplier', '5000.00');
 
-update t_payables set data_org = '01010001' ;
+update t_payables set data_org = '01010001', company_id = '4D74E1E4-A129-11E4-9B6A-782BCBD7746B' ;
 
 TRUNCATE TABLE `t_payables_detail`;
 INSERT INTO `t_payables_detail` (`id`, `act_money`, `balance_money`, `ca_id`, `ca_type`, `biz_date`, `date_created`, `pay_money`, `ref_number`, `ref_type`) VALUES
 ('8800479E-B80F-11E4-8FC9-782BCBD7746B', '0.00', '5000.00', '87D62652-B80F-11E4-8FC9-782BCBD7746B', 'supplier', '2015-01-01 00:00:00', '2015-02-19 16:15:57', '5000.00', '87D62652-B80F-11E4-8FC9-782BCBD7746B', '应付账款期初建账');
 
-update t_payables_detail set data_org = '01010001' ;
+update t_payables_detail set data_org = '01010001', company_id = '4D74E1E4-A129-11E4-9B6A-782BCBD7746B' ;
 
 TRUNCATE TABLE `t_receivables`;
 INSERT INTO `t_receivables` (`id`, `act_money`, `balance_money`, `ca_id`, `ca_type`, `rv_money`) VALUES
 ('04DFC20D-B812-11E4-8FC9-782BCBD7746B', '0.00', '7000.00', '04B53C5E-B812-11E4-8FC9-782BCBD7746B', 'customer', '7000.00');
 
-update t_receivables set data_org = '01010001' ;
+update t_receivables set data_org = '01010001', company_id = '4D74E1E4-A129-11E4-9B6A-782BCBD7746B' ;
 
 TRUNCATE TABLE `t_receivables_detail`;
 INSERT INTO `t_receivables_detail` (`id`, `act_money`, `balance_money`, `ca_id`, `ca_type`, `biz_date`, `date_created`, `ref_number`, `ref_type`, `rv_money`) VALUES
 ('04D71E39-B812-11E4-8FC9-782BCBD7746B', '0.00', '7000.00', '04B53C5E-B812-11E4-8FC9-782BCBD7746B', 'customer', '2015-01-01 00:00:00', '2015-02-19 16:33:45', '04B53C5E-B812-11E4-8FC9-782BCBD7746B', '应收账款期初建账', '7000.00');
 
-update t_receivables_detail set data_org = '01010001' ;
+update t_receivables_detail set data_org = '01010001', company_id = '4D74E1E4-A129-11E4-9B6A-782BCBD7746B' ;
 
 TRUNCATE TABLE `t_recent_fid`;
 INSERT INTO `t_recent_fid` (`fid`, `user_id`, `click_count`) VALUES
