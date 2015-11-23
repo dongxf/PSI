@@ -10,7 +10,11 @@ use Home\Common\FIdConst;
  * @author 李静波
  */
 class CustomerService extends PSIBaseService {
+	private $LOG_CATEGORY = "客户关系-客户资料";
 
+	/**
+	 * 客户分类列表
+	 */
 	public function categoryList($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
@@ -76,6 +80,9 @@ class CustomerService extends PSIBaseService {
 		return M()->query($sql, $queryParam);
 	}
 
+	/**
+	 * 新建或编辑客户分类
+	 */
 	public function editCategory($params) {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
@@ -86,6 +93,7 @@ class CustomerService extends PSIBaseService {
 		$name = $params["name"];
 		
 		$db = M();
+		$db->startTrans();
 		
 		if ($id) {
 			// 编辑
@@ -94,17 +102,20 @@ class CustomerService extends PSIBaseService {
 			$data = $db->query($sql, $code, $id);
 			$cnt = $data[0]["cnt"];
 			if ($cnt > 0) {
+				$db->rollback();
 				return $this->bad("编码为 [{$code}] 的分类已经存在");
 			}
 			
 			$sql = "update t_customer_category
 					set code = '%s', name = '%s' 
 					where id = '%s' ";
-			$db->execute($sql, $code, $name, $id);
+			$rc = $db->execute($sql, $code, $name, $id);
+			if ($rc === false) {
+				$db->rollback();
+				return $this->sqlError(__LINE__);
+			}
 			
 			$log = "编辑客户分类: 编码 = {$code}, 分类名 = {$name}";
-			$bs = new BizlogService();
-			$bs->insertBizlog($log, "客户关系-客户资料");
 		} else {
 			// 新增
 			// 检查分类编码是否已经存在
@@ -112,6 +123,7 @@ class CustomerService extends PSIBaseService {
 			$data = $db->query($sql, $code);
 			$cnt = $data[0]["cnt"];
 			if ($cnt > 0) {
+				$db->rollback();
 				return $this->bad("编码为 [{$code}] 的分类已经存在");
 			}
 			
@@ -123,16 +135,28 @@ class CustomerService extends PSIBaseService {
 			
 			$sql = "insert into t_customer_category (id, code, name, data_org) 
 					values ('%s', '%s', '%s', '%s') ";
-			$db->execute($sql, $id, $code, $name, $dataOrg);
+			$rc = $db->execute($sql, $id, $code, $name, $dataOrg);
+			if ($rc === false) {
+				$db->rollback();
+				return $this->sqlError(__LINE__);
+			}
 			
 			$log = "新增客户分类：编码 = {$code}, 分类名 = {$name}";
-			$bs = new BizlogService();
-			$bs->insertBizlog($log, "客户关系-客户资料");
 		}
+		
+		if ($log) {
+			$bs = new BizlogService();
+			$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		}
+		
+		$db->commit();
 		
 		return $this->ok($id);
 	}
 
+	/**
+	 * 删除客户分类
+	 */
 	public function deleteCategory($params) {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
@@ -141,9 +165,11 @@ class CustomerService extends PSIBaseService {
 		$id = $params["id"];
 		
 		$db = M();
+		$db->startTrans();
 		
 		$data = $db->query("select code, name from t_customer_category where id = '%s' ", $id);
 		if (! $data) {
+			$db->rollback();
 			return $this->bad("要删除的分类不存在");
 		}
 		
@@ -152,17 +178,28 @@ class CustomerService extends PSIBaseService {
 		$query = $db->query("select count(*) as cnt from t_customer where category_id = '%s' ", $id);
 		$cnt = $query[0]["cnt"];
 		if ($cnt > 0) {
+			$db->rollback();
 			return $this->bad("当前分类 [{$category['name']}] 下还有客户资料，不能删除");
 		}
 		
-		$db->execute("delete from t_customer_category where id = '%s' ", $id);
+		$rc = $db->execute("delete from t_customer_category where id = '%s' ", $id);
+		if ($rc === false) {
+			$db->rollback();
+			return $this->sqlError(__LINE__);
+		}
+		
 		$log = "删除客户分类： 编码 = {$category['code']}, 分类名称 = {$category['name']}";
 		$bs = new BizlogService();
-		$bs->insertBizlog($log, "客户关系-客户资料");
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$db->commit();
 		
 		return $this->ok();
 	}
 
+	/**
+	 * 新建或编辑客户资料
+	 */
 	public function editCustomer($params) {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
@@ -195,6 +232,7 @@ class CustomerService extends PSIBaseService {
 		$categoryId = $params["categoryId"];
 		
 		$db = M();
+		$db->startTrans();
 		
 		$us = new UserService();
 		$dataOrg = $us->getLoginUserDataOrg();
@@ -203,8 +241,11 @@ class CustomerService extends PSIBaseService {
 		$data = $db->query($sql, $categoryId);
 		$cnt = $data[0]["cnt"];
 		if ($cnt == 0) {
+			$db->rollback();
 			return $this->bad("客户分类不存在");
 		}
+		
+		$log = null;
 		
 		if ($id) {
 			// 编辑
@@ -213,6 +254,7 @@ class CustomerService extends PSIBaseService {
 			$data = $db->query($sql, $code, $id);
 			$cnt = $data[0]["cnt"];
 			if ($cnt > 0) {
+				$db->rollback();
 				return $this->bad("编码为 [{$code}] 的客户已经存在");
 			}
 			
@@ -225,13 +267,15 @@ class CustomerService extends PSIBaseService {
 					fax = '%s', note = '%s'
 					where id = '%s'  ";
 			
-			$db->execute($sql, $code, $name, $categoryId, $py, $contact01, $qq01, $tel01, $mobile01, 
-					$contact02, $qq02, $tel02, $mobile02, $address, $addressReceipt, $bankName, 
-					$bankAccount, $tax, $fax, $note, $id);
+			$rc = $db->execute($sql, $code, $name, $categoryId, $py, $contact01, $qq01, $tel01, 
+					$mobile01, $contact02, $qq02, $tel02, $mobile02, $address, $addressReceipt, 
+					$bankName, $bankAccount, $tax, $fax, $note, $id);
+			if ($rc === false) {
+				$db->rollback();
+				return $this->sqlError(__LINE__);
+			}
 			
 			$log = "编辑客户：编码 = {$code}, 名称 = {$name}";
-			$bs = new BizlogService();
-			$bs->insertBizlog($log, "客户关系-客户资料");
 		} else {
 			// 新增
 			$idGen = new IdGenService();
@@ -242,6 +286,7 @@ class CustomerService extends PSIBaseService {
 			$data = $db->query($sql, $code);
 			$cnt = $data[0]["cnt"];
 			if ($cnt > 0) {
+				$db->rollback();
 				return $this->bad("编码为 [{$code}] 的客户已经存在");
 			}
 			
@@ -251,13 +296,21 @@ class CustomerService extends PSIBaseService {
 					values ('%s', '%s', '%s', '%s', '%s', '%s', 
 							'%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
 							'%s', '%s', '%s', '%s', '%s', '%s')  ";
-			$db->execute($sql, $id, $categoryId, $code, $name, $py, $contact01, $qq01, $tel01, 
+			$rc = $db->execute($sql, $id, $categoryId, $code, $name, $py, $contact01, $qq01, $tel01, 
 					$mobile01, $contact02, $qq02, $tel02, $mobile02, $address, $addressReceipt, 
 					$bankName, $bankAccount, $tax, $fax, $note, $dataOrg);
+			if ($rc === false) {
+				$db->rollback();
+				return $this->sqlError(__LINE__);
+			}
 			
 			$log = "新增客户：编码 = {$code}, 名称 = {$name}";
+		}
+		
+		// 记录业务日志
+		if ($log) {
 			$bs = new BizlogService();
-			$bs->insertBizlog($log, "客户关系-客户资料");
+			$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		}
 		
 		// 处理应收账款
@@ -270,13 +323,18 @@ class CustomerService extends PSIBaseService {
 			$cnt = $data[0]["cnt"];
 			if ($cnt > 0) {
 				// 已经有应收业务发生，就不再更改期初数据
+				$db->commit();
 				return $this->ok($id);
 			}
 			
 			$sql = "update t_customer 
 					set init_receivables = %f, init_receivables_dt = '%s' 
 					where id = '%s' ";
-			$db->execute($sql, $initReceivables, $initReceivablesDT, $id);
+			$rc = $db->execute($sql, $initReceivables, $initReceivablesDT, $id);
+			if ($rc === false) {
+				$db->rollback();
+				return $this->sqlError(__LINE__);
+			}
 			
 			// 应收明细账
 			$sql = "select id from t_receivables_detail 
@@ -287,15 +345,24 @@ class CustomerService extends PSIBaseService {
 				$sql = "update t_receivables_detail
 						set rv_money = %f, act_money = 0, balance_money = %f, biz_date ='%s', date_created = now() 
 						where id = '%s' ";
-				$db->execute($sql, $initReceivables, $initReceivables, $initReceivablesDT, $rvId);
+				$rc = $db->execute($sql, $initReceivables, $initReceivables, $initReceivablesDT, 
+						$rvId);
+				if ($rc === false) {
+					$db->rollback();
+					return $this->sqlError(__LINE__);
+				}
 			} else {
 				$idGen = new IdGenService();
 				$rvId = $idGen->newId();
 				$sql = "insert into t_receivables_detail (id, rv_money, act_money, balance_money,
 						biz_date, date_created, ca_id, ca_type, ref_number, ref_type, data_org)
 						values ('%s', %f, 0, %f, '%s', now(), '%s', 'customer', '%s', '应收账款期初建账', '%s') ";
-				$db->execute($sql, $rvId, $initReceivables, $initReceivables, $initReceivablesDT, 
-						$id, $id, $dataOrg);
+				$rc = $db->execute($sql, $rvId, $initReceivables, $initReceivables, 
+						$initReceivablesDT, $id, $id, $dataOrg);
+				if ($rc === false) {
+					$db->rollback();
+					return $this->sqlError(__LINE__);
+				}
 			}
 			
 			// 应收总账
@@ -306,19 +373,32 @@ class CustomerService extends PSIBaseService {
 				$sql = "update t_receivables 
 						set rv_money = %f, act_money = 0, balance_money = %f
 						where id = '%s' ";
-				$db->execute($sql, $initReceivables, $initReceivables, $rvId);
+				$rc = $db->execute($sql, $initReceivables, $initReceivables, $rvId);
+				if ($rc === false) {
+					$db->rollback();
+					return $this->sqlError(__LINE__);
+				}
 			} else {
 				$idGen = new IdGenService();
 				$rvId = $idGen->newId();
 				$sql = "insert into t_receivables (id, rv_money, act_money, balance_money,
 						ca_id, ca_type, data_org) values ('%s', %f, 0, %f, '%s', 'customer', '%s')";
-				$db->execute($sql, $rvId, $initReceivables, $initReceivables, $id, $dataOrg);
+				$rc = $db->execute($sql, $rvId, $initReceivables, $initReceivables, $id, $dataOrg);
+				if ($rc === false) {
+					$db->rollback();
+					return $this->sqlError(__LINE__);
+				}
 			}
 		}
+		
+		$db->commit();
 		
 		return $this->ok($id);
 	}
 
+	/**
+	 * 获得某个分类的客户列表
+	 */
 	public function customerList($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
@@ -471,6 +551,9 @@ class CustomerService extends PSIBaseService {
 		);
 	}
 
+	/**
+	 * 删除客户资料
+	 */
 	public function deleteCustomer($params) {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
@@ -478,9 +561,12 @@ class CustomerService extends PSIBaseService {
 		
 		$id = $params["id"];
 		$db = M();
+		$db->startTrans();
+		
 		$sql = "select code, name from t_customer where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if (! $data) {
+			$db->rollback();
 			return $this->bad("要删除的客户资料不存在");
 		}
 		$code = $data[0]["code"];
@@ -491,8 +577,10 @@ class CustomerService extends PSIBaseService {
 		$data = $db->query($sql, $id);
 		$cnt = $data[0]["cnt"];
 		if ($cnt > 0) {
+			$db->rollback();
 			return $this->bad("客户资料 [{$code} {$name}] 已经在销售出库单中使用了，不能删除");
 		}
+		
 		$sql = "select count(*) as cnt 
 				from t_receivables_detail r, t_receiving v
 				where r.ref_number = v.ref_number and r.ref_type = v.ref_type
@@ -500,6 +588,7 @@ class CustomerService extends PSIBaseService {
 		$data = $db->query($sql, $id);
 		$cnt = $data[0]["cnt"];
 		if ($cnt > 0) {
+			$db->rollback();
 			return $this->bad("客户资料 [{$code} {$name}] 已经有收款记录，不能删除");
 		}
 		
@@ -508,33 +597,44 @@ class CustomerService extends PSIBaseService {
 		$data = $db->query($sql, $id);
 		$cnt = $data[0]["cnt"];
 		if ($cnt > 0) {
+			$db->rollback();
 			return $this->bad("客户资料 [{$code} {$name}]已经在销售退货入库单中使用了，不能删除");
 		}
 		
-		$db->startTrans();
-		try {
-			$sql = "delete from t_customer where id = '%s' ";
-			$db->execute($sql, $id);
-			
-			// 删除客户应收总账和明细账
-			$sql = "delete from t_receivables where ca_id = '%s' and ca_type = 'customer' ";
-			$db->execute($sql, $id);
-			$sql = "delete from t_receivables_detail where ca_id = '%s' and ca_type = 'customer' ";
-			$db->execute($sql, $id);
-			
-			$log = "删除客户资料：编码 = {$code},  名称 = {$name}";
-			$bs = new BizlogService();
-			$bs->insertBizlog($log, "客户关系-客户资料");
-			
-			$db->commit();
-		} catch ( Exception $exc ) {
+		$sql = "delete from t_customer where id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
 			$db->rollback();
-			
-			return $this->bad("数据库操作失败，请联系管理员");
+			return $this->sqlError(__LINE__);
 		}
+		
+		// 删除客户应收总账和明细账
+		$sql = "delete from t_receivables where ca_id = '%s' and ca_type = 'customer' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			$db->rollback();
+			return $this->sqlError(__LINE__);
+		}
+		
+		$sql = "delete from t_receivables_detail where ca_id = '%s' and ca_type = 'customer' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			$db->rollback();
+			return $this->sqlError(__LINE__);
+		}
+		
+		$log = "删除客户资料：编码 = {$code},  名称 = {$name}";
+		$bs = new BizlogService();
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$db->commit();
+		
 		return $this->ok();
 	}
 
+	/**
+	 * 客户字段，查询数据
+	 */
 	public function queryData($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
@@ -569,6 +669,9 @@ class CustomerService extends PSIBaseService {
 		return M()->query($sql, $queryParams);
 	}
 
+	/**
+	 * 获得某个客户的详情
+	 */
 	public function customerInfo($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
@@ -636,6 +739,9 @@ class CustomerService extends PSIBaseService {
 		return $data[0]["cnt"] == 1;
 	}
 
+	/**
+	 * 根据客户Id查询客户名称
+	 */
 	public function getCustomerNameById($customerId, $db) {
 		if (! $db) {
 			$db = M();
