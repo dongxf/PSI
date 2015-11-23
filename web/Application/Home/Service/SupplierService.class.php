@@ -12,7 +12,11 @@ use Home\Common\FIdConst;
  * @author 李静波
  */
 class SupplierService extends PSIBaseService {
+	private $LOG_CATEGORY = "基础数据-供应商档案";
 
+	/**
+	 * 供应商分类列表
+	 */
 	public function categoryList($params) {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
@@ -79,6 +83,9 @@ class SupplierService extends PSIBaseService {
 		return M()->query($sql, $queryParam);
 	}
 
+	/**
+	 * 某个分类下的供应商档案列表
+	 */
 	public function supplierList($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
@@ -230,6 +237,9 @@ class SupplierService extends PSIBaseService {
 		);
 	}
 
+	/**
+	 * 新建或编辑供应商分类
+	 */
 	public function editCategory($params) {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
@@ -240,6 +250,9 @@ class SupplierService extends PSIBaseService {
 		$name = $params["name"];
 		
 		$db = M();
+		$db->startTrans();
+		
+		$log = null;
 		
 		if ($id) {
 			// 编辑
@@ -248,17 +261,20 @@ class SupplierService extends PSIBaseService {
 			$data = $db->query($sql, $code, $id);
 			$cnt = $data[0]["cnt"];
 			if ($cnt > 0) {
+				$db->rollback();
 				return $this->bad("编码为 [$code] 的分类已经存在");
 			}
 			
 			$sql = "update t_supplier_category 
 					set code = '%s', name = '%s' 
 					where id = '%s' ";
-			$db->execute($sql, $code, $name, $id);
+			$rc = $db->execute($sql, $code, $name, $id);
+			if ($rc === false) {
+				$db->rollback();
+				return $this->sqlError(__LINE__);
+			}
 			
 			$log = "编辑供应商分类: 编码 = $code, 分类名 = $name";
-			$bs = new BizlogService();
-			$bs->insertBizlog($log, "基础数据-供应商档案");
 		} else {
 			// 新增
 			// 检查分类编码是否已经存在
@@ -266,6 +282,7 @@ class SupplierService extends PSIBaseService {
 			$data = $db->query($sql, $code);
 			$cnt = $data[0]["cnt"];
 			if ($cnt > 0) {
+				$db->rollback();
 				return $this->bad("编码为 [$code] 的分类已经存在");
 			}
 			
@@ -277,16 +294,29 @@ class SupplierService extends PSIBaseService {
 			
 			$sql = "insert into t_supplier_category (id, code, name, data_org) 
 					values ('%s', '%s', '%s', '%s') ";
-			$db->execute($sql, $id, $code, $name, $dataOrg);
+			$rc = $db->execute($sql, $id, $code, $name, $dataOrg);
+			if ($rc === false) {
+				$db->rollback();
+				return $this->sqlError(__LINE__);
+			}
 			
 			$log = "新增供应商分类：编码 = $code, 分类名 = $name";
-			$bs = new BizlogService();
-			$bs->insertBizlog($log, "基础数据-供应商档案");
 		}
+		
+		// 记录业务日志
+		if ($log) {
+			$bs = new BizlogService();
+			$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		}
+		
+		$db->commit();
 		
 		return $this->ok($id);
 	}
 
+	/**
+	 * 删除供应商分类
+	 */
 	public function deleteCategory($params) {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
@@ -295,8 +325,10 @@ class SupplierService extends PSIBaseService {
 		$id = $params["id"];
 		
 		$db = M();
+		$db->startTrans();
 		$data = $db->query("select code, name from t_supplier_category where id = '%s' ", $id);
 		if (! $data) {
+			$db->rollback();
 			return $this->bad("要删除的分类不存在");
 		}
 		
@@ -305,17 +337,28 @@ class SupplierService extends PSIBaseService {
 		$query = $db->query("select count(*) as cnt from t_supplier where category_id = '%s' ", $id);
 		$cnt = $query[0]["cnt"];
 		if ($cnt > 0) {
+			$db->rollback();
 			return $this->bad("当前分类 [{$category['name']}] 下还有供应商档案，不能删除");
 		}
 		
-		$db->execute("delete from t_supplier_category where id = '%s' ", $id);
+		$rc = $db->execute("delete from t_supplier_category where id = '%s' ", $id);
+		if ($rc === false) {
+			$db->rollback();
+			return $this->sqlError(__LINE__);
+		}
+		
 		$log = "删除供应商分类： 编码 = {$category['code']}, 分类名称 = {$category['name']}";
 		$bs = new BizlogService();
-		$bs->insertBizlog($log, "基础数据-供应商档案");
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$db->commit();
 		
 		return $this->ok();
 	}
 
+	/**
+	 * 新建或编辑供应商档案
+	 */
 	public function editSupplier($params) {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
@@ -348,6 +391,8 @@ class SupplierService extends PSIBaseService {
 		$categoryId = $params["categoryId"];
 		
 		$db = M();
+		$db->startTrans();
+		
 		$us = new UserService();
 		$dataOrg = $us->getLoginUserDataOrg();
 		
@@ -355,8 +400,11 @@ class SupplierService extends PSIBaseService {
 		$data = $db->query($sql, $categoryId);
 		$cnt = $data[0]["cnt"];
 		if ($cnt == 0) {
+			$db->rollback();
 			return $this->bad("供应商分类不存在");
 		}
+		
+		$log = null;
 		
 		if ($id) {
 			// 编辑
@@ -365,6 +413,7 @@ class SupplierService extends PSIBaseService {
 			$data = $db->query($sql, $code, $id);
 			$cnt = $data[0]["cnt"];
 			if ($cnt > 0) {
+				$db->rollback();
 				return $this->bad("编码为 [$code] 的供应商已经存在");
 			}
 			
@@ -377,13 +426,15 @@ class SupplierService extends PSIBaseService {
 					fax = '%s', note = '%s'
 					where id = '%s'  ";
 			
-			$db->execute($sql, $code, $name, $categoryId, $py, $contact01, $qq01, $tel01, $mobile01, 
-					$contact02, $qq02, $tel02, $mobile02, $address, $addressShipping, $bankName, 
-					$bankAccount, $tax, $fax, $note, $id);
+			$rc = $db->execute($sql, $code, $name, $categoryId, $py, $contact01, $qq01, $tel01, 
+					$mobile01, $contact02, $qq02, $tel02, $mobile02, $address, $addressShipping, 
+					$bankName, $bankAccount, $tax, $fax, $note, $id);
+			if ($rc === false) {
+				$db->rollback();
+				return $this->sqlError(__LINE__);
+			}
 			
 			$log = "编辑供应商：编码 = $code, 名称 = $name";
-			$bs = new BizlogService();
-			$bs->insertBizlog($log, "基础数据-供应商档案");
 		} else {
 			// 新增
 			$idGen = new IdGenService();
@@ -394,6 +445,7 @@ class SupplierService extends PSIBaseService {
 			$data = $db->query($sql, $code);
 			$cnt = $data[0]["cnt"];
 			if ($cnt > 0) {
+				$db->rollback();
 				return $this->bad("编码为 [$code] 的供应商已经存在");
 			}
 			
@@ -404,13 +456,21 @@ class SupplierService extends PSIBaseService {
 					values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
 							'%s', '%s', '%s', '%s',
 							'%s', '%s', '%s', '%s', '%s', '%s')  ";
-			$db->execute($sql, $id, $categoryId, $code, $name, $py, $contact01, $qq01, $tel01, 
+			$rc = $db->execute($sql, $id, $categoryId, $code, $name, $py, $contact01, $qq01, $tel01, 
 					$mobile01, $contact02, $qq02, $tel02, $mobile02, $address, $addressShipping, 
 					$bankName, $bankAccount, $tax, $fax, $note, $dataOrg);
+			if ($rc === false) {
+				$db->rollback();
+				return $this->sqlError(__LINE__);
+			}
 			
 			$log = "新增供应商：编码 = {$code}, 名称 = {$name}";
+		}
+		
+		// 记录业务日志
+		if ($log) {
 			$bs = new BizlogService();
-			$bs->insertBizlog($log, "基础数据-供应商档案");
+			$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		}
 		
 		// 处理应付期初余额
@@ -424,13 +484,18 @@ class SupplierService extends PSIBaseService {
 			$cnt = $data[0]["cnt"];
 			if ($cnt > 0) {
 				// 已经有往来业务发生，就不能修改应付账了
+				$db->commit();
 				return $this->ok($id);
 			}
 			
 			$sql = "update t_supplier 
 					set init_payables = %f, init_payables_dt = '%s' 
 					where id = '%s' ";
-			$db->execute($sql, $initPayables, $initPayablesDT, $id);
+			$rc = $db->execute($sql, $initPayables, $initPayablesDT, $id);
+			if ($rc === false) {
+				$db->rollback();
+				return $this->sqlError(__LINE__);
+			}
 			
 			// 应付明细账
 			$sql = "select id from t_payables_detail 
@@ -441,15 +506,23 @@ class SupplierService extends PSIBaseService {
 				$sql = "update t_payables_detail 
 						set pay_money = %f ,  balance_money = %f , biz_date = '%s', date_created = now(), act_money = 0 
 						where id = '%s' ";
-				$db->execute($sql, $initPayables, $initPayables, $initPayablesDT, $payId);
+				$rc = $db->execute($sql, $initPayables, $initPayables, $initPayablesDT, $payId);
+				if ($rc === false) {
+					$db->rollback();
+					return $this->sqlError(__LINE__);
+				}
 			} else {
 				$idGen = new IdGenService();
 				$payId = $idGen->newId();
 				$sql = "insert into t_payables_detail (id, pay_money, act_money, balance_money, ca_id,
 						ca_type, ref_type, ref_number, biz_date, date_created, data_org) 
 						values ('%s', %f, 0, %f, '%s', 'supplier', '应付账款期初建账', '%s', '%s', now(), '%s') ";
-				$db->execute($sql, $payId, $initPayables, $initPayables, $id, $id, $initPayablesDT, 
-						$dataOrg);
+				$rc = $db->execute($sql, $payId, $initPayables, $initPayables, $id, $id, 
+						$initPayablesDT, $dataOrg);
+				if ($rc === false) {
+					$db->rollback();
+					return $this->sqlError(__LINE__);
+				}
 			}
 			
 			// 应付总账
@@ -460,29 +533,46 @@ class SupplierService extends PSIBaseService {
 				$sql = "update t_payables 
 						set pay_money = %f ,  balance_money = %f , act_money = 0 
 						where id = '%s' ";
-				$db->execute($sql, $initPayables, $initPayables, $pId);
+				$rc = $db->execute($sql, $initPayables, $initPayables, $pId);
+				if ($rc === false) {
+					$db->rollback();
+					return $this->sqlError(__LINE__);
+				}
 			} else {
 				$idGen = new IdGenService();
 				$pId = $idGen->newId();
 				$sql = "insert into t_payables (id, pay_money, act_money, balance_money, ca_id, ca_type, data_org)
 						values ('%s', %f, 0, %f, '%s', 'supplier', '%s') ";
-				$db->execute($sql, $pId, $initPayables, $initPayables, $id, $dataOrg);
+				$rc = $db->execute($sql, $pId, $initPayables, $initPayables, $id, $dataOrg);
+				if ($rc === false) {
+					$db->rollback();
+					return $this->sqlError(__LINE__);
+				}
 			}
 		}
+		
+		$db->commit();
 		
 		return $this->ok($id);
 	}
 
+	/**
+	 * 删除供应商
+	 */
 	public function deleteSupplier($params) {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
 		}
 		
 		$id = $params["id"];
+		
 		$db = M();
+		$db->startTrans();
+		
 		$sql = "select code, name from t_supplier where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if (! $data) {
+			$db->rollback();
 			return $this->bad("要删除的供应商档案不存在");
 		}
 		$code = $data[0]["code"];
@@ -493,6 +583,7 @@ class SupplierService extends PSIBaseService {
 		$data = $db->query($sql, $id);
 		$cnt = $data[0]["cnt"];
 		if ($cnt > 0) {
+			$db->rollback();
 			return $this->bad("供应商档案 [{$code} {$name}] 在采购入库单中已经被使用，不能删除");
 		}
 		$sql = "select count(*) as cnt 
@@ -502,6 +593,7 @@ class SupplierService extends PSIBaseService {
 		$data = $db->query($sql, $id);
 		$cnt = $data[0]["cnt"];
 		if ($cnt > 0) {
+			$db->rollback();
 			return $this->bad("供应商档案 [{$code} {$name}] 已经产生付款记录，不能删除");
 		}
 		
@@ -510,6 +602,7 @@ class SupplierService extends PSIBaseService {
 		$data = $db->query($sql, $id);
 		$cnt = $data[0]["cnt"];
 		if ($cnt > 0) {
+			$db->rollback();
 			return $this->bad("供应商档案 [{$code} {$name}] 在采购退货出库单中已经被使用，不能删除");
 		}
 		
@@ -518,33 +611,44 @@ class SupplierService extends PSIBaseService {
 		$data = $db->query($sql, $id);
 		$cnt = $data[0]["cnt"];
 		if ($cnt > 0) {
+			$db->rollback();
 			return $this->bad("供应商档案 [{$code} {$name}] 在采购订单中已经被使用，不能删除");
 		}
 		
-		$db->startTrans();
-		try {
-			$sql = "delete from t_supplier where id = '%s' ";
-			$db->execute($sql, $id);
-			
-			// 删除应付总账、明细账
-			$sql = "delete from t_payables where ca_id = '%s' and ca_type = 'supplier' ";
-			$db->execute($sql, $id);
-			$sql = "delete from t_payables_detail where ca_id = '%s' and ca_type = 'supplier' ";
-			$db->execute($sql, $id);
-			
-			$log = "删除供应商档案：编码 = {$code},  名称 = {$name}";
-			$bs = new BizlogService();
-			$bs->insertBizlog($log, "基础数据-供应商档案");
-			
-			$db->commit();
-		} catch ( Exception $exc ) {
+		$sql = "delete from t_supplier where id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
 			$db->rollback();
-			
-			return $this->bad("数据库操作失败，请联系管理员");
+			return $this->sqlError(__LINE__);
 		}
+		
+		// 删除应付总账、明细账
+		$sql = "delete from t_payables where ca_id = '%s' and ca_type = 'supplier' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			$db->rollback();
+			return $this->sqlError(__LINE__);
+		}
+		
+		$sql = "delete from t_payables_detail where ca_id = '%s' and ca_type = 'supplier' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			$db->rollback();
+			return $this->sqlError(__LINE__);
+		}
+		
+		$log = "删除供应商档案：编码 = {$code},  名称 = {$name}";
+		$bs = new BizlogService();
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$db->commit();
+		
 		return $this->ok();
 	}
 
+	/**
+	 * 供应商字段， 查询数据
+	 */
 	public function queryData($queryKey) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
@@ -575,6 +679,9 @@ class SupplierService extends PSIBaseService {
 		return M()->query($sql, $queryParams);
 	}
 
+	/**
+	 * 获得某个供应商档案的详情
+	 */
 	public function supplierInfo($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
@@ -621,6 +728,9 @@ class SupplierService extends PSIBaseService {
 		return $result;
 	}
 
+	/**
+	 * 判断供应商是否存在
+	 */
 	public function supplierExists($supplierId, $db) {
 		if (! $db) {
 			$db = M();
@@ -631,6 +741,9 @@ class SupplierService extends PSIBaseService {
 		return $data[0]["cnt"] == 1;
 	}
 
+	/**
+	 * 根据供应商Id查询供应商名称
+	 */
 	public function getSupplierNameById($supplierId, $db) {
 		if (! $db) {
 			$db = M();
