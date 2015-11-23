@@ -753,36 +753,43 @@ class SRBillService extends PSIBaseService {
 		$id = $params["id"];
 		
 		$db = M();
+		$db->startTrans();
+		
 		$sql = "select bill_status, ref from t_sr_bill where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if (! $data) {
+			$db->rollback();
 			return $this->bad("要删除的销售退货入库单不存在");
 		}
 		
 		$billStatus = $data[0]["bill_status"];
 		$ref = $data[0]["ref"];
 		if ($billStatus != 0) {
+			$db->rollback();
 			return $this->bad("销售退货入库单[单号: {$ref}]已经提交，不能删除");
 		}
 		
-		$db->startTrans();
-		try {
-			$sql = "delete from t_sr_bill_detail where srbill_id = '%s'";
-			$db->execute($sql, $id);
-			
-			$sql = "delete from t_sr_bill where id = '%s' ";
-			$db->execute($sql, $id);
-			
-			$bs = new BizlogService();
-			$log = "删除销售退货入库单，单号：{$ref}";
-			$bs->insertBizlog($log, "销售退货入库");
-			
-			$db->commit();
-			return $this->ok();
-		} catch ( Exception $ex ) {
+		$sql = "delete from t_sr_bill_detail where srbill_id = '%s'";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
 			$db->rollback();
-			return $this->bad("数据库操作失败，请联系管理员");
+			return $this->sqlError(__LINE__);
 		}
+		
+		$sql = "delete from t_sr_bill where id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			$db->rollback();
+			return $this->sqlError(__LINE__);
+		}
+		
+		$bs = new BizlogService();
+		$log = "删除销售退货入库单，单号：{$ref}";
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$db->commit();
+		
+		return $this->ok();
 	}
 
 	/**
