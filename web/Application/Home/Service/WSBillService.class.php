@@ -303,7 +303,7 @@ class WSBillService extends PSIBaseService {
 		// 记录业务日志
 		if ($log) {
 			$bs = new BizlogService();
-			$bs->insertBizlog($log, "销售出库");
+			$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		}
 		
 		$db->commit();
@@ -511,6 +511,9 @@ class WSBillService extends PSIBaseService {
 		return $result;
 	}
 
+	/**
+	 * 删除销售出库单
+	 */
 	public function deleteWSBill($params) {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
@@ -518,32 +521,40 @@ class WSBillService extends PSIBaseService {
 		
 		$id = $params["id"];
 		$db = M();
+		$db->startTrans();
+		
 		$sql = "select ref, bill_status from t_ws_bill where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if (! $data) {
+			$db->rollback();
 			return $this->bad("要删除的销售出库单不存在");
 		}
 		$ref = $data[0]["ref"];
 		$billStatus = $data[0]["bill_status"];
 		if ($billStatus != 0) {
+			$db->rollback();
 			return $this->bad("销售出库单已经提交出库，不能删除");
 		}
 		
-		$db->startTrans();
-		try {
-			$sql = "delete from t_ws_bill_detail where wsbill_id = '%s' ";
-			$db->execute($sql, $id);
-			$sql = "delete from t_ws_bill where id = '%s' ";
-			$db->execute($sql, $id);
-			
-			$log = "删除销售出库单，单号: {$ref}";
-			$bs = new BizlogService();
-			$bs->insertBizlog($log, "销售出库");
-			$db->commit();
-		} catch ( Exception $ex ) {
+		$sql = "delete from t_ws_bill_detail where wsbill_id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
 			$db->rollback();
-			return $this->bad("数据库错误，请联系管理员");
+			return $this->sqlError(__LINE__);
 		}
+		
+		$sql = "delete from t_ws_bill where id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			$db->rollback();
+			return $this->sqlError(__LINE__);
+		}
+		
+		$log = "删除销售出库单，单号: {$ref}";
+		$bs = new BizlogService();
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$db->commit();
 		
 		return $this->ok();
 	}
