@@ -10,6 +10,7 @@ use Home\Common\FIdConst;
  * @author 李静波
  */
 class SRBillService extends PSIBaseService {
+	private $LOG_CATEGORY = "销售退货入库";
 
 	/**
 	 * 销售退货入库单主表信息列表
@@ -421,6 +422,8 @@ class SRBillService extends PSIBaseService {
 		}
 		
 		$db = M();
+		$db->startTrans();
+		
 		$idGen = new IdGenService();
 		
 		$id = $bill["id"];
@@ -437,6 +440,7 @@ class SRBillService extends PSIBaseService {
 			$data = $db->query($sql, $wsBillId);
 			$cnt = $data[0]["cnt"];
 			if ($cnt != 1) {
+				$db->rollback();
 				return $this->bad("选择的销售出库单不存在");
 			}
 			
@@ -444,6 +448,7 @@ class SRBillService extends PSIBaseService {
 			$data = $db->query($sql, $customerId);
 			$cnt = $data[0]["cnt"];
 			if ($cnt != 1) {
+				$db->rollback();
 				return $this->bad("选择的客户不存在");
 			}
 		}
@@ -452,6 +457,7 @@ class SRBillService extends PSIBaseService {
 		$data = $db->query($sql, $warehouseId);
 		$cnt = $data[0]["cnt"];
 		if ($cnt != 1) {
+			$db->rollback();
 			return $this->bad("选择的仓库不存在");
 		}
 		
@@ -459,183 +465,203 @@ class SRBillService extends PSIBaseService {
 		$data = $db->query($sql, $bizUserId);
 		$cnt = $data[0]["cnt"];
 		if ($cnt != 1) {
+			$db->rollback();
 			return $this->bad("选择的业务员不存在");
 		}
 		
 		// 检查业务日期
 		if (! $this->dateIsValid($bizDT)) {
+			$db->rollback();
 			return $this->bad("业务日期不正确");
 		}
 		
+		$log = null;
+		
 		if ($id) {
 			// 编辑
-			$sql = "select bill_status, ref from t_sr_bill where id = '%s' ";
+			$sql = "select bill_status, ref, data_org from t_sr_bill where id = '%s' ";
 			$data = $db->query($sql, $id);
 			if (! $data) {
+				$db->rollback();
 				return $this->bad("要编辑的销售退货入库单不存在");
 			}
 			$billStatus = $data[0]["bill_status"];
 			if ($billStatus != 0) {
+				$db->rollback();
 				return $this->bad("销售退货入库单已经提交，不能再编辑");
 			}
 			$ref = $data[0]["ref"];
+			$dataOrg = $data[0]["data_org"];
 			
-			$db->startTrans();
-			try {
-				$sql = "update t_sr_bill
+			$sql = "update t_sr_bill
 						set bizdt = '%s', biz_user_id = '%s', date_created = now(),
 						   input_user_id = '%s', warehouse_id = '%s',
 							payment_type = %d
 						where id = '%s' ";
-				$us = new UserService();
-				$db->execute($sql, $bizDT, $bizUserId, $us->getLoginUserId(), $warehouseId, 
-						$paymentType, $id);
-				
-				// 退货明细
-				$sql = "delete from t_sr_bill_detail where srbill_id = '%s' ";
-				$db->execute($sql, $id);
-				
-				foreach ( $items as $i => $v ) {
-					$wsBillDetailId = $v["id"];
-					$sql = "select inventory_price, goods_count, goods_price, goods_money
+			$us = new UserService();
+			$db->execute($sql, $bizDT, $bizUserId, $us->getLoginUserId(), $warehouseId, 
+					$paymentType, $id);
+			
+			// 退货明细
+			$sql = "delete from t_sr_bill_detail where srbill_id = '%s' ";
+			$rc = $db->execute($sql, $id);
+			if ($rc === false) {
+				$db->rollback();
+				return $this->sqlError(__LINE__);
+			}
+			
+			foreach ( $items as $i => $v ) {
+				$wsBillDetailId = $v["id"];
+				$sql = "select inventory_price, goods_count, goods_price, goods_money
 							from t_ws_bill_detail 
 							where id = '%s' ";
-					$data = $db->query($sql, $wsBillDetailId);
-					if (! $data) {
-						continue;
-					}
-					$goodsCount = $data[0]["goods_count"];
-					$goodsPrice = $data[0]["goods_price"];
-					$goodsMoney = $data[0]["goods_money"];
-					$inventoryPrice = $data[0]["inventory_price"];
-					$rejCount = $v["rejCount"];
-					$rejPrice = $v["rejPrice"];
-					if ($rejCount == null) {
-						$rejCount = 0;
-					}
-					$rejSaleMoney = $v["rejMoney"];
-					$inventoryMoney = $rejCount * $inventoryPrice;
-					$goodsId = $v["goodsId"];
-					$sn = $v["sn"];
-					
-					$sql = "insert into t_sr_bill_detail(id, date_created, goods_id, goods_count, goods_money,
+				$data = $db->query($sql, $wsBillDetailId);
+				if (! $data) {
+					continue;
+				}
+				$goodsCount = $data[0]["goods_count"];
+				$goodsPrice = $data[0]["goods_price"];
+				$goodsMoney = $data[0]["goods_money"];
+				$inventoryPrice = $data[0]["inventory_price"];
+				$rejCount = $v["rejCount"];
+				$rejPrice = $v["rejPrice"];
+				if ($rejCount == null) {
+					$rejCount = 0;
+				}
+				$rejSaleMoney = $v["rejMoney"];
+				$inventoryMoney = $rejCount * $inventoryPrice;
+				$goodsId = $v["goodsId"];
+				$sn = $v["sn"];
+				
+				$sql = "insert into t_sr_bill_detail(id, date_created, goods_id, goods_count, goods_money,
 						goods_price, inventory_money, inventory_price, rejection_goods_count, 
 						rejection_goods_price, rejection_sale_money, show_order, srbill_id, wsbilldetail_id,
-							sn_note)
+							sn_note, data_org)
 						values('%s', now(), '%s', %d, %f, %f, %f, %f, %d,
-						%f, %f, %d, '%s', '%s', '%s') ";
-					$db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsMoney, 
-							$goodsPrice, $inventoryMoney, $inventoryPrice, $rejCount, $rejPrice, 
-							$rejSaleMoney, $i, $id, $wsBillDetailId, $sn);
+							%f, %f, %d, '%s', '%s', '%s', '%s') ";
+				$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsMoney, 
+						$goodsPrice, $inventoryMoney, $inventoryPrice, $rejCount, $rejPrice, 
+						$rejSaleMoney, $i, $id, $wsBillDetailId, $sn, $dataOrg);
+				if ($rc === false) {
+					$db->rollback();
+					return $this->sqlError(__LINE__);
 				}
-				
-				// 更新主表的汇总信息
-				$sql = "select sum(rejection_sale_money) as rej_money,
+			}
+			
+			// 更新主表的汇总信息
+			$sql = "select sum(rejection_sale_money) as rej_money,
 						sum(inventory_money) as inv_money
 						from t_sr_bill_detail 
 						where srbill_id = '%s' ";
-				$data = $db->query($sql, $id);
-				$rejMoney = $data[0]["rej_money"];
-				if (! $rejMoney) {
-					$rejMoney = 0;
-				}
-				$invMoney = $data[0]["inv_money"];
-				if (! $invMoney) {
-					$invMoney = 0;
-				}
-				$profit = $invMoney - $rejMoney;
-				$sql = "update t_sr_bill
+			$data = $db->query($sql, $id);
+			$rejMoney = $data[0]["rej_money"];
+			if (! $rejMoney) {
+				$rejMoney = 0;
+			}
+			$invMoney = $data[0]["inv_money"];
+			if (! $invMoney) {
+				$invMoney = 0;
+			}
+			$profit = $invMoney - $rejMoney;
+			$sql = "update t_sr_bill
 						set rejection_sale_money = %f, inventory_money = %f, profit = %f
 						where id = '%s' ";
-				$db->execute($sql, $rejMoney, $invMoney, $profit, $id);
-				
-				$bs = new BizlogService();
-				$log = "编辑销售退货入库单，单号：{$ref}";
-				$bs->insertBizlog($log, "销售退货入库");
-				
-				$db->commit();
-				
-				return $this->ok($id);
-			} catch ( Exception $ex ) {
+			$rc = $db->execute($sql, $rejMoney, $invMoney, $profit, $id);
+			if ($rc === false) {
 				$db->rollback();
-				return $this->bad("数据库错误，请联系管理员");
+				return $this->sqlError(__LINE__);
 			}
+			
+			$log = "编辑销售退货入库单，单号：{$ref}";
 		} else {
 			$us = new UserService();
 			$dataOrg = $us->getLoginUserDataOrg();
+			$companyId = $us->getCompanyId();
+			
 			// 新增
-			$db->startTrans();
-			try {
-				$id = $idGen->newId();
-				$ref = $this->genNewBillRef();
-				$sql = "insert into t_sr_bill(id, bill_status, bizdt, biz_user_id, customer_id, 
-						  date_created, input_user_id, ref, warehouse_id, ws_bill_id, payment_type, data_org)
-						values ('%s', 0, '%s', '%s', '%s', 
-						  now(), '%s', '%s', '%s', '%s', %d, '%s')";
-				
-				$db->execute($sql, $id, $bizDT, $bizUserId, $customerId, $us->getLoginUserId(), 
-						$ref, $warehouseId, $wsBillId, $paymentType, $dataOrg);
-				
-				foreach ( $items as $i => $v ) {
-					$wsBillDetailId = $v["id"];
-					$sql = "select inventory_price, goods_count, goods_price, goods_money
+			$id = $idGen->newId();
+			$ref = $this->genNewBillRef();
+			$sql = "insert into t_sr_bill(id, bill_status, bizdt, biz_user_id, customer_id, 
+						date_created, input_user_id, ref, warehouse_id, ws_bill_id, payment_type, 
+						data_org, company_id)
+					values ('%s', 0, '%s', '%s', '%s', 
+						  now(), '%s', '%s', '%s', '%s', %d, '%s', '%s')";
+			
+			$rc = $db->execute($sql, $id, $bizDT, $bizUserId, $customerId, $us->getLoginUserId(), 
+					$ref, $warehouseId, $wsBillId, $paymentType, $dataOrg, $companyId);
+			if ($rc === false) {
+				$db->rollback();
+				return $this->sqlError(__LINE__);
+			}
+			
+			foreach ( $items as $i => $v ) {
+				$wsBillDetailId = $v["id"];
+				$sql = "select inventory_price, goods_count, goods_price, goods_money
 							from t_ws_bill_detail 
 							where id = '%s' ";
-					$data = $db->query($sql, $wsBillDetailId);
-					if (! $data) {
-						continue;
-					}
-					$goodsCount = $data[0]["goods_count"];
-					$goodsPrice = $data[0]["goods_price"];
-					$goodsMoney = $data[0]["goods_money"];
-					$inventoryPrice = $data[0]["inventory_price"];
-					$rejCount = $v["rejCount"];
-					$rejPrice = $v["rejPrice"];
-					if ($rejCount == null) {
-						$rejCount = 0;
-					}
-					$rejSaleMoney = $rejCount * $rejPrice;
-					$inventoryMoney = $rejCount * $inventoryPrice;
-					$goodsId = $v["goodsId"];
-					$sn = $v["sn"];
-					
-					$sql = "insert into t_sr_bill_detail(id, date_created, goods_id, goods_count, goods_money,
+				$data = $db->query($sql, $wsBillDetailId);
+				if (! $data) {
+					continue;
+				}
+				$goodsCount = $data[0]["goods_count"];
+				$goodsPrice = $data[0]["goods_price"];
+				$goodsMoney = $data[0]["goods_money"];
+				$inventoryPrice = $data[0]["inventory_price"];
+				$rejCount = $v["rejCount"];
+				$rejPrice = $v["rejPrice"];
+				if ($rejCount == null) {
+					$rejCount = 0;
+				}
+				$rejSaleMoney = $rejCount * $rejPrice;
+				$inventoryMoney = $rejCount * $inventoryPrice;
+				$goodsId = $v["goodsId"];
+				$sn = $v["sn"];
+				
+				$sql = "insert into t_sr_bill_detail(id, date_created, goods_id, goods_count, goods_money,
 						goods_price, inventory_money, inventory_price, rejection_goods_count, 
 						rejection_goods_price, rejection_sale_money, show_order, srbill_id, wsbilldetail_id,
 							sn_note, data_org)
 						values('%s', now(), '%s', %d, %f, %f, %f, %f, %d,
 						%f, %f, %d, '%s', '%s', '%s', '%s') ";
-					$db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsMoney, 
-							$goodsPrice, $inventoryMoney, $inventoryPrice, $rejCount, $rejPrice, 
-							$rejSaleMoney, $i, $id, $wsBillDetailId, $sn, $dataOrg);
+				$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsMoney, 
+						$goodsPrice, $inventoryMoney, $inventoryPrice, $rejCount, $rejPrice, 
+						$rejSaleMoney, $i, $id, $wsBillDetailId, $sn, $dataOrg);
+				if ($rc === false) {
+					$db->rollback();
+					return $this->sqlError(__LINE__);
 				}
-				
-				// 更新主表的汇总信息
-				$sql = "select sum(rejection_sale_money) as rej_money,
+			}
+			
+			// 更新主表的汇总信息
+			$sql = "select sum(rejection_sale_money) as rej_money,
 						sum(inventory_money) as inv_money
 						from t_sr_bill_detail 
 						where srbill_id = '%s' ";
-				$data = $db->query($sql, $id);
-				$rejMoney = $data[0]["rej_money"];
-				$invMoney = $data[0]["inv_money"];
-				$profit = $invMoney - $rejMoney;
-				$sql = "update t_sr_bill
+			$data = $db->query($sql, $id);
+			$rejMoney = $data[0]["rej_money"];
+			$invMoney = $data[0]["inv_money"];
+			$profit = $invMoney - $rejMoney;
+			$sql = "update t_sr_bill
 						set rejection_sale_money = %f, inventory_money = %f, profit = %f
 						where id = '%s' ";
-				$db->execute($sql, $rejMoney, $invMoney, $profit, $id);
-				
-				$bs = new BizlogService();
-				$log = "新建销售退货入库单，单号：{$ref}";
-				$bs->insertBizlog($log, "销售退货入库");
-				
-				$db->commit();
-				
-				return $this->ok($id);
-			} catch ( Exception $ex ) {
+			$rc = $db->execute($sql, $rejMoney, $invMoney, $profit, $id);
+			if ($rc === false) {
 				$db->rollback();
-				return $this->bad("数据库错误，请联系管理员");
+				return $this->sqlError(__LINE__);
 			}
+			
+			$log = "新建销售退货入库单，单号：{$ref}";
 		}
+		
+		// 记录业务日志
+		if ($log) {
+			$bs = new BizlogService();
+			$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		}
+		
+		$db->commit();
+		
+		return $this->ok($id);
 	}
 
 	/**
