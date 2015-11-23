@@ -28,27 +28,19 @@ class WSBillService extends PSIBaseService {
 			$result["bizUserName"] = $us->getLoginUserName();
 			
 			$ts = new BizConfigService();
-			if ($ts->warehouseUsesOrg()) {
-				$ws = new WarehouseService();
-				$data = $ws->getWarehouseListForLoginUser("2002");
-				if (count($data) > 0) {
+			$db = M();
+			$sql = "select value from t_config where id = '2002-02' ";
+			$data = $db->query($sql);
+			if ($data) {
+				$warehouseId = $data[0]["value"];
+				$sql = "select id, name from t_warehouse where id = '%s' ";
+				$data = $db->query($sql, $warehouseId);
+				if ($data) {
 					$result["warehouseId"] = $data[0]["id"];
 					$result["warehouseName"] = $data[0]["name"];
 				}
-			} else {
-				$db = M();
-				$sql = "select value from t_config where id = '2002-02' ";
-				$data = $db->query($sql);
-				if ($data) {
-					$warehouseId = $data[0]["value"];
-					$sql = "select id, name from t_warehouse where id = '%s' ";
-					$data = $db->query($sql, $warehouseId);
-					if ($data) {
-						$result["warehouseId"] = $data[0]["id"];
-						$result["warehouseName"] = $data[0]["name"];
-					}
-				}
 			}
+			
 			return $result;
 		} else {
 			// 编辑
