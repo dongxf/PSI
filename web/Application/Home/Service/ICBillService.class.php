@@ -256,6 +256,9 @@ class ICBillService extends PSIBaseService {
 		return $this->ok($id);
 	}
 
+	/**
+	 * 盘点单列表
+	 */
 	public function icbillList($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
@@ -374,6 +377,9 @@ class ICBillService extends PSIBaseService {
 		);
 	}
 
+	/**
+	 * 盘点单明细记录
+	 */
 	public function icBillDetailList($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
@@ -403,6 +409,9 @@ class ICBillService extends PSIBaseService {
 		return $result;
 	}
 
+	/**
+	 * 删除盘点单
+	 */
 	public function deleteICBill($params) {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
@@ -411,10 +420,13 @@ class ICBillService extends PSIBaseService {
 		$id = $params["id"];
 		
 		$db = M();
+		$db->startTrans();
+		
 		$sql = "select ref, bill_status from t_ic_bill where id = '%s' ";
 		$data = $db->query($sql, $id);
 		
 		if (! $data) {
+			$db->rollback();
 			return $this->bad("要删除的盘点单不存在");
 		}
 		
@@ -422,26 +434,29 @@ class ICBillService extends PSIBaseService {
 		$billStatus = $data[0]["bill_status"];
 		
 		if ($billStatus != 0) {
+			$db->rollback();
 			return $this->bad("盘点单(单号：$ref)已经提交，不能被删除");
 		}
 		
-		$db->startTrans();
-		try {
-			$sql = "delete from t_ic_bill_detail where icbill_id = '%s' ";
-			$db->execute($sql, $id);
-			
-			$sql = "delete from t_ic_bill where id = '%s' ";
-			$db->execute($sql, $id);
-			
-			$bs = new BizlogService();
-			$log = "删除盘点单，单号：$ref";
-			$bs->insertBizlog($log, "库存盘点");
-			
-			$db->commit();
-		} catch ( Exception $e ) {
+		$sql = "delete from t_ic_bill_detail where icbill_id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
 			$db->rollback();
-			return $this->sqlError();
+			return $this->sqlError(__LINE__);
 		}
+		
+		$sql = "delete from t_ic_bill where id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			$db->rollback();
+			return $this->sqlError(__LINE__);
+		}
+		
+		$bs = new BizlogService();
+		$log = "删除盘点单，单号：$ref";
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$db->commit();
 		
 		return $this->ok();
 	}
