@@ -10,6 +10,7 @@ use Home\Common\FIdConst;
  * @author 李静波
  */
 class ITBillService extends PSIBaseService {
+	private $LOG_CATEGORY = "库间调拨";
 
 	/**
 	 * 生成新的调拨单单号
@@ -171,6 +172,9 @@ class ITBillService extends PSIBaseService {
 		);
 	}
 
+	/**
+	 * 新建或编辑调拨单
+	 */
 	public function editITBill($params) {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
@@ -183,6 +187,7 @@ class ITBillService extends PSIBaseService {
 		}
 		
 		$db = M();
+		$db->startTrans();
 		
 		$id = $bill["id"];
 		$bizDT = $bill["bizDT"];
@@ -190,6 +195,7 @@ class ITBillService extends PSIBaseService {
 		$sql = "select name from t_warehouse where id = '%s' ";
 		$data = $db->query($sql, $fromWarehouseId);
 		if (! $data) {
+			$db->rollback();
 			return $this->bad("调出仓库不存在，无法保存");
 		}
 		
@@ -197,6 +203,7 @@ class ITBillService extends PSIBaseService {
 		$sql = "select name from t_warehouse where id = '%s' ";
 		$data = $db->query($sql, $toWarehouseId);
 		if (! $data) {
+			$db->rollback();
 			return $this->bad("调入仓库不存在，无法保存");
 		}
 		
@@ -204,15 +211,18 @@ class ITBillService extends PSIBaseService {
 		$sql = "select name from t_user where id = '%s' ";
 		$data = $db->query($sql, $bizUserId);
 		if (! $data) {
+			$db->rollback();
 			return $this->bad("业务人员不存在，无法保存");
 		}
 		
 		if ($fromWarehouseId == $toWarehouseId) {
+			$db->rollback();
 			return $this->bad("调出仓库和调入仓库不能是同一个仓库");
 		}
 		
 		// 检查业务日期
 		if (! $this->dateIsValid($bizDT)) {
+			$db->rollback();
 			return $this->bad("业务日期不正确");
 		}
 		
@@ -221,94 +231,110 @@ class ITBillService extends PSIBaseService {
 		$idGen = new IdGenService();
 		$us = new UserService();
 		
+		$log = null;
+		
 		if ($id) {
 			// 编辑
-			$sql = "select ref, bill_status from t_it_bill where id = '%s' ";
+			$sql = "select ref, bill_status, data_org from t_it_bill where id = '%s' ";
 			$data = $db->query($sql, $id);
 			if (! $data) {
+				$db->rollback();
 				return $this->bad("要编辑的调拨单不存在");
 			}
 			$ref = $data[0]["ref"];
+			$dataOrg = $data[0]["data_org"];
 			$billStatus = $data[0]["bill_status"];
 			if ($billStatus != 0) {
+				$db->rollback();
 				return $this->bad("调拨单(单号：$ref)已经提交，不能被编辑");
 			}
 			
-			$db->startTrans();
-			try {
-				$sql = "update t_it_bill
-						set bizdt = '%s', biz_user_id = '%s', date_created = now(),
-						    input_user_id = '%s', from_warehouse_id = '%s', to_warehouse_id = '%s'
-						where id = '%s' ";
-				
-				$db->execute($sql, $bizDT, $bizUserId, $us->getLoginUserId(), $fromWarehouseId, 
-						$toWarehouseId, $id);
-				
-				$sql = "delete from t_it_bill_detail where itbill_id = '%s' ";
-				$db->execute($sql, $id);
-				
-				$sql = "insert into t_it_bill_detail(id, date_created, goods_id, goods_count, show_order, itbill_id)
-						values ('%s', now(), '%s', %d, %d, '%s')";
-				foreach ( $items as $i => $v ) {
-					$goodsId = $v["goodsId"];
-					if (! $goodsId) {
-						continue;
-					}
-					
-					$goodsCount = $v["goodsCount"];
-					
-					$db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $i, $id);
+			$sql = "update t_it_bill
+					set bizdt = '%s', biz_user_id = '%s', date_created = now(),
+					    input_user_id = '%s', from_warehouse_id = '%s', to_warehouse_id = '%s'
+					where id = '%s' ";
+			
+			$rc = $db->execute($sql, $bizDT, $bizUserId, $us->getLoginUserId(), $fromWarehouseId, 
+					$toWarehouseId, $id);
+			if ($rc === false) {
+				$db->rollback();
+				return $this->sqlError(__LINE__);
+			}
+			
+			// 明细记录
+			$sql = "delete from t_it_bill_detail where itbill_id = '%s' ";
+			$rc = $db->execute($sql, $id);
+			if ($rc === false) {
+				$db->rollback();
+				return $this->sqlError(__LINE__);
+			}
+			
+			$sql = "insert into t_it_bill_detail(id, date_created, goods_id, goods_count, 
+						show_order, itbill_id, data_org)
+					values ('%s', now(), '%s', %d, %d, '%s', '%s')";
+			foreach ( $items as $i => $v ) {
+				$goodsId = $v["goodsId"];
+				if (! $goodsId) {
+					continue;
 				}
 				
-				$bs = new BizlogService();
-				$log = "编辑调拨单，单号：$ref";
-				$bs->insertBizlog($log, "库间调拨");
+				$goodsCount = $v["goodsCount"];
 				
-				$db->commit();
-			} catch ( Exception $ex ) {
-				$db->rollback();
-				return $this->bad("数据库错误，请联系系统管理员");
+				$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $i, $id, $dataOrg);
+				if ($rc === false) {
+					$db->rollback();
+					return $this->sqlError(__LINE__);
+				}
 			}
+			
+			$log = "编辑调拨单，单号：$ref";
 		} else {
 			$us = new UserService();
 			$dataOrg = $us->getLoginUserDataOrg();
+			$companyId = $us->getCompanyId();
 			
 			// 新增
-			$db->startTrans();
-			try {
-				$sql = "insert into t_it_bill(id, bill_status, bizdt, biz_user_id,
-						date_created, input_user_id, ref, from_warehouse_id, to_warehouse_id, data_org)
-						values ('%s', 0, '%s', '%s', now(), '%s', '%s', '%s', '%s', '%s')";
-				$id = $idGen->newId();
-				$ref = $this->genNewBillRef();
-				
-				$db->execute($sql, $id, $bizDT, $bizUserId, $us->getLoginUserId(), $ref, 
-						$fromWarehouseId, $toWarehouseId, $dataOrg);
-				
-				$sql = "insert into t_it_bill_detail(id, date_created, goods_id, goods_count, 
+			$sql = "insert into t_it_bill(id, bill_status, bizdt, biz_user_id,
+						date_created, input_user_id, ref, from_warehouse_id, 
+						to_warehouse_id, data_org, company_id)
+					values ('%s', 0, '%s', '%s', now(), '%s', '%s', '%s', '%s', '%s', '%s')";
+			$id = $idGen->newId();
+			$ref = $this->genNewBillRef();
+			
+			$rc = $db->execute($sql, $id, $bizDT, $bizUserId, $us->getLoginUserId(), $ref, 
+					$fromWarehouseId, $toWarehouseId, $dataOrg, $companyId);
+			if ($rc === false) {
+				$db->rollback();
+				return $this->sqlError(__LINE__);
+			}
+			
+			$sql = "insert into t_it_bill_detail(id, date_created, goods_id, goods_count, 
 							show_order, itbill_id, data_org)
 						values ('%s', now(), '%s', %d, %d, '%s', '%s')";
-				foreach ( $items as $i => $v ) {
-					$goodsId = $v["goodsId"];
-					if (! $goodsId) {
-						continue;
-					}
-					
-					$goodsCount = $v["goodsCount"];
-					
-					$db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $i, $id, $dataOrg);
+			foreach ( $items as $i => $v ) {
+				$goodsId = $v["goodsId"];
+				if (! $goodsId) {
+					continue;
 				}
 				
-				$bs = new BizlogService();
-				$log = "新建调拨单，单号：$ref";
-				$bs->insertBizlog($log, "库间调拨");
+				$goodsCount = $v["goodsCount"];
 				
-				$db->commit();
-			} catch ( Exception $ex ) {
-				$db->rollback();
-				return $this->bad("数据库错误，请联系系统管理员");
+				$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $i, $id, $dataOrg);
+				if ($rc === false) {
+					$db->rollback();
+					return $this->sqlError(__LINE__);
+				}
 			}
+			
+			$log = "新建调拨单，单号：$ref";
 		}
+		
+		if ($log) {
+			$bs = new BizlogService();
+			$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		}
+		
+		$db->commit();
 		
 		return $this->ok($id);
 	}
