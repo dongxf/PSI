@@ -102,7 +102,7 @@ Ext.define("PSI.Customer.CustomerImportForm", {
                 PSI.MsgBox.showInfo("数据导入成功" + action.result.msg);
                 me.focus();
                 me.close();
-                me.getParentForm().freshGoodsGrid();
+                me.getParentForm().freshCustomerGrid();
             },
             failure: function (form, action) {
                 el.unmask();
