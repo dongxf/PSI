@@ -498,17 +498,21 @@ class ITBillService extends PSIBaseService {
 		$id = $params["id"];
 		
 		$db = M();
+		$db->startTrans();
+		
 		$sql = "select ref, bill_status, from_warehouse_id, to_warehouse_id,
 					bizdt, biz_user_id
 				from t_it_bill 
 				where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if (! $data) {
+			$db->rollback();
 			return $this->bad("要提交的调拨单不存在，无法提交");
 		}
 		$ref = $data[0]["ref"];
 		$billStatus = $data[0]["bill_status"];
 		if ($billStatus != 0) {
+			$db->rollback();
 			return $this->bad("调拨单(单号：$ref)已经提交，不能再次提交");
 		}
 		
@@ -522,202 +526,201 @@ class ITBillService extends PSIBaseService {
 		$sql = "select name , inited from t_warehouse where id = '%s' ";
 		$data = $db->query($sql, $fromWarehouseId);
 		if (! $data) {
+			$db->rollback();
 			return $this->bad("调出仓库不存在，无法进行调拨操作");
 		}
 		$warehouseName = $data[0]["name"];
 		$inited = $data[0]["inited"];
 		if ($inited != 1) {
+			$db->rollback();
 			return $this->bad("仓库：$warehouseName 还没有完成建账，无法进行调拨操作");
 		}
 		
 		$sql = "select name , inited from t_warehouse where id = '%s' ";
 		$data = $db->query($sql, $toWarehouseId);
 		if (! $data) {
+			$db->rollback();
 			return $this->bad("调入仓库不存在，无法进行调拨操作");
 		}
 		$warehouseName = $data[0]["name"];
 		$inited = $data[0]["inited"];
 		if ($inited != 1) {
+			$db->rollback();
 			return $this->bad("仓库：$warehouseName 还没有完成建账，无法进行调拨操作");
 		}
 		
 		if ($fromWarehouseId == $toWarehouseId) {
+			$db->rollback();
 			return $this->bad("调出仓库和调入仓库不能是同一个仓库");
 		}
 		
-		$db->startTrans();
-		try {
-			$sql = "select goods_id, goods_count 
+		$sql = "select goods_id, goods_count 
 					from t_it_bill_detail 
 					where itbill_id = '%s' 
 					order by show_order";
-			$items = $db->query($sql, $id);
-			foreach ( $items as $i => $v ) {
-				$goodsId = $v["goods_id"];
-				$goodsCount = $v["goods_count"];
-				// 检查商品Id是否存在
-				$sql = "select code, name, spec from t_goods where id = '%s' ";
-				$data = $db->query($sql, $goodsId);
-				if (! $data) {
-					$db->rollback();
-					$index = $i + 1;
-					return $this->bad("第{$index}条明细记录中的商品不存在，无法完成提交");
-				}
-				$goodsCode = $data[0]["code"];
-				$goodsName = $data[0]["name"];
-				$goodsSpec = $data[0]["spec"];
-				
-				// 检查调出数量是否为正数
-				if ($goodsCount <= 0) {
-					$db->rollback();
-					$index = $i + 1;
-					return $this->bad("第{$index}条明细记录中的调拨数量不是正数，无法完成提交");
-				}
-				
-				// 检查调出库存是否足够
-				$sql = "select balance_count, balance_price, balance_money, out_count, out_money 
+		$items = $db->query($sql, $id);
+		foreach ( $items as $i => $v ) {
+			$goodsId = $v["goods_id"];
+			$goodsCount = $v["goods_count"];
+			// 检查商品Id是否存在
+			$sql = "select code, name, spec from t_goods where id = '%s' ";
+			$data = $db->query($sql, $goodsId);
+			if (! $data) {
+				$db->rollback();
+				$index = $i + 1;
+				return $this->bad("第{$index}条明细记录中的商品不存在，无法完成提交");
+			}
+			$goodsCode = $data[0]["code"];
+			$goodsName = $data[0]["name"];
+			$goodsSpec = $data[0]["spec"];
+			
+			// 检查调出数量是否为正数
+			if ($goodsCount <= 0) {
+				$db->rollback();
+				$index = $i + 1;
+				return $this->bad("第{$index}条明细记录中的调拨数量不是正数，无法完成提交");
+			}
+			
+			// 检查调出库存是否足够
+			$sql = "select balance_count, balance_price, balance_money, out_count, out_money 
 						from t_inventory
 						where warehouse_id = '%s' and goods_id = '%s' ";
-				$data = $db->query($sql, $fromWarehouseId, $goodsId);
-				if (! $data) {
-					$db->rollback();
-					return $this->bad("商品[$goodsCode $goodsName $goodsSpec]库存不足，无法调拨");
-				}
-				$balanceCount = $data[0]["balance_count"];
-				$balancePrice = $data[0]["balance_price"];
-				$balanceMoney = $data[0]["balance_money"];
-				if ($balanceCount < $goodsCount) {
-					$db->rollback();
-					return $this->bad("商品[$goodsCode $goodsName $goodsSpec]库存不足，无法调拨");
-				}
-				$totalOutCount = $data[0]["out_count"];
-				$totalOutMoney = $data[0]["out_money"];
-				
-				// 调出库 - 明细账
-				$outPrice = $balancePrice;
-				$outCount = $goodsCount;
-				$outMoney = $outCount * $outPrice;
-				if ($outCount == $balanceCount) {
-					// 全部出库，这个时候金额全部转移
-					$outMoney = $balanceMoney;
-					$balanceCount = 0;
-					$balanceMoney = 0;
-				} else {
-					$balanceCount -= $outCount;
-					$balanceMoney -= $outMoney;
-				}
-				$totalOutCount += $outCount;
-				$totalOutMoney += $outMoney;
-				$totalOutPrice = $totalOutMoney / $totalOutCount;
-				$sql = "insert into t_inventory_detail(out_count, out_price, out_money, balance_count,
+			$data = $db->query($sql, $fromWarehouseId, $goodsId);
+			if (! $data) {
+				$db->rollback();
+				return $this->bad("商品[$goodsCode $goodsName $goodsSpec]库存不足，无法调拨");
+			}
+			$balanceCount = $data[0]["balance_count"];
+			$balancePrice = $data[0]["balance_price"];
+			$balanceMoney = $data[0]["balance_money"];
+			if ($balanceCount < $goodsCount) {
+				$db->rollback();
+				return $this->bad("商品[$goodsCode $goodsName $goodsSpec]库存不足，无法调拨");
+			}
+			$totalOutCount = $data[0]["out_count"];
+			$totalOutMoney = $data[0]["out_money"];
+			
+			// 调出库 - 明细账
+			$outPrice = $balancePrice;
+			$outCount = $goodsCount;
+			$outMoney = $outCount * $outPrice;
+			if ($outCount == $balanceCount) {
+				// 全部出库，这个时候金额全部转移
+				$outMoney = $balanceMoney;
+				$balanceCount = 0;
+				$balanceMoney = 0;
+			} else {
+				$balanceCount -= $outCount;
+				$balanceMoney -= $outMoney;
+			}
+			$totalOutCount += $outCount;
+			$totalOutMoney += $outMoney;
+			$totalOutPrice = $totalOutMoney / $totalOutCount;
+			$sql = "insert into t_inventory_detail(out_count, out_price, out_money, balance_count,
 						balance_price, balance_money, warehouse_id, goods_id, biz_date, biz_user_id, date_created,
 						ref_number, ref_type)
 						values (%d, %f, %f, %d, %f, %f, '%s', '%s', '%s', '%s', now(),
 						'%s', '调拨出库')";
-				$rc = $db->execute($sql, $outCount, $outPrice, $outMoney, $balanceCount, 
-						$balancePrice, $balanceMoney, $fromWarehouseId, $goodsId, $bizDT, $bizUserId, 
-						$ref);
-				if (! $rc) {
-					$db->rollback();
-					return $this->sqlError();
-				}
-				
-				// 调出库 - 总账
-				$sql = "update t_inventory
+			$rc = $db->execute($sql, $outCount, $outPrice, $outMoney, $balanceCount, $balancePrice, 
+					$balanceMoney, $fromWarehouseId, $goodsId, $bizDT, $bizUserId, $ref);
+			if ($rc === false) {
+				$db->rollback();
+				return $this->sqlError(__LINE__);
+			}
+			
+			// 调出库 - 总账
+			$sql = "update t_inventory
 						set out_count = %d, out_price = %f, out_money = %f,
 							balance_count = %d, balance_price = %f, balance_money = %f
 						where warehouse_id = '%s' and goods_id = '%s'";
-				$rc = $db->execute($sql, $totalOutCount, $totalOutPrice, $totalOutMoney, 
-						$balanceCount, $balancePrice, $balanceMoney, $fromWarehouseId, $goodsId);
-				if (! $rc) {
-					$db->rollback();
-					return $this->sqlError();
-				}
-				
-				// 调入库 - 总账
-				$inCount = $outCount;
-				$inPrice = $outPrice;
-				$inMoney = $outMoney;
-				$balanceCount = 0;
-				$balanceMoney = 0;
-				$balancePrice = 0;
-				$sql = "select balance_count, balance_money, in_count, in_money from
+			$rc = $db->execute($sql, $totalOutCount, $totalOutPrice, $totalOutMoney, $balanceCount, 
+					$balancePrice, $balanceMoney, $fromWarehouseId, $goodsId);
+			if ($rc === false) {
+				$db->rollback();
+				return $this->sqlError(__LINE__);
+			}
+			
+			// 调入库 - 总账
+			$inCount = $outCount;
+			$inPrice = $outPrice;
+			$inMoney = $outMoney;
+			$balanceCount = 0;
+			$balanceMoney = 0;
+			$balancePrice = 0;
+			$sql = "select balance_count, balance_money, in_count, in_money from
 						t_inventory
 						where warehouse_id = '%s' and goods_id = '%s' ";
-				$data = $db->query($sql, $toWarehouseId, $goodsId);
-				if (! $data) {
-					// 在总账中还没有记录
-					$balanceCount = $inCount;
-					$balanceMoney = $inMoney;
-					$balancePrice = $inPrice;
-					
-					$sql = "insert into t_inventory(in_count, in_price, in_money, balance_count,
+			$data = $db->query($sql, $toWarehouseId, $goodsId);
+			if (! $data) {
+				// 在总账中还没有记录
+				$balanceCount = $inCount;
+				$balanceMoney = $inMoney;
+				$balancePrice = $inPrice;
+				
+				$sql = "insert into t_inventory(in_count, in_price, in_money, balance_count,
 							balance_price, balance_money, warehouse_id, goods_id)
 							values (%d, %f, %f, %d, %f, %f, '%s', '%s')";
-					$rc = $db->execute($sql, $inCount, $inPrice, $inMoney, $balanceCount, 
-							$balancePrice, $balanceMoney, $toWarehouseId, $goodsId);
-					if (! $rc) {
-						$db->rollback();
-						return $this->sqlError();
-					}
-				} else {
-					$balanceCount = $data[0]["balance_count"];
-					$balanceMoney = $data[0]["balance_money"];
-					$totalInCount = $data[0]["in_count"];
-					$totalInMoney = $data[0]["in_money"];
-					
-					$balanceCount += $inCount;
-					$balanceMoney += $inMoney;
-					$balancePrice = $balanceMoney / $balanceCount;
-					$totalInCount += $inCount;
-					$totalInMoney += $inMoney;
-					$totalInPrice = $totalInMoney / $totalInCount;
-					
-					$sql = "update t_inventory
+				$rc = $db->execute($sql, $inCount, $inPrice, $inMoney, $balanceCount, $balancePrice, 
+						$balanceMoney, $toWarehouseId, $goodsId);
+				if ($rc === false) {
+					$db->rollback();
+					return $this->sqlError(__LINE__);
+				}
+			} else {
+				$balanceCount = $data[0]["balance_count"];
+				$balanceMoney = $data[0]["balance_money"];
+				$totalInCount = $data[0]["in_count"];
+				$totalInMoney = $data[0]["in_money"];
+				
+				$balanceCount += $inCount;
+				$balanceMoney += $inMoney;
+				$balancePrice = $balanceMoney / $balanceCount;
+				$totalInCount += $inCount;
+				$totalInMoney += $inMoney;
+				$totalInPrice = $totalInMoney / $totalInCount;
+				
+				$sql = "update t_inventory
 							set in_count = %d, in_price = %f, in_money = %f,
 							    balance_count = %d, balance_price = %f, balance_money = %f
 							where warehouse_id = '%s' and goods_id = '%s' ";
-					$rc = $db->execute($sql, $totalInCount, $totalInPrice, $totalInMoney, 
-							$balanceCount, $balancePrice, $balanceMoney, $toWarehouseId, $goodsId);
-					if (! $rc) {
-						$db->rollback();
-						return $this->sqlError();
-					}
+				$rc = $db->execute($sql, $totalInCount, $totalInPrice, $totalInMoney, $balanceCount, 
+						$balancePrice, $balanceMoney, $toWarehouseId, $goodsId);
+				if ($rc === false) {
+					$db->rollback();
+					return $this->sqlError(__LINE__);
 				}
-				
-				// 调入库 - 明细账
-				$sql = "insert into t_inventory_detail(in_count, in_price, in_money, balance_count, 
+			}
+			
+			// 调入库 - 明细账
+			$sql = "insert into t_inventory_detail(in_count, in_price, in_money, balance_count, 
 						balance_price, balance_money, warehouse_id, goods_id, ref_number, ref_type,
 						biz_date, biz_user_id, date_created)
 						values (%d, %f, %f, %d, %f, %f, '%s', '%s', '%s', '调拨入库', '%s', '%s', now())";
-				$rc = $db->execute($sql, $inCount, $inPrice, $inMoney, $balanceCount, $balancePrice, 
-						$balanceMoney, $toWarehouseId, $goodsId, $ref, $bizDT, $bizUserId);
-				if (! $rc) {
-					$db->rollback();
-					return $this->sqlError();
-				}
+			$rc = $db->execute($sql, $inCount, $inPrice, $inMoney, $balanceCount, $balancePrice, 
+					$balanceMoney, $toWarehouseId, $goodsId, $ref, $bizDT, $bizUserId);
+			if ($rc === false) {
+				$db->rollback();
+				return $this->sqlError(__LINE__);
 			}
-			
-			// 修改调拨单单据状态为已调拨
-			$sql = "update t_it_bill
+		}
+		
+		// 修改调拨单单据状态为已调拨
+		$sql = "update t_it_bill
 					set bill_status = 1000
 					where id = '%s' ";
-			$rc = $db->execute($sql, $id);
-			if (! $rc) {
-				$db->rollback();
-				return $this->bad("数据库错误，请联系管理员");
-			}
-			
-			// 记录业务日志
-			$bs = new BizlogService();
-			$log = "提交调拨单，单号: $ref";
-			$bs->insertBizlog($log, "库间调拨");
-			
-			$db->commit();
-			return $this->ok($id);
-		} catch ( Exception $e ) {
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
 			$db->rollback();
-			return $this->bad("数据库错误，请联系系统管理员");
+			return $this->sqlError(__LINE__);
 		}
+		
+		// 记录业务日志
+		$bs = new BizlogService();
+		$log = "提交调拨单，单号: $ref";
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$db->commit();
+
+		return $this->ok($id);
 	}
 }
