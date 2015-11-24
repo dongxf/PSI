@@ -504,6 +504,7 @@ CREATE TABLE IF NOT EXISTS `t_it_bill` (
   `from_warehouse_id` varchar(255) NOT NULL,
   `to_warehouse_id` varchar(255) NOT NULL,
   `data_org` varchar(255) DEFAULT NULL,
+  `company_id` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -530,6 +531,7 @@ CREATE TABLE IF NOT EXISTS `t_ic_bill` (
   `ref` varchar(255) NOT NULL,
   `warehouse_id` varchar(255) NOT NULL,
   `data_org` varchar(255) DEFAULT NULL,
+  `company_id` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
