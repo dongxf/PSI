@@ -17,6 +17,9 @@ use Home\Service\MainMenuService;
  */
 class MainMenuController extends Controller {
 
+	/**
+	 * 页面跳转
+	 */
 	public function navigateTo() {
 		$this->assign("uri", __ROOT__ . "/");
 		
