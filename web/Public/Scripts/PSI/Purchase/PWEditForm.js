@@ -176,14 +176,28 @@ Ext.define("PSI.Purchase.PWEditForm", {
 				show : {
 					fn : me.onWndShow,
 					scope : me
+				},
+				close: {
+					fn: me.onWndClose,
+					scope: me
 				}
 			}
 		});
 
 		me.callParent(arguments);
 	},
-	
+
+	onWindowBeforeUnload: function(e) {
+    	return ( window.event.returnValue = e.returnValue = '确认离开当前页面？');
+    },
+    
+    onWndClose: function() {
+        Ext.get(window).un('beforeunload', this.onWindowBeforeUnload);
+    },
+    
 	onWndShow : function() {
+		Ext.get(window).on('beforeunload', this.onWindowBeforeUnload);
+		
 		var me = this;
 
 		var el = me.getEl() || Ext.getBody();

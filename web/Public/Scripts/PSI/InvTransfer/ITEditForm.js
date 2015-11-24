@@ -164,7 +164,7 @@ Ext.define("PSI.InvTransfer.ITEditForm", {
     },
     
     onWindowBeforeUnload: function(e) {
-    	return ( window.event.returnValue = e.returnValue = '确认离开当前页面？！！');
+    	return ( window.event.returnValue = e.returnValue = '确认离开当前页面？');
     },
     
     onWndClose: function() {

@@ -147,7 +147,7 @@ Ext.define("PSI.InvCheck.ICEditForm", {
     },
     
     onWindowBeforeUnload: function(e) {
-    	return ( window.event.returnValue = e.returnValue = '确认离开当前页面？！！');
+    	return ( window.event.returnValue = e.returnValue = '确认离开当前页面？');
     },
     
     onWndClose: function() {
