@@ -129,29 +129,6 @@ class BizlogService extends PSIBaseService {
 	}
 
 	private function getClientIP() {
-		if ($this->isMOPAAS()) {
-			// 部署在http://psi.oschina.mopaas.com
-			
-			// 下面的代码参考：http://git.oschina.net/silentboy/testphp/blob/master/index.php
-			$ip = $_SERVER["HTTP_X_FORWARDED_FOR"];
-			if ($ip) {
-				$result = explode(",", $ip);
-				if ($result) {
-					return $result[0];
-				}
-			}
-			
-			if ($_SERVER["HTTP_CLIENT_IP"]) {
-				$ip = $_SERVER["HTTP_CLIENT_IP"];
-			} else {
-				$ip = $_SERVER["REMOTE_ADDR"];
-			}
-			
-			if ($ip) {
-				return $ip;
-			}
-		}
-		
 		return get_client_ip();
 	}
 }
