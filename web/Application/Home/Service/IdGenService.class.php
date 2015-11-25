@@ -18,10 +18,6 @@ class IdGenService {
 		}
 		
 		$data = $db->query("select UUID() as uuid");
-		if (! $data) {
-			return strtoupper(uniqid());
-		} else {
-			return strtoupper($data[0]["uuid"]);
-		}
+		return strtoupper($data[0]["uuid"]);
 	}
 }
