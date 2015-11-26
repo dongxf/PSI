@@ -21,6 +21,7 @@ function PSI_getHost() {
 		return $cfg["hostname"];
 	}
 	
+	// 本地单机部署，发现写IP地址比localhost，数据库要快很多
 	return "127.0.0.1";
 }
 
