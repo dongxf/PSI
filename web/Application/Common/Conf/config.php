@@ -21,7 +21,7 @@ function PSI_getHost() {
 		return $cfg["hostname"];
 	}
 	
-	return "localhost";
+	return "127.0.0.1";
 }
 
 function PSI_getDBName() {
