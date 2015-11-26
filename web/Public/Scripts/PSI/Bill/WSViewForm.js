@@ -31,7 +31,7 @@ Ext.define("PSI.Bill.WSViewForm", {
                         type: "table",
                         columns: 2
                     },
-                    height: 100,
+                    height: 120,
                     bodyPadding: 10,
                     items: [
                         {
@@ -76,6 +76,15 @@ Ext.define("PSI.Bill.WSViewForm", {
                             labelWidth: 60,
                             labelAlign: "right",
                             labelSeparator: ":"
+                        },
+                        {
+                            id: "editBillMemo",
+                            fieldLabel: "备注",
+                            colspan: 2,
+                            xtype: "displayfield",
+                            labelWidth: 60,
+                            labelAlign: "right",
+                            labelSeparator: ":"
                         }
                     ]
                 }],
@@ -110,6 +119,7 @@ Ext.define("PSI.Bill.WSViewForm", {
                     Ext.getCmp("editWarehouse").setValue(data.warehouseName);
                     Ext.getCmp("editBizUser").setValue(data.bizUserName);
                     Ext.getCmp("editBizDT").setValue(data.bizDT);
+                    Ext.getCmp("editBillMemo").setValue(data.memo);
 
                     var store = me.getGoodsGrid().getStore();
                     store.removeAll();
@@ -132,7 +142,7 @@ Ext.define("PSI.Bill.WSViewForm", {
         Ext.define(modelName, {
             extend: "Ext.data.Model",
             fields: ["id", "goodsId", "goodsCode", "goodsName", "goodsSpec", "unitName", "goodsCount",
-                "goodsMoney", "goodsPrice", "sn"]
+                "goodsMoney", "goodsPrice", "sn", "memo"]
         });
         var store = Ext.create("Ext.data.Store", {
             autoLoad: false,
@@ -162,6 +172,10 @@ Ext.define("PSI.Bill.WSViewForm", {
                     sortable: false, align: "right", xtype: "numbercolumn", width: 120},
                 {
                 	header: "序列号", dataIndex: "sn", menuDisabled: true, sortable: false 
+				},
+				{
+                	header: "备注", dataIndex: "memo", menuDisabled: true, sortable: false,
+                	width: 200
 				}
             ],
             store: store
