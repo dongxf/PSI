@@ -356,7 +356,7 @@ class WSBillService extends PSIBaseService {
 		$db = M();
 		$sql = "select w.id, w.ref, w.bizdt, c.name as customer_name, u.name as biz_user_name,
 					user.name as input_user_name, h.name as warehouse_name, w.sale_money,
-					w.bill_status, w.date_created, w.receiving_type 
+					w.bill_status, w.date_created, w.receiving_type, w.memo 
 				from t_ws_bill w, t_customer c, t_user u, t_user user, t_warehouse h 
 				where (w.customer_id = c.id) and (w.biz_user_id = u.id) 
 				  and (w.input_user_id = user.id) and (w.warehouse_id = h.id) ";
@@ -423,6 +423,7 @@ class WSBillService extends PSIBaseService {
 			$result[$i]["amount"] = $v["sale_money"];
 			$result[$i]["dateCreated"] = $v["date_created"];
 			$result[$i]["receivingType"] = $v["receiving_type"];
+			$result[$i]["memo"] = $v["memo"];
 		}
 		
 		$sql = "select count(*) as cnt 
@@ -489,7 +490,7 @@ class WSBillService extends PSIBaseService {
 		
 		$billId = $params["billId"];
 		$sql = "select d.id, g.code, g.name, g.spec, u.name as unit_name, d.goods_count, 
-				d.goods_price, d.goods_money, d.sn_note 
+				d.goods_price, d.goods_money, d.sn_note, d.memo 
 				from t_ws_bill_detail d, t_goods g, t_goods_unit u 
 				where d.wsbill_id = '%s' and d.goods_id = g.id and g.unit_id = u.id 
 				order by d.show_order";
@@ -506,6 +507,7 @@ class WSBillService extends PSIBaseService {
 			$result[$i]["goodsPrice"] = $v["goods_price"];
 			$result[$i]["goodsMoney"] = $v["goods_money"];
 			$result[$i]["sn"] = $v["sn_note"];
+			$result[$i]["memo"] = $v["memo"];
 		}
 		
 		return $result;
