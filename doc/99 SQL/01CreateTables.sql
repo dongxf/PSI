@@ -412,6 +412,7 @@ CREATE TABLE IF NOT EXISTS `t_ws_bill` (
   `receiving_type` int(11) NOT NULL DEFAULT 0,
   `data_org` varchar(255) DEFAULT NULL,
   `company_id` varchar(255) DEFAULT NULL,
+  `memo` varchar(1000) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -429,6 +430,7 @@ CREATE TABLE IF NOT EXISTS `t_ws_bill_detail` (
   `wsbill_id` varchar(255) NOT NULL,
   `sn_note` varchar(255) DEFAULT NULL,
   `data_org` varchar(255) DEFAULT NULL,
+  `memo` varchar(1000) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
