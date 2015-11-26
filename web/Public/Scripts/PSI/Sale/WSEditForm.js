@@ -616,6 +616,7 @@ Ext.define("PSI.Sale.WSEditForm", {
 		Ext.getCmp("columnActionAdd").hide();
 		Ext.getCmp("columnActionAppend").hide();
 		Ext.getCmp("editReceivingType").setReadOnly(true);
+		Ext.getCmp("editBillMemo").setReadOnly(true);
     },
     
     onBarCode: function() {
@@ -653,6 +654,7 @@ Ext.define("PSI.Sale.WSEditForm", {
             warehouseName: Ext.getCmp("editWarehouse").getValue(),
             bizUserId: Ext.getCmp("editBizUser").getIdValue(),
             bizUserName: Ext.getCmp("editBizUser").getValue(),
+            billMemo: Ext.getCmp("editBillMemo").getValue(),
             items: []
         };
 
@@ -669,7 +671,8 @@ Ext.define("PSI.Sale.WSEditForm", {
                 goodsCount: item.get("goodsCount"),
                 goodsPrice: item.get("goodsPrice"),
                 goodsMoney: item.get("goodsMoney"),
-                sn: item.get("sn")
+                sn: item.get("sn"),
+                memo: item.get("memo")
             });
         }
 
@@ -707,7 +710,7 @@ Ext.define("PSI.Sale.WSEditForm", {
         Ext.getCmp("editBizUser").setIdValue(bill.bizUserId);
         Ext.getCmp("editBizUser").setValue(bill.bizUserName);
         Ext.getCmp("editBizDT").setValue(bill.bizDT);
-
+        Ext.getCmp("editBillMemo").setValue(bill.billMemo);
     	
     	// 明细表
     	var store = me.getGoodsGrid().getStore();
