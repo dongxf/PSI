@@ -188,6 +188,20 @@ Ext.define("PSI.Sale.WSEditForm", {
         							scope : me
         						}
         					}
+        				},
+        				{
+        					id: "editBillMemo",
+        					labelWidth : 60,
+        					labelAlign : "right",
+        					labelSeparator : "",
+        					fieldLabel : "备注",
+        					xtype : "textfield",
+        					listeners : {
+        						specialkey : {
+        							fn : me.onEditBillMemoSpecialKey,
+        							scope : me
+        						}
+        					}
         				}
                     ]
                 }],
@@ -262,6 +276,9 @@ Ext.define("PSI.Sale.WSEditForm", {
                     if (data.receivingType) {
 						Ext.getCmp("editReceivingType").setValue(data.receivingType);
 					}
+                    if (data.memo) {
+                    	Ext.getCmp("editBillMemo").setValue(data.memo);
+                    }
 
                     var store = me.getGoodsGrid().getStore();
                     store.removeAll();
@@ -337,6 +354,16 @@ Ext.define("PSI.Sale.WSEditForm", {
     	}
     	
         if (e.getKey() == e.ENTER) {
+            Ext.getCmp("editBillMemo").focus();
+        }
+    },
+    
+    onEditBillMemoSpecialKey: function (field, e) {
+    	if (this.__readonly) {
+    		return;
+    	}
+    	
+        if (e.getKey() == e.ENTER) {
             var me = this;
             var store = me.getGoodsGrid().getStore();
             if (store.getCount() == 0) {
@@ -355,7 +382,7 @@ Ext.define("PSI.Sale.WSEditForm", {
         Ext.define("PSIWSBillDetail_EditForm", {
             extend: "Ext.data.Model",
             fields: ["id", "goodsId", "goodsCode", "goodsName", "goodsSpec", "unitName", "goodsCount",
-                     {name: "goodsMoney", type: "float"}, "goodsPrice", "sn"]
+                     {name: "goodsMoney", type: "float"}, "goodsPrice", "sn", "memo"]
         });
         var store = Ext.create("Ext.data.Store", {
             autoLoad: false,
@@ -404,6 +431,11 @@ Ext.define("PSI.Sale.WSEditForm", {
                     summaryType: "sum"},
                 {
                 	header: "序列号", dataIndex: "sn", menuDisabled: true, sortable: false, draggable: false,
+                	editor: {
+                		xtype: "textfield"
+                	}
+                },{
+                	header: "备注", dataIndex: "memo", menuDisabled: true, sortable: false, draggable: false,
                 	editor: {
                 		xtype: "textfield"
                 	}
@@ -492,7 +524,7 @@ Ext.define("PSI.Sale.WSEditForm", {
         	if (goods.get(fieldName) != (new Number(oldValue)).toFixed(2)) {
 				me.calcPrice(goods);
 			}
-        } else if (fieldName == "sn") {
+        } else if (fieldName == "memo") {
             var store = me.getGoodsGrid().getStore();
             if (e.rowIdx == store.getCount() - 1) {
                 store.add({});
@@ -547,6 +579,7 @@ Ext.define("PSI.Sale.WSEditForm", {
             warehouseId: Ext.getCmp("editWarehouse").getIdValue(),
             bizUserId: Ext.getCmp("editBizUser").getIdValue(),
             receivingType: Ext.getCmp("editReceivingType").getValue(),
+            billMemo: Ext.getCmp("editBillMemo").getValue(),
             items: []
         };
 
@@ -559,7 +592,8 @@ Ext.define("PSI.Sale.WSEditForm", {
                 goodsCount: item.get("goodsCount"),
                 goodsPrice: item.get("goodsPrice"),
                 goodsMoney: item.get("goodsMoney"),
-                sn: item.get("sn")
+                sn: item.get("sn"),
+                memo: item.get("memo")
             });
         }
 

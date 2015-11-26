@@ -49,7 +49,7 @@ class WSBillService extends PSIBaseService {
 			$sql = "select w.id, w.ref, w.bill_status, w.bizdt, c.id as customer_id, c.name as customer_name, 
 					  u.id as biz_user_id, u.name as biz_user_name, 
 					  h.id as warehouse_id, h.name as warehouse_name,
-						w.receiving_type
+						w.receiving_type, w.memo
 					from t_ws_bill w, t_customer c, t_user u, t_warehouse h 
 					where w.customer_id = c.id and w.biz_user_id = u.id 
 					  and w.warehouse_id = h.id 
@@ -66,10 +66,11 @@ class WSBillService extends PSIBaseService {
 				$result["bizUserId"] = $data[0]["biz_user_id"];
 				$result["bizUserName"] = $data[0]["biz_user_name"];
 				$result["receivingType"] = $data[0]["receiving_type"];
+				$result["memo"] = $data[0]["memo"];
 			}
 			
 			$sql = "select d.id, g.id as goods_id, g.code, g.name, g.spec, u.name as unit_name, d.goods_count, 
-					d.goods_price, d.goods_money, d.sn_note
+					d.goods_price, d.goods_money, d.sn_note, d.memo
 					from t_ws_bill_detail d, t_goods g, t_goods_unit u 
 					where d.wsbill_id = '%s' and d.goods_id = g.id and g.unit_id = u.id
 					order by d.show_order";
@@ -86,6 +87,7 @@ class WSBillService extends PSIBaseService {
 				$items[$i]["goodsPrice"] = $v["goods_price"];
 				$items[$i]["goodsMoney"] = $v["goods_money"];
 				$items[$i]["sn"] = $v["sn_note"];
+				$items[$i]["memo"] = $v["memo"];
 			}
 			
 			$result["items"] = $items;
@@ -138,6 +140,7 @@ class WSBillService extends PSIBaseService {
 		$customerId = $bill["customerId"];
 		$bizUserId = $bill["bizUserId"];
 		$receivingType = $bill["receivingType"];
+		$billMemo = $bill["billMemo"];
 		$items = $bill["items"];
 		
 		$db = M();
@@ -205,8 +208,8 @@ class WSBillService extends PSIBaseService {
 			
 			$sql = "insert into t_ws_bill_detail (id, date_created, goods_id, 
 						goods_count, goods_price, goods_money,
-						show_order, wsbill_id, sn_note, data_org) 
-						values ('%s', now(), '%s', %d, %f, %f, %d, '%s', '%s', '%s')";
+						show_order, wsbill_id, sn_note, data_org, memo) 
+						values ('%s', now(), '%s', %d, %f, %f, %d, '%s', '%s', '%s', '%s')";
 			foreach ( $items as $i => $v ) {
 				$goodsId = $v["goodsId"];
 				if ($goodsId) {
@@ -215,9 +218,10 @@ class WSBillService extends PSIBaseService {
 					$goodsMoney = floatval($v["goodsMoney"]);
 					
 					$sn = $v["sn"];
+					$memo = $v["memo"];
 					
 					$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsPrice, 
-							$goodsMoney, $i, $id, $sn, $dataOrg);
+							$goodsMoney, $i, $id, $sn, $dataOrg, $memo);
 					if ($rc === false) {
 						$db->rollback();
 						return $this->sqlError(__LINE__);
@@ -233,10 +237,11 @@ class WSBillService extends PSIBaseService {
 			
 			$sql = "update t_ws_bill 
 						set sale_money = %f, customer_id = '%s', warehouse_id = '%s', 
-						biz_user_id = '%s', bizdt = '%s', receiving_type = %d 
+						biz_user_id = '%s', bizdt = '%s', receiving_type = %d,
+						memo = '%s'
 						where id = '%s' ";
 			$rc = $db->execute($sql, $sumGoodsMoney, $customerId, $warehouseId, $bizUserId, $bizDT, 
-					$receivingType, $id);
+					$receivingType, $billMemo, $id);
 			if ($rc === false) {
 				$db->rollback();
 				return $this->sqlError(__LINE__);
@@ -252,11 +257,11 @@ class WSBillService extends PSIBaseService {
 			$id = $idGen->newId();
 			$ref = $this->genNewBillRef();
 			$sql = "insert into t_ws_bill(id, bill_status, bizdt, biz_user_id, customer_id,  date_created,
-						input_user_id, ref, warehouse_id, receiving_type, data_org, company_id) 
-						values ('%s', 0, '%s', '%s', '%s', now(), '%s', '%s', '%s', %d, '%s', '%s')";
+						input_user_id, ref, warehouse_id, receiving_type, data_org, company_id, memo) 
+					values ('%s', 0, '%s', '%s', '%s', now(), '%s', '%s', '%s', %d, '%s', '%s', '%s')";
 			
 			$rc = $db->execute($sql, $id, $bizDT, $bizUserId, $customerId, $us->getLoginUserId(), 
-					$ref, $warehouseId, $receivingType, $dataOrg, $companyId);
+					$ref, $warehouseId, $receivingType, $dataOrg, $companyId, $billMemo);
 			if ($rc === false) {
 				$db->rollback();
 				return $this->sqlError(__LINE__);
@@ -264,8 +269,8 @@ class WSBillService extends PSIBaseService {
 			
 			$sql = "insert into t_ws_bill_detail (id, date_created, goods_id, 
 						goods_count, goods_price, goods_money,
-						show_order, wsbill_id, sn_note, data_org) 
-						values ('%s', now(), '%s', %d, %f, %f, %d, '%s', '%s', '%s')";
+						show_order, wsbill_id, sn_note, data_org, memo) 
+						values ('%s', now(), '%s', %d, %f, %f, %d, '%s', '%s', '%s', '%s')";
 			foreach ( $items as $i => $v ) {
 				$goodsId = $v["goodsId"];
 				if ($goodsId) {
@@ -274,9 +279,10 @@ class WSBillService extends PSIBaseService {
 					$goodsMoney = floatval($v["goodsMoney"]);
 					
 					$sn = $v["sn"];
+					$memo = $v["memo"];
 					
 					$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsPrice, 
-							$goodsMoney, $i, $id, $sn, $dataOrg);
+							$goodsMoney, $i, $id, $sn, $dataOrg, $memo);
 					if ($rc === false) {
 						$db->rollback();
 						return $this->sqlError(__LINE__);
