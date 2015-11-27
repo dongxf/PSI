@@ -8,7 +8,7 @@ namespace Home\Service;
  * @author 李静波
  */
 class UpdateDBService extends PSIBaseService {
-	private $CURRENT_DB_VERSION = "20151126-001";
+	private $CURRENT_DB_VERSION = "20151127-001";
 
 	private function tableExists($db, $tableName) {
 		$dbName = C('DB_NAME');
@@ -100,6 +100,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20151123_03($db);
 		$this->update_20151124_01($db);
 		$this->update_20151126_01($db);
+		$this->update_20151127_01($db);
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -111,6 +112,28 @@ class UpdateDBService extends PSIBaseService {
 		$bl->insertBizlog("升级数据库，数据库版本 = " . $this->CURRENT_DB_VERSION);
 		
 		return $this->ok();
+	}
+
+	private function update_20151127_01($db) {
+		// 本次更新：新增客户分类权限
+		$fid = "1007-02";
+		$name = "客户分类";
+		$sql = "select count(*) as cnt from t_fid where fid = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_fid(fid, name) value('%s', '%s')";
+			$db->execute($sql, $fid, $name);
+		}
+		
+		$sql = "select count(*) as cnt from t_permission where id = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_permission(id, fid, name, note) 
+					value('%s', '%s', '%s', '%s')";
+			$db->execute($sql, $fid, $fid, $name, $name);
+		}
 	}
 
 	private function update_20151126_01($db) {
