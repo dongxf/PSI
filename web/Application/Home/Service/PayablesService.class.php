@@ -10,7 +10,11 @@ use Home\Common\FIdConst;
  * @author 李静波
  */
 class PayablesService extends PSIBaseService {
+	private $LOG_CATEGORY = "应付账款管理";
 
+	/**
+	 * 往来单位分类
+	 */
 	public function payCategoryList($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
@@ -58,6 +62,9 @@ class PayablesService extends PSIBaseService {
 		return $result;
 	}
 
+	/**
+	 * 应付账款列表
+	 */
 	public function payList($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
@@ -175,6 +182,9 @@ class PayablesService extends PSIBaseService {
 		}
 	}
 
+	/**
+	 * 每笔应付账款的明细记录
+	 */
 	public function payDetailList($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
@@ -217,6 +227,9 @@ class PayablesService extends PSIBaseService {
 		);
 	}
 
+	/**
+	 * 应付账款的付款记录
+	 */
 	public function payRecordList($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
@@ -260,6 +273,9 @@ class PayablesService extends PSIBaseService {
 		);
 	}
 
+	/**
+	 * 付款记录
+	 */
 	public function addPayment($params) {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
@@ -276,11 +292,14 @@ class PayablesService extends PSIBaseService {
 		}
 		
 		$db = M();
+		$db->startTrans();
+		
 		$billId = "";
 		if ($refType == "采购入库") {
 			$sql = "select id from t_pw_bill where ref = '%s' ";
 			$data = $db->query($sql, $refNumber);
 			if (! $data) {
+				$db->rollback();
 				return $this->bad("单号为 {$refNumber} 的采购入库不存在，无法付款");
 			}
 			$billId = $data[0]["id"];
@@ -291,70 +310,86 @@ class PayablesService extends PSIBaseService {
 		$data = $db->query($sql, $bizUserId);
 		$cnt = $data[0]["cnt"];
 		if ($cnt != 1) {
+			$db->rollback();
 			return $this->bad("付款人不存在，无法付款");
 		}
 		
 		// 检查付款日期是否正确
 		if (! $this->dateIsValid($bizDT)) {
+			$db->rollback();
 			return $this->bad("付款日期不正确");
 		}
 		
-		$db->startTrans();
-		try {
-			$sql = "insert into t_payment (id, act_money, biz_date, date_created, input_user_id,
+		$sql = "insert into t_payment (id, act_money, biz_date, date_created, input_user_id,
 					pay_user_id,  bill_id,  ref_type, ref_number, remark) 
 					values ('%s', %f, '%s', now(), '%s', '%s', '%s', '%s', '%s', '%s')";
-			$idGen = new IdGenService();
-			$us = new UserService();
-			$db->execute($sql, $idGen->newId(), $actMoney, $bizDT, $us->getLoginUserId(), 
-					$bizUserId, $billId, $refType, $refNumber, $remark);
-			
-			$log = "为 {$refType} - 单号：{$refNumber} 付款：{$actMoney}元";
-			$bs = new BizlogService();
-			$bs->insertBizlog($log, "应付账款管理");
-			
-			// 应付明细账
-			$sql = "select balance_money, act_money, ca_type, ca_id 
+		$idGen = new IdGenService();
+		$us = new UserService();
+		$rc = $db->execute($sql, $idGen->newId(), $actMoney, $bizDT, $us->getLoginUserId(), 
+				$bizUserId, $billId, $refType, $refNumber, $remark);
+		if ($rc === false) {
+			$db->rollback();
+			return $this->sqlError(__LINE__);
+		}
+		
+		$log = "为 {$refType} - 单号：{$refNumber} 付款：{$actMoney}元";
+		$bs = new BizlogService();
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		// 应付明细账
+		$sql = "select balance_money, act_money, ca_type, ca_id 
 					from t_payables_detail 
 					where ref_type = '%s' and ref_number = '%s' ";
-			$data = $db->query($sql, $refType, $refNumber);
-			$caType = $data[0]["ca_type"];
-			$caId = $data[0]["ca_id"];
-			$balanceMoney = $data[0]["balance_money"];
-			$actMoneyNew = $data[0]["act_money"];
-			$actMoneyNew += $actMoney;
-			$balanceMoney -= $actMoney;
-			$sql = "update t_payables_detail 
+		$data = $db->query($sql, $refType, $refNumber);
+		if (! $data) {
+			$db->rollback();
+			return $this->sqlError(__LINE__);
+		}
+		$caType = $data[0]["ca_type"];
+		$caId = $data[0]["ca_id"];
+		$balanceMoney = $data[0]["balance_money"];
+		$actMoneyNew = $data[0]["act_money"];
+		$actMoneyNew += $actMoney;
+		$balanceMoney -= $actMoney;
+		$sql = "update t_payables_detail 
 					set act_money = %f, balance_money = %f 
 					where ref_type = '%s' and ref_number = '%s' 
 					and ca_id = '%s' and ca_type = '%s' ";
-			$db->execute($sql, $actMoneyNew, $balanceMoney, $refType, $refNumber, $caId, $caType);
-			
-			// 应付总账
-			$sql = "select sum(pay_money) as sum_pay_money, sum(act_money) as sum_act_money
+		$rc = $db->execute($sql, $actMoneyNew, $balanceMoney, $refType, $refNumber, $caId, $caType);
+		if ($rc === false) {
+			$db->rollback();
+			return $this->sqlError(__LINE__);
+		}
+		
+		// 应付总账
+		$sql = "select sum(pay_money) as sum_pay_money, sum(act_money) as sum_act_money
 					from t_payables_detail
 					where ca_type = '%s' and ca_id = '%s' ";
-			$data = $db->query($sql, $caType, $caId);
-			$sumPayMoney = $data[0]["sum_pay_money"];
-			$sumActMoney = $data[0]["sum_act_money"];
-			if (! $sumPayMoney) {
-				$sumPayMoney = 0;
-			}
-			if (! $sumActMoney) {
-				$sumActMoney = 0;
-			}
-			$sumBalanceMoney = $sumPayMoney - $sumActMoney;
-			
-			$sql = "update t_payables 
+		$data = $db->query($sql, $caType, $caId);
+		if (! $data) {
+			$db->rollback();
+			return $this->sqlError(__LINE__);
+		}
+		$sumPayMoney = $data[0]["sum_pay_money"];
+		$sumActMoney = $data[0]["sum_act_money"];
+		if (! $sumPayMoney) {
+			$sumPayMoney = 0;
+		}
+		if (! $sumActMoney) {
+			$sumActMoney = 0;
+		}
+		$sumBalanceMoney = $sumPayMoney - $sumActMoney;
+		
+		$sql = "update t_payables 
 					set act_money = %f, balance_money = %f 
 					where ca_type = '%s' and ca_id = '%s' ";
-			$db->execute($sql, $sumActMoney, $sumBalanceMoney, $caType, $caId);
-			
-			$db->commit();
-		} catch ( Exception $ex ) {
+		$rc = $db->execute($sql, $sumActMoney, $sumBalanceMoney, $caType, $caId);
+		if ($rc === false) {
 			$db->rollback();
-			return $this->bad("数据库错误，请联系管理员");
+			return $this->sqlError(__LINE__);
 		}
+		
+		$db->commit();
 		
 		return $this->ok();
 	}
