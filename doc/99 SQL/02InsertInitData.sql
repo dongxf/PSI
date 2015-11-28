@@ -20,6 +20,7 @@ INSERT INTO `t_fid` (`fid`, `name`) VALUES
 ('-8996', '权限管理'),
 ('1001', '商品'),
 ('1001-01', '商品在业务单据中的使用权限'),
+('1001-02', '商品分类'),
 ('1002', '商品计量单位'),
 ('1003', '仓库'),
 ('1003-01', '仓库在业务单据中的使用权限'),
@@ -136,6 +137,7 @@ INSERT INTO `t_permission` (`id`, `fid`, `name`, `note`) VALUES
 ('-8999-02', '-8999-02', '业务员在业务单据中的使用权限', '业务员在业务单据中的使用权限'),
 ('1001', '1001', '商品', '商品'),
 ('1001-01', '1001-01', '商品在业务单据中的使用权限', '商品在业务单据中的使用权限'),
+('1001-02', '1001-02', '商品分类', '商品分类'),
 ('1002', '1002', '商品计量单位', '商品计量单位'),
 ('1003', '1003', '仓库', '仓库'),
 ('1003-01', '1003-01', '仓库在业务单据中的使用权限', '仓库在业务单据中的使用权限'),
@@ -260,7 +262,7 @@ INSERT INTO `t_config` (`id`, `name`, `value`, `note`, `show_order`) VALUES
 
 TRUNCATE TABLE `t_psi_db_version`;
 INSERT INTO `t_psi_db_version` (`db_version`, `update_dt`) VALUES
-('20151128-001', now());
+('20151128-002', now());
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
