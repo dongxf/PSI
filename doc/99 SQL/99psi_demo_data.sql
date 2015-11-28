@@ -14,14 +14,14 @@ INSERT INTO `t_customer` (`id`, `category_id`, `code`, `name`, `contact01`, `qq0
 ('3DE2F4E1-B812-11E4-8FC9-782BCBD7746B', 'D33D2C0B-B811-11E4-8FC9-782BCBD7746B', '201', '大连海恩橡胶辅机有限公司', '', '', '', '', '', '', '', '', 'DLHEXJFJYXGS', NULL, NULL, NULL, NULL),
 ('E76FA3FC-B811-11E4-8FC9-782BCBD7746B', 'CDD1DE38-B811-11E4-8FC9-782BCBD7746B', '101', '匿名', '', '', '', '', '', '', '', '', 'NM', NULL, NULL, NULL, NULL);
 
-update t_customer set data_org = '01010001' ;
+update t_customer set data_org = '01010001', company_id = '4D74E1E4-A129-11E4-9B6A-782BCBD7746B' ;
 
 TRUNCATE TABLE `t_customer_category`;
 INSERT INTO `t_customer_category` (`id`, `code`, `name`, `parent_id`) VALUES
 ('CDD1DE38-B811-11E4-8FC9-782BCBD7746B', '1', '市内', NULL),
 ('D33D2C0B-B811-11E4-8FC9-782BCBD7746B', '2', '北三市', NULL);
 
-update t_customer_category set data_org = '01010001' ;
+update t_customer_category set data_org = '01010001', company_id = '4D74E1E4-A129-11E4-9B6A-782BCBD7746B' ;
 
 TRUNCATE TABLE `t_goods`;
 INSERT INTO `t_goods` (`id`, `category_id`, `code`, `name`, `sale_price`, `spec`, `unit_id`, `purchase_price`, `py`) VALUES
@@ -64,7 +64,7 @@ INSERT INTO `t_goods` (`id`, `category_id`, `code`, `name`, `sale_price`, `spec`
 ('F4BA9C47-B748-11E4-98B5-782BCBD7746B', '66D899C2-B3F3-11E4-9DEA-782BCBD7746B', '1403', '海尔消毒柜', '1098.00', 'ZTD100-A', '5D6D901E-B3F3-11E4-9DEA-782BCBD7746B', NULL, 'HEXDG'),
 ('FDE1B0F0-B3F3-11E4-9DEA-782BCBD7746B', '66D899C2-B3F3-11E4-9DEA-782BCBD7746B', '1102', '康佳窄边全高清液晶电视', '1999.00', '42英寸黑色LED42E330CE', '5D6D901E-B3F3-11E4-9DEA-782BCBD7746B', NULL, 'KJZBQGQYJDS');
 
-update t_goods set data_org = '01010001' ;
+update t_goods set data_org = '01010001', company_id = '4D74E1E4-A129-11E4-9B6A-782BCBD7746B' ;
 
 TRUNCATE TABLE `t_goods_category`;
 INSERT INTO `t_goods_category` (`id`, `code`, `name`) VALUES
@@ -74,12 +74,14 @@ INSERT INTO `t_goods_category` (`id`, `code`, `name`) VALUES
 ('89BCA8E9-B3F3-11E4-9DEA-782BCBD7746B', '4', '个护健康'),
 ('953219F9-B3F3-11E4-9DEA-782BCBD7746B', '5', '五金家装');
 
-update t_goods_category set data_org = '01010001', full_name = name ;
+update t_goods_category set data_org = '01010001', full_name = name, company_id = '4D74E1E4-A129-11E4-9B6A-782BCBD7746B' ;
 
 TRUNCATE TABLE `t_goods_unit`;
 INSERT INTO `t_goods_unit` (`id`, `name`) VALUES
 ('50C40382-B745-11E4-9C3C-782BCBD7746B', '套'),
 ('5D6D901E-B3F3-11E4-9DEA-782BCBD7746B', '台');
+
+update t_goods_unit set data_org = '01010001', company_id = '4D74E1E4-A129-11E4-9B6A-782BCBD7746B';
 
 TRUNCATE TABLE `t_payables`;
 INSERT INTO `t_payables` (`id`, `act_money`, `balance_money`, `ca_id`, `ca_type`, `pay_money`) VALUES
@@ -150,20 +152,20 @@ INSERT INTO `t_supplier` (`id`, `category_id`, `code`, `name`, `contact01`, `qq0
 ('F5AA127C-B810-11E4-8FC9-782BCBD7746B', '602BA712-B80F-11E4-8FC9-782BCBD7746B', '219', '大连海珍尚品海洋产品商贸有限公司', '', '', '', '', '', '', '', '', 'DLHZSPHYCPSMYXGS', NULL, NULL, NULL, NULL),
 ('FE7BCC92-B80F-11E4-8FC9-782BCBD7746B', '602BA712-B80F-11E4-8FC9-782BCBD7746B', '207', '大连彤加贸易有限公司', '', '', '', '', '', '', '', '', 'DLTJMYYXGS', NULL, NULL, NULL, NULL);
 
-update t_supplier set data_org = '01010001' ;
+update t_supplier set data_org = '01010001', company_id = '4D74E1E4-A129-11E4-9B6A-782BCBD7746B' ;
 
 TRUNCATE TABLE `t_supplier_category`;
 INSERT INTO `t_supplier_category` (`id`, `code`, `name`) VALUES
 ('599B7CF5-B80F-11E4-8FC9-782BCBD7746B', '1', '电商'),
 ('602BA712-B80F-11E4-8FC9-782BCBD7746B', '2', '本地供应商');
 
-update t_supplier_category set data_org = '01010001' ;
+update t_supplier_category set data_org = '01010001', company_id = '4D74E1E4-A129-11E4-9B6A-782BCBD7746B' ;
 
 TRUNCATE TABLE `t_warehouse`;
 INSERT INTO `t_warehouse` (`id`, `code`, `inited`, `name`, `py`) VALUES
 ('17A72FFA-B3F3-11E4-9DEA-782BCBD7746B', '1', 1, '城区中心库房', 'CQZXKF');
 
-update t_warehouse set data_org = '01010001' ;
+update t_warehouse set data_org = '01010001', company_id = '4D74E1E4-A129-11E4-9B6A-782BCBD7746B' ;
 
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
