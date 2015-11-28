@@ -10,7 +10,11 @@ use Home\Common\FIdConst;
  * @author 李静波
  */
 class ReceivablesService extends PSIBaseService {
+	private $LOG_CATEGORY = "应收账款管理";
 
+	/**
+	 * 往来单位分类
+	 */
 	public function rvCategoryList($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
@@ -62,6 +66,9 @@ class ReceivablesService extends PSIBaseService {
 		return $result;
 	}
 
+	/**
+	 * 应收账款列表
+	 */
 	public function rvList($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
@@ -192,6 +199,9 @@ class ReceivablesService extends PSIBaseService {
 		}
 	}
 
+	/**
+	 * 应收账款的明细记录
+	 */
 	public function rvDetailList($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
@@ -234,6 +244,9 @@ class ReceivablesService extends PSIBaseService {
 		);
 	}
 
+	/**
+	 * 应收账款的收款记录
+	 */
 	public function rvRecordList($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
@@ -277,6 +290,9 @@ class ReceivablesService extends PSIBaseService {
 		);
 	}
 
+	/**
+	 * 收款记录
+	 */
 	public function addRvRecord($params) {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
@@ -293,11 +309,14 @@ class ReceivablesService extends PSIBaseService {
 		}
 		
 		$db = M();
+		$db->startTrans();
+		
 		$billId = "";
 		if ($refType == "销售出库") {
 			$sql = "select id from t_ws_bill where ref = '%s' ";
 			$data = $db->query($sql, $refNumber);
 			if (! $data) {
+				$db->rollback();
 				return $this->bad("单号为 [{$refNumber}] 的销售出库单不存在，无法录入收款记录");
 			}
 			
@@ -309,74 +328,82 @@ class ReceivablesService extends PSIBaseService {
 		$data = $db->query($sql, $bizUserId);
 		$cnt = $data[0]["cnt"];
 		if ($cnt != 1) {
+			$db->rollback();
 			return $this->bad("收款人不存在，无法收款");
 		}
 		
 		if (! $this->dateIsValid($bizDT)) {
+			$db->rollback();
 			return $this->bad("收款日期不正确");
 		}
 		
-		$db->startTrans();
-		try {
-			$sql = "insert into t_receiving (id, act_money, biz_date, date_created, input_user_id,
+		$sql = "insert into t_receiving (id, act_money, biz_date, date_created, input_user_id,
 					rv_user_id, remark, ref_number, ref_type, bill_id) 
 					values ('%s', %f, '%s', now(), '%s', '%s', '%s', '%s', '%s', '%s')";
-			$idGen = new IdGenService();
-			$us = new UserService();
-			$db->execute($sql, $idGen->newId(), $actMoney, $bizDT, $us->getLoginUserId(), 
-					$bizUserId, $remark, $refNumber, $refType, $billId);
-			
-			$log = "为 {$refType} - 单号：{$refNumber} 收款：{$actMoney}元";
-			$bs = new BizlogService();
-			$bs->insertBizlog($log, "应收账款管理");
-			
-			// 应收明细账
-			$sql = "select ca_id, ca_type, act_money, balance_money 
+		$idGen = new IdGenService();
+		$us = new UserService();
+		$rc = $db->execute($sql, $idGen->newId(), $actMoney, $bizDT, $us->getLoginUserId(), 
+				$bizUserId, $remark, $refNumber, $refType, $billId);
+		if ($rc === false) {
+			$db->rollback();
+			return $this->sqlError(__LINE__);
+		}
+		
+		$log = "为 {$refType} - 单号：{$refNumber} 收款：{$actMoney}元";
+		$bs = new BizlogService();
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		// 应收明细账
+		$sql = "select ca_id, ca_type, act_money, balance_money 
 					from t_receivables_detail 
 					where ref_number = '%s' and ref_type = '%s' ";
-			$data = $db->query($sql, $refNumber, $refType);
-			if (! $data) {
-				$db->rollback();
-				return $this->bad("数据库错误，没有应收明细对应，无法收款");
-			}
-			$caId = $data[0]["ca_id"];
-			$caType = $data[0]["ca_type"];
-			$actMoneyDetail = $data[0]["act_money"];
-			$balanceMoneyDetail = $data[0]["balance_money"];
-			$actMoneyDetail += $actMoney;
-			$balanceMoneyDetail -= $actMoney;
-			$sql = "update t_receivables_detail 
+		$data = $db->query($sql, $refNumber, $refType);
+		if (! $data) {
+			$db->rollback();
+			return $this->bad("数据库错误，没有应收明细对应，无法收款");
+		}
+		$caId = $data[0]["ca_id"];
+		$caType = $data[0]["ca_type"];
+		$actMoneyDetail = $data[0]["act_money"];
+		$balanceMoneyDetail = $data[0]["balance_money"];
+		$actMoneyDetail += $actMoney;
+		$balanceMoneyDetail -= $actMoney;
+		$sql = "update t_receivables_detail 
 					set act_money = %f, balance_money = %f 
 					where ref_number = '%s' and ref_type = '%s' 
 					  and ca_id = '%s' and ca_type = '%s' ";
-			$db->execute($sql, $actMoneyDetail, $balanceMoneyDetail, $refNumber, $refType, $caId, 
-					$caType);
-			
-			// 应收总账
-			$sql = "select sum(rv_money) as sum_rv_money, sum(act_money) as sum_act_money
+		$rc = $db->execute($sql, $actMoneyDetail, $balanceMoneyDetail, $refNumber, $refType, $caId, 
+				$caType);
+		if ($rc === false) {
+			$db->rollback();
+			return $this->sqlError(__LINE__);
+		}
+		
+		// 应收总账
+		$sql = "select sum(rv_money) as sum_rv_money, sum(act_money) as sum_act_money
 					from t_receivables_detail
 					where ca_id = '%s' and ca_type = '%s' ";
-			$data = $db->query($sql, $caId, $caType);
-			$sumRvMoney = $data[0]["sum_rv_money"];
-			if (! $sumRvMoney) {
-				$sumRvMoney = 0;
-			}
-			$sumActMoney = $data[0]["sum_act_money"];
-			if (! $sumActMoney) {
-				$sumActMoney = 0;
-			}
-			$sumBalanceMoney = $sumRvMoney - $sumActMoney;
-			
-			$sql = "update t_receivables 
+		$data = $db->query($sql, $caId, $caType);
+		$sumRvMoney = $data[0]["sum_rv_money"];
+		if (! $sumRvMoney) {
+			$sumRvMoney = 0;
+		}
+		$sumActMoney = $data[0]["sum_act_money"];
+		if (! $sumActMoney) {
+			$sumActMoney = 0;
+		}
+		$sumBalanceMoney = $sumRvMoney - $sumActMoney;
+		
+		$sql = "update t_receivables 
 					set act_money = %f, balance_money = %f 
 					where ca_id = '%s' and ca_type = '%s' ";
-			$db->execute($sql, $sumActMoney, $sumBalanceMoney, $caId, $caType);
-			
-			$db->commit();
-		} catch ( Exception $ex ) {
+		$rc = $db->execute($sql, $sumActMoney, $sumBalanceMoney, $caId, $caType);
+		if ($rc === false) {
 			$db->rollback();
-			return $this->bad("数据库错误，请联系管理员");
+			return $this->sqlError(__LINE__);
 		}
+		
+		$db->commit();
 		
 		return $this->ok();
 	}
