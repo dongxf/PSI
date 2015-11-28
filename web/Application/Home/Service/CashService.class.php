@@ -9,6 +9,9 @@ namespace Home\Service;
  */
 class CashService extends PSIBaseService {
 
+	/**
+	 * 按日期现金收支列表
+	 */
 	public function cashList($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
@@ -22,13 +25,17 @@ class CashService extends PSIBaseService {
 		$dtTo = $params["dtTo"];
 		
 		$db = M();
+		$us = new UserService();
+		$companyId = $us->getCompanyId();
+		
 		$result = array();
 		$sql = "select biz_date, in_money, out_money, balance_money
 				from t_cash
-				where biz_date >= '%s' and biz_date <= '%s' 
+				where biz_date >= '%s' and biz_date <= '%s'
+					and company_id = '%s'
 				order by biz_date
 				limit %d, %d ";
-		$data = $db->query($sql, $dtFrom, $dtTo, $start, $limit);
+		$data = $db->query($sql, $dtFrom, $dtTo, $companyId, $start, $limit);
 		foreach ( $data as $i => $v ) {
 			$result[$i]["bizDT"] = $this->toYMD($v["biz_date"]);
 			$result[$i]["inMoney"] = $v["in_money"];
@@ -38,8 +45,9 @@ class CashService extends PSIBaseService {
 		
 		$sql = "select count(*) as cnt
 				from t_cash
-				where biz_date >= '%s' and biz_date <= '%s' ";
-		$data = $db->query($sql, $dtFrom, $dtTo);
+				where biz_date >= '%s' and biz_date <= '%s' 
+					and company_id = '%s' ";
+		$data = $db->query($sql, $dtFrom, $dtTo, $companyId);
 		$cnt = $data[0]["cnt"];
 		
 		return array(
@@ -48,6 +56,9 @@ class CashService extends PSIBaseService {
 		);
 	}
 
+	/**
+	 * 某天的现金收支列表
+	 */
 	public function cashDetailList($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
@@ -60,14 +71,17 @@ class CashService extends PSIBaseService {
 		$bizDT = $params["bizDT"];
 		
 		$db = M();
+		$us = new UserService();
+		$companyId = $us->getCompanyId();
+		
 		$result = array();
 		$sql = "select biz_date, in_money, out_money, balance_money, date_created,
 					ref_type, ref_number
 				from t_cash_detail
-				where biz_date = '%s'
+				where biz_date = '%s' and company_id = '%s'
 				order by date_created
 				limit %d, %d ";
-		$data = $db->query($sql, $bizDT, $start, $limit);
+		$data = $db->query($sql, $bizDT, $companyId, $start, $limit);
 		foreach ( $data as $i => $v ) {
 			$result[$i]["bizDT"] = $this->toYMD($v["biz_date"]);
 			$result[$i]["inMoney"] = $v["in_money"];
@@ -80,8 +94,8 @@ class CashService extends PSIBaseService {
 		
 		$sql = "select count(*) as cnt
 				from t_cash_detail
-				where biz_date = '%s' ";
-		$data = $db->query($sql, $bizDT);
+				where biz_date = '%s' and company_id = '%s' ";
+		$data = $db->query($sql, $bizDT, $companyId);
 		$cnt = $data[0]["cnt"];
 		
 		return array(
