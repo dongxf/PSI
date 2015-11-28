@@ -23,20 +23,25 @@ class PayablesReportService extends PSIBaseService {
 		
 		$result = array();
 		
+		$us = new UserService();
+		$companyId = $us->getCompanyId();
+		
 		$db = M();
 		$sql = "select t.ca_type, t.id, t.code, t.name, t.balance_money
 				from (
 					select p.ca_type, c.id, c.code, c.name, p.balance_money
 					from t_payables p, t_customer c
 					where p.ca_id = c.id and p.ca_type = 'customer'
+						and p.company_id = '%s'
 					union
 					select p.ca_type, s.id, s.code, s.name, p.balance_money
 					from t_payables p, t_supplier s
 					where p.ca_id = s.id and p.ca_type = 'supplier'
+						and p.company_id = '%s'
 				) t
 				order by t.ca_type desc, t.code
 				limit %d, %d";
-		$data = $db->query($sql, $start, $limit);
+		$data = $db->query($sql, $companyId, $companyId, $start, $limit);
 		
 		foreach ( $data as $i => $v ) {
 			$caType = $v["ca_type"];
@@ -51,10 +56,11 @@ class PayablesReportService extends PSIBaseService {
 					from t_payables_detail
 					where ca_type = '%s' and ca_id = '%s'
 						and datediff(current_date(), biz_date) < 30
+						and company_id = '%s'
 					";
-			$data = $db->query($sql, $caType, $caId);
+			$data = $db->query($sql, $caType, $caId, $companyId);
 			$bm = $data[0]["balance_money"];
-			if (!$bm) {
+			if (! $bm) {
 				$bm = 0;
 			}
 			$result[$i]["money30"] = $bm;
@@ -65,37 +71,40 @@ class PayablesReportService extends PSIBaseService {
 					where ca_type = '%s' and ca_id = '%s'
 						and datediff(current_date(), biz_date) <= 60
 						and datediff(current_date(), biz_date) >= 30
+						and company_id = '%s'
 					";
-			$data = $db->query($sql, $caType, $caId);
+			$data = $db->query($sql, $caType, $caId, $companyId);
 			$bm = $data[0]["balance_money"];
-			if (!$bm) {
+			if (! $bm) {
 				$bm = 0;
 			}
 			$result[$i]["money30to60"] = $bm;
-				
+			
 			// 账龄60-90天
 			$sql = "select sum(balance_money) as balance_money
 					from t_payables_detail
 					where ca_type = '%s' and ca_id = '%s'
 						and datediff(current_date(), biz_date) <= 90
 						and datediff(current_date(), biz_date) > 60
+						and company_id = '%s'
 					";
-			$data = $db->query($sql, $caType, $caId);
+			$data = $db->query($sql, $caType, $caId, $companyId);
 			$bm = $data[0]["balance_money"];
-			if (!$bm) {
+			if (! $bm) {
 				$bm = 0;
 			}
 			$result[$i]["money60to90"] = $bm;
-				
+			
 			// 账龄90天以上
 			$sql = "select sum(balance_money) as balance_money
 					from t_payables_detail
 					where ca_type = '%s' and ca_id = '%s'
 						and datediff(current_date(), biz_date) > 90
+						and company_id = '%s'
 					";
-			$data = $db->query($sql, $caType, $caId);
+			$data = $db->query($sql, $caType, $caId, $companyId);
 			$bm = $data[0]["balance_money"];
-			if (!$bm) {
+			if (! $bm) {
 				$bm = 0;
 			}
 			$result[$i]["money90"] = $bm;
@@ -103,8 +112,9 @@ class PayablesReportService extends PSIBaseService {
 		
 		$sql = "select count(*) as cnt
 				from t_payables
+				where company_id = '%s'
 				";
-		$data = $db->query($sql);
+		$data = $db->query($sql, $companyId);
 		$cnt = $data[0]["cnt"];
 		
 		return array(
@@ -112,7 +122,7 @@ class PayablesReportService extends PSIBaseService {
 				"totalCount" => $cnt
 		);
 	}
-	
+
 	public function payablesSummaryQueryData() {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
@@ -120,10 +130,13 @@ class PayablesReportService extends PSIBaseService {
 		
 		$db = M();
 		$result = array();
+		$us = new UserService();
+		$companyId = $us->getCompanyId();
 		
 		$sql = "select sum(balance_money) as balance_money
-				from t_payables";
-		$data = $db->query($sql);
+				from t_payables
+				where company_id = '%s' ";
+		$data = $db->query($sql, $companyId);
 		$balance = $data[0]["balance_money"];
 		if (! $balance) {
 			$balance = 0;
@@ -133,8 +146,9 @@ class PayablesReportService extends PSIBaseService {
 		// 账龄30天内
 		$sql = "select sum(balance_money) as balance_money
 				from t_payables_detail
-				where datediff(current_date(), biz_date) < 30";
-		$data = $db->query($sql);
+				where datediff(current_date(), biz_date) < 30
+					and company_id = '%s' ";
+		$data = $db->query($sql, $companyId);
 		$balance = $data[0]["balance_money"];
 		if (! $balance) {
 			$balance = 0;
@@ -145,8 +159,9 @@ class PayablesReportService extends PSIBaseService {
 		$sql = "select sum(balance_money) as balance_money
 				from t_payables_detail
 				where datediff(current_date(), biz_date) <= 60
-					and datediff(current_date(), biz_date) >= 30";
-		$data = $db->query($sql);
+					and datediff(current_date(), biz_date) >= 30
+					and company_id = '%s' ";
+		$data = $db->query($sql, $companyId);
 		$balance = $data[0]["balance_money"];
 		if (! $balance) {
 			$balance = 0;
@@ -157,8 +172,9 @@ class PayablesReportService extends PSIBaseService {
 		$sql = "select sum(balance_money) as balance_money
 				from t_payables_detail
 				where datediff(current_date(), biz_date) <= 90
-					and datediff(current_date(), biz_date) > 60";
-		$data = $db->query($sql);
+					and datediff(current_date(), biz_date) > 60
+					and company_id = '%s' ";
+		$data = $db->query($sql, $companyId);
 		$balance = $data[0]["balance_money"];
 		if (! $balance) {
 			$balance = 0;
@@ -168,8 +184,9 @@ class PayablesReportService extends PSIBaseService {
 		// 账龄大于90天
 		$sql = "select sum(balance_money) as balance_money
 				from t_payables_detail
-				where datediff(current_date(), biz_date) > 90";
-		$data = $db->query($sql);
+				where datediff(current_date(), biz_date) > 90
+					and company_id = '%s' ";
+		$data = $db->query($sql, $companyId);
 		$balance = $data[0]["balance_money"];
 		if (! $balance) {
 			$balance = 0;
