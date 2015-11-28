@@ -2,6 +2,8 @@
 
 namespace Home\Service;
 
+use Home\Common\FIdConst;
+
 /**
  * 库存报表Service
  *
@@ -25,6 +27,10 @@ class InventoryReportService extends PSIBaseService {
 		
 		$db = M();
 		
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::REPORT_SAFETY_INVENTORY, "w");
+		$queryParams = array();
+		
 		$sql = "select w.code as warehouse_code, w.name as warehouse_name,
 					g.code as goods_code, g.name as goods_name, g.spec as goods_spec,
 					u.name as unit_name,
@@ -32,10 +38,16 @@ class InventoryReportService extends PSIBaseService {
 				from t_inventory i, t_goods g, t_goods_unit u, t_goods_si s, t_warehouse w
 				where i.warehouse_id = w.id and i.goods_id = g.id and g.unit_id = u.id
 					and s.warehouse_id = i.warehouse_id and s.goods_id = g.id
-					and s.safety_inventory > i.balance_count
-				order by w.code, g.code
+					and s.safety_inventory > i.balance_count ";
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = array_merge($queryParams, $rs[1]);
+		}
+		$sql .= " order by w.code, g.code
 				limit %d, %d";
-		$data = $db->query($sql, $start, $limit);
+		$queryParams[] = $start;
+		$queryParams[] = $limit;
+		$data = $db->query($sql, $queryParams);
 		foreach ( $data as $i => $v ) {
 			$result[$i]["warehouseCode"] = $v["warehouse_code"];
 			$result[$i]["warehouseName"] = $v["warehouse_name"];
@@ -52,9 +64,14 @@ class InventoryReportService extends PSIBaseService {
 				from t_inventory i, t_goods g, t_goods_unit u, t_goods_si s, t_warehouse w
 				where i.warehouse_id = w.id and i.goods_id = g.id and g.unit_id = u.id
 					and s.warehouse_id = i.warehouse_id and s.goods_id = g.id
-					and s.safety_inventory > i.balance_count";
-		
-		$data = $db->query($sql);
+					and s.safety_inventory > i.balance_count ";
+		$queryParams = array();
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = array_merge($queryParams, $rs[1]);
+			;
+		}
+		$data = $db->query($sql, $queryParams);
 		$cnt = $data[0]["cnt"];
 		
 		return array(
@@ -78,6 +95,8 @@ class InventoryReportService extends PSIBaseService {
 		$result = array();
 		
 		$db = M();
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::REPORT_INVENTORY_UPPER, "w");
 		
 		$sql = "select w.code as warehouse_code, w.name as warehouse_name,
 					g.code as goods_code, g.name as goods_name, g.spec as goods_spec,
@@ -87,10 +106,17 @@ class InventoryReportService extends PSIBaseService {
 				where i.warehouse_id = w.id and i.goods_id = g.id and g.unit_id = u.id
 					and s.warehouse_id = i.warehouse_id and s.goods_id = g.id
 					and s.inventory_upper < i.balance_count
-					and s.inventory_upper <> 0 and s.inventory_upper is not null
-				order by w.code, g.code
+					and s.inventory_upper <> 0 and s.inventory_upper is not null ";
+		$queryParams = array();
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = array_merge($queryParams, $rs[1]);
+		}
+		$sql .= " order by w.code, g.code
 				limit %d, %d";
-		$data = $db->query($sql, $start, $limit);
+		$queryParams[] = $start;
+		$queryParams[] = $limit;
+		$data = $db->query($sql, $queryParams);
 		foreach ( $data as $i => $v ) {
 			$result[$i]["warehouseCode"] = $v["warehouse_code"];
 			$result[$i]["warehouseName"] = $v["warehouse_name"];
@@ -110,8 +136,13 @@ class InventoryReportService extends PSIBaseService {
 					and s.inventory_upper < i.balance_count
 					and s.inventory_upper <> 0 and s.inventory_upper is not null
 				";
+		$queryParams = array();
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = array_merge($queryParams, $rs[1]);
+		}
 		
-		$data = $db->query($sql);
+		$data = $db->query($sql, $queryParams);
 		$cnt = $data[0]["cnt"];
 		
 		return array(
