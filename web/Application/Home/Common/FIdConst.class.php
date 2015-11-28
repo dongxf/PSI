@@ -65,9 +65,21 @@ class FIdConst {
 	const SUPPLIER = "1004";
 	
 	/**
+	 * 供应商分类
+	 */
+	const SUPPLIER_CATEGORY = "1004-02";
+	
+	/**
 	 * 基础数据-商品
 	 */
 	const GOODS = "1001";
+	
+	/**
+	 * 商品分类
+	 *
+	 * @var unknown
+	 */
+	const GOODS_CATEGORY = "1001-02";
 	
 	/**
 	 * 基础数据-商品计量单位
@@ -78,6 +90,11 @@ class FIdConst {
 	 * 客户资料
 	 */
 	const CUSTOMER = "1007";
+	
+	/**
+	 * 客户分类
+	 */
+	const CUSTOMER_CATEGORY = "1007-02";
 	
 	/**
 	 * 库存建账

@@ -71,7 +71,7 @@ class SupplierService extends PSIBaseService {
 		}
 		
 		$ds = new DataOrgService();
-		$rs = $ds->buildSQL("1004-02", "c", array());
+		$rs = $ds->buildSQL(FIdConst::SUPPLIER_CATEGORY, "c", array());
 		if ($rs) {
 			$sql .= " where " . $rs[0];
 			$queryParam = array_merge($queryParam, $rs[1]);
@@ -549,7 +549,8 @@ class SupplierService extends PSIBaseService {
 				$sql = "insert into t_payables (id, pay_money, act_money, balance_money, ca_id, 
 							ca_type, data_org, company_id)
 						values ('%s', %f, 0, %f, '%s', 'supplier', '%s', '%s') ";
-				$rc = $db->execute($sql, $pId, $initPayables, $initPayables, $id, $dataOrg, $companyId);
+				$rc = $db->execute($sql, $pId, $initPayables, $initPayables, $id, $dataOrg, 
+						$companyId);
 				if ($rc === false) {
 					$db->rollback();
 					return $this->sqlError(__LINE__);
