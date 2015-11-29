@@ -25,6 +25,9 @@ class SaleReportService extends PSIBaseService {
 		
 		$result = array();
 		
+		$us = new UserService();
+		$companyId = $us->getCompanyId();
+		
 		$db = M();
 		$sql = "select g.id, g.code, g.name, g.spec, u.name as unit_name
 				from t_goods g, t_goods_unit u
@@ -32,14 +35,16 @@ class SaleReportService extends PSIBaseService {
 					select distinct d.goods_id
 					from t_ws_bill w, t_ws_bill_detail d
 					where w.id = d.wsbill_id and w.bizdt = '%s' and w.bill_status = 1000
+						and w.company_id = '%s'
 					union
 					select distinct d.goods_id
 					from t_sr_bill s, t_sr_bill_detail d
 					where s.id = d.srbill_id and s.bizdt = '%s' and s.bill_status = 1000
+						and s.company_id = '%s'
 					)
 				order by g.code
 				limit %d, %d";
-		$items = $db->query($sql, $dt, $dt, $start, $limit);
+		$items = $db->query($sql, $dt, $companyId, $dt, $companyId, $start, $limit);
 		foreach ( $items as $i => $v ) {
 			$result[$i]["bizDT"] = $dt;
 			$result[$i]["goodsCode"] = $v["code"];
@@ -52,8 +57,8 @@ class SaleReportService extends PSIBaseService {
 						sum(d.goods_count) as goods_count
 					from t_ws_bill w, t_ws_bill_detail d
 					where w.id = d.wsbill_id and w.bizdt = '%s' and d.goods_id = '%s' 
-						and w.bill_status = 1000";
-			$data = $db->query($sql, $dt, $goodsId);
+						and w.bill_status = 1000 and w.company_id = '%s' ";
+			$data = $db->query($sql, $dt, $goodsId, $companyId);
 			$saleCount = $data[0]["goods_count"];
 			if (! $saleCount) {
 				$saleCount = 0;
@@ -74,8 +79,8 @@ class SaleReportService extends PSIBaseService {
 						sum(d.inventory_money) as rej_inventory_money
 					from t_sr_bill s, t_sr_bill_detail d
 					where s.id = d.srbill_id and s.bizdt = '%s' and d.goods_id = '%s' 
-						and s.bill_status = 1000 ";
-			$data = $db->query($sql, $dt, $goodsId);
+						and s.bill_status = 1000 and s.company_id = '%s' ";
+			$data = $db->query($sql, $dt, $goodsId, $companyId);
 			$rejCount = $data[0]["rej_count"];
 			if (! $rejCount) {
 				$rejCount = 0;
@@ -109,13 +114,15 @@ class SaleReportService extends PSIBaseService {
 					select distinct d.goods_id
 					from t_ws_bill w, t_ws_bill_detail d
 					where w.id = d.wsbill_id and w.bizdt = '%s' and w.bill_status = 1000
+						and w.company_id = '%s'
 					union
 					select distinct d.goods_id
 					from t_sr_bill s, t_sr_bill_detail d
 					where s.id = d.srbill_id and s.bizdt = '%s' and s.bill_status = 1000
+						and s.company_id = '%s'
 					)
 				";
-		$data = $db->query($sql, $dt, $dt);
+		$data = $db->query($sql, $dt, $companyId, $dt, $companyId);
 		$cnt = $data[0]["cnt"];
 		
 		return array(
@@ -130,12 +137,15 @@ class SaleReportService extends PSIBaseService {
 		$result = array();
 		$result[0]["bizDT"] = $dt;
 		
+		$us = new UserService();
+		$companyId = $us->getCompanyId();
+		
 		$db = M();
 		$sql = "select sum(d.goods_money) as goods_money, sum(d.inventory_money) as inventory_money
 					from t_ws_bill w, t_ws_bill_detail d
 					where w.id = d.wsbill_id and w.bizdt = '%s'
-						and w.bill_status = 1000";
-		$data = $db->query($sql, $dt);
+						and w.bill_status = 1000 and w.company_id = '%s' ";
+		$data = $db->query($sql, $dt, $companyId);
 		$saleMoney = $data[0]["goods_money"];
 		if (! $saleMoney) {
 			$saleMoney = 0;
@@ -150,8 +160,8 @@ class SaleReportService extends PSIBaseService {
 						sum(d.inventory_money) as rej_inventory_money
 					from t_sr_bill s, t_sr_bill_detail d
 					where s.id = d.srbill_id and s.bizdt = '%s'
-						and s.bill_status = 1000 ";
-		$data = $db->query($sql, $dt);
+						and s.bill_status = 1000 and s.company_id = '%s' ";
+		$data = $db->query($sql, $dt, $companyId);
 		$rejSaleMoney = $data[0]["rej_money"];
 		if (! $rejSaleMoney) {
 			$rejSaleMoney = 0;
@@ -201,6 +211,9 @@ class SaleReportService extends PSIBaseService {
 		
 		$result = array();
 		
+		$us = new UserService();
+		$companyId = $us->getCompanyId();
+		
 		$db = M();
 		$sql = "select c.id, c.code, c.name
 				from t_customer c
@@ -208,14 +221,16 @@ class SaleReportService extends PSIBaseService {
 					select distinct w.customer_id
 					from t_ws_bill w
 					where w.bizdt = '%s' and w.bill_status = 1000
+						and w.company_id = '%s'
 					union
 					select distinct s.customer_id
 					from t_sr_bill s
 					where s.bizdt = '%s' and s.bill_status = 1000
+						and s.company_id = '%s'
 					)
 				order by c.code
 				limit %d, %d";
-		$items = $db->query($sql, $dt, $dt, $start, $limit);
+		$items = $db->query($sql, $dt, $companyId, $dt, $companyId, $start, $limit);
 		foreach ( $items as $i => $v ) {
 			$result[$i]["bizDT"] = $dt;
 			$result[$i]["customerCode"] = $v["code"];
@@ -225,8 +240,8 @@ class SaleReportService extends PSIBaseService {
 			$sql = "select sum(w.sale_money) as goods_money, sum(w.inventory_money) as inventory_money
 					from t_ws_bill w
 					where w.bizdt = '%s' and w.customer_id = '%s'
-						and w.bill_status = 1000";
-			$data = $db->query($sql, $dt, $customerId);
+						and w.bill_status = 1000 and w.company_id = '%s' ";
+			$data = $db->query($sql, $dt, $customerId, $companyId);
 			$saleMoney = $data[0]["goods_money"];
 			if (! $saleMoney) {
 				$saleMoney = 0;
@@ -241,8 +256,8 @@ class SaleReportService extends PSIBaseService {
 						sum(s.inventory_money) as rej_inventory_money
 					from t_sr_bill s
 					where s.bizdt = '%s' and s.customer_id = '%s'
-						and s.bill_status = 1000 ";
-			$data = $db->query($sql, $dt, $customerId);
+						and s.bill_status = 1000 and s.company_id = '%s' ";
+			$data = $db->query($sql, $dt, $customerId, $companyId);
 			$rejSaleMoney = $data[0]["rej_money"];
 			if (! $rejSaleMoney) {
 				$rejSaleMoney = 0;
@@ -269,12 +284,14 @@ class SaleReportService extends PSIBaseService {
 					select distinct w.customer_id
 					from t_ws_bill w
 					where w.bizdt = '%s' and w.bill_status = 1000
+						and w.company_id = '%s'
 					union
 					select distinct s.customer_id
 					from t_sr_bill s
 					where s.bizdt = '%s' and s.bill_status = 1000
+						and s.company_id = '%s'
 					)";
-		$data = $db->query($sql, $dt, $dt);
+		$data = $db->query($sql, $dt, $companyId, $dt, $companyId);
 		$cnt = $data[0]["cnt"];
 		
 		return array(
@@ -310,6 +327,9 @@ class SaleReportService extends PSIBaseService {
 		
 		$result = array();
 		
+		$us = new UserService();
+		$companyId = $us->getCompanyId();
+		
 		$db = M();
 		$sql = "select w.id, w.code, w.name
 				from t_warehouse w
@@ -317,14 +337,16 @@ class SaleReportService extends PSIBaseService {
 					select distinct w.warehouse_id
 					from t_ws_bill w
 					where w.bizdt = '%s' and w.bill_status = 1000
+						and w.company_id = '%s'
 					union
 					select distinct s.warehouse_id
 					from t_sr_bill s
 					where s.bizdt = '%s' and s.bill_status = 1000
+						and s.company_id = '%s'
 					)
 				order by w.code
 				limit %d, %d";
-		$items = $db->query($sql, $dt, $dt, $start, $limit);
+		$items = $db->query($sql, $dt, $companyId, $dt, $companyId, $start, $limit);
 		foreach ( $items as $i => $v ) {
 			$result[$i]["bizDT"] = $dt;
 			$result[$i]["warehouseCode"] = $v["code"];
@@ -334,8 +356,8 @@ class SaleReportService extends PSIBaseService {
 			$sql = "select sum(w.sale_money) as goods_money, sum(w.inventory_money) as inventory_money
 					from t_ws_bill w
 					where w.bizdt = '%s' and w.warehouse_id = '%s'
-						and w.bill_status = 1000";
-			$data = $db->query($sql, $dt, $warehouseId);
+						and w.bill_status = 1000 and w.company_id = '%s' ";
+			$data = $db->query($sql, $dt, $warehouseId, $companyId);
 			$saleMoney = $data[0]["goods_money"];
 			if (! $saleMoney) {
 				$saleMoney = 0;
@@ -350,8 +372,8 @@ class SaleReportService extends PSIBaseService {
 						sum(s.inventory_money) as rej_inventory_money
 					from t_sr_bill s
 					where s.bizdt = '%s' and s.warehouse_id = '%s'
-						and s.bill_status = 1000 ";
-			$data = $db->query($sql, $dt, $warehouseId);
+						and s.bill_status = 1000 and s.company_id = '%s' ";
+			$data = $db->query($sql, $dt, $warehouseId, $companyId);
 			$rejSaleMoney = $data[0]["rej_money"];
 			if (! $rejSaleMoney) {
 				$rejSaleMoney = 0;
@@ -378,12 +400,14 @@ class SaleReportService extends PSIBaseService {
 					select distinct w.warehouse_id
 					from t_ws_bill w
 					where w.bizdt = '%s' and w.bill_status = 1000
+						and w.company_id = '%s'
 					union
 					select distinct s.warehouse_id
 					from t_sr_bill s
 					where s.bizdt = '%s' and s.bill_status = 1000
+						and s.company_id = '%s'
 					)";
-		$data = $db->query($sql, $dt, $dt);
+		$data = $db->query($sql, $dt, $companyId, $dt, $companyId);
 		$cnt = $data[0]["cnt"];
 		
 		return array(
@@ -419,6 +443,9 @@ class SaleReportService extends PSIBaseService {
 		
 		$result = array();
 		
+		$us = new UserService();
+		$companyId = $us->getCompanyId();
+		
 		$db = M();
 		$sql = "select u.id, u.org_code, u.name
 				from t_user u
@@ -426,14 +453,16 @@ class SaleReportService extends PSIBaseService {
 					select distinct w.biz_user_id
 					from t_ws_bill w
 					where w.bizdt = '%s' and w.bill_status = 1000
+						and w.company_id = '%s'
 					union
 					select distinct s.biz_user_id
 					from t_sr_bill s
 					where s.bizdt = '%s' and s.bill_status = 1000
+						and s.company_id = '%s'
 					)
 				order by u.org_code
 				limit %d, %d";
-		$items = $db->query($sql, $dt, $dt, $start, $limit);
+		$items = $db->query($sql, $dt, $companyId, $dt, $companyId, $start, $limit);
 		foreach ( $items as $i => $v ) {
 			$result[$i]["bizDT"] = $dt;
 			$result[$i]["userName"] = $v["name"];
@@ -443,8 +472,8 @@ class SaleReportService extends PSIBaseService {
 			$sql = "select sum(w.sale_money) as goods_money, sum(w.inventory_money) as inventory_money
 					from t_ws_bill w
 					where w.bizdt = '%s' and w.biz_user_id = '%s'
-						and w.bill_status = 1000";
-			$data = $db->query($sql, $dt, $userId);
+						and w.bill_status = 1000 and w.company_id = '%s' ";
+			$data = $db->query($sql, $dt, $userId, $companyId);
 			$saleMoney = $data[0]["goods_money"];
 			if (! $saleMoney) {
 				$saleMoney = 0;
@@ -459,8 +488,8 @@ class SaleReportService extends PSIBaseService {
 						sum(s.inventory_money) as rej_inventory_money
 					from t_sr_bill s
 					where s.bizdt = '%s' and s.biz_user_id = '%s'
-						and s.bill_status = 1000 ";
-			$data = $db->query($sql, $dt, $userId);
+						and s.bill_status = 1000 and s.company_id = '%s' ";
+			$data = $db->query($sql, $dt, $userId, $companyId);
 			$rejSaleMoney = $data[0]["rej_money"];
 			if (! $rejSaleMoney) {
 				$rejSaleMoney = 0;
@@ -487,12 +516,14 @@ class SaleReportService extends PSIBaseService {
 					select distinct w.biz_user_id
 					from t_ws_bill w
 					where w.bizdt = '%s' and w.bill_status = 1000
+						and w.company_id = '%s'
 					union
 					select distinct s.biz_user_id
 					from t_sr_bill s
 					where s.bizdt = '%s' and s.bill_status = 1000
+						and s.company_id = '%s'
 					)";
-		$data = $db->query($sql, $dt, $dt);
+		$data = $db->query($sql, $dt, $companyId, $dt, $companyId);
 		$cnt = $data[0]["cnt"];
 		
 		return array(
@@ -529,6 +560,9 @@ class SaleReportService extends PSIBaseService {
 		
 		$result = array();
 		
+		$us = new UserService();
+		$companyId = $us->getCompanyId();
+		
 		$db = M();
 		$sql = "select g.id, g.code, g.name, g.spec, u.name as unit_name
 				from t_goods g, t_goods_unit u
@@ -537,15 +571,18 @@ class SaleReportService extends PSIBaseService {
 					from t_ws_bill w, t_ws_bill_detail d
 					where w.id = d.wsbill_id and year(w.bizdt) = %d and month(w.bizdt) = %d
 						and w.bill_status = 1000
+						and w.company_id = '%s'
 					union
 					select distinct d.goods_id
 					from t_sr_bill s, t_sr_bill_detail d
 					where s.id = d.srbill_id and year(s.bizdt) = %d and month(s.bizdt) = %d 
 						and s.bill_status = 1000
+						and s.company_id = '%s'
 					)
 				order by g.code
 				limit %d, %d";
-		$items = $db->query($sql, $year, $month, $year, $month, $start, $limit);
+		$items = $db->query($sql, $year, $month, $companyId, $year, $month, $companyId, $start, 
+				$limit);
 		foreach ( $items as $i => $v ) {
 			if ($month < 10) {
 				$result[$i]["bizDT"] = "$year-0$month";
@@ -564,8 +601,8 @@ class SaleReportService extends PSIBaseService {
 					from t_ws_bill w, t_ws_bill_detail d
 					where w.id = d.wsbill_id and year(w.bizdt) = %d and month(w.bizdt) = %d 
 						and d.goods_id = '%s'
-						and w.bill_status = 1000";
-			$data = $db->query($sql, $year, $month, $goodsId);
+						and w.bill_status = 1000 and w.company_id = '%s' ";
+			$data = $db->query($sql, $year, $month, $goodsId, $companyId);
 			$saleCount = $data[0]["goods_count"];
 			if (! $saleCount) {
 				$saleCount = 0;
@@ -587,8 +624,8 @@ class SaleReportService extends PSIBaseService {
 					from t_sr_bill s, t_sr_bill_detail d
 					where s.id = d.srbill_id and year(s.bizdt) = %d and month(s.bizdt) = %d 
 						and d.goods_id = '%s'
-						and s.bill_status = 1000 ";
-			$data = $db->query($sql, $year, $month, $goodsId);
+						and s.bill_status = 1000 and s.company_id = '%s' ";
+			$data = $db->query($sql, $year, $month, $goodsId, $companyId);
 			$rejCount = $data[0]["rej_count"];
 			if (! $rejCount) {
 				$rejCount = 0;
@@ -622,13 +659,15 @@ class SaleReportService extends PSIBaseService {
 					select distinct d.goods_id
 					from t_ws_bill w, t_ws_bill_detail d
 					where w.id = d.wsbill_id and year(w.bizdt) = %d and month(w.bizdt) = %d and w.bill_status = 1000
+						and w.company_id = '%s'
 					union
 					select distinct d.goods_id
 					from t_sr_bill s, t_sr_bill_detail d
 					where s.id = d.srbill_id and year(s.bizdt) = %d and month(s.bizdt) = %d and s.bill_status = 1000
+						and s.company_id = '%s'
 					)
 				";
-		$data = $db->query($sql, $year, $month, $year, $month);
+		$data = $db->query($sql, $year, $month, $companyId, $year, $month, $companyId);
 		$cnt = $data[0]["cnt"];
 		
 		return array(
@@ -648,12 +687,15 @@ class SaleReportService extends PSIBaseService {
 			$result[0]["bizDT"] = "$year-$month";
 		}
 		
+		$us = new UserService();
+		$companyId = $us->getCompanyId();
+		
 		$db = M();
 		$sql = "select sum(d.goods_money) as goods_money, sum(d.inventory_money) as inventory_money
 					from t_ws_bill w, t_ws_bill_detail d
 					where w.id = d.wsbill_id and year(w.bizdt) = %d and month(w.bizdt) = %d
-						and w.bill_status = 1000";
-		$data = $db->query($sql, $year, $month);
+						and w.bill_status = 1000 and w.company_id = '%s' ";
+		$data = $db->query($sql, $year, $month, $companyId);
 		$saleMoney = $data[0]["goods_money"];
 		if (! $saleMoney) {
 			$saleMoney = 0;
@@ -668,8 +710,8 @@ class SaleReportService extends PSIBaseService {
 						sum(d.inventory_money) as rej_inventory_money
 					from t_sr_bill s, t_sr_bill_detail d
 					where s.id = d.srbill_id and year(s.bizdt) = %d and month(s.bizdt) = %d
-						and s.bill_status = 1000 ";
-		$data = $db->query($sql, $year, $month);
+						and s.bill_status = 1000 and s.company_id = '%s' ";
+		$data = $db->query($sql, $year, $month, $companyId);
 		$rejSaleMoney = $data[0]["rej_money"];
 		if (! $rejSaleMoney) {
 			$rejSaleMoney = 0;
@@ -720,6 +762,9 @@ class SaleReportService extends PSIBaseService {
 		
 		$result = array();
 		
+		$us = new UserService();
+		$companyId = $us->getCompanyId();
+		
 		$db = M();
 		$sql = "select c.id, c.code, c.name
 				from t_customer c
@@ -727,16 +772,17 @@ class SaleReportService extends PSIBaseService {
 					select distinct w.customer_id
 					from t_ws_bill w
 					where year(w.bizdt) = %d and month(w.bizdt) = %d
-						and w.bill_status = 1000
+						and w.bill_status = 1000 and w.company_id = '%s'
 					union
 					select distinct s.customer_id
 					from t_sr_bill s
 					where year(s.bizdt) = %d and month(s.bizdt) = %d 
-						and s.bill_status = 1000
+						and s.bill_status = 1000 and s.company_id = '%s'
 					)
 				order by c.code
 				limit %d, %d";
-		$items = $db->query($sql, $year, $month, $year, $month, $start, $limit);
+		$items = $db->query($sql, $year, $month, $companyId, $year, $month, $companyId, $start, 
+				$limit);
 		foreach ( $items as $i => $v ) {
 			if ($month < 10) {
 				$result[$i]["bizDT"] = "$year-0$month";
@@ -752,8 +798,8 @@ class SaleReportService extends PSIBaseService {
 					from t_ws_bill w
 					where year(w.bizdt) = %d and month(w.bizdt) = %d 
 						and w.customer_id = '%s'
-						and w.bill_status = 1000";
-			$data = $db->query($sql, $year, $month, $customerId);
+						and w.bill_status = 1000 and w.company_id = '%s' ";
+			$data = $db->query($sql, $year, $month, $customerId, $companyId);
 			$saleMoney = $data[0]["goods_money"];
 			if (! $saleMoney) {
 				$saleMoney = 0;
@@ -769,8 +815,8 @@ class SaleReportService extends PSIBaseService {
 					from t_sr_bill s
 					where year(s.bizdt) = %d and month(s.bizdt) = %d 
 						and s.customer_id = '%s'
-						and s.bill_status = 1000 ";
-			$data = $db->query($sql, $year, $month, $customerId);
+						and s.bill_status = 1000 and s.company_id = '%s' ";
+			$data = $db->query($sql, $year, $month, $customerId, $companyId);
 			$rejSaleMoney = $data[0]["rej_money"];
 			if (! $rejSaleMoney) {
 				$rejSaleMoney = 0;
@@ -797,15 +843,15 @@ class SaleReportService extends PSIBaseService {
 					select distinct w.customer_id
 					from t_ws_bill w
 					where year(w.bizdt) = %d and month(w.bizdt) = %d
-						and w.bill_status = 1000
+						and w.bill_status = 1000 and w.company_id = '%s'
 					union
 					select distinct s.customer_id
 					from t_sr_bill s
 					where year(s.bizdt) = %d and month(s.bizdt) = %d 
-						and s.bill_status = 1000
+						and s.bill_status = 1000 and s.company_id = '%s'
 					)
 				";
-		$data = $db->query($sql, $year, $month, $year, $month);
+		$data = $db->query($sql, $year, $month, $companyId, $year, $month, $companyId);
 		$cnt = $data[0]["cnt"];
 		
 		return array(
@@ -842,6 +888,9 @@ class SaleReportService extends PSIBaseService {
 		
 		$result = array();
 		
+		$us = new UserService();
+		$companyId = $us->getCompanyId();
+		
 		$db = M();
 		$sql = "select w.id, w.code, w.name
 				from t_warehouse w
@@ -849,16 +898,17 @@ class SaleReportService extends PSIBaseService {
 					select distinct w.warehouse_id
 					from t_ws_bill w
 					where year(w.bizdt) = %d and month(w.bizdt) = %d
-						and w.bill_status = 1000
+						and w.bill_status = 1000 and w.company_id = '%s'
 					union
 					select distinct s.warehouse_id
 					from t_sr_bill s
 					where year(s.bizdt) = %d and month(s.bizdt) = %d
-						and s.bill_status = 1000
+						and s.bill_status = 1000 and w.company_id = '%s'
 					)
 				order by w.code
 				limit %d, %d";
-		$items = $db->query($sql, $year, $month, $year, $month, $start, $limit);
+		$items = $db->query($sql, $year, $month, $companyId, $year, $month, $companyId, $start, 
+				$limit);
 		foreach ( $items as $i => $v ) {
 			if ($month < 10) {
 				$result[$i]["bizDT"] = "$year-0$month";
@@ -874,8 +924,8 @@ class SaleReportService extends PSIBaseService {
 					from t_ws_bill w
 					where year(w.bizdt) = %d and month(w.bizdt) = %d
 						and w.warehouse_id = '%s'
-						and w.bill_status = 1000";
-			$data = $db->query($sql, $year, $month, $warehouseId);
+						and w.bill_status = 1000 and w.company_id = '%s' ";
+			$data = $db->query($sql, $year, $month, $warehouseId, $companyId);
 			$saleMoney = $data[0]["goods_money"];
 			if (! $saleMoney) {
 				$saleMoney = 0;
@@ -891,8 +941,8 @@ class SaleReportService extends PSIBaseService {
 					from t_sr_bill s
 					where year(s.bizdt) = %d and month(s.bizdt) = %d
 						and s.warehouse_id = '%s'
-						and s.bill_status = 1000 ";
-			$data = $db->query($sql, $year, $month, $warehouseId);
+						and s.bill_status = 1000 and s.company_id = '%s' ";
+			$data = $db->query($sql, $year, $month, $warehouseId, $companyId);
 			$rejSaleMoney = $data[0]["rej_money"];
 			if (! $rejSaleMoney) {
 				$rejSaleMoney = 0;
@@ -919,15 +969,15 @@ class SaleReportService extends PSIBaseService {
 					select distinct w.warehouse_id
 					from t_ws_bill w
 					where year(w.bizdt) = %d and month(w.bizdt) = %d
-						and w.bill_status = 1000
+						and w.bill_status = 1000 and w.company_id = '%s'
 					union
 					select distinct s.warehouse_id
 					from t_sr_bill s
 					where year(s.bizdt) = %d and month(s.bizdt) = %d
-						and s.bill_status = 1000
+						and s.bill_status = 1000 and s.company_id = '%s'
 					)
 				";
-		$data = $db->query($sql, $year, $month, $year, $month);
+		$data = $db->query($sql, $year, $month, $companyId, $year, $month, $companyId);
 		$cnt = $data[0]["cnt"];
 		
 		return array(
@@ -964,6 +1014,9 @@ class SaleReportService extends PSIBaseService {
 		
 		$result = array();
 		
+		$us = new UserService();
+		$companyId = $us->getCompanyId();
+		
 		$db = M();
 		$sql = "select u.id, u.org_code as code, u.name
 				from t_user u
@@ -971,16 +1024,17 @@ class SaleReportService extends PSIBaseService {
 					select distinct w.biz_user_id
 					from t_ws_bill w
 					where year(w.bizdt) = %d and month(w.bizdt) = %d
-						and w.bill_status = 1000
+						and w.bill_status = 1000 and w.company_id = '%s'
 					union
 					select distinct s.biz_user_id
 					from t_sr_bill s
 					where year(s.bizdt) = %d and month(s.bizdt) = %d
-						and s.bill_status = 1000
+						and s.bill_status = 1000 and s.company_id = '%s'
 					)
 				order by u.org_code
 				limit %d, %d";
-		$items = $db->query($sql, $year, $month, $year, $month, $start, $limit);
+		$items = $db->query($sql, $year, $month, $companyId, $year, $month, $companyId, $start, 
+				$limit);
 		foreach ( $items as $i => $v ) {
 			if ($month < 10) {
 				$result[$i]["bizDT"] = "$year-0$month";
@@ -996,8 +1050,8 @@ class SaleReportService extends PSIBaseService {
 					from t_ws_bill w
 					where year(w.bizdt) = %d and month(w.bizdt) = %d
 						and w.biz_user_id = '%s'
-						and w.bill_status = 1000";
-			$data = $db->query($sql, $year, $month, $userId);
+						and w.bill_status = 1000 and w.company_id = '%s' ";
+			$data = $db->query($sql, $year, $month, $userId, $companyId);
 			$saleMoney = $data[0]["goods_money"];
 			if (! $saleMoney) {
 				$saleMoney = 0;
@@ -1013,8 +1067,8 @@ class SaleReportService extends PSIBaseService {
 					from t_sr_bill s
 					where year(s.bizdt) = %d and month(s.bizdt) = %d
 						and s.biz_user_id = '%s'
-						and s.bill_status = 1000 ";
-			$data = $db->query($sql, $year, $month, $userId);
+						and s.bill_status = 1000 and s.company_id = '%s' ";
+			$data = $db->query($sql, $year, $month, $userId, $companyId);
 			$rejSaleMoney = $data[0]["rej_money"];
 			if (! $rejSaleMoney) {
 				$rejSaleMoney = 0;
@@ -1041,15 +1095,15 @@ class SaleReportService extends PSIBaseService {
 					select distinct w.biz_user_id
 					from t_ws_bill w
 					where year(w.bizdt) = %d and month(w.bizdt) = %d
-						and w.bill_status = 1000
+						and w.bill_status = 1000 and w.company_id = '%s'
 					union
 					select distinct s.biz_user_id
 					from t_sr_bill s
 					where year(s.bizdt) = %d and month(s.bizdt) = %d
-						and s.bill_status = 1000
+						and s.bill_status = 1000 and s.company_id = '%s'
 					)
 				";
-		$data = $db->query($sql, $year, $month, $year, $month);
+		$data = $db->query($sql, $year, $month, $companyId, $year, $month, $companyId);
 		$cnt = $data[0]["cnt"];
 		
 		return array(
