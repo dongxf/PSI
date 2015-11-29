@@ -113,14 +113,27 @@ class BizlogService extends PSIBaseService {
 		$db = M();
 		$hasDataOrgColumn = $this->columnExists($db, "t_biz_log", "data_org");
 		$hasIpFromColumn = $this->columnExists($db, "t_biz_log", "ip_from");
+		$hasCompanyIdColumn = $this->columnExists($db, "t_biz_log", "company_id");
 		
 		if ($hasDataOrgColumn && $hasIpFromColumn) {
 			$dataOrg = $us->getLoginUserDataOrg();
-			$sql = "insert into t_biz_log (user_id, info, ip, date_created, log_category, data_org, ip_from)
+			if ($hasCompanyIdColumn) {
+				$companyId = $us->getCompanyId();
+				
+				$sql = "insert into t_biz_log (user_id, info, ip, date_created, log_category, data_org, 
+							ip_from, company_id)
+						values ('%s', '%s', '%s',  now(), '%s', '%s', '%s', '%s')";
+				$db->execute($sql, $us->getLoginUserId(), $log, $ip, $category, $dataOrg, $ipFrom, 
+						$companyId);
+			} else {
+				// 兼容旧版本
+				
+				$sql = "insert into t_biz_log (user_id, info, ip, date_created, log_category, data_org, ip_from)
 					values ('%s', '%s', '%s',  now(), '%s', '%s', '%s')";
-			$db->execute($sql, $us->getLoginUserId(), $log, $ip, $category, $dataOrg, $ipFrom);
+				$db->execute($sql, $us->getLoginUserId(), $log, $ip, $category, $dataOrg, $ipFrom);
+			}
 		} else {
-			// 兼容旧代码
+			// 兼容旧版本
 			
 			$sql = "insert into t_biz_log (user_id, info, ip, date_created, log_category)
 					values ('%s', '%s', '%s',  now(), '%s')";
