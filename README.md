@@ -16,9 +16,9 @@ PSI演示
 -------------
 >PSI的演示见：<a href = 'http://psi.oschina.mopaas.com' target = '_blank'>http://psi.oschina.mopaasapp.com</a>
 
-PSI 2015 下载地址
+PSI 2016 beta1 下载地址
 -------------
->PSI 2015下载地址：http://pan.baidu.com/s/1kTD2svX
+>PSI 2016 beta1 下载地址：http://pan.baidu.com/s/1dDt1Qvf
 
 
 源代码下载地址
