@@ -235,7 +235,7 @@ class ITBillService extends PSIBaseService {
 		
 		if ($id) {
 			// 编辑
-			$sql = "select ref, bill_status, data_org from t_it_bill where id = '%s' ";
+			$sql = "select ref, bill_status, data_org, company_id from t_it_bill where id = '%s' ";
 			$data = $db->query($sql, $id);
 			if (! $data) {
 				$db->rollback();
@@ -243,6 +243,7 @@ class ITBillService extends PSIBaseService {
 			}
 			$ref = $data[0]["ref"];
 			$dataOrg = $data[0]["data_org"];
+			$companyId = $data[0]["company_id"];
 			$billStatus = $data[0]["bill_status"];
 			if ($billStatus != 0) {
 				$db->rollback();
@@ -270,8 +271,8 @@ class ITBillService extends PSIBaseService {
 			}
 			
 			$sql = "insert into t_it_bill_detail(id, date_created, goods_id, goods_count, 
-						show_order, itbill_id, data_org)
-					values ('%s', now(), '%s', %d, %d, '%s', '%s')";
+						show_order, itbill_id, data_org, company_id)
+					values ('%s', now(), '%s', %d, %d, '%s', '%s', '%s')";
 			foreach ( $items as $i => $v ) {
 				$goodsId = $v["goodsId"];
 				if (! $goodsId) {
@@ -280,7 +281,8 @@ class ITBillService extends PSIBaseService {
 				
 				$goodsCount = $v["goodsCount"];
 				
-				$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $i, $id, $dataOrg);
+				$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $i, $id, $dataOrg, 
+						$companyId);
 				if ($rc === false) {
 					$db->rollback();
 					return $this->sqlError(__LINE__);
@@ -309,8 +311,8 @@ class ITBillService extends PSIBaseService {
 			}
 			
 			$sql = "insert into t_it_bill_detail(id, date_created, goods_id, goods_count, 
-							show_order, itbill_id, data_org)
-						values ('%s', now(), '%s', %d, %d, '%s', '%s')";
+							show_order, itbill_id, data_org, company_id)
+						values ('%s', now(), '%s', %d, %d, '%s', '%s', '%s')";
 			foreach ( $items as $i => $v ) {
 				$goodsId = $v["goodsId"];
 				if (! $goodsId) {
@@ -319,7 +321,8 @@ class ITBillService extends PSIBaseService {
 				
 				$goodsCount = $v["goodsCount"];
 				
-				$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $i, $id, $dataOrg);
+				$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $i, $id, $dataOrg, 
+						$companyId);
 				if ($rc === false) {
 					$db->rollback();
 					return $this->sqlError(__LINE__);
@@ -720,7 +723,7 @@ class ITBillService extends PSIBaseService {
 		$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		
 		$db->commit();
-
+		
 		return $this->ok($id);
 	}
 }
