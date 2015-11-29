@@ -238,7 +238,7 @@ class PWBillService extends PSIBaseService {
 		
 		if ($id) {
 			// 编辑采购入库单
-			$sql = "select ref, bill_status, data_org from t_pw_bill where id = '%s' ";
+			$sql = "select ref, bill_status, data_org, company_id from t_pw_bill where id = '%s' ";
 			$data = $db->query($sql, $id);
 			if (! $data) {
 				$db->rollback();
@@ -246,6 +246,7 @@ class PWBillService extends PSIBaseService {
 			}
 			$dataOrg = $data[0]["data_org"];
 			$billStatus = $data[0]["bill_status"];
+			$companyId = $data[0]["company_id"];
 			$ref = $data[0]["ref"];
 			if ($billStatus != 0) {
 				$db->rollback();
@@ -275,10 +276,10 @@ class PWBillService extends PSIBaseService {
 						$goodsMoney = $item["goodsMoney"];
 						
 						$sql = "insert into t_pw_bill_detail (id, date_created, goods_id, goods_count, goods_price,
-									goods_money,  pwbill_id, show_order, data_org, memo)
-									values ('%s', now(), '%s', %d, %f, %f, '%s', %d, '%s', '%s')";
+									goods_money,  pwbill_id, show_order, data_org, memo, company_id)
+									values ('%s', now(), '%s', %d, %f, %f, '%s', %d, '%s', '%s', '%s')";
 						$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, 
-								$goodsPrice, $goodsMoney, $id, $i, $dataOrg, $memo);
+								$goodsPrice, $goodsMoney, $id, $i, $dataOrg, $memo, $companyId);
 						if ($rc === false) {
 							$db->rollback();
 							return $this->sqlError(__LINE__);
@@ -346,10 +347,10 @@ class PWBillService extends PSIBaseService {
 						
 						$sql = "insert into t_pw_bill_detail 
 									(id, date_created, goods_id, goods_count, goods_price,
-									goods_money,  pwbill_id, show_order, data_org, memo)
-									values ('%s', now(), '%s', %d, %f, %f, '%s', %d, '%s', '%s')";
+									goods_money,  pwbill_id, show_order, data_org, memo, company_id)
+								values ('%s', now(), '%s', %d, %f, %f, '%s', %d, '%s', '%s', '%s')";
 						$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, 
-								$goodsPrice, $goodsMoney, $id, $i, $dataOrg, $memo);
+								$goodsPrice, $goodsMoney, $id, $i, $dataOrg, $memo, $companyId);
 						if ($rc === false) {
 							$db->rollback();
 							return $this->sqlError(__LINE__);
