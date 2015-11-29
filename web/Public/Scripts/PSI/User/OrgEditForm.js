@@ -18,7 +18,7 @@ Ext.define("PSI.User.OrgEditForm", {
             resizable: false,
             onEsc: Ext.emptyFn,
             width: 400,
-            height: 160,
+            height: 190,
             layout: "fit",
             defaultFocus: "editName",
             items: [
@@ -94,6 +94,10 @@ Ext.define("PSI.User.OrgEditForm", {
                                 }
                             },
                             width: 370
+                        },
+                        {
+                        	xtype: "displayfield",
+                        	value: "上级组织机构为空的时候，该组织机构是公司"
                         }
                     ],
                     buttons: [
