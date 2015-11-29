@@ -150,7 +150,7 @@ class ICBillService extends PSIBaseService {
 		
 		if ($id) {
 			// 编辑单据
-			$sql = "select ref, bill_status, data_org from t_ic_bill where id = '%s' ";
+			$sql = "select ref, bill_status, data_org, company_id from t_ic_bill where id = '%s' ";
 			$data = $db->query($sql, $id);
 			if (! $data) {
 				$db->rollback();
@@ -159,6 +159,7 @@ class ICBillService extends PSIBaseService {
 			
 			$ref = $data[0]["ref"];
 			$dataOrg = $data[0]["data_org"];
+			$companyId = $data[0]["company_id"];
 			$billStatus = $data[0]["bill_status"];
 			if ($billStatus != 0) {
 				$db->rollback();
@@ -185,8 +186,8 @@ class ICBillService extends PSIBaseService {
 			}
 			
 			$sql = "insert into t_ic_bill_detail(id, date_created, goods_id, goods_count, goods_money,
-						show_order, icbill_id, data_org)
-					values ('%s', now(), '%s', %d, %f, %d, '%s', '%s')";
+						show_order, icbill_id, data_org, company_id)
+					values ('%s', now(), '%s', %d, %f, %d, '%s', '%s', '%s')";
 			foreach ( $items as $i => $v ) {
 				$goodsId = $v["goodsId"];
 				if (! $goodsId) {
@@ -196,7 +197,7 @@ class ICBillService extends PSIBaseService {
 				$goodsMoney = $v["goodsMoney"];
 				
 				$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsMoney, $i, 
-						$id, $dataOrg);
+						$id, $dataOrg, $companyId);
 				if ($rc === false) {
 					$db->rollback();
 					return $this->sqlError(__LINE__);
@@ -224,8 +225,8 @@ class ICBillService extends PSIBaseService {
 			
 			// 明细表
 			$sql = "insert into t_ic_bill_detail(id, date_created, goods_id, goods_count, goods_money,
-						show_order, icbill_id, data_org)
-					values ('%s', now(), '%s', %d, %f, %d, '%s', '%s')";
+						show_order, icbill_id, data_org, company_id)
+					values ('%s', now(), '%s', %d, %f, %d, '%s', '%s', '%s')";
 			foreach ( $items as $i => $v ) {
 				$goodsId = $v["goodsId"];
 				if (! $goodsId) {
@@ -235,7 +236,7 @@ class ICBillService extends PSIBaseService {
 				$goodsMoney = $v["goodsMoney"];
 				
 				$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsMoney, $i, 
-						$id, $dataOrg);
+						$id, $dataOrg, $companyId);
 				if ($rc === false) {
 					$db->rollback();
 					return $this->sqlError(__LINE__);
