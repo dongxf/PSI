@@ -338,12 +338,16 @@ class ReceivablesService extends PSIBaseService {
 		}
 		
 		$sql = "insert into t_receiving (id, act_money, biz_date, date_created, input_user_id,
-					rv_user_id, remark, ref_number, ref_type, bill_id) 
-					values ('%s', %f, '%s', now(), '%s', '%s', '%s', '%s', '%s', '%s')";
+					rv_user_id, remark, ref_number, ref_type, bill_id, data_org, company_id) 
+					values ('%s', %f, '%s', now(), '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')";
 		$idGen = new IdGenService();
 		$us = new UserService();
+		
+		$companyId = $us->getCompanyId();
+		$dataOrg = $us->getLoginUserDataOrg();
+		
 		$rc = $db->execute($sql, $idGen->newId(), $actMoney, $bizDT, $us->getLoginUserId(), 
-				$bizUserId, $remark, $refNumber, $refType, $billId);
+				$bizUserId, $remark, $refNumber, $refType, $billId, $dataOrg, $companyId);
 		if ($rc === false) {
 			$db->rollback();
 			return $this->sqlError(__LINE__);
@@ -354,7 +358,7 @@ class ReceivablesService extends PSIBaseService {
 		$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		
 		// 应收明细账
-		$sql = "select ca_id, ca_type, act_money, balance_money 
+		$sql = "select ca_id, ca_type, act_money, balance_money, company_id 
 					from t_receivables_detail 
 					where ref_number = '%s' and ref_type = '%s' ";
 		$data = $db->query($sql, $refNumber, $refType);
@@ -364,6 +368,7 @@ class ReceivablesService extends PSIBaseService {
 		}
 		$caId = $data[0]["ca_id"];
 		$caType = $data[0]["ca_type"];
+		$companyId = $data[0]["company_id"];
 		$actMoneyDetail = $data[0]["act_money"];
 		$balanceMoneyDetail = $data[0]["balance_money"];
 		$actMoneyDetail += $actMoney;
@@ -382,8 +387,8 @@ class ReceivablesService extends PSIBaseService {
 		// 应收总账
 		$sql = "select sum(rv_money) as sum_rv_money, sum(act_money) as sum_act_money
 					from t_receivables_detail
-					where ca_id = '%s' and ca_type = '%s' ";
-		$data = $db->query($sql, $caId, $caType);
+					where ca_id = '%s' and ca_type = '%s' and company_id = '%s' ";
+		$data = $db->query($sql, $caId, $caType, $companyId);
 		$sumRvMoney = $data[0]["sum_rv_money"];
 		if (! $sumRvMoney) {
 			$sumRvMoney = 0;
@@ -396,8 +401,8 @@ class ReceivablesService extends PSIBaseService {
 		
 		$sql = "update t_receivables 
 					set act_money = %f, balance_money = %f 
-					where ca_id = '%s' and ca_type = '%s' ";
-		$rc = $db->execute($sql, $sumActMoney, $sumBalanceMoney, $caId, $caType);
+					where ca_id = '%s' and ca_type = '%s' and company_id = '%s' ";
+		$rc = $db->execute($sql, $sumActMoney, $sumBalanceMoney, $caId, $caType, $companyId);
 		if ($rc === false) {
 			$db->rollback();
 			return $this->sqlError(__LINE__);
