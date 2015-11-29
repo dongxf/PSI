@@ -132,10 +132,11 @@ class CustomerService extends PSIBaseService {
 			
 			$us = new UserService();
 			$dataOrg = $us->getLoginUserDataOrg();
+			$companyId = $us->getCompanyId();
 			
-			$sql = "insert into t_customer_category (id, code, name, data_org) 
-					values ('%s', '%s', '%s', '%s') ";
-			$rc = $db->execute($sql, $id, $code, $name, $dataOrg);
+			$sql = "insert into t_customer_category (id, code, name, data_org, company_id) 
+					values ('%s', '%s', '%s', '%s', '%s') ";
+			$rc = $db->execute($sql, $id, $code, $name, $dataOrg, $companyId);
 			if ($rc === false) {
 				$db->rollback();
 				return $this->sqlError(__LINE__);
@@ -293,13 +294,13 @@ class CustomerService extends PSIBaseService {
 			
 			$sql = "insert into t_customer (id, category_id, code, name, py, contact01, 
 					qq01, tel01, mobile01, contact02, qq02, tel02, mobile02, address, address_receipt,
-					bank_name, bank_account, tax_number, fax, note, data_org)  
+					bank_name, bank_account, tax_number, fax, note, data_org, company_id)  
 					values ('%s', '%s', '%s', '%s', '%s', '%s', 
 							'%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
-							'%s', '%s', '%s', '%s', '%s', '%s')  ";
+							'%s', '%s', '%s', '%s', '%s', '%s', '%s')  ";
 			$rc = $db->execute($sql, $id, $categoryId, $code, $name, $py, $contact01, $qq01, $tel01, 
 					$mobile01, $contact02, $qq02, $tel02, $mobile02, $address, $addressReceipt, 
-					$bankName, $bankAccount, $tax, $fax, $note, $dataOrg);
+					$bankName, $bankAccount, $tax, $fax, $note, $dataOrg, $companyId);
 			if ($rc === false) {
 				$db->rollback();
 				return $this->sqlError(__LINE__);
@@ -389,7 +390,8 @@ class CustomerService extends PSIBaseService {
 				$sql = "insert into t_receivables (id, rv_money, act_money, balance_money,
 							ca_id, ca_type, data_org, company_id) 
 						values ('%s', %f, 0, %f, '%s', 'customer', '%s', '%s')";
-				$rc = $db->execute($sql, $rvId, $initReceivables, $initReceivables, $id, $dataOrg, $companyId);
+				$rc = $db->execute($sql, $rvId, $initReceivables, $initReceivables, $id, $dataOrg, 
+						$companyId);
 				if ($rc === false) {
 					$db->rollback();
 					return $this->sqlError(__LINE__);
