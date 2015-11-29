@@ -321,12 +321,15 @@ class PayablesService extends PSIBaseService {
 		}
 		
 		$sql = "insert into t_payment (id, act_money, biz_date, date_created, input_user_id,
-					pay_user_id,  bill_id,  ref_type, ref_number, remark) 
-					values ('%s', %f, '%s', now(), '%s', '%s', '%s', '%s', '%s', '%s')";
+					pay_user_id,  bill_id,  ref_type, ref_number, remark, data_org, company_id) 
+					values ('%s', %f, '%s', now(), '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')";
 		$idGen = new IdGenService();
 		$us = new UserService();
+		$dataOrg = $us->getLoginUserDataOrg();
+		$companyId = $us->getCompanyId();
+		
 		$rc = $db->execute($sql, $idGen->newId(), $actMoney, $bizDT, $us->getLoginUserId(), 
-				$bizUserId, $billId, $refType, $refNumber, $remark);
+				$bizUserId, $billId, $refType, $refNumber, $remark, $dataOrg, $companyId);
 		if ($rc === false) {
 			$db->rollback();
 			return $this->sqlError(__LINE__);
@@ -337,7 +340,7 @@ class PayablesService extends PSIBaseService {
 		$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		
 		// 应付明细账
-		$sql = "select balance_money, act_money, ca_type, ca_id 
+		$sql = "select balance_money, act_money, ca_type, ca_id, company_id 
 					from t_payables_detail 
 					where ref_type = '%s' and ref_number = '%s' ";
 		$data = $db->query($sql, $refType, $refNumber);
@@ -347,6 +350,7 @@ class PayablesService extends PSIBaseService {
 		}
 		$caType = $data[0]["ca_type"];
 		$caId = $data[0]["ca_id"];
+		$companyId = $data[0]["company_id"];
 		$balanceMoney = $data[0]["balance_money"];
 		$actMoneyNew = $data[0]["act_money"];
 		$actMoneyNew += $actMoney;
@@ -364,8 +368,8 @@ class PayablesService extends PSIBaseService {
 		// 应付总账
 		$sql = "select sum(pay_money) as sum_pay_money, sum(act_money) as sum_act_money
 					from t_payables_detail
-					where ca_type = '%s' and ca_id = '%s' ";
-		$data = $db->query($sql, $caType, $caId);
+					where ca_type = '%s' and ca_id = '%s' and company_id = '%s' ";
+		$data = $db->query($sql, $caType, $caId, $companyId);
 		if (! $data) {
 			$db->rollback();
 			return $this->sqlError(__LINE__);
@@ -382,8 +386,8 @@ class PayablesService extends PSIBaseService {
 		
 		$sql = "update t_payables 
 					set act_money = %f, balance_money = %f 
-					where ca_type = '%s' and ca_id = '%s' ";
-		$rc = $db->execute($sql, $sumActMoney, $sumBalanceMoney, $caType, $caId);
+					where ca_type = '%s' and ca_id = '%s' and company_id = '%s' ";
+		$rc = $db->execute($sql, $sumActMoney, $sumBalanceMoney, $caType, $caId, $companyId);
 		if ($rc === false) {
 			$db->rollback();
 			return $this->sqlError(__LINE__);
