@@ -174,7 +174,7 @@ class PRBillService extends PSIBaseService {
 		
 		if ($id) {
 			// 编辑采购退货出库单
-			$sql = "select ref, bill_status, data_org
+			$sql = "select ref, bill_status, data_org, company_id
 						from t_pr_bill
 						where id = '%s' ";
 			$data = $db->query($sql, $id);
@@ -183,6 +183,7 @@ class PRBillService extends PSIBaseService {
 				return $this->bad("要编辑的采购退货出库单不存在");
 			}
 			$ref = $data[0]["ref"];
+			$companyId = $data[0]["company_id"];
 			$billStatus = $data[0]["bill_status"];
 			if ($billStatus != 0) {
 				$db->rollback();
@@ -200,8 +201,8 @@ class PRBillService extends PSIBaseService {
 			
 			$sql = "insert into t_pr_bill_detail(id, date_created, goods_id, goods_count, goods_price,
 						goods_money, rejection_goods_count, rejection_goods_price, rejection_money, show_order,
-						prbill_id, pwbilldetail_id, data_org)
-						values ('%s', now(), '%s', %d, %f, %f, %d, %f, %f, %d, '%s', '%s', '%s')";
+						prbill_id, pwbilldetail_id, data_org, company_id)
+						values ('%s', now(), '%s', %d, %f, %f, %d, %f, %f, %d, '%s', '%s', '%s', '%s')";
 			foreach ( $items as $i => $v ) {
 				$pwbillDetailId = $v["id"];
 				$goodsId = $v["goodsId"];
@@ -214,7 +215,7 @@ class PRBillService extends PSIBaseService {
 				
 				$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsPrice, 
 						$goodsMoney, $rejCount, $rejPrice, $rejMoney, $i, $id, $pwbillDetailId, 
-						$dataOrg);
+						$dataOrg, $companyId);
 				if ($rc === false) {
 					$db->rollback();
 					return $this->sqlError(__LINE__);
@@ -268,8 +269,8 @@ class PRBillService extends PSIBaseService {
 			// 明细表
 			$sql = "insert into t_pr_bill_detail(id, date_created, goods_id, goods_count, goods_price,
 						goods_money, rejection_goods_count, rejection_goods_price, rejection_money, show_order,
-						prbill_id, pwbilldetail_id, data_org)
-						values ('%s', now(), '%s', %d, %f, %f, %d, %f, %f, %d, '%s', '%s', '%s')";
+						prbill_id, pwbilldetail_id, data_org, company_id)
+						values ('%s', now(), '%s', %d, %f, %f, %d, %f, %f, %d, '%s', '%s', '%s', '%s')";
 			foreach ( $items as $i => $v ) {
 				$pwbillDetailId = $v["id"];
 				$goodsId = $v["goodsId"];
@@ -282,7 +283,7 @@ class PRBillService extends PSIBaseService {
 				
 				$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsPrice, 
 						$goodsMoney, $rejCount, $rejPrice, $rejMoney, $i, $id, $pwbillDetailId, 
-						$dataOrg);
+						$dataOrg, $companyId);
 				if ($rc === false) {
 					$db->rollback();
 					return $this->sqlError(__LINE__);
