@@ -2,7 +2,8 @@
 Ext.define("PSI.BizConfig.EditForm", {
 	extend : "Ext.window.Window",
 	config : {
-		parentForm : null
+		parentForm : null,
+		companyId: null
 	},
 	initComponent : function() {
 		var me = this;
@@ -266,7 +267,10 @@ Ext.define("PSI.BizConfig.EditForm", {
 	},
 	
 	getSaveData: function() {
+		var me = this;
+		
 		var result = {
+				companyId: me.getCompanyId(),
 				'value9000-01': Ext.getCmp("editValue9000-01").getValue(),
 				'value9000-02': Ext.getCmp("editValue9000-02").getValue(),
 				'value9000-03': Ext.getCmp("editValue9000-03").getValue(),
@@ -330,6 +334,9 @@ Ext.define("PSI.BizConfig.EditForm", {
 		el.mask(PSI.Const.LOADING);
 		Ext.Ajax.request({
 			url : PSI.Const.BASE_URL + "Home/BizConfig/allConfigsWithExtData",
+			params: {
+				companyId: me.getCompanyId()
+			},
 			method : "POST",
 			callback : function(options, success, response) {
 				if (success) {

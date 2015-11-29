@@ -39,7 +39,11 @@ class BizConfigController extends PSIBaseController {
 		if (IS_POST) {
 			$bs = new BizConfigService();
 			
-			$this->ajaxReturn($bs->allConfigs());
+			$params = array(
+					"companyId" => I("post.companyId")
+			);
+			
+			$this->ajaxReturn($bs->allConfigs($params));
 		}
 	}
 
@@ -50,7 +54,11 @@ class BizConfigController extends PSIBaseController {
 		if (IS_POST) {
 			$bs = new BizConfigService();
 			
-			$this->ajaxReturn($bs->allConfigsWithExtData());
+			$params = array(
+					"companyId" => I("post.companyId")
+			);
+			
+			$this->ajaxReturn($bs->allConfigsWithExtData($params));
 		}
 	}
 
@@ -62,6 +70,7 @@ class BizConfigController extends PSIBaseController {
 			$bs = new BizConfigService();
 			
 			$params = array(
+					"companyId" => I("post.companyId"),
 					"9000-01" => I("post.value9000-01"),
 					"9000-02" => I("post.value9000-02"),
 					"9000-03" => I("post.value9000-03"),
@@ -83,6 +92,16 @@ class BizConfigController extends PSIBaseController {
 			);
 			
 			$this->ajaxReturn($bs->edit($params));
+		}
+	}
+
+	/**
+	 * 获得当前用户可以设置的公司
+	 */
+	public function getCompany() {
+		if (IS_POST) {
+			$bs = new BizConfigService();
+			$this->ajaxReturn($bs->getCompany());
 		}
 	}
 }

@@ -4,11 +4,39 @@ Ext.define("PSI.BizConfig.MainForm", {
     
     initComponent: function () {
         var me = this;
+        
+        var modelName = "PSICompany";
+        Ext.define(modelName, {
+			extend : "Ext.data.Model",
+			fields : [ "id", "name" ]
+		});
 
         Ext.apply(me, {
             border: 0,
             layout: "border",
             tbar: [{
+            	xtype:"displayfield",
+            	value: "公司 "
+            },{
+				xtype : "combobox",
+				id : "comboCompany",
+				queryMode : "local",
+				editable : false,
+				valueField : "id",
+				displayField : "name",
+				store : Ext.create("Ext.data.Store", {
+					model : modelName,
+					autoLoad : false,
+					data : []
+				}),
+				width: 400,
+				listeners: {
+					select: {
+						fn: me.onComboCompanySelect,
+						scope: me
+					}
+				}
+			},{
                     text: "设置", iconCls: "PSI-button-edit", handler: me.onEdit, scope: me
                 }, "-",
                 {
@@ -34,7 +62,7 @@ Ext.define("PSI.BizConfig.MainForm", {
 
         me.callParent(arguments);
 
-        me.refreshGrid();
+        me.queryCompany();
     },
     
     getGrid: function () {
@@ -87,6 +115,9 @@ Ext.define("PSI.BizConfig.MainForm", {
         el.mask(PSI.Const.LOADING);
         Ext.Ajax.request({
             url: PSI.Const.BASE_URL + "Home/BizConfig/allConfigs",
+            params: {
+            	companyId: Ext.getCmp("comboCompany").getValue()
+            },
             method: "POST",
             callback: function (options, success, response) {
                 var store = grid.getStore();
@@ -114,9 +145,46 @@ Ext.define("PSI.BizConfig.MainForm", {
     
     // 设置按钮被单击
     onEdit: function () {
+    	var companyId = Ext.getCmp("comboCompany").getValue();
+    	if (!companyId) {
+    		PSI.MsgBos.showInfo("没有选择要设置的公司");
+    		return;
+    	}
+    	
         var form = Ext.create("PSI.BizConfig.EditForm", {
-            parentForm: this
+            parentForm: this,
+            companyId: companyId
         });
         form.show();
+    },
+    
+    queryCompany: function() {
+        var me = this;
+        var el = Ext.getBody();
+        var comboCompany = Ext.getCmp("comboCompany");
+        var store = comboCompany.getStore();
+        el.mask(PSI.Const.LOADING);
+        Ext.Ajax.request({
+            url: PSI.Const.BASE_URL + "Home/BizConfig/getCompany",
+            method: "POST",
+            callback: function (options, success, response) {
+                store.removeAll();
+
+                if (success) {
+                    var data = Ext.JSON.decode(response.responseText);
+                    store.add(data);
+                    if (data.length > 0) {
+                    	comboCompany.setValue(data[0]["id"]);
+                    	me.refreshGrid();
+                    }
+                }
+
+                el.unmask();
+            }
+        });
+    },
+    
+    onComboCompanySelect: function() {
+    	this.refreshGrid();
     }
 });

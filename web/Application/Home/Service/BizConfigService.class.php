@@ -2,12 +2,15 @@
 
 namespace Home\Service;
 
+use Home\Common\FIdConst;
+
 /**
  * 业务设置Service
  *
  * @author 李静波
  */
 class BizConfigService extends PSIBaseService {
+	private $LOG_CATEGORY = "业务设置";
 
 	/**
 	 * 返回所有的配置项
@@ -17,10 +20,13 @@ class BizConfigService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
+		$companyId = $params["companyId"];
+		
 		$sql = "select id, name, value, note  
-				from t_config  
+				from t_config
+				where company_id = '%s'
 				order by show_order";
-		$data = M()->query($sql);
+		$data = M()->query($sql, $companyId);
 		$result = array();
 		
 		foreach ( $data as $i => $v ) {
@@ -46,21 +52,174 @@ class BizConfigService extends PSIBaseService {
 		return $result;
 	}
 
+	private function getDefaultConfig() {
+		return array(
+				array(
+						"id" => "9000-01",
+						"name" => "公司名称",
+						"value" => "",
+						"note" => "",
+						"showOrder" => 100
+				),
+				array(
+						"id" => "9000-02",
+						"name" => "公司地址",
+						"value" => "",
+						"note" => "",
+						"showOrder" => 101
+				),
+				array(
+						"id" => "9000-03",
+						"name" => "公司电话",
+						"value" => "",
+						"note" => "",
+						"showOrder" => 102
+				),
+				array(
+						"id" => "9000-04",
+						"name" => "公司传真",
+						"value" => "",
+						"note" => "",
+						"showOrder" => 103
+				),
+				array(
+						"id" => "9000-05",
+						"name" => "公司邮编",
+						"value" => "",
+						"note" => "",
+						"showOrder" => 104
+				),
+				array(
+						"id" => "2001-01",
+						"name" => "采购入库默认仓库",
+						"value" => "",
+						"note" => "",
+						"showOrder" => 200
+				),
+				array(
+						"id" => "2002-02",
+						"name" => "销售出库默认仓库",
+						"value" => "",
+						"note" => "",
+						"showOrder" => 300
+				),
+				array(
+						"id" => "2002-01",
+						"name" => "销售出库单允许编辑销售单价",
+						"value" => "0",
+						"note" => "当允许编辑的时候，还需要给用户赋予权限[销售出库单允许编辑销售单价]",
+						"showOrder" => 301
+				),
+				array(
+						"id" => "1003-02",
+						"name" => "存货计价方法",
+						"value" => "0",
+						"note" => "",
+						"showOrder" => 401
+				),
+				array(
+						"id" => "9001-01",
+						"name" => "增值税税率",
+						"value" => "17",
+						"note" => "",
+						"showOrder" => 501
+				),
+				array(
+						"id" => "9002-01",
+						"name" => "产品名称",
+						"value" => "开源进销存PSI",
+						"note" => "",
+						"showOrder" => 0
+				),
+				array(
+						"id" => "9003-01",
+						"name" => "采购订单单号前缀",
+						"value" => "PO",
+						"note" => "",
+						"showOrder" => 601
+				),
+				array(
+						"id" => "9003-02",
+						"name" => "采购入库单单号前缀",
+						"value" => "PW",
+						"note" => "",
+						"showOrder" => 602
+				),
+				array(
+						"id" => "9003-03",
+						"name" => "采购退货出库单单号前缀",
+						"value" => "PR",
+						"note" => "",
+						"showOrder" => 603
+				),
+				array(
+						"id" => "9003-04",
+						"name" => "销售出库单单号前缀",
+						"value" => "WS",
+						"note" => "",
+						"showOrder" => 604
+				),
+				array(
+						"id" => "9003-05",
+						"name" => "销售退货入库单单号前缀",
+						"value" => "SR",
+						"note" => "",
+						"showOrder" => 605
+				),
+				array(
+						"id" => "9003-06",
+						"name" => "调拨单单号前缀",
+						"value" => "IT",
+						"note" => "",
+						"showOrder" => 606
+				),
+				array(
+						"id" => "9003-07",
+						"name" => "盘点单单号前缀",
+						"value" => "IC",
+						"note" => "",
+						"showOrder" => 607
+				)
+		);
+	}
+
 	/**
 	 * 返回所有的配置项，附带着附加数据集
 	 */
-	public function allConfigsWithExtData() {
+	public function allConfigsWithExtData($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
 		
-		$sql = "select id, name, value from t_config order by id";
+		$companyId = $params["companyId"];
+		
 		$db = M();
-		$result = $db->query($sql);
+		$result = $this->getDefaultConfig();
+		
+		foreach ( $result as $v ) {
+			$sql = "select value
+				from t_config
+				where company_id = '%s' and id = '%s'
+				";
+			$data = $db->query($sql, $companyId, $v["id"]);
+			if ($data) {
+				$v["value"] = $data[0]["value"];
+			}
+		}
 		
 		$extDataList = array();
-		$sql = "select id, name from t_warehouse order by code";
-		$data = $db->query($sql);
+		
+		$sql = "select id, name from t_warehouse ";
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::BIZ_CONFIG, "t_warehouse");
+		$queryParams = array();
+		if ($rs) {
+			$sql .= " where " . $rs[0];
+			$queryParams = array_merge($queryParams, $rs[1]);
+		}
+		
+		$sql .= " order by code ";
+		$data = $db->query($sql, $queryParams);
 		$warehouse = array(
 				array(
 						"id" => "",
@@ -86,6 +245,12 @@ class BizConfigService extends PSIBaseService {
 		
 		$db = M();
 		
+		$db->startTrans();
+		
+		$defaultConfigs = $this->getDefaultConfig();
+		
+		$companyId = $params["companyId"];
+		
 		$refPreList = array(
 				"9003-01",
 				"9003-02",
@@ -101,9 +266,11 @@ class BizConfigService extends PSIBaseService {
 			if ($key == "9001-01") {
 				$v = intval($value);
 				if ($v < 0) {
+					$db->rollback();
 					return $this->bad("增值税税率不能为负数");
 				}
 				if ($v > 17) {
+					$db->rollback();
 					return $this->bad("增值税税率不能大于17");
 				}
 			}
@@ -116,8 +283,9 @@ class BizConfigService extends PSIBaseService {
 			
 			if ($key == "1003-02") {
 				// 存货计价方法
-				$sql = "select name, value from t_config where id = '%s' ";
-				$data = $db->query($sql, $key);
+				$sql = "select name, value from t_config 
+						where id = '%s' and company_id = '%s' ";
+				$data = $db->query($sql, $key, $companyId);
 				if (! $data) {
 					continue;
 				}
@@ -127,6 +295,7 @@ class BizConfigService extends PSIBaseService {
 				}
 				
 				if ($value == "1") {
+					$db->rollback();
 					return $this->bad("当前版本还不支持先进先出法");
 				}
 				
@@ -135,43 +304,34 @@ class BizConfigService extends PSIBaseService {
 				$data = $db->query($sql);
 				$cnt = $data[0]["cnt"];
 				if ($cnt > 0) {
+					$db->rollback();
 					return $this->bad("已经有业务发生，不能再调整存货计价方法");
 				}
 			}
 			
 			if (in_array($key, $refPreList)) {
 				if ($value == null || $value == "") {
+					$db->rollback();
 					return $this->bad("单号前缀不能为空");
 				}
 			}
 		}
 		
 		foreach ( $params as $key => $value ) {
-			$sql = "select name, value from t_config where id = '%s' ";
-			$data = $db->query($sql, $key);
-			if (! $data) {
-				continue;
-			}
-			
-			$itemName = $data[0]["name"];
-			
-			$oldValue = $data[0]["value"];
-			if ($value == $oldValue) {
-				continue;
-			}
-			
 			if ($key == "9001-01") {
 				$value = intval($value);
 			}
 			
 			if ($key == "9002-01") {
 				if ($this->isDemo()) {
+					$db->rollback();
 					return $this->bad("在演示环境下不能修改产品名称，请原谅。");
 				}
 			}
 			
 			if (in_array($key, $refPreList)) {
 				if ($this->isDemo()) {
+					$db->rollback();
 					return $this->bad("在演示环境下不能修改单号前缀，请原谅。");
 				}
 				
@@ -179,36 +339,69 @@ class BizConfigService extends PSIBaseService {
 				$value = strtoupper($value);
 			}
 			
-			$sql = "update t_config set value = '%s'
-				where id = '%s' ";
-			$db->execute($sql, $value, $key);
+			$sql = "select name, value from t_config 
+					where id = '%s' and company_id = '%s' ";
+			$data = $db->query($sql, $key, $companyId);
+			$itemName = "";
+			if (! $data) {
+				foreach ( $defaultConfigs as $dc ) {
+					if ($dc["id"] == $key) {
+						$sql = "insert into t_config(id, name, value, note, show_order, company_id)
+								values ('%s', '%s', '%s', '%s', %d, '%s')";
+						$rc = $db->execute($sql, $key, $dc["name"], $value, $dc["note"], 
+								$dc["showOrder"], $companyId);
+						if ($rc === false) {
+							$db->rollback();
+							return $this->sqlError(__LINE__);
+						}
+						
+						$itemName = $dc["name"];
+						
+						break;
+					}
+				}
+			} else {
+				$itemName = $data[0]["name"];
+				
+				$oldValue = $data[0]["value"];
+				if ($value == $oldValue) {
+					continue;
+				}
+				
+				$sql = "update t_config set value = '%s'
+				where id = '%s' and company_id = '%s' ";
+				$rc = $db->execute($sql, $value, $key, $companyId);
+				if ($rc === false) {
+					$db->rollback();
+					return $this->sqlError(__LINE__);
+				}
+			}
 			
+			// 记录业务日志
+			$log = null;
 			if ($key == "1003-02") {
 				$v = $value == 0 ? "移动平均法" : "先进先出法";
 				$log = "把[{$itemName}]设置为[{$v}]";
-				$bs = new BizlogService();
-				$bs->insertBizlog($log, "业务设置");
 			} else if ($key == "2001-01") {
 				$v = $this->getWarehouseName($value);
 				$log = "把[{$itemName}]设置为[{$v}]";
-				$bs = new BizlogService();
-				$bs->insertBizlog($log, "业务设置");
 			} else if ($key == "2002-01") {
 				$v = $value == 1 ? "允许编辑销售单价" : "不允许编辑销售单价";
 				$log = "把[{$itemName}]设置为[{$v}]";
-				$bs = new BizlogService();
-				$bs->insertBizlog($log, "业务设置");
 			} else if ($key == "2002-02") {
 				$v = $this->getWarehouseName($value);
 				$log = "把[{$itemName}]设置为[{$v}]";
-				$bs = new BizlogService();
-				$bs->insertBizlog($log, "业务设置");
 			} else {
 				$log = "把[{$itemName}]设置为[{$value}]";
+			}
+			
+			if ($log) {
 				$bs = new BizlogService();
-				$bs->insertBizlog($log, "业务设置");
+				$bs->insertBizlog($log, $this->LOG_CATEGORY);
 			}
 		}
+		
+		$db->commit();
 		
 		return $this->ok();
 	}
@@ -227,8 +420,12 @@ class BizConfigService extends PSIBaseService {
 	 */
 	public function getTaxRate() {
 		$db = M();
-		$sql = "select value from t_config where id = '9001-01' ";
-		$data = $db->query($sql);
+		$us = new UserService();
+		$companyId = $us->getCompanyId();
+		
+		$sql = "select value from t_config 
+				where id = '9001-01' and company_id = '%s' ";
+		$data = $db->query($sql, $companyId);
 		if ($data) {
 			$result = $data[0]["value"];
 			return intval($result);
@@ -242,8 +439,12 @@ class BizConfigService extends PSIBaseService {
 	 */
 	public function getProductionName() {
 		$db = M();
-		$sql = "select value from t_config where id = '9002-01' ";
-		$data = $db->query($sql);
+		$us = new UserService();
+		$companyId = $us->getCompanyId();
+		
+		$sql = "select value from t_config 
+				where id = '9002-01' and company_id = '%s' ";
+		$data = $db->query($sql, $companyId);
 		if ($data) {
 			return $data[0]["value"];
 		} else {
@@ -279,9 +480,13 @@ class BizConfigService extends PSIBaseService {
 		$result = "PO";
 		
 		$db = M();
+		$us = new UserService();
+		$companyId = $us->getCompanyId();
+		
 		$id = "9003-01";
-		$sql = "select value from t_config where id = '%s' ";
-		$data = $db->query($sql, $id);
+		$sql = "select value from t_config 
+				where id = '%s' and company_id = '%s' ";
+		$data = $db->query($sql, $id, $companyId);
 		if ($data) {
 			$result = $data[0]["value"];
 			
@@ -300,9 +505,13 @@ class BizConfigService extends PSIBaseService {
 		$result = "PW";
 		
 		$db = M();
+		$us = new UserService();
+		$companyId = $us->getCompanyId();
+		
 		$id = "9003-02";
-		$sql = "select value from t_config where id = '%s' ";
-		$data = $db->query($sql, $id);
+		$sql = "select value from t_config 
+				where id = '%s' and company_id = '%s' ";
+		$data = $db->query($sql, $id, $companyId);
 		if ($data) {
 			$result = $data[0]["value"];
 			
@@ -321,9 +530,13 @@ class BizConfigService extends PSIBaseService {
 		$result = "PR";
 		
 		$db = M();
+		$us = new UserService();
+		$companyId = $us->getCompanyId();
+		
 		$id = "9003-03";
-		$sql = "select value from t_config where id = '%s' ";
-		$data = $db->query($sql, $id);
+		$sql = "select value from t_config 
+				where id = '%s' and company_id = '%s' ";
+		$data = $db->query($sql, $id, $companyId);
 		if ($data) {
 			$result = $data[0]["value"];
 			
@@ -342,9 +555,13 @@ class BizConfigService extends PSIBaseService {
 		$result = "WS";
 		
 		$db = M();
+		$us = new UserService();
+		$companyId = $us->getCompanyId();
+		
 		$id = "9003-04";
-		$sql = "select value from t_config where id = '%s' ";
-		$data = $db->query($sql, $id);
+		$sql = "select value from t_config 
+				where id = '%s' and company_id = '%s' ";
+		$data = $db->query($sql, $id, $companyId);
 		if ($data) {
 			$result = $data[0]["value"];
 			
@@ -363,9 +580,13 @@ class BizConfigService extends PSIBaseService {
 		$result = "SR";
 		
 		$db = M();
+		$us = new UserService();
+		$companyId = $us->getCompanyId();
+		
 		$id = "9003-05";
-		$sql = "select value from t_config where id = '%s' ";
-		$data = $db->query($sql, $id);
+		$sql = "select value from t_config 
+				where id = '%s' and company_id = '%s' ";
+		$data = $db->query($sql, $id, $companyId);
 		if ($data) {
 			$result = $data[0]["value"];
 			
@@ -384,9 +605,13 @@ class BizConfigService extends PSIBaseService {
 		$result = "IT";
 		
 		$db = M();
+		$us = new UserService();
+		$companyId = $us->getCompanyId();
+		
 		$id = "9003-06";
-		$sql = "select value from t_config where id = '%s' ";
-		$data = $db->query($sql, $id);
+		$sql = "select value from t_config 
+				where id = '%s' and company_id = '%s' ";
+		$data = $db->query($sql, $id, $companyId);
 		if ($data) {
 			$result = $data[0]["value"];
 			
@@ -405,15 +630,58 @@ class BizConfigService extends PSIBaseService {
 		$result = "IC";
 		
 		$db = M();
+		$us = new UserService();
+		$companyId = $us->getCompanyId();
+		
 		$id = "9003-07";
-		$sql = "select value from t_config where id = '%s' ";
-		$data = $db->query($sql, $id);
+		$sql = "select value from t_config 
+				where id = '%s' and company_id = '%s' ";
+		$data = $db->query($sql, $id, $companyId);
 		if ($data) {
 			$result = $data[0]["value"];
 			
 			if ($result == null || $result == "") {
 				$result = "IC";
 			}
+		}
+		
+		return $result;
+	}
+
+	/**
+	 * 获得当前用户可以设置的公司
+	 */
+	public function getCompany() {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$db = M();
+		$result = array();
+		
+		$us = new UserService();
+		
+		$companyId = $us->getCompanyId();
+		
+		$sql = "select id, name
+				from t_org
+				where (parent_id is null) ";
+		$queryParams = array();
+		
+		$ds = new DataOrgService();
+		$rs = $ds->buildSQL(FIdConst::BIZ_CONFIG, "t_org");
+		
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = array_merge($queryParams, $rs[1]);
+		}
+		
+		$sql .= " order by org_code ";
+		
+		$data = $db->query($sql, $queryParams);
+		foreach ( $data as $i => $v ) {
+			$result[$i]["id"] = $v["id"];
+			$result[$i]["name"] = $v["name"];
 		}
 		
 		return $result;
