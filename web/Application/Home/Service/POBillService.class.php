@@ -239,7 +239,7 @@ class POBillService extends PSIBaseService {
 		$log = null;
 		if ($id) {
 			// 编辑
-			$sql = "select ref, data_org, bill_status from t_po_bill where id = '%s' ";
+			$sql = "select ref, data_org, bill_status, company_id from t_po_bill where id = '%s' ";
 			$data = $db->query($sql, $id);
 			if (! $data) {
 				$db->rollback();
@@ -247,6 +247,7 @@ class POBillService extends PSIBaseService {
 			}
 			$ref = $data[0]["ref"];
 			$dataOrg = $data[0]["data_org"];
+			$companyId = $data[0]["company_id"];
 			$billStatus = $data[0]["bill_status"];
 			if ($billStatus != 0) {
 				$db->rollback();
@@ -274,11 +275,12 @@ class POBillService extends PSIBaseService {
 				
 				$sql = "insert into t_po_bill_detail(id, date_created, goods_id, goods_count, goods_money,
 							goods_price, pobill_id, tax_rate, tax, money_with_tax, pw_count, left_count, 
-							show_order, data_org)
+							show_order, data_org, company_id)
 						values ('%s', now(), '%s', %d, %f,
-							%f, '%s', %d, %f, %f, 0, %d, %d, '%s')";
+							%f, '%s', %d, %f, %f, 0, %d, %d, '%s', '%s')";
 				$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsMoney, 
-						$goodsPrice, $id, $taxRate, $tax, $moneyWithTax, $goodsCount, $i, $dataOrg);
+						$goodsPrice, $id, $taxRate, $tax, $moneyWithTax, $goodsCount, $i, $dataOrg, 
+						$companyId);
 				if ($rc === false) {
 					$db->rollback();
 					return $this->sqlError(__LINE__);
@@ -359,11 +361,11 @@ class POBillService extends PSIBaseService {
 				
 				$sql = "insert into t_po_bill_detail(id, date_created, goods_id, goods_count, goods_money,
 								goods_price, pobill_id, tax_rate, tax, money_with_tax, pw_count, left_count, 
-								show_order, data_org)
+								show_order, data_org, company_id)
 							values ('%s', now(), '%s', %d, %f,
-								%f, '%s', %d, %f, %f, 0, %d, %d, '%s')";
+								%f, '%s', %d, %f, %f, 0, %d, %d, '%s', '%s')";
 				$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsMoney, 
-						$goodsPrice, $id, $taxRate, $tax, $moneyWithTax, $goodsCount, $i, $dataOrg);
+						$goodsPrice, $id, $taxRate, $tax, $moneyWithTax, $goodsCount, $i, $dataOrg, $companyId);
 				if ($rc === false) {
 					$db->rollback();
 					return $this->sqlError(__LINE__);
