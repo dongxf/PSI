@@ -199,9 +199,11 @@ class PermissionService extends PSIBaseService {
 			$id = $idGen->newId();
 			$us = new UserService();
 			$loginUserDataOrg = $us->getLoginUserDataOrg();
+			$companyId = $us->getCompanyId();
 			
-			$sql = "insert into t_role (id, name, data_org) values ('%s', '%s', '%s') ";
-			$rc = $db->execute($sql, $id, $name, $loginUserDataOrg);
+			$sql = "insert into t_role (id, name, data_org, company_id) 
+					values ('%s', '%s', '%s', '%s') ";
+			$rc = $db->execute($sql, $id, $name, $loginUserDataOrg, $companyId);
 			if ($rc === false) {
 				$db->rollback();
 				return $this->sqlError(__LINE__);
