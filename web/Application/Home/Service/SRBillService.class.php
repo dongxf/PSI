@@ -479,7 +479,7 @@ class SRBillService extends PSIBaseService {
 		
 		if ($id) {
 			// 编辑
-			$sql = "select bill_status, ref, data_org from t_sr_bill where id = '%s' ";
+			$sql = "select bill_status, ref, data_org, company_id from t_sr_bill where id = '%s' ";
 			$data = $db->query($sql, $id);
 			if (! $data) {
 				$db->rollback();
@@ -492,6 +492,7 @@ class SRBillService extends PSIBaseService {
 			}
 			$ref = $data[0]["ref"];
 			$dataOrg = $data[0]["data_org"];
+			$companyId = $data[0]["company_id"];
 			
 			$sql = "update t_sr_bill
 						set bizdt = '%s', biz_user_id = '%s', date_created = now(),
@@ -536,12 +537,12 @@ class SRBillService extends PSIBaseService {
 				$sql = "insert into t_sr_bill_detail(id, date_created, goods_id, goods_count, goods_money,
 						goods_price, inventory_money, inventory_price, rejection_goods_count, 
 						rejection_goods_price, rejection_sale_money, show_order, srbill_id, wsbilldetail_id,
-							sn_note, data_org)
+							sn_note, data_org, company_id)
 						values('%s', now(), '%s', %d, %f, %f, %f, %f, %d,
-							%f, %f, %d, '%s', '%s', '%s', '%s') ";
+							%f, %f, %d, '%s', '%s', '%s', '%s', '%s') ";
 				$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsMoney, 
 						$goodsPrice, $inventoryMoney, $inventoryPrice, $rejCount, $rejPrice, 
-						$rejSaleMoney, $i, $id, $wsBillDetailId, $sn, $dataOrg);
+						$rejSaleMoney, $i, $id, $wsBillDetailId, $sn, $dataOrg, $companyId);
 				if ($rc === false) {
 					$db->rollback();
 					return $this->sqlError(__LINE__);
@@ -620,12 +621,12 @@ class SRBillService extends PSIBaseService {
 				$sql = "insert into t_sr_bill_detail(id, date_created, goods_id, goods_count, goods_money,
 						goods_price, inventory_money, inventory_price, rejection_goods_count, 
 						rejection_goods_price, rejection_sale_money, show_order, srbill_id, wsbilldetail_id,
-							sn_note, data_org)
+							sn_note, data_org, company_id)
 						values('%s', now(), '%s', %d, %f, %f, %f, %f, %d,
-						%f, %f, %d, '%s', '%s', '%s', '%s') ";
+						%f, %f, %d, '%s', '%s', '%s', '%s', '%s') ";
 				$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsMoney, 
 						$goodsPrice, $inventoryMoney, $inventoryPrice, $rejCount, $rejPrice, 
-						$rejSaleMoney, $i, $id, $wsBillDetailId, $sn, $dataOrg);
+						$rejSaleMoney, $i, $id, $wsBillDetailId, $sn, $dataOrg, $companyId);
 				if ($rc === false) {
 					$db->rollback();
 					return $this->sqlError(__LINE__);
