@@ -185,7 +185,7 @@ class WSBillService extends PSIBaseService {
 		
 		if ($id) {
 			// 编辑
-			$sql = "select ref, bill_status, data_org from t_ws_bill where id = '%s' ";
+			$sql = "select ref, bill_status, data_org, company_id from t_ws_bill where id = '%s' ";
 			$data = $db->query($sql, $id);
 			if (! $data) {
 				$db->rollback();
@@ -198,6 +198,7 @@ class WSBillService extends PSIBaseService {
 				return $this->bad("销售出库单[单号：{$ref}]已经提交出库了，不能再编辑");
 			}
 			$dataOrg = $data[0]["data_org"];
+			$companyId = $data[0]["company_id"];
 			
 			$sql = "delete from t_ws_bill_detail where wsbill_id = '%s' ";
 			$rc = $db->execute($sql, $id);
@@ -208,8 +209,8 @@ class WSBillService extends PSIBaseService {
 			
 			$sql = "insert into t_ws_bill_detail (id, date_created, goods_id, 
 						goods_count, goods_price, goods_money,
-						show_order, wsbill_id, sn_note, data_org, memo) 
-						values ('%s', now(), '%s', %d, %f, %f, %d, '%s', '%s', '%s', '%s')";
+						show_order, wsbill_id, sn_note, data_org, memo, company_id) 
+						values ('%s', now(), '%s', %d, %f, %f, %d, '%s', '%s', '%s', '%s', '%s')";
 			foreach ( $items as $i => $v ) {
 				$goodsId = $v["goodsId"];
 				if ($goodsId) {
@@ -221,7 +222,7 @@ class WSBillService extends PSIBaseService {
 					$memo = $v["memo"];
 					
 					$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsPrice, 
-							$goodsMoney, $i, $id, $sn, $dataOrg, $memo);
+							$goodsMoney, $i, $id, $sn, $dataOrg, $memo, $companyId);
 					if ($rc === false) {
 						$db->rollback();
 						return $this->sqlError(__LINE__);
@@ -269,8 +270,8 @@ class WSBillService extends PSIBaseService {
 			
 			$sql = "insert into t_ws_bill_detail (id, date_created, goods_id, 
 						goods_count, goods_price, goods_money,
-						show_order, wsbill_id, sn_note, data_org, memo) 
-						values ('%s', now(), '%s', %d, %f, %f, %d, '%s', '%s', '%s', '%s')";
+						show_order, wsbill_id, sn_note, data_org, memo, company_id) 
+						values ('%s', now(), '%s', %d, %f, %f, %d, '%s', '%s', '%s', '%s', '%s')";
 			foreach ( $items as $i => $v ) {
 				$goodsId = $v["goodsId"];
 				if ($goodsId) {
@@ -282,7 +283,7 @@ class WSBillService extends PSIBaseService {
 					$memo = $v["memo"];
 					
 					$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsPrice, 
-							$goodsMoney, $i, $id, $sn, $dataOrg, $memo);
+							$goodsMoney, $i, $id, $sn, $dataOrg, $memo, $companyId);
 					if ($rc === false) {
 						$db->rollback();
 						return $this->sqlError(__LINE__);
