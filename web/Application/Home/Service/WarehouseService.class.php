@@ -4,7 +4,6 @@ namespace Home\Service;
 
 use Home\Service\IdGenService;
 use Home\Service\BizlogService;
-use Org\Util\ArrayList;
 use Home\Common\FIdConst;
 
 /**
@@ -93,10 +92,11 @@ class WarehouseService extends PSIBaseService {
 			
 			$us = new UserService();
 			$dataOrg = $us->getLoginUserDataOrg();
+			$companyId = $us->getCompanyId();
 			
-			$sql = "insert into t_warehouse(id, code, name, inited, py, data_org) 
-					values ('%s', '%s', '%s', 0, '%s', '%s')";
-			$rc = $db->execute($sql, $id, $code, $name, $py, $dataOrg);
+			$sql = "insert into t_warehouse(id, code, name, inited, py, data_org, company_id) 
+					values ('%s', '%s', '%s', 0, '%s', '%s', '%s')";
+			$rc = $db->execute($sql, $id, $code, $name, $py, $dataOrg, $companyId);
 			if ($rc === false) {
 				$db->rollback();
 				return $this->sqlError(__LINE__);
