@@ -77,8 +77,14 @@ class GoodsService extends PSIBaseService {
 			
 			$idGen = new IdGenService();
 			$id = $idGen->newId();
-			$sql = "insert into t_goods_unit(id, name) values ('%s', '%s') ";
-			$rc = $db->execute($sql, $id, $name);
+			
+			$us = new UserService();
+			$dataOrg = $us->getLoginUserDataOrg();
+			$companyId = $us->getCompanyId();
+			
+			$sql = "insert into t_goods_unit(id, name, data_org, company_id) 
+					values ('%s', '%s', '%s', '%s') ";
+			$rc = $db->execute($sql, $id, $name, $dataOrg, $companyId);
 			if ($rc === false) {
 				$db->rollback();
 				return $this->sqlError(__LINE__);
@@ -476,6 +482,7 @@ class GoodsService extends PSIBaseService {
 			$id = $idGen->newId();
 			$us = new UserService();
 			$dataOrg = $us->getLoginUserDataOrg();
+			$companyId = $us->getCompanyId();
 			
 			if ($parentId) {
 				$sql = "select full_name from t_goods_category where id = '%s' ";
@@ -486,17 +493,19 @@ class GoodsService extends PSIBaseService {
 					$fullName .= "\\" . $name;
 				}
 				
-				$sql = "insert into t_goods_category (id, code, name, data_org, parent_id, full_name)
-					values ('%s', '%s', '%s', '%s', '%s', '%s')";
-				$rc = $db->execute($sql, $id, $code, $name, $dataOrg, $parentId, $fullName);
+				$sql = "insert into t_goods_category (id, code, name, data_org, parent_id, 
+							full_name, company_id)
+						values ('%s', '%s', '%s', '%s', '%s', '%s', '%s')";
+				$rc = $db->execute($sql, $id, $code, $name, $dataOrg, $parentId, $fullName, 
+						$companyId);
 				if ($rc === false) {
 					$db->rollback();
 					return $this->sqlError(__LINE__);
 				}
 			} else {
-				$sql = "insert into t_goods_category (id, code, name, data_org, full_name)
-					values ('%s', '%s', '%s', '%s', '%s')";
-				$rc = $db->execute($sql, $id, $code, $name, $dataOrg, $name);
+				$sql = "insert into t_goods_category (id, code, name, data_org, full_name, company_id)
+					values ('%s', '%s', '%s', '%s', '%s', '%s')";
+				$rc = $db->execute($sql, $id, $code, $name, $dataOrg, $name, $companyId);
 				if ($rc === false) {
 					$db->rollback();
 					return $this->sqlError(__LINE__);
@@ -770,12 +779,13 @@ class GoodsService extends PSIBaseService {
 			$py = $ps->toPY($name);
 			$us = new UserService();
 			$dataOrg = $us->getLoginUserDataOrg();
+			$companyId = $us->getCompanyId();
 			
 			$sql = "insert into t_goods (id, code, name, spec, category_id, unit_id, sale_price, 
-						py, purchase_price, bar_code, memo, data_org)
-					values ('%s', '%s', '%s', '%s', '%s', '%s', %f, '%s', %f, '%s', '%s', '%s')";
+						py, purchase_price, bar_code, memo, data_org, company_id)
+					values ('%s', '%s', '%s', '%s', '%s', '%s', %f, '%s', %f, '%s', '%s', '%s', '%s')";
 			$rc = $db->execute($sql, $id, $code, $name, $spec, $categoryId, $unitId, $salePrice, 
-					$py, $purchasePrice, $barCode, $memo, $dataOrg);
+					$py, $purchasePrice, $barCode, $memo, $dataOrg, $companyId);
 			if ($rc === false) {
 				$db->rollback();
 				return $this->sqlError(__LINE__);
