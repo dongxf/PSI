@@ -196,14 +196,14 @@ class BizConfigService extends PSIBaseService {
 		$db = M();
 		$result = $this->getDefaultConfig();
 		
-		foreach ( $result as $v ) {
+		foreach ( $result as $i => $v ) {
 			$sql = "select value
 				from t_config
 				where company_id = '%s' and id = '%s'
 				";
 			$data = $db->query($sql, $companyId, $v["id"]);
 			if ($data) {
-				$v["value"] = $data[0]["value"];
+				$result[$i]["value"] = $data[0]["value"];
 			}
 		}
 		
@@ -324,17 +324,12 @@ class BizConfigService extends PSIBaseService {
 			
 			if ($key == "9002-01") {
 				if ($this->isDemo()) {
-					$db->rollback();
-					return $this->bad("在演示环境下不能修改产品名称，请原谅。");
+					// 演示环境下，不让修改产品名称
+					$value = "开源进销存PSI";
 				}
 			}
 			
 			if (in_array($key, $refPreList)) {
-				if ($this->isDemo()) {
-					$db->rollback();
-					return $this->bad("在演示环境下不能修改单号前缀，请原谅。");
-				}
-				
 				// 单号前缀保持大写
 				$value = strtoupper($value);
 			}
