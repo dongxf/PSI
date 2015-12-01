@@ -4,10 +4,8 @@ namespace Home\Controller;
 
 use Think\Controller;
 use Home\Service\UserService;
-use Home\Service\InventoryService;
 use Home\Common\FIdConst;
 use Home\Service\ITBillService;
-use Home\Service\BizConfigService;
 
 /**
  * 库间调拨

@@ -6,7 +6,6 @@ use Think\Controller;
 use Home\Service\UserService;
 use Home\Service\PermissionService;
 use Home\Common\FIdConst;
-use Home\Service\BizConfigService;
 
 /**
  * 权限Controller

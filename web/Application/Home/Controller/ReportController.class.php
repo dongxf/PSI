@@ -9,7 +9,6 @@ use Home\Service\SaleReportService;
 use Home\Service\InventoryReportService;
 use Home\Service\ReceivablesReportService;
 use Home\Service\PayablesReportService;
-use Home\Service\BizConfigService;
 
 /**
  * 报表Controller

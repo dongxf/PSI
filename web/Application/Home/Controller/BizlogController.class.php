@@ -7,7 +7,6 @@ use Home\Service\UserService;
 use Home\Service\BizlogService;
 use Home\Common\FIdConst;
 use Home\Service\UpdateDBService;
-use Home\Service\BizConfigService;
 
 /**
  * 业务日志Controller

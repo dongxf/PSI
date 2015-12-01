@@ -7,7 +7,6 @@ use Think\Controller;
 use Home\Service\UserService;
 use Home\Service\CustomerService;
 use Home\Common\FIdConst;
-use Home\Service\BizConfigService;
 
 /**
  * 客户资料Controller

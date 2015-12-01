@@ -7,8 +7,6 @@ use Home\Service\UserService;
 use Home\Service\GoodsService;
 use Home\Service\ImportService;
 use Home\Common\FIdConst;
-use Home\Service\BizConfigService;
-use Home\Service;
 
 /**
  * 商品Controller

@@ -5,7 +5,6 @@ namespace Home\Controller;
 use Think\Controller;
 use Home\Service\UserService;
 use Home\Common\FIdConst;
-use Home\Service\BizConfigService;
 
 /**
  * 用户管理Controller

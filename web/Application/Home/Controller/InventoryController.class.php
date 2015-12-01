@@ -6,7 +6,6 @@ use Think\Controller;
 use Home\Service\UserService;
 use Home\Service\InventoryService;
 use Home\Common\FIdConst;
-use Home\Service\BizConfigService;
 
 /**
  * 库存Controller

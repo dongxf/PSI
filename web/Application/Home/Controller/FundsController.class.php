@@ -10,7 +10,6 @@ use Home\Common\FIdConst;
 use Home\Service\CashService;
 use Home\Service\PreReceivingService;
 use Home\Service\PrePaymentService;
-use Home\Service\BizConfigService;
 
 /**
  * 资金Controller

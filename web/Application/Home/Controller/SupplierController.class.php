@@ -6,7 +6,6 @@ use Think\Controller;
 use Home\Service\UserService;
 use Home\Service\SupplierService;
 use Home\Common\FIdConst;
-use Home\Service\BizConfigService;
 
 /**
  * 供应商档案Controller
