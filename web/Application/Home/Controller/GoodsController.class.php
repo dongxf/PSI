@@ -29,7 +29,7 @@ class GoodsController extends PSIBaseController {
 			
 			$this->display();
 		} else {
-			$this->gotoLoginPage();
+			$this->gotoLoginPage("/Home/Goods/index");
 		}
 	}
 
@@ -46,7 +46,7 @@ class GoodsController extends PSIBaseController {
 			
 			$this->display();
 		} else {
-			$this->gotoLoginPage();
+			$this->gotoLoginPage("/Home/Goods/unitIndex");
 		}
 	}
 
