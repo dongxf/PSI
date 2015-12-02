@@ -28,7 +28,7 @@ class InvCheckController extends PSIBaseController {
 			
 			$this->display();
 		} else {
-			$this->gotoLoginPage();
+			$this->gotoLoginPage("/Home/InvCheck/index");
 		}
 	}
 
