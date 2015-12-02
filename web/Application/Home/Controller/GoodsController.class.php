@@ -333,6 +333,9 @@ class GoodsController extends PSIBaseController {
 		}
 	}
 
+	/**
+	 * 获得所有的商品种类数
+	 */
 	public function getTotalGoodsCount() {
 		if (IS_POST) {
 			$params = array(

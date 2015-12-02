@@ -1302,7 +1302,7 @@ class GoodsService extends PSIBaseService {
 	}
 
 	/**
-	 * 查收商品种类总数
+	 * 查询商品种类总数
 	 */
 	public function getTotalGoodsCount($params) {
 		if ($this->isNotOnline()) {
