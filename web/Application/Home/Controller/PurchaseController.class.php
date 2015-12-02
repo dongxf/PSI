@@ -29,7 +29,7 @@ class PurchaseController extends PSIBaseController {
 			
 			$this->display();
 		} else {
-			$this->gotoLoginPage();
+			$this->gotoLoginPage("/Home/Purchase/pwbillIndex");
 		}
 	}
 
@@ -131,7 +131,7 @@ class PurchaseController extends PSIBaseController {
 			
 			$this->display();
 		} else {
-			$this->gotoLoginPage();
+			$this->gotoLoginPage("/Home/Purchase/pobillIndex");
 		}
 	}
 

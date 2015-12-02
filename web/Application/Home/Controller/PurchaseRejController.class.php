@@ -28,7 +28,7 @@ class PurchaseRejController extends PSIBaseController {
 			
 			$this->display();
 		} else {
-			$this->gotoLoginPage();
+			$this->gotoLoginPage("/Home/PurchaseRej/index");
 		}
 	}
 
