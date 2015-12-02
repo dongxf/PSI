@@ -28,7 +28,7 @@ class InventoryController extends PSIBaseController {
 			
 			$this->display();
 		} else {
-			$this->gotoLoginPage();
+			$this->gotoLoginPage("/Home/Inventory/initIndex");
 		}
 	}
 
@@ -45,7 +45,7 @@ class InventoryController extends PSIBaseController {
 			
 			$this->display();
 		} else {
-			$this->gotoLoginPage();
+			$this->gotoLoginPage("/Home/Inventory/inventoryQuery");
 		}
 	}
 
