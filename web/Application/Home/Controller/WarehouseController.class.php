@@ -28,7 +28,7 @@ class WarehouseController extends PSIBaseController {
 			
 			$this->display();
 		} else {
-			$this->gotoLoginPage();
+			$this->gotoLoginPage("/Home/Warehouse/index");
 		}
 	}
 
