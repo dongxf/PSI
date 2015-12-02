@@ -439,7 +439,7 @@ class ReportController extends PSIBaseController {
 			
 			$this->display();
 		} else {
-			$this->gotoLoginPage();
+			$this->gotoLoginPage("/Home/Report/safetyInventory");
 		}
 	}
 
@@ -473,7 +473,7 @@ class ReportController extends PSIBaseController {
 			
 			$this->display();
 		} else {
-			$this->gotoLoginPage();
+			$this->gotoLoginPage("/Home/Report/receivablesAge");
 		}
 	}
 
@@ -518,7 +518,7 @@ class ReportController extends PSIBaseController {
 			
 			$this->display();
 		} else {
-			$this->gotoLoginPage();
+			$this->gotoLoginPage("/Home/Report/payablesAge");
 		}
 	}
 
@@ -563,7 +563,7 @@ class ReportController extends PSIBaseController {
 			
 			$this->display();
 		} else {
-			$this->gotoLoginPage();
+			$this->gotoLoginPage("/Home/Report/inventoryUpper");
 		}
 	}
 
