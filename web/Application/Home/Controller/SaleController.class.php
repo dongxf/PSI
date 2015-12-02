@@ -29,7 +29,7 @@ class SaleController extends PSIBaseController {
 			
 			$this->display();
 		} else {
-			$this->gotoLoginPage();
+			$this->gotoLoginPage("/Home/Sale/wsIndex");
 		}
 	}
 
@@ -140,7 +140,7 @@ class SaleController extends PSIBaseController {
 			
 			$this->display();
 		} else {
-			$this->gotoLoginPage();
+			$this->gotoLoginPage("/Home/Sale/srIndex");
 		}
 	}
 
