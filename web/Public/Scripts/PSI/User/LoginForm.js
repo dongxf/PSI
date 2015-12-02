@@ -6,7 +6,8 @@ Ext.define("PSI.User.LoginForm", {
         demoInfo: "",
         productionName: "",
         ip: "",
-        cname: ""
+        cname: "",
+        returnPage: ""
     },
 
     modal: true,
@@ -127,7 +128,12 @@ Ext.define("PSI.User.LoginForm", {
                 Ext.util.Cookies.set("PSI_user_login_name", encodeURIComponent(loginName),
                     Ext.Date.add(new Date(), Ext.Date.YEAR, 1));
 
-                location.replace(PSI.Const.BASE_URL);
+                var returnPage = me.getReturnPage();
+                if (returnPage) {
+                    location.replace(returnPage);
+                } else {
+                    location.replace(PSI.Const.BASE_URL);
+                }
             },
             failure: function (form, action) {
                 el.unmask();

@@ -44,6 +44,8 @@ class UserController extends PSIBaseController {
 		
 		$this->assign("title", "登录");
 		
+		$this->assign("returnPage", I("get.returnPage"));
+		
 		$us = new UserService();
 		$this->assign("demoInfo", $us->getDemoLoginInfo());
 		
