@@ -32,7 +32,7 @@ class FundsController extends PSIBaseController {
 			
 			$this->display();
 		} else {
-			$this->gotoLoginPage();
+			$this->gotoLoginPage("/Home/Funds/payIndex");
 		}
 	}
 
@@ -172,7 +172,7 @@ class FundsController extends PSIBaseController {
 			
 			$this->display();
 		} else {
-			$this->gotoLoginPage();
+			$this->gotoLoginPage("/Home/Funds/rvIndex");
 		}
 	}
 
@@ -312,7 +312,7 @@ class FundsController extends PSIBaseController {
 			
 			$this->display();
 		} else {
-			$this->gotoLoginPage();
+			$this->gotoLoginPage("/Home/Funds/cashIndex");
 		}
 	}
 
@@ -362,7 +362,7 @@ class FundsController extends PSIBaseController {
 			
 			$this->display();
 		} else {
-			$this->gotoLoginPage();
+			$this->gotoLoginPage("/Home/Funds/prereceivingIndex");
 		}
 	}
 
@@ -469,7 +469,7 @@ class FundsController extends PSIBaseController {
 			
 			$this->display();
 		} else {
-			$this->gotoLoginPage();
+			$this->gotoLoginPage("/Home/Funds/prepaymentIndex");
 		}
 	}
 
