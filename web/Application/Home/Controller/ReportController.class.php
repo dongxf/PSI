@@ -31,7 +31,7 @@ class ReportController extends PSIBaseController {
 			
 			$this->display();
 		} else {
-			$this->gotoLoginPage();
+			$this->gotoLoginPage("/Home/Report/saleDayByGoods");
 		}
 	}
 
@@ -81,7 +81,7 @@ class ReportController extends PSIBaseController {
 			
 			$this->display();
 		} else {
-			$this->gotoLoginPage();
+			$this->gotoLoginPage("/Home/Report/saleDayByCustomer");
 		}
 	}
 
@@ -131,7 +131,7 @@ class ReportController extends PSIBaseController {
 			
 			$this->display();
 		} else {
-			$this->gotoLoginPage();
+			$this->gotoLoginPage("/Home/Report/saleDayByWarehouse");
 		}
 	}
 
@@ -181,7 +181,7 @@ class ReportController extends PSIBaseController {
 			
 			$this->display();
 		} else {
-			$this->gotoLoginPage();
+			$this->gotoLoginPage("/Home/Report/saleDayByBizuser");
 		}
 	}
 
@@ -231,7 +231,7 @@ class ReportController extends PSIBaseController {
 			
 			$this->display();
 		} else {
-			$this->gotoLoginPage();
+			$this->gotoLoginPage("/Home/Report/saleMonthByGoods");
 		}
 	}
 
@@ -283,7 +283,7 @@ class ReportController extends PSIBaseController {
 			
 			$this->display();
 		} else {
-			$this->gotoLoginPage();
+			$this->gotoLoginPage("/Home/Report/saleMonthByCustomer");
 		}
 	}
 
@@ -335,7 +335,7 @@ class ReportController extends PSIBaseController {
 			
 			$this->display();
 		} else {
-			$this->gotoLoginPage();
+			$this->gotoLoginPage("/Home/Report/saleMonthByWarehouse");
 		}
 	}
 
@@ -387,7 +387,7 @@ class ReportController extends PSIBaseController {
 			
 			$this->display();
 		} else {
-			$this->gotoLoginPage();
+			$this->gotoLoginPage("/Home/Report/saleMonthByBizuser");
 		}
 	}
 
