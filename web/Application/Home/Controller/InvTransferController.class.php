@@ -28,7 +28,7 @@ class InvTransferController extends PSIBaseController {
 			
 			$this->display();
 		} else {
-			$this->gotoLoginPage();
+			$this->gotoLoginPage("/Home/InvTransfer/index");
 		}
 	}
 
