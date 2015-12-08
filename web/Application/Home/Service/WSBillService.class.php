@@ -12,6 +12,9 @@ use Home\Common\FIdConst;
 class WSBillService extends PSIBaseService {
 	private $LOG_CATEGORY = "销售出库";
 
+	/**
+	 * 新建或编辑的时候，获得销售出库单的详情
+	 */
 	public function wsBillInfo($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
@@ -342,6 +345,9 @@ class WSBillService extends PSIBaseService {
 		return $pre . $mid . $suf;
 	}
 
+	/**
+	 * 获得销售出库单主表列表
+	 */
 	public function wsbillList($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
@@ -490,6 +496,9 @@ class WSBillService extends PSIBaseService {
 		);
 	}
 
+	/**
+	 * 获得某个销售出库单的明细记录列表
+	 */
 	public function wsBillDetailList($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
@@ -1125,6 +1134,9 @@ class WSBillService extends PSIBaseService {
 		return $this->ok($id);
 	}
 
+	/**
+	 * 销售出库单生成pdf文件
+	 */
 	public function pdf($params) {
 		if ($this->isNotOnline()) {
 			return;
