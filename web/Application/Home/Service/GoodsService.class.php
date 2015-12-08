@@ -599,7 +599,7 @@ class GoodsService extends PSIBaseService {
 		$queryParam = array();
 		$queryParam[] = $categoryId;
 		$ds = new DataOrgService();
-		$rs = $ds->buildSQL(FIdConst::GOODS, "g", array());
+		$rs = $ds->buildSQL(FIdConst::GOODS, "g");
 		if ($rs) {
 			$sql .= " and " . $rs[0];
 			$queryParam = array_merge($queryParam, $rs[1]);
@@ -645,7 +645,7 @@ class GoodsService extends PSIBaseService {
 		$queryParam = array();
 		$queryParam[] = $categoryId;
 		$ds = new DataOrgService();
-		$rs = $ds->buildSQL(FIdConst::GOODS, "g", array());
+		$rs = $ds->buildSQL(FIdConst::GOODS, "g");
 		if ($rs) {
 			$sql .= " and " . $rs[0];
 			$queryParam = array_merge($queryParam, $rs[1]);

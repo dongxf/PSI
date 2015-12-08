@@ -25,7 +25,7 @@ class WarehouseService extends PSIBaseService {
 		$sql = "select id, code, name, inited from t_warehouse ";
 		$ds = new DataOrgService();
 		$queryParams = array();
-		$rs = $ds->buildSQL(FIdConst::WAREHOUSE, "t_warehouse", array());
+		$rs = $ds->buildSQL(FIdConst::WAREHOUSE, "t_warehouse");
 		if ($rs) {
 			$sql .= " where " . $rs[0];
 			$queryParams = $rs[1];
@@ -233,7 +233,7 @@ class WarehouseService extends PSIBaseService {
 		$queryParams[] = $key;
 		
 		$ds = new DataOrgService();
-		$rs = $ds->buildSQL("1003-01", "t_warehouse", array());
+		$rs = $ds->buildSQL("1003-01", "t_warehouse");
 		if ($rs) {
 			$sql .= " and " . $rs[0];
 			$queryParams = array_merge($queryParams, $rs[1]);

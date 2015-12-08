@@ -69,7 +69,7 @@ class CustomerService extends PSIBaseService {
 		}
 		
 		$ds = new DataOrgService();
-		$rs = $ds->buildSQL(FIdConst::CUSTOMER_CATEGORY, "c", array());
+		$rs = $ds->buildSQL(FIdConst::CUSTOMER_CATEGORY, "c");
 		if ($rs) {
 			$sql .= " where " . $rs[0];
 			$queryParam = array_merge($queryParam, $rs[1]);
@@ -467,7 +467,7 @@ class CustomerService extends PSIBaseService {
 		}
 		
 		$ds = new DataOrgService();
-		$rs = $ds->buildSQL(FIdConst::CUSTOMER, "t_customer", array());
+		$rs = $ds->buildSQL(FIdConst::CUSTOMER, "t_customer");
 		if ($rs) {
 			$sql .= " and " . $rs[0];
 			$queryParam = array_merge($queryParam, $rs[1]);
@@ -545,7 +545,7 @@ class CustomerService extends PSIBaseService {
 		}
 		
 		$ds = new DataOrgService();
-		$rs = $ds->buildSQL(FIdConst::CUSTOMER, "t_customer", array());
+		$rs = $ds->buildSQL(FIdConst::CUSTOMER, "t_customer");
 		if ($rs) {
 			$sql .= " and " . $rs[0];
 			$queryParam = array_merge($queryParam, $rs[1]);

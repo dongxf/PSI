@@ -151,7 +151,7 @@ class UserService extends PSIBaseService {
 	public function allOrgs() {
 		$ds = new DataOrgService();
 		$queryParams = array();
-		$rs = $ds->buildSQL(FIdConst::USR_MANAGEMENT, "t_org", $queryParams);
+		$rs = $ds->buildSQL(FIdConst::USR_MANAGEMENT, "t_org");
 		
 		$sql = "select id, name, org_code, full_name, data_org 
 				from t_org 

@@ -71,7 +71,7 @@ class SupplierService extends PSIBaseService {
 		}
 		
 		$ds = new DataOrgService();
-		$rs = $ds->buildSQL(FIdConst::SUPPLIER_CATEGORY, "c", array());
+		$rs = $ds->buildSQL(FIdConst::SUPPLIER_CATEGORY, "c");
 		if ($rs) {
 			$sql .= " where " . $rs[0];
 			$queryParam = array_merge($queryParam, $rs[1]);
@@ -148,7 +148,7 @@ class SupplierService extends PSIBaseService {
 		}
 		
 		$ds = new DataOrgService();
-		$rs = $ds->buildSQL(FIdConst::SUPPLIER, "t_supplier", array());
+		$rs = $ds->buildSQL(FIdConst::SUPPLIER, "t_supplier");
 		if ($rs) {
 			$sql .= " and " . $rs[0];
 			$queryParam = array_merge($queryParam, $rs[1]);
@@ -224,7 +224,7 @@ class SupplierService extends PSIBaseService {
 			$queryParam[] = "%{$qq}";
 		}
 		$ds = new DataOrgService();
-		$rs = $ds->buildSQL(FIdConst::SUPPLIER, "t_supplier", array());
+		$rs = $ds->buildSQL(FIdConst::SUPPLIER, "t_supplier");
 		if ($rs) {
 			$sql .= " and " . $rs[0];
 			$queryParam = array_merge($queryParam, $rs[1]);
@@ -676,7 +676,7 @@ class SupplierService extends PSIBaseService {
 		$queryParams[] = $key;
 		
 		$ds = new DataOrgService();
-		$rs = $ds->buildSQL("1004-01", "t_supplier", array());
+		$rs = $ds->buildSQL("1004-01", "t_supplier");
 		if ($rs) {
 			$sql .= " and " . $rs[0];
 			$queryParams = array_merge($queryParams, $rs[1]);

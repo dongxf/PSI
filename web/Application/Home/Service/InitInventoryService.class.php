@@ -20,7 +20,7 @@ class InitInventoryService extends PSIBaseService {
 		$queryParams = array();
 		
 		$ds = new DataOrgService();
-		$rs = $ds->buildSQL(FIdConst::INVENTORY_INIT, "t_warehouse", array());
+		$rs = $ds->buildSQL(FIdConst::INVENTORY_INIT, "t_warehouse");
 		if ($rs) {
 			$sql .= " where " . $rs[0];
 			$queryParams = $rs[1];
@@ -82,7 +82,7 @@ class InitInventoryService extends PSIBaseService {
 		$queryParams = array();
 		
 		$ds = new DataOrgService();
-		$rs = $ds->buildSQL(FIdConst::INVENTORY_INIT, "t_goods_category", array());
+		$rs = $ds->buildSQL(FIdConst::INVENTORY_INIT, "t_goods_category");
 		if ($rs) {
 			$sql .= " where " . $rs[0];
 			$queryParams = $rs[1];

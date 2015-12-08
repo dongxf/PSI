@@ -22,7 +22,7 @@ class PermissionService extends PSIBaseService {
 		$queryParams = array();
 		
 		$ds = new DataOrgService();
-		$rs = $ds->buildSQL(FIdConst::PERMISSION_MANAGEMENT, "r", $queryParams);
+		$rs = $ds->buildSQL(FIdConst::PERMISSION_MANAGEMENT, "r");
 		if ($rs) {
 			$sql .= " where " . $rs[0];
 			$queryParams = $rs[1];
@@ -319,7 +319,7 @@ class PermissionService extends PSIBaseService {
 				where u.org_id = o.id ";
 		$queryParams = array();
 		$ds = new DataOrgService();
-		$rs = $ds->buildSQL(FIdConst::PERMISSION_MANAGEMENT, "u", $queryParams);
+		$rs = $ds->buildSQL(FIdConst::PERMISSION_MANAGEMENT, "u");
 		if ($rs) {
 			$sql .= " and " . $rs[0];
 			$queryParams = $rs[1];
@@ -455,7 +455,7 @@ class PermissionService extends PSIBaseService {
 		$queryParams = array();
 		$ds = new DataOrgService();
 		
-		$rs = $ds->buildSQL(FIdConst::PERMISSION_MANAGEMENT, "t_org", $queryParams);
+		$rs = $ds->buildSQL(FIdConst::PERMISSION_MANAGEMENT, "t_org");
 		if ($rs) {
 			$sql .= " where " . $rs[0];
 			$queryParams = $rs[1];
