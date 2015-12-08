@@ -9,6 +9,9 @@ namespace Home\Service;
  */
 class DataOrgService extends PSIBaseService {
 
+	/**
+	 * 构建数据域的查询SQL语句
+	 */
 	public function buildSQL($fid, $tableName, $queryParams = null) {
 		if (!$queryParams)  {
 			$queryParams = array();
