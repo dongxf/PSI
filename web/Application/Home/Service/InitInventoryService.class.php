@@ -10,7 +10,11 @@ use Home\Common\FIdConst;
  * @author 李静波
  */
 class InitInventoryService extends PSIBaseService {
+	private $LOG_CATEGORY = "库存建账";
 
+	/**
+	 * 获得仓库列表
+	 */
 	public function warehouseList() {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
@@ -31,6 +35,9 @@ class InitInventoryService extends PSIBaseService {
 		return M()->query($sql, $queryParams);
 	}
 
+	/**
+	 * 某个仓库的建账信息
+	 */
 	public function initInfoList($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
@@ -73,6 +80,9 @@ class InitInventoryService extends PSIBaseService {
 		);
 	}
 
+	/**
+	 * 获得商品分类列表
+	 */
 	public function goodsCategoryList() {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
@@ -106,6 +116,9 @@ class InitInventoryService extends PSIBaseService {
 		return $result;
 	}
 
+	/**
+	 * 获得某个分类下的商品列表
+	 */
 	public function goodsList($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
@@ -150,6 +163,9 @@ class InitInventoryService extends PSIBaseService {
 		);
 	}
 
+	/**
+	 * 提交建账信息
+	 */
 	public function commitInitInventoryGoods($params) {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
@@ -171,18 +187,23 @@ class InitInventoryService extends PSIBaseService {
 		$goodsPrice = $goodsMoney / $goodsCount;
 		
 		$db = M();
+		$db->startTrans();
+		
 		$sql = "select name, inited from t_warehouse where id = '%s' ";
 		$data = $db->query($sql, $warehouseId);
 		if (! $data) {
+			$db->rollback();
 			return $this->bad("仓库不存在");
 		}
 		if ($data[0]["inited"] != 0) {
+			$db->rollback();
 			return $this->bad("仓库 [{$data[0]["name"]}] 已经建账完成，不能再次建账");
 		}
 		
 		$sql = "select name from t_goods where id = '%s' ";
 		$data = $db->query($sql, $goodsId);
 		if (! $data) {
+			$db->rollback();
 			return $this->bad("商品不存在");
 		}
 		$sql = "select count(*) as cnt from t_inventory_detail 
@@ -190,122 +211,148 @@ class InitInventoryService extends PSIBaseService {
 		$data = $db->query($sql, $warehouseId, $goodsId);
 		$cnt = $data[0]["cnt"];
 		if ($cnt > 0) {
+			$db->rollback();
 			return $this->bad("当前商品已经有业务发生，不能再建账");
 		}
 		
-		$db->startTrans();
-		try {
-			$us = new UserService();
-			$dataOrg = $us->getLoginUserDataOrg();
-			
-			// 总账
-			$sql = "select id from t_inventory where warehouse_id = '%s' and goods_id = '%s' ";
-			$data = $db->query($sql, $warehouseId, $goodsId);
-			if (! $data) {
-				$sql = "insert into t_inventory (warehouse_id, goods_id, in_count, in_price, 
+		$us = new UserService();
+		$dataOrg = $us->getLoginUserDataOrg();
+		
+		// 总账
+		$sql = "select id from t_inventory where warehouse_id = '%s' and goods_id = '%s' ";
+		$data = $db->query($sql, $warehouseId, $goodsId);
+		if (! $data) {
+			$sql = "insert into t_inventory (warehouse_id, goods_id, in_count, in_price, 
 						in_money, balance_count, balance_price, balance_money, data_org) 
 						values ('%s', '%s', %d, %f, %f, %d, %f, %f, '%s') ";
-				$db->execute($sql, $warehouseId, $goodsId, $goodsCount, $goodsPrice, $goodsMoney, 
-						$goodsCount, $goodsPrice, $goodsMoney, $dataOrg);
-			} else {
-				$id = $data[0]["id"];
-				$sql = "update t_inventory  
+			$rc = $db->execute($sql, $warehouseId, $goodsId, $goodsCount, $goodsPrice, $goodsMoney, 
+					$goodsCount, $goodsPrice, $goodsMoney, $dataOrg);
+			if ($rc === false) {
+				$db->rollback();
+				return $this->sqlError(__LINE__);
+			}
+		} else {
+			$id = $data[0]["id"];
+			$sql = "update t_inventory  
 						set in_count = %d, in_price = %f, in_money = %f, 
 						balance_count = %d, balance_price = %f, balance_money = %f 
 						where id = %d ";
-				$db->execute($sql, $goodsCount, $goodsPrice, $goodsMoney, $goodsCount, $goodsPrice, 
-						$goodsMoney, $id);
+			$rc = $db->execute($sql, $goodsCount, $goodsPrice, $goodsMoney, $goodsCount, 
+					$goodsPrice, $goodsMoney, $id);
+			if ($rc === false) {
+				$db->rollback();
+				return $this->sqlError(__LINE__);
 			}
-			
-			// 明细账
-			$sql = "select id from t_inventory_detail  
+		}
+		
+		// 明细账
+		$sql = "select id from t_inventory_detail  
 					where warehouse_id = '%s' and goods_id = '%s' and ref_type = '库存建账' ";
-			$data = $db->query($sql, $warehouseId, $goodsId);
-			if (! $data) {
-				$sql = "insert into t_inventory_detail (warehouse_id, goods_id,  in_count, in_price,
+		$data = $db->query($sql, $warehouseId, $goodsId);
+		if (! $data) {
+			$sql = "insert into t_inventory_detail (warehouse_id, goods_id,  in_count, in_price,
 						in_money, balance_count, balance_price, balance_money,
 						biz_date, biz_user_id, date_created,  ref_number, ref_type, data_org)
 						values ('%s', '%s', %d, %f, %f, %d, %f, %f, curdate(), '%s', now(), '', '库存建账', '%s')";
-				$us = new UserService();
-				$db->execute($sql, $warehouseId, $goodsId, $goodsCount, $goodsPrice, $goodsMoney, 
-						$goodsCount, $goodsPrice, $goodsMoney, $us->getLoginUserId(), $dataOrg);
-			} else {
-				$id = $data[0]["id"];
-				$sql = "update t_inventory_detail 
+			$rc = $db->execute($sql, $warehouseId, $goodsId, $goodsCount, $goodsPrice, $goodsMoney, 
+					$goodsCount, $goodsPrice, $goodsMoney, $us->getLoginUserId(), $dataOrg);
+			if ($rc === false) {
+				$db->rollback();
+				return $this->sqlError(__LINE__);
+			}
+		} else {
+			$id = $data[0]["id"];
+			$sql = "update t_inventory_detail 
 						set in_count = %d, in_price = %f, in_money = %f,
 						balance_count = %d, balance_price = %f, balance_money = %f,
 						biz_date = curdate()  
 						where id = %d ";
-				$db->execute($sql, $goodsCount, $goodsPrice, $goodsMoney, $goodsCount, $goodsPrice, 
-						$goodsMoney, $id);
+			$rc = $db->execute($sql, $goodsCount, $goodsPrice, $goodsMoney, $goodsCount, 
+					$goodsPrice, $goodsMoney, $id);
+			if ($rc === false) {
+				$db->rollback();
+				return $this->sqlError(__LINE__);
 			}
-			
-			$db->commit();
-		} catch ( Exception $exc ) {
-			$db->rollback();
-			
-			return $this->bad("数据库错误，请联系管理员");
 		}
+		
+		$db->commit();
 		
 		return $this->ok();
 	}
 
+	/**
+	 * 完成建账
+	 */
 	public function finish($params) {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
 		}
 		
 		$warehouseId = $params["warehouseId"];
+		
 		$db = M();
+		$db->startTrans();
+		
 		$sql = "select name, inited from t_warehouse where id = '%s' ";
 		$data = $db->query($sql, $warehouseId);
 		if (! $data) {
+			$db->rollback();
 			return $this->bad("仓库不存在");
 		}
 		$inited = $data[0]["inited"];
 		$name = $data[0]["name"];
 		if ($inited == 1) {
+			$db->rollback();
 			return $this->bad("仓库 [{$name}] 已经建账完毕");
 		}
 		
-		$db->startTrans();
-		try {
-			$sql = "update t_warehouse set inited = 1 where id = '%s' ";
-			$db->execute($sql, $warehouseId);
-			
-			$sql = "update t_inventory_detail set biz_date = curdate() 
-					where warehouse_id = '%s' and ref_type = '库存建账' ";
-			$db->execute($sql, $warehouseId);
-			
-			$log = "仓库 [{$name}] 建账完毕";
-			$bs = new BizlogService();
-			$bs->insertBizlog($log, "库存");
-			
-			$db->commit();
-		} catch ( Exception $exc ) {
+		$sql = "update t_warehouse set inited = 1 where id = '%s' ";
+		$rc = $db->execute($sql, $warehouseId);
+		if ($rc === false) {
 			$db->rollback();
-			
-			return $this->bad("数据库错误，请联系管理员");
+			return $this->sqlError(__LINE__);
 		}
+		
+		$sql = "update t_inventory_detail set biz_date = curdate() 
+					where warehouse_id = '%s' and ref_type = '库存建账' ";
+		$rc = $db->execute($sql, $warehouseId);
+		if ($rc === false) {
+			$db->rollback();
+			return $this->sqlError(__LINE__);
+		}
+		
+		$log = "仓库 [{$name}] 建账完毕";
+		$bs = new BizlogService();
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$db->commit();
 		
 		return $this->ok();
 	}
 
+	/**
+	 * 取消库存建账标志
+	 */
 	public function cancel($params) {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
 		}
 		
 		$warehouseId = $params["warehouseId"];
+		
 		$db = M();
+		$db->startTrans();
+		
 		$sql = "select name, inited from t_warehouse where id = '%s' ";
 		$data = $db->query($sql, $warehouseId);
 		if (! $data) {
+			$db->rollback();
 			return $this->bad("仓库不存在");
 		}
 		$inited = $data[0]["inited"];
 		$name = $data[0]["name"];
 		if ($inited != 1) {
+			$db->rollback();
 			return $this->bad("仓库 [{$name}] 还没有标记为建账完毕，无需取消建账标志");
 		}
 		$sql = "select count(*) as cnt from t_inventory_detail 
@@ -313,15 +360,22 @@ class InitInventoryService extends PSIBaseService {
 		$data = $db->query($sql, $warehouseId);
 		$cnt = $data[0]["cnt"];
 		if ($cnt > 0) {
+			$db->rollback();
 			return $this->bad("仓库 [{$name}] 中已经发生出入库业务，不能再取消建账标志");
 		}
 		
 		$sql = "update t_warehouse set inited = 0 where id = '%s' ";
-		$db->execute($sql, $warehouseId);
+		$rc = $db->execute($sql, $warehouseId);
+		if ($rc === false) {
+			$db->rollback();
+			return $this->sqlError(__LINE__);
+		}
 		
 		$log = "仓库 [{$name}] 取消建账完毕标志";
 		$bs = new BizlogService();
-		$bs->insertBizlog($log, "库存");
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$db->commit();
 		
 		return $this->ok();
 	}
