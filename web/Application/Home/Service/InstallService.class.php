@@ -1246,9 +1246,9 @@ class InstallService extends PSIBaseService {
 		
 		// t_psi_db_version
 		$sql = "INSERT INTO `t_psi_db_version` (`db_version`, `update_dt`) VALUES
-					('20151128-003', now());
+					('%s', now());
 		";
-		$db->execute($sql);
+		$db->execute($sql, $this->CURRENT_DB_VERSION);
 		
 		$db->commit();
 		

@@ -142,4 +142,9 @@ class PSIBaseService {
 		$cnt = $data[0]["cnt"];
 		return $cnt == 1;
 	}
+	
+	/**
+	 * 当前数据库版本
+	 */
+	protected $CURRENT_DB_VERSION = "20151128-003";
 }

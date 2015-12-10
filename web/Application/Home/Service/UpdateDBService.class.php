@@ -8,7 +8,6 @@ namespace Home\Service;
  * @author 李静波
  */
 class UpdateDBService extends PSIBaseService {
-	private $CURRENT_DB_VERSION = "20151128-003";
 
 	public function updateDatabase() {
 		if ($this->isNotOnline()) {
