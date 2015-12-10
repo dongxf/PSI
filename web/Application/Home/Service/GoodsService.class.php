@@ -712,6 +712,11 @@ class GoodsService extends PSIBaseService {
 			return $this->bad("商品分类不存在");
 		}
 		
+		$ps = new PinyinService();
+		$py = $ps->toPY($name);
+		$specPY = $ps->toPY($spec);
+		$log = null;
+		
 		if ($id) {
 			// 编辑
 			// 检查商品编码是否唯一
@@ -734,17 +739,14 @@ class GoodsService extends PSIBaseService {
 				}
 			}
 			
-			$ps = new PinyinService();
-			$py = $ps->toPY($name);
-			
 			$sql = "update t_goods
 					set code = '%s', name = '%s', spec = '%s', category_id = '%s', 
 					    unit_id = '%s', sale_price = %f, py = '%s', purchase_price = %f,
-						bar_code = '%s', memo = '%s'
+						bar_code = '%s', memo = '%s', spec_py = '%s'
 					where id = '%s' ";
 			
 			$rc = $db->execute($sql, $code, $name, $spec, $categoryId, $unitId, $salePrice, $py, 
-					$purchasePrice, $barCode, $memo, $id);
+					$purchasePrice, $barCode, $memo, $specPY, $id);
 			if ($rc === false) {
 				$db->rollback();
 				return $this->sqlError(__LINE__);
@@ -775,17 +777,15 @@ class GoodsService extends PSIBaseService {
 			
 			$idGen = new IdGenService();
 			$id = $idGen->newId();
-			$ps = new PinyinService();
-			$py = $ps->toPY($name);
 			$us = new UserService();
 			$dataOrg = $us->getLoginUserDataOrg();
 			$companyId = $us->getCompanyId();
 			
 			$sql = "insert into t_goods (id, code, name, spec, category_id, unit_id, sale_price, 
-						py, purchase_price, bar_code, memo, data_org, company_id)
-					values ('%s', '%s', '%s', '%s', '%s', '%s', %f, '%s', %f, '%s', '%s', '%s', '%s')";
+						py, purchase_price, bar_code, memo, data_org, company_id, spec_py)
+					values ('%s', '%s', '%s', '%s', '%s', '%s', %f, '%s', %f, '%s', '%s', '%s', '%s', '%s')";
 			$rc = $db->execute($sql, $id, $code, $name, $spec, $categoryId, $unitId, $salePrice, 
-					$py, $purchasePrice, $barCode, $memo, $dataOrg, $companyId);
+					$py, $purchasePrice, $barCode, $memo, $dataOrg, $companyId, $specPY);
 			if ($rc === false) {
 				$db->rollback();
 				return $this->sqlError(__LINE__);
