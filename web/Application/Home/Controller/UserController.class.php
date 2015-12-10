@@ -5,6 +5,7 @@ namespace Home\Controller;
 use Think\Controller;
 use Home\Service\UserService;
 use Home\Common\FIdConst;
+use Home\Service\InstallService;
 
 /**
  * 用户管理Controller
@@ -39,6 +40,10 @@ class UserController extends PSIBaseController {
 			// 已经登录了，就返回首页
 			redirect(__ROOT__);
 		}
+		
+		// 自动初始化数据库
+		$installService = new InstallService();
+		$installService->autoInstallWhenFirstRun();
 		
 		$this->initVar();
 		
