@@ -218,5 +218,742 @@ class InstallService extends PSIBaseService {
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
 		$db->execute($sql);
+		
+		// t_goods
+		$sql = "CREATE TABLE IF NOT EXISTS `t_goods` (
+				  `id` varchar(255) NOT NULL,
+				  `category_id` varchar(255) NOT NULL,
+				  `code` varchar(255) NOT NULL,
+				  `name` varchar(255) NOT NULL,
+				  `sale_price` decimal(19,2) NOT NULL,
+				  `spec` varchar(255) NOT NULL,
+				  `unit_id` varchar(255) NOT NULL,
+				  `purchase_price` decimal(19, 2) DEFAULT NULL,
+				  `py` varchar(255) DEFAULT NULL,
+				  `bar_code` varchar(255) DEFAULT NULL,
+				  `data_org` varchar(255) DEFAULT NULL,
+				  `memo` varchar(500) DEFAULT NULL,
+				  `company_id` varchar(255) DEFAULT NULL,
+				  PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		";
+		$db->execute($sql);
+		
+		// t_goods_category
+		$sql = "CREATE TABLE IF NOT EXISTS `t_goods_category` (
+				  `id` varchar(255) NOT NULL,
+				  `code` varchar(255) NOT NULL,
+				  `name` varchar(255) NOT NULL,
+				  `parent_id` varchar(255) DEFAULT NULL,
+				  `full_name` varchar(1000) DEFAULT NULL,
+				  `data_org` varchar(255) DEFAULT NULL,
+				  `company_id` varchar(255) DEFAULT NULL,
+				  PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		";
+		$db->execute($sql);
+		
+		// t_goods_unit
+		$sql = "CREATE TABLE IF NOT EXISTS `t_goods_unit` (
+			  `id` varchar(255) NOT NULL,
+			  `name` varchar(255) NOT NULL,
+			  `data_org` varchar(255) DEFAULT NULL,
+			  `company_id` varchar(255) DEFAULT NULL,
+			  PRIMARY KEY (`id`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		";
+		$db->execute($sql);
+		
+		// t_customer
+		$sql = "CREATE TABLE IF NOT EXISTS `t_customer` (
+				  `id` varchar(255) NOT NULL,
+				  `category_id` varchar(255) NOT NULL,
+				  `code` varchar(255) NOT NULL,
+				  `name` varchar(255) NOT NULL,
+				  `contact01` varchar(255) DEFAULT NULL,
+				  `qq01` varchar(255) DEFAULT NULL,
+				  `tel01` varchar(255) DEFAULT NULL,
+				  `mobile01` varchar(255) DEFAULT NULL,
+				  `contact02` varchar(255) DEFAULT NULL,
+				  `qq02` varchar(255) DEFAULT NULL,
+				  `tel02` varchar(255) DEFAULT NULL,
+				  `mobile02` varchar(255) DEFAULT NULL,
+				  `address` varchar(255) DEFAULT NULL,
+				  `address_shipping` varchar(255) DEFAULT NULL,
+				  `address_receipt` varchar(255) DEFAULT NULL,
+				  `py` varchar(255) DEFAULT NULL,
+				  `init_receivables` decimal(19,2) DEFAULT NULL, 
+				  `init_receivables_dt` datetime DEFAULT NULL, 
+				  `init_payables` decimal(19,2) DEFAULT NULL, 
+				  `init_payables_dt` datetime DEFAULT NULL, 
+				  `bank_name` varchar(255) DEFAULT NULL,
+				  `bank_account` varchar(255) DEFAULT NULL,
+				  `tax_number` varchar(255) DEFAULT NULL,
+				  `fax` varchar(255) DEFAULT NULL,
+				  `note` varchar(255) DEFAULT NULL,
+				  `data_org` varchar(255) DEFAULT NULL,
+				  `company_id` varchar(255) DEFAULT NULL,
+				  PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		";
+		$db->execute($sql);
+		
+		// t_customer_category
+		$sql = "CREATE TABLE IF NOT EXISTS `t_customer_category` (
+				  `id` varchar(255) NOT NULL,
+				  `code` varchar(255) NOT NULL,
+				  `name` varchar(255) NOT NULL,
+				  `parent_id` varchar(255) DEFAULT NULL,
+				  `data_org` varchar(255) DEFAULT NULL,
+				  `company_id` varchar(255) DEFAULT NULL,
+				  PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		";
+		$db->execute($sql);
+		
+		// t_inventory
+		$sql = "CREATE TABLE IF NOT EXISTS `t_inventory` (
+				  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+				  `balance_count` decimal(19,2) NOT NULL,
+				  `balance_money` decimal(19,2) NOT NULL,
+				  `balance_price` decimal(19,2) NOT NULL,
+				  `goods_id` varchar(255) NOT NULL,
+				  `in_count` decimal(19,2) DEFAULT NULL,
+				  `in_money` decimal(19,2) DEFAULT NULL,
+				  `in_price` decimal(19,2) DEFAULT NULL,
+				  `out_count` decimal(19,2) DEFAULT NULL,
+				  `out_money` decimal(19,2) DEFAULT NULL,
+				  `out_price` decimal(19,2) DEFAULT NULL,
+				  `afloat_count` decimal(19,2) DEFAULT NULL,
+				  `afloat_money` decimal(19,2) DEFAULT NULL,
+				  `afloat_price` decimal(19,2) DEFAULT NULL,
+				  `warehouse_id` varchar(255) NOT NULL,
+				  `data_org` varchar(255) DEFAULT NULL,
+				  `company_id` varchar(255) DEFAULT NULL,
+				  PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+		";
+		$db->execute($sql);
+		
+		// t_inventory_detail
+		$sql = "CREATE TABLE IF NOT EXISTS `t_inventory_detail` (
+				  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+				  `balance_count` decimal(19,2) NOT NULL,
+				  `balance_money` decimal(19,2) NOT NULL,
+				  `balance_price` decimal(19,2) NOT NULL,
+				  `biz_date` datetime NOT NULL,
+				  `biz_user_id` varchar(255) NOT NULL,
+				  `date_created` datetime DEFAULT NULL,
+				  `goods_id` varchar(255) NOT NULL,
+				  `in_count` decimal(19,2) DEFAULT NULL,
+				  `in_money` decimal(19,2) DEFAULT NULL,
+				  `in_price` decimal(19,2) DEFAULT NULL,
+				  `out_count` decimal(19,2) DEFAULT NULL,
+				  `out_money` decimal(19,2) DEFAULT NULL,
+				  `out_price` decimal(19,2) DEFAULT NULL,
+				  `ref_number` varchar(255) DEFAULT NULL,
+				  `ref_type` varchar(255) NOT NULL,
+				  `warehouse_id` varchar(255) NOT NULL,
+				  `data_org` varchar(255) DEFAULT NULL,
+				  `company_id` varchar(255) DEFAULT NULL,
+				  PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+		";
+		$db->execute($sql);
+		
+		// t_pw_bill
+		$sql = "CREATE TABLE IF NOT EXISTS `t_pw_bill` (
+				  `id` varchar(255) NOT NULL,
+				  `bill_status` int(11) NOT NULL,
+				  `biz_dt` datetime NOT NULL,
+				  `biz_user_id` varchar(255) NOT NULL,
+				  `date_created` datetime DEFAULT NULL,
+				  `goods_money` decimal(19,2) NOT NULL,
+				  `input_user_id` varchar(255) NOT NULL,
+				  `ref` varchar(255) NOT NULL,
+				  `supplier_id` varchar(255) NOT NULL,
+				  `warehouse_id` varchar(255) NOT NULL,
+				  `payment_type` int(11) NOT NULL DEFAULT 0,
+				  `data_org` varchar(255) DEFAULT NULL,
+				  `company_id` varchar(255) DEFAULT NULL,
+				  PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		";
+		$db->execute($sql);
+		
+		// t_pw_bill_detail
+		$sql = "CREATE TABLE IF NOT EXISTS `t_pw_bill_detail` (
+				  `id` varchar(255) NOT NULL,
+				  `date_created` datetime DEFAULT NULL,
+				  `goods_id` varchar(255) NOT NULL,
+				  `goods_count` int(11) NOT NULL,
+				  `goods_money` decimal(19,2) NOT NULL,
+				  `goods_price` decimal(19,2) NOT NULL,
+				  `pwbill_id` varchar(255) NOT NULL,
+				  `show_order` int(11) NOT NULL,
+				  `data_org` varchar(255) DEFAULT NULL,
+				  `memo` varchar(1000) DEFAULT NULL,
+				  `company_id` varchar(255) DEFAULT NULL,
+				  PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		";
+		$db->execute($sql);
+		
+		// t_payables
+		$sql = "CREATE TABLE IF NOT EXISTS `t_payables` (
+				  `id` varchar(255) NOT NULL,
+				  `act_money` decimal(19,2) NOT NULL,
+				  `balance_money` decimal(19,2) NOT NULL,
+				  `ca_id` varchar(255) NOT NULL,
+				  `ca_type` varchar(255) NOT NULL,
+				  `pay_money` decimal(19,2) NOT NULL,
+				  `data_org` varchar(255) DEFAULT NULL,
+				  `company_id` varchar(255) DEFAULT NULL,
+				  PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		";
+		$db->execute($sql);
+		
+		// t_payables_detail
+		$sql = "CREATE TABLE IF NOT EXISTS `t_payables_detail` (
+				  `id` varchar(255) NOT NULL,
+				  `act_money` decimal(19,2) NOT NULL,
+				  `balance_money` decimal(19,2) NOT NULL,
+				  `ca_id` varchar(255) NOT NULL,
+				  `ca_type` varchar(255) NOT NULL,
+				  `biz_date` datetime DEFAULT NULL,
+				  `date_created` datetime DEFAULT NULL,
+				  `pay_money` decimal(19,2) NOT NULL,
+				  `ref_number` varchar(255) NOT NULL,
+				  `ref_type` varchar(255) NOT NULL,
+				  `data_org` varchar(255) DEFAULT NULL,
+				  `company_id` varchar(255) DEFAULT NULL,
+				  PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		";
+		$db->execute($sql);
+		
+		// t_receivables
+		$sql = "CREATE TABLE IF NOT EXISTS `t_receivables` (
+				  `id` varchar(255) NOT NULL,
+				  `act_money` decimal(19,2) NOT NULL,
+				  `balance_money` decimal(19,2) NOT NULL,
+				  `ca_id` varchar(255) NOT NULL,
+				  `ca_type` varchar(255) NOT NULL,
+				  `rv_money` decimal(19,2) NOT NULL,
+				  `data_org` varchar(255) DEFAULT NULL,
+				  `company_id` varchar(255) DEFAULT NULL,
+				  PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		";
+		$db->execute($sql);
+		
+		// t_receivables_detail
+		$sql = "CREATE TABLE IF NOT EXISTS `t_receivables_detail` (
+				  `id` varchar(255) NOT NULL,
+				  `act_money` decimal(19,2) NOT NULL,
+				  `balance_money` decimal(19,2) NOT NULL,
+				  `ca_id` varchar(255) NOT NULL,
+				  `ca_type` varchar(255) NOT NULL,
+				  `biz_date` datetime DEFAULT NULL,
+				  `date_created` datetime DEFAULT NULL,
+				  `ref_number` varchar(255) NOT NULL,
+				  `ref_type` varchar(255) NOT NULL,
+				  `rv_money` decimal(19,2) NOT NULL,
+				  `data_org` varchar(255) DEFAULT NULL,
+				  `company_id` varchar(255) DEFAULT NULL,
+				  PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		";
+		$db->execute($sql);
+		
+		// t_payment
+		$sql = "CREATE TABLE IF NOT EXISTS `t_payment` (
+				  `id` varchar(255) NOT NULL,
+				  `act_money` decimal(19,2) NOT NULL,
+				  `biz_date` datetime NOT NULL,
+				  `date_created` datetime DEFAULT NULL,
+				  `input_user_id` varchar(255) NOT NULL,
+				  `pay_user_id` varchar(255) NOT NULL,
+				  `bill_id` varchar(255) NOT NULL,
+				  `ref_type` varchar(255) NOT NULL,
+				  `ref_number` varchar(255) NOT NULL,
+				  `remark` varchar(255) NOT NULL,
+				  `data_org` varchar(255) DEFAULT NULL,
+				  `company_id` varchar(255) DEFAULT NULL,
+				  PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		";
+		$db->execute($sql);
+		
+		// t_ws_bill
+		$sql = "CREATE TABLE IF NOT EXISTS `t_ws_bill` (
+				  `id` varchar(255) NOT NULL,
+				  `bill_status` int(11) NOT NULL,
+				  `bizdt` datetime NOT NULL,
+				  `biz_user_id` varchar(255) NOT NULL,
+				  `customer_id` varchar(255) NOT NULL,
+				  `date_created` datetime DEFAULT NULL,
+				  `input_user_id` varchar(255) NOT NULL,
+				  `inventory_money` decimal(19,2) DEFAULT NULL,
+				  `profit` decimal(19,2) DEFAULT NULL,
+				  `ref` varchar(255) NOT NULL,
+				  `sale_money` decimal(19,2) DEFAULT NULL,
+				  `warehouse_id` varchar(255) NOT NULL,
+				  `receiving_type` int(11) NOT NULL DEFAULT 0,
+				  `data_org` varchar(255) DEFAULT NULL,
+				  `company_id` varchar(255) DEFAULT NULL,
+				  `memo` varchar(1000) DEFAULT NULL,
+				  PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		";
+		$db->execute($sql);
+		
+		// t_ws_bill_detail
+		$sql = "CREATE TABLE IF NOT EXISTS `t_ws_bill_detail` (
+			  `id` varchar(255) NOT NULL,
+			  `date_created` datetime DEFAULT NULL,
+			  `goods_id` varchar(255) NOT NULL,
+			  `goods_count` int(11) NOT NULL,
+			  `goods_money` decimal(19,2) NOT NULL,
+			  `goods_price` decimal(19,2) NOT NULL,
+			  `inventory_money` decimal(19,2) DEFAULT NULL,
+			  `inventory_price` decimal(19,2) DEFAULT NULL,
+			  `show_order` int(11) NOT NULL,
+			  `wsbill_id` varchar(255) NOT NULL,
+			  `sn_note` varchar(255) DEFAULT NULL,
+			  `data_org` varchar(255) DEFAULT NULL,
+			  `memo` varchar(1000) DEFAULT NULL,
+			  `company_id` varchar(255) DEFAULT NULL,
+			  PRIMARY KEY (`id`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		";
+		$db->execute($sql);
+		
+		// t_receiving
+		$sql = "CREATE TABLE IF NOT EXISTS `t_receiving` (
+				  `id` varchar(255) NOT NULL,
+				  `act_money` decimal(19,2) NOT NULL,
+				  `biz_date` datetime NOT NULL,
+				  `date_created` datetime DEFAULT NULL,
+				  `input_user_id` varchar(255) NOT NULL,
+				  `remark` varchar(255) NOT NULL,
+				  `rv_user_id` varchar(255) NOT NULL,
+				  `bill_id` varchar(255) NOT NULL,
+				  `ref_number` varchar(255) NOT NULL,
+				  `ref_type` varchar(255) NOT NULL,
+				  `data_org` varchar(255) DEFAULT NULL,
+				  `company_id` varchar(255) DEFAULT NULL,
+				  PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		";
+		$db->execute($sql);
+		
+		// t_sr_bill
+		$sql = "CREATE TABLE IF NOT EXISTS `t_sr_bill` (
+				  `id` varchar(255) NOT NULL,
+				  `bill_status` int(11) NOT NULL,
+				  `bizdt` datetime NOT NULL,
+				  `biz_user_id` varchar(255) NOT NULL,
+				  `customer_id` varchar(255) NOT NULL,
+				  `date_created` datetime DEFAULT NULL,
+				  `input_user_id` varchar(255) NOT NULL,
+				  `inventory_money` decimal(19,2) DEFAULT NULL,
+				  `profit` decimal(19,2) DEFAULT NULL,
+				  `ref` varchar(255) NOT NULL,
+				  `rejection_sale_money` decimal(19,2) DEFAULT NULL,
+				  `warehouse_id` varchar(255) NOT NULL,
+				  `ws_bill_id` varchar(255) NOT NULL,
+				  `payment_type` int(11) NOT NULL DEFAULT 0,
+				  `data_org` varchar(255) DEFAULT NULL,
+				  `company_id` varchar(255) DEFAULT NULL,
+				  PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		";
+		$db->execute($sql);
+		
+		// t_sr_bill_detail
+		$sql = "CREATE TABLE IF NOT EXISTS `t_sr_bill_detail` (
+				  `id` varchar(255) NOT NULL,
+				  `date_created` datetime DEFAULT NULL,
+				  `goods_id` varchar(255) NOT NULL,
+				  `goods_count` int(11) NOT NULL,
+				  `goods_money` decimal(19,2) NOT NULL,
+				  `goods_price` decimal(19,2) NOT NULL,
+				  `inventory_money` decimal(19,2) NOT NULL,
+				  `inventory_price` decimal(19,2) NOT NULL,
+				  `rejection_goods_count` int(11) NOT NULL,
+				  `rejection_goods_price` decimal(19,2) NOT NULL,
+				  `rejection_sale_money` decimal(19,2) NOT NULL,
+				  `show_order` int(11) NOT NULL,
+				  `srbill_id` varchar(255) NOT NULL,
+				  `wsbilldetail_id` varchar(255) NOT NULL,
+				  `sn_note` varchar(255) DEFAULT NULL,
+				  `data_org` varchar(255) DEFAULT NULL,
+				  `company_id` varchar(255) DEFAULT NULL,
+				  PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		";
+		$db->execute($sql);
+		
+		// t_it_bill
+		$sql = "CREATE TABLE IF NOT EXISTS `t_it_bill` (
+				  `id` varchar(255) NOT NULL,
+				  `bill_status` int(11) NOT NULL,
+				  `bizdt` datetime NOT NULL,
+				  `biz_user_id` varchar(255) NOT NULL,
+				  `date_created` datetime DEFAULT NULL,
+				  `input_user_id` varchar(255) NOT NULL,
+				  `ref` varchar(255) NOT NULL,
+				  `from_warehouse_id` varchar(255) NOT NULL,
+				  `to_warehouse_id` varchar(255) NOT NULL,
+				  `data_org` varchar(255) DEFAULT NULL,
+				  `company_id` varchar(255) DEFAULT NULL,
+				  PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		";
+		$db->execute($sql);
+		
+		// t_it_bill_detail
+		$sql = "CREATE TABLE IF NOT EXISTS `t_it_bill_detail` (
+				  `id` varchar(255) NOT NULL,
+				  `date_created` datetime DEFAULT NULL,
+				  `goods_id` varchar(255) NOT NULL,
+				  `goods_count` int(11) NOT NULL,
+				  `show_order` int(11) NOT NULL,
+				  `itbill_id` varchar(255) NOT NULL,
+				  `data_org` varchar(255) DEFAULT NULL,
+				  `company_id` varchar(255) DEFAULT NULL,
+				  PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		";
+		$db->execute($sql);
+		
+		// t_ic_bill
+		$sql = "CREATE TABLE IF NOT EXISTS `t_ic_bill` (
+				  `id` varchar(255) NOT NULL,
+				  `bill_status` int(11) NOT NULL,
+				  `bizdt` datetime NOT NULL,
+				  `biz_user_id` varchar(255) NOT NULL,
+				  `date_created` datetime DEFAULT NULL,
+				  `input_user_id` varchar(255) NOT NULL,
+				  `ref` varchar(255) NOT NULL,
+				  `warehouse_id` varchar(255) NOT NULL,
+				  `data_org` varchar(255) DEFAULT NULL,
+				  `company_id` varchar(255) DEFAULT NULL,
+				  PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		";
+		$db->execute($sql);
+		
+		// t_ic_bill_detail
+		$sql = "CREATE TABLE IF NOT EXISTS `t_ic_bill_detail` (
+				  `id` varchar(255) NOT NULL,
+				  `date_created` datetime DEFAULT NULL,
+				  `goods_id` varchar(255) NOT NULL,
+				  `goods_count` int(11) NOT NULL,
+				  `goods_money` decimal(19,2) NOT NULL,
+				  `show_order` int(11) NOT NULL,
+				  `icbill_id` varchar(255) NOT NULL,
+				  `data_org` varchar(255) DEFAULT NULL,
+				  `company_id` varchar(255) DEFAULT NULL,
+				  PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		";
+		$db->execute($sql);
+		
+		// t_pr_bill
+		$sql = "CREATE TABLE IF NOT EXISTS `t_pr_bill` (
+				  `id` varchar(255) NOT NULL,
+				  `bill_status` int(11) NOT NULL,
+				  `bizdt` datetime NOT NULL,
+				  `biz_user_id` varchar(255) NOT NULL,
+				  `supplier_id` varchar(255) NOT NULL,
+				  `date_created` datetime DEFAULT NULL,
+				  `input_user_id` varchar(255) NOT NULL,
+				  `inventory_money` decimal(19,2) DEFAULT NULL,
+				  `ref` varchar(255) NOT NULL,
+				  `rejection_money` decimal(19,2) DEFAULT NULL,
+				  `warehouse_id` varchar(255) NOT NULL,
+				  `pw_bill_id` varchar(255) NOT NULL,
+				  `receiving_type` int(11) NOT NULL DEFAULT 0,
+				  `data_org` varchar(255) DEFAULT NULL,
+				  `company_id` varchar(255) DEFAULT NULL,
+				  PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		";
+		$db->execute($sql);
+		
+		// t_pr_bill_detail
+		$sql = "CREATE TABLE IF NOT EXISTS `t_pr_bill_detail` (
+				  `id` varchar(255) NOT NULL,
+				  `date_created` datetime DEFAULT NULL,
+				  `goods_id` varchar(255) NOT NULL,
+				  `goods_count` int(11) NOT NULL,
+				  `goods_money` decimal(19,2) NOT NULL,
+				  `goods_price` decimal(19,2) NOT NULL,
+				  `inventory_money` decimal(19,2) NOT NULL,
+				  `inventory_price` decimal(19,2) NOT NULL,
+				  `rejection_goods_count` int(11) NOT NULL,
+				  `rejection_goods_price` decimal(19,2) NOT NULL,
+				  `rejection_money` decimal(19,2) NOT NULL,
+				  `show_order` int(11) NOT NULL,
+				  `prbill_id` varchar(255) NOT NULL,
+				  `pwbilldetail_id` varchar(255) NOT NULL,
+				  `data_org` varchar(255) DEFAULT NULL,
+				  `company_id` varchar(255) DEFAULT NULL,
+				  PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		";
+		$db->execute($sql);
+		
+		// t_config
+		$sql = "CREATE TABLE IF NOT EXISTS `t_config` (
+				  `id` varchar(255) NOT NULL,
+				  `name` varchar(255) NOT NULL,
+				  `value` varchar(255) NOT NULL,
+				  `note` varchar(255) NOT NULL,
+				  `show_order` int(11) DEFAULT NULL,
+				  `company_id` varchar(255) DEFAULT NULL
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		";
+		$db->execute($sql);
+		
+		// t_psi_db_version
+		$sql = "CREATE TABLE IF NOT EXISTS `t_psi_db_version` (
+				  `db_version` varchar(255) NOT NULL,
+				  `update_dt` datetime NOT NULL
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		";
+		$db->execute($sql);
+		
+		// t_goods_si
+		$sql = "CREATE TABLE IF NOT EXISTS `t_goods_si` (
+				  `id` varchar(255) NOT NULL,
+				  `goods_id` varchar(255) NOT NULL,
+				  `warehouse_id` varchar(255) NOT NULL,
+				  `safety_inventory` decimal(19,2) NOT NULL,
+				  `inventory_upper` decimal(19,2) DEFAULT NULL,
+				  `data_org` varchar(255) DEFAULT NULL,
+				  `company_id` varchar(255) DEFAULT NULL,
+				  PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		";
+		$db->execute($sql);
+		
+		// t_cash
+		$sql = "CREATE TABLE IF NOT EXISTS `t_cash` (
+				  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+				  `biz_date` datetime NOT NULL,
+				  `in_money` decimal(19,2) DEFAULT NULL,
+				  `out_money` decimal(19,2) DEFAULT NULL,
+				  `balance_money` decimal(19,2) NOT NULL,
+				  `data_org` varchar(255) DEFAULT NULL,
+				  `company_id` varchar(255) DEFAULT NULL,
+				  PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		";
+		$db->execute($sql);
+		
+		// t_cash_detail
+		$sql = "CREATE TABLE IF NOT EXISTS `t_cash_detail` (
+				  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+				  `biz_date` datetime NOT NULL,
+				  `in_money` decimal(19,2) DEFAULT NULL,
+				  `out_money` decimal(19,2) DEFAULT NULL,
+				  `balance_money` decimal(19,2) NOT NULL,
+				  `ref_number` varchar(255) NOT NULL,
+				  `ref_type` varchar(255) NOT NULL,
+				  `date_created` datetime NOT NULL,
+				  `data_org` varchar(255) DEFAULT NULL,
+				  `company_id` varchar(255) DEFAULT NULL,
+				  PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		";
+		$db->execute($sql);
+		
+		// t_pre_receiving
+		$sql = "CREATE TABLE IF NOT EXISTS `t_pre_receiving` (
+				  `id` varchar(255) NOT NULL,
+				  `customer_id` varchar(255) NOT NULL,
+				  `in_money` decimal(19,2) DEFAULT NULL,
+				  `out_money` decimal(19,2) DEFAULT NULL,
+				  `balance_money` decimal(19,2) NOT NULL,
+				  `data_org` varchar(255) DEFAULT NULL,
+				  `company_id` varchar(255) DEFAULT NULL,
+				  PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		";
+		$db->execute($sql);
+		
+		// t_pre_receiving_detail
+		$sql = "CREATE TABLE IF NOT EXISTS `t_pre_receiving_detail` (
+				  `id` varchar(255) NOT NULL,
+				  `customer_id` varchar(255) NOT NULL,
+				  `in_money` decimal(19,2) DEFAULT NULL,
+				  `out_money` decimal(19,2) DEFAULT NULL,
+				  `balance_money` decimal(19,2) NOT NULL,
+				  `biz_date` datetime DEFAULT NULL,
+				  `date_created` datetime DEFAULT NULL,
+				  `ref_number` varchar(255) NOT NULL,
+				  `ref_type` varchar(255) NOT NULL,
+				  `biz_user_id` varchar(255) NOT NULL,
+				  `input_user_id` varchar(255) NOT NULL,
+				  `data_org` varchar(255) DEFAULT NULL,
+				  `company_id` varchar(255) DEFAULT NULL,
+				  PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		";
+		$db->execute($sql);
+		
+		// t_pre_payment
+		$sql = "CREATE TABLE IF NOT EXISTS `t_pre_payment` (
+				  `id` varchar(255) NOT NULL,
+				  `supplier_id` varchar(255) NOT NULL,
+				  `in_money` decimal(19,2) DEFAULT NULL,
+				  `out_money` decimal(19,2) DEFAULT NULL,
+				  `balance_money` decimal(19,2) NOT NULL,
+				  `data_org` varchar(255) DEFAULT NULL,
+				  `company_id` varchar(255) DEFAULT NULL,
+				  PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		";
+		$db->execute($sql);
+		
+		// t_pre_payment_detail
+		$sql = "CREATE TABLE IF NOT EXISTS `t_pre_payment_detail` (
+				  `id` varchar(255) NOT NULL,
+				  `supplier_id` varchar(255) NOT NULL,
+				  `in_money` decimal(19,2) DEFAULT NULL,
+				  `out_money` decimal(19,2) DEFAULT NULL,
+				  `balance_money` decimal(19,2) NOT NULL,
+				  `biz_date` datetime DEFAULT NULL,
+				  `date_created` datetime DEFAULT NULL,
+				  `ref_number` varchar(255) NOT NULL,
+				  `ref_type` varchar(255) NOT NULL,
+				  `biz_user_id` varchar(255) NOT NULL,
+				  `input_user_id` varchar(255) NOT NULL,
+				  `data_org` varchar(255) DEFAULT NULL,
+				  `company_id` varchar(255) DEFAULT NULL,
+				  PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		";
+		$db->execute($sql);
+		
+		// t_po_bill
+		$sql = "CREATE TABLE IF NOT EXISTS `t_po_bill` (
+				  `id` varchar(255) NOT NULL,
+				  `bill_status` int(11) NOT NULL,
+				  `biz_dt` datetime NOT NULL,
+				  `deal_date` datetime NOT NULL,
+				  `org_id` varchar(255) NOT NULL,
+				  `biz_user_id` varchar(255) NOT NULL,
+				  `date_created` datetime DEFAULT NULL,
+				  `goods_money` decimal(19,2) NOT NULL,
+				  `tax` decimal(19,2) NOT NULL,
+				  `money_with_tax` decimal(19,2) NOT NULL,
+				  `input_user_id` varchar(255) NOT NULL,
+				  `ref` varchar(255) NOT NULL,
+				  `supplier_id` varchar(255) NOT NULL,
+				  `contact` varchar(255) NOT NULL,
+				  `tel` varchar(255) DEFAULT NULL,
+				  `fax` varchar(255) DEFAULT NULL,
+				  `deal_address` varchar(255) DEFAULT NULL,
+				  `bill_memo` varchar(255) DEFAULT NULL,
+				  `payment_type` int(11) NOT NULL DEFAULT 0,
+				  `confirm_user_id` varchar(255) DEFAULT NULL,
+				  `confirm_date` datetime DEFAULT NULL,
+				  `data_org` varchar(255) DEFAULT NULL,
+				  `company_id` varchar(255) DEFAULT NULL,
+				  PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		";
+		$db->execute($sql);
+		
+		// t_po_bill_detail
+		$sql = "CREATE TABLE IF NOT EXISTS `t_po_bill_detail` (
+				  `id` varchar(255) NOT NULL,
+				  `date_created` datetime DEFAULT NULL,
+				  `goods_id` varchar(255) NOT NULL,
+				  `goods_count` int(11) NOT NULL,
+				  `goods_money` decimal(19,2) NOT NULL,
+				  `goods_price` decimal(19,2) NOT NULL,
+				  `pobill_id` varchar(255) NOT NULL,
+				  `tax_rate` decimal(19,2) NOT NULL,
+				  `tax` decimal(19,2) NOT NULL,
+				  `money_with_tax` decimal(19,2) NOT NULL,
+				  `pw_count` int(11) NOT NULL,
+				  `left_count` int(11) NOT NULL,
+				  `show_order` int(11) NOT NULL,
+				  `data_org` varchar(255) DEFAULT NULL,
+				  `company_id` varchar(255) DEFAULT NULL,
+				  PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		";
+		$db->execute($sql);
+		
+		// t_po_pw
+		$sql = "CREATE TABLE IF NOT EXISTS `t_po_pw` (
+				  `po_id` varchar(255) NOT NULL,
+				  `pw_id` varchar(255) NOT NULL
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		";
+		$db->execute($sql);
+		
+		// t_role_permission_dataorg
+		$sql = "CREATE TABLE IF NOT EXISTS `t_role_permission_dataorg` (
+				  `role_id` varchar(255) DEFAULT NULL,
+				  `permission_id` varchar(255) DEFAULT NULL,
+				  `data_org` varchar(255) DEFAULT NULL
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		";
+		$db->execute($sql);
+		
+		// t_inventory_fifo
+		$sql = "CREATE TABLE IF NOT EXISTS `t_inventory_fifo` (
+				  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+				  `balance_count` decimal(19,2) NOT NULL,
+				  `balance_money` decimal(19,2) NOT NULL,
+				  `balance_price` decimal(19,2) NOT NULL,
+				  `date_created` datetime DEFAULT NULL,
+				  `goods_id` varchar(255) NOT NULL,
+				  `in_count` decimal(19,2) DEFAULT NULL,
+				  `in_money` decimal(19,2) DEFAULT NULL,
+				  `in_price` decimal(19,2) DEFAULT NULL,
+				  `out_count` decimal(19,2) DEFAULT NULL,
+				  `out_money` decimal(19,2) DEFAULT NULL,
+				  `out_price` decimal(19,2) DEFAULT NULL,
+				  `in_ref` varchar(255) DEFAULT NULL,
+				  `in_ref_type` varchar(255) NOT NULL,
+				  `warehouse_id` varchar(255) NOT NULL,
+				  `data_org` varchar(255) DEFAULT NULL,
+				  `pwbilldetail_id` varchar(255) DEFAULT NULL,
+				  PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+		";
+		$db->execute($sql);
+		
+		// t_inventory_fifo_detail
+		$sql = "CREATE TABLE IF NOT EXISTS `t_inventory_fifo_detail` (
+				  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+				  `balance_count` decimal(19,2) NOT NULL,
+				  `balance_money` decimal(19,2) NOT NULL,
+				  `balance_price` decimal(19,2) NOT NULL,
+				  `date_created` datetime DEFAULT NULL,
+				  `goods_id` varchar(255) NOT NULL,
+				  `in_count` decimal(19,2) DEFAULT NULL,
+				  `in_money` decimal(19,2) DEFAULT NULL,
+				  `in_price` decimal(19,2) DEFAULT NULL,
+				  `out_count` decimal(19,2) DEFAULT NULL,
+				  `out_money` decimal(19,2) DEFAULT NULL,
+				  `out_price` decimal(19,2) DEFAULT NULL,
+				  `warehouse_id` varchar(255) NOT NULL,
+				  `data_org` varchar(255) DEFAULT NULL,
+				  `pwbilldetail_id` varchar(255) DEFAULT NULL,
+				  `wsbilldetail_id` varchar(255) DEFAULT NULL,
+				  PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+		";
+		$db->execute($sql);
 	}
 }
