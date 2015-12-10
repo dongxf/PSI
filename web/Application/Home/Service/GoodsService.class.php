@@ -894,8 +894,11 @@ class GoodsService extends PSIBaseService {
 		$sql = "select g.id, g.code, g.name, g.spec, u.name as unit_name
 				from t_goods g, t_goods_unit u
 				where (g.unit_id = u.id)
-				and (g.code like '%s' or g.name like '%s' or g.py like '%s') ";
+				and (g.code like '%s' or g.name like '%s' or g.py like '%s'
+					or g.spec like '%s' or g.spec_py like '%s') ";
 		$queryParams = array();
+		$queryParams[] = $key;
+		$queryParams[] = $key;
 		$queryParams[] = $key;
 		$queryParams[] = $key;
 		$queryParams[] = $key;
@@ -941,9 +944,12 @@ class GoodsService extends PSIBaseService {
 		$sql = "select g.id, g.code, g.name, g.spec, u.name as unit_name, g.sale_price, g.memo
 				from t_goods g, t_goods_unit u
 				where (g.unit_id = u.id)
-				and (g.code like '%s' or g.name like '%s' or g.py like '%s') ";
+				and (g.code like '%s' or g.name like '%s' or g.py like '%s'
+					or g.spec like '%s' or g.spec_py like '%s') ";
 		
 		$queryParams = array();
+		$queryParams[] = $key;
+		$queryParams[] = $key;
 		$queryParams[] = $key;
 		$queryParams[] = $key;
 		$queryParams[] = $key;
@@ -989,9 +995,12 @@ class GoodsService extends PSIBaseService {
 		$sql = "select g.id, g.code, g.name, g.spec, u.name as unit_name, g.purchase_price, g.memo
 				from t_goods g, t_goods_unit u
 				where (g.unit_id = u.id)
-				and (g.code like '%s' or g.name like '%s' or g.py like '%s') ";
+				and (g.code like '%s' or g.name like '%s' or g.py like '%s' 
+					or g.spec like '%s' or g.spec_py like '%s') ";
 		
 		$queryParams = array();
+		$queryParams[] = $key;
+		$queryParams[] = $key;
 		$queryParams[] = $key;
 		$queryParams[] = $key;
 		$queryParams[] = $key;
