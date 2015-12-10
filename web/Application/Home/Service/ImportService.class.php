@@ -67,8 +67,9 @@ class ImportService extends PSIBaseService {
 			$us = new UserService();
 			$dataOrg = $us->getLoginUserDataOrg();
 			
-			$insertSql = "insert into t_goods (id, code, name, spec, category_id, unit_id, sale_price,	py, purchase_price, bar_code, data_org,memo) values";
-			$dataSql = "('%s', '%s', '%s', '%s', '%s', '%s', %f, '%s', %f, '%s', '%s', '%s'),";
+			$insertSql = "insert into t_goods (id, code, name, spec, category_id, unit_id, sale_price,	py, 
+					purchase_price, bar_code, data_org, memo, spec_py) values";
+			$dataSql = "('%s', '%s', '%s', '%s', '%s', '%s', %f, '%s', %f, '%s', '%s', '%s', '%s'),";
 			/**
 			 * 单元格定义
 			 * A 商品分类编码
@@ -168,11 +169,12 @@ class ImportService extends PSIBaseService {
 				
 				$id = $idGen->newId();
 				$py = $ps->toPY($name);
+				$specPY = $ps->toPY($spec);
 				
 				$insertSql .= $dataSql;
 				// 数据参数加入
 				array_push($params, $id, $code, $name, $spec, $categoryId, $unitId, $salePrice, $py, 
-						$purchasePrice, $barcode, $dataOrg, $memo);
+						$purchasePrice, $barcode, $dataOrg, $memo, $specPY);
 			}
 			
 			$db->execute(rtrim($insertSql, ','), $params);
