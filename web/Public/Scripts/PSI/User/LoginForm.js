@@ -105,7 +105,7 @@ Ext.define("PSI.User.LoginForm", {
                     text: "帮助",
                     iconCls: "PSI-help",
                     handler: function() {
-                        window.open("http://www.kancloud.cn/crm8000/psi_help/login");
+                        window.open("http://psi.mydoc.io/?t=50507");
                     }
                 }]
             }]
