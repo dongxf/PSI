@@ -105,7 +105,7 @@ Ext.define("PSI.User.LoginForm", {
                     text: "帮助",
                     iconCls: "PSI-help",
                     handler: function() {
-                        window.open("http://psi.mydoc.io/?t=50507");
+                    	window.open(PSI.Const.BASE_URL + "/Home/Help/index?t=login");
                     }
                 }]
             }]
