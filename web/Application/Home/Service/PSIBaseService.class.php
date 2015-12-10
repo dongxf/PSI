@@ -119,4 +119,27 @@ class PSIBaseService {
 		
 		return date("Y-m-d", $dt) == $date;
 	}
+
+	protected function tableExists($db, $tableName) {
+		$dbName = C('DB_NAME');
+		$sql = "select count(*) as cnt
+				from information_schema.columns
+				where table_schema = '%s'
+					and table_name = '%s' ";
+		$data = $db->query($sql, $dbName, $tableName);
+		return $data[0]["cnt"] != 0;
+	}
+
+	protected function columnExists($db, $tableName, $columnName) {
+		$dbName = C('DB_NAME');
+		
+		$sql = "select count(*) as cnt
+				from information_schema.columns
+				where table_schema = '%s'
+					and table_name = '%s'
+					and column_name = '%s' ";
+		$data = $db->query($sql, $dbName, $tableName, $columnName);
+		$cnt = $data[0]["cnt"];
+		return $cnt == 1;
+	}
 }

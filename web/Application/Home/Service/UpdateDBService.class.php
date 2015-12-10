@@ -10,29 +10,6 @@ namespace Home\Service;
 class UpdateDBService extends PSIBaseService {
 	private $CURRENT_DB_VERSION = "20151128-003";
 
-	private function tableExists($db, $tableName) {
-		$dbName = C('DB_NAME');
-		$sql = "select count(*) as cnt
-				from information_schema.columns
-				where table_schema = '%s' 
-					and table_name = '%s' ";
-		$data = $db->query($sql, $dbName, $tableName);
-		return $data[0]["cnt"] != 0;
-	}
-
-	private function columnExists($db, $tableName, $columnName) {
-		$dbName = C('DB_NAME');
-		
-		$sql = "select count(*) as cnt
-				from information_schema.columns
-				where table_schema = '%s' 
-					and table_name = '%s'
-					and column_name = '%s' ";
-		$data = $db->query($sql, $dbName, $tableName, $columnName);
-		$cnt = $data[0]["cnt"];
-		return $cnt == 1;
-	}
-
 	public function updateDatabase() {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();

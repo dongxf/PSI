@@ -11,19 +11,6 @@ use Home\Common\FIdConst;
  */
 class BizlogService extends PSIBaseService {
 
-	private function columnExists($db, $tableName, $columnName) {
-		$dbName = C('DB_NAME');
-		
-		$sql = "select count(*) as cnt
-				from information_schema.columns
-				where table_schema = '%s'
-					and table_name = '%s'
-					and column_name = '%s' ";
-		$data = $db->query($sql, $dbName, $tableName, $columnName);
-		$cnt = $data[0]["cnt"];
-		return $cnt == 1;
-	}
-
 	/**
 	 * 返回日志列表
 	 */
