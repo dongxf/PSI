@@ -17,13 +17,6 @@ class PSIBaseService {
 	}
 
 	/**
-	 * 是否部署在MoPaaS
-	 */
-	protected function isMOPAAS() {
-		return getenv("IS_MOPAAS") == "1";
-	}
-
-	/**
 	 * 操作成功
 	 */
 	protected function ok($id = null) {
