@@ -234,6 +234,7 @@ class InstallService extends PSIBaseService {
 				  `unit_id` varchar(255) NOT NULL,
 				  `purchase_price` decimal(19, 2) DEFAULT NULL,
 				  `py` varchar(255) DEFAULT NULL,
+				  `spec_py` varchar(255) DEFAULT NULL,
 				  `bar_code` varchar(255) DEFAULT NULL,
 				  `data_org` varchar(255) DEFAULT NULL,
 				  `memo` varchar(500) DEFAULT NULL,
