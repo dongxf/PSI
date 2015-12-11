@@ -434,6 +434,11 @@ class BizConfigService extends PSIBaseService {
 	 */
 	public function getProductionName() {
 		$db = M();
+		if (! $this->columnExists($db, "t_config", "company_id")) {
+			// 兼容旧代码
+			return "开源进销存PSI";
+		}
+		
 		$us = new UserService();
 		$companyId = $us->getCompanyId();
 		
