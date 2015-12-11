@@ -427,7 +427,7 @@ class CustomerService extends PSIBaseService {
 		
 		$sql = "select id, category_id, code, name, address, contact01, qq01, tel01, mobile01, 
 				 contact02, qq02, tel02, mobile02, init_receivables, init_receivables_dt,
-					address_receipt, bank_name, bank_account, tax_number, fax, note
+					address_receipt, bank_name, bank_account, tax_number, fax, note, data_org
 				 from t_customer where (category_id = '%s') ";
 		$queryParam = array();
 		$queryParam[] = $categoryId;
@@ -504,6 +504,7 @@ class CustomerService extends PSIBaseService {
 			$result[$i]["tax"] = $v["tax_number"];
 			$result[$i]["fax"] = $v["fax"];
 			$result[$i]["note"] = $v["note"];
+			$result[$i]["dataOrg"] = $v["data_org"];
 		}
 		
 		$sql = "select count(*) as cnt from t_customer where (category_id  = '%s') ";
