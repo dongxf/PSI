@@ -107,7 +107,7 @@ class SupplierService extends PSIBaseService {
 		$sql = "select id, category_id, code, name, contact01, qq01, tel01, mobile01, 
 				contact02, qq02, tel02, mobile02, init_payables, init_payables_dt, 
 				address, address_shipping,
-				bank_name, bank_account, tax_number, fax, note
+				bank_name, bank_account, tax_number, fax, note, data_org
 				from t_supplier 
 				where (category_id = '%s')";
 		$queryParam = array();
@@ -185,6 +185,7 @@ class SupplierService extends PSIBaseService {
 			$result[$i]["tax"] = $v["tax_number"];
 			$result[$i]["fax"] = $v["fax"];
 			$result[$i]["note"] = $v["note"];
+			$result[$i]["dataOrg"] = $v["data_org"];
 		}
 		
 		$sql = "select count(*) as cnt from t_supplier where (category_id  = '%s') ";
