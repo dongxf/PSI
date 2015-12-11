@@ -159,7 +159,7 @@ Ext.define("PSI.Warehouse.MainForm", {
     	var modelName = "PSIWarehouse";
         Ext.define(modelName, {
             extend: "Ext.data.Model",
-            fields: ["id", "code", "name", "inited"]
+            fields: ["id", "code", "name", "inited", "dataOrg"]
         });
 
         me.__mainGrid = Ext.create("Ext.grid.Panel", {
@@ -175,7 +175,8 @@ Ext.define("PSI.Warehouse.MainForm", {
                 {header: "建账完毕", dataIndex: "inited", menuDisabled: true, sortable: false, width: 60,
                     renderer: function (value) {
                         return value == 1 ? "完毕" : "<span style='color:red'>未完</span>";
-                    }}
+                    }},
+                {header: "数据域", dataIndex: "dataOrg", menuDisabled: true, sortable: false}
             ],
             store: Ext.create("Ext.data.Store", {
                 model: modelName,

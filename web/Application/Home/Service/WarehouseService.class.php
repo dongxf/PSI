@@ -22,7 +22,7 @@ class WarehouseService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		$sql = "select id, code, name, inited from t_warehouse ";
+		$sql = "select id, code, name, inited, data_org from t_warehouse ";
 		$ds = new DataOrgService();
 		$queryParams = array();
 		$rs = $ds->buildSQL(FIdConst::WAREHOUSE, "t_warehouse");
@@ -33,7 +33,18 @@ class WarehouseService extends PSIBaseService {
 		
 		$sql .= " order by code";
 		
-		return M()->query($sql, $queryParams);
+		$db = M();
+		$result = array();
+		$data = $db->query($sql, $queryParams);
+		foreach ($data as $i => $v) {
+			$result[$i]["id"] = $v["id"];
+			$result[$i]["code"] = $v["code"];
+			$result[$i]["name"] = $v["name"];
+			$result[$i]["inited"] = $v["inited"];
+			$result[$i]["dataOrg"] = $v["data_org"];
+		}
+		
+		return $result;
 	}
 
 	/**
