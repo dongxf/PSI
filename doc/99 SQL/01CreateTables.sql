@@ -115,15 +115,6 @@ CREATE TABLE IF NOT EXISTS `t_warehouse` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `t_warehouse_org`;
-CREATE TABLE IF NOT EXISTS `t_warehouse_org` (
-  `warehouse_id` varchar(255) DEFAULT NULL,
-  `org_id` varchar(255) DEFAULT NULL,
-  `org_type` varchar(255) DEFAULT NULL,
-  `bill_fid` varchar(255) DEFAULT NULL,
-  `data_org` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 DROP TABLE IF EXISTS `t_supplier`;
 CREATE TABLE IF NOT EXISTS `t_supplier` (
   `id` varchar(255) NOT NULL,
