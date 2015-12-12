@@ -1282,7 +1282,7 @@ class GoodsService extends PSIBaseService {
 	}
 
 	/**
-	 * 通过条形码查询商品信息
+	 * 通过条形码查询商品信息, 销售出库单使用
 	 */
 	public function queryGoodsInfoByBarcode($params) {
 		$barcode = $params["barcode"];
@@ -1311,6 +1311,36 @@ class GoodsService extends PSIBaseService {
 		return $result;
 	}
 
+	/**
+	 * 通过条形码查询商品信息, 采购入库单使用
+	 */
+	public function queryGoodsInfoByBarcodeForPW($params) {
+		$barcode = $params["barcode"];
+		
+		$result = array();
+		
+		$db = M();
+		$sql = "select g.id, g.code, g.name, g.spec, g.purchase_price, u.name as unit_name  
+				from t_goods g, t_goods_unit u
+				where g.bar_code = '%s' and g.unit_id = u.id ";
+		$data = $db->query($sql, $barcode);
+		
+		if (! $data) {
+			$result["success"] = false;
+			$result["msg"] = "条码为[{$barcode}]的商品不存在";
+		} else {
+			$result["success"] = true;
+			$result["id"] = $data[0]["id"];
+			$result["code"] = $data[0]["code"];
+			$result["name"] = $data[0]["name"];
+			$result["spec"] = $data[0]["spec"];
+			$result["purchasePrice"] = $data[0]["purchase_price"];
+			$result["unitName"] = $data[0]["unit_name"];
+		}
+		
+		return $result;
+	}
+	
 	/**
 	 * 查询商品种类总数
 	 */

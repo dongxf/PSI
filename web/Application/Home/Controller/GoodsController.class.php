@@ -287,7 +287,7 @@ class GoodsController extends PSIBaseController {
 	}
 
 	/**
-	 * 根据条形码，查询商品信息
+	 * 根据条形码，查询商品信息, 销售出库单使用
 	 */
 	public function queryGoodsInfoByBarcode() {
 		if (IS_POST) {
@@ -299,6 +299,19 @@ class GoodsController extends PSIBaseController {
 		}
 	}
 
+	/**
+	 * 根据条形码，查询商品信息, 采购入库单使用
+	 */
+	public function queryGoodsInfoByBarcodeForPW() {
+		if (IS_POST) {
+			$params = array(
+					"barcode" => I("post.barcode")
+			);
+			$gs = new GoodsService();
+			$this->ajaxReturn($gs->queryGoodsInfoByBarcodeForPW($params));
+		}
+	}
+	
 	/**
 	 * 通过Excel导入商品
 	 */
