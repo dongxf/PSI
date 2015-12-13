@@ -1,4 +1,6 @@
-// PSI的应用容器：承载主菜单、其他模块的UI
+/**
+ * PSI的应用容器：承载主菜单、其他模块的UI
+ */
 Ext.define("PSI.App", {
 	config : {
 		userName : "",
@@ -155,11 +157,6 @@ Ext.define("PSI.App", {
 
 			if (fid == "-9995") {
 				window.open("http://my.oschina.net/u/134395/blog/374195");
-			} else if (fid == "-9994") {
-				var form = Ext.create("PSI.About.MainForm", {
-							productionName : me.getProductionName()
-						});
-				form.show();
 			} else if (fid == "-9993") {
 				window.open("https://zb.oschina.net/market/opus/134395_122");
 			} else if (fid === "-9999") {

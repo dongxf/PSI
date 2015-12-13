@@ -1,3 +1,6 @@
+/**
+ * 关于窗体
+ */
 Ext.define("PSI.About.MainForm", {
 	extend : 'Ext.window.Window',
 	config : {
@@ -55,6 +58,6 @@ Ext.define("PSI.About.MainForm", {
 	},
 
 	onOK : function() {
-		this.close();
+		location.replace(PSI.Const.BASE_URL);
 	}
 });
