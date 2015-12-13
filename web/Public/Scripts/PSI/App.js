@@ -70,14 +70,13 @@ Ext.define("PSI.App", {
 				}, me);
 
 		me.vp = Ext.create("Ext.container.Viewport", {
-					layout : "fit",
-					items : [{
+			layout : "fit",
+			items : [{
 						id : "__PSITopPanel",
 						xtype : "panel",
 						border : 0,
 						layout : "border",
-						bbar : ["当前用户：<span style='color:red'>"
-								+ me.getUserName() + "</span>"],
+						bbar : ["当前用户：" + me.getUserName()],
 						items : [{
 									region : "center",
 									layout : "fit",
@@ -106,7 +105,7 @@ Ext.define("PSI.App", {
 									}
 								}]
 					}]
-				});
+		});
 
 		var el = Ext.getBody();
 		el.mask("系统正在加载中...");
