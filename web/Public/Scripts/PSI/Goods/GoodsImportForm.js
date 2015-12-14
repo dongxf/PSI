@@ -1,115 +1,119 @@
-// 商品导入
+/**
+ * 商品导入
+ * 
+ * @author 张健
+ */
 Ext.define("PSI.Goods.GoodsImportForm", {
-    extend: "Ext.window.Window",
-    config: {
-        parentForm: null
-    },
-    initComponent: function () {
-        var me = this;
+	extend : "Ext.window.Window",
+	config : {
+		parentForm : null
+	},
+	initComponent : function() {
+		var me = this;
 
-        var buttons = [];
+		var buttons = [];
 
-        buttons.push({
-            text: "导入商品",
-            formBind: true,
-            iconCls: "PSI-button-ok",
-            handler: function () {
-                me.onOK();
-            }, scope: me
-        }, {
-            text:  "关闭", handler: function () {
-                me.close();
-            }, scope: me
-        });
+		buttons.push({
+					text : "导入商品",
+					formBind : true,
+					iconCls : "PSI-button-ok",
+					handler : function() {
+						me.onOK();
+					},
+					scope : me
+				}, {
+					text : "关闭",
+					handler : function() {
+						me.close();
+					},
+					scope : me
+				});
 
+		Ext.apply(me, {
+			title : "导入商品",
+			modal : true,
+			resizable : false,
+			onEsc : Ext.emptyFn,
+			width : 512,
+			height : 150,
+			layout : "fit",
+			items : [{
+				id : "importForm",
+				xtype : "form",
+				layout : {
+					type : "table",
+					columns : 1
+				},
+				height : "100%",
+				bodyPadding : 5,
+				// defaultType: 'textfield',
+				fieldDefaults : {
+					labelWidth : 60,
+					labelAlign : "right",
+					labelSeparator : "",
+					msgTarget : 'side'
+				},
+				items : [{
+					xtype : 'filefield',
+					name : 'data_file',
+					afterLabelTextTpl : '<span style="color:red;font-weight:bold" data-qtip="必需填写">*</span>',
+					fieldLabel : '文件',
+					labelWidth : 50,
+					width : 480,
+					msgTarget : 'side', // 提示 文字的位置
+										// \title\under\none\side\[element id]
 
-        Ext.apply(me, {
-            title: "导入商品",
-            modal: true,
-            resizable: false,
-            onEsc: Ext.emptyFn,
-            width: 512,
-            height: 150,
-            layout: "fit",
-            items: [
-                {
-                    id: "importForm",
-                    xtype: "form",
-                    layout: {
-                        type : "table",
-                        columns : 1
-                    },
-                    height: "100%",
-                    bodyPadding: 5,
-                    //defaultType: 'textfield',
-                    fieldDefaults: {
-                        labelWidth: 60,
-                        labelAlign: "right",
-                        labelSeparator: "",
-                        msgTarget: 'side'
-                    },
-                    items: [
-                        {
-                            xtype: 'filefield',
-                            name: 'data_file',
-                            afterLabelTextTpl:  '<span style="color:red;font-weight:bold" data-qtip="必需填写">*</span>',
-                            fieldLabel: '文件',
-                            labelWidth: 50,
-                            width: 480,
-                            msgTarget: 'side', //  提示 文字的位置 \title\under\none\side\[element id]
-                            allowBlank: false,
-                            anchor: '100%',
-                            buttonText: '选择商品文件'
-                        },
-                        {
-                            html: "<a href=../Uploads/Goods/goodsModelFile.xls ><h4>商品导入模板下载</h4></a>",
-                            border: 0
-                        }
-                    ],
-                    buttons: buttons
-                }],
-            listeners: {
-                show: {
-                    fn: me.onWndShow,
-                    scope: me
-                },
-                close: {
-                    fn: me.onWndClose,
-                    scope: me
-                }
-            }
-        });
+					allowBlank : false,
+					anchor : '100%',
+					buttonText : '选择商品文件'
+				}, {
+					html : "<a href=../Uploads/Goods/goodsModelFile.xls ><h4>商品导入模板下载</h4></a>",
+					border : 0
+				}],
+				buttons : buttons
+			}],
+			listeners : {
+				show : {
+					fn : me.onWndShow,
+					scope : me
+				},
+				close : {
+					fn : me.onWndClose,
+					scope : me
+				}
+			}
+		});
 
-        me.callParent(arguments);
-    },
-    onWndShow: function () {
-    },
-    // private
-    onOK: function () {
-        var me = this;
-        var f = Ext.getCmp("importForm");
-        var el = f.getEl();
-        el.mask('正在导入...');
-        f.submit({
-            url: PSI.Const.BASE_URL + "Home/Goods/import",
-            method: "POST",
-            success: function (form, action) {
-                el.unmask();
+		me.callParent(arguments);
+	},
+	onWndShow : function() {
+	},
+	// private
+	onOK : function() {
+		var me = this;
+		var f = Ext.getCmp("importForm");
+		var el = f.getEl();
+		el.mask('正在导入...');
+		f.submit({
+					url : PSI.Const.BASE_URL + "Home/Goods/import",
+					method : "POST",
+					success : function(form, action) {
+						el.unmask();
 
-                PSI.MsgBox.showInfo("数据导入成功" + action.result.msg);
-                me.focus();
-                me.close();
-                me.getParentForm().freshGoodsGrid();
-            },
-            failure: function (form, action) {
-                el.unmask();
-                PSI.MsgBox.showInfo(action.result.msg, function () {
-                    Ext.getCmp("editFileData").focus();
-                });
-            }
-        });
-    },
-    onWndClose: function () {
-        var me = this;
-    }
+						PSI.MsgBox.showInfo("数据导入成功" + action.result.msg);
+						me.focus();
+						me.close();
+						me.getParentForm().freshGoodsGrid();
+					},
+					failure : function(form, action) {
+						el.unmask();
+						PSI.MsgBox.showInfo(action.result.msg, function() {
+									Ext.getCmp("editFileData").focus();
+								});
+					}
+				});
+	},
+	onWndClose : function() {
+		var me = this;
+	}
 });
