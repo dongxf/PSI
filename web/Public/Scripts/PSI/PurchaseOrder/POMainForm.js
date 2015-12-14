@@ -1,5 +1,7 @@
 /**
  * 采购订单 - 主界面
+ * 
+ * @author 李静波
  */
 Ext.define("PSI.PurchaseOrder.POMainForm", {
 	extend : "Ext.panel.Panel",
@@ -8,6 +10,9 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 		permission : null
 	},
 
+	/**
+	 * 初始化组件
+	 */
 	initComponent : function() {
 		var me = this;
 
@@ -49,20 +54,39 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 
 		me.callParent(arguments);
 
-		Ext.getCmp("tbseparator1")
-				.setVisible(me.getPermission().confirm == "1");
-		Ext.getCmp("buttonCommit")
-				.setVisible(me.getPermission().confirm == "1");
-		Ext.getCmp("buttonCancelConfirm")
-				.setVisible(me.getPermission().confirm == "1");
-		Ext.getCmp("buttonGenPWBill")
-				.setVisible(me.getPermission().genPWBill == "1");
-		Ext.getCmp("tbseparator2")
-				.setVisible(me.getPermission().genPWBill == "1");
+		var bConfirm = me.getPermission().confirm == "1";
+		var tb1 = Ext.getCmp("tbseparator1");
+		if (tb1) {
+			tb1.setVisible(bConfirm);
+		}
+
+		var buttonCommit = Ext.getCmp("buttonCommit");
+		if (buttonCommit) {
+			buttonCommit.setVisible(bConfirm);
+		}
+
+		var buttonCancelConfirm = Ext.getCmp("buttonCancelConfirm");
+		if (buttonCancelConfirm) {
+			buttonCancelConfirm.setVisible(bConfirm);
+		}
+
+		var bGenPWBill = me.getPermission().genPWBill == "1";
+		var buttonGenPWBill = Ext.getCmp("buttonGenPWBill");
+		if (buttonGenPWBill) {
+			buttonGenPWBill.setVisible(bGenPWBill);
+		}
+
+		var tb2 = Ext.getCmp("tbseparator2");
+		if (tb2) {
+			tb2.setVisible(bGenPWBill);
+		}
 
 		me.refreshMainGrid();
 	},
 
+	/**
+	 * 工具栏
+	 */
 	getToolbarCmp : function() {
 		var me = this;
 		return [{
@@ -115,6 +139,9 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 				}];
 	},
 
+	/**
+	 * 查询条件
+	 */
 	getQueryCmp : function() {
 		var me = this;
 		return [{
@@ -204,6 +231,9 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 				}];
 	},
 
+	/**
+	 * 采购订单主表
+	 */
 	getMainGrid : function() {
 		var me = this;
 		if (me.__mainGrid) {
@@ -438,6 +468,9 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 		return me.__mainGrid;
 	},
 
+	/**
+	 * 采购订单明细记录
+	 */
 	getDetailGrid : function() {
 		var me = this;
 		if (me.__detailGrid) {
@@ -541,6 +574,9 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 		return me.__detailGrid;
 	},
 
+	/**
+	 * 刷新采购订单主表记录
+	 */
 	refreshMainGrid : function(id) {
 		var me = this;
 
@@ -558,7 +594,9 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 		me.__lastId = id;
 	},
 
-	// 新增采购订单
+	/**
+	 * 新增采购订单
+	 */
 	onAddBill : function() {
 		var form = Ext.create("PSI.PurchaseOrder.POEditForm", {
 					parentForm : this
@@ -566,7 +604,9 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 		form.show();
 	},
 
-	// 编辑采购订单
+	/**
+	 * 编辑采购订单
+	 */
 	onEditBill : function() {
 		var me = this;
 		var item = me.getMainGrid().getSelectionModel().getSelection();
@@ -583,7 +623,9 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 		form.show();
 	},
 
-	// 删除采购订单
+	/**
+	 * 删除采购订单
+	 */
 	onDeleteBill : function() {
 		var me = this;
 		var item = me.getMainGrid().getSelectionModel().getSelection();
@@ -610,37 +652,36 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 
 		var info = "请确认是否删除采购订单: <span style='color:red'>" + bill.get("ref")
 				+ "</span>";
-		var me = this;
-		PSI.MsgBox.confirm(info, function() {
+		var funcConfirm = function() {
 			var el = Ext.getBody();
 			el.mask("正在删除中...");
-			Ext.Ajax.request({
-						url : PSI.Const.BASE_URL + "Home/Purchase/deletePOBill",
-						method : "POST",
-						params : {
-							id : bill.get("id")
-						},
-						callback : function(options, success, response) {
-							el.unmask();
+			var r = {
+				url : PSI.Const.BASE_URL + "Home/Purchase/deletePOBill",
+				method : "POST",
+				params : {
+					id : bill.get("id")
+				},
+				callback : function(options, success, response) {
+					el.unmask();
 
-							if (success) {
-								var data = Ext.JSON
-										.decode(response.responseText);
-								if (data.success) {
-									PSI.MsgBox.showInfo("成功完成删除操作", function() {
-												me.refreshMainGrid(preIndex);
-											});
-								} else {
-									PSI.MsgBox.showInfo(data.msg);
-								}
-							} else {
-								PSI.MsgBox.showInfo("网络错误", function() {
-											window.location.reload();
-										});
-							}
+					if (success) {
+						var data = Ext.JSON.decode(response.responseText);
+						if (data.success) {
+							PSI.MsgBox.showInfo("成功完成删除操作", function() {
+										me.refreshMainGrid(preIndex);
+									});
+						} else {
+							PSI.MsgBox.showInfo(data.msg);
 						}
-					});
-		});
+					} else {
+						PSI.MsgBox.showInfo("网络错误");
+					}
+				}
+			};
+			Ext.Ajax.request(r);
+		};
+
+		PSI.MsgBox.confirm(info, funcConfirm);
 	},
 
 	onMainGridSelect : function() {
@@ -675,6 +716,9 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 		this.refreshDetailGrid();
 	},
 
+	/**
+	 * 刷新采购订单明细记录
+	 */
 	refreshDetailGrid : function(id) {
 		var me = this;
 		me.getDetailGrid().setTitle("采购订单明细");
@@ -689,37 +733,41 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 				+ bill.get("supplierName"));
 		var el = grid.getEl();
 		el.mask(PSI.Const.LOADING);
-		Ext.Ajax.request({
-					url : PSI.Const.BASE_URL + "Home/Purchase/poBillDetailList",
-					params : {
-						id : bill.get("id")
-					},
-					method : "POST",
-					callback : function(options, success, response) {
-						var store = grid.getStore();
 
-						store.removeAll();
+		var r = {
+			url : PSI.Const.BASE_URL + "Home/Purchase/poBillDetailList",
+			params : {
+				id : bill.get("id")
+			},
+			method : "POST",
+			callback : function(options, success, response) {
+				var store = grid.getStore();
 
-						if (success) {
-							var data = Ext.JSON.decode(response.responseText);
-							store.add(data);
+				store.removeAll();
 
-							if (store.getCount() > 0) {
-								if (id) {
-									var r = store.findExact("id", id);
-									if (r != -1) {
-										grid.getSelectionModel().select(r);
-									}
-								}
+				if (success) {
+					var data = Ext.JSON.decode(response.responseText);
+					store.add(data);
+
+					if (store.getCount() > 0) {
+						if (id) {
+							var r = store.findExact("id", id);
+							if (r != -1) {
+								grid.getSelectionModel().select(r);
 							}
 						}
-
-						el.unmask();
 					}
-				});
+				}
+
+				el.unmask();
+			}
+		};
+		Ext.Ajax.request(r);
 	},
 
-	// 审核采购订单
+	/**
+	 * 审核采购订单
+	 */
 	onCommit : function() {
 		var me = this;
 		var item = me.getMainGrid().getSelectionModel().getSelection();
@@ -743,39 +791,41 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 		var info = "请确认是否审核单号: <span style='color:red'>" + bill.get("ref")
 				+ "</span> 的采购订单?";
 		var id = bill.get("id");
-		PSI.MsgBox.confirm(info, function() {
+
+		var funcConfirm = function() {
 			var el = Ext.getBody();
 			el.mask("正在提交中...");
-			Ext.Ajax.request({
-						url : PSI.Const.BASE_URL + "Home/Purchase/commitPOBill",
-						method : "POST",
-						params : {
-							id : id
-						},
-						callback : function(options, success, response) {
-							el.unmask();
+			var r = {
+				url : PSI.Const.BASE_URL + "Home/Purchase/commitPOBill",
+				method : "POST",
+				params : {
+					id : id
+				},
+				callback : function(options, success, response) {
+					el.unmask();
 
-							if (success) {
-								var data = Ext.JSON
-										.decode(response.responseText);
-								if (data.success) {
-									PSI.MsgBox.showInfo("成功完成审核操作", function() {
-												me.refreshMainGrid(id);
-											});
-								} else {
-									PSI.MsgBox.showInfo(data.msg);
-								}
-							} else {
-								PSI.MsgBox.showInfo("网络错误", function() {
-											window.location.reload();
-										});
-							}
+					if (success) {
+						var data = Ext.JSON.decode(response.responseText);
+						if (data.success) {
+							PSI.MsgBox.showInfo("成功完成审核操作", function() {
+										me.refreshMainGrid(id);
+									});
+						} else {
+							PSI.MsgBox.showInfo(data.msg);
 						}
-					});
-		});
+					} else {
+						PSI.MsgBox.showInfo("网络错误");
+					}
+				}
+			};
+			Ext.Ajax.request(r);
+		};
+		PSI.MsgBox.confirm(info, funcConfirm);
 	},
 
-	// 取消审核
+	/**
+	 * 取消审核
+	 */
 	onCancelConfirm : function() {
 		var me = this;
 		var item = me.getMainGrid().getSelectionModel().getSelection();
@@ -793,38 +843,35 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 		var info = "请确认是否取消审核单号为 <span style='color:red'>" + bill.get("ref")
 				+ "</span> 的采购订单?";
 		var id = bill.get("id");
-		PSI.MsgBox.confirm(info, function() {
-					var el = Ext.getBody();
-					el.mask("正在提交中...");
-					Ext.Ajax.request({
-								url : PSI.Const.BASE_URL
-										+ "Home/Purchase/cancelConfirmPOBill",
-								method : "POST",
-								params : {
-									id : id
-								},
-								callback : function(options, success, response) {
-									el.unmask();
+		var funcConfirm = function() {
+			var el = Ext.getBody();
+			el.mask("正在提交中...");
+			var r = {
+				url : PSI.Const.BASE_URL + "Home/Purchase/cancelConfirmPOBill",
+				method : "POST",
+				params : {
+					id : id
+				},
+				callback : function(options, success, response) {
+					el.unmask();
 
-									if (success) {
-										var data = Ext.JSON
-												.decode(response.responseText);
-										if (data.success) {
-											PSI.MsgBox.showInfo("成功完成取消审核操作",
-													function() {
-														me.refreshMainGrid(id);
-													});
-										} else {
-											PSI.MsgBox.showInfo(data.msg);
-										}
-									} else {
-										PSI.MsgBox.showInfo("网络错误", function() {
-													window.location.reload();
-												});
-									}
-								}
-							});
-				});
+					if (success) {
+						var data = Ext.JSON.decode(response.responseText);
+						if (data.success) {
+							PSI.MsgBox.showInfo("成功完成取消审核操作", function() {
+										me.refreshMainGrid(id);
+									});
+						} else {
+							PSI.MsgBox.showInfo(data.msg);
+						}
+					} else {
+						PSI.MsgBox.showInfo("网络错误");
+					}
+				}
+			};
+			Ext.Ajax.request(r);
+		};
+		PSI.MsgBox.confirm(info, funcConfirm);
 	},
 
 	gotoMainGridRecord : function(id) {
@@ -844,10 +891,16 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 		}
 	},
 
+	/**
+	 * 查询
+	 */
 	onQuery : function() {
 		this.refreshMainGrid();
 	},
 
+	/**
+	 * 清除查询条件
+	 */
 	onClearQuery : function() {
 		var me = this;
 

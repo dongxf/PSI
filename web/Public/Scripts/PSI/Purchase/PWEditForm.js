@@ -9,6 +9,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 		genBill : false,
 		pobillRef : null
 	},
+
 	initComponent : function() {
 		var me = this;
 		me.__readOnly = false;
@@ -253,6 +254,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 						Ext.getCmp("columnActionAdd").hide();
 						Ext.getCmp("columnActionAppend").hide();
 
+						Ext.getCmp("editBarcode").setDisabled(true);
 					} else {
 						if (!data.genBill) {
 							Ext.getCmp("columnGoodsCode").setEditor({
