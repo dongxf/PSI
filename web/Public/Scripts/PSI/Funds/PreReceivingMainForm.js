@@ -1,4 +1,6 @@
-// 预收款管理 - 主界面
+/**
+ * 预收款管理 - 主界面
+ */
 Ext.define("PSI.Funds.PreReceivingMainForm", {
 	extend : "Ext.panel.Panel",
 
@@ -7,72 +9,70 @@ Ext.define("PSI.Funds.PreReceivingMainForm", {
 
 	initComponent : function() {
 		var me = this;
-		
+
 		var modelName = "PSICustomerCategroy";
 		Ext.define(modelName, {
-			extend : "Ext.data.Model",
-			fields : [ "id", "name" ]
-		});
+					extend : "Ext.data.Model",
+					fields : ["id", "name"]
+				});
 
 		Ext.apply(me, {
-			tbar : [ 
-			{
-				text: "收取预收款",
-				iconCls: "PSI-button-add",
-				handler: me.onReceivingMoney,
-				scope: me
-			}, "-", {
-				text: "退还预收款",
-				iconCls: "PSI-button-delete",
-				handler: me.onReturnMoney,
-				scope: me
-			}, "-",
-			{
-				xtype : "displayfield",
-				value : "客户分类"
-			}, {
-				xtype : "combobox",
-				id : "comboCategory",
-				queryMode : "local",
-				editable : false,
-				valueField : "id",
-				displayField : "name",
-				store : Ext.create("Ext.data.Store", {
-					model : modelName,
-					autoLoad : false,
-					data : []
-				})
-			}, {
-				text : "查询",
-				iconCls : "PSI-button-refresh",
-				handler : me.onQuery,
-				scope : me
-			}, "-", {
-				text : "关闭",
-				iconCls : "PSI-button-exit",
-				handler : function() {
-					location.replace(PSI.Const.BASE_URL);
-				}
-			} ],
-			layout : "border",
-			border : 0,
-			items : [ {
-				region : "center",
-				layout : "fit",
-				border : 0,
-				items : [ me.getMainGrid() ]
-			}, {
-				region : "south",
-				layout : "fit",
-				border : 0,
-				split : true,
-				height : "50%",
-				items : [ me.getDetailGrid() ]
-			} ]
-		});
+					tbar : [{
+								text : "收取预收款",
+								iconCls : "PSI-button-add",
+								handler : me.onReceivingMoney,
+								scope : me
+							}, "-", {
+								text : "退还预收款",
+								iconCls : "PSI-button-delete",
+								handler : me.onReturnMoney,
+								scope : me
+							}, "-", {
+								xtype : "displayfield",
+								value : "客户分类"
+							}, {
+								xtype : "combobox",
+								id : "comboCategory",
+								queryMode : "local",
+								editable : false,
+								valueField : "id",
+								displayField : "name",
+								store : Ext.create("Ext.data.Store", {
+											model : modelName,
+											autoLoad : false,
+											data : []
+										})
+							}, {
+								text : "查询",
+								iconCls : "PSI-button-refresh",
+								handler : me.onQuery,
+								scope : me
+							}, "-", {
+								text : "关闭",
+								iconCls : "PSI-button-exit",
+								handler : function() {
+									location.replace(PSI.Const.BASE_URL);
+								}
+							}],
+					layout : "border",
+					border : 0,
+					items : [{
+								region : "center",
+								layout : "fit",
+								border : 0,
+								items : [me.getMainGrid()]
+							}, {
+								region : "south",
+								layout : "fit",
+								border : 0,
+								split : true,
+								height : "50%",
+								items : [me.getDetailGrid()]
+							}]
+				});
 
 		me.callParent(arguments);
-		
+
 		me.queryCustomerCategory();
 	},
 
@@ -84,90 +84,92 @@ Ext.define("PSI.Funds.PreReceivingMainForm", {
 
 		var modelName = "PSIPreReceiving";
 		Ext.define(modelName, {
-			extend : "Ext.data.Model",
-			fields : [ "id", "customerId", "code", "name", "inMoney", "outMoney",
-					"balanceMoney" ]
-		});
+					extend : "Ext.data.Model",
+					fields : ["id", "customerId", "code", "name", "inMoney",
+							"outMoney", "balanceMoney"]
+				});
 
 		var store = Ext.create("Ext.data.Store", {
-			model : modelName,
-			pageSize : 20,
-			proxy : {
-				type : "ajax",
-				actionMethods : {
-					read : "POST"
-				},
-				url : PSI.Const.BASE_URL + "Home/Funds/prereceivingList",
-				reader : {
-					root : 'dataList',
-					totalProperty : 'totalCount'
-				}
-			},
-			autoLoad : false,
-			data : []
-		});
+					model : modelName,
+					pageSize : 20,
+					proxy : {
+						type : "ajax",
+						actionMethods : {
+							read : "POST"
+						},
+						url : PSI.Const.BASE_URL
+								+ "Home/Funds/prereceivingList",
+						reader : {
+							root : 'dataList',
+							totalProperty : 'totalCount'
+						}
+					},
+					autoLoad : false,
+					data : []
+				});
 
 		store.on("beforeload", function() {
-			Ext.apply(store.proxy.extraParams, {
-				categoryId : Ext.getCmp("comboCategory").getValue()
-			});
-		});
+					Ext.apply(store.proxy.extraParams, {
+								categoryId : Ext.getCmp("comboCategory")
+										.getValue()
+							});
+				});
 
 		me.__mainGrid = Ext.create("Ext.grid.Panel", {
-			viewConfig: {
-                enableTextSelection: true
-            },
-            border: 0,
-			bbar : [ {
-				xtype : "pagingtoolbar",
-				store : store
-			} ],
-			columnLines : true,
-			columns : [ {
-				header : "客户编码",
-				dataIndex : "code",
-				menuDisabled : true,
-				sortable : false,
-				width: 120
-			}, {
-				header : "客户名称",
-				dataIndex : "name",
-				menuDisabled : true,
-				sortable : false,
-				width: 300
-			}, {
-				header : "收",
-				dataIndex : "inMoney",
-				menuDisabled : true,
-				sortable : false,
-				align : "right",
-				xtype : "numbercolumn",
-				width: 160
-			}, {
-				header : "支",
-				dataIndex : "outMoney",
-				menuDisabled : true,
-				sortable : false,
-				align : "right",
-				xtype : "numbercolumn",
-				width: 160
-			}, {
-				header : "预付款余额",
-				dataIndex : "balanceMoney",
-				menuDisabled : true,
-				sortable : false,
-				align : "right",
-				xtype : "numbercolumn",
-				width: 160
-			} ],
-			store : store,
-			listeners : {
-				select : {
-					fn : me.onMainGridSelect,
-					scope : me
-				}
-			}
-		});
+					viewConfig : {
+						enableTextSelection : true
+					},
+					border : 0,
+					bbar : [{
+								xtype : "pagingtoolbar",
+								store : store
+							}],
+					columnLines : true,
+					columns : [{
+								header : "客户编码",
+								dataIndex : "code",
+								menuDisabled : true,
+								sortable : false,
+								width : 120
+							}, {
+								header : "客户名称",
+								dataIndex : "name",
+								menuDisabled : true,
+								sortable : false,
+								width : 300
+							}, {
+								header : "收",
+								dataIndex : "inMoney",
+								menuDisabled : true,
+								sortable : false,
+								align : "right",
+								xtype : "numbercolumn",
+								width : 160
+							}, {
+								header : "支",
+								dataIndex : "outMoney",
+								menuDisabled : true,
+								sortable : false,
+								align : "right",
+								xtype : "numbercolumn",
+								width : 160
+							}, {
+								header : "预付款余额",
+								dataIndex : "balanceMoney",
+								menuDisabled : true,
+								sortable : false,
+								align : "right",
+								xtype : "numbercolumn",
+								width : 160
+							}],
+					store : store,
+					listeners : {
+						select : {
+							fn : me.onMainGridSelect,
+							scope : me
+						}
+					}
+				});
 
 		return me.__mainGrid;
 	},
@@ -180,11 +182,11 @@ Ext.define("PSI.Funds.PreReceivingMainForm", {
 
 		var rv = item[0];
 		var result = {
-				dtFrom : Ext.Date.format(Ext.getCmp("dtFrom").getValue(), "Y-m-d"),
-				dtTo : Ext.Date.format(Ext.getCmp("dtTo").getValue(), "Y-m-d"),
-				customerId: rv.get("customerId")
+			dtFrom : Ext.Date.format(Ext.getCmp("dtFrom").getValue(), "Y-m-d"),
+			dtTo : Ext.Date.format(Ext.getCmp("dtTo").getValue(), "Y-m-d"),
+			customerId : rv.get("customerId")
 		};
-		
+
 		return result;
 	},
 
@@ -200,134 +202,143 @@ Ext.define("PSI.Funds.PreReceivingMainForm", {
 
 		var modelName = "PSIPreReceivingDetail";
 		Ext.define(modelName, {
-			extend : "Ext.data.Model",
-			fields : [ "id", "inMoney", "outMoney", "balanceMoney", "refType",
-					"refNumber", "bizDT", "dateCreated", "bizUserName", "inputUserName" ]
-		});
+					extend : "Ext.data.Model",
+					fields : ["id", "inMoney", "outMoney", "balanceMoney",
+							"refType", "refNumber", "bizDT", "dateCreated",
+							"bizUserName", "inputUserName"]
+				});
 
 		var store = Ext.create("Ext.data.Store", {
-			model : modelName,
-			pageSize : 20,
-			proxy : {
-				type : "ajax",
-				actionMethods : {
-					read : "POST"
-				},
-				url : PSI.Const.BASE_URL + "Home/Funds/prereceivingDetailList",
-				reader : {
-					root : 'dataList',
-					totalProperty : 'totalCount'
-				}
-			},
-			autoLoad : false,
-			data : []
-		});
+					model : modelName,
+					pageSize : 20,
+					proxy : {
+						type : "ajax",
+						actionMethods : {
+							read : "POST"
+						},
+						url : PSI.Const.BASE_URL
+								+ "Home/Funds/prereceivingDetailList",
+						reader : {
+							root : 'dataList',
+							totalProperty : 'totalCount'
+						}
+					},
+					autoLoad : false,
+					data : []
+				});
 
 		store.on("beforeload", function() {
-			Ext.apply(store.proxy.extraParams, me.getDetailParam());
-		});
+					Ext.apply(store.proxy.extraParams, me.getDetailParam());
+				});
 
 		me.__detailGrid = Ext.create("Ext.grid.Panel", {
-			viewConfig: {
-                enableTextSelection: true
-            },
-			title : "预收款明细",
-			border: 0,
-			tbar : [ {
-				xtype : "displayfield",
-				value : "业务日期 从"
-			}, {
-				id : "dtFrom",
-				xtype : "datefield",
-				format : "Y-m-d",
-				width : 90
-			}, {
-				xtype : "displayfield",
-				value : " 到 "
-			}, {
-				id : "dtTo",
-				xtype : "datefield",
-				format : "Y-m-d",
-				width : 90,
-				value : new Date()
-			}, {
-				text : "查询",
-				iconCls : "PSI-button-refresh",
-				handler : me.onQueryDetail,
-				scope : me
-			}, {
-				xtype : "pagingtoolbar",
-				store : store
-			} ],
-			columnLines : true,
-			columns : [ {
-				header : "业务类型",
-				dataIndex : "refType",
-				menuDisabled : true,
-				sortable : false,
-				width: 120
-			}, {
-				header : "单号",
-				dataIndex : "refNumber",
-				menuDisabled : true,
-				sortable : false,
-				width : 120,
-				renderer: function(value, md, record) {
-					return "<a href='" + PSI.Const.BASE_URL + "Home/Bill/viewIndex?fid=2025&refType=" 
-						+ encodeURIComponent(record.get("refType")) 
-						+ "&ref=" + encodeURIComponent(record.get("refNumber")) + "' target='_blank'>" + value + "</a>";
-				}
-			}, {
-				header : "业务日期",
-				dataIndex : "bizDT",
-				menuDisabled : true,
-				sortable : false
-			}, {
-				header : "收",
-				dataIndex : "inMoney",
-				menuDisabled : true,
-				sortable : false,
-				align : "right",
-				xtype : "numbercolumn",
-				width: 160
-			}, {
-				header : "支",
-				dataIndex : "outMoney",
-				menuDisabled : true,
-				sortable : false,
-				align : "right",
-				xtype : "numbercolumn",
-				width: 160
-			}, {
-				header : "预收款余额",
-				dataIndex : "balanceMoney",
-				menuDisabled : true,
-				sortable : false,
-				align : "right",
-				xtype : "numbercolumn",
-				width: 160
-			},{
-				header : "创建时间",
-				dataIndex : "dateCreated",
-				menuDisabled : true,
-				sortable : false,
-				width: 140
-			},{
-				header : "业务员",
-				dataIndex : "bizUserName",
-				menuDisabled : true,
-				sortable : false,
-				width: 120
-			},{
-				header : "制单人",
-				dataIndex : "inputUserName",
-				menuDisabled : true,
-				sortable : false,
-				width: 120
-			} ],
-			store : store
-		});
-		
+					viewConfig : {
+						enableTextSelection : true
+					},
+					title : "预收款明细",
+					border : 0,
+					tbar : [{
+								xtype : "displayfield",
+								value : "业务日期 从"
+							}, {
+								id : "dtFrom",
+								xtype : "datefield",
+								format : "Y-m-d",
+								width : 90
+							}, {
+								xtype : "displayfield",
+								value : " 到 "
+							}, {
+								id : "dtTo",
+								xtype : "datefield",
+								format : "Y-m-d",
+								width : 90,
+								value : new Date()
+							}, {
+								text : "查询",
+								iconCls : "PSI-button-refresh",
+								handler : me.onQueryDetail,
+								scope : me
+							}, {
+								xtype : "pagingtoolbar",
+								store : store
+							}],
+					columnLines : true,
+					columns : [{
+								header : "业务类型",
+								dataIndex : "refType",
+								menuDisabled : true,
+								sortable : false,
+								width : 120
+							}, {
+								header : "单号",
+								dataIndex : "refNumber",
+								menuDisabled : true,
+								sortable : false,
+								width : 120,
+								renderer : function(value, md, record) {
+									return "<a href='"
+											+ PSI.Const.BASE_URL
+											+ "Home/Bill/viewIndex?fid=2025&refType="
+											+ encodeURIComponent(record
+													.get("refType"))
+											+ "&ref="
+											+ encodeURIComponent(record
+													.get("refNumber"))
+											+ "' target='_blank'>" + value
+											+ "</a>";
+								}
+							}, {
+								header : "业务日期",
+								dataIndex : "bizDT",
+								menuDisabled : true,
+								sortable : false
+							}, {
+								header : "收",
+								dataIndex : "inMoney",
+								menuDisabled : true,
+								sortable : false,
+								align : "right",
+								xtype : "numbercolumn",
+								width : 160
+							}, {
+								header : "支",
+								dataIndex : "outMoney",
+								menuDisabled : true,
+								sortable : false,
+								align : "right",
+								xtype : "numbercolumn",
+								width : 160
+							}, {
+								header : "预收款余额",
+								dataIndex : "balanceMoney",
+								menuDisabled : true,
+								sortable : false,
+								align : "right",
+								xtype : "numbercolumn",
+								width : 160
+							}, {
+								header : "创建时间",
+								dataIndex : "dateCreated",
+								menuDisabled : true,
+								sortable : false,
+								width : 140
+							}, {
+								header : "业务员",
+								dataIndex : "bizUserName",
+								menuDisabled : true,
+								sortable : false,
+								width : 120
+							}, {
+								header : "制单人",
+								dataIndex : "inputUserName",
+								menuDisabled : true,
+								sortable : false,
+								width : 120
+							}],
+					store : store
+				});
+
 		var dt = new Date();
 		dt.setDate(dt.getDate() - 7);
 		Ext.getCmp("dtFrom").setValue(dt);
@@ -337,54 +348,54 @@ Ext.define("PSI.Funds.PreReceivingMainForm", {
 
 	onQuery : function() {
 		var me = this;
-		
+
 		me.getMainGrid().getStore().removeAll();
 		me.getDetailGrid().getStore().removeAll();
 
 		me.getMainGrid().getStore().loadPage(1);
-    },
-    
-    queryCustomerCategory: function() {
-    	var combo = Ext.getCmp("comboCategory");
-        var el = Ext.getBody();
-        el.mask(PSI.Const.LOADING);
-        Ext.Ajax.request({
-            url: PSI.Const.BASE_URL + "Home/Customer/categoryList",
-            method: "POST",
-            callback: function (options, success, response) {
-                var store = combo.getStore();
+	},
 
-                store.removeAll();
+	queryCustomerCategory : function() {
+		var combo = Ext.getCmp("comboCategory");
+		var el = Ext.getBody();
+		el.mask(PSI.Const.LOADING);
+		Ext.Ajax.request({
+					url : PSI.Const.BASE_URL + "Home/Customer/categoryList",
+					method : "POST",
+					callback : function(options, success, response) {
+						var store = combo.getStore();
 
-                if (success) {
-                    var data = Ext.JSON.decode(response.responseText);
-                    store.add(data);
+						store.removeAll();
 
-                    if (store.getCount() > 0) {
-                    	combo.setValue(store.getAt(0).get("id"));
-                    }
-                }
+						if (success) {
+							var data = Ext.JSON.decode(response.responseText);
+							store.add(data);
 
-                el.unmask();
-            }
-        });
-    },
-    
-    onReceivingMoney: function() {
-    	var form = Ext.create("PSI.Funds.AddPreReceivingForm", {
-    		parentForm: this
-    	});
-    	form.show();
-    },
-    
-    onReturnMoney: function() {
-    	var form = Ext.create("PSI.Funds.ReturnPreReceivingForm", {
-    		parentForm: this
-    	});
-    	form.show();
-    },
-    
-    onQueryDetail: function() {
+							if (store.getCount() > 0) {
+								combo.setValue(store.getAt(0).get("id"));
+							}
+						}
+
+						el.unmask();
+					}
+				});
+	},
+
+	onReceivingMoney : function() {
+		var form = Ext.create("PSI.Funds.AddPreReceivingForm", {
+					parentForm : this
+				});
+		form.show();
+	},
+
+	onReturnMoney : function() {
+		var form = Ext.create("PSI.Funds.ReturnPreReceivingForm", {
+					parentForm : this
+				});
+		form.show();
+	},
+
+	onQueryDetail : function() {
 		var dtTo = Ext.getCmp("dtTo").getValue();
 		if (dtTo == null) {
 			Ext.getCmp("dtTo").setValue(new Date());
@@ -397,6 +408,6 @@ Ext.define("PSI.Funds.PreReceivingMainForm", {
 			Ext.getCmp("dtFrom").setValue(dt);
 		}
 
-    	this.getDetailGrid().getStore().loadPage(1);
-    }
+		this.getDetailGrid().getStore().loadPage(1);
+	}
 });
