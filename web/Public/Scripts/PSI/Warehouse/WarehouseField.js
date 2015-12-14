@@ -1,4 +1,6 @@
-// 自定义字段 - 仓库
+/**
+ * 自定义字段 - 仓库
+ */
 Ext.define("PSI.Warehouse.WarehouseField", {
 	extend : "Ext.form.field.Trigger",
 	alias : "widget.psi_warehousefield",
