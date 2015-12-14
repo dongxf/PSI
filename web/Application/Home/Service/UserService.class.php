@@ -240,7 +240,7 @@ class UserService extends PSIBaseService {
 	}
 
 	/**
-	 * 做类似这种增长 '01010001' => '01020002', 用户的数据域+1
+	 * 做类似这种增长 '01010001' => '01010002', 用户的数据域+1
 	 */
 	private function incDataOrgForUser($dataOrg) {
 		$pre = substr($dataOrg, 0, strlen($dataOrg) - 4);
