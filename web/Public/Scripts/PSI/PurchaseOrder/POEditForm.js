@@ -1,12 +1,19 @@
 /**
  * 采购订单 - 新增或编辑界面
+ * 
+ * @author 李静波
  */
 Ext.define("PSI.PurchaseOrder.POEditForm", {
 	extend : "Ext.window.Window",
+
 	config : {
 		parentForm : null,
 		entity : null
 	},
+
+	/**
+	 * 初始化组件
+	 */
 	initComponent : function() {
 		var me = this;
 		me.__readOnly = false;
