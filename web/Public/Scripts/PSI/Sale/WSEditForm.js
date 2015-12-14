@@ -1,4 +1,6 @@
-// 销售出库 - 新建或编辑界面
+/**
+ * 销售出库 - 新建或编辑界面
+ */
 Ext.define("PSI.Sale.WSEditForm", {
 	extend : "Ext.window.Window",
 	config : {
