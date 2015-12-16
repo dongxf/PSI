@@ -3,10 +3,14 @@
  */
 Ext.define("PSI.User.MainForm", {
 	extend : "Ext.panel.Panel",
+	
 	getBaseURL : function() {
 		return PSI.Const.BASE_URL;
 	},
 
+	/**
+	 * 初始化组件
+	 */
 	initComponent : function() {
 		var me = this;
 
