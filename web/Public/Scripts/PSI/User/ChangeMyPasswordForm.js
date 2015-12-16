@@ -124,6 +124,9 @@ Ext.define("PSI.User.ChangeMyPasswordForm", {
 		me.callParent(arguments);
 	},
 
+	/**
+	 * 修改密码
+	 */
 	onOK : function() {
 		var me = this;
 

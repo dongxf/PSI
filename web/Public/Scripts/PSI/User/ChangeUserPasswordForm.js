@@ -104,6 +104,9 @@ Ext.define("PSI.User.ChangeUserPasswordForm", {
 		me.editConfirmPassword = Ext.getCmp("editConfirmPassword");
 	},
 
+	/**
+	 * 修改密码
+	 */
 	onOK : function() {
 		var me = this;
 		var pass = me.editPassword.getValue();
