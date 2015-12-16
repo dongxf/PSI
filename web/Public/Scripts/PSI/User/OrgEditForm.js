@@ -12,6 +12,9 @@ Ext.define("PSI.User.OrgEditForm", {
 		return PSI.Const.BASE_URL;
 	},
 
+	/**
+	 * 初始化组件
+	 */
 	initComponent : function() {
 		var me = this;
 		var entity = me.getEntity();
