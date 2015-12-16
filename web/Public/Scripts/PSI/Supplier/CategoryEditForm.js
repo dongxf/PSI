@@ -104,7 +104,6 @@ Ext.define("PSI.Supplier.CategoryEditForm", {
 									}
 								}],
 								buttons : buttons
-								,
 							}],
 							listeners : {
 								show : {
