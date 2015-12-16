@@ -55,7 +55,7 @@ PSI的开源协议
 
 - Email：1569352868@qq.com
 
-- QQ群：414474186
+- QQ群：414474186 (付费20元才能入群)
  <a target="_blank" href="http://shang.qq.com/wpa/qunwpa?idkey=64808ce24f2a3186ccb1f37aad9ed591bcc4fb257d09749753aca98c6c73e400"><img border="0" src="http://pub.idqqimg.com/wpa/images/group.png" alt="开源进销存PSI" title="开源进销存PSI"></a>
 
 捐赠PSI众包业务
