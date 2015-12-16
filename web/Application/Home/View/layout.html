@@ -19,7 +19,9 @@
     <body>
     <script>
         PSI.Const.BASE_URL = "{$uri}";
-        Ext.BLANK_IMAGE_URL = "{$uri}Public/Images/s.gif";
+        if (Ext.isIE7m) {
+            Ext.BLANK_IMAGE_URL = "{$uri}Public/Images/s.gif";
+        }
     </script>
         
         {__CONTENT__}
