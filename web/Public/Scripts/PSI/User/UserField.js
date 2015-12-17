@@ -3,6 +3,9 @@ Ext.define("PSI.User.UserField", {
     extend: "Ext.form.field.Trigger",
     alias: "widget.psi_userfield",
 
+    /**
+     * 初始化组件
+     */
     initComponent: function () {
     	var me = this;
     	me.__idValue = null;

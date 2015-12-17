@@ -10,6 +10,9 @@ Ext.define("PSI.User.UserEditForm", {
 		defaultOrg : null
 	},
 
+	/**
+	 * 初始化组件
+	 */
 	initComponent : function() {
 		var me = this;
 
@@ -251,7 +254,6 @@ Ext.define("PSI.User.UserEditForm", {
 		editOrgId.setValue(data.id);
 	},
 
-	// private
 	onOK : function() {
 		var me = this;
 		var f = Ext.getCmp("editForm");

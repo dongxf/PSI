@@ -106,7 +106,6 @@ Ext.define("PSI.User.OrgWithDataOrgField", {
 						});
 			},
 
-			// private
 			onOK : function() {
 				var me = this;
 

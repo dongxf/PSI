@@ -107,9 +107,7 @@ Ext.define("PSI.User.OrgField", {
 				}
 
 				var data = item[0];
-				// var parentItem = this.initialConfig.parentItem;
 
-				// parentItem.setParentOrg(data);
 				me.setIdValue(data.get("id"));
 				me.setValue(data.get("fullName"));
 				me.wnd.close();
