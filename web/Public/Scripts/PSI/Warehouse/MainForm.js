@@ -6,6 +6,9 @@ Ext.define("PSI.Warehouse.MainForm", {
 	border : 0,
 	layout : "border",
 
+	/**
+	 * 初始化组件
+	 */
 	initComponent : function() {
 		var me = this;
 
@@ -53,6 +56,9 @@ Ext.define("PSI.Warehouse.MainForm", {
 		me.freshGrid();
 	},
 
+	/**
+	 * 新增仓库
+	 */
 	onAddWarehouse : function() {
 		var form = Ext.create("PSI.Warehouse.EditForm", {
 					parentForm : this
@@ -61,6 +67,9 @@ Ext.define("PSI.Warehouse.MainForm", {
 		form.show();
 	},
 
+	/**
+	 * 编辑仓库
+	 */
 	onEditWarehouse : function() {
 		var me = this;
 		var item = me.getMainGrid().getSelectionModel().getSelection();
@@ -79,6 +88,9 @@ Ext.define("PSI.Warehouse.MainForm", {
 		form.show();
 	},
 
+	/**
+	 * 删除仓库
+	 */
 	onDeleteWarehouse : function() {
 		var me = this;
 		var item = me.getMainGrid().getSelectionModel().getSelection();
@@ -100,33 +112,35 @@ Ext.define("PSI.Warehouse.MainForm", {
 			preIndex = preWarehouse.get("id");
 		}
 
-		PSI.MsgBox.confirm(info, function() {
-					var el = Ext.getBody();
-					el.mask(PSI.Const.LOADING);
-					Ext.Ajax.request({
-								url : PSI.Const.BASE_URL
-										+ "Home/Warehouse/deleteWarehouse",
-								params : {
-									id : warehouse.get("id")
-								},
-								method : "POST",
-								callback : function(options, success, response) {
-									el.unmask();
-									if (success) {
-										var data = Ext.JSON
-												.decode(response.responseText);
-										if (data.success) {
-											PSI.MsgBox.tip("成功完成删除操作");
-											me.freshGrid(preIndex);
-										} else {
-											PSI.MsgBox.showInfo(data.msg);
-										}
-									} else {
-										PSI.MsgBox.showInfo("网络错误");
-									}
-								}
-							});
-				});
+		var funcConfirm = function() {
+			var el = Ext.getBody();
+			el.mask(PSI.Const.LOADING);
+			var r = {
+				url : PSI.Const.BASE_URL + "Home/Warehouse/deleteWarehouse",
+				params : {
+					id : warehouse.get("id")
+				},
+				method : "POST",
+				callback : function(options, success, response) {
+					el.unmask();
+					if (success) {
+						var data = Ext.JSON.decode(response.responseText);
+						if (data.success) {
+							PSI.MsgBox.tip("成功完成删除操作");
+							me.freshGrid(preIndex);
+						} else {
+							PSI.MsgBox.showInfo(data.msg);
+						}
+					} else {
+						PSI.MsgBox.showInfo("网络错误");
+					}
+				}
+			};
+
+			Ext.Ajax.request(r);
+		};
+
+		PSI.MsgBox.confirm(info, funcConfirm);
 	},
 
 	freshGrid : function(id) {
