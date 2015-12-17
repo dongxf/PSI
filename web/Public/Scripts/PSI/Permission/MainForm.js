@@ -4,6 +4,9 @@
 Ext.define("PSI.Permission.MainForm", {
 	extend : "Ext.panel.Panel",
 
+	/**
+	 * 初始化组件
+	 */
 	initComponent : function() {
 		var me = this;
 
@@ -184,6 +187,9 @@ Ext.define("PSI.Permission.MainForm", {
 		me.refreshRoleGrid();
 	},
 
+	/**
+	 * 刷新角色Grid
+	 */
 	refreshRoleGrid : function(id) {
 		var grid = this.roleGrid;
 		var store = grid.getStore();
@@ -278,6 +284,9 @@ Ext.define("PSI.Permission.MainForm", {
 				});
 	},
 
+	/**
+	 * 新增角色
+	 */
 	onAddRole : function() {
 		var editForm = Ext.create("PSI.Permission.EditForm", {
 					parentForm : this
@@ -286,6 +295,9 @@ Ext.define("PSI.Permission.MainForm", {
 		editForm.show();
 	},
 
+	/**
+	 * 编辑角色
+	 */
 	onEditRole : function() {
 		var grid = this.roleGrid;
 		var items = grid.getSelectionModel().getSelection();
@@ -305,6 +317,9 @@ Ext.define("PSI.Permission.MainForm", {
 		editForm.show();
 	},
 
+	/**
+	 * 删除角色
+	 */
 	onDeleteRole : function() {
 		var me = this;
 		var grid = me.roleGrid;
@@ -317,32 +332,36 @@ Ext.define("PSI.Permission.MainForm", {
 
 		var role = items[0].data;
 
-		PSI.MsgBox.confirm("请确认是否删除角色 <span style='color:red'>" + role.name
-						+ "</span> ?", function() {
-					Ext.getBody().mask("正在删除中...");
-					Ext.Ajax.request({
-						url : PSI.Const.BASE_URL + "Home/Permission/deleteRole",
-						method : "POST",
-						params : {
-							id : role.id
-						},
-						callback : function(options, success, response) {
-							Ext.getBody().unmask();
+		var info = "请确认是否删除角色 <span style='color:red'>" + role.name
+				+ "</span> ?";
+		var funcConfirm = function() {
+			Ext.getBody().mask("正在删除中...");
+			var r = {
+				url : PSI.Const.BASE_URL + "Home/Permission/deleteRole",
+				method : "POST",
+				params : {
+					id : role.id
+				},
+				callback : function(options, success, response) {
+					Ext.getBody().unmask();
 
-							if (success) {
-								var data = Ext.JSON
-										.decode(response.responseText);
-								if (data.success) {
-									PSI.MsgBox.showInfo("成功完成删除操作", function() {
-												me.refreshRoleGrid();
-											});
-								} else {
-									PSI.MsgBox.showInfo(data.msg);
-								}
-							}
+					if (success) {
+						var data = Ext.JSON.decode(response.responseText);
+						if (data.success) {
+							PSI.MsgBox.showInfo("成功完成删除操作", function() {
+										me.refreshRoleGrid();
+									});
+						} else {
+							PSI.MsgBox.showInfo(data.msg);
 						}
-					});
-				});
+					}
+				}
+			};
+			
+			Ext.Ajax.request(r);
+		};
+
+		PSI.MsgBox.confirm(info, funcConfirm);
 	},
 
 	getDataOrgGrid : function() {
