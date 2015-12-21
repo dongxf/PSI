@@ -3,10 +3,15 @@
  */
 Ext.define("PSI.Goods.CategoryEditForm", {
 			extend : "Ext.window.Window",
+
 			config : {
 				parentForm : null,
 				entity : null
 			},
+
+			/**
+			 * 初始化组件
+			 */
 			initComponent : function() {
 				var me = this;
 				var entity = me.getEntity();
@@ -134,7 +139,7 @@ Ext.define("PSI.Goods.CategoryEditForm", {
 
 				me.callParent(arguments);
 			},
-			// private
+
 			onOK : function(thenAdd) {
 				var me = this;
 
@@ -175,16 +180,19 @@ Ext.define("PSI.Goods.CategoryEditForm", {
 							}
 						});
 			},
+
 			onEditCodeSpecialKey : function(field, e) {
 				if (e.getKey() == e.ENTER) {
 					Ext.getCmp("editName").focus();
 				}
 			},
+
 			onEditNameSpecialKey : function(field, e) {
 				if (e.getKey() == e.ENTER) {
 					Ext.getCmp("editParentCategory").focus();
 				}
 			},
+
 			onEditCategorySpecialKey : function(field, e) {
 				if (e.getKey() == e.ENTER) {
 					var f = Ext.getCmp("editForm");
@@ -195,11 +203,16 @@ Ext.define("PSI.Goods.CategoryEditForm", {
 					}
 				}
 			},
+
 			onWndClose : function() {
 				if (this.__lastId) {
 					this.getParentForm().freshCategoryGrid();
 				}
 			},
+
+			/**
+			 * 窗体显示的时候查询数据
+			 */
 			onWndShow : function() {
 				var me = this;
 				var editCode = Ext.getCmp("editCode");
