@@ -5,6 +5,10 @@ Ext.define("PSI.InvCheck.InvCheckMainForm", {
 	extend : "Ext.panel.Panel",
 	border : 0,
 	layout : "border",
+
+	/**
+	 * 初始化组件
+	 */
 	initComponent : function() {
 		var me = this;
 
@@ -165,7 +169,9 @@ Ext.define("PSI.InvCheck.InvCheckMainForm", {
 		me.__lastId = id;
 	},
 
-	// 新增盘点单
+	/**
+	 * 新增盘点单
+	 */
 	onAddBill : function() {
 		var form = Ext.create("PSI.InvCheck.ICEditForm", {
 					parentForm : this
@@ -173,7 +179,9 @@ Ext.define("PSI.InvCheck.InvCheckMainForm", {
 		form.show();
 	},
 
-	// 编辑盘点单
+	/**
+	 * 编辑盘点单
+	 */
 	onEditBill : function() {
 		var me = this;
 		var item = me.getMainGrid().getSelectionModel().getSelection();
@@ -190,7 +198,9 @@ Ext.define("PSI.InvCheck.InvCheckMainForm", {
 		form.show();
 	},
 
-	// 删除盘点单
+	/**
+	 * 删除盘点单
+	 */
 	onDeleteBill : function() {
 		var me = this;
 		var item = me.getMainGrid().getSelectionModel().getSelection();
@@ -234,7 +244,9 @@ Ext.define("PSI.InvCheck.InvCheckMainForm", {
 		});
 	},
 
-	// 提交盘点单
+	/**
+	 * 提交盘点单
+	 */
 	onCommit : function() {
 		var me = this;
 		var item = me.getMainGrid().getSelectionModel().getSelection();
@@ -282,13 +294,16 @@ Ext.define("PSI.InvCheck.InvCheckMainForm", {
 		});
 	},
 
+	/**
+	 * 盘点单主表
+	 */
 	getMainGrid : function() {
 		var me = this;
 		if (me.__mainGrid) {
 			return me.__mainGrid;
 		}
 
-		var modelName = "PSIITBill";
+		var modelName = "PSIICBill";
 		Ext.define(modelName, {
 					extend : "Ext.data.Model",
 					fields : ["id", "ref", "bizDate", "warehouseName",
@@ -428,13 +443,16 @@ Ext.define("PSI.InvCheck.InvCheckMainForm", {
 		return me.__mainGrid;
 	},
 
+	/**
+	 * 盘点单明细记录Grid
+	 */
 	getDetailGrid : function() {
 		var me = this;
 		if (me.__detailGrid) {
 			return me.__detailGrid;
 		}
 
-		var modelName = "PSIITBillDetail";
+		var modelName = "PSIICBillDetail";
 		Ext.define(modelName, {
 					extend : "Ext.data.Model",
 					fields : ["id", "goodsCode", "goodsName", "goodsSpec",
@@ -591,10 +609,16 @@ Ext.define("PSI.InvCheck.InvCheckMainForm", {
 				});
 	},
 
+	/**
+	 * 查询
+	 */
 	onQuery : function() {
 		this.refreshMainGrid();
 	},
 
+	/**
+	 * 清除查询条件
+	 */
 	onClearQuery : function() {
 		var me = this;
 
@@ -607,6 +631,9 @@ Ext.define("PSI.InvCheck.InvCheckMainForm", {
 		me.onQuery();
 	},
 
+	/**
+	 * 查询参数
+	 */
 	getQueryParam : function() {
 		var me = this;
 
