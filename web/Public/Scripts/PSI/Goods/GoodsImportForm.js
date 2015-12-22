@@ -5,9 +5,14 @@
  */
 Ext.define("PSI.Goods.GoodsImportForm", {
 	extend : "Ext.window.Window",
+
 	config : {
 		parentForm : null
 	},
+
+	/**
+	 * 初始化组件
+	 */
 	initComponent : function() {
 		var me = this;
 
@@ -46,7 +51,6 @@ Ext.define("PSI.Goods.GoodsImportForm", {
 				},
 				height : "100%",
 				bodyPadding : 5,
-				// defaultType: 'textfield',
 				fieldDefaults : {
 					labelWidth : 60,
 					labelAlign : "right",
@@ -60,9 +64,7 @@ Ext.define("PSI.Goods.GoodsImportForm", {
 					fieldLabel : '文件',
 					labelWidth : 50,
 					width : 480,
-					msgTarget : 'side', // 提示 文字的位置
-										// \title\under\none\side\[element id]
-
+					msgTarget : 'side',
 					allowBlank : false,
 					anchor : '100%',
 					buttonText : '选择商品文件'
@@ -71,24 +73,12 @@ Ext.define("PSI.Goods.GoodsImportForm", {
 					border : 0
 				}],
 				buttons : buttons
-			}],
-			listeners : {
-				show : {
-					fn : me.onWndShow,
-					scope : me
-				},
-				close : {
-					fn : me.onWndClose,
-					scope : me
-				}
-			}
+			}]
 		});
 
 		me.callParent(arguments);
 	},
-	onWndShow : function() {
-	},
-	// private
+
 	onOK : function() {
 		var me = this;
 		var f = Ext.getCmp("importForm");
@@ -112,8 +102,5 @@ Ext.define("PSI.Goods.GoodsImportForm", {
 								});
 					}
 				});
-	},
-	onWndClose : function() {
-		var me = this;
 	}
 });

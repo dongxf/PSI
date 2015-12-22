@@ -9,6 +9,9 @@ Ext.define("PSI.Goods.GoodsField", {
 		parentCmp : null
 	},
 
+	/**
+	 * 初始化组件
+	 */
 	initComponent : function() {
 		this.enableKeyEvents = true;
 
@@ -191,7 +194,6 @@ Ext.define("PSI.Goods.GoodsField", {
 		wnd.show();
 	},
 
-	// private
 	onOK : function() {
 		var me = this;
 		var grid = me.lookupGrid;
