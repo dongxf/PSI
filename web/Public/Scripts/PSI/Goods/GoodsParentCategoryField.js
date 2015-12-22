@@ -5,6 +5,9 @@ Ext.define("PSI.Goods.GoodsParentCategoryField", {
 			extend : "Ext.form.field.Trigger",
 			alias : "widget.psi_goodsparentcategoryfield",
 
+			/**
+			 * 初始化组件
+			 */
 			initComponent : function() {
 				var me = this;
 
@@ -28,6 +31,9 @@ Ext.define("PSI.Goods.GoodsParentCategoryField", {
 						});
 			},
 
+			/**
+			 * 点击下拉按钮
+			 */
 			onTriggerClick : function(e) {
 				var modelName = "PSIGoodsCategoryModel_Field";
 				Ext.define(modelName, {
@@ -101,7 +107,6 @@ Ext.define("PSI.Goods.GoodsParentCategoryField", {
 				wnd.show();
 			},
 
-			// private
 			onOK : function() {
 				var me = this;
 
@@ -129,6 +134,9 @@ Ext.define("PSI.Goods.GoodsParentCategoryField", {
 				return this.__idValue;
 			},
 
+			/**
+			 * 没有上级分类
+			 */
 			onNone : function() {
 				var me = this;
 

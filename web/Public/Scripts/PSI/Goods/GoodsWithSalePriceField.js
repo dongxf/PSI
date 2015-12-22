@@ -9,6 +9,9 @@ Ext.define("PSI.Goods.GoodsWithSalePriceField", {
 		parentCmp : null
 	},
 
+	/**
+	 * 初始化组件
+	 */
 	initComponent : function() {
 		this.enableKeyEvents = true;
 
@@ -27,6 +30,9 @@ Ext.define("PSI.Goods.GoodsWithSalePriceField", {
 				});
 	},
 
+	/**
+	 * 单击下拉组件
+	 */
 	onTriggerClick : function(e) {
 		var me = this;
 		var modelName = "PSIGoodsField";
@@ -204,7 +210,6 @@ Ext.define("PSI.Goods.GoodsWithSalePriceField", {
 		wnd.show();
 	},
 
-	// private
 	onOK : function() {
 		var me = this;
 		var grid = me.lookupGrid;
