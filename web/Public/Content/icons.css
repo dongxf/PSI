@@ -90,6 +90,14 @@
     background-image:url(../Images/icons/gen_bill.png) !important;
 }
 
+.PSI-button-excelimport {
+    background-image:url(../Images/icons/excel_import.png) !important;
+}
+
+.PSI-button-excelexport {
+    background-image:url(../Images/icons/excel_export.png) !important;
+}
+
 .PSI-fid-8993 {
     background-image:url(../Images/fid/fid-8993.png) !important;
 }

@@ -185,7 +185,7 @@ Ext.define("PSI.Goods.MainForm", {
 						scope : me
 					}, {
 						text : "导入商品",
-						iconCls : "PSI-button-add",
+						iconCls : "PSI-button-excelimport",
 						handler : me.onImportGoods,
 						scope : me
 					}, "-", {
