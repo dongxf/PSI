@@ -3,10 +3,15 @@
  */
 Ext.define("PSI.Goods.SafetyInventoryEditForm", {
 	extend : "Ext.window.Window",
+
 	config : {
 		parentForm : null,
 		entity : null
 	},
+
+	/**
+	 * 初始化组件
+	 */
 	initComponent : function() {
 		var me = this;
 		var entity = me.getEntity();

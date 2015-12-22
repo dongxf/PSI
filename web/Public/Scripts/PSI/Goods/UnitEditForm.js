@@ -3,10 +3,15 @@
  */
 Ext.define("PSI.Goods.UnitEditForm", {
 			extend : "Ext.window.Window",
+
 			config : {
 				parentForm : null,
 				entity : null
 			},
+
+			/**
+			 * 初始化组件
+			 */
 			initComponent : function() {
 				var me = this;
 				var entity = me.getEntity();
@@ -103,7 +108,7 @@ Ext.define("PSI.Goods.UnitEditForm", {
 
 				me.callParent(arguments);
 			},
-			// private
+
 			onOK : function(thenAdd) {
 				var me = this;
 				var f = Ext.getCmp("editForm");
@@ -135,6 +140,7 @@ Ext.define("PSI.Goods.UnitEditForm", {
 							}
 						});
 			},
+
 			onEditNameSpecialKey : function(field, e) {
 				if (e.getKey() == e.ENTER) {
 					var f = Ext.getCmp("editForm");
@@ -143,12 +149,14 @@ Ext.define("PSI.Goods.UnitEditForm", {
 					}
 				}
 			},
+
 			onWndClose : function() {
 				var me = this;
 				if (me.__lastId) {
 					me.getParentForm().freshGrid(me.__lastId);
 				}
 			},
+
 			onWndShow : function() {
 				var editName = Ext.getCmp("editName");
 				editName.focus();
