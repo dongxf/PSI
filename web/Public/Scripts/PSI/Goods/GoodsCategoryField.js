@@ -5,6 +5,9 @@ Ext.define("PSI.Goods.GoodsCategoryField", {
 			extend : "Ext.form.field.Trigger",
 			alias : "widget.psi_goodscategoryfield",
 
+			/**
+			 * 初始化组件
+			 */
 			initComponent : function() {
 				var me = this;
 
@@ -97,7 +100,6 @@ Ext.define("PSI.Goods.GoodsCategoryField", {
 				wnd.show();
 			},
 
-			// private
 			onOK : function() {
 				var me = this;
 

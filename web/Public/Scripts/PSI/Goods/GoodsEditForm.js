@@ -3,10 +3,15 @@
  */
 Ext.define("PSI.Goods.GoodsEditForm", {
 			extend : "Ext.window.Window",
+
 			config : {
 				parentForm : null,
 				entity : null
 			},
+
+			/**
+			 * 初始化组件
+			 */
 			initComponent : function() {
 				var me = this;
 				var entity = me.getEntity();
@@ -186,9 +191,6 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 									}
 								}, {
 									fieldLabel : "销售价",
-									// allowBlank: false,
-									// blankText: "没有输入销售价",
-									// beforeLabelTextTpl: PSI.Const.REQUIRED,
 									xtype : "numberfield",
 									hideTrigger : true,
 									name : "salePrice",
@@ -323,12 +325,12 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 							}
 						});
 			},
-			// private
+
 			onOK : function(thenAdd) {
 				var me = this;
 
-				Ext.getCmp("editCategoryId").setValue(Ext
-						.getCmp("editCategory").getIdValue());
+				var categoryId = Ext.getCmp("editCategory").getIdValue();
+				Ext.getCmp("editCategoryId").setValue(categoryId);
 
 				var f = Ext.getCmp("editForm");
 				var el = f.getEl();
@@ -360,6 +362,7 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 							}
 						});
 			},
+			
 			onEditSpecialKey : function(field, e) {
 				if (e.getKey() === e.ENTER) {
 					var me = this;
@@ -374,6 +377,7 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 					}
 				}
 			},
+			
 			onLastEditSpecialKey : function(field, e) {
 				if (e.getKey() == e.ENTER) {
 					var f = Ext.getCmp("editForm");
@@ -383,6 +387,7 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 					}
 				}
 			},
+			
 			clearEdit : function() {
 				Ext.getCmp("editCode").focus();
 
@@ -396,6 +401,7 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 					edit.clearInvalid();
 				}
 			},
+			
 			onWndClose : function() {
 				var me = this;
 				me.getParentForm().__lastId = me.__lastId;
