@@ -4,6 +4,7 @@ function PSI_getMoPaasV2MySQLConfig() {
 	$services = getenv("VCAP_SERVICES");
 	$services_json = json_decode($services, true);
 	$mysql_config = $services_json["MySQL-docker-5.5"][0]["credentials"];
+	var_dump($mysql_config);
 	
 	return $mysql_config;
 }
@@ -12,7 +13,7 @@ function PSI_getHost() {
 	// MoPaaS V2
 	$cfg = PSI_getMoPaasV2MySQLConfig();
 	if ($cfg) {
-		return $cfg["hostname"];
+		return $cfg["host"];
 	}
 	
 	// 本地单机部署，发现写IP地址比localhost，数据库要快很多
