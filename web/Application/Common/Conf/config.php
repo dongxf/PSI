@@ -3,6 +3,8 @@
 function PSI_getMoPaasV2MySQLConfig() {
 	$services = getenv("VCAP_SERVICES");
 	$services_json = json_decode($services, true);
+	
+	// 数据库使用 MoPaaS提供的 MySQL-docker
 	$mysql_config = $services_json["MySQL-docker-5.5"][0]["credentials"];
 	
 	return $mysql_config;
