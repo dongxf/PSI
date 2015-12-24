@@ -9,6 +9,9 @@ Ext.define("PSI.Warehouse.EditForm", {
 				entity : null
 			},
 
+			/**
+			 * 初始化组件
+			 */
 			initComponent : function() {
 				var me = this;
 
@@ -129,6 +132,9 @@ Ext.define("PSI.Warehouse.EditForm", {
 				me.callParent(arguments);
 			},
 
+			/**
+			 * 保存
+			 */
 			onOK : function(thenAdd) {
 				var me = this;
 				var f = Ext.getCmp("editForm");
