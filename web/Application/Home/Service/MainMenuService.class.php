@@ -9,6 +9,9 @@ namespace Home\Service;
  */
 class MainMenuService extends PSIBaseService {
 
+	/**
+	 * 当前用户有权限访问的所有菜单项
+	 */
 	public function mainMenuItems() {
 		$us = new UserService();
 		
