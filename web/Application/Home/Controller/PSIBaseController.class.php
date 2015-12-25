@@ -32,12 +32,6 @@ class PSIBaseController extends Controller {
 		// 时间标志，用于浏览器及时刷新JS文件
 		$dtFlag = getdate();
 		$this->assign("dtFlag", $dtFlag[0]);
-		
-		// 在MoPaaS部署下，启用gzip
-		//$gzip = $us->isMoPaaS() ? "1" : "0";
-		
-		$gzip = "0";
-		$this->assign("gzip", $gzip);
 	}
 
 	/**
