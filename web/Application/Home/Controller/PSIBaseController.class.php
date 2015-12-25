@@ -34,7 +34,9 @@ class PSIBaseController extends Controller {
 		$this->assign("dtFlag", $dtFlag[0]);
 		
 		// 在MoPaaS部署下，启用gzip
-		$gzip = $us->isMoPaaS() ? "1" : "0";
+		//$gzip = $us->isMoPaaS() ? "1" : "0";
+		
+		$gzip = "0";
 		$this->assign("gzip", $gzip);
 	}
 
