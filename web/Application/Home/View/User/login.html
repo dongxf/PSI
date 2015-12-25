@@ -45,7 +45,11 @@
     </div>
 </div>
 	
-<script src="{$uri}Public/ExtJS/ext-all.js" type="text/javascript"></script>
+<if condition="$gzip == '1' ">
+ 	<script src="{$uri}Public/ExtJS/ext-all.js.gz" type="text/javascript"></script>
+<else />
+ 	<script src="{$uri}Public/ExtJS/ext-all.js" type="text/javascript"></script>
+</if>
 <script src="{$uri}Public/ExtJS/ext-lang-zh_CN.js" type="text/javascript"></script>
 <script src="{$uri}Public/Scripts/PSI/MsgBox.js?dt={$dtFlag}" type="text/javascript"></script>
 <script src="{$uri}Public/Scripts/PSI/Const.js?dt={$dtFlag}" type="text/javascript"></script>
