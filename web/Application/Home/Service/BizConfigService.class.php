@@ -318,6 +318,10 @@ class BizConfigService extends PSIBaseService {
 		}
 		
 		foreach ( $params as $key => $value ) {
+			if ($key == "companyId") {
+				continue;
+			}
+			
 			if ($key == "9001-01") {
 				$value = intval($value);
 			}
