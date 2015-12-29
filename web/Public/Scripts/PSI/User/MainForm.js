@@ -3,7 +3,7 @@
  */
 Ext.define("PSI.User.MainForm", {
 	extend : "Ext.panel.Panel",
-	
+
 	getBaseURL : function() {
 		return PSI.Const.BASE_URL;
 	},
@@ -217,73 +217,73 @@ Ext.define("PSI.User.MainForm", {
 		this.grid = grid;
 
 		Ext.apply(me, {
-			border : 0,
-			layout : "border",
-			tbar : [{
-						text : "新增组织机构",
-						iconCls : "PSI-button-add",
-						handler : me.onAddOrg,
-						scope : me
-					}, {
-						text : "编辑组织机构",
-						iconCls : "PSI-button-edit",
-						handler : me.onEditOrg,
-						scope : me
-					}, {
-						text : "删除组织机构",
-						iconCls : "PSI-button-delete",
-						handler : me.onDeleteOrg,
-						scope : me
-					}, "-", {
-						text : "新增用户",
-						iconCls : "PSI-button-add-user",
-						handler : me.onAddUser,
-						scope : me
-					}, {
-						text : "修改用户",
-						iconCls : "PSI-button-edit-user",
-						handler : me.onEditUser,
-						scope : me
-					}, {
-						text : "删除用户",
-						iconCls : "PSI-button-delete-user",
-						handler : me.onDeleteUser,
-						scope : me
-					}, "-", {
-						text : "修改用户密码",
-						iconCls : "PSI-button-change-password",
-						handler : me.onEditUserPassword,
-						scope : me
-					}, "-", {
-						text : "帮助",
-						iconCls : "PSI-help",
-						handler : function() {
-							window
-									.open("http://www.kancloud.cn/crm8000/psi_help/users");
-						}
-					}, "-", {
-						text : "关闭",
-						iconCls : "PSI-button-exit",
-						handler : function() {
-							location.replace(me.getBaseURL());
-						}
-					}],
-			items : [{
-						region : "center",
-						xtype : "panel",
-						layout : "fit",
-						border : 0,
-						items : [grid]
-					}, {
-						xtype : "panel",
-						region : "west",
-						layout : "fit",
-						width : 440,
-						split : true,
-						border : 0,
-						items : [orgTree]
-					}]
-		});
+					border : 0,
+					layout : "border",
+					tbar : [{
+								text : "新增组织机构",
+								iconCls : "PSI-button-add",
+								handler : me.onAddOrg,
+								scope : me
+							}, {
+								text : "编辑组织机构",
+								iconCls : "PSI-button-edit",
+								handler : me.onEditOrg,
+								scope : me
+							}, {
+								text : "删除组织机构",
+								iconCls : "PSI-button-delete",
+								handler : me.onDeleteOrg,
+								scope : me
+							}, "-", {
+								text : "新增用户",
+								iconCls : "PSI-button-add-user",
+								handler : me.onAddUser,
+								scope : me
+							}, {
+								text : "修改用户",
+								iconCls : "PSI-button-edit-user",
+								handler : me.onEditUser,
+								scope : me
+							}, {
+								text : "删除用户",
+								iconCls : "PSI-button-delete-user",
+								handler : me.onDeleteUser,
+								scope : me
+							}, "-", {
+								text : "修改用户密码",
+								iconCls : "PSI-button-change-password",
+								handler : me.onEditUserPassword,
+								scope : me
+							}, "-", {
+								text : "帮助",
+								iconCls : "PSI-help",
+								handler : function() {
+									window.open(PSI.Const.BASE_URL
+											+ "/Home/Help/index?t=user");
+								}
+							}, "-", {
+								text : "关闭",
+								iconCls : "PSI-button-exit",
+								handler : function() {
+									location.replace(me.getBaseURL());
+								}
+							}],
+					items : [{
+								region : "center",
+								xtype : "panel",
+								layout : "fit",
+								border : 0,
+								items : [grid]
+							}, {
+								xtype : "panel",
+								region : "west",
+								layout : "fit",
+								width : 440,
+								split : true,
+								border : 0,
+								items : [orgTree]
+							}]
+				});
 
 		me.callParent(arguments);
 	},
