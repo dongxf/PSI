@@ -81,6 +81,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20151128_02($db);
 		$this->update_20151128_03($db);
 		$this->update_20151210_01($db);
+		$this->update_20150105_01($db);
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -92,6 +93,75 @@ class UpdateDBService extends PSIBaseService {
 		$bl->insertBizlog("升级数据库，数据库版本 = " . $this->CURRENT_DB_VERSION);
 		
 		return $this->ok();
+	}
+
+	private function update_20150105_01($db) {
+		// 本次更新：新增采购订单表
+		$tableName = "t_so_bill";
+		if (! $this->tableExists($db, $tableName)) {
+			$sql = "CREATE TABLE IF NOT EXISTS `t_so_bill` (
+					  `id` varchar(255) NOT NULL,
+					  `bill_status` int(11) NOT NULL,
+					  `biz_dt` datetime NOT NULL,
+					  `deal_date` datetime NOT NULL,
+					  `org_id` varchar(255) NOT NULL,
+					  `biz_user_id` varchar(255) NOT NULL,
+					  `date_created` datetime DEFAULT NULL,
+					  `goods_money` decimal(19,2) NOT NULL,
+					  `tax` decimal(19,2) NOT NULL,
+					  `money_with_tax` decimal(19,2) NOT NULL,
+					  `input_user_id` varchar(255) NOT NULL,
+					  `ref` varchar(255) NOT NULL,
+					  `customer_id` varchar(255) NOT NULL,
+					  `contact` varchar(255) NOT NULL,
+					  `tel` varchar(255) DEFAULT NULL,
+					  `fax` varchar(255) DEFAULT NULL,
+					  `deal_address` varchar(255) DEFAULT NULL,
+					  `bill_memo` varchar(255) DEFAULT NULL,
+					  `receiving_type` int(11) NOT NULL DEFAULT 0,
+					  `confirm_user_id` varchar(255) DEFAULT NULL,
+					  `confirm_date` datetime DEFAULT NULL,
+					  `data_org` varchar(255) DEFAULT NULL,
+					  `company_id` varchar(255) DEFAULT NULL,
+					  PRIMARY KEY (`id`)
+					) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+					";
+			$db->execute($sql);
+		}
+		
+		$tableName = "t_so_bill_detail";
+		if (! $this->tableExists($db, $tableName)) {
+			$sql = "CREATE TABLE IF NOT EXISTS `t_so_bill_detail` (
+					  `id` varchar(255) NOT NULL,
+					  `date_created` datetime DEFAULT NULL,
+					  `goods_id` varchar(255) NOT NULL,
+					  `goods_count` int(11) NOT NULL,
+					  `goods_money` decimal(19,2) NOT NULL,
+					  `goods_price` decimal(19,2) NOT NULL,
+					  `sobill_id` varchar(255) NOT NULL,
+					  `tax_rate` decimal(19,2) NOT NULL,
+					  `tax` decimal(19,2) NOT NULL,
+					  `money_with_tax` decimal(19,2) NOT NULL,
+					  `ws_count` int(11) NOT NULL,
+					  `left_count` int(11) NOT NULL,
+					  `show_order` int(11) NOT NULL,
+					  `data_org` varchar(255) DEFAULT NULL,
+					  `company_id` varchar(255) DEFAULT NULL,
+					  PRIMARY KEY (`id`)
+					) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+					";
+			$db->execute($sql);
+		}
+		
+		$tableName = "t_so_ws";
+		if (! $this->tableExists($db, $tableName)) {
+			$sql = "CREATE TABLE IF NOT EXISTS `t_so_ws` (
+					  `so_id` varchar(255) NOT NULL,
+					  `ws_id` varchar(255) NOT NULL
+					) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+					";
+			$db->execute($sql);
+		}
 	}
 
 	private function update_20151210_01($db) {
