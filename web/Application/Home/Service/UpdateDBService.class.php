@@ -81,7 +81,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20151128_02($db);
 		$this->update_20151128_03($db);
 		$this->update_20151210_01($db);
-		$this->update_20150105_01($db);
+		$this->update_20160105_01($db);
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -95,7 +95,7 @@ class UpdateDBService extends PSIBaseService {
 		return $this->ok();
 	}
 
-	private function update_20150105_01($db) {
+	private function update_20160105_01($db) {
 		// 本次更新：新增采购订单表
 		$tableName = "t_so_bill";
 		if (! $this->tableExists($db, $tableName)) {
