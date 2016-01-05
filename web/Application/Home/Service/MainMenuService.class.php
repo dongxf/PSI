@@ -2,6 +2,8 @@
 
 namespace Home\Service;
 
+use Home\Common\FIdConst;
+
 /**
  * 主菜单Service
  *
@@ -13,6 +15,13 @@ class MainMenuService extends PSIBaseService {
 	 * 当前用户有权限访问的所有菜单项
 	 */
 	public function mainMenuItems() {
+		
+		// 还在开发中的功能，在MoPaaS上暂时不出现在菜单上
+		$isMoPaas = $this->isMoPaaS();
+		$inDeveloping = array(
+				FIdConst::SALE_ORDER
+		);
+		
 		$us = new UserService();
 		
 		$sql = "select id, caption, fid from t_menu_item
@@ -33,6 +42,13 @@ class MainMenuService extends PSIBaseService {
 			// 第二级菜单
 			$index2 = 0;
 			foreach ( $m2 as $menuItem2 ) {
+				
+				if ($isMoPaas) {
+					if (in_array($menuItem2["fid"], $inDeveloping)) {
+						continue;
+					}
+				}
+				
 				$children2 = array();
 				$sql = "select id, caption, fid from t_menu_item
 							where parent_id = '%s' order by show_order ";

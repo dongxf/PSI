@@ -260,4 +260,9 @@ class FIdConst {
 	 * 采购订单 - 生成采购入库单
 	 */
 	const PURCHASE_ORDER_GEN_PWBILL = "2027-02";
+	
+	/**
+	 * 销售订单
+	 */
+	const SALE_ORDER = "2028";
 }

@@ -63,7 +63,8 @@ INSERT INTO `t_fid` (`fid`, `name`) VALUES
 ('2026', '预付款管理'),
 ('2027', '采购订单'),
 ('2027-01', '采购订单 - 审核/取消审核'),
-('2027-02', '采购订单 - 生成采购入库单');
+('2027-02', '采购订单 - 生成采购入库单'),
+('2028', '销售订单');
 
 TRUNCATE TABLE `t_menu_item`;
 INSERT INTO `t_menu_item` (`id`, `caption`, `fid`, `parent_id`, `show_order`) VALUES
@@ -81,6 +82,7 @@ INSERT INTO `t_menu_item` (`id`, `caption`, `fid`, `parent_id`, `show_order`) VA
 ('0303', '库间调拨', '2009', '03', 3),
 ('0304', '库存盘点', '2010', '03', 4),
 ('04', '销售', NULL, NULL, 4),
+('0400', '销售订单', '2028', '04', 0),
 ('0401', '销售出库', '2002', '04', 1),
 ('0402', '销售退货入库', '2006', '04', 2),
 ('05', '客户关系', NULL, NULL, 5),
@@ -180,7 +182,8 @@ INSERT INTO `t_permission` (`id`, `fid`, `name`, `note`) VALUES
 ('2026', '2026', '预付款管理', '预付款管理'),
 ('2027', '2027', '采购订单', '采购订单'),
 ('2027-01', '2027-01', '采购订单 - 审核/取消审核', '采购订单 - 审核/取消审核'),
-('2027-02', '2027-02', '采购订单 - 生成采购入库单', '采购订单 - 生成采购入库单');
+('2027-02', '2027-02', '采购订单 - 生成采购入库单', '采购订单 - 生成采购入库单'),
+('2028', '2028', '销售订单', '销售订单');
 
 TRUNCATE TABLE `t_role`;
 INSERT INTO `t_role` (`id`, `name`, `data_org`, `company_id`) VALUES
@@ -229,7 +232,8 @@ INSERT INTO `t_role_permission` (`role_id`, `permission_id`) VALUES
 ('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2026'),
 ('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2027'),
 ('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2027-01'),
-('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2027-02');
+('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2027-02'),
+('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2028');
 
 TRUNCATE TABLE `t_role_user`;
 INSERT INTO `t_role_user` (`role_id`, `user_id`) VALUES
