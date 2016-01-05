@@ -2,6 +2,8 @@
 
 namespace Home\Service;
 
+use Home\Common\FIdConst;
+
 /**
  * 数据库升级Service
  *
@@ -82,6 +84,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20151128_03($db);
 		$this->update_20151210_01($db);
 		$this->update_20160105_01($db);
+		$this->update_20160105_02($db);
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -93,6 +96,38 @@ class UpdateDBService extends PSIBaseService {
 		$bl->insertBizlog("升级数据库，数据库版本 = " . $this->CURRENT_DB_VERSION);
 		
 		return $this->ok();
+	}
+
+	private function update_20160105_02($db) {
+		// 本次更新：新增模块销售订单
+		$fid = FIdConst::SALE_ORDER;
+		$name = "销售订单";
+		$sql = "select count(*) as cnt from t_fid where fid = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_fid(fid, name) value('%s', '%s')";
+			$db->execute($sql, $fid, $name);
+		}
+		
+		$sql = "select count(*) as cnt from t_permission where id = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_permission(id, fid, name, note) 
+					value('%s', '%s', '%s', '%s')";
+			$db->execute($sql, $fid, $fid, $name, $name);
+		}
+		
+		$sql = "select count(*) as cnt from t_menu_item
+				where id = '0400' ";
+		$data = $db->query($sql);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_menu_item(id, caption, fid, parent_id, show_order)
+					values ('0400', '%s', '%s', '04', 0)";
+			$db->execute($sql, $name, $fid);
+		}
 	}
 
 	private function update_20160105_01($db) {
