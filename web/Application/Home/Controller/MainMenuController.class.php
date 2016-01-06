@@ -191,6 +191,10 @@ class MainMenuController extends Controller {
 				// 采购订单
 				redirect(__ROOT__ . "/Home/Purchase/pobillIndex");
 				break;
+			case FIdConst::SALE_ORDER:
+				// 销售订单
+				redirect(__ROOT__ . "/Home/Sale/soIndex");
+				break;
 			default :
 				redirect(__ROOT__ . "/Home");
 		}

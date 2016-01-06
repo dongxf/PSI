@@ -1,0 +1,16 @@
+<layout name="layout" />
+
+<script>
+    Ext.onReady(function(){
+        var app = Ext.create("PSI.App", {
+            userName: "{$loginUserName}",
+            productionName: "{$productionName}"
+        });
+
+        //app.add(Ext.create("PSI.Sale.SOMainForm"));
+        app.setAppHeader({
+            title: "{$title}",
+            iconCls: "PSI-fid2028"
+            });
+    });
+</script>

@@ -17,6 +17,23 @@ use Home\Service\SRBillService;
 class SaleController extends PSIBaseController {
 
 	/**
+	 * 销售订单 - 主页面
+	 */
+	public function soIndex() {
+		$us = new UserService();
+		
+		if ($us->hasPermission(FIdConst::SALE_ORDER)) {
+			$this->initVar();
+			
+			$this->assign("title", "销售订单");
+			
+			$this->display();
+		} else {
+			$this->gotoLoginPage("/Home/Sale/soIndex");
+		}
+	}
+
+	/**
 	 * 销售出库 - 主页面
 	 */
 	public function wsIndex() {
