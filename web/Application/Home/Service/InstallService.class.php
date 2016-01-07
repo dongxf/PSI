@@ -1144,7 +1144,7 @@ class InstallService extends PSIBaseService {
 		// t_org
 		$sql = "INSERT INTO `t_org` (`id`, `full_name`, `name`, `org_code`, `data_org`, `parent_id`) VALUES
 					('4D74E1E4-A129-11E4-9B6A-782BCBD7746B', '公司', '公司', '01', '01', NULL),
-					('5EBDBE11-A129-11E4-9B6A-782BCBD7746B', '公司\\信息部', '信息部', '0199', '0101', '4D74E1E4-A129-11E4-9B6A-782BCBD7746B');
+					('5EBDBE11-A129-11E4-9B6A-782BCBD7746B', '公司\\\\信息部', '信息部', '0199', '0101', '4D74E1E4-A129-11E4-9B6A-782BCBD7746B');
 		";
 		$db->execute($sql);
 		
