@@ -344,6 +344,9 @@ class PermissionService extends PSIBaseService {
 		return $result;
 	}
 
+	/**
+	 * 删除角色
+	 */
 	public function deleteRole($id) {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
@@ -363,6 +366,13 @@ class PermissionService extends PSIBaseService {
 			return $this->bad("要删除的角色不存在");
 		}
 		$roleName = $data[0]["name"];
+		
+		$sql = "delete from t_role_permission_dataorg where role_id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			$db->rollback();
+			return $this->sqlError(__LINE__);
+		}
 		
 		$sql = "delete from t_role_permission where role_id = '%s' ";
 		$rc = $db->execute($sql, $id);
