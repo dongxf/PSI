@@ -930,6 +930,13 @@ class UserService extends PSIBaseService {
 		
 		// TODO 如果增加了其他单据，同样需要做出判断是否使用了该用户
 		
+		$sql = "delete from t_role_user where user_id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			$db->rollback();
+			return $this->sqlError(__LINE__);
+		}
+		
 		$sql = "delete from t_user where id = '%s' ";
 		$rc = $db->execute($sql, $id);
 		if ($rc === false) {
