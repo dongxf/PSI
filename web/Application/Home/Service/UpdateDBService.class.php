@@ -85,6 +85,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20151210_01($db);
 		$this->update_20160105_01($db);
 		$this->update_20160105_02($db);
+		$this->update_20160108_01($db);
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -96,6 +97,197 @@ class UpdateDBService extends PSIBaseService {
 		$bl->insertBizlog("升级数据库，数据库版本 = " . $this->CURRENT_DB_VERSION);
 		
 		return $this->ok();
+	}
+
+	private function update_20160108_01($db) {
+		// 本次更新：t_permission新增字段 category、py
+		$tableName = "t_permission";
+		$columnName = "category";
+		
+		$updateData = false;
+		
+		if (! $this->columnExists($db, $tableName, $columnName)) {
+			$sql = "alter table {$tableName} add {$columnName} varchar(255) default null;";
+			$db->execute($sql);
+			
+			$updateData = true;
+		}
+		
+		$columnName = "py";
+		if (! $this->columnExists($db, $tableName, $columnName)) {
+			$sql = "alter table {$tableName} add {$columnName} varchar(255) default null;";
+			$db->execute($sql);
+			
+			$updateData = true;
+		}
+		
+		if (! $updateData) {
+			return;
+		}
+		
+		// 更新t_permission数据
+		$ps = new PinyinService();
+		$sql = "select id, name from t_permission";
+		$data = $db->query($sql);
+		foreach ( $data as $v ) {
+			$id = $v["id"];
+			$name = $v["name"];
+			$sql = "update t_permission
+					set py = '%s'
+					where id = '%s' ";
+			$db->execute($sql, $ps->toPY($name), $id);
+		}
+		
+		// 权限分类：系统管理
+		$sql = "update t_permission
+				set category = '系统管理' 
+				where id in ('-8996', '-8997', '-8999', '-8999-01', 
+					'-8999-02', '2008')";
+		$db->execute($sql);
+		
+		// 权限分类：商品
+		$sql = "update t_permission
+				set category = '商品' 
+				where id in ('1001', '1001-01', '1001-02', '1002')";
+		$db->execute($sql);
+		
+		// 权限分类：仓库
+		$sql = "update t_permission
+				set category = '仓库' 
+				where id in ('1003', '1003-01')";
+		$db->execute($sql);
+		
+		// 权限分类： 供应商管理
+		$sql = "update t_permission
+				set category = '供应商管理'
+				where id in ('1004', '1004-01', '1004-02')";
+		$db->execute($sql);
+		
+		// 权限分类：客户管理
+		$sql = "update t_permission
+				set category = '客户管理'
+				where id in ('1007', '1007-01', '1007-02')";
+		$db->execute($sql);
+		
+		// 权限分类：库存建账
+		$sql = "update t_permission
+				set category = '库存建账'
+				where id in ('2000')";
+		$db->execute($sql);
+		
+		// 权限分类：采购入库
+		$sql = "update t_permission
+				set category = '采购入库'
+				where id in ('2001')";
+		$db->execute($sql);
+		
+		// 权限分类：销售出库
+		$sql = "update t_permission
+				set category = '销售出库'
+				where id in ('2002', '2002-01')";
+		$db->execute($sql);
+		
+		// 权限分类：库存账查询
+		$sql = "update t_permission
+				set category = '库存账查询'
+				where id in ('2003')";
+		$db->execute($sql);
+		
+		// 权限分类：应收账款管理
+		$sql = "update t_permission
+				set category = '应收账款管理'
+				where id in ('2004')";
+		$db->execute($sql);
+		
+		// 权限分类：应付账款管理
+		$sql = "update t_permission
+				set category = '应付账款管理'
+				where id in ('2005')";
+		$db->execute($sql);
+		
+		// 权限分类：销售退货入库
+		$sql = "update t_permission
+				set category = '销售退货入库'
+				where id in ('2006')";
+		$db->execute($sql);
+		
+		// 权限分类：采购退货出库
+		$sql = "update t_permission
+				set category = '采购退货出库'
+				where id in ('2007')";
+		$db->execute($sql);
+		
+		// 权限分类：库间调拨
+		$sql = "update t_permission
+				set category = '库间调拨'
+				where id in ('2009')";
+		$db->execute($sql);
+		
+		// 权限分类：库存盘点
+		$sql = "update t_permission
+				set category = '库存盘点'
+				where id in ('2010')";
+		$db->execute($sql);
+		
+		// 权限分类：首页看板
+		$sql = "update t_permission
+				set category = '首页看板'
+				where id in ('2011-01', '2011-02', '2011-03', '2011-04')";
+		$db->execute($sql);
+		
+		// 权限分类：销售日报表
+		$sql = "update t_permission
+				set category = '销售日报表'
+				where id in ('2012', '2013', '2014', '2015')";
+		$db->execute($sql);
+		
+		// 权限分类：销售月报表
+		$sql = "update t_permission
+				set category = '销售月报表'
+				where id in ('2016', '2017', '2018', '2019')";
+		$db->execute($sql);
+		
+		// 权限分类：库存报表
+		$sql = "update t_permission
+				set category = '库存报表'
+				where id in ('2020', '2023')";
+		$db->execute($sql);
+		
+		// 权限分类：资金报表
+		$sql = "update t_permission
+				set category = '资金报表'
+				where id in ('2021', '2022')";
+		$db->execute($sql);
+		
+		// 权限分类：现金管理
+		$sql = "update t_permission
+				set category = '现金管理'
+				where id in ('2024')";
+		$db->execute($sql);
+		
+		// 权限分类：预收款管理
+		$sql = "update t_permission
+				set category = '预收款管理'
+				where id in ('2025')";
+		$db->execute($sql);
+		
+		// 权限分类：预付款管理
+		$sql = "update t_permission
+				set category = '预付款管理'
+				where id in ('2026')";
+		$db->execute($sql);
+		
+		// 权限分类：采购订单
+		$sql = "update t_permission
+				set category = '采购订单'
+				where id in ('2027', '2027-01', '2027-02')";
+		$db->execute($sql);
+		
+		// 权限分类：销售订单
+		$sql = "update t_permission
+				set category = '销售订单'
+				where id in ('2028')";
+		$db->execute($sql);
 	}
 
 	private function update_20160105_02($db) {
