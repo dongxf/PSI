@@ -86,6 +86,8 @@ class InstallService extends PSIBaseService {
 				  `fid` varchar(255) NOT NULL,
 				  `name` varchar(255) NOT NULL,
 				  `note` varchar(255) DEFAULT NULL,
+				  `category` varchar(255) DEFAULT NULL,
+				  `py` varchar(255) DEFAULT NULL,
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
