@@ -10,54 +10,35 @@ Ext.define("PSI.Permission.SelectPermissionForm", {
 			},
 
 			title : "选择权限",
-			width : 600,
-			height : 500,
+			width : 700,
+			height : 600,
 			modal : true,
 			resizable : false,
 			layout : "border",
 
 			initComponent : function() {
 				var me = this;
-				Ext.define("PSIPermission_SelectPermissionForm", {
-							extend : "Ext.data.Model",
-							fields : ["id", "name"]
-						});
-
-				var permissionStore = Ext.create("Ext.data.Store", {
-							model : "PSIPermission_SelectPermissionForm",
-							autoLoad : false,
-							data : []
-						});
-
-				var permissionGrid = Ext.create("Ext.grid.Panel", {
-							title : "角色的权限",
-							padding : 5,
-							selModel : {
-								mode : "MULTI"
-							},
-							selType : "checkboxmodel",
-							viewConfig : {
-								deferEmptyText : false,
-								emptyText : "所有权限都已经加入到当前角色中了"
-							},
-							store : permissionStore,
-							columns : [{
-										header : "权限名称",
-										dataIndex : "name",
-										flex : 1,
-										menuDisabled : true
-									}]
-						});
-
-				this.permissionGrid = permissionGrid;
 
 				Ext.apply(me, {
 							padding : 5,
 							items : [{
 										region : "center",
-										layout : "fit",
+										layout : "border",
 										border : 0,
-										items : [permissionGrid]
+										items : [{
+													region : "north",
+													layout : "fit",
+													height : "50%",
+													border : 0,
+													items : [me
+															.getPermissionGrid()]
+												}, {
+													region : "center",
+													layout : "fit",
+													border : 0,
+													items : [me
+															.getSelectedGrid()]
+												}]
 									}, {
 										region : "south",
 										layout : {
@@ -110,41 +91,36 @@ Ext.define("PSI.Permission.SelectPermissionForm", {
 			onWndShow : function() {
 				var me = this;
 				var idList = me.getIdList();
-				var permissionStore = me.permissionGrid.getStore();
+				var store = me.getPermissionGrid().getStore();
 
 				var el = me.getEl() || Ext.getBody();
 				el.mask("数据加载中...");
-				Ext.Ajax.request({
-							url : PSI.Const.BASE_URL
-									+ "Home/Permission/selectPermission",
-							params : {
-								idList : idList.join()
-							},
-							method : "POST",
-							callback : function(options, success, response) {
-								permissionStore.removeAll();
+				var r = {
+					url : PSI.Const.BASE_URL
+							+ "Home/Permission/selectPermission",
+					params : {
+						idList : idList.join()
+					},
+					method : "POST",
+					callback : function(options, success, response) {
+						store.removeAll();
 
-								if (success) {
-									var data = Ext.JSON
-											.decode(response.responseText);
+						if (success) {
+							var data = Ext.JSON.decode(response.responseText);
 
-									for (var i = 0; i < data.length; i++) {
-										var item = data[i];
-										permissionStore.add({
-													id : item.id,
-													name : item.name
-												});
-									}
-								}
+							store.add(data);
+						}
 
-								el.unmask();
-							}
-						});
+						el.unmask();
+					}
+				};
+
+				Ext.Ajax.request(r);
 			},
 
 			onOK : function() {
 				var me = this;
-				var grid = me.permissionGrid;
+				var grid = me.getPermissionGrid();
 
 				var items = grid.getSelectionModel().getSelection();
 				if (items == null || items.length == 0) {
@@ -179,5 +155,118 @@ Ext.define("PSI.Permission.SelectPermissionForm", {
 			setDataOrgList : function(fullNameList, dataOrgList) {
 				Ext.getCmp("editDataOrg").setValue(fullNameList);
 				Ext.getCmp("editDataOrgIdList").setValue(dataOrgList);
+			},
+
+			/**
+			 * 所有可以选择的权限的Grid
+			 */
+			getPermissionGrid : function() {
+				var me = this;
+				if (me.__permissionGrid) {
+					return me.__permissionGrid;
+				}
+
+				var modelName = "PSIPermission_SelectPermissionForm";
+				Ext.define(modelName, {
+							extend : "Ext.data.Model",
+							fields : ["id", "name"]
+						});
+
+				var store = Ext.create("Ext.data.Store", {
+							model : modelName,
+							autoLoad : false,
+							data : []
+						});
+
+				me.__permissionGrid = Ext.create("Ext.grid.Panel", {
+							title : "所有可以选择的权限",
+							padding : 5,
+							viewConfig : {
+								deferEmptyText : false,
+								emptyText : "所有权限都已经加入到当前角色中了"
+							},
+							store : store,
+							columns : [{
+										header : "权限名称",
+										dataIndex : "name",
+										flex : 1,
+										menuDisabled : true
+									}]
+						});
+
+				return me.__permissionGrid;
+			},
+
+			/**
+			 * 最终用户选择权限的Grid
+			 */
+			getSelectedGrid : function() {
+				var me = this;
+				if (me.__selectedGrid) {
+					return me.__selectedGrid;
+				}
+
+				var modelName = "PSISelectedPermission_SelectPermissionForm";
+				Ext.define(modelName, {
+							extend : "Ext.data.Model",
+							fields : ["id", "name"]
+						});
+
+				var store = Ext.create("Ext.data.Store", {
+							model : modelName,
+							autoLoad : false,
+							data : []
+						});
+
+				me.__selectedGrid = Ext.create("Ext.grid.Panel", {
+							title : "已经选择的权限",
+							padding : 5,
+							store : store,
+							columns : [{
+										header : "权限名称",
+										dataIndex : "name",
+										flex : 1,
+										menuDisabled : true
+									}]
+						});
+
+				return me.__selectedGrid;
+			},
+
+			/**
+			 * 权限分类Grid
+			 */
+			getCategoryGrid : function() {
+				var me = this;
+				if (me.__categoryGrid) {
+					return me.__categoryGrid;
+				}
+
+				var modelName = "PSIPermissionCategory_SelectPermissionForm";
+				Ext.define(modelName, {
+							extend : "Ext.data.Model",
+							fields : ["id", "name"]
+						});
+
+				var store = Ext.create("Ext.data.Store", {
+							model : modelName,
+							autoLoad : false,
+							data : []
+						});
+
+				me.__categoryGrid = Ext.create("Ext.grid.Panel", {
+							title : "权限分类",
+							padding : 5,
+							store : store,
+							columns : [{
+										header : "权限分类",
+										dataIndex : "name",
+										flex : 1,
+										menuDisabled : true
+									}]
+						});
+
+				return me.__categoryGrid;
+
 			}
 		});
