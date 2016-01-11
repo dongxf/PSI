@@ -116,6 +116,10 @@ Ext.define("PSI.Permission.SelectPermissionForm", {
 					var data = Ext.JSON.decode(response.responseText);
 
 					store.add(data);
+					
+					if (data.length > 0) {
+						me.getCategoryGrid().getSelectionModel().select(0);
+					}
 				}
 
 				el.unmask();
