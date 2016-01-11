@@ -171,4 +171,18 @@ class PermissionController extends PSIBaseController {
 			$this->ajaxReturn($ps->permissionCategory());
 		}
 	}
+
+	/**
+	 * 按权限分类查询权限项
+	 */
+	public function permissionByCategory() {
+		if (IS_POST) {
+			$params = array(
+					"category" => I("post.category")
+			);
+			
+			$ps = new PermissionService();
+			$this->ajaxReturn($ps->permissionByCategory($params));
+		}
+	}
 }

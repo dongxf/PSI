@@ -262,10 +262,49 @@ Ext.define("PSI.Permission.SelectPermissionForm", {
 								dataIndex : "name",
 								flex : 1,
 								menuDisabled : true
-							}]
+							}],
+					listeners : {
+						select : {
+							fn : me.onCategoryGridSelect,
+							scope : me
+						}
+					}
 				});
 
 		return me.__categoryGrid;
 
+	},
+
+	onCategoryGridSelect : function() {
+		var me = this;
+		var item = me.getCategoryGrid().getSelectionModel().getSelection();
+
+		if (item == null || item.length != 1) {
+			return;
+		}
+
+		var category = item[0].get("name");
+		var grid = me.getPermissionGrid();
+		var store = grid.getStore();
+		var el = grid.getEl() || Ext.getBody();
+
+		el.mask("数据加载中...");
+		Ext.Ajax.request({
+					url : PSI.Const.BASE_URL + "Home/Permission/permissionByCategory",
+					params : {
+						category : category
+					},
+					method : "POST",
+					callback : function(options, success, response) {
+						store.removeAll();
+
+						if (success) {
+							var data = Ext.JSON.decode(response.responseText);
+							store.add(data);
+						}
+
+						el.unmask();
+					}
+				});
 	}
 });
