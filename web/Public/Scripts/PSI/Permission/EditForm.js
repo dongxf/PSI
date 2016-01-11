@@ -304,8 +304,8 @@ Ext.define("PSI.Permission.EditForm", {
 		for (var i = 0; i < data.length; i++) {
 			var item = data[i];
 			store.add({
-						id : item.get("id"),
-						name : item.get("name"),
+						id : item.id,
+						name : item.name,
 						dataOrg : dataOrgList,
 						dataOrgFullName : fullNameList
 					});

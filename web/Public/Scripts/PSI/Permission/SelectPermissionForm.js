@@ -116,7 +116,7 @@ Ext.define("PSI.Permission.SelectPermissionForm", {
 					var data = Ext.JSON.decode(response.responseText);
 
 					store.add(data);
-					
+
 					if (data.length > 0) {
 						me.getCategoryGrid().getSelectionModel().select(0);
 					}
@@ -131,13 +131,21 @@ Ext.define("PSI.Permission.SelectPermissionForm", {
 
 	onOK : function() {
 		var me = this;
-		var grid = me.getPermissionGrid();
+		var grid = me.getSelectedGrid();
 
-		var items = grid.getSelectionModel().getSelection();
-		if (items == null || items.length == 0) {
+		if (grid.getStore().getCount() == 0) {
 			PSI.MsgBox.showInfo("没有选择权限");
 
 			return;
+		}
+
+		var items = [];
+		for (var i = 0; i < grid.getStore().getCount(); i++) {
+			var item = grid.getStore().getAt(i);
+			items.push({
+						id : item.get("id"),
+						name : item.get("name")
+					});
 		}
 
 		var dataOrgList = Ext.getCmp("editDataOrgIdList").getValue();
@@ -191,15 +199,45 @@ Ext.define("PSI.Permission.SelectPermissionForm", {
 
 		me.__permissionGrid = Ext.create("Ext.grid.Panel", {
 					store : store,
+					bbar : [{
+								text : "全部添加",
+								handler : me.addAllPermission,
+								scope : me
+							}],
 					columns : [{
 								header : "权限名称",
 								dataIndex : "name",
 								flex : 1,
 								menuDisabled : true
+							}, {
+								header : "",
+								align : "center",
+								menuDisabled : true,
+								draggable : false,
+								width : 40,
+								xtype : "actioncolumn",
+								items : [{
+									icon : PSI.Const.BASE_URL
+											+ "Public/Images/icons/add.png",
+									handler : me.onAddPermission,
+									scope : me
+								}]
 							}]
 				});
 
 		return me.__permissionGrid;
+	},
+
+	onAddPermission : function(grid, row) {
+		var item = grid.getStore().getAt(row);
+		var me = this;
+		var store = me.getSelectedGrid().getStore();
+		if (store.findExact("id", item.get("id")) == -1) {
+			store.add({
+						id : item.get("id"),
+						name : item.get("name")
+					});
+		}
 	},
 
 	/**
@@ -231,7 +269,23 @@ Ext.define("PSI.Permission.SelectPermissionForm", {
 								header : "权限名称",
 								dataIndex : "name",
 								flex : 1,
-								menuDisabled : true
+								menuDisabled : true,
+								draggable : false
+							}, {
+								header : "",
+								align : "center",
+								menuDisabled : true,
+								draggable : false,
+								width : 40,
+								xtype : "actioncolumn",
+								items : [{
+									icon : PSI.Const.BASE_URL
+											+ "Public/Images/icons/delete.png",
+									handler : function(grid, row) {
+										grid.getStore().removeAt(row);
+									},
+									scope : me
+								}]
 							}]
 				});
 
@@ -294,7 +348,8 @@ Ext.define("PSI.Permission.SelectPermissionForm", {
 
 		el.mask("数据加载中...");
 		Ext.Ajax.request({
-					url : PSI.Const.BASE_URL + "Home/Permission/permissionByCategory",
+					url : PSI.Const.BASE_URL
+							+ "Home/Permission/permissionByCategory",
 					params : {
 						category : category
 					},
@@ -310,5 +365,25 @@ Ext.define("PSI.Permission.SelectPermissionForm", {
 						el.unmask();
 					}
 				});
+	},
+
+	addAllPermission : function() {
+		var me = this;
+		var store = me.getPermissionGrid().getStore();
+
+		var selectStore = me.getSelectedGrid().getStore();
+
+		for (var i = 0; i < store.getCount(); i++) {
+			var item = store.getAt(i);
+
+			if (selectStore.findExact("id", item.get("id")) == -1) {
+				selectStore.add({
+							id : item.get("id"),
+							name : item.get("name")
+						});
+			}
+		}
+
+		me.getSelectedGrid().focus();
 	}
 });
