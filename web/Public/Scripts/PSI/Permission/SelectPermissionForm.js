@@ -62,10 +62,10 @@ Ext.define("PSI.Permission.SelectPermissionForm", {
 									xtype : "textfield",
 									fieldLabel : "数据域",
 									margin : "5 5 5 5",
-									labelWidth : 60,
+									labelWidth : 40,
 									labelAlign : "right",
 									labelSeparator : "",
-									width : 480,
+									width : 590,
 									readOnly : true,
 									id : "editDataOrg"
 								}, {
