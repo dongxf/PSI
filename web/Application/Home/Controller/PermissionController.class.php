@@ -160,4 +160,15 @@ class PermissionController extends PSIBaseController {
 			$this->ajaxReturn($ps->selectDataOrg());
 		}
 	}
+
+	/**
+	 * 获得权限分类
+	 */
+	public function permissionCategory() {
+		if (IS_POST) {
+			$ps = new PermissionService();
+			
+			$this->ajaxReturn($ps->permissionCategory());
+		}
+	}
 }

@@ -30,13 +30,13 @@ Ext.define("PSI.Permission.SelectPermissionForm", {
 									layout : "border",
 									height : "50%",
 									border : 0,
-									title: "所有可以选择的权限",
+									title : "所有可以选择的权限",
 									items : [{
 												region : "west",
 												width : "30%",
 												layout : "fit",
 												border : 0,
-												split: true,
+												split : true,
 												items : [me.getCategoryGrid()]
 											}, {
 												region : "center",
@@ -102,15 +102,12 @@ Ext.define("PSI.Permission.SelectPermissionForm", {
 	onWndShow : function() {
 		var me = this;
 		var idList = me.getIdList();
-		var store = me.getPermissionGrid().getStore();
+		var store = me.getCategoryGrid().getStore();
 
 		var el = me.getEl() || Ext.getBody();
 		el.mask("数据加载中...");
 		var r = {
-			url : PSI.Const.BASE_URL + "Home/Permission/selectPermission",
-			params : {
-				idList : idList.join()
-			},
+			url : PSI.Const.BASE_URL + "Home/Permission/permissionCategory",
 			method : "POST",
 			callback : function(options, success, response) {
 				store.removeAll();

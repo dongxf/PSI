@@ -480,4 +480,33 @@ class PermissionService extends PSIBaseService {
 		
 		return $result;
 	}
+	
+	/**
+	 * const: 全部权限
+	 */
+	private $ALL_CATEGORY = "[全部]";
+
+	/**
+	 * 获得权限分类
+	 */
+	public function permissionCategory() {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$result = array();
+		
+		$result[0]["name"] = $this->ALL_CATEGORY;
+		
+		$db = M();
+		$sql = "select distinct category
+				from t_permission
+				order by convert(category USING gbk) collate gbk_chinese_ci";
+		$data = $db->query($sql);
+		foreach ( $data as $i => $v ) {
+			$result[$i + 1]["name"] = $v["category"];
+		}
+		
+		return $result;
+	}
 }
