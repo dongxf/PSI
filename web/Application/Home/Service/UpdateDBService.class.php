@@ -86,6 +86,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20160105_01($db);
 		$this->update_20160105_02($db);
 		$this->update_20160108_01($db);
+		$this->update_20160112_01($db);
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -97,6 +98,71 @@ class UpdateDBService extends PSIBaseService {
 		$bl->insertBizlog("升级数据库，数据库版本 = " . $this->CURRENT_DB_VERSION);
 		
 		return $this->ok();
+	}
+
+	private function update_20160112_01($db) {
+		// 本次更新： 细化权限管理模块的权限到按钮级别
+		$fid = "-8996";
+		$category = "权限管理";
+		$note = "通过菜单进入权限管理模块的权限";
+		$sql = "update t_permission
+				set note = '%s',
+					category = '%s'
+				where id = '%s' ";
+		$db->execute($sql, $note, $category, $fid);
+		
+		$ps = new PinyinService();
+		
+		// 新增角色
+		$fid = "-8996-01";
+		$sql = "select count(*) as cnt from t_permission
+				where id = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$name = "权限管理-新增角色";
+			$note = "权限管理模块[新增角色]按钮的权限";
+			
+			$py = $ps->toPY($name);
+			
+			$sql = "insert into t_permission (id, fid, name, note, category, py)
+				values ('%s', '%s', '%s', '%s', '%s', '%s') ";
+			$db->execute($sql, $fid, $fid, $name, $note, $category, $py);
+		}
+		
+		// 编辑角色
+		$fid = "-8996-02";
+		$sql = "select count(*) as cnt from t_permission
+				where id = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$name = "权限管理-编辑角色";
+			$note = "权限管理模块[编辑角色]按钮的权限";
+			
+			$py = $ps->toPY($name);
+			
+			$sql = "insert into t_permission (id, fid, name, note, category, py)
+				values ('%s', '%s', '%s', '%s', '%s', '%s') ";
+			$db->execute($sql, $fid, $fid, $name, $note, $category, $py);
+		}
+		
+		// 删除角色
+		$fid = "-8996-03";
+		$sql = "select count(*) as cnt from t_permission
+				where id = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$name = "权限管理-删除角色";
+			$note = "权限管理模块[删除角色]按钮的权限";
+			
+			$py = $ps->toPY($name);
+			
+			$sql = "insert into t_permission (id, fid, name, note, category, py)
+				values ('%s', '%s', '%s', '%s', '%s', '%s') ";
+			$db->execute($sql, $fid, $fid, $name, $note, $category, $py);
+		}
 	}
 
 	private function update_20160108_01($db) {

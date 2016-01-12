@@ -132,7 +132,10 @@ INSERT INTO `t_org` (`id`, `full_name`, `name`, `org_code`, `data_org`, `parent_
 
 TRUNCATE TABLE `t_permission`;
 INSERT INTO `t_permission` (`id`, `fid`, `name`, `note`, `category`, `py`) VALUES
-('-8996', '-8996', '权限管理', '权限管理', '系统管理', 'QXGL'),
+('-8996', '-8996', '权限管理', '通过菜单进入权限管理模块的权限', '权限管理', 'QXGL'),
+('-8996-01', '-8996-01', '权限管理-新增角色', '权限管理模块[新增角色]按钮的权限', '权限管理', 'QXGL_XZJS'),
+('-8996-02', '-8996-02', '权限管理-编辑角色', '权限管理模块[编辑角色]按钮的权限', '权限管理', 'QXGL_BJJS'),
+('-8996-03', '-8996-03', '权限管理-删除角色', '权限管理模块[删除角色]按钮的权限', '权限管理', 'QXGL_SCJS'),
 ('-8997', '-8997', '业务日志', '业务日志', '系统管理', 'YWRZ'),
 ('-8999', '-8999', '用户管理', '用户管理', '系统管理', 'YHGL'),
 ('-8999-01', '-8999-01', '组织机构在业务单据中的使用权限', '组织机构在业务单据中的使用权限', '系统管理', 'ZZJGZYWDJZDSYQX'),
@@ -268,7 +271,7 @@ update t_config set company_id = '4D74E1E4-A129-11E4-9B6A-782BCBD7746B' ;
 
 TRUNCATE TABLE `t_psi_db_version`;
 INSERT INTO `t_psi_db_version` (`db_version`, `update_dt`) VALUES
-('20160108-01', now());
+('20160112-01', now());
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
