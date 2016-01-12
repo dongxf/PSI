@@ -26,6 +26,11 @@ class PermissionController extends PSIBaseController {
 			
 			$this->assign("title", "权限管理");
 			
+			$this->assign("pAdd", $us->hasPermission(FIdConst::PERMISSION_MANAGEMENT_ADD) ? 1 : 0);
+			$this->assign("pEdit", $us->hasPermission(FIdConst::PERMISSION_MANAGEMENT_EDIT) ? 1 : 0);
+			$this->assign("pDelete", 
+					$us->hasPermission(FIdConst::PERMISSION_MANAGEMENT_DELETE) ? 1 : 0);
+			
 			$this->display();
 		} else {
 			$this->gotoLoginPage("/Home/Permission/index");
@@ -78,6 +83,22 @@ class PermissionController extends PSIBaseController {
 	 */
 	public function editRole() {
 		if (IS_POST) {
+			// 检查权限
+			$us = new UserService();
+			if (I("post.id")) {
+				// 编辑角色
+				if (! $us->hasPermission(FIdConst::PERMISSION_MANAGEMENT_EDIT)) {
+					$this->ajaxReturn($this->noPermission("编辑角色"));
+					return;
+				}
+			} else {
+				// 新增角色
+				if (! $us->hasPermission(FIdConst::PERMISSION_MANAGEMENT_ADD)) {
+					$this->ajaxReturn($this->noPermission("新增角色"));
+					return;
+				}
+			}
+			
 			$ps = new PermissionService();
 			$params = array(
 					"id" => I("post.id"),
@@ -126,6 +147,13 @@ class PermissionController extends PSIBaseController {
 	 */
 	public function deleteRole() {
 		if (IS_POST) {
+			// 检查权限
+			$us = new UserService();
+			if (! $us->hasPermission(FIdConst::PERMISSION_MANAGEMENT_DELETE)) {
+				$this->ajaxReturn($this->noPermission("删除角色"));
+				return;
+			}
+			
 			$id = I("post.id");
 			
 			$ps = new PermissionService();

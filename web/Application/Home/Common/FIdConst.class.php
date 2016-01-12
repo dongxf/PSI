@@ -50,6 +50,21 @@ class FIdConst {
 	const PERMISSION_MANAGEMENT = "-8996";
 	
 	/**
+	 * 权限管理 - 新增角色 - 按钮权限
+	 */
+	const PERMISSION_MANAGEMENT_ADD = "-8996-01";
+	
+	/**
+	 * 权限管理 - 编辑角色 - 按钮权限
+	 */
+	const PERMISSION_MANAGEMENT_EDIT = "-8996-02";
+	
+	/**
+	 * 权限管理 - 删除角色 - 按钮权限
+	 */
+	const PERMISSION_MANAGEMENT_DELETE = "-8996-03";
+	
+	/**
 	 * 业务日志
 	 */
 	const BIZ_LOG = "-8997";

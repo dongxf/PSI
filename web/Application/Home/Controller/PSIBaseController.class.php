@@ -46,4 +46,14 @@ class PSIBaseController extends Controller {
 		
 		redirect($url);
 	}
+	
+	/**
+	 * 没有权限
+	 */
+	protected function noPermission($m) {
+		return array(
+				"success" => false,
+				"msg" => "您没有[$m]的操作权限"
+		);
+	}
 }

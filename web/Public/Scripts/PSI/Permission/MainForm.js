@@ -4,6 +4,12 @@
 Ext.define("PSI.Permission.MainForm", {
 	extend : "Ext.panel.Panel",
 
+	config : {
+		pAdd : "",
+		pEdit : "",
+		pDelete : ""
+	},
+
 	/**
 	 * 初始化组件
 	 */
@@ -108,16 +114,19 @@ Ext.define("PSI.Permission.MainForm", {
 						text : "新增角色",
 						handler : me.onAddRole,
 						scope : me,
+						disabled : me.getPAdd() == "0",
 						iconCls : "PSI-button-add"
 					}, {
 						text : "编辑角色",
 						handler : me.onEditRole,
 						scope : me,
+						disabled : me.getPEdit() == "0",
 						iconCls : "PSI-button-edit"
 					}, {
 						text : "删除角色",
 						handler : me.onDeleteRole,
 						scope : me,
+						disabled : me.getPDelete() == "0",
 						iconCls : "PSI-button-delete"
 					}, "-", {
 						text : "帮助",
@@ -357,7 +366,7 @@ Ext.define("PSI.Permission.MainForm", {
 					}
 				}
 			};
-			
+
 			Ext.Ajax.request(r);
 		};
 

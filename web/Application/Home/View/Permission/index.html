@@ -13,7 +13,12 @@
             productionName: "{$productionName}"
         });
 
-        app.add(Ext.create("PSI.Permission.MainForm"));
+        app.add(Ext.create("PSI.Permission.MainForm", {
+        	pAdd: "{$pAdd}",
+        	pEdit: "{$pEdit}",
+        	pDelete: "{$pDelete}"
+        }));
+        
         app.setAppHeader({
             title: "{$title}",
             iconCls: "PSI-fid-8996"
