@@ -58,14 +58,19 @@ Ext.define("PSI.Permission.EditForm", {
 							}],
 					tbar : [{
 								text : "添加权限",
-								handler : this.onAddPermission,
-								scope : this,
+								handler : me.onAddPermission,
+								scope : me,
 								iconCls : "PSI-button-add"
 							}, "-", {
 								text : "移除权限",
-								handler : this.onRemovePermission,
-								scope : this,
+								handler : me.onRemovePermission,
+								scope : me,
 								iconCls : "PSI-button-delete"
+							}, "-", {
+								text : "编辑数据域",
+								handler : me.onEditDataOrg,
+								scope : me,
+								iconCls : "PSI-button-edit"
 							}]
 				});
 
@@ -250,6 +255,7 @@ Ext.define("PSI.Permission.EditForm", {
 
 		me.callParent(arguments);
 	},
+
 	onWndShow : function() {
 		var entity = this.getEntity();
 		var store = this.permissionGrid.getStore();
@@ -298,6 +304,7 @@ Ext.define("PSI.Permission.EditForm", {
 				});
 
 	},
+
 	setSelectedPermission : function(data, dataOrgList, fullNameList) {
 		var store = this.permissionGrid.getStore();
 
@@ -311,6 +318,7 @@ Ext.define("PSI.Permission.EditForm", {
 					});
 		}
 	},
+
 	setSelectedUsers : function(data) {
 		var store = this.userGrid.getStore();
 
@@ -324,7 +332,7 @@ Ext.define("PSI.Permission.EditForm", {
 					});
 		}
 	},
-	// private
+
 	onOK : function() {
 		var me = this;
 		var editName = Ext.getCmp("editName");
@@ -412,6 +420,7 @@ Ext.define("PSI.Permission.EditForm", {
 
 		grid.getStore().remove(items);
 	},
+
 	onAddUser : function() {
 		var store = this.userGrid.getStore();
 		var data = store.data;
@@ -428,6 +437,7 @@ Ext.define("PSI.Permission.EditForm", {
 
 		form.show();
 	},
+
 	onRemoveUser : function() {
 		var grid = this.userGrid;
 
@@ -478,5 +488,40 @@ Ext.define("PSI.Permission.EditForm", {
 				});
 
 		return me.__dataOrgGrid;
+	},
+
+	onEditDataOrg : function() {
+		var me = this;
+
+		var grid = me.permissionGrid;
+
+		var items = grid.getSelectionModel().getSelection();
+		if (items == null || items.length == 0) {
+			PSI.MsgBox.showInfo("请选择要编辑数据域的权限");
+			return;
+		}
+
+		var form = Ext.create("PSI.Permission.SelectDataOrgForm", {
+					editForm : me
+				});
+		form.show();
+	},
+
+	/**
+	 * PSI.Permission.SelectDataOrgForm中回调本方法
+	 */
+	onEditDataOrgCallback : function(dataOrg) {
+		var me = this;
+
+		var grid = me.permissionGrid;
+
+		var items = grid.getSelectionModel().getSelection();
+		if (items == null || items.length == 0) {
+			return;
+		}
+
+		for (var i = 0; i < items.length; i++) {
+			items[i].set("dataOrg", dataOrg);
+		}
 	}
 });
