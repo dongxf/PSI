@@ -202,7 +202,8 @@ Ext.define("PSI.Permission.SelectPermissionForm", {
 					bbar : [{
 								text : "全部添加",
 								handler : me.addAllPermission,
-								scope : me
+								scope : me,
+								iconCls: "PSI-button-add-detail"
 							}],
 					columns : [{
 								header : "权限名称",
