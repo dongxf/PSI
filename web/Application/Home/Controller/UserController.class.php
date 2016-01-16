@@ -26,6 +26,20 @@ class UserController extends PSIBaseController {
 			
 			$this->assign("title", "用户管理");
 			
+			$this->assign("pAddOrg", $us->hasPermission(FIdConst::USER_MANAGEMENT_ADD_ORG) ? 1 : 0);
+			$this->assign("pEditOrg", 
+					$us->hasPermission(FIdConst::USER_MANAGEMENT_EDIT_ORG) ? 1 : 0);
+			$this->assign("pDeleteOrg", 
+					$us->hasPermission(FIdConst::USER_MANAGEMENT_DELETE_ORG) ? 1 : 0);
+			$this->assign("pAddUser", 
+					$us->hasPermission(FIdConst::USER_MANAGEMENT_ADD_USER) ? 1 : 0);
+			$this->assign("pEditUser", 
+					$us->hasPermission(FIdConst::USER_MANAGEMENT_EDIT_USER) ? 1 : 0);
+			$this->assign("pDeleteUser", 
+					$us->hasPermission(FIdConst::USER_MANAGEMENT_DELETE_USER) ? 1 : 0);
+			$this->assign("pChangePassword", 
+					$us->hasPermission(FIdConst::USER_MANAGEMENT_CHANGE_USER_PASSWORD) ? 1 : 0);
+			
 			$this->display();
 		} else {
 			$this->gotoLoginPage("/Home/User/index");
@@ -150,6 +164,20 @@ class UserController extends PSIBaseController {
 			$parentId = I("post.parentId");
 			$orgCode = I("post.orgCode");
 			
+			if ($id) {
+				// 编辑组织机构
+				if (! $us->hasPermission(FIdConst::USER_MANAGEMENT_EDIT_ORG)) {
+					$this->ajaxReturn($this->noPermission("编辑组织机构"));
+					return;
+				}
+			} else {
+				// 新增组织机构
+				if (! $us->hasPermission(FIdConst::USER_MANAGEMENT_ADD_ORG)) {
+					$this->ajaxReturn($this->noPermission("新增组织机构"));
+					return;
+				}
+			}
+			
 			$result = $us->editOrg($id, $name, $parentId, $orgCode);
 			
 			$this->ajaxReturn($result);
@@ -175,6 +203,12 @@ class UserController extends PSIBaseController {
 	public function deleteOrg() {
 		if (IS_POST) {
 			$us = new UserService();
+			
+			if (! $us->hasPermission(FIdConst::USER_MANAGEMENT_DELETE_ORG)) {
+				$this->ajaxReturn($this->noPermission("删除组织机构"));
+				return;
+			}
+			
 			$id = I("post.id");
 			$data = $us->deleteOrg($id);
 			
@@ -188,6 +222,20 @@ class UserController extends PSIBaseController {
 	public function editUser() {
 		if (IS_POST) {
 			$us = new UserService();
+			
+			if (I("post.id")) {
+				// 编辑用户
+				if (! $us->hasPermission(FIdConst::USER_MANAGEMENT_EDIT_USER)) {
+					$this->ajaxReturn($this->noPermission("编辑用户"));
+					return;
+				}
+			} else {
+				// 新增用户
+				if (! $us->hasPermission(FIdConst::USER_MANAGEMENT_ADD_USER)) {
+					$this->ajaxReturn($this->noPermission("新增用户"));
+					return;
+				}
+			}
 			
 			$params = array(
 					"id" => I("post.id"),
@@ -217,6 +265,11 @@ class UserController extends PSIBaseController {
 		if (IS_POST) {
 			$us = new UserService();
 			
+			if (! $us->hasPermission(FIdConst::USER_MANAGEMENT_DELETE_USER)) {
+				$this->ajaxReturn($this->noPermission("删除用户"));
+				return;
+			}
+			
 			$params = array(
 					"id" => I("post.id")
 			);
@@ -233,6 +286,11 @@ class UserController extends PSIBaseController {
 	public function changePassword() {
 		if (IS_POST) {
 			$us = new UserService();
+			
+			if (! $us->hasPermission(FIdConst::USER_MANAGEMENT_CHANGE_USER_PASSWORD)) {
+				$this->ajaxReturn($this->noPermission("修改用户密码"));
+				return;
+			}
 			
 			$params = array(
 					"id" => I("post.id"),
