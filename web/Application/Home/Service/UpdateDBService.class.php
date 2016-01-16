@@ -88,6 +88,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20160108_01($db);
 		$this->update_20160112_01($db);
 		$this->update_20160116_01($db);
+		$this->update_20160116_02($db);
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -99,6 +100,87 @@ class UpdateDBService extends PSIBaseService {
 		$bl->insertBizlog("升级数据库，数据库版本 = " . $this->CURRENT_DB_VERSION);
 		
 		return $this->ok();
+	}
+
+	private function update_20160116_02($db) {
+		// 本次更新：细化基础数据仓库的权限到按钮级别
+		$fid = "1003";
+		$category = "仓库";
+		$note = "通过菜单进入基础数据仓库模块的权限";
+		$sql = "update t_permission
+				set note = '%s'
+				where id = '%s' ";
+		$db->execute($sql, $note, $fid);
+		
+		$ps = new PinyinService();
+		
+		// 新增仓库
+		$fid = "1003-02";
+		$sql = "select count(*) as cnt from t_permission
+				where id = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$name = "新增仓库";
+			$note = "基础数据仓库模块[新增仓库]按钮的权限";
+			
+			$py = $ps->toPY($name);
+			
+			$sql = "insert into t_permission (id, fid, name, note, category, py)
+				values ('%s', '%s', '%s', '%s', '%s', '%s') ";
+			$db->execute($sql, $fid, $fid, $name, $note, $category, $py);
+		}
+		
+		// 编辑仓库
+		$fid = "1003-03";
+		$sql = "select count(*) as cnt from t_permission
+				where id = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$name = "编辑仓库";
+			$note = "基础数据仓库模块[编辑仓库]按钮的权限";
+			
+			$py = $ps->toPY($name);
+			
+			$sql = "insert into t_permission (id, fid, name, note, category, py)
+				values ('%s', '%s', '%s', '%s', '%s', '%s') ";
+			$db->execute($sql, $fid, $fid, $name, $note, $category, $py);
+		}
+		
+		// 删除仓库
+		$fid = "1003-04";
+		$sql = "select count(*) as cnt from t_permission
+				where id = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$name = "删除仓库";
+			$note = "基础数据仓库模块[删除仓库]按钮的权限";
+			
+			$py = $ps->toPY($name);
+			
+			$sql = "insert into t_permission (id, fid, name, note, category, py)
+				values ('%s', '%s', '%s', '%s', '%s', '%s') ";
+			$db->execute($sql, $fid, $fid, $name, $note, $category, $py);
+		}
+		
+		// 修改仓库数据域
+		$fid = "1003-05";
+		$sql = "select count(*) as cnt from t_permission
+				where id = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$name = "修改仓库数据域";
+			$note = "基础数据仓库模块[修改仓库数据域]按钮的权限";
+			
+			$py = $ps->toPY($name);
+			
+			$sql = "insert into t_permission (id, fid, name, note, category, py)
+				values ('%s', '%s', '%s', '%s', '%s', '%s') ";
+			$db->execute($sql, $fid, $fid, $name, $note, $category, $py);
+		}
 	}
 
 	private function update_20160116_01($db) {
