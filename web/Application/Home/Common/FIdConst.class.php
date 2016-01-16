@@ -45,6 +45,41 @@ class FIdConst {
 	const USR_MANAGEMENT = "-8999";
 	
 	/**
+	 * 用户管理 - 新增组织机构
+	 */
+	const USER_MANAGEMENT_ADD_ORG = "-8999-03";
+	
+	/**
+	 * 用户管理 - 编辑组织机构
+	 */
+	const USER_MANAGEMENT_EDIT_ORG = "-8999-04";
+	
+	/**
+	 * 用户管理 - 删除组织机构
+	 */
+	const USER_MANAGEMENT_DELETE_ORG = "-8999-05";
+	
+	/**
+	 * 用户管理 - 新增用户
+	 */
+	const USER_MANAGEMENT_ADD_USER = "-8999-06";
+	
+	/**
+	 * 用户管理 - 编辑用户
+	 */
+	const USER_MANAGEMENT_EDIT_USER = "-8999-07";
+	
+	/**
+	 * 用户管理 - 删除用户
+	 */
+	const USER_MANAGEMENT_DELETE_USER = "-8999-08";
+	
+	/**
+	 * 用户管理 - 修改用户密码
+	 */
+	const USER_MANAGEMENT_CHANGE_USER_PASSWORD = "-8999-09";
+	
+	/**
 	 * 权限管理
 	 */
 	const PERMISSION_MANAGEMENT = "-8996";
