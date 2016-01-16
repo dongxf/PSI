@@ -110,6 +110,26 @@ class FIdConst {
 	const WAREHOUSE = "1003";
 	
 	/**
+	 * 新增仓库
+	 */
+	const WAREHOUSE_ADD = "1003-02";
+	
+	/**
+	 * 编辑仓库
+	 */
+	const WAREHOUSE_EDIT = "1003-03";
+	
+	/**
+	 * 删除仓库
+	 */
+	const WAREHOUSE_DELETE = "1003-04";
+	
+	/**
+	 * 修改仓库数据域
+	 */
+	const WAREHOUSE_EDIT_DATAORG = "1003-05";
+	
+	/**
 	 * 基础数据-供应商档案
 	 */
 	const SUPPLIER = "1004";

@@ -6,6 +6,13 @@ Ext.define("PSI.Warehouse.MainForm", {
 	border : 0,
 	layout : "border",
 
+	config : {
+		pAdd : null,
+		pEdit : null,
+		pDelete : null,
+		pEditDataOrg : null
+	},
+
 	/**
 	 * 初始化组件
 	 */
@@ -15,16 +22,19 @@ Ext.define("PSI.Warehouse.MainForm", {
 		Ext.apply(me, {
 			tbar : [{
 						text : "新增仓库",
+						disabled : me.getPAdd() == "0",
 						iconCls : "PSI-button-add",
 						handler : me.onAddWarehouse,
 						scope : me
 					}, {
 						text : "编辑仓库",
 						iconCls : "PSI-button-edit",
+						disabled : me.getPEdit() == "0",
 						handler : me.onEditWarehouse,
 						scope : me
 					}, {
 						text : "删除仓库",
+						disabled : me.getPDelete() == "0",
 						iconCls : "PSI-button-delete",
 						handler : me.onDeleteWarehouse,
 						scope : me
@@ -72,6 +82,11 @@ Ext.define("PSI.Warehouse.MainForm", {
 	 */
 	onEditWarehouse : function() {
 		var me = this;
+
+		if (me.getPEdit() == "0") {
+			return;
+		}
+
 		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
 			PSI.MsgBox.showInfo("请选择要编辑的仓库");

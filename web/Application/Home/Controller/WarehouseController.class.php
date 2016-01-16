@@ -26,6 +26,12 @@ class WarehouseController extends PSIBaseController {
 			
 			$this->assign("title", "仓库");
 			
+			$this->assign("pAdd", $us->hasPermission(FIdConst::WAREHOUSE_ADD) ? 1 : 0);
+			$this->assign("pEdit", $us->hasPermission(FIdConst::WAREHOUSE_EDIT) ? 1 : 0);
+			$this->assign("pDelete", $us->hasPermission(FIdConst::WAREHOUSE_DELETE) ? 1 : 0);
+			$this->assign("pEditDataOrg", 
+					$us->hasPermission(FIdConst::WAREHOUSE_EDIT_DATAORG) ? 1 : 0);
+			
 			$this->display();
 		} else {
 			$this->gotoLoginPage("/Home/Warehouse/index");
@@ -47,6 +53,21 @@ class WarehouseController extends PSIBaseController {
 	 */
 	public function editWarehouse() {
 		if (IS_POST) {
+			$us = new UserService();
+			if (I("post.id")) {
+				// 编辑仓库
+				if (! $us->hasPermission(FIdConst::WAREHOUSE_EDIT)) {
+					$this->ajaxReturn($this->noPermission("编辑仓库"));
+					return;
+				}
+			} else {
+				// 新增仓库
+				if (! $us->hasPermission(FIdConst::WAREHOUSE_ADD)) {
+					$this->ajaxReturn($this->noPermission("新增仓库"));
+					return;
+				}
+			}
+			
 			$params = array(
 					"id" => I("post.id"),
 					"code" => I("post.code"),
@@ -62,6 +83,12 @@ class WarehouseController extends PSIBaseController {
 	 */
 	public function deleteWarehouse() {
 		if (IS_POST) {
+			$us = new UserService();
+			if (! $us->hasPermission(FIdConst::WAREHOUSE_DELETE)) {
+				$this->ajaxReturn($this->noPermission("删除仓库"));
+				return;
+			}
+			
 			$params = array(
 					"id" => I("post.id")
 			);

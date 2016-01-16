@@ -11,7 +11,12 @@
         });
 
         
-        app.add(Ext.create("PSI.Warehouse.MainForm"));
+        app.add(Ext.create("PSI.Warehouse.MainForm", {
+        	pAdd: "{$pAdd}",
+        	pEdit: "{$pEdit}",
+        	pDelete: "{$pDelete}",
+        	pEditDataOrg: "{$pEditDataOrg}"
+        }));
 
         app.setAppHeader({
             title: "{$title}",
