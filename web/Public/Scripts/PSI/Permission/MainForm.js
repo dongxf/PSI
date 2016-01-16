@@ -39,7 +39,6 @@ Ext.define("PSI.Permission.MainForm", {
 				});
 
 		roleGrid.on("itemclick", me.onRoleGridItemClick, me);
-		roleGrid.on("itemdblclick", me.onEditRole, me);
 
 		Ext.define("PSIPermission", {
 					extend : "Ext.data.Model",

@@ -323,6 +323,11 @@ Ext.define("PSI.User.MainForm", {
 	 * 编辑组织机构
 	 */
 	onEditOrg : function() {
+		var me = this;
+		if (me.getPEditOrg() == "0") {
+			return;
+		}
+
 		var tree = this.orgTree;
 		var item = tree.getSelectionModel().getSelection();
 		if (item === null || item.length !== 1) {
@@ -421,6 +426,11 @@ Ext.define("PSI.User.MainForm", {
 	 * 编辑用户
 	 */
 	onEditUser : function() {
+		var me = this;
+		if (me.getPEditUser() == "0") {
+			return;
+		}
+
 		var item = this.grid.getSelectionModel().getSelection();
 		if (item === null || item.length !== 1) {
 			PSI.MsgBox.showInfo("请选择要编辑的用户");
