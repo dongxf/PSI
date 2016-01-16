@@ -15,7 +15,15 @@
             productionName: "{$productionName}"
         });
         
-        app.add(Ext.create("PSI.User.MainForm"));
+        app.add(Ext.create("PSI.User.MainForm", {
+        	pAddOrg: "{$pAddOrg}",
+        	pEditOrg: "{$pEditOrg}",
+        	pDeleteOrg: "{$pDeleteOrg}",
+           	pAddUser: "{$pAddUser}",
+           	pEditUser: "{$pEditUser}",
+           	pDeleteUser: "{$pDeleteUser}",
+           	pChangePassword: "{$pChangePassword}"
+        }));
         app.setAppHeader({
             title: "{$title}",
             iconCls: "PSI-fid-8999"
