@@ -146,10 +146,48 @@ class FIdConst {
 	
 	/**
 	 * 商品分类
-	 *
-	 * @var unknown
 	 */
 	const GOODS_CATEGORY = "1001-02";
+	
+	/**
+	 * 新增商品分类
+	 */
+	const GOODS_CATEGORY_ADD = "1001-03";
+	
+	/**
+	 * 编辑商品分类
+	 */
+	const GOODS_CATEGORY_EDIT = "1001-04";
+	
+	/**
+	 * 删除商品分类
+	 */
+	const GOODS_CATEGORY_DELETE = "1001-05";
+	
+	/**
+	 * 新增商品
+	 */
+	const GOODS_ADD = "1001-06";
+	
+	/**
+	 * 编辑商品
+	 */
+	const GOODS_EDIT = "1001-07";
+	
+	/**
+	 * 删除商品
+	 */
+	const GOODS_DELETE = "1001-08";
+	
+	/**
+	 * 导入商品
+	 */
+	const GOODS_IMPORT = "1001-09";
+	
+	/**
+	 * 设置商品安全库存
+	 */
+	const GOODS_SI = "1001-10";
 	
 	/**
 	 * 基础数据-商品计量单位
