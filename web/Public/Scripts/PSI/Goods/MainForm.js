@@ -4,6 +4,17 @@
 Ext.define("PSI.Goods.MainForm", {
 	extend : "Ext.panel.Panel",
 
+	config : {
+		pAddCategory : null,
+		pEditCategory : null,
+		pDeleteCategory : null,
+		pAddGoods : null,
+		pEditGoods : null,
+		pDeleteGoods : null,
+		pImportGoods : null,
+		pGoodsSI : null
+	},
+
 	/**
 	 * 初始化组件
 	 */
@@ -165,41 +176,49 @@ Ext.define("PSI.Goods.MainForm", {
 			layout : "border",
 			tbar : [{
 						text : "新增商品分类",
+						disabled : me.getPAddCategory() == "0",
 						iconCls : "PSI-button-add",
 						handler : me.onAddCategory,
 						scope : me
 					}, {
 						text : "编辑商品分类",
+						disabled : me.getPEditCategory() == "0",
 						iconCls : "PSI-button-edit",
 						handler : me.onEditCategory,
 						scope : me
 					}, {
 						text : "删除商品分类",
+						disabled : me.getPDeleteCategory() == "0",
 						iconCls : "PSI-button-delete",
 						handler : me.onDeleteCategory,
 						scope : me
 					}, "-", {
 						text : "新增商品",
+						disabled : me.getPAddGoods() == "0",
 						iconCls : "PSI-button-add-detail",
 						handler : me.onAddGoods,
 						scope : me
 					}, {
 						text : "导入商品",
+						disabled : me.getPImportGoods() == "0",
 						iconCls : "PSI-button-excelimport",
 						handler : me.onImportGoods,
 						scope : me
 					}, "-", {
 						text : "修改商品",
+						disabled : me.getPEditGoods() == "0",
 						iconCls : "PSI-button-edit-detail",
 						handler : me.onEditGoods,
 						scope : me
 					}, {
 						text : "删除商品",
+						disabled : me.getPDeleteGoods() == "0",
 						iconCls : "PSI-button-delete-detail",
 						handler : me.onDeleteGoods,
 						scope : me
 					}, "-", {
 						text : "设置商品安全库存",
+						disabled : me.getPGoodsSI() == "0",
 						iconCls : "PSI-button-view",
 						handler : me.onSafetyInventory,
 						scope : me
@@ -480,6 +499,11 @@ Ext.define("PSI.Goods.MainForm", {
 	 * 编辑商品
 	 */
 	onEditGoods : function() {
+		var me = this;
+		if (me.getPEditGoods() == "0") {
+			return;
+		}
+		
 		var item = this.getCategoryGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
 			PSI.MsgBox.showInfo("请选择商品分类");
@@ -850,6 +874,10 @@ Ext.define("PSI.Goods.MainForm", {
 	 */
 	onSafetyInventory : function() {
 		var me = this;
+		if (me.getPGoodsSI() == "0") {
+			return;
+		}
+		
 		var item = me.goodsGrid.getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
 			PSI.MsgBox.showInfo("请选择要设置安全库存的商品");

@@ -27,6 +27,17 @@ class GoodsController extends PSIBaseController {
 			
 			$this->assign("title", "商品");
 			
+			$this->assign("pAddCategory", $us->hasPermission(FIdConst::GOODS_CATEGORY_ADD) ? 1 : 0);
+			$this->assign("pEditCategory", 
+					$us->hasPermission(FIdConst::GOODS_CATEGORY_EDIT) ? 1 : 0);
+			$this->assign("pDeleteCategory", 
+					$us->hasPermission(FIdConst::GOODS_CATEGORY_DELETE) ? 1 : 0);
+			$this->assign("pAddGoods", $us->hasPermission(FIdConst::GOODS_ADD) ? 1 : 0);
+			$this->assign("pEditGoods", $us->hasPermission(FIdConst::GOODS_EDIT) ? 1 : 0);
+			$this->assign("pDeleteGoods", $us->hasPermission(FIdConst::GOODS_DELETE) ? 1 : 0);
+			$this->assign("pImportGoods", $us->hasPermission(FIdConst::GOODS_IMPORT) ? 1 : 0);
+			$this->assign("pGoodsSI", $us->hasPermission(FIdConst::GOODS_SI) ? 1 : 0);
+			
 			$this->display();
 		} else {
 			$this->gotoLoginPage("/Home/Goods/index");
@@ -108,6 +119,21 @@ class GoodsController extends PSIBaseController {
 	 */
 	public function editCategory() {
 		if (IS_POST) {
+			$us = new UserService();
+			if (I("post.id")) {
+				// 编辑商品分类
+				if (! $us->hasPermission(FIdConst::GOODS_CATEGORY_EDIT)) {
+					$this->ajaxReturn($this->noPermission("编辑商品分类"));
+					return;
+				}
+			} else {
+				// 新增商品分类
+				if (! $us->hasPermission(FIdConst::GOODS_CATEGORY_ADD)) {
+					$this->ajaxReturn($this->noPermission("新增商品分类"));
+					return;
+				}
+			}
+			
 			$params = array(
 					"id" => I("post.id"),
 					"code" => I("post.code"),
@@ -137,6 +163,12 @@ class GoodsController extends PSIBaseController {
 	 */
 	public function deleteCategory() {
 		if (IS_POST) {
+			$us = new UserService();
+			if (! $us->hasPermission(FIdConst::GOODS_CATEGORY_DELETE)) {
+				$this->ajaxReturn($this->noPermission("删除商品分类"));
+				return;
+			}
+			
 			$params = array(
 					"id" => I("post.id")
 			);
@@ -170,6 +202,21 @@ class GoodsController extends PSIBaseController {
 	 */
 	public function editGoods() {
 		if (IS_POST) {
+			$us = new UserService();
+			if (I("post.id")) {
+				// 编辑商品
+				if (! $us->hasPermission(FIdConst::GOODS_EDIT)) {
+					$this->ajaxReturn($this->noPermission("编辑商品"));
+					return;
+				}
+			} else {
+				// 新增商品
+				if (! $us->hasPermission(FIdConst::GOODS_ADD)) {
+					$this->ajaxReturn($this->noPermission("新增商品"));
+					return;
+				}
+			}
+			
 			$params = array(
 					"id" => I("post.id"),
 					"categoryId" => I("post.categoryId"),
@@ -192,6 +239,12 @@ class GoodsController extends PSIBaseController {
 	 */
 	public function deleteGoods() {
 		if (IS_POST) {
+			$us = new UserService();
+			if (! $us->hasPermission(FIdConst::GOODS_DELETE)) {
+				$this->ajaxReturn($this->noPermission("删除商品"));
+				return;
+			}
+			
 			$params = array(
 					"id" => I("post.id")
 			);
@@ -278,6 +331,12 @@ class GoodsController extends PSIBaseController {
 	 */
 	public function editSafetyInventory() {
 		if (IS_POST) {
+			$us = new UserService();
+			if (! $us->hasPermission(FIdConst::GOODS_SI)) {
+				$this->ajaxReturn($this->noPermission("设置商品安全库存"));
+				return;
+			}
+			
 			$params = array(
 					"jsonStr" => I("post.jsonStr")
 			);
@@ -311,20 +370,30 @@ class GoodsController extends PSIBaseController {
 			$this->ajaxReturn($gs->queryGoodsInfoByBarcodeForPW($params));
 		}
 	}
-	
+
 	/**
 	 * 通过Excel导入商品
 	 */
 	public function import() {
 		if (IS_POST) {
+			$us = new UserService();
+			if (! $us->hasPermission(FIdConst::GOODS_IMPORT)) {
+				$this->ajaxReturn($this->noPermission("导入商品"));
+				return;
+			}
+			
 			$upload = new \Think\Upload();
 			
+			// 允许上传的文件后缀
 			$upload->exts = array(
 					'xls',
 					'xlsx'
-			); // 允许上传的文件后缀
-			$upload->savePath = '/Goods/'; // 保存路径
-			                               // 先上传文件
+			);
+			
+			// 保存路径
+			$upload->savePath = '/Goods/';
+			
+			// 先上传文件
 			$fileInfo = $upload->uploadOne($_FILES['data_file']);
 			if (! $fileInfo) {
 				$this->ajaxReturn(

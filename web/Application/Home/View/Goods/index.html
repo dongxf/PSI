@@ -15,7 +15,16 @@
             productionName: "{$productionName}"
         });
 
-        app.add(Ext.create("PSI.Goods.MainForm"));
+        app.add(Ext.create("PSI.Goods.MainForm", {
+        	pAddCategory: "{$pAddCategory}",
+        	pEditCategory: "{$pEditCategory}",
+        	pDeleteCategory: "{$pDeleteCategory}",
+        	pAddGoods: "{$pAddGoods}",
+        	pEditGoods: "{$pEditGoods}",
+        	pDeleteGoods: "{$pDeleteGoods}",
+        	pImportGoods: "{$pImportGoods}",
+        	pGoodsSI: "{$pGoodsSI}"
+        }));
         app.setAppHeader({
             title: "{$title}",
             iconCls: "PSI-fid1001"
