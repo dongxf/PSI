@@ -108,4 +108,24 @@ class WarehouseController extends PSIBaseController {
 			$this->ajaxReturn($ws->queryData($queryKey, $fid));
 		}
 	}
+
+	/**
+	 * 修改数据域
+	 */
+	public function editDataOrg() {
+		if (IS_POST) {
+			$us = new UserService();
+			if (! $us->hasPermission(FIdConst::WAREHOUSE_EDIT_DATAORG)) {
+				$this->ajaxReturn($this->noPermission("修改数据域"));
+				return;
+			}
+			
+			$params = array(
+					"id" => I("post.id"),
+					"dataOrg" => I("post.dataOrg")
+			);
+			$ws = new WarehouseService();
+			$this->ajaxReturn($ws->editDataOrg($params));
+		}
+	}
 }

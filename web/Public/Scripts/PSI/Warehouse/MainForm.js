@@ -40,6 +40,7 @@ Ext.define("PSI.Warehouse.MainForm", {
 						scope : me
 					}, "-", {
 						text : "修改数据域",
+						disabled : me.getPEditDataOrg() == "0",
 						iconCls : "PSI-button-dataorg",
 						handler : me.onEditDataOrg,
 						scope : me

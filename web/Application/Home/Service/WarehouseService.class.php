@@ -36,7 +36,7 @@ class WarehouseService extends PSIBaseService {
 		$db = M();
 		$result = array();
 		$data = $db->query($sql, $queryParams);
-		foreach ($data as $i => $v) {
+		foreach ( $data as $i => $v ) {
 			$result[$i]["id"] = $v["id"];
 			$result[$i]["code"] = $v["code"];
 			$result[$i]["name"] = $v["name"];
@@ -253,5 +253,52 @@ class WarehouseService extends PSIBaseService {
 		$sql .= " order by code";
 		
 		return M()->query($sql, $queryParams);
+	}
+
+	public function editDataOrg($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
+		$id = $params["id"];
+		$dataOrg = $params["dataOrg"];
+		
+		$db = M();
+		$db->startTrans();
+		
+		$sql = "select data_org from t_warehouse where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if (! $data) {
+			$db->rollback();
+			return $this->bad("要编辑数据域的仓库不存在");
+		}
+		
+		$oldDataOrg = $data[0]["data_org"];
+		if ($oldDataOrg == $dataOrg) {
+			$db->rollback();
+			return $this->bad("数据域没有改动，不用保存");
+		}
+		
+		// 检查新数据域是否存在
+		$sql = "select count(*) as cnt from t_user where data_org = '%s' ";
+		$data = $db->query($sql, $dataOrg);
+		$cnt = $data[0]["cnt"];
+		if ($cnt != 1) {
+			$db->rollback();
+			return $this->bad("数据域[{$dataOrg}]不存在");
+		}
+		
+		$sql = "update t_warehouse
+				set data_org = '%s'
+				where id = '%s' ";
+		$rc = $db->execute($sql, $dataOrg, $id);
+		if ($rc === false) {
+			$db->rollback();
+			return $this->sqlError(__LINE__);
+		}
+		
+		$db->commit();
+		
+		return $this->ok($id);
 	}
 }
