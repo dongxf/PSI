@@ -89,6 +89,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20160112_01($db);
 		$this->update_20160116_01($db);
 		$this->update_20160116_02($db);
+		$this->update_20160118_01($db);
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -100,6 +101,155 @@ class UpdateDBService extends PSIBaseService {
 		$bl->insertBizlog("升级数据库，数据库版本 = " . $this->CURRENT_DB_VERSION);
 		
 		return $this->ok();
+	}
+
+	private function update_20160118_01($db) {
+		// 本次更新：细化基础数据商品的权限到按钮级别
+		$fid = "1001";
+		$category = "商品";
+		$note = "通过菜单进入基础数据商品模块的权限";
+		$sql = "update t_permission
+				set note = '%s'
+				where id = '%s' ";
+		$db->execute($sql, $note, $fid);
+		
+		$ps = new PinyinService();
+		
+		// 新增商品分类
+		$fid = FIdConst::GOODS_CATEGORY_ADD;
+		$sql = "select count(*) as cnt from t_permission
+				where id = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$name = "新增商品分类";
+			$note = "基础数据商品模块[新增商品分类]按钮的权限";
+			
+			$py = $ps->toPY($name);
+			
+			$sql = "insert into t_permission (id, fid, name, note, category, py)
+				values ('%s', '%s', '%s', '%s', '%s', '%s') ";
+			$db->execute($sql, $fid, $fid, $name, $note, $category, $py);
+		}
+		
+		// 编辑商品分类
+		$fid = FIdConst::GOODS_CATEGORY_EDIT;
+		$sql = "select count(*) as cnt from t_permission
+				where id = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$name = "编辑商品分类";
+			$note = "基础数据商品模块[编辑商品分类]按钮的权限";
+			
+			$py = $ps->toPY($name);
+			
+			$sql = "insert into t_permission (id, fid, name, note, category, py)
+				values ('%s', '%s', '%s', '%s', '%s', '%s') ";
+			$db->execute($sql, $fid, $fid, $name, $note, $category, $py);
+		}
+		
+		// 删除商品分类
+		$fid = FIdConst::GOODS_CATEGORY_DELETE;
+		$sql = "select count(*) as cnt from t_permission
+				where id = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$name = "删除商品分类";
+			$note = "基础数据商品模块[删除商品分类]按钮的权限";
+			
+			$py = $ps->toPY($name);
+			
+			$sql = "insert into t_permission (id, fid, name, note, category, py)
+				values ('%s', '%s', '%s', '%s', '%s', '%s') ";
+			$db->execute($sql, $fid, $fid, $name, $note, $category, $py);
+		}
+		
+		// 新增商品
+		$fid = FIdConst::GOODS_ADD;
+		$sql = "select count(*) as cnt from t_permission
+				where id = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$name = "新增商品";
+			$note = "基础数据商品模块[新增商品]按钮的权限";
+			
+			$py = $ps->toPY($name);
+			
+			$sql = "insert into t_permission (id, fid, name, note, category, py)
+				values ('%s', '%s', '%s', '%s', '%s', '%s') ";
+			$db->execute($sql, $fid, $fid, $name, $note, $category, $py);
+		}
+		
+		// 编辑商品
+		$fid = FIdConst::GOODS_EDIT;
+		$sql = "select count(*) as cnt from t_permission
+				where id = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$name = "编辑商品";
+			$note = "基础数据商品模块[编辑商品]按钮的权限";
+			
+			$py = $ps->toPY($name);
+			
+			$sql = "insert into t_permission (id, fid, name, note, category, py)
+				values ('%s', '%s', '%s', '%s', '%s', '%s') ";
+			$db->execute($sql, $fid, $fid, $name, $note, $category, $py);
+		}
+		
+		// 删除商品
+		$fid = FIdConst::GOODS_DELETE;
+		$sql = "select count(*) as cnt from t_permission
+				where id = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$name = "删除商品";
+			$note = "基础数据商品模块[删除商品]按钮的权限";
+			
+			$py = $ps->toPY($name);
+			
+			$sql = "insert into t_permission (id, fid, name, note, category, py)
+				values ('%s', '%s', '%s', '%s', '%s', '%s') ";
+			$db->execute($sql, $fid, $fid, $name, $note, $category, $py);
+		}
+		
+		// 导入商品
+		$fid = FIdConst::GOODS_IMPORT;
+		$sql = "select count(*) as cnt from t_permission
+				where id = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$name = "导入商品";
+			$note = "基础数据商品模块[导入商品]按钮的权限";
+			
+			$py = $ps->toPY($name);
+			
+			$sql = "insert into t_permission (id, fid, name, note, category, py)
+				values ('%s', '%s', '%s', '%s', '%s', '%s') ";
+			$db->execute($sql, $fid, $fid, $name, $note, $category, $py);
+		}
+		
+		// 设置商品安全库存
+		$fid = FIdConst::GOODS_SI;
+		$sql = "select count(*) as cnt from t_permission
+				where id = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$name = "设置商品安全库存";
+			$note = "基础数据商品模块[设置商品安全库存]按钮的权限";
+			
+			$py = $ps->toPY($name);
+			
+			$sql = "insert into t_permission (id, fid, name, note, category, py)
+				values ('%s', '%s', '%s', '%s', '%s', '%s') ";
+			$db->execute($sql, $fid, $fid, $name, $note, $category, $py);
+		}
 	}
 
 	private function update_20160116_02($db) {
