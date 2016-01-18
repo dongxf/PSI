@@ -266,13 +266,14 @@ class WarehouseService extends PSIBaseService {
 		$db = M();
 		$db->startTrans();
 		
-		$sql = "select data_org from t_warehouse where id = '%s' ";
+		$sql = "select name, data_org from t_warehouse where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if (! $data) {
 			$db->rollback();
 			return $this->bad("要编辑数据域的仓库不存在");
 		}
 		
+		$name = $data[0]["name"];
 		$oldDataOrg = $data[0]["data_org"];
 		if ($oldDataOrg == $dataOrg) {
 			$db->rollback();
@@ -296,6 +297,10 @@ class WarehouseService extends PSIBaseService {
 			$db->rollback();
 			return $this->sqlError(__LINE__);
 		}
+		
+		$log = "把仓库[{$name}]的数据域从旧值[{$oldDataOrg}]修改为新值[{$dataOrg}]";
+		$bs = new BizlogService();
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		
 		$db->commit();
 		
