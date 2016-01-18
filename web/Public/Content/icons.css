@@ -98,6 +98,10 @@
     background-image:url(../Images/icons/excel_export.png) !important;
 }
 
+.PSI-button-dataorg {
+    background-image:url(../Images/icons/edit_dataorg.png) !important;
+}
+
 .PSI-fid-8993 {
     background-image:url(../Images/fid/fid-8993.png) !important;
 }

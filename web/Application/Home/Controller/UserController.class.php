@@ -323,4 +323,15 @@ class UserController extends PSIBaseController {
 			$this->ajaxReturn($us->orgWithDataOrg());
 		}
 	}
+
+	/**
+	 * 选择数据域自定义字段， 查询数据
+	 */
+	public function queryUserDataOrg() {
+		if (IS_POST) {
+			$queryKey = I("post.queryKey");
+			$us = new UserService();
+			$this->ajaxReturn($us->queryUserDataOrg($queryKey));
+		}
+	}
 }

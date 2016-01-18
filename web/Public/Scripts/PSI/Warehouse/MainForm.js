@@ -39,6 +39,11 @@ Ext.define("PSI.Warehouse.MainForm", {
 						handler : me.onDeleteWarehouse,
 						scope : me
 					}, "-", {
+						text : "修改数据域",
+						iconCls : "PSI-button-dataorg",
+						handler : me.onEditDataOrg,
+						scope : me
+					}, "-", {
 						text : "帮助",
 						iconCls : "PSI-help",
 						handler : function() {
@@ -260,5 +265,27 @@ Ext.define("PSI.Warehouse.MainForm", {
 				});
 
 		return me.__mainGrid;
+	},
+
+	/**
+	 * 编辑数据域
+	 */
+	onEditDataOrg : function() {
+		var me = this;
+
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			PSI.MsgBox.showInfo("请选择要编辑数据域的仓库");
+			return;
+		}
+
+		var warehouse = item[0];
+
+		var form = Ext.create("PSI.Warehouse.EditDataOrgForm", {
+					parentForm : me,
+					entity : warehouse
+				});
+
+		form.show();
 	}
 });
