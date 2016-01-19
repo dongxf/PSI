@@ -3,6 +3,16 @@
  */
 Ext.define("PSI.Supplier.MainForm", {
 	extend : "Ext.panel.Panel",
+
+	config : {
+		pAddCategory : null,
+		pEditCategory : null,
+		pDeleteCategory : null,
+		pAddSupplier : null,
+		pEditSupplier : null,
+		pDeleteSupplier : null
+	},
+
 	initComponent : function() {
 		var me = this;
 
@@ -279,31 +289,37 @@ Ext.define("PSI.Supplier.MainForm", {
 			layout : "border",
 			tbar : [{
 						text : "新增供应商分类",
+						disabled : me.getPAddCategory() == "0",
 						iconCls : "PSI-button-add",
 						handler : this.onAddCategory,
 						scope : this
 					}, {
 						text : "编辑供应商分类",
+						disabled : me.getPEditCategory() == "0",
 						iconCls : "PSI-button-edit",
 						handler : this.onEditCategory,
 						scope : this
 					}, {
 						text : "删除供应商分类",
+						disabled : me.getPDeleteCategory() == "0",
 						iconCls : "PSI-button-delete",
 						handler : this.onDeleteCategory,
 						scope : this
 					}, "-", {
 						text : "新增供应商",
+						disabled : me.getPAddSupplier() == "0",
 						iconCls : "PSI-button-add-detail",
 						handler : this.onAddSupplier,
 						scope : this
 					}, {
 						text : "修改供应商",
+						disabled : me.getPEditSupplier() == "0",
 						iconCls : "PSI-button-edit-detail",
 						handler : this.onEditSupplier,
 						scope : this
 					}, {
 						text : "删除供应商",
+						disabled : me.getPDeleteSupplier() == "0",
 						iconCls : "PSI-button-delete-detail",
 						handler : this.onDeleteSupplier,
 						scope : this
@@ -482,6 +498,10 @@ Ext.define("PSI.Supplier.MainForm", {
 
 		me.freshCategoryGrid();
 	},
+
+	/**
+	 * 新增供应商分类
+	 */
 	onAddCategory : function() {
 		var form = Ext.create("PSI.Supplier.CategoryEditForm", {
 					parentForm : this
@@ -489,7 +509,16 @@ Ext.define("PSI.Supplier.MainForm", {
 
 		form.show();
 	},
+
+	/**
+	 * 编辑供应商分类
+	 */
 	onEditCategory : function() {
+		var me = this;
+		if (me.getPEditCategory() == "0") {
+			return;
+		}
+
 		var item = this.categoryGrid.getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
 			PSI.MsgBox.showInfo("请选择要编辑的供应商分类");
@@ -505,6 +534,10 @@ Ext.define("PSI.Supplier.MainForm", {
 
 		form.show();
 	},
+
+	/**
+	 * 删除供应商分类
+	 */
 	onDeleteCategory : function() {
 		var item = this.categoryGrid.getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
@@ -553,6 +586,7 @@ Ext.define("PSI.Supplier.MainForm", {
 							});
 				});
 	},
+
 	freshCategoryGrid : function(id) {
 		var me = this;
 		var grid = me.categoryGrid;
@@ -601,7 +635,7 @@ Ext.define("PSI.Supplier.MainForm", {
 		this.__lastId = id;
 		Ext.getCmp("pagingToolbar").doRefresh()
 	},
-	// private
+
 	onCategoryGridSelect : function() {
 		var me = this;
 		me.supplierGrid.getStore().currentPage = 1;
@@ -619,7 +653,16 @@ Ext.define("PSI.Supplier.MainForm", {
 
 		form.show();
 	},
+
+	/**
+	 * 编辑供应商档案
+	 */
 	onEditSupplier : function() {
+		var me = this;
+		if (me.getPEditSupplier() == "0") {
+			return;
+		}
+
 		var item = this.categoryGrid.getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
 			PSI.MsgBox.showInfo("没有选择供应商分类");

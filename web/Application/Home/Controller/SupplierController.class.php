@@ -26,6 +26,16 @@ class SupplierController extends PSIBaseController {
 			
 			$this->assign("title", "供应商档案");
 			
+			$this->assign("pAddCategory", 
+					$us->hasPermission(FIdConst::SUPPLIER_CATEGORY_ADD) ? 1 : 0);
+			$this->assign("pEditCategory", 
+					$us->hasPermission(FIdConst::SUPPLIER_CATEGORY_EDIT) ? 1 : 0);
+			$this->assign("pDeleteCategory", 
+					$us->hasPermission(FIdConst::SUPPLIER_CATEGORY_DELETE) ? 1 : 0);
+			$this->assign("pAddSupplier", $us->hasPermission(FIdConst::SUPPLIER_ADD) ? 1 : 0);
+			$this->assign("pEditSupplier", $us->hasPermission(FIdConst::SUPPLIER_EDIT) ? 1 : 0);
+			$this->assign("pDeleteSupplier", $us->hasPermission(FIdConst::SUPPLIER_DELETE) ? 1 : 0);
+			
 			$this->display();
 		} else {
 			$this->gotoLoginPage("/Home/Supplier/index");
@@ -79,6 +89,21 @@ class SupplierController extends PSIBaseController {
 	 */
 	public function editCategory() {
 		if (IS_POST) {
+			$us = new UserService();
+			if (I("post.id")) {
+				// 编辑供应商分类
+				if (! $us->hasPermission(FIdConst::SUPPLIER_CATEGORY_EDIT)) {
+					$this->ajaxReturn($this->noPermission("编辑供应商分类"));
+					return;
+				}
+			} else {
+				// 新增供应商分类
+				if (! $us->hasPermission(FIdConst::SUPPLIER_CATEGORY_ADD)) {
+					$this->ajaxReturn($this->noPermission("新增供应商分类"));
+					return;
+				}
+			}
+			
 			$params = array(
 					"id" => I("post.id"),
 					"code" => I("post.code"),
@@ -94,6 +119,12 @@ class SupplierController extends PSIBaseController {
 	 */
 	public function deleteCategory() {
 		if (IS_POST) {
+			$us = new UserService();
+			if (! $us->hasPermission(FIdConst::SUPPLIER_CATEGORY_DELETE)) {
+				$this->ajaxReturn($this->noPermission("删除供应商分类"));
+				return;
+			}
+			
 			$params = array(
 					"id" => I("post.id")
 			);
@@ -107,6 +138,21 @@ class SupplierController extends PSIBaseController {
 	 */
 	public function editSupplier() {
 		if (IS_POST) {
+			$us = new UserService();
+			if (I("post.id")) {
+				// 编辑供应商档案
+				if (! $us->hasPermission(FIdConst::SUPPLIER_EDIT)) {
+					$this->ajaxReturn($this->noPermission("编辑供应商档案"));
+					return;
+				}
+			} else {
+				// 新增供应商档案
+				if (! $us->hasPermission(FIdConst::SUPPLIER_ADD)) {
+					$this->ajaxReturn($this->noPermission("新增供应商档案"));
+					return;
+				}
+			}
+			
 			$params = array(
 					"id" => I("post.id"),
 					"code" => I("post.code"),
@@ -140,6 +186,12 @@ class SupplierController extends PSIBaseController {
 	 */
 	public function deleteSupplier() {
 		if (IS_POST) {
+			$us = new UserService();
+			if (! $us->hasPermission(FIdConst::SUPPLIER_DELETE)) {
+				$this->ajaxReturn($this->noPermission("删除供应商档案"));
+				return;
+			}
+			
 			$params = array(
 					"id" => I("post.id")
 			);
