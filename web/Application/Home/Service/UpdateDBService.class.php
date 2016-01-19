@@ -90,6 +90,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20160116_01($db);
 		$this->update_20160116_02($db);
 		$this->update_20160118_01($db);
+		$this->update_20160119_01($db);
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -101,6 +102,121 @@ class UpdateDBService extends PSIBaseService {
 		$bl->insertBizlog("升级数据库，数据库版本 = " . $this->CURRENT_DB_VERSION);
 		
 		return $this->ok();
+	}
+
+	private function update_20160119_01($db) {
+		// 本次更新：细化基础数据供应商的权限到按钮级别
+		$fid = "1004";
+		$category = "供应商管理";
+		$note = "通过菜单进入基础数据供应商档案模块的权限";
+		$sql = "update t_permission
+				set note = '%s'
+				where id = '%s' ";
+		$db->execute($sql, $note, $fid);
+		
+		$ps = new PinyinService();
+		
+		// 新增供应商分类
+		$fid = FIdConst::SUPPLIER_CATEGORY_ADD;
+		$sql = "select count(*) as cnt from t_permission
+				where id = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$name = "新增供应商分类";
+			$note = "基础数据供应商档案模块[新增供应商分类]按钮的权限";
+			
+			$py = $ps->toPY($name);
+			
+			$sql = "insert into t_permission (id, fid, name, note, category, py)
+				values ('%s', '%s', '%s', '%s', '%s', '%s') ";
+			$db->execute($sql, $fid, $fid, $name, $note, $category, $py);
+		}
+		
+		// 编辑供应商分类
+		$fid = FIdConst::SUPPLIER_CATEGORY_EDIT;
+		$sql = "select count(*) as cnt from t_permission
+				where id = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$name = "编辑供应商分类";
+			$note = "基础数据供应商档案模块[编辑供应商分类]按钮的权限";
+			
+			$py = $ps->toPY($name);
+			
+			$sql = "insert into t_permission (id, fid, name, note, category, py)
+				values ('%s', '%s', '%s', '%s', '%s', '%s') ";
+			$db->execute($sql, $fid, $fid, $name, $note, $category, $py);
+		}
+		
+		// 删除供应商分类
+		$fid = FIdConst::SUPPLIER_CATEGORY_DELETE;
+		$sql = "select count(*) as cnt from t_permission
+				where id = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$name = "删除供应商分类";
+			$note = "基础数据供应商档案模块[删除供应商分类]按钮的权限";
+			
+			$py = $ps->toPY($name);
+			
+			$sql = "insert into t_permission (id, fid, name, note, category, py)
+				values ('%s', '%s', '%s', '%s', '%s', '%s') ";
+			$db->execute($sql, $fid, $fid, $name, $note, $category, $py);
+		}
+		
+		// 新增供应商
+		$fid = FIdConst::SUPPLIER_ADD;
+		$sql = "select count(*) as cnt from t_permission
+				where id = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$name = "新增供应商";
+			$note = "基础数据供应商档案模块[新增供应商]按钮的权限";
+			
+			$py = $ps->toPY($name);
+			
+			$sql = "insert into t_permission (id, fid, name, note, category, py)
+				values ('%s', '%s', '%s', '%s', '%s', '%s') ";
+			$db->execute($sql, $fid, $fid, $name, $note, $category, $py);
+		}
+		
+		// 编辑供应商
+		$fid = FIdConst::SUPPLIER_EDIT;
+		$sql = "select count(*) as cnt from t_permission
+				where id = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$name = "编辑供应商";
+			$note = "基础数据供应商档案模块[编辑供应商]按钮的权限";
+			
+			$py = $ps->toPY($name);
+			
+			$sql = "insert into t_permission (id, fid, name, note, category, py)
+				values ('%s', '%s', '%s', '%s', '%s', '%s') ";
+			$db->execute($sql, $fid, $fid, $name, $note, $category, $py);
+		}
+		
+		// 删除供应商
+		$fid = FIdConst::SUPPLIER_DELETE;
+		$sql = "select count(*) as cnt from t_permission
+				where id = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$name = "删除供应商";
+			$note = "基础数据供应商档案模块[删除供应商]按钮的权限";
+			
+			$py = $ps->toPY($name);
+			
+			$sql = "insert into t_permission (id, fid, name, note, category, py)
+				values ('%s', '%s', '%s', '%s', '%s', '%s') ";
+			$db->execute($sql, $fid, $fid, $name, $note, $category, $py);
+		}
 	}
 
 	private function update_20160118_01($db) {
