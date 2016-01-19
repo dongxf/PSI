@@ -140,6 +140,36 @@ class FIdConst {
 	const SUPPLIER_CATEGORY = "1004-02";
 	
 	/**
+	 * 新增供应商分类
+	 */
+	const SUPPLIER_CATEGORY_ADD = "1004-03";
+	
+	/**
+	 * 编辑供应商分类
+	 */
+	const SUPPLIER_CATEGORY_EDIT = "1004-04";
+	
+	/**
+	 * 删除供应商分类
+	 */
+	const SUPPLIER_CATEGORY_DELETE = "1004-05";
+	
+	/**
+	 * 新增供应商
+	 */
+	const SUPPLIER_ADD = "1004-06";
+	
+	/**
+	 * 编辑供应商
+	 */
+	const SUPPLIER_EDIT = "1004-07";
+	
+	/**
+	 * 删除供应商
+	 */
+	const SUPPLIER_DELETE = "1004-08";
+	
+	/**
 	 * 基础数据-商品
 	 */
 	const GOODS = "1001";
