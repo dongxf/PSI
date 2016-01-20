@@ -91,6 +91,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20160116_02($db);
 		$this->update_20160118_01($db);
 		$this->update_20160119_01($db);
+		$this->update_20160120_01($db);
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -102,6 +103,138 @@ class UpdateDBService extends PSIBaseService {
 		$bl->insertBizlog("升级数据库，数据库版本 = " . $this->CURRENT_DB_VERSION);
 		
 		return $this->ok();
+	}
+
+	private function update_20160120_01($db) {
+		// 本次更新：细化客户资料的权限到按钮级别
+		$fid = FIdConst::CUSTOMER;
+		$category = "客户管理";
+		$note = "通过菜单进入客户资料模块的权限";
+		$sql = "update t_permission
+				set note = '%s'
+				where id = '%s' ";
+		$db->execute($sql, $note, $fid);
+		
+		$ps = new PinyinService();
+		
+		// 新增客户分类
+		$fid = FIdConst::CUSTOMER_CATEGORY_ADD;
+		$sql = "select count(*) as cnt from t_permission
+				where id = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$name = "新增客户分类";
+			$note = "客户资料模块[新增客户分类]按钮的权限";
+			
+			$py = $ps->toPY($name);
+			
+			$sql = "insert into t_permission (id, fid, name, note, category, py)
+				values ('%s', '%s', '%s', '%s', '%s', '%s') ";
+			$db->execute($sql, $fid, $fid, $name, $note, $category, $py);
+		}
+		
+		// 编辑客户分类
+		$fid = FIdConst::CUSTOMER_CATEGORY_EDIT;
+		$sql = "select count(*) as cnt from t_permission
+				where id = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$name = "编辑客户分类";
+			$note = "客户资料模块[编辑客户分类]按钮的权限";
+			
+			$py = $ps->toPY($name);
+			
+			$sql = "insert into t_permission (id, fid, name, note, category, py)
+				values ('%s', '%s', '%s', '%s', '%s', '%s') ";
+			$db->execute($sql, $fid, $fid, $name, $note, $category, $py);
+		}
+		
+		// 删除客户分类
+		$fid = FIdConst::CUSTOMER_CATEGORY_DELETE;
+		$sql = "select count(*) as cnt from t_permission
+				where id = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$name = "删除客户分类";
+			$note = "客户资料模块[删除客户分类]按钮的权限";
+			
+			$py = $ps->toPY($name);
+			
+			$sql = "insert into t_permission (id, fid, name, note, category, py)
+				values ('%s', '%s', '%s', '%s', '%s', '%s') ";
+			$db->execute($sql, $fid, $fid, $name, $note, $category, $py);
+		}
+		
+		// 新增客户
+		$fid = FIdConst::CUSTOMER_ADD;
+		$sql = "select count(*) as cnt from t_permission
+				where id = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$name = "新增客户";
+			$note = "客户资料模块[新增客户]按钮的权限";
+			
+			$py = $ps->toPY($name);
+			
+			$sql = "insert into t_permission (id, fid, name, note, category, py)
+				values ('%s', '%s', '%s', '%s', '%s', '%s') ";
+			$db->execute($sql, $fid, $fid, $name, $note, $category, $py);
+		}
+		
+		// 编辑客户
+		$fid = FIdConst::CUSTOMER_EDIT;
+		$sql = "select count(*) as cnt from t_permission
+				where id = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$name = "编辑客户";
+			$note = "客户资料模块[编辑客户]按钮的权限";
+			
+			$py = $ps->toPY($name);
+			
+			$sql = "insert into t_permission (id, fid, name, note, category, py)
+				values ('%s', '%s', '%s', '%s', '%s', '%s') ";
+			$db->execute($sql, $fid, $fid, $name, $note, $category, $py);
+		}
+		
+		// 删除客户
+		$fid = FIdConst::CUSTOMER_DELETE;
+		$sql = "select count(*) as cnt from t_permission
+				where id = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$name = "删除客户";
+			$note = "客户资料模块[删除客户]按钮的权限";
+			
+			$py = $ps->toPY($name);
+			
+			$sql = "insert into t_permission (id, fid, name, note, category, py)
+				values ('%s', '%s', '%s', '%s', '%s', '%s') ";
+			$db->execute($sql, $fid, $fid, $name, $note, $category, $py);
+		}
+		
+		// 导入客户
+		$fid = FIdConst::CUSTOMER_IMPORT;
+		$sql = "select count(*) as cnt from t_permission
+				where id = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$name = "导入客户";
+			$note = "客户资料模块[导入客户]按钮的权限";
+			
+			$py = $ps->toPY($name);
+			
+			$sql = "insert into t_permission (id, fid, name, note, category, py)
+				values ('%s', '%s', '%s', '%s', '%s', '%s') ";
+			$db->execute($sql, $fid, $fid, $name, $note, $category, $py);
+		}
 	}
 
 	private function update_20160119_01($db) {
