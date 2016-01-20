@@ -235,6 +235,41 @@ class FIdConst {
 	const CUSTOMER_CATEGORY = "1007-02";
 	
 	/**
+	 * 新增客户分类
+	 */
+	const CUSTOMER_CATEGORY_ADD = "1007-03";
+	
+	/**
+	 * 编辑客户分类
+	 */
+	const CUSTOMER_CATEGORY_EDIT = "1007-04";
+	
+	/**
+	 * 删除客户分类
+	 */
+	const CUSTOMER_CATEGORY_DELETE = "1007-05";
+	
+	/**
+	 * 新增客户
+	 */
+	const CUSTOMER_ADD = "1007-06";
+	
+	/**
+	 * 编辑客户
+	 */
+	const CUSTOMER_EDIT = "1007-07";
+	
+	/**
+	 * 删除客户
+	 */
+	const CUSTOMER_DELETE = "1007-08";
+	
+	/**
+	 * 导入客户
+	 */
+	const CUSTOMER_IMPORT = "1007-09";
+	
+	/**
 	 * 库存建账
 	 */
 	const INVENTORY_INIT = "2000";
