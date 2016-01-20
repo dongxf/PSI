@@ -27,6 +27,17 @@ class CustomerController extends PSIBaseController {
 			
 			$this->assign("title", "客户资料");
 			
+			$this->assign("pAddCategory", 
+					$us->hasPermission(FIdConst::CUSTOMER_CATEGORY_ADD) ? 1 : 0);
+			$this->assign("pEditCategory", 
+					$us->hasPermission(FIdConst::CUSTOMER_CATEGORY_EDIT) ? 1 : 0);
+			$this->assign("pDeleteCategory", 
+					$us->hasPermission(FIdConst::CUSTOMER_CATEGORY_DELETE) ? 1 : 0);
+			$this->assign("pAddCustomer", $us->hasPermission(FIdConst::CUSTOMER_ADD) ? 1 : 0);
+			$this->assign("pEditCustomer", $us->hasPermission(FIdConst::CUSTOMER_EDIT) ? 1 : 0);
+			$this->assign("pDeleteCustomer", $us->hasPermission(FIdConst::CUSTOMER_DELETE) ? 1 : 0);
+			$this->assign("pImportCustomer", $us->hasPermission(FIdConst::CUSTOMER_IMPORT) ? 1 : 0);
+			
 			$this->display();
 		} else {
 			$this->gotoLoginPage("/Home/Customer/index");
@@ -58,6 +69,21 @@ class CustomerController extends PSIBaseController {
 	 */
 	public function editCategory() {
 		if (IS_POST) {
+			$us = new UserService();
+			if (I("post.id")) {
+				// 编辑客户分类
+				if (! $us->hasPermission(FIdConst::CUSTOMER_CATEGORY_EDIT)) {
+					$this->ajaxReturn($this->noPermission("编辑客户分类"));
+					return;
+				}
+			} else {
+				// 新增客户分类
+				if (! $us->hasPermission(FIdConst::CUSTOMER_CATEGORY_ADD)) {
+					$this->ajaxReturn($this->noPermission("新增客户分类"));
+					return;
+				}
+			}
+			
 			$params = array(
 					"id" => I("post.id"),
 					"code" => I("post.code"),
@@ -73,6 +99,12 @@ class CustomerController extends PSIBaseController {
 	 */
 	public function deleteCategory() {
 		if (IS_POST) {
+			$us = new UserService();
+			if (! $us->hasPermission(FIdConst::CUSTOMER_CATEGORY_DELETE)) {
+				$this->ajaxReturn($this->noPermission("删除客户分类"));
+				return;
+			}
+			
 			$params = array(
 					"id" => I("post.id")
 			);
@@ -86,6 +118,21 @@ class CustomerController extends PSIBaseController {
 	 */
 	public function editCustomer() {
 		if (IS_POST) {
+			$us = new UserService();
+			if (I("post.id")) {
+				// 编辑客户
+				if (! $us->hasPermission(FIdConst::CUSTOMER_EDIT)) {
+					$this->ajaxReturn($this->noPermission("编辑客户"));
+					return;
+				}
+			} else {
+				// 新增客户
+				if (! $us->hasPermission(FIdConst::CUSTOMER_ADD)) {
+					$this->ajaxReturn($this->noPermission("新增客户"));
+					return;
+				}
+			}
+			
 			$params = array(
 					"id" => I("post.id"),
 					"code" => I("post.code"),
@@ -142,6 +189,12 @@ class CustomerController extends PSIBaseController {
 	 */
 	public function deleteCustomer() {
 		if (IS_POST) {
+			$us = new UserService();
+			if (! $us->hasPermission(FIdConst::CUSTOMER_DELETE)) {
+				$this->ajaxReturn($this->noPermission("删除客户"));
+				return;
+			}
+			
 			$params = array(
 					"id" => I("post.id")
 			);
@@ -181,14 +234,24 @@ class CustomerController extends PSIBaseController {
 	 */
 	public function import() {
 		if (IS_POST) {
+			$us = new UserService();
+			if (! $us->hasPermission(FIdConst::CUSTOMER_IMPORT)) {
+				$this->ajaxReturn($this->noPermission("导入客户"));
+				return;
+			}
+			
 			$upload = new \Think\Upload();
 			
+			// 允许上传的文件后缀
 			$upload->exts = array(
 					'xls',
 					'xlsx'
-			); // 允许上传的文件后缀
-			$upload->savePath = '/Customer/'; // 保存路径
-			                                  // 先上传文件
+			);
+			
+			// 保存路径
+			$upload->savePath = '/Customer/';
+			
+			// 先上传文件
 			$fileInfo = $upload->uploadOne($_FILES['data_file']);
 			if (! $fileInfo) {
 				$this->ajaxReturn(

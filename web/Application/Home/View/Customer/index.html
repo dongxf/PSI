@@ -12,7 +12,15 @@
             productionName: "{$productionName}"
         });
 
-        app.add(Ext.create("PSI.Customer.MainForm"));
+        app.add(Ext.create("PSI.Customer.MainForm", {
+        	pAddCategory: "{$pAddCategory}",
+        	pEditCategory: "{$pEditCategory}",
+        	pDeleteCategory: "{$pDeleteCategory}",
+        	pAddCustomer: "{$pAddCustomer}",
+        	pEditCustomer: "{$pEditCustomer}",
+        	pDeleteCustomer: "{$pDeleteCustomer}",
+			pImportCustomer: "{$pImportCustomer}"        	
+        }));
         app.setAppHeader({
             title: "{$title}",
             iconCls: "PSI-fid1007"

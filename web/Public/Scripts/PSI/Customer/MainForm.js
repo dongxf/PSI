@@ -7,6 +7,16 @@ Ext.define("PSI.Customer.MainForm", {
 	extend : "Ext.panel.Panel",
 	border : 0,
 
+	config : {
+		pAddCategory : null,
+		pEditCategory : null,
+		pDeleteCategory : null,
+		pAddCustomer : null,
+		pEditCustomer : null,
+		pDeleteCustomer : null,
+		pImportCustomer : null
+	},
+
 	/**
 	 * 初始化组件
 	 */
@@ -284,36 +294,43 @@ Ext.define("PSI.Customer.MainForm", {
 		Ext.apply(me, {
 			tbar : [{
 						text : "新增客户分类",
+						disabled : me.getPAddCategory() == "0",
 						iconCls : "PSI-button-add",
 						handler : me.onAddCategory,
 						scope : me
 					}, {
 						text : "编辑客户分类",
+						disabled : me.getPEditCategory() == "0",
 						iconCls : "PSI-button-edit",
 						handler : me.onEditCategory,
 						scope : me
 					}, {
 						text : "删除客户分类",
+						disabled : me.getPDeleteCategory() == "0",
 						iconCls : "PSI-button-delete",
 						handler : me.onDeleteCategory,
 						scope : me
 					}, "-", {
 						text : "新增客户",
+						disabled : me.getPAddCustomer() == "0",
 						iconCls : "PSI-button-add-detail",
 						handler : me.onAddCustomer,
 						scope : me
 					}, {
 						text : "导入客户",
+						disabled : me.getPImportCustomer() == "0",
 						iconCls : "PSI-button-add",
 						handler : me.onImportCustomer,
 						scope : me
 					}, {
 						text : "修改客户",
+						disabled : me.getPEditCustomer() == "0",
 						iconCls : "PSI-button-edit-detail",
 						handler : me.onEditCustomer,
 						scope : me
 					}, {
 						text : "删除客户",
+						disabled : me.getPDeleteCustomer() == "0",
 						iconCls : "PSI-button-delete-detail",
 						handler : me.onDeleteCustomer,
 						scope : me
@@ -507,6 +524,11 @@ Ext.define("PSI.Customer.MainForm", {
 	 * 编辑客户分类
 	 */
 	onEditCategory : function() {
+		var me = this;
+		if (me.getPEditCategory() == "0") {
+			return;
+		}
+
 		var item = this.categoryGrid.getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
 			PSI.MsgBox.showInfo("请选择要编辑的客户分类");
@@ -674,6 +696,11 @@ Ext.define("PSI.Customer.MainForm", {
 	 * 编辑客户资料
 	 */
 	onEditCustomer : function() {
+		var me = this;
+		if (me.getPEditCustomer() == "0") {
+			return;
+		}
+
 		var item = this.categoryGrid.getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
 			PSI.MsgBox.showInfo("没有选择客户分类");
@@ -747,13 +774,13 @@ Ext.define("PSI.Customer.MainForm", {
 				}
 
 			};
-			
+
 			Ext.Ajax.request(r);
 		};
 
 		PSI.MsgBox.confirm(info, funcConfirm);
 	},
-	
+
 	gotoCustomerGridRecord : function(id) {
 		var me = this;
 		var grid = me.customerGrid;
@@ -769,7 +796,7 @@ Ext.define("PSI.Customer.MainForm", {
 			grid.getSelectionModel().select(0);
 		}
 	},
-	
+
 	refreshCategoryCount : function() {
 		var me = this;
 		var item = me.categoryGrid.getSelectionModel().getSelection();
@@ -867,7 +894,7 @@ Ext.define("PSI.Customer.MainForm", {
 	 */
 	onClearQuery : function() {
 		var me = this;
-		
+
 		var nameList = me.__queryEditNameList;
 		for (var i = 0; i < nameList.length; i++) {
 			var name = nameList[i];
