@@ -50,10 +50,6 @@ PSI的开源协议
 
 如需要技术支持，请联系
 -------------
-- QQ： <a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=1569352868&site=qq&menu=yes">1569352868</a>
-
-- Email：1569352868@qq.com
-
 - QQ群： <a target="_blank" href="http://shang.qq.com/wpa/qunwpa?idkey=64808ce24f2a3186ccb1f37aad9ed591bcc4fb257d09749753aca98c6c73e400">414474186</a>
 
 捐赠PSI众包业务
