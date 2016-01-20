@@ -22,7 +22,7 @@ Ext.define("PSI.About.MainForm", {
 				iconCls : "PSI-fid-9994",
 				height : 40
 			},
-			height : 300,
+			height : 240,
 			items : [{
 				border : 0,
 				xtype : "container",
@@ -32,8 +32,8 @@ Ext.define("PSI.About.MainForm", {
 						+ "</h1><p>当前版本："
 						+ PSI.Const.VERSION
 						+ "</p>"
-						+ "<p>产品源码下载请访问<a href='http://git.oschina.net/crm8000/PSI' target='_blank'>http://git.oschina.net/crm8000/PSI</a></p>"
-						+ "<p>如需技术支持，请联系：</p><p>QQ：1569352868 Email：1569352868@qq.com <br /><br /> QQ群：414474186</p>"
+						+ "<p>产品源码下载请访问  <a href='http://git.oschina.net/crm8000/PSI' target='_blank'>http://git.oschina.net/crm8000/PSI</a></p>"
+						+ "<p>技术支持QQ群 414474186</p>"
 			}],
 			buttons : [{
 						id : "buttonAboutFormOK",
