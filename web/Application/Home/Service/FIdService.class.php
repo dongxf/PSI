@@ -9,6 +9,9 @@ namespace Home\Service;
  */
 class FIdService {
 
+	/**
+	 * 记录刚刚操作过的FId值
+	 */
 	public function insertRecentFid($fid) {
 		if ($fid == null) {
 			return;
