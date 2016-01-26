@@ -1,5 +1,9 @@
 <layout name="layout" />
 
+<script src="{$uri}Public/Scripts/PSI/Customer/CustomerField.js?dt={$dtFlag}" type="text/javascript"></script>
+
+<script src="{$uri}Public/Scripts/PSI/SaleOrder/SOMainForm.js?dt={$dtFlag}" type="text/javascript"></script>
+
 <script>
     Ext.onReady(function(){
         var app = Ext.create("PSI.App", {
@@ -7,7 +11,14 @@
             productionName: "{$productionName}"
         });
 
-        //app.add(Ext.create("PSI.Sale.SOMainForm"));
+        var permission = {
+        		confirm: "",
+        		genWSBill: ""
+        };
+
+        app.add(Ext.create("PSI.SaleOrder.SOMainForm", {
+        	permission: permission
+        }));
         app.setAppHeader({
             title: "{$title}",
             iconCls: "PSI-fid2028"

@@ -1,9 +1,9 @@
 /**
- * 采购订单 - 主界面
+ * 销售订单 - 主界面
  * 
  * @author 李静波
  */
-Ext.define("PSI.PurchaseOrder.POMainForm", {
+Ext.define("PSI.SaleOrder.SOMainForm", {
 	extend : "Ext.panel.Panel",
 
 	config : {
@@ -90,18 +90,18 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 	getToolbarCmp : function() {
 		var me = this;
 		return [{
-					text : "新建采购订单",
+					text : "新建销售订单",
 					iconCls : "PSI-button-add",
 					scope : me,
 					handler : me.onAddBill
 				}, "-", {
-					text : "编辑采购订单",
+					text : "编辑销售订单",
 					iconCls : "PSI-button-edit",
 					scope : me,
 					handler : me.onEditBill,
 					id : "buttonEdit"
 				}, "-", {
-					text : "删除采购订单",
+					text : "删除销售订单",
 					iconCls : "PSI-button-delete",
 					scope : me,
 					handler : me.onDeleteBill,
@@ -125,11 +125,11 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 					xtype : "tbseparator",
 					id : "tbseparator2"
 				}, {
-					text : "生成采购入库单",
+					text : "生成销售出库单",
 					iconCls : "PSI-button-genbill",
 					scope : me,
-					handler : me.onGenPWBill,
-					id : "buttonGenPWBill"
+					handler : me.onGenWSBill,
+					id : "buttonGenWSBill"
 				}, "-", {
 					text : "关闭",
 					iconCls : "PSI-button-exit",
@@ -185,19 +185,18 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 					labelSeparator : "",
 					fieldLabel : "交货日期（止）"
 				}, {
-					id : "editQuerySupplier",
-					xtype : "psi_supplierfield",
-					parentCmp : me,
+					id : "editQueryCustomer",
+					xtype : "psi_customerfield",
 					labelAlign : "right",
 					labelSeparator : "",
 					labelWidth : 60,
 					margin : "5, 0, 0, 0",
-					fieldLabel : "供应商"
+					fieldLabel : "客户"
 				}, {
 					id : "editQueryPaymentType",
 					labelAlign : "right",
 					labelSeparator : "",
-					fieldLabel : "付款方式",
+					fieldLabel : "收款方式",
 					labelWidth : 60,
 					margin : "5, 0, 0, 0",
 					xtype : "combo",
@@ -206,7 +205,7 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 					valueField : "id",
 					store : Ext.create("Ext.data.ArrayStore", {
 								fields : ["id", "text"],
-								data : [[-1, "全部"], [0, "记应付账款"], [1, "现金付款"],
+								data : [[-1, "全部"], [0, "记应收账款"], [1, "现金收款"],
 										[2, "预付款"]]
 							}),
 					value : -1
@@ -232,7 +231,7 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 	},
 
 	/**
-	 * 采购订单主表
+	 * 销售订单主表
 	 */
 	getMainGrid : function() {
 		var me = this;
@@ -240,10 +239,10 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 			return me.__mainGrid;
 		}
 
-		var modelName = "PSIPOBill";
+		var modelName = "PSISOBill";
 		Ext.define(modelName, {
 					extend : "Ext.data.Model",
-					fields : ["id", "ref", "supplierName", "contact", "tel",
+					fields : ["id", "ref", "customerName", "contact", "tel",
 							"fax", "inputUserName", "bizUserName",
 							"billStatus", "goodsMoney", "dateCreated",
 							"paymentType", "tax", "moneyWithTax", "dealDate",
@@ -260,7 +259,7 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 						actionMethods : {
 							read : "POST"
 						},
-						url : PSI.Const.BASE_URL + "Home/Purchase/pobillList",
+						url : PSI.Const.BASE_URL + "Home/Sale/sobillList",
 						reader : {
 							root : 'dataList',
 							totalProperty : 'totalCount'
@@ -301,7 +300,7 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 									}
 								}
 							}, {
-								header : "采购订单号",
+								header : "销售订单号",
 								dataIndex : "ref",
 								width : 110,
 								menuDisabled : true,
@@ -317,28 +316,28 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 								menuDisabled : true,
 								sortable : false
 							}, {
-								header : "供应商",
-								dataIndex : "supplierName",
+								header : "客户",
+								dataIndex : "customerName",
 								width : 300,
 								menuDisabled : true,
 								sortable : false
 							}, {
-								header : "供应商联系人",
+								header : "客户联系人",
 								dataIndex : "contact",
 								menuDisabled : true,
 								sortable : false
 							}, {
-								header : "供应商电话",
+								header : "客户电话",
 								dataIndex : "tel",
 								menuDisabled : true,
 								sortable : false
 							}, {
-								header : "供应商传真",
+								header : "客户传真",
 								dataIndex : "fax",
 								menuDisabled : true,
 								sortable : false
 							}, {
-								header : "采购金额",
+								header : "销售金额",
 								dataIndex : "goodsMoney",
 								menuDisabled : true,
 								sortable : false,
@@ -362,16 +361,16 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 								xtype : "numbercolumn",
 								width : 150
 							}, {
-								header : "付款方式",
+								header : "收款方式",
 								dataIndex : "paymentType",
 								menuDisabled : true,
 								sortable : false,
 								width : 100,
 								renderer : function(value) {
 									if (value == 0) {
-										return "记应付账款";
+										return "记应收账款";
 									} else if (value == 1) {
-										return "现金付款";
+										return "现金收款";
 									} else if (value == 2) {
 										return "预付款";
 									} else {
@@ -469,7 +468,7 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 	},
 
 	/**
-	 * 采购订单明细记录
+	 * 销售订单明细记录
 	 */
 	getDetailGrid : function() {
 		var me = this;
@@ -477,7 +476,7 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 			return me.__detailGrid;
 		}
 
-		var modelName = "PSIPOBillDetail";
+		var modelName = "PSISOBillDetail";
 		Ext.define(modelName, {
 					extend : "Ext.data.Model",
 					fields : ["id", "goodsCode", "goodsName", "goodsSpec",
@@ -491,7 +490,7 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 				});
 
 		me.__detailGrid = Ext.create("Ext.grid.Panel", {
-					title : "采购订单明细",
+					title : "销售订单明细",
 					viewConfig : {
 						enableTextSelection : true
 					},
@@ -575,7 +574,7 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 	},
 
 	/**
-	 * 刷新采购订单主表记录
+	 * 刷新销售订单主表记录
 	 */
 	refreshMainGrid : function(id) {
 		var me = this;
@@ -584,10 +583,10 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 		Ext.getCmp("buttonDelete").setDisabled(true);
 		Ext.getCmp("buttonCommit").setDisabled(true);
 		Ext.getCmp("buttonCancelConfirm").setDisabled(true);
-		Ext.getCmp("buttonGenPWBill").setDisabled(true);
+		Ext.getCmp("buttonGenWSBill").setDisabled(true);
 
 		var gridDetail = me.getDetailGrid();
-		gridDetail.setTitle("采购订单明细");
+		gridDetail.setTitle("销售订单明细");
 		gridDetail.getStore().removeAll();
 
 		Ext.getCmp("pagingToobar").doRefresh();
@@ -595,49 +594,40 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 	},
 
 	/**
-	 * 新增采购订单
+	 * 新增销售订单
 	 */
 	onAddBill : function() {
-		var form = Ext.create("PSI.PurchaseOrder.POEditForm", {
-					parentForm : this
-				});
-		form.show();
 	},
 
 	/**
-	 * 编辑采购订单
+	 * 编辑销售订单
 	 */
 	onEditBill : function() {
 		var me = this;
 		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			PSI.MsgBox.showInfo("没有选择要编辑的采购订单");
+			PSI.MsgBox.showInfo("没有选择要编辑的销售订单");
 			return;
 		}
 		var bill = item[0];
 
-		var form = Ext.create("PSI.PurchaseOrder.POEditForm", {
-					parentForm : me,
-					entity : bill
-				});
-		form.show();
 	},
 
 	/**
-	 * 删除采购订单
+	 * 删除销售订单
 	 */
 	onDeleteBill : function() {
 		var me = this;
 		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			PSI.MsgBox.showInfo("请选择要删除的采购订单");
+			PSI.MsgBox.showInfo("请选择要删除的销售订单");
 			return;
 		}
 
 		var bill = item[0];
 
 		if (bill.get("billStatus") > 0) {
-			PSI.MsgBox.showInfo("当前采购订单已经审核，不能删除");
+			PSI.MsgBox.showInfo("当前销售订单已经审核，不能删除");
 			return;
 		}
 
@@ -650,13 +640,13 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 			preIndex = preItem.get("id");
 		}
 
-		var info = "请确认是否删除采购订单: <span style='color:red'>" + bill.get("ref")
+		var info = "请确认是否删除销售订单: <span style='color:red'>" + bill.get("ref")
 				+ "</span>";
 		var funcConfirm = function() {
 			var el = Ext.getBody();
 			el.mask("正在删除中...");
 			var r = {
-				url : PSI.Const.BASE_URL + "Home/Purchase/deletePOBill",
+				url : PSI.Const.BASE_URL + "Home/Sale/deleteSOBill",
 				method : "POST",
 				params : {
 					id : bill.get("id")
@@ -686,14 +676,14 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 
 	onMainGridSelect : function() {
 		var me = this;
-		me.getDetailGrid().setTitle("采购订单明细");
+		me.getDetailGrid().setTitle("销售订单明细");
 		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
 			Ext.getCmp("buttonEdit").setDisabled(true);
 			Ext.getCmp("buttonDelete").setDisabled(true);
 			Ext.getCmp("buttonCommit").setDisabled(true);
 			Ext.getCmp("buttonCancelConfirm").setDisabled(true);
-			Ext.getCmp("buttonGenPWBill").setDisabled(true);
+			Ext.getCmp("buttonGenWSBill").setDisabled(true);
 
 			return;
 		}
@@ -703,25 +693,25 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 		var buttonEdit = Ext.getCmp("buttonEdit");
 		buttonEdit.setDisabled(false);
 		if (commited) {
-			buttonEdit.setText("查看采购订单");
+			buttonEdit.setText("查看销售订单");
 		} else {
-			buttonEdit.setText("编辑采购订单");
+			buttonEdit.setText("编辑销售订单");
 		}
 
 		Ext.getCmp("buttonDelete").setDisabled(commited);
 		Ext.getCmp("buttonCommit").setDisabled(commited);
 		Ext.getCmp("buttonCancelConfirm").setDisabled(!commited);
-		Ext.getCmp("buttonGenPWBill").setDisabled(!commited);
+		Ext.getCmp("buttonGenWSBill").setDisabled(!commited);
 
-		this.refreshDetailGrid();
+		me.refreshDetailGrid();
 	},
 
 	/**
-	 * 刷新采购订单明细记录
+	 * 刷新销售订单明细记录
 	 */
 	refreshDetailGrid : function(id) {
 		var me = this;
-		me.getDetailGrid().setTitle("采购订单明细");
+		me.getDetailGrid().setTitle("销售订单明细");
 		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
 			return;
@@ -735,7 +725,7 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 		el.mask(PSI.Const.LOADING);
 
 		var r = {
-			url : PSI.Const.BASE_URL + "Home/Purchase/poBillDetailList",
+			url : PSI.Const.BASE_URL + "Home/Sale/soBillDetailList",
 			params : {
 				id : bill.get("id")
 			},
@@ -766,37 +756,37 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 	},
 
 	/**
-	 * 审核采购订单
+	 * 审核销售订单
 	 */
 	onCommit : function() {
 		var me = this;
 		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			PSI.MsgBox.showInfo("没有选择要审核的采购订单");
+			PSI.MsgBox.showInfo("没有选择要审核的销售订单");
 			return;
 		}
 		var bill = item[0];
 
 		if (bill.get("billStatus") > 0) {
-			PSI.MsgBox.showInfo("当前采购订单已经审核，不能再次审核");
+			PSI.MsgBox.showInfo("当前销售订单已经审核，不能再次审核");
 			return;
 		}
 
 		var detailCount = me.getDetailGrid().getStore().getCount();
 		if (detailCount == 0) {
-			PSI.MsgBox.showInfo("当前采购订单没有录入商品明细，不能审核");
+			PSI.MsgBox.showInfo("当前销售订单没有录入商品明细，不能审核");
 			return;
 		}
 
 		var info = "请确认是否审核单号: <span style='color:red'>" + bill.get("ref")
-				+ "</span> 的采购订单?";
+				+ "</span> 的销售订单?";
 		var id = bill.get("id");
 
 		var funcConfirm = function() {
 			var el = Ext.getBody();
 			el.mask("正在提交中...");
 			var r = {
-				url : PSI.Const.BASE_URL + "Home/Purchase/commitPOBill",
+				url : PSI.Const.BASE_URL + "Home/Sale/commitSOBill",
 				method : "POST",
 				params : {
 					id : id
@@ -830,24 +820,24 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 		var me = this;
 		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			PSI.MsgBox.showInfo("没有选择要取消审核的采购订单");
+			PSI.MsgBox.showInfo("没有选择要取消审核的销售订单");
 			return;
 		}
 		var bill = item[0];
 
 		if (bill.get("billStatus") == 0) {
-			PSI.MsgBox.showInfo("当前采购订单还没有审核，无法取消审核");
+			PSI.MsgBox.showInfo("当前销售订单还没有审核，无法取消审核");
 			return;
 		}
 
 		var info = "请确认是否取消审核单号为 <span style='color:red'>" + bill.get("ref")
-				+ "</span> 的采购订单?";
+				+ "</span> 的销售订单?";
 		var id = bill.get("id");
 		var funcConfirm = function() {
 			var el = Ext.getBody();
 			el.mask("正在提交中...");
 			var r = {
-				url : PSI.Const.BASE_URL + "Home/Purchase/cancelConfirmPOBill",
+				url : PSI.Const.BASE_URL + "Home/Sale/cancelConfirmSOBill",
 				method : "POST",
 				params : {
 					id : id
@@ -908,7 +898,7 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 		Ext.getCmp("editQueryRef").setValue(null);
 		Ext.getCmp("editQueryFromDT").setValue(null);
 		Ext.getCmp("editQueryToDT").setValue(null);
-		Ext.getCmp("editQuerySupplier").clearIdValue();
+		Ext.getCmp("editQueryCustomer").clearIdValue();
 		Ext.getCmp("editQueryPaymentType").setValue(-1);
 
 		me.onQuery();
@@ -926,7 +916,7 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 			result.ref = ref;
 		}
 
-		var supplierId = Ext.getCmp("editQuerySupplier").getIdValue();
+		var supplierId = Ext.getCmp("editQueryCustomer").getIdValue();
 		if (supplierId) {
 			result.supplierId = supplierId;
 		}
@@ -948,26 +938,20 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 	},
 
 	/**
-	 * 生成采购入库单
+	 * 生成销售出库单
 	 */
-	onGenPWBill : function() {
+	onGenWSBill : function() {
 		var me = this;
 		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			PSI.MsgBox.showInfo("没有选择要生成入库单的采购订单");
+			PSI.MsgBox.showInfo("没有选择要生成出库单的销售订单");
 			return;
 		}
 		var bill = item[0];
 
 		if (bill.get("billStatus") != 1000) {
-			PSI.MsgBox.showInfo("当前采购订单还没有审核，无法生成采购入库单");
+			PSI.MsgBox.showInfo("当前销售订单还没有审核，无法生成销售出库单");
 			return;
 		}
-
-		var form = Ext.create("PSI.Purchase.PWEditForm", {
-					genBill : true,
-					pobillRef : bill.get("ref")
-				});
-		form.show();
 	}
 });
