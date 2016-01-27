@@ -297,13 +297,14 @@ INSERT INTO `t_config` (`id`, `name`, `value`, `note`, `show_order`) VALUES
 ('9003-04', '销售出库单单号前缀', 'WS', '', 604),
 ('9003-05', '销售退货入库单单号前缀', 'SR', '', 605),
 ('9003-06', '调拨单单号前缀', 'IT', '', 606),
-('9003-07', '盘点单单号前缀', 'IC', '', 607);
+('9003-07', '盘点单单号前缀', 'IC', '', 607),
+('9003-08', '销售订单单号前缀', 'SO', '', 608);
 
 update t_config set company_id = '4D74E1E4-A129-11E4-9B6A-782BCBD7746B' ;
 
 TRUNCATE TABLE `t_psi_db_version`;
 INSERT INTO `t_psi_db_version` (`db_version`, `update_dt`) VALUES
-('20160120-01', now());
+('20160127-01', now());
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
