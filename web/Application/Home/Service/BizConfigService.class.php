@@ -179,6 +179,13 @@ class BizConfigService extends PSIBaseService {
 						"value" => "IC",
 						"note" => "",
 						"showOrder" => 607
+				),
+				array(
+						"id" => "9003-08",
+						"name" => "销售订单单号前缀",
+						"value" => "SO",
+						"note" => "",
+						"showOrder" => 608
 				)
 		);
 	}
@@ -251,6 +258,14 @@ class BizConfigService extends PSIBaseService {
 		
 		$companyId = $params["companyId"];
 		
+		$sql = "select name from t_org where id = '%s' ";
+		$data = $db->query($sql, $companyId);
+		if (! $data) {
+			$db->rollback();
+			return $this->bad("没有选择公司");
+		}
+		$companyName = $data[0]["name"];
+		
 		$refPreList = array(
 				"9003-01",
 				"9003-02",
@@ -258,7 +273,8 @@ class BizConfigService extends PSIBaseService {
 				"9003-04",
 				"9003-05",
 				"9003-06",
-				"9003-07"
+				"9003-07",
+				"9003-08"
 		);
 		
 		// 检查值是否合法
@@ -395,6 +411,7 @@ class BizConfigService extends PSIBaseService {
 			}
 			
 			if ($log) {
+				$log = "[" . $companyName . "], " . $log;
 				$bs = new BizlogService();
 				$bs->insertBizlog($log, $this->LOG_CATEGORY);
 			}
