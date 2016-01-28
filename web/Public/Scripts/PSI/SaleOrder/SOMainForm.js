@@ -193,7 +193,7 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 					margin : "5, 0, 0, 0",
 					fieldLabel : "客户"
 				}, {
-					id : "editQueryPaymentType",
+					id : "editQueryReceivingType",
 					labelAlign : "right",
 					labelSeparator : "",
 					fieldLabel : "收款方式",
@@ -244,7 +244,7 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 					fields : ["id", "ref", "customerName", "contact", "tel",
 							"fax", "inputUserName", "bizUserName",
 							"billStatus", "goodsMoney", "dateCreated",
-							"paymentType", "tax", "moneyWithTax", "dealDate",
+							"receivingType", "tax", "moneyWithTax", "dealDate",
 							"dealAddress", "orgName", "confirmUserName",
 							"confirmDate", "billMemo"]
 				});
@@ -361,7 +361,7 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 								width : 150
 							}, {
 								header : "收款方式",
-								dataIndex : "paymentType",
+								dataIndex : "receivingType",
 								menuDisabled : true,
 								sortable : false,
 								width : 100,
@@ -913,9 +913,9 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 			result.ref = ref;
 		}
 
-		var supplierId = Ext.getCmp("editQueryCustomer").getIdValue();
-		if (supplierId) {
-			result.supplierId = supplierId;
+		var customerId = Ext.getCmp("editQueryCustomer").getIdValue();
+		if (customerId) {
+			result.customerId = customerId;
 		}
 
 		var fromDT = Ext.getCmp("editQueryFromDT").getValue();
@@ -928,8 +928,8 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 			result.toDT = Ext.Date.format(toDT, "Y-m-d");
 		}
 
-		var paymentType = Ext.getCmp("editQueryPaymentType").getValue();
-		result.paymentType = paymentType;
+		var receivingType = Ext.getCmp("editQueryReceivingType").getValue();
+		result.receivingType = receivingType;
 
 		return result;
 	},

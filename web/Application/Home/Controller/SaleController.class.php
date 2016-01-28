@@ -7,6 +7,7 @@ use Home\Service\UserService;
 use Home\Common\FIdConst;
 use Home\Service\WSBillService;
 use Home\Service\SRBillService;
+use Home\Service\SOBillService;
 
 /**
  * 销售Controller
@@ -301,5 +302,25 @@ class SaleController extends PSIBaseController {
 		
 		$ws = new WSBillService();
 		$ws->pdf($params);
+	}
+	
+	/**
+	 * 获得销售订单主表信息列表
+	 */
+	public function sobillList() {
+		if (IS_POST) {
+			$ps = new SOBillService();
+			$params = array(
+					"billStatus" => I("post.billStatus"),
+					"ref" => I("post.ref"),
+					"fromDT" => I("post.fromDT"),
+					"toDT" => I("post.toDT"),
+					"customerId" => I("post.customerId"),
+					"receivingType" => I("post.receivingType"),
+					"start" => I("post.start"),
+					"limit" => I("post.limit")
+			);
+			$this->ajaxReturn($ps->sobillList($params));
+		}
 	}
 }
