@@ -707,4 +707,29 @@ class BizConfigService extends PSIBaseService {
 		
 		return $result;
 	}
+
+	/**
+	 * 获得销售订单单号前缀
+	 */
+	public function getSOBillRefPre() {
+		$result = "PO";
+		
+		$db = M();
+		$us = new UserService();
+		$companyId = $us->getCompanyId();
+		
+		$id = "9003-08";
+		$sql = "select value from t_config
+				where id = '%s' and company_id = '%s' ";
+		$data = $db->query($sql, $id, $companyId);
+		if ($data) {
+			$result = $data[0]["value"];
+			
+			if ($result == null || $result == "") {
+				$result = "SO";
+			}
+		}
+		
+		return $result;
+	}
 }
