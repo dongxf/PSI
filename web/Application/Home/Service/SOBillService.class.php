@@ -155,4 +155,106 @@ class SOBillService extends PSIBaseService {
 				"totalCount" => $cnt
 		);
 	}
+
+	/**
+	 * 获得销售订单的信息
+	 */
+	public function soBillInfo($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		$id = $params["id"];
+		
+		$result = array();
+		
+		$cs = new BizConfigService();
+		$result["taxRate"] = $cs->getTaxRate();
+		
+		$db = M();
+		
+		if ($id) {
+			// 编辑销售订单
+			$sql = "select s.ref, s.deal_date, s.deal_address, s.customer_id,
+						s.name as customer_name, s.contact, s.tel, s.fax,
+						s.org_id, o.full_name, s.biz_user_id, u.name as biz_user_name,
+						s.receiving_type, s.bill_memo, s.bill_status
+					from t_so_bill s, t_customer c, t_user u, t_org o
+					where s.id = '%s' and s.customer_Id = s.id
+						and s.biz_user_id = u.id
+						and s.org_id = o.id";
+			$data = $db->query($sql, $id);
+			if ($data) {
+				$v = $data[0];
+				$result["ref"] = $v["ref"];
+				$result["dealDate"] = $this->toYMD($v["deal_date"]);
+				$result["dealAddress"] = $v["deal_address"];
+				$result["customerId"] = $v["customer_id"];
+				$result["customerName"] = $v["customer_name"];
+				$result["contact"] = $v["contact"];
+				$result["tel"] = $v["tel"];
+				$result["fax"] = $v["fax"];
+				$result["orgId"] = $v["org_id"];
+				$result["orgFullName"] = $v["full_name"];
+				$result["bizUserId"] = $v["biz_user_id"];
+				$result["bizUserName"] = $v["biz_user_name"];
+				$result["receivingType"] = $v["receiving_type"];
+				$result["billMemo"] = $v["bill_memo"];
+				$result["billStatus"] = $v["bill_status"];
+				
+				// 明细表
+				$sql = "select s.id, s.goods_id, g.code, g.name, g.spec, s.goods_count, s.goods_price, s.goods_money,
+					s.tax_rate, s.tax, s.money_with_tax, u.name as unit_name
+				from t_so_bill_detail s, t_goods g, t_goods_unit u
+				where s.pobill_id = '%s' and s.goods_id = g.id and g.unit_id = u.id
+				order by s.show_order";
+				$items = array();
+				$data = $db->query($sql, $id);
+				
+				foreach ( $data as $i => $v ) {
+					$items[$i]["goodsId"] = $v["goods_id"];
+					$items[$i]["goodsCode"] = $v["code"];
+					$items[$i]["goodsName"] = $v["name"];
+					$items[$i]["goodsSpec"] = $v["spec"];
+					$items[$i]["goodsCount"] = $v["goods_count"];
+					$items[$i]["goodsPrice"] = $v["goods_price"];
+					$items[$i]["goodsMoney"] = $v["goods_money"];
+					$items[$i]["taxRate"] = $v["tax_rate"];
+					$items[$i]["tax"] = $v["tax"];
+					$items[$i]["moneyWithTax"] = $v["money_with_tax"];
+					$items[$i]["unitName"] = $v["unit_name"];
+				}
+				
+				$result["items"] = $items;
+			}
+		} else {
+			// 新建销售订单
+			$us = new UserService();
+			$result["bizUserId"] = $us->getLoginUserId();
+			$result["bizUserName"] = $us->getLoginUserName();
+			
+			$sql = "select o.id, o.full_name
+					from t_org o, t_user u
+					where o.id = u.org_id and u.id = '%s' ";
+			$data = $db->query($sql, $us->getLoginUserId());
+			if ($data) {
+				$result["orgId"] = $data[0]["id"];
+				$result["orgFullName"] = $data[0]["full_name"];
+			}
+		}
+		
+		return $result;
+	}
+
+	public function editSOBill($json) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
+		$bill = json_decode(html_entity_decode($json), true);
+		if ($bill == null) {
+			return $this->bad("传入的参数错误，不是正确的JSON格式");
+		}
+		
+		return $this->todo();
+	}
 }

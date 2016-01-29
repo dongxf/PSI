@@ -303,7 +303,7 @@ class SaleController extends PSIBaseController {
 		$ws = new WSBillService();
 		$ws->pdf($params);
 	}
-	
+
 	/**
 	 * 获得销售订单主表信息列表
 	 */
@@ -321,6 +321,31 @@ class SaleController extends PSIBaseController {
 					"limit" => I("post.limit")
 			);
 			$this->ajaxReturn($ps->sobillList($params));
+		}
+	}
+
+	/**
+	 * 获得销售订单的信息
+	 */
+	public function soBillInfo() {
+		if (IS_POST) {
+			$params = array(
+					"id" => I("post.id")
+			);
+				
+			$ps = new SOBillService();
+			$this->ajaxReturn($ps->soBillInfo($params));
+		}
+	}
+	
+	/**
+	 * 新增或编辑销售订单
+	 */
+	public function editSOBill() {
+		if (IS_POST) {
+			$json = I("post.jsonStr");
+			$ps = new SOBillService();
+			$this->ajaxReturn($ps->editSOBill($json));
 		}
 	}
 }

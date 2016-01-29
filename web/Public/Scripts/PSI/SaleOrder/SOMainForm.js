@@ -514,7 +514,7 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 								sortable : false,
 								width : 200
 							}, {
-								header : "采购数量",
+								header : "销售数量",
 								dataIndex : "goodsCount",
 								menuDisabled : true,
 								sortable : false,
@@ -526,7 +526,7 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 								sortable : false,
 								width : 60
 							}, {
-								header : "采购单价",
+								header : "销售单价",
 								dataIndex : "goodsPrice",
 								menuDisabled : true,
 								sortable : false,
@@ -534,7 +534,7 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 								xtype : "numbercolumn",
 								width : 150
 							}, {
-								header : "采购金额",
+								header : "销售金额",
 								dataIndex : "goodsMoney",
 								menuDisabled : true,
 								sortable : false,
@@ -594,6 +594,10 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 	 * 新增销售订单
 	 */
 	onAddBill : function() {
+		var form = Ext.create("PSI.SaleOrder.SOEditForm", {
+					parentForm : this
+				});
+		form.show();
 	},
 
 	/**
