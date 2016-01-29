@@ -348,4 +348,18 @@ class SaleController extends PSIBaseController {
 			$this->ajaxReturn($ps->editSOBill($json));
 		}
 	}
+	
+	/**
+	 * 获得销售订单的明细信息
+	 */
+	public function soBillDetailList() {
+		if (IS_POST) {
+			$params = array(
+					"id" => I("post.id")
+			);
+				
+			$ps = new SOBillService();
+			$this->ajaxReturn($ps->soBillDetailList($params));
+		}
+	}
 }

@@ -720,8 +720,8 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 		var bill = item[0];
 
 		var grid = me.getDetailGrid();
-		grid.setTitle("单号: " + bill.get("ref") + " 供应商: "
-				+ bill.get("supplierName"));
+		grid.setTitle("单号: " + bill.get("ref") + " 客户: "
+				+ bill.get("customerName"));
 		var el = grid.getEl();
 		el.mask(PSI.Const.LOADING);
 
