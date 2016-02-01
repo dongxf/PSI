@@ -362,4 +362,18 @@ class SaleController extends PSIBaseController {
 			$this->ajaxReturn($ps->soBillDetailList($params));
 		}
 	}
+	
+	/**
+	 * 删除销售订单
+	 */
+	public function deleteSOBill() {
+		if (IS_POST) {
+			$params = array(
+					"id" => I("post.id")
+			);
+				
+			$ps = new SOBillService();
+			$this->ajaxReturn($ps->deleteSOBill($params));
+		}
+	}
 }

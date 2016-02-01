@@ -24,6 +24,7 @@ Ext.define("PSI.SaleOrder.SOEditForm", {
 			title : entity == null ? "新建销售订单" : "编辑销售订单",
 			modal : true,
 			onEsc : Ext.emptyFn,
+			defaultFocus : "editCustomer",
 			maximized : true,
 			width : 1000,
 			height : 600,
@@ -261,7 +262,7 @@ Ext.define("PSI.SaleOrder.SOEditForm", {
 
 		me.__editorList = ["editDealDate", "editCustomer", "editDealAddress",
 				"editContact", "editTel", "editFax", "editOrg", "editBizUser",
-				"editPaymentType", "editBillMemo"];
+				"editReceivingType", "editBillMemo"];
 	},
 
 	onWindowBeforeUnload : function(e) {
@@ -274,7 +275,7 @@ Ext.define("PSI.SaleOrder.SOEditForm", {
 
 	onWndShow : function() {
 		Ext.get(window).on('beforeunload', this.onWindowBeforeUnload);
-
+		
 		var me = this;
 
 		var el = me.getEl() || Ext.getBody();
