@@ -612,6 +612,11 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 		}
 		var bill = item[0];
 
+		var form = Ext.create("PSI.SaleOrder.SOEditForm", {
+					parentForm : me,
+					entity : bill
+				});
+		form.show();
 	},
 
 	/**

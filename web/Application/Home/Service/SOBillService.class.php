@@ -197,11 +197,11 @@ class SOBillService extends PSIBaseService {
 		if ($id) {
 			// 编辑销售订单
 			$sql = "select s.ref, s.deal_date, s.deal_address, s.customer_id,
-						s.name as customer_name, s.contact, s.tel, s.fax,
+						c.name as customer_name, s.contact, s.tel, s.fax,
 						s.org_id, o.full_name, s.biz_user_id, u.name as biz_user_name,
 						s.receiving_type, s.bill_memo, s.bill_status
 					from t_so_bill s, t_customer c, t_user u, t_org o
-					where s.id = '%s' and s.customer_Id = s.id
+					where s.id = '%s' and s.customer_Id = c.id
 						and s.biz_user_id = u.id
 						and s.org_id = o.id";
 			$data = $db->query($sql, $id);
@@ -227,7 +227,7 @@ class SOBillService extends PSIBaseService {
 				$sql = "select s.id, s.goods_id, g.code, g.name, g.spec, s.goods_count, s.goods_price, s.goods_money,
 					s.tax_rate, s.tax, s.money_with_tax, u.name as unit_name
 				from t_so_bill_detail s, t_goods g, t_goods_unit u
-				where s.pobill_id = '%s' and s.goods_id = g.id and g.unit_id = u.id
+				where s.sobill_id = '%s' and s.goods_id = g.id and g.unit_id = u.id
 				order by s.show_order";
 				$items = array();
 				$data = $db->query($sql, $id);
