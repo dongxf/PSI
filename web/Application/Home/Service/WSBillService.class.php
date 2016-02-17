@@ -659,7 +659,7 @@ class WSBillService extends PSIBaseService {
 		$items = $db->query($sql, $id);
 		if (! $items) {
 			$db->rollback();
-			return $this->bad("采购出库单没有出库商品明细记录，无法出库");
+			return $this->bad("销售出库单没有出库商品明细记录，无法出库");
 		}
 		
 		foreach ( $items as $v ) {
