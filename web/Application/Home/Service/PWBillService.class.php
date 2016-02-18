@@ -717,15 +717,14 @@ class PWBillService extends PSIBaseService {
 		
 		// 检查供应商是否存在
 		$ss = new SupplierService();
-		if (!$ss->supplierExists($supplierId, $db)) {
+		if (! $ss->supplierExists($supplierId, $db)) {
 			$db->rollback();
 			return $this->bad("供应商不存在");
 		}
 		
-		
 		// 检查业务员是否存在
 		$us = new UserService();
-		if (!$us->userExists($bizUserId, $db)) {
+		if (! $us->userExists($bizUserId, $db)) {
 			$db->rollback();
 			return $this->bad("业务员不存在");
 		}
