@@ -715,6 +715,21 @@ class PWBillService extends PSIBaseService {
 			return $this->bad("仓库 [{$data[0]['name']}] 还没有完成建账，不能做采购入库的操作");
 		}
 		
+		// 检查供应商是否存在
+		$ss = new SupplierService();
+		if (!$ss->supplierExists($supplierId, $db)) {
+			$db->rollback();
+			return $this->bad("供应商不存在");
+		}
+		
+		
+		// 检查业务员是否存在
+		$us = new UserService();
+		if (!$us->userExists($bizUserId, $db)) {
+			$db->rollback();
+			return $this->bad("业务员不存在");
+		}
+		
 		$sql = "select goods_id, goods_count, goods_price, goods_money, id 
 				from t_pw_bill_detail 
 				where pwbill_id = '%s' order by show_order";
