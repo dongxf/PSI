@@ -92,6 +92,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20160118_01($db);
 		$this->update_20160119_01($db);
 		$this->update_20160120_01($db);
+		$this->update_20160219_01($db);
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -103,6 +104,56 @@ class UpdateDBService extends PSIBaseService {
 		$bl->insertBizlog("升级数据库，数据库版本 = " . $this->CURRENT_DB_VERSION);
 		
 		return $this->ok();
+	}
+
+	private function update_20160219_01($db) {
+		// 本次更新：销售订单新增审核和生成销售出库单的权限
+		$ps = new PinyinService();
+		$category = "销售订单";
+		
+		$fid = FIdConst::SALE_ORDER_CONFIRM;
+		$name = "销售订单 - 审核/取消审核";
+		$note = "销售订单 - 审核/取消审核";
+		$sql = "select count(*) as cnt from t_fid where fid = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_fid(fid, name) value('%s', '%s')";
+			$db->execute($sql, $fid, $name);
+		}
+		
+		$sql = "select count(*) as cnt from t_permission where id = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$py = $ps->toPY($name);
+			
+			$sql = "insert into t_permission (id, fid, name, note, category, py)
+				values ('%s', '%s', '%s', '%s', '%s', '%s') ";
+			$db->execute($sql, $fid, $fid, $name, $note, $category, $py);
+		}
+		
+		$fid = FIdConst::SALE_ORDER_GEN_WSBILL;
+		$name = "销售订单 - 生成销售出库单";
+		$note = "销售订单 - 生成销售出库单";
+		$sql = "select count(*) as cnt from t_fid where fid = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_fid(fid, name) value('%s', '%s')";
+			$db->execute($sql, $fid, $name);
+		}
+		
+		$sql = "select count(*) as cnt from t_permission where id = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$py = $ps->toPY($name);
+			
+			$sql = "insert into t_permission (id, fid, name, note, category, py)
+				values ('%s', '%s', '%s', '%s', '%s', '%s') ";
+			$db->execute($sql, $fid, $fid, $name, $note, $category, $py);
+		}
 	}
 
 	private function update_20160120_01($db) {

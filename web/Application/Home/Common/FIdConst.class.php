@@ -438,4 +438,14 @@ class FIdConst {
 	 * 销售订单
 	 */
 	const SALE_ORDER = "2028";
+	
+	/**
+	 * 销售订单 - 审核
+	 */
+	const SALE_ORDER_CONFIRM = "2028-01";
+	
+	/**
+	 * 销售订单 - 生成销售出库单
+	 */
+	const SALE_ORDER_GEN_WSBILL = "2028-02";
 }

@@ -28,6 +28,11 @@ class SaleController extends PSIBaseController {
 			
 			$this->assign("title", "销售订单");
 			
+			$this->assign("pConfirm", 
+					$us->hasPermission(FIdConst::SALE_ORDER_CONFIRM) ? "1" : "0");
+			$this->assign("pGenPWBill", 
+					$us->hasPermission(FIdConst::SALE_ORDER_GEN_WSBILL) ? "1" : "0");
+			
 			$this->display();
 		} else {
 			$this->gotoLoginPage("/Home/Sale/soIndex");
@@ -332,12 +337,12 @@ class SaleController extends PSIBaseController {
 			$params = array(
 					"id" => I("post.id")
 			);
-				
+			
 			$ps = new SOBillService();
 			$this->ajaxReturn($ps->soBillInfo($params));
 		}
 	}
-	
+
 	/**
 	 * 新增或编辑销售订单
 	 */
@@ -348,7 +353,7 @@ class SaleController extends PSIBaseController {
 			$this->ajaxReturn($ps->editSOBill($json));
 		}
 	}
-	
+
 	/**
 	 * 获得销售订单的明细信息
 	 */
@@ -357,12 +362,12 @@ class SaleController extends PSIBaseController {
 			$params = array(
 					"id" => I("post.id")
 			);
-				
+			
 			$ps = new SOBillService();
 			$this->ajaxReturn($ps->soBillDetailList($params));
 		}
 	}
-	
+
 	/**
 	 * 删除销售订单
 	 */
@@ -371,7 +376,7 @@ class SaleController extends PSIBaseController {
 			$params = array(
 					"id" => I("post.id")
 			);
-				
+			
 			$ps = new SOBillService();
 			$this->ajaxReturn($ps->deleteSOBill($params));
 		}

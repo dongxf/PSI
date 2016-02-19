@@ -64,7 +64,9 @@ INSERT INTO `t_fid` (`fid`, `name`) VALUES
 ('2027', '采购订单'),
 ('2027-01', '采购订单 - 审核/取消审核'),
 ('2027-02', '采购订单 - 生成采购入库单'),
-('2028', '销售订单');
+('2028', '销售订单'),
+('2028-01', '销售订单 - 审核/取消审核'),
+('2028-02', '销售订单 - 生成销售出库单');
 
 TRUNCATE TABLE `t_menu_item`;
 INSERT INTO `t_menu_item` (`id`, `caption`, `fid`, `parent_id`, `show_order`) VALUES
@@ -218,7 +220,9 @@ INSERT INTO `t_permission` (`id`, `fid`, `name`, `note`, `category`, `py`) VALUE
 ('2027', '2027', '采购订单', '采购订单', '采购订单', 'CGDD'),
 ('2027-01', '2027-01', '采购订单 - 审核/取消审核', '采购订单 - 审核/取消审核', '采购订单', 'CGDD _ SH_QXSH'),
 ('2027-02', '2027-02', '采购订单 - 生成采购入库单', '采购订单 - 生成采购入库单', '采购订单', 'CGDD _ SCCGRKD'),
-('2028', '2028', '销售订单', '销售订单', '销售订单', 'XSDD');
+('2028', '2028', '销售订单', '销售订单', '销售订单', 'XSDD'),
+('2028-01', '2028-01', '销售订单 - 审核/取消审核', '销售订单 - 审核/取消审核', '销售订单', 'XSDD _ SH_QXSH'),
+('2028-02', '2028-02', '销售订单 - 生成销售出库单', '销售订单 - 生成销售出库单', '销售订单', 'XSDD _ SCXSCKD');
 
 TRUNCATE TABLE `t_role`;
 INSERT INTO `t_role` (`id`, `name`, `data_org`, `company_id`) VALUES
@@ -304,7 +308,7 @@ update t_config set company_id = '4D74E1E4-A129-11E4-9B6A-782BCBD7746B' ;
 
 TRUNCATE TABLE `t_psi_db_version`;
 INSERT INTO `t_psi_db_version` (`db_version`, `update_dt`) VALUES
-('20160127-01', now());
+('20160219-01', now());
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
