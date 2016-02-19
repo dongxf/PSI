@@ -70,15 +70,15 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 			buttonCancelConfirm.setVisible(bConfirm);
 		}
 
-		var bGenPWBill = me.getPermission().genPWBill == "1";
-		var buttonGenPWBill = Ext.getCmp("buttonGenPWBill");
-		if (buttonGenPWBill) {
-			buttonGenPWBill.setVisible(bGenPWBill);
+		var bGenWSBill = me.getPermission().genWSBill == "1";
+		var buttonGenWSBill = Ext.getCmp("buttonGenWSBill");
+		if (buttonGenWSBill) {
+			buttonGenWSBill.setVisible(bGenWSBill);
 		}
 
 		var tb2 = Ext.getCmp("tbseparator2");
 		if (tb2) {
-			tb2.setVisible(bGenPWBill);
+			tb2.setVisible(bGenWSBill);
 		}
 
 		me.refreshMainGrid();

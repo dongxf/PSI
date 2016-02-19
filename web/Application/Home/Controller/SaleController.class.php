@@ -30,7 +30,7 @@ class SaleController extends PSIBaseController {
 			
 			$this->assign("pConfirm", 
 					$us->hasPermission(FIdConst::SALE_ORDER_CONFIRM) ? "1" : "0");
-			$this->assign("pGenPWBill", 
+			$this->assign("pGenWSBill", 
 					$us->hasPermission(FIdConst::SALE_ORDER_GEN_WSBILL) ? "1" : "0");
 			
 			$this->display();
