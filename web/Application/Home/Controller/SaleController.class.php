@@ -28,8 +28,7 @@ class SaleController extends PSIBaseController {
 			
 			$this->assign("title", "销售订单");
 			
-			$this->assign("pConfirm", 
-					$us->hasPermission(FIdConst::SALE_ORDER_CONFIRM) ? "1" : "0");
+			$this->assign("pConfirm", $us->hasPermission(FIdConst::SALE_ORDER_CONFIRM) ? "1" : "0");
 			$this->assign("pGenWSBill", 
 					$us->hasPermission(FIdConst::SALE_ORDER_GEN_WSBILL) ? "1" : "0");
 			
@@ -379,6 +378,20 @@ class SaleController extends PSIBaseController {
 			
 			$ps = new SOBillService();
 			$this->ajaxReturn($ps->deleteSOBill($params));
+		}
+	}
+
+	/**
+	 * 审核销售订单
+	 */
+	public function commitSOBill() {
+		if (IS_POST) {
+			$params = array(
+					"id" => I("post.id")
+			);
+			
+			$ps = new SOBillService();
+			$this->ajaxReturn($ps->commitSOBill($params));
 		}
 	}
 }

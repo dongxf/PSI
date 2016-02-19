@@ -539,7 +539,7 @@ class SOBillService extends PSIBaseService {
 		
 		return $result;
 	}
-	
+
 	/**
 	 * 删除销售订单
 	 */
@@ -587,6 +587,18 @@ class SOBillService extends PSIBaseService {
 		$db->commit();
 		
 		return $this->ok();
+	}
+
+	/**
+	 * 审核销售订单
+	 */
+	public function commitSOBill($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
 		
+		$id = $params["id"];
+		
+		return $this->todo();
 	}
 }
