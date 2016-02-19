@@ -654,7 +654,7 @@ class CustomerService extends PSIBaseService {
 			$queryKey = "";
 		}
 		
-		$sql = "select id, code, name, mobile01
+		$sql = "select id, code, name, mobile01, tel01, fax, address_receipt, contact01
 				from t_customer 
 				where (code like '%s' or name like '%s' or py like '%s' 
 					or mobile01 like '%s' or mobile02 like '%s' ) ";

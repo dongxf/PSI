@@ -789,7 +789,7 @@ Ext.define("PSI.SaleOrder.SOEditForm", {
 	},
 
 	__setCustomerExtData : function(data) {
-		Ext.getCmp("editDealAddress").setValue(data.address_shipping);
+		Ext.getCmp("editDealAddress").setValue(data.address_receipt);
 		Ext.getCmp("editTel").setValue(data.tel01);
 		Ext.getCmp("editFax").setValue(data.fax);
 		Ext.getCmp("editContact").setValue(data.contact01);

@@ -6,7 +6,8 @@ Ext.define("PSI.Customer.CustomerField", {
 	alias : "widget.psi_customerfield",
 
 	config : {
-		showAddButton : false
+		showAddButton : false,
+		callbackFunc : null
 	},
 
 	initComponent : function() {
@@ -40,7 +41,8 @@ Ext.define("PSI.Customer.CustomerField", {
 		var modelName = "PSICustomerField";
 		Ext.define(modelName, {
 					extend : "Ext.data.Model",
-					fields : ["id", "code", "name", "mobile01"]
+					fields : ["id", "code", "name", "mobile01", "tel01", "fax",
+							"address_receipt", "contact01"]
 				});
 
 		var store = Ext.create("Ext.data.Store", {
@@ -216,6 +218,11 @@ Ext.define("PSI.Customer.CustomerField", {
 		me.focus();
 
 		me.setIdValue(data.id);
+
+		var func = me.getCallbackFunc();
+		if (func) {
+			func(data);
+		}
 	},
 
 	setIdValue : function(id) {
