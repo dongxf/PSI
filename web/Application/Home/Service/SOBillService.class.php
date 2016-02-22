@@ -598,7 +598,42 @@ class SOBillService extends PSIBaseService {
 		}
 		
 		$id = $params["id"];
+		$db = M();
 		
-		return $this->todo();
+		$db->startTrans();
+		
+		$sql = "select ref, bill_status from t_so_bill where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if (! $data) {
+			$db->rollback();
+			return $this->bad("要审核的销售订单不存在");
+		}
+		$ref = $data[0]["ref"];
+		$billStatus = $data[0]["bill_status"];
+		if ($billStatus > 0) {
+			$db->rollback();
+			return $this->bad("销售订单(单号：$ref)已经被审核，不能再次审核");
+		}
+		
+		$sql = "update t_so_bill
+					set bill_status = 1000,
+						confirm_user_id = '%s',
+						confirm_date = now()
+					where id = '%s' ";
+		$us = new UserService();
+		$rc = $db->execute($sql, $us->getLoginUserId(), $id);
+		if ($rc === false) {
+			$db->rollback();
+			return $this->sqlError(__LINE__);
+		}
+		
+		// 记录业务日志
+		$log = "审核销售订单，单号：{$ref}";
+		$bs = new BizlogService();
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$db->commit();
+		
+		return $this->ok($id);
 	}
 }
