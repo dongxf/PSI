@@ -394,4 +394,18 @@ class SaleController extends PSIBaseController {
 			$this->ajaxReturn($ps->commitSOBill($params));
 		}
 	}
+
+	/**
+	 * 取消销售订单审核
+	 */
+	public function cancelConfirmSOBill() {
+		if (IS_POST) {
+			$params = array(
+					"id" => I("post.id")
+			);
+			
+			$ps = new SOBillService();
+			$this->ajaxReturn($ps->cancelConfirmSOBill($params));
+		}
+	}
 }
