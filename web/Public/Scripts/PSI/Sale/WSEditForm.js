@@ -5,7 +5,9 @@ Ext.define("PSI.Sale.WSEditForm", {
 	extend : "Ext.window.Window",
 	config : {
 		parentForm : null,
-		entity : null
+		entity : null,
+		genBill : false,
+		sobillRef : null
 	},
 
 	initComponent : function() {
@@ -242,7 +244,8 @@ Ext.define("PSI.Sale.WSEditForm", {
 		Ext.Ajax.request({
 					url : PSI.Const.BASE_URL + "Home/Sale/wsBillInfo",
 					params : {
-						id : Ext.getCmp("hiddenId").getValue()
+						id : Ext.getCmp("hiddenId").getValue(),
+						sobillRef : me.getSobillRef()
 					},
 					method : "POST",
 					callback : function(options, success, response) {
@@ -265,49 +268,77 @@ Ext.define("PSI.Sale.WSEditForm", {
 										});
 							}
 
-							if (data.ref) {
-								Ext.getCmp("editRef").setValue(data.ref);
-							}
-
-							Ext.getCmp("editCustomer")
-									.setIdValue(data.customerId);
-							Ext.getCmp("editCustomer")
-									.setValue(data.customerName);
-							Ext
-									.getCmp("editCustomer")
-									.setShowAddButton(data.showAddCustomerButton);
-
-							Ext.getCmp("editWarehouse")
-									.setIdValue(data.warehouseId);
-							Ext.getCmp("editWarehouse")
-									.setValue(data.warehouseName);
-
-							Ext.getCmp("editBizUser")
-									.setIdValue(data.bizUserId);
-							Ext.getCmp("editBizUser")
-									.setValue(data.bizUserName);
-							if (data.bizDT) {
-								Ext.getCmp("editBizDT").setValue(data.bizDT);
-							}
-							if (data.receivingType) {
+							if (me.getGenBill()) {
+								// 从销售订单生成销售出库单
+								Ext.getCmp("editCustomer")
+										.setIdValue(data.customerId);
+								Ext.getCmp("editCustomer")
+										.setValue(data.customerName);
+								Ext.getCmp("editBizUser")
+										.setIdValue(data.bizUserId);
+								Ext.getCmp("editBizUser")
+										.setValue(data.bizUserName);
+								Ext.getCmp("editBizDT").setValue(data.dealDate);
 								Ext.getCmp("editReceivingType")
 										.setValue(data.receivingType);
-							}
-							if (data.memo) {
-								Ext.getCmp("editBillMemo").setValue(data.memo);
-							}
-
-							var store = me.getGoodsGrid().getStore();
-							store.removeAll();
-							if (data.items) {
+								var store = me.getGoodsGrid().getStore();
+								store.removeAll();
 								store.add(data.items);
-							}
-							if (store.getCount() == 0) {
-								store.add({});
-							}
 
-							if (data.billStatus && data.billStatus != 0) {
-								me.setBillReadonly();
+								Ext.getCmp("editCustomer").setReadOnly(true);
+								Ext.getCmp("columnActionDelete").hide();
+								Ext.getCmp("columnActionAdd").hide();
+								Ext.getCmp("columnActionAppend").hide();
+
+								Ext.getCmp("editBarcode").setDisabled(true);
+							} else {
+
+								if (data.ref) {
+									Ext.getCmp("editRef").setValue(data.ref);
+								}
+
+								Ext.getCmp("editCustomer")
+										.setIdValue(data.customerId);
+								Ext.getCmp("editCustomer")
+										.setValue(data.customerName);
+								Ext
+										.getCmp("editCustomer")
+										.setShowAddButton(data.showAddCustomerButton);
+
+								Ext.getCmp("editWarehouse")
+										.setIdValue(data.warehouseId);
+								Ext.getCmp("editWarehouse")
+										.setValue(data.warehouseName);
+
+								Ext.getCmp("editBizUser")
+										.setIdValue(data.bizUserId);
+								Ext.getCmp("editBizUser")
+										.setValue(data.bizUserName);
+								if (data.bizDT) {
+									Ext.getCmp("editBizDT")
+											.setValue(data.bizDT);
+								}
+								if (data.receivingType) {
+									Ext.getCmp("editReceivingType")
+											.setValue(data.receivingType);
+								}
+								if (data.memo) {
+									Ext.getCmp("editBillMemo")
+											.setValue(data.memo);
+								}
+
+								var store = me.getGoodsGrid().getStore();
+								store.removeAll();
+								if (data.items) {
+									store.add(data.items);
+								}
+								if (store.getCount() == 0) {
+									store.add({});
+								}
+
+								if (data.billStatus && data.billStatus != 0) {
+									me.setBillReadonly();
+								}
 							}
 						} else {
 							PSI.MsgBox.showInfo("网络错误")
@@ -654,6 +685,8 @@ Ext.define("PSI.Sale.WSEditForm", {
 	},
 
 	getSaveData : function() {
+		var me = this;
+
 		var result = {
 			id : Ext.getCmp("hiddenId").getValue(),
 			bizDT : Ext.Date
@@ -663,6 +696,7 @@ Ext.define("PSI.Sale.WSEditForm", {
 			bizUserId : Ext.getCmp("editBizUser").getIdValue(),
 			receivingType : Ext.getCmp("editReceivingType").getValue(),
 			billMemo : Ext.getCmp("editBillMemo").getValue(),
+			sobillRef : me.getSobillRef(),
 			items : []
 		};
 

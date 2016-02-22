@@ -61,7 +61,8 @@ class SaleController extends PSIBaseController {
 	public function wsBillInfo() {
 		if (IS_POST) {
 			$params = array(
-					"id" => I("post.id")
+					"id" => I("post.id"),
+					"sobillRef" => I("post.sobillRef")
 			);
 			
 			$ws = new WSBillService();

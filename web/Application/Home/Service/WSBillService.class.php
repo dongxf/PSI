@@ -21,6 +21,8 @@ class WSBillService extends PSIBaseService {
 		}
 		
 		$id = $params["id"];
+		$sobillRef = $params["sobillRef"];
+		
 		$us = new UserService();
 		$result = array();
 		$result["canEditGoodsPrice"] = $this->canEditGoodsPrice();
@@ -42,6 +44,45 @@ class WSBillService extends PSIBaseService {
 				if ($data) {
 					$result["warehouseId"] = $data[0]["id"];
 					$result["warehouseName"] = $data[0]["name"];
+				}
+			}
+			
+			if ($sobillRef) {
+				// 由销售订单生成销售出库单
+				$sql = "select s.id, s.customer_id, c.name as customer_name, s.deal_date,
+							s.receiving_type
+						from t_so_bill s, t_customer c
+						where s.ref = '%s' and s.customer_id = c.id ";
+				$data = $db->query($sql, $sobillRef);
+				if ($data) {
+					$v = $data[0];
+					$result["customerId"] = $v["customer_id"];
+					$result["customerName"] = $v["customer_name"];
+					$result["dealDate"] = $this->toYMD($v["deal_date"]);
+					$result["receivingType"] = $v["receiving_type"];
+					
+					$pobillId = $v["id"];
+					// 销售订单的明细
+					$items = array();
+					$sql = "select s.id, s.goods_id, g.code, g.name, g.spec, u.name as unit_name,
+								s.goods_count, s.goods_price, s.goods_money
+							from t_so_bill_detail s, t_goods g, t_goods_unit u
+							where s.sobill_id = '%s' and s.goods_id = g.id and g.unit_id = u.id
+							order by s.show_order ";
+					$data = $db->query($sql, $pobillId);
+					foreach ( $data as $i => $v ) {
+						$items[$i]["id"] = $v["id"];
+						$items[$i]["goodsId"] = $v["goods_id"];
+						$items[$i]["goodsCode"] = $v["code"];
+						$items[$i]["goodsName"] = $v["name"];
+						$items[$i]["goodsSpec"] = $v["spec"];
+						$items[$i]["unitName"] = $v["unit_name"];
+						$items[$i]["goodsCount"] = $v["goods_count"];
+						$items[$i]["goodsPrice"] = $v["goods_price"];
+						$items[$i]["goodsMoney"] = $v["goods_money"];
+					}
+					
+					$result["items"] = $items;
 				}
 			}
 			
@@ -145,6 +186,8 @@ class WSBillService extends PSIBaseService {
 		$receivingType = $bill["receivingType"];
 		$billMemo = $bill["billMemo"];
 		$items = $bill["items"];
+		
+		$sobillRef = $bill["sobillRef"];
 		
 		$db = M();
 		$db->startTrans();
@@ -307,7 +350,38 @@ class WSBillService extends PSIBaseService {
 				return $this->sqlError(__LINE__);
 			}
 			
-			$log = "新增销售出库单，单号 = {$ref}";
+			if ($sobillRef) {
+				// 从销售订单生成销售出库单
+				$sql = "select id, company_id from t_so_bill where ref = '%s' ";
+				$data = $db->query($sql, $sobillRef);
+				if (! $data) {
+					$db->rollback();
+					return $this->sqlError(__LINE__);
+				}
+				$sobillId = $data[0]["id"];
+				$companyId = $data[0]["company_id"];
+				
+				$sql = "update t_ws_bill
+							set company_id = '%s'
+							where id = '%s' ";
+				$rc = $db->execute($sql, $companyId, $id);
+				if ($rc === false) {
+					$db->rollback();
+					return $this->sqlError(__LINE__);
+				}
+				
+				$sql = "insert into t_so_ws(so_id, ws_id) values('%s', '%s')";
+				$rc = $db->execute($sql, $sobillId, $id);
+				if (! $rc) {
+					$db->rollback();
+					return $this->sqlError(__LINE__);
+				}
+				
+				$log = "从销售订单(单号：{$sobillRef})生成销售出库单: 单号 = {$ref}";
+			} else {
+				// 手工新建销售出库单
+				$log = "新增销售出库单，单号 = {$ref}";
+			}
 		}
 		
 		// 记录业务日志
@@ -562,6 +636,14 @@ class WSBillService extends PSIBaseService {
 		}
 		
 		$sql = "delete from t_ws_bill where id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			$db->rollback();
+			return $this->sqlError(__LINE__);
+		}
+		
+		// 删除从销售订单生成的记录
+		$sql = "delete from t_so_ws where ws_id = '%s' ";
 		$rc = $db->execute($sql, $id);
 		if ($rc === false) {
 			$db->rollback();

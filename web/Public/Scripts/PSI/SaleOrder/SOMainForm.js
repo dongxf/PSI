@@ -959,5 +959,11 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 			PSI.MsgBox.showInfo("当前销售订单还没有审核，无法生成销售出库单");
 			return;
 		}
+
+		var form = Ext.create("PSI.Sale.WSEditForm", {
+					genBill : true,
+					sobillRef : bill.get("ref")
+				});
+		form.show();
 	}
 });
