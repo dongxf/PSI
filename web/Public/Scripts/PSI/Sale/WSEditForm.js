@@ -1,5 +1,7 @@
 /**
  * 销售出库 - 新建或编辑界面
+ * 
+ * @author 李静波
  */
 Ext.define("PSI.Sale.WSEditForm", {
 	extend : "Ext.window.Window",
@@ -290,6 +292,7 @@ Ext.define("PSI.Sale.WSEditForm", {
 								Ext.getCmp("columnActionAdd").hide();
 								Ext.getCmp("columnActionAppend").hide();
 
+								Ext.getCmp("buttonToolbox").setDisabled(true);
 								Ext.getCmp("editBarcode").setDisabled(true);
 							} else {
 
