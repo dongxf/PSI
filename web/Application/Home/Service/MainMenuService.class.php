@@ -19,6 +19,7 @@ class MainMenuService extends PSIBaseService {
 		// 还在开发中的功能，在MoPaaS上暂时不出现在菜单上
 		$isMoPaas = $this->isMoPaaS();
 		$inDeveloping = array(
+				FIdConst::GOODS_BRAND
 		);
 		
 		$us = new UserService();
