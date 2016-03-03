@@ -1,5 +1,7 @@
 <layout name="layout" />
 
+<script src="{$uri}Public/Scripts/PSI/Goods/BrandMainForm.js?dt={$dtFlag}" type="text/javascript"></script>
+
 <script>
     Ext.onReady(function(){
         var app = Ext.create("PSI.App", {
@@ -7,6 +9,8 @@
             productionName: "{$productionName}"
         });
 
+        app.add(Ext.create("PSI.Goods.BrandMainForm"));
+        
         app.setAppHeader({
             title: "{$title}",
             iconCls: "PSI-fid2029"
