@@ -66,7 +66,8 @@ INSERT INTO `t_fid` (`fid`, `name`) VALUES
 ('2027-02', '采购订单 - 生成采购入库单'),
 ('2028', '销售订单'),
 ('2028-01', '销售订单 - 审核/取消审核'),
-('2028-02', '销售订单 - 生成销售出库单');
+('2028-02', '销售订单 - 生成销售出库单'),
+('2029', '商品品牌');
 
 TRUNCATE TABLE `t_menu_item`;
 INSERT INTO `t_menu_item` (`id`, `caption`, `fid`, `parent_id`, `show_order`) VALUES
@@ -113,8 +114,10 @@ INSERT INTO `t_menu_item` (`id`, `caption`, `fid`, `parent_id`, `show_order`) VA
 ('070601', '应收账款账龄分析表', '2021', '0706', 1),
 ('070602', '应付账款账龄分析表', '2022', '0706', 2),
 ('08', '基础数据', NULL, NULL, 8),
-('0801', '商品', '1001', '08', 1),
-('0802', '商品计量单位', '1002', '08', 2),
+('0801', '商品', NULL, '08', 1),
+('080101', '商品', '1001', '0801', 1),
+('080102', '商品计量单位', '1002', '0801', 2),
+('080103', '商品品牌', '2029', '0801', 3),
 ('0803', '仓库', '1003', '08', 3),
 ('0804', '供应商档案', '1004', '08', 4),
 ('09', '系统管理', NULL, NULL, 9),
@@ -222,7 +225,8 @@ INSERT INTO `t_permission` (`id`, `fid`, `name`, `note`, `category`, `py`) VALUE
 ('2027-02', '2027-02', '采购订单 - 生成采购入库单', '采购订单 - 生成采购入库单', '采购订单', 'CGDD _ SCCGRKD'),
 ('2028', '2028', '销售订单', '销售订单', '销售订单', 'XSDD'),
 ('2028-01', '2028-01', '销售订单 - 审核/取消审核', '销售订单 - 审核/取消审核', '销售订单', 'XSDD _ SH_QXSH'),
-('2028-02', '2028-02', '销售订单 - 生成销售出库单', '销售订单 - 生成销售出库单', '销售订单', 'XSDD _ SCXSCKD');
+('2028-02', '2028-02', '销售订单 - 生成销售出库单', '销售订单 - 生成销售出库单', '销售订单', 'XSDD _ SCXSCKD'),
+('2029', '2029', '商品品牌', '通过菜单进入基础数据商品品牌模块的权限', '商品', 'SPPP');
 
 TRUNCATE TABLE `t_role`;
 INSERT INTO `t_role` (`id`, `name`, `data_org`, `company_id`) VALUES
@@ -308,7 +312,7 @@ update t_config set company_id = '4D74E1E4-A129-11E4-9B6A-782BCBD7746B' ;
 
 TRUNCATE TABLE `t_psi_db_version`;
 INSERT INTO `t_psi_db_version` (`db_version`, `update_dt`) VALUES
-('20160301-01', now());
+('20160303-01', now());
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

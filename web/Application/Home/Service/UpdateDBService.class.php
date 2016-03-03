@@ -149,9 +149,11 @@ class UpdateDBService extends PSIBaseService {
 		$cnt = $data[0]["cnt"];
 		if ($cnt == 0) {
 			$category = "商品";
-			$sql = "insert into t_permission(id, fid, name, note, category)
-					value('%s', '%s', '%s', '%s', '%s')";
-			$db->execute($sql, $fid, $fid, $name, $name, $category);
+			$ps = new PinyinService();
+			$py = $ps->toPY($name);
+			$sql = "insert into t_permission(id, fid, name, note, category, py)
+					value('%s', '%s', '%s', '%s', '%s', '%s')";
+			$db->execute($sql, $fid, $fid, $name, $name, $category, $py);
 		}
 		
 		$sql = "select count(*) as cnt from t_menu_item
