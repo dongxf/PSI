@@ -448,4 +448,9 @@ class FIdConst {
 	 * 销售订单 - 生成销售出库单
 	 */
 	const SALE_ORDER_GEN_WSBILL = "2028-02";
+	
+	/**
+	 * 基础数据 - 商品品牌
+	 */
+	const GOODS_BRAND = "2029";
 }

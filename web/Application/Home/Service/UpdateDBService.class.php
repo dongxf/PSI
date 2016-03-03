@@ -94,6 +94,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20160120_01($db);
 		$this->update_20160219_01($db);
 		$this->update_20160301_01($db);
+		$this->update_20160303_01($db);
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -105,6 +106,63 @@ class UpdateDBService extends PSIBaseService {
 		$bl->insertBizlog("升级数据库，数据库版本 = " . $this->CURRENT_DB_VERSION);
 		
 		return $this->ok();
+	}
+
+	private function update_20160303_01($db) {
+		// 本次更新：调整菜单；新增模块：基础数据-商品品牌
+		
+		// 调整菜单
+		$sql = "update t_menu_item
+				set fid = null
+				where id = '0801' ";
+		$db->execute($sql);
+		
+		$sql = "select count(*) as cnt 
+				from t_menu_item 
+				where id = '080101' ";
+		$data = $db->query($sql);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_menu_item (id, caption, fid, parent_id, show_order)
+				values ('080101', '商品', '1001', '0801', 1)";
+			$db->execute($sql);
+		}
+		
+		$sql = "update t_menu_item
+				set parent_id = '0801', id = '080102'
+				where id = '0802' ";
+		$db->execute($sql);
+		
+		// 新增模块：基础数据-商品品牌
+		$fid = FIdConst::GOODS_BRAND;
+		$name = "商品品牌";
+		$sql = "select count(*) as cnt from t_fid where fid = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_fid(fid, name) value('%s', '%s')";
+			$db->execute($sql, $fid, $name);
+		}
+		
+		$sql = "select count(*) as cnt from t_permission where id = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$category = "商品";
+			$sql = "insert into t_permission(id, fid, name, note, category)
+					value('%s', '%s', '%s', '%s', '%s')";
+			$db->execute($sql, $fid, $fid, $name, $name, $category);
+		}
+		
+		$sql = "select count(*) as cnt from t_menu_item
+				where id = '080103' ";
+		$data = $db->query($sql);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_menu_item(id, caption, fid, parent_id, show_order)
+					values ('080103', '%s', '%s', '0801', 3)";
+			$db->execute($sql, $name, $fid);
+		}
 	}
 
 	private function update_20160301_01($db) {
