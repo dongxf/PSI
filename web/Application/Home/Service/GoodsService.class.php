@@ -12,6 +12,7 @@ use Home\Common\FIdConst;
 class GoodsService extends PSIBaseService {
 	private $LOG_CATEGORY_GOODS = "基础数据-商品";
 	private $LOG_CATEGORY_UNIT = "基础数据-商品计量单位";
+	private $LOG_CATEGORY_BRAND = "基础数据-商品品牌";
 
 	/**
 	 * 返回所有商品计量单位
@@ -1340,7 +1341,7 @@ class GoodsService extends PSIBaseService {
 		
 		return $result;
 	}
-	
+
 	/**
 	 * 查询商品种类总数
 	 */
@@ -1388,6 +1389,19 @@ class GoodsService extends PSIBaseService {
 		$result = array();
 		
 		$result["cnt"] = $data[0]["cnt"];
+		
+		return $result;
+	}
+
+	/**
+	 * 获得所有的品牌
+	 */
+	public function allBrands() {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$result = array();
 		
 		return $result;
 	}

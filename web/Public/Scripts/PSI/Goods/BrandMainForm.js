@@ -43,7 +43,7 @@ Ext.define("PSI.Goods.BrandMainForm", {
 										xtype : "panel",
 										layout : "fit",
 										border : 0,
-										items : []
+										items : [me.getGrid()]
 									}]
 						});
 
@@ -77,5 +77,56 @@ Ext.define("PSI.Goods.BrandMainForm", {
 			 * 刷新Grid
 			 */
 			freshGrid : function(id) {
+			},
+
+			getGrid : function() {
+				var me = this;
+				if (me.__grid) {
+					return me.__grid;
+				}
+
+				var modelName = "PSIGoodsBrand";
+				Ext.define(modelName, {
+							extend : "Ext.data.Model",
+							fields : ["id", "text", "fullName", "leaf",
+									"children"]
+						});
+
+				var store = Ext.create("Ext.data.TreeStore", {
+							model : modelName,
+							proxy : {
+								type : "ajax",
+								actionMethods : {
+									read : "POST"
+								},
+								url : PSI.Const.BASE_URL
+										+ "Home/Goods/allBrands"
+							}
+						});
+
+				me.__grid = Ext.create("Ext.tree.Panel", {
+							border : 0,
+							store : store,
+							rootVisible : false,
+							useArrows : true,
+							viewConfig : {
+								loadMask : true
+							},
+							columns : {
+								defaults : {
+									sortable : false,
+									menuDisabled : true,
+									draggable : false
+								},
+								items : [{
+											xtype : "treecolumn",
+											text : "品牌",
+											dataIndex : "text",
+											width : 500
+										}]
+							}
+						});
+
+				return me.__grid;
 			}
 		});

@@ -448,4 +448,14 @@ class GoodsController extends PSIBaseController {
 			$this->gotoLoginPage("/Home/Goods/brandIndex");
 		}
 	}
+
+	/**
+	 * 获得所有的品牌
+	 */
+	public function allBrands() {
+		if (IS_POST) {
+			$gs = new GoodsService();
+			$this->ajaxReturn($gs->allBrands());
+		}
+	}
 }
