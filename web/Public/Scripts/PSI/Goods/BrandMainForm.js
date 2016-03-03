@@ -31,6 +31,11 @@ Ext.define("PSI.Goods.BrandMainForm", {
 										handler : me.onDeleteBrand,
 										scope : me
 									}, "-", {
+										text : "刷新",
+										iconCls : "PSI-button-refresh",
+										handler : me.onRefreshGrid,
+										scope : me
+									}, "-", {
 										text : "关闭",
 										iconCls : "PSI-button-exit",
 										handler : function() {
@@ -48,8 +53,6 @@ Ext.define("PSI.Goods.BrandMainForm", {
 						});
 
 				me.callParent(arguments);
-
-				me.freshGrid();
 			},
 
 			/**
@@ -76,7 +79,10 @@ Ext.define("PSI.Goods.BrandMainForm", {
 			/**
 			 * 刷新Grid
 			 */
-			freshGrid : function(id) {
+			refreshGrid : function(id) {
+				var me = this;
+				var store = me.getGrid().getStore();
+				store.load();
 			},
 
 			getGrid : function() {
@@ -128,5 +134,10 @@ Ext.define("PSI.Goods.BrandMainForm", {
 						});
 
 				return me.__grid;
+			},
+
+			onRefreshGrid : function() {
+				var me = this;
+				me.refreshGrid();
 			}
 		});
