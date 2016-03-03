@@ -37,7 +37,7 @@ class MainMenuController extends Controller {
 		}
 		
 		switch ($fid) {
-			case FIdConst::ABOUT:
+			case FIdConst::ABOUT :
 				// 修改我的密码
 				redirect(__ROOT__ . "/Home/About/index");
 				break;
@@ -191,9 +191,13 @@ class MainMenuController extends Controller {
 				// 采购订单
 				redirect(__ROOT__ . "/Home/Purchase/pobillIndex");
 				break;
-			case FIdConst::SALE_ORDER:
+			case FIdConst::SALE_ORDER :
 				// 销售订单
 				redirect(__ROOT__ . "/Home/Sale/soIndex");
+				break;
+			case FIdConst::GOODS_BRAND :
+				// 基础数据 - 商品品牌
+				redirect(__ROOT__ . "/Home/Goods/brandIndex");
 				break;
 			default :
 				redirect(__ROOT__ . "/Home");

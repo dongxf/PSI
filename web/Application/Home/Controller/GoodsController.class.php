@@ -431,4 +431,21 @@ class GoodsController extends PSIBaseController {
 			$this->ajaxReturn($gs->getTotalGoodsCount($params));
 		}
 	}
+
+	/**
+	 * 商品品牌主页面
+	 */
+	public function brandIndex() {
+		$us = new UserService();
+		
+		if ($us->hasPermission(FIdConst::GOODS_BRAND)) {
+			$this->initVar();
+			
+			$this->assign("title", "商品品牌");
+			
+			$this->display();
+		} else {
+			$this->gotoLoginPage("/Home/Goods/brandIndex");
+		}
+	}
 }
