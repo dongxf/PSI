@@ -59,7 +59,11 @@ Ext.define("PSI.Goods.BrandMainForm", {
 			 * 新增商品品牌
 			 */
 			onAddBrand : function() {
-				PSI.MsgBox.showInfo("TODO");
+				var me = this;
+				var form = Ext.create("PSI.Goods.BrandEditForm", {
+							parentForm : me
+						});
+				form.show();
 			},
 
 			/**

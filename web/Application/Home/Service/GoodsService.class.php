@@ -1473,4 +1473,15 @@ class GoodsService extends PSIBaseService {
 		
 		return $result;
 	}
+
+	/**
+	 * 新增或编辑商品品牌
+	 */
+	public function editBrand($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
+		return $this->todo();
+	}
 }

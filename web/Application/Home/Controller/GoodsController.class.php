@@ -458,4 +458,16 @@ class GoodsController extends PSIBaseController {
 			$this->ajaxReturn($gs->allBrands());
 		}
 	}
+
+	/**
+	 * 新增或编辑商品品牌
+	 */
+	public function editBrand() {
+		if (IS_POST) {
+			$params = array();
+			
+			$gs = new GoodsService();
+			$this->ajaxReturn($gs->editBrand($params));
+		}
+	}
 }
