@@ -1487,6 +1487,7 @@ class GoodsService extends PSIBaseService {
 		$parentId = $params["parentId"];
 		
 		$db = M();
+		$db->startTrans();
 		
 		$log = null;
 		
@@ -1685,5 +1686,59 @@ class GoodsService extends PSIBaseService {
 		}
 		
 		return $result;
+	}
+
+	/**
+	 * 删除商品品牌
+	 */
+	public function deleteBrand($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
+		$id = $params["id"];
+		
+		$db = M();
+		$db->startTrans();
+		
+		$sql = "select full_name from t_goods_brand where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if (! $data) {
+			$db->rollback();
+			return $this->bad("要删除的品牌不存在");
+		}
+		$fullName = $data[0]["full_name"];
+		
+		$sql = "select count(*) as cnt from t_goods
+				where brand_id = '%s' ";
+		$data = $db->query($sql, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			$db->rollback();
+			return $this->bad("品牌[$fullName]已经在商品中使用，不能删除");
+		}
+		
+		$sql = "select count(*) as cnt from t_goods_brand where parent_id = '%s' ";
+		$data = $db->query($sql, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			$db->rollback();
+			return $this->bad("品牌[$fullName]还有子品牌，所以不能被删除");
+		}
+		
+		$sql = "delete from t_goods_brand where id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			$db->rollback();
+			return $this->sqlError(__LINE__);
+		}
+		
+		$log = "删除商品品牌[$fullName]";
+		$bs = new BizlogService();
+		$bs->insertBizlog($log, $this->LOG_CATEGORY_BRAND);
+		
+		$db->commit();
+		
+		return $this->ok();
 	}
 }

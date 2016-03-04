@@ -488,4 +488,18 @@ class GoodsController extends PSIBaseController {
 			$this->ajaxReturn($gs->brandParentName($params));
 		}
 	}
+
+	/**
+	 * 删除商品品牌
+	 */
+	public function deleteBrand() {
+		if (IS_POST) {
+			$params = array(
+					"id" => I("post.id")
+			);
+			
+			$gs = new GoodsService();
+			$this->ajaxReturn($gs->deleteBrand($params));
+		}
+	}
 }

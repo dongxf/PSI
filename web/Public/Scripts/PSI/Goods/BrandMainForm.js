@@ -91,7 +91,47 @@ Ext.define("PSI.Goods.BrandMainForm", {
 			 * 删除商品品牌
 			 */
 			onDeleteBrand : function() {
-				PSI.MsgBox.showInfo("TODO");
+				var me = this;
+				var item = me.getGrid().getSelectionModel().getSelection();
+				if (item == null || item.length != 1) {
+					PSI.MsgBox.showInfo("请选择要删除的商品品牌");
+					return;
+				}
+
+				var brand = item[0];
+				var info = "请确认是否删除商品品牌: <span style='color:red'>"
+						+ brand.get("text") + "</span>";
+				var confimFunc = function() {
+					var el = Ext.getBody();
+					el.mask("正在删除中...");
+					var r = {
+						url : PSI.Const.BASE_URL + "Home/Goods/deleteBrand",
+						method : "POST",
+						params : {
+							id : brand.get("id")
+						},
+						callback : function(options, success, response) {
+							el.unmask();
+
+							if (success) {
+								var data = Ext.JSON
+										.decode(response.responseText);
+								if (data.success) {
+									PSI.MsgBox.tip("成功完成删除操作")
+									me.refreshGrid();
+								} else {
+									PSI.MsgBox.showInfo(data.msg);
+								}
+							} else {
+								PSI.MsgBox.showInfo("网络错误", function() {
+											window.location.reload();
+										});
+							}
+						}
+					};
+					Ext.Ajax.request(r);
+				};
+				PSI.MsgBox.confirm(info, confimFunc);
 			},
 
 			/**
