@@ -1547,4 +1547,46 @@ class GoodsService extends PSIBaseService {
 		
 		return $this->ok($id);
 	}
+
+	/**
+	 * 获得某个品牌的上级品牌全称
+	 */
+	public function brandParentName($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$result = array();
+		
+		$id = $params["id"];
+		
+		$db = M();
+		$sql = "select name, parent_id 
+				from t_goods_brand
+				where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if (! $data) {
+			return $result;
+		}
+		
+		$result["name"] = $data[0]["name"];
+		$parentId = $data[0]["parent_id"];
+		$result["parentBrandId"] = $parentId;
+		if ($parentId) {
+			$sql = "select full_name 
+					from t_goods_brand
+					where id = '%s' ";
+			$data = $db->query($sql, $parentId);
+			if ($data) {
+				$result["parentBrandName"] = $data[0]["full_name"];
+			} else {
+				$result["parentBrandId"] = null;
+				$result["parentBrandName"] = null;
+			}
+		} else {
+			$result["parentBrandName"] = null;
+		}
+		
+		return $result;
+	}
 }

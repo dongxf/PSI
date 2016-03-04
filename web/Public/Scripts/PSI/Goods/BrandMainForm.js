@@ -70,7 +70,21 @@ Ext.define("PSI.Goods.BrandMainForm", {
 			 * 编辑商品品牌
 			 */
 			onEditBrand : function() {
-				PSI.MsgBox.showInfo("TODO");
+				var me = this;
+				var item = me.getGrid().getSelectionModel().getSelection();
+				if (item == null || item.length != 1) {
+					PSI.MsgBox.showInfo("请选择要编辑的商品品牌");
+					return;
+				}
+
+				var brand = item[0];
+
+				var form = Ext.create("PSI.Goods.BrandEditForm", {
+							parentForm : me,
+							entity : brand
+						});
+
+				form.show();
 			},
 
 			/**
