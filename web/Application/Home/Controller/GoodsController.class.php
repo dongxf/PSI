@@ -464,7 +464,11 @@ class GoodsController extends PSIBaseController {
 	 */
 	public function editBrand() {
 		if (IS_POST) {
-			$params = array();
+			$params = array(
+					"id" => I("post.id"),
+					"name" => I("post.name"),
+					"parentId" => I("post.parentId")
+			);
 			
 			$gs = new GoodsService();
 			$this->ajaxReturn($gs->editBrand($params));

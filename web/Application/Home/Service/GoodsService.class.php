@@ -1482,6 +1482,69 @@ class GoodsService extends PSIBaseService {
 			return $this->notOnlineError();
 		}
 		
-		return $this->todo();
+		$id = $params["id"];
+		$name = $params["name"];
+		$parentId = $params["parentId"];
+		
+		$db = M();
+		
+		$log = null;
+		
+		$us = new UserService();
+		$dataOrg = $us->getLoginUserDataOrg();
+		$companyId = $us->getCompanyId();
+		
+		if ($id) {
+			// 编辑品牌
+		} else {
+			// 新增品牌
+			
+			// 检查上级品牌是否存在
+			$fullName = $name;
+			if ($parentId) {
+				$sql = "select full_name 
+						from t_goods_brand 
+						where id = '%s' ";
+				$data = $db->query($sql, $parentId);
+				if (! $data) {
+					$db->rollback();
+					return $this->bad("所选择的上级商品品牌不存在");
+				}
+				$fullName = $data[0]["full_name"] . "\\" . $name;
+			}
+			
+			$idGen = new IdGenService();
+			$id = $idGen->newId($db);
+			
+			if ($parentId) {
+				$sql = "insert into t_goods_brand(id, name, full_name, parent_id, data_org, company_id)
+						values ('%s', '%s', '%s', '%s', '%s', '%s')";
+				$rc = $db->execute($sql, $id, $name, $fullName, $parentId, $dataOrg, $companyId);
+				if ($rc === false) {
+					$db->rollback();
+					return $this->sqlError(__LINE__);
+				}
+			} else {
+				$sql = "insert into t_goods_brand(id, name, full_name, parent_id, data_org, company_id)
+						values ('%s', '%s', '%s', null, '%s', '%s')";
+				$rc = $db->execute($sql, $id, $name, $fullName, $dataOrg, $companyId);
+				if ($rc === false) {
+					$db->rollback();
+					return $this->sqlError(__LINE__);
+				}
+			}
+			
+			$log = "新增商品品牌[$name]";
+		}
+		
+		// 记录业务日志
+		if ($log) {
+			$bs = new BizlogService();
+			$bs->insertBizlog($log, $this->LOG_CATEGORY_BRAND);
+		}
+		
+		$db->commit();
+		
+		return $this->ok($id);
 	}
 }
