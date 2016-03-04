@@ -1496,6 +1496,78 @@ class GoodsService extends PSIBaseService {
 		
 		if ($id) {
 			// 编辑品牌
+			
+			// 检查品牌是否存在
+			$sql = "select name 
+					from t_goods_brand 
+					where id = '%s' ";
+			$data = $db->query($sql, $id);
+			if (! $data) {
+				$db->rollback();
+				return $this->bad("要编辑的品牌不存在");
+			}
+			if ($parentId) {
+				// 检查上级品牌是否存在
+				$sql = "select full_name 
+						from t_goods_brand 
+						where id = '%s' ";
+				$data = $db->query($sql, $parentId);
+				if (! data) {
+					$db->rollback();
+					return $this->bad("选择的上级品牌不存在");
+				}
+				$parentFullName = $data[0]["full_name"];
+				
+				// 上级品牌不能是自身
+				if ($parentId == $id) {
+					$db->rollback();
+					return $this->bad("上级品牌不能是自身");
+				}
+				
+				// 检查下级品牌不能是作为上级品牌
+				$tempParentId = $parentId;
+				while ( $tempParentId != null ) {
+					$sql = "select parent_id 
+							from t_goods_brand 
+							where id = '%s' ";
+					$data = $db->query($sql, $tempParentId);
+					if ($data) {
+						$tempParentId = $data[0]["parent_id"];
+					} else {
+						$tempParentId = null;
+					}
+					
+					if ($tempParentId == $id) {
+						$db->rollback();
+						return $this->bad("下级品牌不能作为上级品牌");
+					}
+				}
+			}
+			if ($parentId) {
+				$fullName = $parentFullName . "\\" . $name;
+				$sql = "update t_goods_brand
+							set name = '%s', parent_id = '%s', full_name = '%s'
+							where id = '%s' ";
+				$rc = $db->execute($sql, $name, $parentId, $fullName, $id);
+				if ($rc === false) {
+					$db->rollback();
+					return $this->sqlError(__LINE__);
+				}
+			} else {
+				$sql = "update t_goods_brand
+							set name = '%s', parent_id = null, full_name = '%s'
+							where id = '%s' ";
+				$rc = $db->execute($sql, $name, $name, $id);
+				if ($rc === false) {
+					$db->rollback();
+					return $this->sqlError(__LINE__);
+				}
+			}
+			
+			// 同步下级品牌的full_name
+			$this->updateSubBrandsFullName($db, $id);
+			
+			$log = "编辑商品品牌[$name]";
 		} else {
 			// 新增品牌
 			
@@ -1546,6 +1618,31 @@ class GoodsService extends PSIBaseService {
 		$db->commit();
 		
 		return $this->ok($id);
+	}
+
+	private function updateSubBrandsFullName($db, $parentId) {
+		$sql = "select full_name from t_goods_brand where id = '%s' ";
+		$data = $db->query($sql, $parentId);
+		if (! $data) {
+			return;
+		}
+		
+		$parentFullName = $data[0]["full_name"];
+		$sql = "select id, name 
+				from t_goods_brand
+				where parent_id = '%s' ";
+		$data = $db->query($sql, $parentId);
+		foreach ( $data as $i => $v ) {
+			$id = $v["id"];
+			$fullName = $parentFullName . "\\" . $v["name"];
+			$sql = "update t_goods_brand
+					set full_name = '%s'
+					where id = '%s' ";
+			$db->execute($sql, $fullName, $id);
+			
+			// 递归调用自身
+			$this->updateSubBrandsFullName($db, $id);
+		}
 	}
 
 	/**
