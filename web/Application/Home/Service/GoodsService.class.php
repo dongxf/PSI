@@ -594,7 +594,7 @@ class GoodsService extends PSIBaseService {
 		$db = M();
 		$result = array();
 		$sql = "select g.id, g.code, g.name, g.sale_price, g.spec,  g.unit_id, u.name as unit_name,
-					g.purchase_price, g.bar_code, g.memo, g.data_org
+					g.purchase_price, g.bar_code, g.memo, g.data_org, g.brand_id
 				from t_goods g, t_goods_unit u 
 				where (g.unit_id = u.id) and (g.category_id = '%s') ";
 		$queryParam = array();
@@ -641,6 +641,11 @@ class GoodsService extends PSIBaseService {
 			$result[$i]["barCode"] = $v["bar_code"];
 			$result[$i]["memo"] = $v["memo"];
 			$result[$i]["dataOrg"] = $v["data_org"];
+			
+			$brandId = $v["brand_id"];
+			if ($brandId) {
+				$result[$i]["brandFullName"] = $this->getBrandFullNameById($db, $brandId);
+			}
 		}
 		
 		$sql = "select count(*) as cnt from t_goods g where (g.category_id = '%s') ";
@@ -677,6 +682,16 @@ class GoodsService extends PSIBaseService {
 				"goodsList" => $result,
 				"totalCount" => $totalCount
 		);
+	}
+
+	public function getBrandFullNameById($db, $brandId) {
+		$sql = "select full_name from t_goods_brand where id = '%s' ";
+		$data = $db->query($sql, $brandId);
+		if ($data) {
+			return $data[0]["full_name"];
+		} else {
+			return null;
+		}
 	}
 
 	/**

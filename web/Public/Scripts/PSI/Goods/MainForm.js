@@ -26,7 +26,8 @@ Ext.define("PSI.Goods.MainForm", {
 					extend : "Ext.data.Model",
 					fields : ["id", "code", "name", "spec", "unitId",
 							"unitName", "categoryId", "salePrice",
-							"purchasePrice", "barCode", "memo", "dataOrg"]
+							"purchasePrice", "barCode", "memo", "dataOrg",
+							"brandFullName"]
 				});
 
 		var store = Ext.create("Ext.data.Store", {
@@ -125,6 +126,11 @@ Ext.define("PSI.Goods.MainForm", {
 								menuDisabled : true,
 								sortable : false,
 								width : 60
+							}, {
+								header : "品牌",
+								dataIndex : "brandFullName",
+								menuDisabled : true,
+								sortable : false
 							}, {
 								header : "销售价",
 								dataIndex : "salePrice",
@@ -503,7 +509,7 @@ Ext.define("PSI.Goods.MainForm", {
 		if (me.getPEditGoods() == "0") {
 			return;
 		}
-		
+
 		var item = this.getCategoryGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
 			PSI.MsgBox.showInfo("请选择商品分类");
@@ -877,7 +883,7 @@ Ext.define("PSI.Goods.MainForm", {
 		if (me.getPGoodsSI() == "0") {
 			return;
 		}
-		
+
 		var item = me.goodsGrid.getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
 			PSI.MsgBox.showInfo("请选择要设置安全库存的商品");
