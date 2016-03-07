@@ -1056,7 +1056,7 @@ class GoodsService extends PSIBaseService {
 		$db = M();
 		
 		$sql = "select category_id, code, name, spec, unit_id, sale_price, purchase_price, 
-					bar_code, memo
+					bar_code, memo, brand_id
 				from t_goods
 				where id = '%s' ";
 		$data = $db->query($sql, $id);
@@ -1070,6 +1070,8 @@ class GoodsService extends PSIBaseService {
 			$result["spec"] = $data[0]["spec"];
 			$result["unitId"] = $data[0]["unit_id"];
 			$result["salePrice"] = $data[0]["sale_price"];
+			$brandId = $data[0]["brand_id"];
+			$result["brandId"] = $brandId;
 			
 			$v = $data[0]["purchase_price"];
 			if ($v == 0) {
@@ -1086,6 +1088,13 @@ class GoodsService extends PSIBaseService {
 			if ($data) {
 				$result["categoryName"] = $data[0]["full_name"];
 			}
+			
+			if ($brandId) {
+				$sql = "select full_name from t_goods_brand where id = '%s' ";
+				$data = $db->query($sql, $brandId);
+				$result["brandFullName"] = $data[0]["full_name"];
+			}
+			
 			return $result;
 		} else {
 			$result = array();

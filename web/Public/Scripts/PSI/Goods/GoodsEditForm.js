@@ -320,6 +320,14 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 												.setValue(data.barCode);
 										Ext.getCmp("editMemo")
 												.setValue(data.memo);
+										var brandId = data.brandId;
+										if (brandId) {
+											var editBrand = Ext
+													.getCmp("editBrand");
+											editBrand.setIdValue(brandId);
+											editBrand
+													.setValue(data.brandFullName);
+										}
 									} else {
 										// 新增商品
 										if (unitStore.getCount() > 0) {
