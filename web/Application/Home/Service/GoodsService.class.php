@@ -697,6 +697,7 @@ class GoodsService extends PSIBaseService {
 		$purchasePrice = $params["purchasePrice"];
 		$barCode = $params["barCode"];
 		$memo = $params["memo"];
+		$brandId = $params["brandId"];
 		
 		$db = M();
 		$db->startTrans();
@@ -712,6 +713,16 @@ class GoodsService extends PSIBaseService {
 		if (! $data) {
 			$db->rollback();
 			return $this->bad("商品分类不存在");
+		}
+		
+		// 检查商品品牌
+		if ($brandId) {
+			$sql = "select name from t_goods_brand where id = '%s' ";
+			$data = $db->query($sql, $brandId);
+			if (! $data) {
+				$db->rollback();
+				return $this->bad("商品品牌不存在");
+			}
 		}
 		
 		$ps = new PinyinService();
@@ -744,11 +755,12 @@ class GoodsService extends PSIBaseService {
 			$sql = "update t_goods
 					set code = '%s', name = '%s', spec = '%s', category_id = '%s', 
 					    unit_id = '%s', sale_price = %f, py = '%s', purchase_price = %f,
-						bar_code = '%s', memo = '%s', spec_py = '%s'
+						bar_code = '%s', memo = '%s', spec_py = '%s',
+						brand_id = if('%s' = '', null, '%s')
 					where id = '%s' ";
 			
 			$rc = $db->execute($sql, $code, $name, $spec, $categoryId, $unitId, $salePrice, $py, 
-					$purchasePrice, $barCode, $memo, $specPY, $id);
+					$purchasePrice, $barCode, $memo, $specPY, $brandId, $brandId, $id);
 			if ($rc === false) {
 				$db->rollback();
 				return $this->sqlError(__LINE__);
@@ -784,10 +796,12 @@ class GoodsService extends PSIBaseService {
 			$companyId = $us->getCompanyId();
 			
 			$sql = "insert into t_goods (id, code, name, spec, category_id, unit_id, sale_price, 
-						py, purchase_price, bar_code, memo, data_org, company_id, spec_py)
-					values ('%s', '%s', '%s', '%s', '%s', '%s', %f, '%s', %f, '%s', '%s', '%s', '%s', '%s')";
+						py, purchase_price, bar_code, memo, data_org, company_id, spec_py, brand_id)
+					values ('%s', '%s', '%s', '%s', '%s', '%s', %f, '%s', %f, '%s', '%s', '%s', '%s', '%s',
+						if('%s' = '', null, '%s'))";
 			$rc = $db->execute($sql, $id, $code, $name, $spec, $categoryId, $unitId, $salePrice, 
-					$py, $purchasePrice, $barCode, $memo, $dataOrg, $companyId, $specPY);
+					$py, $purchasePrice, $barCode, $memo, $dataOrg, $companyId, $specPY, $brandId, 
+					$brandId);
 			if ($rc === false) {
 				$db->rollback();
 				return $this->sqlError(__LINE__);

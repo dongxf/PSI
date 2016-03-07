@@ -71,7 +71,7 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 							resizable : false,
 							onEsc : Ext.emptyFn,
 							width : 460,
-							height : 240,
+							height : 260,
 							layout : "fit",
 							items : [{
 								id : "editForm",
@@ -190,6 +190,23 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 										}
 									}
 								}, {
+									id : "editBrandId",
+									xtype : "hidden",
+									name : "brandId"
+								}, {
+									id : "editBrand",
+									fieldLabel : "品牌",
+									name : "brandName",
+									xtype : "PSI_goods_brand_field",
+									colspan : 2,
+									width : 430,
+									listeners : {
+										specialkey : {
+											fn : me.onEditSpecialKey,
+											scope : me
+										}
+									}
+								}, {
 									fieldLabel : "销售价",
 									xtype : "numberfield",
 									hideTrigger : true,
@@ -249,9 +266,10 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 				me.callParent(arguments);
 
 				me.__editorList = ["editCategory", "editCode", "editName",
-						"editSpec", "editUnit", "editBarCode", "editSalePrice",
-						"editPurchasePrice", "editMemo"];
+						"editSpec", "editUnit", "editBarCode", "editBrand",
+						"editSalePrice", "editPurchasePrice", "editMemo"];
 			},
+
 			onWndShow : function() {
 				var me = this;
 				var editCode = Ext.getCmp("editCode");
@@ -332,6 +350,9 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 				var categoryId = Ext.getCmp("editCategory").getIdValue();
 				Ext.getCmp("editCategoryId").setValue(categoryId);
 
+				var brandId = Ext.getCmp("editBrand").getIdValue();
+				Ext.getCmp("editBrandId").setValue(brandId);
+
 				var f = Ext.getCmp("editForm");
 				var el = f.getEl();
 				el.mask(PSI.Const.SAVING);
@@ -362,7 +383,7 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 							}
 						});
 			},
-			
+
 			onEditSpecialKey : function(field, e) {
 				if (e.getKey() === e.ENTER) {
 					var me = this;
@@ -377,7 +398,7 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 					}
 				}
 			},
-			
+
 			onLastEditSpecialKey : function(field, e) {
 				if (e.getKey() == e.ENTER) {
 					var f = Ext.getCmp("editForm");
@@ -387,7 +408,7 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 					}
 				}
 			},
-			
+
 			clearEdit : function() {
 				Ext.getCmp("editCode").focus();
 
@@ -401,7 +422,7 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 					edit.clearInvalid();
 				}
 			},
-			
+
 			onWndClose : function() {
 				var me = this;
 				me.getParentForm().__lastId = me.__lastId;
