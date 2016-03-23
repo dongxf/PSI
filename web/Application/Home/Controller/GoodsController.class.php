@@ -503,4 +503,18 @@ class GoodsController extends PSIBaseController {
 			$this->ajaxReturn($gs->deleteBrand($params));
 		}
 	}
+
+	/**
+	 * 某个商品的商品构成
+	 */
+	public function goodsBOMList() {
+		if (IS_POST) {
+			$params = array(
+					"id" => I("post.id")
+			);
+			
+			$gs = new GoodsService();
+			$this->ajaxReturn($gs->goodsBOMList($params));
+		}
+	}
 }

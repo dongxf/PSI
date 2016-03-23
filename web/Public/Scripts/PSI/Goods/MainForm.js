@@ -842,6 +842,7 @@ Ext.define("PSI.Goods.MainForm", {
 		var item = me.goodsGrid.getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
 			me.getSIGrid().setTitle("商品安全库存");
+			me.getGoodsBOMGrid().setTitle("商品构成");
 			return;
 		}
 
@@ -872,6 +873,29 @@ Ext.define("PSI.Goods.MainForm", {
 						}
 
 						el.unmask();
+					}
+				});
+
+		var grid = me.getGoodsBOMGrid();
+		var elBOM = grid.getEl() || Ext.getBody();
+		elBOM.mask(PSI.Const.LOADING);
+		Ext.Ajax.request({
+					url : PSI.Const.BASE_URL + "Home/Goods/goodsBOMList",
+					method : "POST",
+					params : {
+						id : goods.get("id")
+					},
+					callback : function(options, success, response) {
+						var store = grid.getStore();
+
+						store.removeAll();
+
+						if (success) {
+							var data = Ext.JSON.decode(response.responseText);
+							store.add(data);
+						}
+
+						elBOM.unmask();
 					}
 				});
 	},
