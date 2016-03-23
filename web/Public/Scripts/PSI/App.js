@@ -155,7 +155,7 @@ Ext.define("PSI.App", {
 			var fid = this.fid;
 
 			if (fid == "-9995") {
-				window.open("http://my.oschina.net/u/134395/blog/374195");
+				window.open("http://psi.mydoc.io/");
 			} else if (fid == "-9993") {
 				window.open("https://zb.oschina.net/market/opus/134395_122");
 			} else if (fid === "-9999") {
