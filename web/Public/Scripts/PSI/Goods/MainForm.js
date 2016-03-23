@@ -1,5 +1,7 @@
 /**
  * 商品 - 主界面
+ * 
+ * @author 李静波
  */
 Ext.define("PSI.Goods.MainForm", {
 	extend : "Ext.panel.Panel",
@@ -332,32 +334,35 @@ Ext.define("PSI.Goods.MainForm", {
 						region : "center",
 						layout : "border",
 						items : [{
-									region : "center",
-									xtype : "panel",
-									layout : "border",
-									border : 0,
-									items : [{
-												region : "center",
-												layout : "fit",
-												border : 0,
-												items : [goodsGrid]
-											}, {
-												region : "south",
-												layout : "fit",
-												border : 0,
-												height : 200,
-												split : true,
-												items : [me.getSIGrid()]
-											}]
-								}, {
-									xtype : "panel",
-									region : "west",
-									layout : "fit",
-									width : 430,
-									split : true,
-									border : 0,
-									items : [me.getCategoryGrid()]
-								}]
+							region : "center",
+							xtype : "panel",
+							layout : "border",
+							border : 0,
+							items : [{
+										region : "center",
+										layout : "fit",
+										border : 0,
+										items : [goodsGrid]
+									}, {
+										region : "south",
+										layout : "fit",
+										border : 0,
+										height : 200,
+										split : true,
+										xtype : "tabpanel",
+										items : [me.getSIGrid(),
+												me.getGoodsBOMGrid()]
+									}]
+						}, {
+							xtype : "panel",
+							region : "west",
+							layout : "fit",
+							width : 430,
+							split : true,
+							collapsible : true,
+							border : 0,
+							items : [me.getCategoryGrid()]
+						}]
 					}]
 		});
 
@@ -625,10 +630,6 @@ Ext.define("PSI.Goods.MainForm", {
 		if (item == null || item.length != 1) {
 			return;
 		}
-
-		// var category = item[0];
-		// category.set("cnt", me.goodsGrid.getStore().getTotalCount());
-		// me.getCategoryGrid().getStore().commitChanges();
 	},
 
 	onQueryEditSpecialKey : function(field, e) {
@@ -1037,5 +1038,70 @@ Ext.define("PSI.Goods.MainForm", {
 						}
 					}
 				});
+	},
+
+	/**
+	 * 商品构成Grid
+	 */
+	getGoodsBOMGrid : function() {
+		var me = this;
+		if (me.__bomGrid) {
+			return me.__bomGrid;
+		}
+
+		var modelName = "PSIGoodsBOM";
+		Ext.define(modelName, {
+					extend : "Ext.data.Model",
+					fields : ["id", "goodsCode", "goodsName", "goodsCount",
+							"goodsSpec", "unitName"]
+				});
+
+		me.__bomGrid = Ext.create("Ext.grid.Panel", {
+					viewConfig : {
+						enableTextSelection : true
+					},
+					title : "商品构成",
+					columnLines : true,
+					columns : [{
+								header : "子商品编码",
+								dataIndex : "goodsCode",
+								menuDisabled : true,
+								sortable : false
+							}, {
+								header : "子商品名称",
+								dataIndex : "goodsName",
+								width : 300,
+								menuDisabled : true,
+								sortable : false
+							}, {
+								header : "子商品规格型号",
+								dataIndex : "goodsSpec",
+								width : 200,
+								menuDisabled : true,
+								sortable : false
+							}, {
+								header : "子商品数量",
+								dataIndex : "goodsCount",
+								width : 120,
+								menuDisabled : true,
+								sortable : false,
+								align : "right",
+								xtype : "numbercolumn",
+								format : "0"
+							}, {
+								header : "计量单位",
+								dataIndex : "unitName",
+								width : 80,
+								menuDisabled : true,
+								sortable : false
+							}],
+					store : Ext.create("Ext.data.Store", {
+								model : modelName,
+								autoLoad : false,
+								data : []
+							})
+				});
+
+		return me.__bomGrid;
 	}
 });
