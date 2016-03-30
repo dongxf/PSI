@@ -705,6 +705,16 @@ class UserService extends PSIBaseService {
 				return $this->bad("组织机构不存在");
 			}
 			
+			// 检查编码是否存在
+			$sql = "select count(*) as cnt from t_user 
+					where org_code = '%s' and id <> '%s' ";
+			$data = $db->query($sql, $orgCode, $id);
+			$cnt = $data[0]["cnt"];
+			if ($cnt > 0) {
+				$db->rollback();
+				return $this->bad("编码[$orgCode]已经被其他用户使用");
+			}
+			
 			$sql = "select org_id, data_org from t_user where id = '%s'";
 			$data = $db->query($sql, $id);
 			$oldOrgId = $data[0]["org_id"];
@@ -768,6 +778,15 @@ class UserService extends PSIBaseService {
 			if ($cnt != 1) {
 				$db->rollback();
 				return $this->bad("组织机构不存在");
+			}
+			
+			// 检查编码是否存在
+			$sql = "select count(*) as cnt from t_user where org_code = '%s' ";
+			$data = $db->query($sql, $orgCode);
+			$cnt = $data[0]["cnt"];
+			if ($cnt > 0) {
+				$db->rollback();
+				return $this->bad("编码[$orgCode]已经被其他用户使用");
 			}
 			
 			// 新增用户的默认密码
