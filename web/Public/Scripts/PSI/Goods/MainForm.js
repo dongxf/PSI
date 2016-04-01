@@ -876,8 +876,8 @@ Ext.define("PSI.Goods.MainForm", {
 					}
 				});
 
-		var grid = me.getGoodsBOMGrid();
-		var elBOM = grid.getEl() || Ext.getBody();
+		var gridBOM = me.getGoodsBOMGrid();
+		var elBOM = gridBOM.getEl() || Ext.getBody();
 		elBOM.mask(PSI.Const.LOADING);
 		Ext.Ajax.request({
 					url : PSI.Const.BASE_URL + "Home/Goods/goodsBOMList",
@@ -886,7 +886,7 @@ Ext.define("PSI.Goods.MainForm", {
 						id : goods.get("id")
 					},
 					callback : function(options, success, response) {
-						var store = grid.getStore();
+						var store = gridBOM.getStore();
 
 						store.removeAll();
 
