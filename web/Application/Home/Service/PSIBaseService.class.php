@@ -2,6 +2,8 @@
 
 namespace Home\Service;
 
+use Home\DAO\UserDAO;
+
 /**
  * Service 基类
  *
@@ -95,11 +97,23 @@ class PSIBaseService {
 	}
 
 	/**
-	 * 盘点当前用户的session是否已经失效
+	 * 判断当前用户的session是否已经失效
 	 * true: 已经不在线
 	 */
 	protected function isNotOnline() {
-		return session("loginUserId") == null;
+		$userId = session("loginUserId");
+		if ($userId == null) {
+			return true;
+		} else {
+			// 判断当前用户是否被禁用
+			// 被禁用的用户，及时当前是在线，也视为已经退出
+			$ud = new UserDAO();
+			if ($ud->isDisabled($userId)) {
+				return true;
+			}
+			
+			return false;
+		}
 	}
 
 	/**

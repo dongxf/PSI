@@ -4,6 +4,7 @@ namespace Home\Service;
 
 use Home\Common\DemoConst;
 use Home\Common\FIdConst;
+use Home\DAO\UserDAO;
 
 /**
  * 用户Service
@@ -34,6 +35,20 @@ class UserService extends PSIBaseService {
 			return false;
 		}
 		
+		$userId = $this->getLoginUserId();
+		
+		if ($userId == DemoConst::ADMIN_USER_ID) {
+			// admin 用户是超级管理员
+			return true;
+		}
+		
+		// 判断用户是否被禁用
+		// 被禁用的用户，视为没有权限
+		$ud = new UserDAO();
+		if ($ud->isDisabled($userId)) {
+			return false;
+		}
+		
 		// 修改我的密码，重新登录，首页，使用帮助，关于，购买商业服务，这六个功能对所有的在线用户均不需要特别的权限
 		$idList = array(
 				FIdConst::CHANGE_MY_PASSWORD,
@@ -45,13 +60,6 @@ class UserService extends PSIBaseService {
 		);
 		if ($fid == null || in_array($fid, $idList)) {
 			return $result;
-		}
-		
-		$userId = $this->getLoginUserId();
-		
-		if ($userId == DemoConst::ADMIN_USER_ID) {
-			// admin 用户是超级管理员
-			return true;
 		}
 		
 		$sql = "select count(*) as cnt 
