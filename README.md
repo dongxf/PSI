@@ -48,6 +48,11 @@ PSI的开源协议
 > 更多文档，请参考：http://my.oschina.net/u/134395
 
 
+PSI行业版
+-------------
+> 食品行业版   http://git.oschina.net/crm8000/PSI_Food_Industry
+
+
 如需要技术支持，请联系
 -------------
 - QQ群： <a target="_blank" href="http://shang.qq.com/wpa/qunwpa?idkey=64808ce24f2a3186ccb1f37aad9ed591bcc4fb257d09749753aca98c6c73e400">414474186</a>
