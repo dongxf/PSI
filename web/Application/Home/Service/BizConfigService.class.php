@@ -454,10 +454,12 @@ class BizConfigService extends PSIBaseService {
 	 * 获得本产品名称，默认值是：开源进销存PSI
 	 */
 	public function getProductionName() {
+		$defaultName = "开源进销存PSI";
+		
 		$db = M();
 		if (! $this->columnExists($db, "t_config", "company_id")) {
 			// 兼容旧代码
-			return "开源进销存PSI";
+			return $defaultName;
 		}
 		
 		$us = new UserService();
@@ -469,7 +471,7 @@ class BizConfigService extends PSIBaseService {
 		if ($data) {
 			return $data[0]["value"];
 		} else {
-			return "开源进销存PSI";
+			return $defaultName;
 		}
 	}
 
