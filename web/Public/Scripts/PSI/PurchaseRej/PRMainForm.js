@@ -473,10 +473,10 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
 								listeners : {
 									change : {
 										fn : function() {
-											storeWSBill.pageSize = Ext
+											store.pageSize = Ext
 													.getCmp("comboCountPerPage")
 													.getValue();
-											storeWSBill.currentPage = 1;
+											store.currentPage = 1;
 											Ext.getCmp("pagingToobar")
 													.doRefresh();
 										},
