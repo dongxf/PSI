@@ -51,7 +51,7 @@ PSI的开源协议
 PSI行业版
 -------------
 > 食品行业版   http://git.oschina.net/crm8000/PSI_Food_Industry
-
+> 服装行业供应链管理系统   http://git.oschina.net/crm8000/PSI_Garment_Industry
 
 如需要技术支持，请联系
 -------------
