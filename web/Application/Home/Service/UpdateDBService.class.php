@@ -96,6 +96,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20160301_01($db);
 		$this->update_20160303_01($db);
 		$this->update_20160314_01($db);
+		$this->update_20160620_01($db);
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -107,6 +108,27 @@ class UpdateDBService extends PSIBaseService {
 		$bl->insertBizlog("升级数据库，数据库版本 = " . $this->CURRENT_DB_VERSION);
 		
 		return $this->ok();
+	}
+
+	private function update_20160620_01($db) {
+		// 本次更新：新增表：t_subject
+		$tableName = "t_subject";
+		
+		if (! $this->tableExists($db, $tableName)) {
+			$sql = "CREATE TABLE IF NOT EXISTS `t_subject` (
+					  `id` varchar(255) NOT NULL,
+					  `category` int NOT NULL,
+					  `code` varchar(255) NOT NULL,
+					  `name` varchar(255) NOT NULL,
+					  `is_leaf` int NOT NULL,
+					  `py` varchar(255) DEFAULT NULL,
+					  `data_org` varchar(255) DEFAULT NULL,
+					  `company_id` varchar(255) DEFAULT NULL,
+					  PRIMARY KEY (`id`)
+					) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+					";
+			$db->execute($sql);
+		}
 	}
 
 	private function update_20160314_01($db) {
