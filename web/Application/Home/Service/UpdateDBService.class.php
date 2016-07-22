@@ -97,6 +97,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20160303_01($db);
 		$this->update_20160314_01($db);
 		$this->update_20160620_01($db);
+		$this->update_20160722_01($db);
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -108,6 +109,16 @@ class UpdateDBService extends PSIBaseService {
 		$bl->insertBizlog("升级数据库，数据库版本 = " . $this->CURRENT_DB_VERSION);
 		
 		return $this->ok();
+	}
+
+	private function update_20160722_01($db) {
+		// 本次跟新：t_subject表新增字段parent_id
+		$tableName = "t_subject";
+		$columnName = "parent_id";
+		if (! $this->columnExists($db, $tableName, $columnName)) {
+			$sql = "alter table {$tableName} add {$columnName} varchar(255) default null;";
+			$db->execute($sql);
+		}
 	}
 
 	private function update_20160620_01($db) {
