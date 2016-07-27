@@ -131,7 +131,7 @@ class PSIBaseService {
 	}
 
 	/**
-	 * 盘点日期是否是正确的Y-m-d格式
+	 * 判断日期是否是正确的Y-m-d格式
 	 *
 	 * @param string $date        	
 	 * @return boolean true: 是正确的格式
