@@ -10,6 +10,11 @@ namespace Home\Common;
 class FIdConst {
 	
 	/**
+	 * 自定义表单系统
+	 */
+	const FORM_SYSTEM = "-7999";
+	
+	/**
 	 * 首页
 	 */
 	const HOME = "-9997";

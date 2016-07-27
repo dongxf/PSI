@@ -199,6 +199,10 @@ class MainMenuController extends Controller {
 				// 基础数据 - 商品品牌
 				redirect(__ROOT__ . "/Home/Goods/brandIndex");
 				break;
+			case FIdConst::FORM_SYSTEM :
+				// 自定义表单
+				redirect(__ROOT__ . "/Home/Form/index");
+				break;
 			default :
 				redirect(__ROOT__ . "/Home");
 		}
