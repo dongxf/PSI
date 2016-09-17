@@ -471,6 +471,14 @@ class BizConfigService extends PSIBaseService {
 		if ($data) {
 			return $data[0]["value"];
 		} else {
+			// 登录页面的时候，并不知道company_id的值
+			$sql = "select value from t_config
+				where id = '9002-01' ";
+			$data = $db->query($sql);
+			if ($data) {
+				return $data[0]["value"];
+			}
+			
 			return $defaultName;
 		}
 	}
