@@ -63,7 +63,7 @@ Ext.define("PSI.Bizlog.MainForm", {
 							}, {
 								text : "IP所属地",
 								dataIndex : "ipFrom",
-								width : 120,
+								width : 200,
 								menuDisabled : true,
 								sortable : false
 							}, {
