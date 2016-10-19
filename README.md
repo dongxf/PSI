@@ -60,6 +60,8 @@ PSI行业版
 -------------
 - QQ群： <a target="_blank" href="http://shang.qq.com/wpa/qunwpa?idkey=64808ce24f2a3186ccb1f37aad9ed591bcc4fb257d09749753aca98c6c73e400">414474186</a>
 
+- 付费技术支持群：498771245
+
 致谢
 -------------
 >PSI使用了如下开源软件，没有你们，就没有PSI
