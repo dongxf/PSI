@@ -37,7 +37,7 @@ Ext.define("PSI.About.MainForm", {
 			}],
 			buttons : [{
 						id : "buttonAboutFormOK",
-						text : "确定",
+						text : "关闭",
 						handler : me.onOK,
 						scope : me,
 						iconCls : "PSI-button-ok"
@@ -58,6 +58,6 @@ Ext.define("PSI.About.MainForm", {
 	},
 
 	onOK : function() {
-		location.replace(PSI.Const.BASE_URL);
+		window.close();
 	}
 });

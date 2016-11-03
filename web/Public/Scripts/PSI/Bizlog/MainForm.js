@@ -142,7 +142,7 @@ Ext.define("PSI.Bizlog.MainForm", {
 								text : "关闭",
 								iconCls : "PSI-button-exit",
 								handler : function() {
-									location.replace(PSI.Const.BASE_URL);
+									window.close();
 								}
 							}, "->", {
 								text : "一键升级数据库",
