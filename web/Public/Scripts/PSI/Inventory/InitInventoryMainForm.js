@@ -234,7 +234,7 @@ Ext.define("PSI.Inventory.InitInventoryMainForm", {
 						text : "关闭",
 						iconCls : "PSI-button-exit",
 						handler : function() {
-							location.replace(PSI.Const.BASE_URL);
+							window.close();
 						}
 					}],
 			items : [{
