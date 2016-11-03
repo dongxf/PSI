@@ -282,7 +282,7 @@ Ext.define("PSI.User.MainForm", {
 								text : "关闭",
 								iconCls : "PSI-button-exit",
 								handler : function() {
-									location.replace(me.getBaseURL());
+									window.close();
 								}
 							}],
 					items : [{
