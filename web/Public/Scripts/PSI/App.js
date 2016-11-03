@@ -164,7 +164,7 @@ Ext.define("PSI.App", {
 									+ "Home/MainMenu/navigateTo/fid/-9999");
 						});
 			} else {
-				location.replace(PSI.Const.BASE_URL
+				window.open(PSI.Const.BASE_URL
 						+ "Home/MainMenu/navigateTo/fid/" + fid);
 			}
 		};
