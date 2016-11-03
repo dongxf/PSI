@@ -64,7 +64,7 @@ Ext.define("PSI.App", {
 													+ "Home/MainMenu/navigateTo/fid/-9999");
 								});
 					} else {
-						location.replace(PSI.Const.BASE_URL
+						window.open(PSI.Const.BASE_URL
 								+ "Home/MainMenu/navigateTo/fid/" + fid);
 					}
 				}, me);
@@ -159,10 +159,9 @@ Ext.define("PSI.App", {
 			} else if (fid == "-9993") {
 				window.open("https://zb.oschina.net/market/opus/134395_122");
 			} else if (fid === "-9999") {
-				PSI.MsgBox.confirm("请确认是否重新登录", function() {
-							location.replace(PSI.Const.BASE_URL
-									+ "Home/MainMenu/navigateTo/fid/-9999");
-						});
+				// 重新登录
+				location.replace(PSI.Const.BASE_URL
+						+ "Home/MainMenu/navigateTo/fid/-9999");
 			} else {
 				window.open(PSI.Const.BASE_URL
 						+ "Home/MainMenu/navigateTo/fid/" + fid);
