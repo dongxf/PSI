@@ -4,11 +4,6 @@
 Ext.define("PSI.Warehouse.EditForm", {
 			extend : "PSI.AFX.BaseForm",
 
-			config : {
-				parentForm : null,
-				entity : null
-			},
-
 			/**
 			 * 初始化组件
 			 */
@@ -127,9 +122,9 @@ Ext.define("PSI.Warehouse.EditForm", {
 						});
 
 				me.callParent(arguments);
-				
+
 				me.editForm = Ext.getCmp("editForm");
-				
+
 				me.editCode = Ext.getCmp("editCode");
 				me.editName = Ext.getCmp("editName");
 			},
@@ -170,7 +165,7 @@ Ext.define("PSI.Warehouse.EditForm", {
 
 			onEditCodeSpecialKey : function(field, e) {
 				var me = this;
-				
+
 				if (e.getKey() == e.ENTER) {
 					var editName = me.editName;
 					editName.focus();

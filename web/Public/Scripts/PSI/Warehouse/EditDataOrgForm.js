@@ -2,12 +2,7 @@
  * 仓库 - 编辑数据域
  */
 Ext.define("PSI.Warehouse.EditDataOrgForm", {
-	extend : "Ext.window.Window",
-
-	config : {
-		parentForm : null,
-		entity : null
-	},
+	extend : "PSI.AFX.BaseForm",
 
 	/**
 	 * 初始化组件
@@ -131,7 +126,7 @@ Ext.define("PSI.Warehouse.EditDataOrgForm", {
 		el.mask(PSI.Const.SAVING);
 
 		var r = {
-			url : PSI.Const.BASE_URL + "Home/Warehouse/editDataOrg",
+			url : me.URL("/Home/Warehouse/editDataOrg"),
 			params : {
 				id : Ext.getCmp("editId").getValue(),
 				dataOrg : newDataOrg

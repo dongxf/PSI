@@ -4,6 +4,11 @@
 Ext.define("PSI.AFX.BaseForm", {
 			extend : 'Ext.window.Window',
 
+			config : {
+				parentForm : null,
+				entity : null
+			},
+
 			modal : true,
 			resizable : false,
 			onEsc : Ext.emptyFn,
