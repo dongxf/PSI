@@ -2,7 +2,7 @@
  * 登录界面
  */
 Ext.define("PSI.User.LoginForm", {
-	extend : 'Ext.window.Window',
+	extend : 'PSI.AFX.BaseForm',
 
 	config : {
 		demoInfo : "",
@@ -12,10 +12,7 @@ Ext.define("PSI.User.LoginForm", {
 		returnPage : ""
 	},
 
-	modal : true,
 	closable : false,
-	resizable : false,
-	onEsc : Ext.emptyFn,
 	width : 400,
 	layout : "fit",
 	defaultFocus : Ext.util.Cookies.get("PSI_user_login_name")
@@ -170,7 +167,7 @@ Ext.define("PSI.User.LoginForm", {
 		el.mask("系统登录中...");
 
 		var r = {
-			url : PSI.Const.BASE_URL + "Home/User/loginPOST",
+			url : me.URL("/Home/User/loginPOST"),
 			method : "POST",
 			success : function(form, action) {
 				me.setLoginNameToCookie(loginName);
