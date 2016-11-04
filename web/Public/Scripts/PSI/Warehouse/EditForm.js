@@ -127,6 +127,11 @@ Ext.define("PSI.Warehouse.EditForm", {
 						});
 
 				me.callParent(arguments);
+				
+				me.editForm = Ext.getCmp("editForm");
+				
+				me.editCode = Ext.getCmp("editCode");
+				me.editName = Ext.getCmp("editName");
 			},
 
 			/**
@@ -134,7 +139,7 @@ Ext.define("PSI.Warehouse.EditForm", {
 			 */
 			onOK : function(thenAdd) {
 				var me = this;
-				var f = Ext.getCmp("editForm");
+				var f = me.editForm;
 				var el = f.getEl();
 				el.mask(PSI.Const.SAVING);
 				var sf = {
@@ -164,8 +169,10 @@ Ext.define("PSI.Warehouse.EditForm", {
 			},
 
 			onEditCodeSpecialKey : function(field, e) {
+				var me = this;
+				
 				if (e.getKey() == e.ENTER) {
-					var editName = Ext.getCmp("editName");
+					var editName = me.editName;
 					editName.focus();
 					editName.setValue(editName.getValue());
 				}
@@ -175,7 +182,7 @@ Ext.define("PSI.Warehouse.EditForm", {
 				var me = this;
 
 				if (e.getKey() == e.ENTER) {
-					var f = Ext.getCmp("editForm");
+					var f = me.editForm;
 					if (f.getForm().isValid()) {
 						me.onOK(me.adding);
 					}
@@ -183,9 +190,10 @@ Ext.define("PSI.Warehouse.EditForm", {
 			},
 
 			clearEdit : function() {
-				Ext.getCmp("editCode").focus();
+				var me = this;
+				me.editCode.focus();
 
-				var editors = [Ext.getCmp("editCode"), Ext.getCmp("editName")];
+				var editors = [me.editCode, me.editName];
 				for (var i = 0; i < editors.length; i++) {
 					var edit = editors[i];
 					edit.setValue(null);
@@ -196,12 +204,15 @@ Ext.define("PSI.Warehouse.EditForm", {
 			onWndClose : function() {
 				var me = this;
 				if (me.__lastId) {
-					me.getParentForm().freshGrid(me.__lastId);
+					if (me.getParentForm()) {
+						me.getParentForm().freshGrid(me.__lastId);
+					}
 				}
 			},
 
 			onWndShow : function() {
-				var editCode = Ext.getCmp("editCode");
+				var me = this;
+				var editCode = me.editCode;
 				editCode.focus();
 				editCode.setValue(editCode.getValue());
 			}
