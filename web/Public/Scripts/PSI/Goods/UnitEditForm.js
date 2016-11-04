@@ -102,6 +102,9 @@ Ext.define("PSI.Goods.UnitEditForm", {
 						});
 
 				me.callParent(arguments);
+
+				me.editForm = Ext.getCmp("editForm");
+				me.editName = Ext.getCmp("editName");
 			},
 
 			onOK : function(thenAdd) {
@@ -118,7 +121,7 @@ Ext.define("PSI.Goods.UnitEditForm", {
 								PSI.MsgBox.tip("数据保存成功");
 								me.focus();
 								if (thenAdd) {
-									var editName = Ext.getCmp("editName");
+									var editName = me.editName;
 									editName.focus();
 									editName.setValue(null);
 									editName.clearInvalid();
@@ -130,17 +133,19 @@ Ext.define("PSI.Goods.UnitEditForm", {
 								el.unmask();
 								PSI.MsgBox.showInfo(action.result.msg,
 										function() {
-											Ext.getCmp("editName").focus();
+											me.editName.focus();
 										});
 							}
 						});
 			},
 
 			onEditNameSpecialKey : function(field, e) {
+				var me = this;
+
 				if (e.getKey() == e.ENTER) {
-					var f = Ext.getCmp("editForm");
+					var f = me.editForm;
 					if (f.getForm().isValid()) {
-						this.onOK(this.adding);
+						me.onOK(me.adding);
 					}
 				}
 			},
@@ -148,12 +153,16 @@ Ext.define("PSI.Goods.UnitEditForm", {
 			onWndClose : function() {
 				var me = this;
 				if (me.__lastId) {
-					me.getParentForm().freshGrid(me.__lastId);
+					if (me.getParentForm()) {
+						me.getParentForm().freshGrid(me.__lastId);
+					}
 				}
 			},
 
 			onWndShow : function() {
-				var editName = Ext.getCmp("editName");
+				var me = this;
+
+				var editName = me.editName;
 				editName.focus();
 				editName.setValue(editName.getValue());
 			}
