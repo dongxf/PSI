@@ -113,11 +113,18 @@ Ext.define("PSI.User.LoginForm", {
 				});
 
 		me.callParent(arguments);
+
+		me.loginForm = Ext.getCmp("loginForm");
+
+		me.editPassword = Ext.getCmp("editPassword");
+		me.editLoginName = Ext.getCmp("editLoginName");
 	},
 
 	onEditLoginNameSpecialKey : function(field, e) {
+		var me = this;
+
 		if (e.getKey() === e.ENTER) {
-			Ext.getCmp("editPassword").focus();
+			me.editPassword.focus();
 		}
 	},
 
@@ -125,7 +132,7 @@ Ext.define("PSI.User.LoginForm", {
 		var me = this;
 
 		if (e.getKey() === e.ENTER) {
-			if (Ext.getCmp("loginForm").getForm().isValid()) {
+			if (me.loginForm.getForm().isValid()) {
 				me.onOK();
 			}
 		}
@@ -157,8 +164,8 @@ Ext.define("PSI.User.LoginForm", {
 	onOK : function() {
 		var me = this;
 
-		var loginName = Ext.getCmp("editLoginName").getValue();
-		var f = Ext.getCmp("loginForm");
+		var loginName = me.editLoginName.getValue();
+		var f = me.loginForm;
 		var el = f.getEl() || Ext.getBody();
 		el.mask("系统登录中...");
 
@@ -178,7 +185,7 @@ Ext.define("PSI.User.LoginForm", {
 			failure : function(form, action) {
 				el.unmask();
 				PSI.MsgBox.showInfo(action.result.msg, function() {
-							var editPassword = Ext.getCmp("editPassword");
+							var editPassword = me.editPassword;
 							editPassword.setValue(null);
 							editPassword.clearInvalid();
 							editPassword.focus();
