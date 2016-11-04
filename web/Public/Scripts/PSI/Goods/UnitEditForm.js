@@ -49,7 +49,7 @@ Ext.define("PSI.Goods.UnitEditForm", {
 							height : 110,
 							layout : "fit",
 							items : [{
-								id : "editForm",
+								id : "PSI_Goods_UnitEditForm_editForm",
 								xtype : "form",
 								layout : {
 									type : "table",
@@ -72,7 +72,7 @@ Ext.define("PSI.Goods.UnitEditForm", {
 									value : entity == null ? null : entity
 											.get("id")
 								}, {
-									id : "editName",
+									id : "PSI_Goods_UnitEditForm_editName",
 									fieldLabel : "计量单位",
 									allowBlank : false,
 									blankText : "没有输入计量单位",
@@ -103,13 +103,13 @@ Ext.define("PSI.Goods.UnitEditForm", {
 
 				me.callParent(arguments);
 
-				me.editForm = Ext.getCmp("editForm");
-				me.editName = Ext.getCmp("editName");
+				me.editForm = Ext.getCmp("PSI_Goods_UnitEditForm_editForm");
+				me.editName = Ext.getCmp("PSI_Goods_UnitEditForm_editName");
 			},
 
 			onOK : function(thenAdd) {
 				var me = this;
-				var f = Ext.getCmp("editForm");
+				var f = me.editForm;
 				var el = f.getEl();
 				el.mask(PSI.Const.SAVING);
 				f.submit({
