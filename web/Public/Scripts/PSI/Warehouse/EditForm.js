@@ -64,7 +64,7 @@ Ext.define("PSI.Warehouse.EditForm", {
 								}
 							},
 							items : [{
-								id : "editForm",
+								id : "PSI_Warehouse_EditForm_editForm",
 								xtype : "form",
 								layout : {
 									type : "table",
@@ -87,7 +87,7 @@ Ext.define("PSI.Warehouse.EditForm", {
 									value : entity == null ? null : entity
 											.get("id")
 								}, {
-									id : "editCode",
+									id : "PSI_Warehouse_EditForm_editCode",
 									fieldLabel : "仓库编码",
 									allowBlank : false,
 									blankText : "没有输入仓库编码",
@@ -102,7 +102,7 @@ Ext.define("PSI.Warehouse.EditForm", {
 										}
 									}
 								}, {
-									id : "editName",
+									id : "PSI_Warehouse_EditForm_editName",
 									fieldLabel : "仓库名称",
 									allowBlank : false,
 									blankText : "没有输入仓库名称",
@@ -123,10 +123,10 @@ Ext.define("PSI.Warehouse.EditForm", {
 
 				me.callParent(arguments);
 
-				me.editForm = Ext.getCmp("editForm");
+				me.editForm = Ext.getCmp("PSI_Warehouse_EditForm_editForm");
 
-				me.editCode = Ext.getCmp("editCode");
-				me.editName = Ext.getCmp("editName");
+				me.editCode = Ext.getCmp("PSI_Warehouse_EditForm_editCode");
+				me.editName = Ext.getCmp("PSI_Warehouse_EditForm_editName");
 			},
 
 			/**
