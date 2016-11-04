@@ -2,7 +2,7 @@
  * 仓库 - 新增或编辑界面
  */
 Ext.define("PSI.Warehouse.EditForm", {
-			extend : "Ext.window.Window",
+			extend : "PSI.AFX.BaseForm",
 
 			config : {
 				parentForm : null,
@@ -55,9 +55,6 @@ Ext.define("PSI.Warehouse.EditForm", {
 
 				Ext.apply(me, {
 							title : entity == null ? "新增仓库" : "编辑仓库",
-							modal : true,
-							resizable : false,
-							onEsc : Ext.emptyFn,
 							width : 400,
 							height : 140,
 							layout : "fit",
@@ -141,7 +138,7 @@ Ext.define("PSI.Warehouse.EditForm", {
 				var el = f.getEl();
 				el.mask(PSI.Const.SAVING);
 				var sf = {
-					url : PSI.Const.BASE_URL + "Home/Warehouse/editWarehouse",
+					url : me.URL("/Home/Warehouse/editWarehouse"),
 					method : "POST",
 					success : function(form, action) {
 						me.__lastId = action.result.id;
