@@ -2,12 +2,7 @@
  * 商品计量单位 - 新增或编辑界面
  */
 Ext.define("PSI.Goods.UnitEditForm", {
-			extend : "Ext.window.Window",
-
-			config : {
-				parentForm : null,
-				entity : null
-			},
+			extend : "PSI.AFX.BaseForm",
 
 			/**
 			 * 初始化组件
@@ -115,7 +110,7 @@ Ext.define("PSI.Goods.UnitEditForm", {
 				var el = f.getEl();
 				el.mask(PSI.Const.SAVING);
 				f.submit({
-							url : PSI.Const.BASE_URL + "Home/Goods/editUnit",
+							url : me.URL("/Home/Goods/editUnit"),
 							method : "POST",
 							success : function(form, action) {
 								el.unmask();
