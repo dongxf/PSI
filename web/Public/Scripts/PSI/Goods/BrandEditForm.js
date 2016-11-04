@@ -16,9 +16,8 @@ Ext.define("PSI.Goods.BrandEditForm", {
 			width : 400,
 			height : 140,
 			layout : "fit",
-			defaultFocus : "editName",
 			items : [{
-				id : "editForm",
+				id : "PSI_Goods_BrandEditForm_editForm",
 				xtype : "form",
 				layout : {
 					type : "table",
@@ -38,7 +37,7 @@ Ext.define("PSI.Goods.BrandEditForm", {
 							name : "id",
 							value : entity === null ? null : entity.get("id")
 						}, {
-							id : "editName",
+							id : "PSI_Goods_BrandEditForm_editName",
 							fieldLabel : "品牌",
 							allowBlank : false,
 							blankText : "没有输入品牌",
@@ -53,19 +52,19 @@ Ext.define("PSI.Goods.BrandEditForm", {
 							},
 							width : 370
 						}, {
-							id : "editParentBrand",
+							id : "PSI_Goods_BrandEditForm_editParentBrand",
 							xtype : "PSI_parent_brand_editor",
 							parentItem : me,
 							fieldLabel : "上级品牌",
 							listeners : {
 								specialkey : {
-									fn : me.onEditParentOrgSpecialKey,
+									fn : me.onEditParentBrandSpecialKey,
 									scope : me
 								}
 							},
 							width : 370
 						}, {
-							id : "editParentBrandId",
+							id : "PSI_Goods_BrandEditForm_editParentBrandId",
 							xtype : "hidden",
 							name : "parentId",
 							value : entity === null ? null : entity
@@ -96,10 +95,20 @@ Ext.define("PSI.Goods.BrandEditForm", {
 		});
 
 		me.callParent(arguments);
+
+		me.editForm = Ext.getCmp("PSI_Goods_BrandEditForm_editForm");
+
+		me.editName = Ext.getCmp("PSI_Goods_BrandEditForm_editName");
+		me.editParentBrand = Ext
+				.getCmp("PSI_Goods_BrandEditForm_editParentBrand");
+		me.editParentBrandId = Ext
+				.getCmp("PSI_Goods_BrandEditForm_editParentBrandId");
 	},
 
 	onEditFormShow : function() {
 		var me = this;
+
+		me.editName.focus();
 
 		var entity = me.getEntity();
 		if (entity === null) {
@@ -117,26 +126,24 @@ Ext.define("PSI.Goods.BrandEditForm", {
 						me.getEl().unmask();
 						if (success) {
 							var data = Ext.JSON.decode(response.responseText);
-							Ext.getCmp("editParentBrand")
-									.setValue(data.parentBrandName);
-							Ext.getCmp("editParentBrandId")
-									.setValue(data.parentBrandId);
-							Ext.getCmp("editName").setValue(data.name);
+							me.editParentBrand.setValue(data.parentBrandName);
+							me.editParentBrandId.setValue(data.parentBrandId);
+							me.editName.setValue(data.name);
 						}
 					}
 				});
 	},
 
 	setParentBrand : function(data) {
-		var editParentBrand = Ext.getCmp("editParentBrand");
-		editParentBrand.setValue(data.fullName);
-		var editParentBrandId = Ext.getCmp("editParentBrandId");
-		editParentBrandId.setValue(data.id);
+		var me = this;
+
+		me.editParentBrand.setValue(data.fullName);
+		me.editParentBrandId.setValue(data.id);
 	},
 
 	onOK : function() {
 		var me = this;
-		var f = Ext.getCmp("editForm");
+		var f = me.editForm;
 		var el = f.getEl();
 		el.mask("数据保存中...");
 		f.submit({
@@ -145,28 +152,31 @@ Ext.define("PSI.Goods.BrandEditForm", {
 					success : function(form, action) {
 						el.unmask();
 						me.close();
-						me.getParentForm().refreshGrid();
+						if (me.getParentForm()) {
+							me.getParentForm().refreshGrid();
+						}
 					},
 					failure : function(form, action) {
 						el.unmask();
 						PSI.MsgBox.showInfo(action.result.msg, function() {
-									Ext.getCmp("editName").focus();
+									me.editName.focus();
 								});
 					}
 				});
 	},
 
 	onEditNameSpecialKey : function(field, e) {
+		var me = this;
+
 		if (e.getKey() == e.ENTER) {
-			Ext.getCmp("editParentBrand").focus();
+			me.editParentBrand.focus();
 		}
 	},
 
 	onEditParentBrandSpecialKey : function(field, e) {
 		var me = this;
 		if (e.getKey() == e.ENTER) {
-			var f = Ext.getCmp("editForm");
-			if (f.getForm().isValid()) {
+			if (me.editForm.getForm().isValid()) {
 				me.onOK();
 			}
 		}
