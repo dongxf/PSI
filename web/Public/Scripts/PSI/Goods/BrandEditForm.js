@@ -2,15 +2,7 @@
  * 新增或编辑商品品牌
  */
 Ext.define("PSI.Goods.BrandEditForm", {
-	extend : "Ext.window.Window",
-	config : {
-		parentForm : null,
-		entity : null
-	},
-
-	getBaseURL : function() {
-		return PSI.Const.BASE_URL;
-	},
+	extend : "PSI.AFX.BaseForm",
 
 	/**
 	 * 初始化组件
@@ -21,9 +13,6 @@ Ext.define("PSI.Goods.BrandEditForm", {
 
 		Ext.apply(me, {
 			title : entity === null ? "新增商品品牌" : "编辑商品品牌",
-			modal : true,
-			resizable : false,
-			onEsc : Ext.emptyFn,
 			width : 400,
 			height : 140,
 			layout : "fit",
@@ -112,14 +101,14 @@ Ext.define("PSI.Goods.BrandEditForm", {
 	onEditFormShow : function() {
 		var me = this;
 
-		var entity = this.getEntity();
+		var entity = me.getEntity();
 		if (entity === null) {
 			return;
 		}
 
 		me.getEl().mask("数据加载中...");
 		Ext.Ajax.request({
-					url : me.getBaseURL() + "Home/Goods/brandParentName",
+					url : me.URL("/Home/Goods/brandParentName"),
 					method : "POST",
 					params : {
 						id : entity.get("id")
@@ -151,7 +140,7 @@ Ext.define("PSI.Goods.BrandEditForm", {
 		var el = f.getEl();
 		el.mask("数据保存中...");
 		f.submit({
-					url : me.getBaseURL() + "Home/Goods/editBrand",
+					url : me.URL("/Home/Goods/editBrand"),
 					method : "POST",
 					success : function(form, action) {
 						el.unmask();

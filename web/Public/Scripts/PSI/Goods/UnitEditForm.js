@@ -42,9 +42,6 @@ Ext.define("PSI.Goods.UnitEditForm", {
 
 				Ext.apply(me, {
 							title : entity == null ? "新增商品计量单位" : "编辑商品计量单位",
-							modal : true,
-							resizable : false,
-							onEsc : Ext.emptyFn,
 							width : 400,
 							height : 110,
 							layout : "fit",
