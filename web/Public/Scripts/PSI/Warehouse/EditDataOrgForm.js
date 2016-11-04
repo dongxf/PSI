@@ -35,69 +35,77 @@ Ext.define("PSI.Warehouse.EditDataOrgForm", {
 		buttons.push(btn);
 
 		Ext.apply(me, {
-					title : "编辑数据域",
-					modal : true,
-					resizable : false,
-					onEsc : Ext.emptyFn,
-					width : 400,
-					height : 210,
-					layout : "fit",
-					listeners : {
-						show : {
-							fn : me.onWndShow,
-							scope : me
+			title : "编辑数据域",
+			modal : true,
+			resizable : false,
+			onEsc : Ext.emptyFn,
+			width : 400,
+			height : 210,
+			layout : "fit",
+			listeners : {
+				show : {
+					fn : me.onWndShow,
+					scope : me
+				},
+				close : {
+					fn : me.onWndClose,
+					scope : me
+				}
+			},
+			items : [{
+						id : "PSI_Warehouse_EditDataOrgForm_editForm",
+						xtype : "form",
+						layout : {
+							type : "table",
+							columns : 1
 						},
-						close : {
-							fn : me.onWndClose,
-							scope : me
-						}
-					},
-					items : [{
-								id : "editForm",
-								xtype : "form",
-								layout : {
-									type : "table",
-									columns : 1
-								},
-								height : "100%",
-								bodyPadding : 5,
-								defaultType : 'textfield',
-								fieldDefaults : {
-									labelWidth : 60,
-									labelAlign : "right",
-									labelSeparator : "",
-									msgTarget : 'side',
-									width : 370,
-									margin : "5"
-								},
-								items : [{
-											id : "editId",
-											xtype : "hidden",
-											value : entity.get("id")
-										}, {
-											readOnly : true,
-											fieldLabel : "仓库编码",
-											value : entity.get("code")
-										}, {
-											readOnly : true,
-											fieldLabel : "仓库名称",
-											value : entity.get("name")
-										}, {
-											readOnly : true,
-											fieldLabel : "原数据域",
-											value : entity.get("dataOrg"),
-											id : "editOldDataOrg"
-										}, {
-											id : "editDataOrg",
-											fieldLabel : "新数据域",
-											name : "dataOrg",
-											xtype : "psi_selectuserdataorgfield"
-										}],
-								buttons : buttons
-							}]
-				});
+						height : "100%",
+						bodyPadding : 5,
+						defaultType : 'textfield',
+						fieldDefaults : {
+							labelWidth : 60,
+							labelAlign : "right",
+							labelSeparator : "",
+							msgTarget : 'side',
+							width : 370,
+							margin : "5"
+						},
+						items : [{
+									id : "PSI_Warehouse_EditDataOrgForm_editId",
+									xtype : "hidden",
+									value : entity.get("id")
+								}, {
+									readOnly : true,
+									fieldLabel : "仓库编码",
+									value : entity.get("code")
+								}, {
+									readOnly : true,
+									fieldLabel : "仓库名称",
+									value : entity.get("name")
+								}, {
+									readOnly : true,
+									fieldLabel : "原数据域",
+									value : entity.get("dataOrg"),
+									id : "PSI_Warehouse_EditDataOrgForm_editOldDataOrg"
+								}, {
+									id : "PSI_Warehouse_EditDataOrgForm_editDataOrg",
+									fieldLabel : "新数据域",
+									name : "dataOrg",
+									xtype : "psi_selectuserdataorgfield"
+								}],
+						buttons : buttons
+					}]
+		});
 
 		me.callParent(arguments);
+
+		me.editForm = Ext.getCmp("PSI_Warehouse_EditDataOrgForm_editForm");
+
+		me.editId = Ext.getCmp("PSI_Warehouse_EditDataOrgForm_editId");
+		me.editOldDataOrg = Ext
+				.getCmp("PSI_Warehouse_EditDataOrgForm_editOldDataOrg");
+		me.editDataOrg = Ext
+				.getCmp("PSI_Warehouse_EditDataOrgForm_editDataOrg");
 	},
 
 	/**
@@ -106,11 +114,11 @@ Ext.define("PSI.Warehouse.EditDataOrgForm", {
 	onOK : function() {
 		var me = this;
 
-		var oldDataOrg = Ext.getCmp("editOldDataOrg").getValue();
-		var newDataOrg = Ext.getCmp("editDataOrg").getValue();
+		var oldDataOrg = me.editOldDataOrg.getValue();
+		var newDataOrg = me.editDataOrg.getValue();
 		if (!newDataOrg) {
 			PSI.MsgBox.showInfo("没有输入新数据域", function() {
-						Ext.getCmp("editDataOrg").focus();
+						me.editDataOrg.focus();
 					});
 
 			return;
@@ -121,14 +129,14 @@ Ext.define("PSI.Warehouse.EditDataOrgForm", {
 			return;
 		}
 
-		var f = Ext.getCmp("editForm");
+		var f = me.editForm;
 		var el = f.getEl();
 		el.mask(PSI.Const.SAVING);
 
 		var r = {
 			url : me.URL("/Home/Warehouse/editDataOrg"),
 			params : {
-				id : Ext.getCmp("editId").getValue(),
+				id : me.editId.getValue(),
 				dataOrg : newDataOrg
 			},
 			method : "POST",
@@ -155,11 +163,14 @@ Ext.define("PSI.Warehouse.EditDataOrgForm", {
 	onWndClose : function() {
 		var me = this;
 		if (me.__lastId) {
-			me.getParentForm().freshGrid(me.__lastId);
+			if (me.getParentForm()) {
+				me.getParentForm().freshGrid(me.__lastId);
+			}
 		}
 	},
 
 	onWndShow : function() {
-		Ext.getCmp("editDataOrg").focus();
+		var me = this;
+		me.editDataOrg.focus();
 	}
 });
