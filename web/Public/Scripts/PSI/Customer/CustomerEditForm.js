@@ -14,10 +14,9 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 						text : "保存并继续新增",
 						formBind : true,
 						handler : function() {
-							var me = this;
 							me.onOK(true);
 						},
-						scope : this
+						scope : me
 					});
 		}
 
@@ -48,7 +47,7 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 			height : 400,
 			layout : "fit",
 			items : [{
-				id : "editForm",
+				id : "PSI_Customer_CustomerEditForm_editForm",
 				xtype : "form",
 				layout : {
 					type : "table",
@@ -68,7 +67,7 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 							name : "id",
 							value : entity == null ? null : entity.get("id")
 						}, {
-							id : "editCategory",
+							id : "PSI_Customer_CustomerEditForm_editCategory",
 							xtype : "combo",
 							fieldLabel : "分类",
 							allowBlank : false,
@@ -89,7 +88,7 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 								}
 							}
 						}, {
-							id : "editCode",
+							id : "PSI_Customer_CustomerEditForm_editCode",
 							fieldLabel : "编码",
 							allowBlank : false,
 							blankText : "没有输入客户编码",
@@ -103,7 +102,7 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 								}
 							}
 						}, {
-							id : "editName",
+							id : "PSI_Customer_CustomerEditForm_editName",
 							fieldLabel : "客户名称",
 							allowBlank : false,
 							blankText : "没有输入客户名称",
@@ -119,7 +118,7 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 							width : 490,
 							colspan : 2
 						}, {
-							id : "editAddress",
+							id : "PSI_Customer_CustomerEditForm_editAddress",
 							fieldLabel : "地址",
 							name : "address",
 							value : entity == null ? null : entity
@@ -133,7 +132,7 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 							width : 490,
 							colspan : 2
 						}, {
-							id : "editContact01",
+							id : "PSI_Customer_CustomerEditForm_editContact01",
 							fieldLabel : "联系人",
 							name : "contact01",
 							value : entity == null ? null : entity
@@ -145,7 +144,7 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 								}
 							}
 						}, {
-							id : "editMobile01",
+							id : "PSI_Customer_CustomerEditForm_editMobile01",
 							fieldLabel : "手机",
 							name : "mobile01",
 							value : entity == null ? null : entity
@@ -157,7 +156,7 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 								}
 							}
 						}, {
-							id : "editTel01",
+							id : "PSI_Customer_CustomerEditForm_editTel01",
 							fieldLabel : "固话",
 							name : "tel01",
 							value : entity == null ? null : entity.get("tel01"),
@@ -168,7 +167,7 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 								}
 							}
 						}, {
-							id : "editQQ01",
+							id : "PSI_Customer_CustomerEditForm_editQQ01",
 							fieldLabel : "QQ",
 							name : "qq01",
 							value : entity == null ? null : entity.get("qq01"),
@@ -179,7 +178,7 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 								}
 							}
 						}, {
-							id : "editContact02",
+							id : "PSI_Customer_CustomerEditForm_editContact02",
 							fieldLabel : "备用联系人",
 							name : "contact02",
 							value : entity == null ? null : entity
@@ -191,7 +190,7 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 								}
 							}
 						}, {
-							id : "editMobile02",
+							id : "PSI_Customer_CustomerEditForm_editMobile02",
 							fieldLabel : "备用联系人手机",
 							name : "mobile02",
 							value : entity == null ? null : entity
@@ -203,7 +202,7 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 								}
 							}
 						}, {
-							id : "editTel02",
+							id : "PSI_Customer_CustomerEditForm_editTel02",
 							fieldLabel : "备用联系人固话",
 							name : "tel02",
 							value : entity == null ? null : entity.get("tel02"),
@@ -214,7 +213,7 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 								}
 							}
 						}, {
-							id : "editQQ02",
+							id : "PSI_Customer_CustomerEditForm_editQQ02",
 							fieldLabel : "备用联系人QQ",
 							name : "qq02",
 							value : entity == null ? null : entity.get("qq02"),
@@ -225,7 +224,7 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 								}
 							}
 						}, {
-							id : "editAddressReceipt",
+							id : "PSI_Customer_CustomerEditForm_editAddressReceipt",
 							fieldLabel : "收货地址",
 							name : "addressReceipt",
 							value : entity == null ? null : entity
@@ -239,7 +238,7 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 							width : 490,
 							colspan : 2
 						}, {
-							id : "editBankName",
+							id : "PSI_Customer_CustomerEditForm_editBankName",
 							fieldLabel : "开户行",
 							name : "bankName",
 							value : entity == null ? null : entity
@@ -251,7 +250,7 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 								}
 							}
 						}, {
-							id : "editBankAccount",
+							id : "PSI_Customer_CustomerEditForm_editBankAccount",
 							fieldLabel : "开户行账号",
 							name : "bankAccount",
 							value : entity == null ? null : entity
@@ -263,7 +262,7 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 								}
 							}
 						}, {
-							id : "editTax",
+							id : "PSI_Customer_CustomerEditForm_editTax",
 							fieldLabel : "税号",
 							name : "tax",
 							value : entity == null ? null : entity.get("tax"),
@@ -274,7 +273,7 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 								}
 							}
 						}, {
-							id : "editFax",
+							id : "PSI_Customer_CustomerEditForm_editFax",
 							fieldLabel : "传真",
 							name : "fax",
 							value : entity == null ? null : entity.get("fax"),
@@ -285,7 +284,7 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 								}
 							}
 						}, {
-							id : "editInitReceivables",
+							id : "PSI_Customer_CustomerEditForm_editInitReceivables",
 							fieldLabel : "应收期初余额",
 							name : "initReceivables",
 							xtype : "numberfield",
@@ -299,7 +298,7 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 								}
 							}
 						}, {
-							id : "editInitReceivablesDT",
+							id : "PSI_Customer_CustomerEditForm_editInitReceivablesDT",
 							fieldLabel : "余额日期",
 							name : "initReceivablesDT",
 							xtype : "datefield",
@@ -313,7 +312,7 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 								}
 							}
 						}, {
-							id : "editNote",
+							id : "PSI_Customer_CustomerEditForm_editNote",
 							fieldLabel : "备注",
 							name : "note",
 							value : entity == null ? null : entity.get("note"),
@@ -342,12 +341,45 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 
 		me.callParent(arguments);
 
-		me.__editorList = ["editCategory", "editCode", "editName",
-				"editAddress", "editContact01", "editMobile01", "editTel01",
-				"editQQ01", "editContact02", "editMobile02", "editTel02",
-				"editQQ02", "editAddressReceipt", "editBankName",
-				"editBankAccount", "editTax", "editFax", "editInitReceivables",
-				"editInitReceivablesDT", "editNote"];
+		me.editForm = Ext.getCmp("PSI_Customer_CustomerEditForm_editForm");
+		me.editCategory = Ext
+				.getCmp("PSI_Customer_CustomerEditForm_editCategory");
+		me.editCode = Ext.getCmp("PSI_Customer_CustomerEditForm_editCode");
+		me.editName = Ext.getCmp("PSI_Customer_CustomerEditForm_editName");
+		me.editAddress = Ext
+				.getCmp("PSI_Customer_CustomerEditForm_editAddress");
+		me.editContact01 = Ext
+				.getCmp("PSI_Customer_CustomerEditForm_editContact01");
+		me.editMobile01 = Ext
+				.getCmp("PSI_Customer_CustomerEditForm_editMobile01");
+		me.editTel01 = Ext.getCmp("PSI_Customer_CustomerEditForm_editTel01");
+		me.editQQ01 = Ext.getCmp("PSI_Customer_CustomerEditForm_editQQ01");
+		me.editContact02 = Ext
+				.getCmp("PSI_Customer_CustomerEditForm_editContact02");
+		me.editMobile02 = Ext
+				.getCmp("PSI_Customer_CustomerEditForm_editMobile02");
+		me.editTel02 = Ext.getCmp("PSI_Customer_CustomerEditForm_editTel02");
+		me.editQQ02 = Ext.getCmp("PSI_Customer_CustomerEditForm_editQQ02");
+		me.editAddressReceipt = Ext
+				.getCmp("PSI_Customer_CustomerEditForm_editAddressReceipt");
+		me.editBankName = Ext
+				.getCmp("PSI_Customer_CustomerEditForm_editBankName");
+		me.editBankAccount = Ext
+				.getCmp("PSI_Customer_CustomerEditForm_editBankAccount");
+		me.editTax = Ext.getCmp("PSI_Customer_CustomerEditForm_editTax");
+		me.editFax = Ext.getCmp("PSI_Customer_CustomerEditForm_editFax");
+		me.editInitReceivables = Ext
+				.getCmp("PSI_Customer_CustomerEditForm_editInitReceivables");
+		me.editInitReceivablesDT = Ext
+				.getCmp("PSI_Customer_CustomerEditForm_editInitReceivablesDT");
+		me.editNote = Ext.getCmp("PSI_Customer_CustomerEditForm_editNote");
+
+		me.__editorList = [me.editCategory, me.editCode, me.editName,
+				me.editAddress, me.editContact01, me.editMobile01,
+				me.editTel01, me.editQQ01, me.editContact02, me.editMobile02,
+				me.editTel02, me.editQQ02, me.editAddressReceipt,
+				me.editBankName, me.editBankAccount, me.editTax, me.editFax,
+				me.editInitReceivables, me.editInitReceivablesDT, me.editNote];
 
 	},
 
@@ -367,37 +399,29 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 							if (success) {
 								var data = Ext.JSON
 										.decode(response.responseText);
-								Ext.getCmp("editCategory")
-										.setValue(data.categoryId);
-								Ext.getCmp("editCode").setValue(data.code);
-								Ext.getCmp("editName").setValue(data.name);
-								Ext.getCmp("editAddress")
-										.setValue(data.address);
-								Ext.getCmp("editContact01")
-										.setValue(data.contact01);
-								Ext.getCmp("editMobile01")
-										.setValue(data.mobile01);
-								Ext.getCmp("editTel01").setValue(data.tel01);
-								Ext.getCmp("editQQ01").setValue(data.qq01);
-								Ext.getCmp("editContact02")
-										.setValue(data.contact02);
-								Ext.getCmp("editMobile02")
-										.setValue(data.mobile02);
-								Ext.getCmp("editTel02").setValue(data.tel02);
-								Ext.getCmp("editQQ02").setValue(data.qq02);
-								Ext.getCmp("editAddressReceipt")
+								me.editCategory.setValue(data.categoryId);
+								me.editCode.setValue(data.code);
+								me.editName.setValue(data.name);
+								me.editAddress.setValue(data.address);
+								me.editContact01.setValue(data.contact01);
+								me.editMobile01.setValue(data.mobile01);
+								me.editTel01.setValue(data.tel01);
+								me.editQQ01.setValue(data.qq01);
+								me.editContact02.setValue(data.contact02);
+								me.editMobile02.setValue(data.mobile02);
+								me.editTel02.setValue(data.tel02);
+								me.editQQ02.setValue(data.qq02);
+								me.editAddressReceipt
 										.setValue(data.addressReceipt);
-								Ext.getCmp("editInitReceivables")
+								me.editInitReceivables
 										.setValue(data.initReceivables);
-								Ext.getCmp("editInitReceivablesDT")
+								me.editInitReceivablesDT
 										.setValue(data.initReceivablesDT);
-								Ext.getCmp("editBankName")
-										.setValue(data.bankName);
-								Ext.getCmp("editBankAccount")
-										.setValue(data.bankAccount);
-								Ext.getCmp("editTax").setValue(data.tax);
-								Ext.getCmp("editFax").setValue(data.fax);
-								Ext.getCmp("editNote").setValue(data.note);
+								me.editBankName.setValue(data.bankName);
+								me.editBankAccount.setValue(data.bankAccount);
+								me.editTax.setValue(data.tax);
+								me.editFax.setValue(data.fax);
+								me.editNote.setValue(data.note);
 							}
 
 							el.unmask();
@@ -412,7 +436,7 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 					return;
 				}
 
-				Ext.getCmp("editCategory").setValue(item[0].get("id"));
+				me.editCategory.setValue(item[0].get("id"));
 			} else {
 				// 在其他界面中调用新增客户资料
 				var modelName = "PSICustomerCategory_CustomerEditForm";
@@ -428,7 +452,7 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 							autoLoad : false,
 							data : []
 						});
-				Ext.getCmp("editCategory").bindStore(store);
+				me.editCategory.bindStore(store);
 				var el = Ext.getBody();
 				el.mask(PSI.Const.LOADING);
 				Ext.Ajax.request({
@@ -442,9 +466,8 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 											.decode(response.responseText);
 									store.add(data);
 									if (store.getCount() > 0) {
-										Ext.getCmp("editCategory")
-												.setValue(store.getAt(0)
-														.get("id"))
+										var id = store.getAt(0).get("id");
+										me.editCategory.setValue(id);
 									}
 								}
 
@@ -454,7 +477,7 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 			}
 		}
 
-		var editCode = Ext.getCmp("editCode");
+		var editCode = me.editCode;
 		editCode.focus();
 		editCode.setValue(editCode.getValue());
 	},
@@ -470,7 +493,7 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 
 	onOK : function(thenAdd) {
 		var me = this;
-		var f = Ext.getCmp("editForm");
+		var f = me.editForm;
 		var el = f.getEl();
 		el.mask(PSI.Const.SAVING);
 		f.submit({
@@ -490,20 +513,21 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 					failure : function(form, action) {
 						el.unmask();
 						PSI.MsgBox.showInfo(action.result.msg, function() {
-									Ext.getCmp("editCode").focus();
+									me.editCode.focus();
 								});
 					}
 				});
 	},
 
 	onEditSpecialKey : function(field, e) {
+		var me = this;
+
 		if (e.getKey() === e.ENTER) {
-			var me = this;
 			var id = field.getId();
 			for (var i = 0; i < me.__editorList.length; i++) {
-				var editorId = me.__editorList[i];
-				if (id === editorId) {
-					var edit = Ext.getCmp(me.__editorList[i + 1]);
+				var editor = me.__editorList[i];
+				if (id === editor.getId()) {
+					var edit = me.__editorList[i + 1];
 					edit.focus();
 					edit.setValue(edit.getValue());
 				}
@@ -512,24 +536,29 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 	},
 
 	onEditLastSpecialKey : function(field, e) {
+		var me = this;
+
 		if (e.getKey() == e.ENTER) {
-			var f = Ext.getCmp("editForm");
+			var f = me.editForm;
 			if (f.getForm().isValid()) {
-				this.onOK(this.adding);
+				me.onOK(me.adding);
 			}
 		}
 	},
 
 	clearEdit : function() {
-		Ext.getCmp("editCode").focus();
+		var me = this;
 
-		var editors = ["editCode", "editName", "editAddress", "editContact01",
-				"editMobile01", "editTel01", "editQQ01", "editContact02",
-				"editMobile02", "editTel02", "editQQ02", "editAddressReceipt",
-				"editBankName", "editBankAccount", "editTax", "editFax",
-				"editNote", "editInitReceivables", "editInitReceivablesDT"];
+		me.editCode.focus();
+
+		var editors = [me.editCode, me.editName, me.editAddress,
+				me.editContact01, me.editMobile01, me.editTel01, me.editQQ01,
+				me.editContact02, me.editMobile02, me.editTel02, me.editQQ02,
+				me.editAddressReceipt, me.editBankName, me.editBankAccount,
+				me.editTax, me.editFax, me.editNote, me.editInitReceivables,
+				me.editInitReceivablesDT];
 		for (var i = 0; i < editors.length; i++) {
-			var edit = Ext.getCmp(editors[i]);
+			var edit = editors[i];
 			if (edit) {
 				edit.setValue(null);
 				edit.clearInvalid();
