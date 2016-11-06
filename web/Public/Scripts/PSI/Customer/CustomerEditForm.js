@@ -2,11 +2,7 @@
  * 客户资料 - 新增或编辑界面
  */
 Ext.define("PSI.Customer.CustomerEditForm", {
-	extend : "Ext.window.Window",
-	config : {
-		parentForm : null,
-		entity : null
-	},
+	extend : "PSI.AFX.BaseForm",
 
 	initComponent : function() {
 		var me = this;
@@ -48,9 +44,6 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 
 		Ext.apply(me, {
 			title : entity == null ? "新增客户" : "编辑客户",
-			modal : true,
-			resizable : false,
-			onEsc : Ext.emptyFn,
 			width : 550,
 			height : 400,
 			layout : "fit",
@@ -365,7 +358,7 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 			var el = me.getEl();
 			el.mask(PSI.Const.LOADING);
 			Ext.Ajax.request({
-						url : PSI.Const.BASE_URL + "Home/Customer/customerInfo",
+						url : me.URL("/Home/Customer/customerInfo"),
 						params : {
 							id : me.getEntity().get("id")
 						},
@@ -439,8 +432,7 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 				var el = Ext.getBody();
 				el.mask(PSI.Const.LOADING);
 				Ext.Ajax.request({
-							url : PSI.Const.BASE_URL
-									+ "Home/Customer/categoryList",
+							url : me.URL("/Home/Customer/categoryList"),
 							method : "POST",
 							callback : function(options, success, response) {
 								store.removeAll();
@@ -482,7 +474,7 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 		var el = f.getEl();
 		el.mask(PSI.Const.SAVING);
 		f.submit({
-					url : PSI.Const.BASE_URL + "Home/Customer/editCustomer",
+					url : me.URL("/Home/Customer/editCustomer"),
 					method : "POST",
 					success : function(form, action) {
 						el.unmask();
@@ -518,7 +510,7 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 			}
 		}
 	},
-	
+
 	onEditLastSpecialKey : function(field, e) {
 		if (e.getKey() == e.ENTER) {
 			var f = Ext.getCmp("editForm");
@@ -527,7 +519,7 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 			}
 		}
 	},
-	
+
 	clearEdit : function() {
 		Ext.getCmp("editCode").focus();
 
