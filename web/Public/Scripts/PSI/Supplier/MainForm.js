@@ -2,7 +2,7 @@
  * 供应商档案 - 主界面
  */
 Ext.define("PSI.Supplier.MainForm", {
-	extend : "Ext.panel.Panel",
+	extend : "PSI.AFX.BaseMainForm",
 
 	config : {
 		pAddCategory : null,
@@ -96,7 +96,7 @@ Ext.define("PSI.Supplier.MainForm", {
 						actionMethods : {
 							read : "POST"
 						},
-						url : PSI.Const.BASE_URL + "Home/Supplier/supplierList",
+						url : me.URL("/Home/Supplier/supplierList"),
 						reader : {
 							root : 'supplierList',
 							totalProperty : 'totalCount'
@@ -503,8 +503,10 @@ Ext.define("PSI.Supplier.MainForm", {
 	 * 新增供应商分类
 	 */
 	onAddCategory : function() {
+		var me = this;
+
 		var form = Ext.create("PSI.Supplier.CategoryEditForm", {
-					parentForm : this
+					parentForm : me
 				});
 
 		form.show();
@@ -519,7 +521,7 @@ Ext.define("PSI.Supplier.MainForm", {
 			return;
 		}
 
-		var item = this.categoryGrid.getSelectionModel().getSelection();
+		var item = me.categoryGrid.getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
 			PSI.MsgBox.showInfo("请选择要编辑的供应商分类");
 			return;
@@ -528,7 +530,7 @@ Ext.define("PSI.Supplier.MainForm", {
 		var category = item[0];
 
 		var form = Ext.create("PSI.Supplier.CategoryEditForm", {
-					parentForm : this,
+					parentForm : me,
 					entity : category
 				});
 
@@ -539,7 +541,9 @@ Ext.define("PSI.Supplier.MainForm", {
 	 * 删除供应商分类
 	 */
 	onDeleteCategory : function() {
-		var item = this.categoryGrid.getSelectionModel().getSelection();
+		var me = this;
+
+		var item = me.categoryGrid.getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
 			PSI.MsgBox.showInfo("请选择要删除的供应商分类");
 			return;
@@ -548,7 +552,6 @@ Ext.define("PSI.Supplier.MainForm", {
 		var category = item[0];
 		var info = "请确认是否删除供应商分类: <span style='color:red'>"
 				+ category.get("name") + "</span>";
-		var me = this;
 
 		var store = me.categoryGrid.getStore();
 		var index = store.findExact("id", category.get("id"));
@@ -563,8 +566,7 @@ Ext.define("PSI.Supplier.MainForm", {
 					var el = Ext.getBody();
 					el.mask("正在删除中...");
 					Ext.Ajax.request({
-								url : PSI.Const.BASE_URL
-										+ "Home/Supplier/deleteCategory",
+								url : me.URL("/Home/Supplier/deleteCategory"),
 								method : "POST",
 								params : {
 									id : category.get("id")
@@ -593,7 +595,7 @@ Ext.define("PSI.Supplier.MainForm", {
 		var el = grid.getEl() || Ext.getBody();
 		el.mask(PSI.Const.LOADING);
 		Ext.Ajax.request({
-					url : PSI.Const.BASE_URL + "Home/Supplier/categoryList",
+					url : me.URL("/Home/Supplier/categoryList"),
 					method : "POST",
 					params : me.getQueryParam(),
 					callback : function(options, success, response) {
@@ -619,20 +621,23 @@ Ext.define("PSI.Supplier.MainForm", {
 					}
 				});
 	},
+
 	freshSupplierGrid : function(id) {
-		var item = this.categoryGrid.getSelectionModel().getSelection();
+		var me = this;
+
+		var item = me.categoryGrid.getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			var grid = this.supplierGrid;
+			var grid = me.supplierGrid;
 			grid.setTitle("供应商档案");
 			return;
 		}
 
 		var category = item[0];
 
-		var grid = this.supplierGrid;
+		var grid = me.supplierGrid;
 		grid.setTitle("属于分类 [" + category.get("name") + "] 的供应商");
 
-		this.__lastId = id;
+		me.__lastId = id;
 		Ext.getCmp("pagingToolbar").doRefresh()
 	},
 
@@ -641,14 +646,17 @@ Ext.define("PSI.Supplier.MainForm", {
 		me.supplierGrid.getStore().currentPage = 1;
 		me.freshSupplierGrid();
 	},
+
 	onAddSupplier : function() {
-		if (this.categoryGrid.getStore().getCount() == 0) {
+		var me = this;
+
+		if (me.categoryGrid.getStore().getCount() == 0) {
 			PSI.MsgBox.showInfo("没有供应商分类，请先新增供应商分类");
 			return;
 		}
 
 		var form = Ext.create("PSI.Supplier.SupplierEditForm", {
-					parentForm : this
+					parentForm : me
 				});
 
 		form.show();
@@ -663,14 +671,14 @@ Ext.define("PSI.Supplier.MainForm", {
 			return;
 		}
 
-		var item = this.categoryGrid.getSelectionModel().getSelection();
+		var item = me.categoryGrid.getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
 			PSI.MsgBox.showInfo("没有选择供应商分类");
 			return;
 		}
 		var category = item[0];
 
-		var item = this.supplierGrid.getSelectionModel().getSelection();
+		var item = me.supplierGrid.getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
 			PSI.MsgBox.showInfo("请选择要编辑的供应商");
 			return;
@@ -679,12 +687,13 @@ Ext.define("PSI.Supplier.MainForm", {
 		var supplier = item[0];
 		supplier.set("categoryId", category.get("id"));
 		var form = Ext.create("PSI.Supplier.SupplierEditForm", {
-					parentForm : this,
+					parentForm : me,
 					entity : supplier
 				});
 
 		form.show();
 	},
+
 	onDeleteSupplier : function() {
 		var me = this;
 		var item = me.supplierGrid.getSelectionModel().getSelection();
@@ -706,13 +715,11 @@ Ext.define("PSI.Supplier.MainForm", {
 
 		var info = "请确认是否删除供应商: <span style='color:red'>"
 				+ supplier.get("name") + "</span>";
-		var me = this;
 		PSI.MsgBox.confirm(info, function() {
 					var el = Ext.getBody();
 					el.mask("正在删除中...");
 					Ext.Ajax.request({
-								url : PSI.Const.BASE_URL
-										+ "Home/Supplier/deleteSupplier",
+								url : me.URL("/Home/Supplier/deleteSupplier"),
 								method : "POST",
 								params : {
 									id : supplier.get("id")
@@ -735,6 +742,7 @@ Ext.define("PSI.Supplier.MainForm", {
 							});
 				});
 	},
+
 	gotoCategoryGridRecord : function(id) {
 		var me = this;
 		var grid = me.categoryGrid;
@@ -748,6 +756,7 @@ Ext.define("PSI.Supplier.MainForm", {
 			}
 		}
 	},
+
 	gotoSupplierGridRecord : function(id) {
 		var me = this;
 		var grid = me.supplierGrid;
@@ -763,6 +772,7 @@ Ext.define("PSI.Supplier.MainForm", {
 			grid.getSelectionModel().select(0);
 		}
 	},
+
 	refreshCategoryCount : function() {
 		var me = this;
 		var item = me.categoryGrid.getSelectionModel().getSelection();
@@ -791,8 +801,10 @@ Ext.define("PSI.Supplier.MainForm", {
 	},
 
 	onLastQueryEditSpecialKey : function(field, e) {
+		var me = this;
+
 		if (e.getKey() === e.ENTER) {
-			this.onQuery();
+			me.onQuery();
 		}
 	},
 
@@ -849,11 +861,15 @@ Ext.define("PSI.Supplier.MainForm", {
 	},
 
 	onQuery : function() {
-		this.freshCategoryGrid();
+		var me = this;
+
+		me.freshCategoryGrid();
 	},
 
 	onClearQuery : function() {
-		var nameList = this.__queryEditNameList;
+		var me = this;
+
+		var nameList = me.__queryEditNameList;
 		for (var i = 0; i < nameList.length; i++) {
 			var name = nameList[i];
 			var edit = Ext.getCmp(name);
@@ -862,6 +878,6 @@ Ext.define("PSI.Supplier.MainForm", {
 			}
 		}
 
-		this.onQuery();
+		me.onQuery();
 	}
 });
