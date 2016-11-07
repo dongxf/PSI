@@ -45,9 +45,6 @@ Ext.define("PSI.Goods.CategoryEditForm", {
 
 		Ext.apply(me, {
 			title : entity == null ? "新增商品分类" : "编辑商品分类",
-			modal : true,
-			resizable : false,
-			onEsc : Ext.emptyFn,
 			width : 400,
 			height : 160,
 			layout : "fit",

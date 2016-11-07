@@ -2,100 +2,93 @@
  * 商品 - 新建或编辑界面
  */
 Ext.define("PSI.Goods.GoodsEditForm", {
-			extend : "Ext.window.Window",
+	extend : "PSI.AFX.BaseForm",
 
-			config : {
-				parentForm : null,
-				entity : null
-			},
+	/**
+	 * 初始化组件
+	 */
+	initComponent : function() {
+		var me = this;
+		var entity = me.getEntity();
 
-			/**
-			 * 初始化组件
-			 */
-			initComponent : function() {
-				var me = this;
-				var entity = me.getEntity();
+		var modelName = "PSIGoodsUnit";
+		Ext.define(modelName, {
+					extend : "Ext.data.Model",
+					fields : ["id", "name"]
+				});
 
-				Ext.define("PSIGoodsUnit", {
-							extend : "Ext.data.Model",
-							fields : ["id", "name"]
-						});
+		var unitStore = Ext.create("Ext.data.Store", {
+					model : modelName,
+					autoLoad : false,
+					data : []
+				});
+		me.unitStore = unitStore;
 
-				var unitStore = Ext.create("Ext.data.Store", {
-							model : "PSIGoodsUnit",
-							autoLoad : false,
-							data : []
-						});
-				me.unitStore = unitStore;
+		me.adding = entity == null;
 
-				me.adding = entity == null;
+		var buttons = [];
+		if (!entity) {
+			buttons.push({
+						text : "保存并继续新增",
+						formBind : true,
+						handler : function() {
+							me.onOK(true);
+						},
+						scope : me
+					});
+		}
 
-				var buttons = [];
-				if (!entity) {
-					buttons.push({
-								text : "保存并继续新增",
-								formBind : true,
-								handler : function() {
-									me.onOK(true);
-								},
-								scope : me
-							});
-				}
+		buttons.push({
+					text : "保存",
+					formBind : true,
+					iconCls : "PSI-button-ok",
+					handler : function() {
+						me.onOK(false);
+					},
+					scope : me
+				}, {
+					text : entity == null ? "关闭" : "取消",
+					handler : function() {
+						me.close();
+					},
+					scope : me
+				});
 
-				buttons.push({
-							text : "保存",
-							formBind : true,
-							iconCls : "PSI-button-ok",
-							handler : function() {
-								me.onOK(false);
-							},
-							scope : me
-						}, {
-							text : entity == null ? "关闭" : "取消",
-							handler : function() {
-								me.close();
-							},
-							scope : me
-						});
+		var selectedCategory = me.getParentForm().getCategoryGrid()
+				.getSelectionModel().getSelection();
+		var defaultCategoryId = null;
+		if (selectedCategory != null && selectedCategory.length > 0) {
+			defaultCategoryId = selectedCategory[0].get("id");
+		}
 
-				var selectedCategory = me.getParentForm().getCategoryGrid()
-						.getSelectionModel().getSelection();
-				var defaultCategoryId = null;
-				if (selectedCategory != null && selectedCategory.length > 0) {
-					defaultCategoryId = selectedCategory[0].get("id");
-				}
-
-				Ext.apply(me, {
-							title : entity == null ? "新增商品" : "编辑商品",
-							modal : true,
-							resizable : false,
-							onEsc : Ext.emptyFn,
-							width : 460,
-							height : 260,
-							layout : "fit",
-							items : [{
-								id : "editForm",
-								xtype : "form",
-								layout : {
-									type : "table",
-									columns : 2
-								},
-								height : "100%",
-								bodyPadding : 5,
-								defaultType : 'textfield',
-								fieldDefaults : {
-									labelWidth : 60,
-									labelAlign : "right",
-									labelSeparator : "",
-									msgTarget : 'side'
-								},
-								items : [{
+		Ext.apply(me, {
+					title : entity == null ? "新增商品" : "编辑商品",
+					width : 460,
+					height : 260,
+					layout : "fit",
+					items : [{
+						id : "PSI_Goods_GoodsEditForm_editForm",
+						xtype : "form",
+						layout : {
+							type : "table",
+							columns : 2
+						},
+						height : "100%",
+						bodyPadding : 5,
+						defaultType : 'textfield',
+						fieldDefaults : {
+							labelWidth : 60,
+							labelAlign : "right",
+							labelSeparator : "",
+							msgTarget : 'side'
+						},
+						items : [{
 									xtype : "hidden",
 									name : "id",
 									value : entity == null ? null : entity
 											.get("id")
 								}, {
-									id : "editCategory",
+									id : "PSI_Goods_GoodsEditForm_editCategory",
 									xtype : "psi_goodscategoryfield",
 									fieldLabel : "商品分类",
 									allowBlank : false,
@@ -108,12 +101,12 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 										}
 									}
 								}, {
-									id : "editCategoryId",
+									id : "PSI_Goods_GoodsEditForm_editCategoryId",
 									name : "categoryId",
 									xtype : "hidden",
 									value : defaultCategoryId
 								}, {
-									id : "editCode",
+									id : "PSI_Goods_GoodsEditForm_editCode",
 									fieldLabel : "商品编码",
 									allowBlank : false,
 									blankText : "没有输入商品编码",
@@ -128,7 +121,7 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 										}
 									}
 								}, {
-									id : "editName",
+									id : "PSI_Goods_GoodsEditForm_editName",
 									fieldLabel : "品名",
 									colspan : 2,
 									width : 430,
@@ -145,7 +138,7 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 										}
 									}
 								}, {
-									id : "editSpec",
+									id : "PSI_Goods_GoodsEditForm_editSpec",
 									fieldLabel : "规格型号",
 									colspan : 2,
 									width : 430,
@@ -159,7 +152,7 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 										}
 									}
 								}, {
-									id : "editUnit",
+									id : "PSI_Goods_GoodsEditForm_editUnit",
 									xtype : "combo",
 									fieldLabel : "计量单位",
 									allowBlank : false,
@@ -178,7 +171,7 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 										}
 									}
 								}, {
-									id : "editBarCode",
+									id : "PSI_Goods_GoodsEditForm_editBarCode",
 									fieldLabel : "条形码",
 									name : "barCode",
 									value : entity == null ? null : entity
@@ -190,11 +183,11 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 										}
 									}
 								}, {
-									id : "editBrandId",
+									id : "PSI_Goods_GoodsEditForm_editBrandId",
 									xtype : "hidden",
 									name : "brandId"
 								}, {
-									id : "editBrand",
+									id : "PSI_Goods_GoodsEditForm_editBrand",
 									fieldLabel : "品牌",
 									name : "brandName",
 									xtype : "PSI_goods_brand_field",
@@ -211,7 +204,7 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 									xtype : "numberfield",
 									hideTrigger : true,
 									name : "salePrice",
-									id : "editSalePrice",
+									id : "PSI_Goods_GoodsEditForm_editSalePrice",
 									value : entity == null ? null : entity
 											.get("salePrice"),
 									listeners : {
@@ -225,7 +218,7 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 									xtype : "numberfield",
 									hideTrigger : true,
 									name : "purchasePrice",
-									id : "editPurchasePrice",
+									id : "PSI_Goods_GoodsEditForm_editPurchasePrice",
 									value : entity == null ? null : entity
 											.get("purchasePrice"),
 									listeners : {
@@ -237,7 +230,7 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 								}, {
 									fieldLabel : "备注",
 									name : "memo",
-									id : "editMemo",
+									id : "PSI_Goods_GoodsEditForm_editMemo",
 									value : entity == null ? null : entity
 											.get("memo"),
 									listeners : {
@@ -249,191 +242,195 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 									colspan : 2,
 									width : 430
 								}],
-								buttons : buttons
-							}],
-							listeners : {
-								show : {
-									fn : me.onWndShow,
-									scope : me
-								},
-								close : {
-									fn : me.onWndClose,
-									scope : me
-								}
-							}
-						});
-
-				me.callParent(arguments);
-
-				me.__editorList = ["editCategory", "editCode", "editName",
-						"editSpec", "editUnit", "editBarCode", "editBrand",
-						"editSalePrice", "editPurchasePrice", "editMemo"];
-			},
-
-			onWndShow : function() {
-				var me = this;
-				var editCode = Ext.getCmp("editCode");
-				editCode.focus();
-				editCode.setValue(editCode.getValue());
-
-				var categoryId = Ext.getCmp("editCategoryId").getValue();
-				var el = me.getEl();
-				var unitStore = me.unitStore;
-				el.mask(PSI.Const.LOADING);
-				Ext.Ajax.request({
-							url : PSI.Const.BASE_URL + "Home/Goods/goodsInfo",
-							params : {
-								id : me.adding ? null : me.getEntity()
-										.get("id"),
-								categoryId : categoryId
-							},
-							method : "POST",
-							callback : function(options, success, response) {
-								unitStore.removeAll();
-
-								if (success) {
-									var data = Ext.JSON
-											.decode(response.responseText);
-									if (data.units) {
-										unitStore.add(data.units);
-									}
-
-									if (!me.adding) {
-										// 编辑商品信息
-										Ext.getCmp("editCategory")
-												.setIdValue(data.categoryId);
-										Ext.getCmp("editCategory")
-												.setValue(data.categoryName);
-										Ext.getCmp("editCode")
-												.setValue(data.code);
-										Ext.getCmp("editName")
-												.setValue(data.name);
-										Ext.getCmp("editSpec")
-												.setValue(data.spec);
-										Ext.getCmp("editUnit")
-												.setValue(data.unitId);
-										Ext.getCmp("editSalePrice")
-												.setValue(data.salePrice);
-										Ext.getCmp("editPurchasePrice")
-												.setValue(data.purchasePrice);
-										Ext.getCmp("editBarCode")
-												.setValue(data.barCode);
-										Ext.getCmp("editMemo")
-												.setValue(data.memo);
-										var brandId = data.brandId;
-										if (brandId) {
-											var editBrand = Ext
-													.getCmp("editBrand");
-											editBrand.setIdValue(brandId);
-											editBrand
-													.setValue(data.brandFullName);
-										}
-									} else {
-										// 新增商品
-										if (unitStore.getCount() > 0) {
-											var unitId = unitStore.getAt(0)
-													.get("id");
-											Ext.getCmp("editUnit")
-													.setValue(unitId);
-										}
-										if (data.categoryId) {
-											Ext
-													.getCmp("editCategory")
-													.setIdValue(data.categoryId);
-											Ext
-													.getCmp("editCategory")
-													.setValue(data.categoryName);
-										}
-									}
-								}
-
-								el.unmask();
-							}
-						});
-			},
-
-			onOK : function(thenAdd) {
-				var me = this;
-
-				var categoryId = Ext.getCmp("editCategory").getIdValue();
-				Ext.getCmp("editCategoryId").setValue(categoryId);
-
-				var brandId = Ext.getCmp("editBrand").getIdValue();
-				Ext.getCmp("editBrandId").setValue(brandId);
-
-				var f = Ext.getCmp("editForm");
-				var el = f.getEl();
-				el.mask(PSI.Const.SAVING);
-				f.submit({
-							url : PSI.Const.BASE_URL + "Home/Goods/editGoods",
-							method : "POST",
-							success : function(form, action) {
-								el.unmask();
-								me.__lastId = action.result.id;
-								me.getParentForm().__lastId = me.__lastId;
-
-								PSI.MsgBox.tip("数据保存成功");
-								me.focus();
-
-								if (thenAdd) {
-									me.clearEdit();
-								} else {
-									me.close();
-									me.getParentForm().freshGoodsGrid();
-								}
-							},
-							failure : function(form, action) {
-								el.unmask();
-								PSI.MsgBox.showInfo(action.result.msg,
-										function() {
-											Ext.getCmp("editCode").focus();
-										});
-							}
-						});
-			},
-
-			onEditSpecialKey : function(field, e) {
-				if (e.getKey() === e.ENTER) {
-					var me = this;
-					var id = field.getId();
-					for (var i = 0; i < me.__editorList.length; i++) {
-						var editorId = me.__editorList[i];
-						if (id === editorId) {
-							var edit = Ext.getCmp(me.__editorList[i + 1]);
-							edit.focus();
-							edit.setValue(edit.getValue());
+						buttons : buttons
+					}],
+					listeners : {
+						show : {
+							fn : me.onWndShow,
+							scope : me
+						},
+						close : {
+							fn : me.onWndClose,
+							scope : me
 						}
 					}
-				}
-			},
+				});
 
-			onLastEditSpecialKey : function(field, e) {
-				if (e.getKey() == e.ENTER) {
-					var f = Ext.getCmp("editForm");
-					if (f.getForm().isValid()) {
-						var me = this;
-						me.onOK(me.adding);
+		me.callParent(arguments);
+
+		me.editForm = Ext.getCmp("PSI_Goods_GoodsEditForm_editForm");
+		me.editCategory = Ext.getCmp("PSI_Goods_GoodsEditForm_editCategory");
+		me.editCategoryId = Ext
+				.getCmp("PSI_Goods_GoodsEditForm_editCategoryId");
+		me.editCode = Ext.getCmp("PSI_Goods_GoodsEditForm_editCode");
+		me.editName = Ext.getCmp("PSI_Goods_GoodsEditForm_editName");
+		me.editSpec = Ext.getCmp("PSI_Goods_GoodsEditForm_editSpec");
+		me.editUnit = Ext.getCmp("PSI_Goods_GoodsEditForm_editUnit");
+		me.editBarCode = Ext.getCmp("PSI_Goods_GoodsEditForm_editBarCode");
+		me.editBrand = Ext.getCmp("PSI_Goods_GoodsEditForm_editBrand");
+		me.editBrandId = Ext.getCmp("PSI_Goods_GoodsEditForm_editBrandId");
+		me.editSalePrice = Ext.getCmp("PSI_Goods_GoodsEditForm_editSalePrice");
+		me.editPurchasePrice = Ext
+				.getCmp("PSI_Goods_GoodsEditForm_editPurchasePrice");
+		me.editMemo = Ext.getCmp("PSI_Goods_GoodsEditForm_editMemo");
+
+		me.__editorList = [me.editCategory, me.editCode, me.editName,
+				me.editSpec, me.editUnit, me.editBarCode, me.editBrand,
+				me.editSalePrice, me.editPurchasePrice, me.editMemo];
+	},
+
+	onWndShow : function() {
+		var me = this;
+		var editCode = me.editCode;
+		editCode.focus();
+		editCode.setValue(editCode.getValue());
+
+		var categoryId = me.editCategoryId.getValue();
+		var el = me.getEl();
+		var unitStore = me.unitStore;
+		el.mask(PSI.Const.LOADING);
+		Ext.Ajax.request({
+					url : me.URL("/Home/Goods/goodsInfo"),
+					params : {
+						id : me.adding ? null : me.getEntity().get("id"),
+						categoryId : categoryId
+					},
+					method : "POST",
+					callback : function(options, success, response) {
+						unitStore.removeAll();
+
+						if (success) {
+							var data = Ext.JSON.decode(response.responseText);
+							if (data.units) {
+								unitStore.add(data.units);
+							}
+
+							if (!me.adding) {
+								// 编辑商品信息
+								me.editCategory.setIdValue(data.categoryId);
+								me.editCategory.setValue(data.categoryName);
+								me.editCode.setValue(data.code);
+								me.editName.setValue(data.name);
+								me.editSpec.setValue(data.spec);
+								me.editUnit.setValue(data.unitId);
+								me.editSalePrice.setValue(data.salePrice);
+								me.editPurchasePrice
+										.setValue(data.purchasePrice);
+								me.editBarCode.setValue(data.barCode);
+								me.editMemo.setValue(data.memo);
+								var brandId = data.brandId;
+								if (brandId) {
+									var editBrand = me.editBrand;
+									editBrand.setIdValue(brandId);
+									editBrand.setValue(data.brandFullName);
+								}
+							} else {
+								// 新增商品
+								if (unitStore.getCount() > 0) {
+									var unitId = unitStore.getAt(0).get("id");
+									me.editUnit.setValue(unitId);
+								}
+								if (data.categoryId) {
+									me.editCategory.setIdValue(data.categoryId);
+									me.editCategory.setValue(data.categoryName);
+								}
+							}
+						}
+
+						el.unmask();
 					}
+				});
+	},
+
+	onOK : function(thenAdd) {
+		var me = this;
+
+		var categoryId = me.editCategory.getIdValue();
+		me.editCategoryId.setValue(categoryId);
+
+		var brandId = me.editBrand.getIdValue();
+		me.editBrandId.setValue(brandId);
+
+		var f = me.editForm;
+		var el = f.getEl();
+		el.mask(PSI.Const.SAVING);
+		f.submit({
+					url : me.URL("/Home/Goods/editGoods"),
+					method : "POST",
+					success : function(form, action) {
+						el.unmask();
+						me.__lastId = action.result.id;
+						if (me.getParentForm()) {
+							me.getParentForm().__lastId = me.__lastId;
+						}
+
+						PSI.MsgBox.tip("数据保存成功");
+						me.focus();
+
+						if (thenAdd) {
+							me.clearEdit();
+						} else {
+							me.close();
+							if (me.getPrantForm()) {
+								me.getParentForm().freshGoodsGrid();
+							}
+						}
+					},
+					failure : function(form, action) {
+						el.unmask();
+						PSI.MsgBox.showInfo(action.result.msg, function() {
+									me.editCode.focus();
+								});
+					}
+				});
+	},
+
+	onEditSpecialKey : function(field, e) {
+		var me = this;
+
+		if (e.getKey() === e.ENTER) {
+			var id = field.getId();
+			for (var i = 0; i < me.__editorList.length; i++) {
+				var editor = me.__editorList[i];
+				if (id === editor.getId()) {
+					var edit = me.__editorList[i + 1];
+					edit.focus();
+					edit.setValue(edit.getValue());
 				}
-			},
-
-			clearEdit : function() {
-				Ext.getCmp("editCode").focus();
-
-				var editors = [Ext.getCmp("editCode"), Ext.getCmp("editName"),
-						Ext.getCmp("editSpec"), Ext.getCmp("editSalePrice"),
-						Ext.getCmp("editPurchasePrice"),
-						Ext.getCmp("editBarCode")];
-				for (var i = 0; i < editors.length; i++) {
-					var edit = editors[i];
-					edit.setValue(null);
-					edit.clearInvalid();
-				}
-			},
-
-			onWndClose : function() {
-				var me = this;
-				me.getParentForm().__lastId = me.__lastId;
-				me.getParentForm().freshGoodsGrid();
 			}
-		});
+		}
+	},
+
+	onLastEditSpecialKey : function(field, e) {
+		var me = this;
+
+		if (e.getKey() == e.ENTER) {
+			var f = me.editForm;
+			if (f.getForm().isValid()) {
+				me.onOK(me.adding);
+			}
+		}
+	},
+
+	clearEdit : function() {
+		var me = this;
+
+		me.editCode.focus();
+
+		var editors = [me.editCode, me.editName, me.editSpec, me.editSalePrice,
+				me.editPurchasePrice, me.editBarCode, me.editMemo];
+		for (var i = 0; i < editors.length; i++) {
+			var edit = editors[i];
+			edit.setValue(null);
+			edit.clearInvalid();
+		}
+	},
+
+	onWndClose : function() {
+		var me = this;
+		if (me.getParentForm()) {
+			me.getParentForm().__lastId = me.__lastId;
+			me.getParentForm().freshGoodsGrid();
+		}
+	}
+});
