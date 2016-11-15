@@ -450,7 +450,7 @@ class PWBillService extends PSIBaseService {
 		$suf = "001";
 		if ($data) {
 			$ref = $data[0]["ref"];
-			$nextNumber = intval(substr($ref, 10)) + 1;
+			$nextNumber = intval(substr($ref, strlen($pre . $mid))) + 1;
 			$suf = str_pad($nextNumber, 3, "0", STR_PAD_LEFT);
 		}
 		
