@@ -186,14 +186,7 @@ Ext.define("PSI.Warehouse.MainForm", {
 		var info = "请确认是否删除仓库 <span style='color:red'>" + warehouse.get("name")
 				+ "</span> ?";
 
-		var store = me.getMainGrid().getStore();
-		var index = store.findExact("id", warehouse.get("id"));
-		index--;
-		var preIndex = null;
-		var preWarehouse = store.getAt(index);
-		if (preWarehouse) {
-			preIndex = preWarehouse.get("id");
-		}
+		var preIndex = me.getPreIndexInMainGrid(warehouse.get("id"));
 
 		var funcConfirm = function() {
 			var el = Ext.getBody();

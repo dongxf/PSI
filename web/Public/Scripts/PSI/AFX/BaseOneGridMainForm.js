@@ -70,6 +70,22 @@ Ext.define("PSI.AFX.BaseOneGridMainForm", {
 						});
 			},
 
+			// public
+			getPreIndexInMainGrid : function(id) {
+				var me = this;
+
+				var store = me.getMainGrid().getStore();
+				var index = store.findExact("id", id) - 1;
+				
+				var result = null;
+				var preEntity = store.getAt(index);
+				if (preEntity) {
+					result = preEntity.get("id");
+				}
+
+				return result;
+			},
+
 			// protected
 			afxGetMainGrid : function() {
 				return null;

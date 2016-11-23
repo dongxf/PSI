@@ -131,14 +131,7 @@ Ext.define("PSI.Goods.UnitMainForm", {
 				var info = "请确认是否删除商品计量单位 <span style='color:red'>"
 						+ unit.get("name") + "</span> ?";
 
-				var store = me.getMainGrid().getStore();
-				var index = store.findExact("id", unit.get("id"));
-				index--;
-				var preIndex = null;
-				var preItem = store.getAt(index);
-				if (preItem) {
-					preIndex = preItem.get("id");
-				}
+				var preIndex = me.getPreIndexInMainGrid(unit.get("id"));
 
 				var funcConfirm = function() {
 					var el = Ext.getBody();
