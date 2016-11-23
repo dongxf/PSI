@@ -2,20 +2,53 @@
  * 商品计量单位 - 主界面
  */
 Ext.define("PSI.Goods.UnitMainForm", {
-			extend : "Ext.panel.Panel",
+			extend : "PSI.AFX.BaseOneGridMainForm",
 
 			/**
-			 * 初始化组件
+			 * 重载父类方法
 			 */
-			initComponent : function() {
+			afxGetToolbarCmp : function() {
 				var me = this;
+				return [{
+							text : "新增计量单位",
+							iconCls : "PSI-button-add",
+							handler : me.onAddUnit,
+							scope : me
+						}, {
+							text : "编辑计量单位",
+							iconCls : "PSI-button-edit",
+							handler : me.onEditUnit,
+							scope : me
+						}, {
+							text : "删除计量单位",
+							iconCls : "PSI-button-delete",
+							handler : me.onDeleteUnit,
+							scope : me
+						}, "-", {
+							text : "关闭",
+							iconCls : "PSI-button-exit",
+							handler : function() {
+								window.close();
+							}
+						}];
+			},
 
-				Ext.define("PSIGoodsUnit", {
+			/**
+			 * 重载父类方法
+			 */
+			afxGetMainGrid : function() {
+				var me = this;
+				if (me.__mainGrid) {
+					return me.__mainGrid;
+				}
+
+				var modelName = "PSI_Goods_UnitMainForm_PSIGoodsUnit";
+				Ext.define(modelName, {
 							extend : "Ext.data.Model",
 							fields : ["id", "name"]
 						});
 
-				var grid = Ext.create("Ext.grid.Panel", {
+				me.__mainGrid = Ext.create("Ext.grid.Panel", {
 							columnLines : true,
 							columns : [{
 										xtype : "rownumberer"
@@ -27,7 +60,7 @@ Ext.define("PSI.Goods.UnitMainForm", {
 										width : 200
 									}],
 							store : Ext.create("Ext.data.Store", {
-										model : "PSIGoodsUnit",
+										model : modelName,
 										autoLoad : false,
 										data : []
 									}),
@@ -38,53 +71,24 @@ Ext.define("PSI.Goods.UnitMainForm", {
 								}
 							}
 						});
-				this.grid = grid;
 
-				Ext.apply(me, {
-							border : 0,
-							layout : "border",
-							tbar : [{
-										text : "新增计量单位",
-										iconCls : "PSI-button-add",
-										handler : me.onAddUnit,
-										scope : me
-									}, {
-										text : "编辑计量单位",
-										iconCls : "PSI-button-edit",
-										handler : me.onEditUnit,
-										scope : me
-									}, {
-										text : "删除计量单位",
-										iconCls : "PSI-button-delete",
-										handler : me.onDeleteUnit,
-										scope : me
-									}, "-", {
-										text : "关闭",
-										iconCls : "PSI-button-exit",
-										handler : function() {
-											window.close();
-										}
-									}],
-							items : [{
-										region : "center",
-										xtype : "panel",
-										layout : "fit",
-										border : 0,
-										items : [grid]
-									}]
-						});
+				return me.__mainGrid;
+			},
 
-				me.callParent(arguments);
-
-				me.freshGrid();
+			/**
+			 * 重载父类方法
+			 */
+			afxGetRefreshGridURL : function() {
+				return "Home/Goods/allUnits";
 			},
 
 			/**
 			 * 新增商品计量单位
 			 */
 			onAddUnit : function() {
+				var me = this;
 				var form = Ext.create("PSI.Goods.UnitEditForm", {
-							parentForm : this
+							parentForm : me
 						});
 
 				form.show();
@@ -94,7 +98,9 @@ Ext.define("PSI.Goods.UnitMainForm", {
 			 * 编辑商品计量单位
 			 */
 			onEditUnit : function() {
-				var item = this.grid.getSelectionModel().getSelection();
+				var me = this;
+
+				var item = me.getMainGrid().getSelectionModel().getSelection();
 				if (item == null || item.length != 1) {
 					PSI.MsgBox.showInfo("请选择要编辑的商品计量单位");
 					return;
@@ -103,7 +109,7 @@ Ext.define("PSI.Goods.UnitMainForm", {
 				var unit = item[0];
 
 				var form = Ext.create("PSI.Goods.UnitEditForm", {
-							parentForm : this,
+							parentForm : me,
 							entity : unit
 						});
 
@@ -114,18 +120,18 @@ Ext.define("PSI.Goods.UnitMainForm", {
 			 * 删除商品计量单位
 			 */
 			onDeleteUnit : function() {
-				var item = this.grid.getSelectionModel().getSelection();
+				var me = this;
+				var item = me.getMainGrid().getSelectionModel().getSelection();
 				if (item == null || item.length != 1) {
 					PSI.MsgBox.showInfo("请选择要删除的商品计量单位");
 					return;
 				}
 
-				var me = this;
 				var unit = item[0];
 				var info = "请确认是否删除商品计量单位 <span style='color:red'>"
 						+ unit.get("name") + "</span> ?";
 
-				var store = me.grid.getStore();
+				var store = me.getMainGrid().getStore();
 				var index = store.findExact("id", unit.get("id"));
 				index--;
 				var preIndex = null;
@@ -163,42 +169,5 @@ Ext.define("PSI.Goods.UnitMainForm", {
 				};
 
 				PSI.MsgBox.confirm(info, funcConfirm);
-			},
-
-			/**
-			 * 刷新Grid
-			 */
-			freshGrid : function(id) {
-				var me = this;
-				var grid = me.grid;
-
-				var el = grid.getEl() || Ext.getBody();
-				el.mask(PSI.Const.LOADING);
-				Ext.Ajax.request({
-							url : PSI.Const.BASE_URL + "Home/Goods/allUnits",
-							method : "POST",
-							callback : function(options, success, response) {
-								var store = grid.getStore();
-
-								store.removeAll();
-
-								if (success) {
-									var data = Ext.JSON
-											.decode(response.responseText);
-									store.add(data);
-									if (id) {
-										var r = store.findExact("id", id);
-										if (r != -1) {
-											grid.getSelectionModel().select(r);
-										} else {
-											grid.getSelectionModel().select(0);
-										}
-
-									}
-								}
-
-								el.unmask();
-							}
-						});
 			}
 		});

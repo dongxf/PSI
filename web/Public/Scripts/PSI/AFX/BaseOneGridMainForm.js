@@ -18,6 +18,8 @@ Ext.define("PSI.AFX.BaseOneGridMainForm", {
 						});
 
 				me.callParent(arguments);
+
+				me.freshGrid();
 			},
 
 			// public

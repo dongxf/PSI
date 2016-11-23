@@ -12,17 +12,6 @@ Ext.define("PSI.Warehouse.MainForm", {
 	},
 
 	/**
-	 * 初始化组件
-	 */
-	initComponent : function() {
-		var me = this;
-
-		me.callParent(arguments);
-
-		me.freshGrid();
-	},
-
-	/**
 	 * 重载父类方法
 	 */
 	afxGetToolbarCmp : function() {
