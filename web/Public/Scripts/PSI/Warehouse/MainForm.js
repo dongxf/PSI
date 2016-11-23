@@ -142,6 +142,7 @@ Ext.define("PSI.Warehouse.MainForm", {
 
 		return me.__mainGrid;
 	},
+
 	/**
 	 * 新增仓库
 	 */
