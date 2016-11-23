@@ -2,7 +2,7 @@
  * 仓库 - 主界面
  */
 Ext.define("PSI.Warehouse.MainForm", {
-	extend : "Ext.panel.Panel",
+	extend : "PSI.AFX.BaseMainForm",
 	border : 0,
 	layout : "border",
 
@@ -137,7 +137,7 @@ Ext.define("PSI.Warehouse.MainForm", {
 			var el = Ext.getBody();
 			el.mask(PSI.Const.LOADING);
 			var r = {
-				url : PSI.Const.BASE_URL + "Home/Warehouse/deleteWarehouse",
+				url : me.URL("Home/Warehouse/deleteWarehouse"),
 				params : {
 					id : warehouse.get("id")
 				},
@@ -170,7 +170,7 @@ Ext.define("PSI.Warehouse.MainForm", {
 		var el = grid.getEl() || Ext.getBody();
 		el.mask(PSI.Const.LOADING);
 		Ext.Ajax.request({
-					url : PSI.Const.BASE_URL + "Home/Warehouse/warehouseList",
+					url : me.URL("Home/Warehouse/warehouseList"),
 					method : "POST",
 					callback : function(options, success, response) {
 						var store = grid.getStore();
