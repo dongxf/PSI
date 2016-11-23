@@ -2,7 +2,7 @@
  * 仓库 - 主界面
  */
 Ext.define("PSI.Warehouse.MainForm", {
-	extend : "PSI.AFX.BaseMainForm",
+	extend : "PSI.AFX.BaseOneGridMainForm",
 
 	config : {
 		pAdd : null,
@@ -16,16 +16,6 @@ Ext.define("PSI.Warehouse.MainForm", {
 	 */
 	initComponent : function() {
 		var me = this;
-
-		Ext.apply(me, {
-					items : [{
-								region : "center",
-								xtype : "panel",
-								layout : "fit",
-								border : 0,
-								items : [me.getMainGrid()]
-							}]
-				});
 
 		me.callParent(arguments);
 
@@ -211,7 +201,10 @@ Ext.define("PSI.Warehouse.MainForm", {
 		}
 	},
 
-	getMainGrid : function() {
+	/**
+	 * 重载父类方法
+	 */
+	afxGetMainGrid : function() {
 		var me = this;
 		if (me.__mainGrid) {
 			return me.__mainGrid;
