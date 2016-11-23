@@ -3,8 +3,6 @@
  */
 Ext.define("PSI.Warehouse.MainForm", {
 	extend : "PSI.AFX.BaseMainForm",
-	border : 0,
-	layout : "border",
 
 	config : {
 		pAdd : null,
@@ -20,52 +18,14 @@ Ext.define("PSI.Warehouse.MainForm", {
 		var me = this;
 
 		Ext.apply(me, {
-			tbar : [{
-						text : "新增仓库",
-						disabled : me.getPAdd() == "0",
-						iconCls : "PSI-button-add",
-						handler : me.onAddWarehouse,
-						scope : me
-					}, {
-						text : "编辑仓库",
-						iconCls : "PSI-button-edit",
-						disabled : me.getPEdit() == "0",
-						handler : me.onEditWarehouse,
-						scope : me
-					}, {
-						text : "删除仓库",
-						disabled : me.getPDelete() == "0",
-						iconCls : "PSI-button-delete",
-						handler : me.onDeleteWarehouse,
-						scope : me
-					}, "-", {
-						text : "修改数据域",
-						disabled : me.getPEditDataOrg() == "0",
-						iconCls : "PSI-button-dataorg",
-						handler : me.onEditDataOrg,
-						scope : me
-					}, "-", {
-						text : "帮助",
-						iconCls : "PSI-help",
-						handler : function() {
-							window
-									.open("http://my.oschina.net/u/134395/blog/374807");
-						}
-					}, "-", {
-						text : "关闭",
-						iconCls : "PSI-button-exit",
-						handler : function() {
-							window.close();
-						}
-					}],
-			items : [{
-						region : "center",
-						xtype : "panel",
-						layout : "fit",
-						border : 0,
-						items : [me.getMainGrid()]
-					}]
-		});
+					items : [{
+								region : "center",
+								xtype : "panel",
+								layout : "fit",
+								border : 0,
+								items : [me.getMainGrid()]
+							}]
+				});
 
 		me.callParent(arguments);
 
@@ -73,11 +33,59 @@ Ext.define("PSI.Warehouse.MainForm", {
 	},
 
 	/**
+	 * 重载父类方法
+	 */
+	afxGetToolbarCmp : function() {
+		var me = this;
+
+		return [{
+					text : "新增仓库",
+					disabled : me.getPAdd() == "0",
+					iconCls : "PSI-button-add",
+					handler : me.onAddWarehouse,
+					scope : me
+				}, {
+					text : "编辑仓库",
+					iconCls : "PSI-button-edit",
+					disabled : me.getPEdit() == "0",
+					handler : me.onEditWarehouse,
+					scope : me
+				}, {
+					text : "删除仓库",
+					disabled : me.getPDelete() == "0",
+					iconCls : "PSI-button-delete",
+					handler : me.onDeleteWarehouse,
+					scope : me
+				}, "-", {
+					text : "修改数据域",
+					disabled : me.getPEditDataOrg() == "0",
+					iconCls : "PSI-button-dataorg",
+					handler : me.onEditDataOrg,
+					scope : me
+				}, "-", {
+					text : "帮助",
+					iconCls : "PSI-help",
+					handler : function() {
+						var url = "http://my.oschina.net/u/134395/blog/374807";
+						window.open(url);
+					}
+				}, "-", {
+					text : "关闭",
+					iconCls : "PSI-button-exit",
+					handler : function() {
+						window.close();
+					}
+				}];
+	},
+
+	/**
 	 * 新增仓库
 	 */
 	onAddWarehouse : function() {
+		var me = this;
+
 		var form = Ext.create("PSI.Warehouse.EditForm", {
-					parentForm : this
+					parentForm : me
 				});
 
 		form.show();
@@ -209,7 +217,7 @@ Ext.define("PSI.Warehouse.MainForm", {
 			return me.__mainGrid;
 		}
 
-		var modelName = "PSIWarehouse";
+		var modelName = "PSI_Warehouse_MainForm_PSIWarehouse";
 		Ext.define(modelName, {
 					extend : "Ext.data.Model",
 					fields : ["id", "code", "name", "inited", "dataOrg"]
