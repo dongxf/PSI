@@ -69,6 +69,80 @@ Ext.define("PSI.Warehouse.MainForm", {
 	},
 
 	/**
+	 * 重载父类方法
+	 */
+	afxGetRefreshGridURL : function() {
+		return "Home/Warehouse/warehouseList";
+	},
+
+	/**
+	 * 重载父类方法
+	 */
+	afxGetMainGrid : function() {
+		var me = this;
+		if (me.__mainGrid) {
+			return me.__mainGrid;
+		}
+
+		var modelName = "PSI_Warehouse_MainForm_PSIWarehouse";
+		Ext.define(modelName, {
+					extend : "Ext.data.Model",
+					fields : ["id", "code", "name", "inited", "dataOrg"]
+				});
+
+		me.__mainGrid = Ext.create("Ext.grid.Panel", {
+					border : 0,
+					viewConfig : {
+						enableTextSelection : true
+					},
+					columnLines : true,
+					columns : [{
+								xtype : "rownumberer"
+							}, {
+								header : "仓库编码",
+								dataIndex : "code",
+								menuDisabled : true,
+								sortable : false,
+								width : 60
+							}, {
+								header : "仓库名称",
+								dataIndex : "name",
+								menuDisabled : true,
+								sortable : false,
+								width : 200
+							}, {
+								header : "建账完毕",
+								dataIndex : "inited",
+								menuDisabled : true,
+								sortable : false,
+								width : 70,
+								renderer : function(value) {
+									return value == 1
+											? "完毕"
+											: "<span style='color:red'>未完</span>";
+								}
+							}, {
+								header : "数据域",
+								dataIndex : "dataOrg",
+								menuDisabled : true,
+								sortable : false
+							}],
+					store : Ext.create("Ext.data.Store", {
+								model : modelName,
+								autoLoad : false,
+								data : []
+							}),
+					listeners : {
+						itemdblclick : {
+							fn : me.onEditWarehouse,
+							scope : me
+						}
+					}
+				});
+
+		return me.__mainGrid;
+	},
+	/**
 	 * 新增仓库
 	 */
 	onAddWarehouse : function() {
@@ -160,113 +234,6 @@ Ext.define("PSI.Warehouse.MainForm", {
 		};
 
 		PSI.MsgBox.confirm(info, funcConfirm);
-	},
-
-	freshGrid : function(id) {
-		var me = this;
-		var grid = me.getMainGrid();
-		var el = grid.getEl() || Ext.getBody();
-		el.mask(PSI.Const.LOADING);
-		Ext.Ajax.request({
-					url : me.URL("Home/Warehouse/warehouseList"),
-					method : "POST",
-					callback : function(options, success, response) {
-						var store = grid.getStore();
-
-						store.removeAll();
-
-						if (success) {
-							var data = Ext.JSON.decode(response.responseText);
-							store.add(data);
-
-							me.gotoGridRecord(id);
-						}
-
-						el.unmask();
-					}
-				});
-	},
-
-	gotoGridRecord : function(id) {
-		var me = this;
-		var grid = me.getMainGrid();
-		var store = grid.getStore();
-		if (id) {
-			var r = store.findExact("id", id);
-			if (r != -1) {
-				grid.getSelectionModel().select(r);
-			} else {
-				grid.getSelectionModel().select(0);
-			}
-		}
-	},
-
-	/**
-	 * 重载父类方法
-	 */
-	afxGetMainGrid : function() {
-		var me = this;
-		if (me.__mainGrid) {
-			return me.__mainGrid;
-		}
-
-		var modelName = "PSI_Warehouse_MainForm_PSIWarehouse";
-		Ext.define(modelName, {
-					extend : "Ext.data.Model",
-					fields : ["id", "code", "name", "inited", "dataOrg"]
-				});
-
-		me.__mainGrid = Ext.create("Ext.grid.Panel", {
-					border : 0,
-					viewConfig : {
-						enableTextSelection : true
-					},
-					columnLines : true,
-					columns : [{
-								xtype : "rownumberer"
-							}, {
-								header : "仓库编码",
-								dataIndex : "code",
-								menuDisabled : true,
-								sortable : false,
-								width : 60
-							}, {
-								header : "仓库名称",
-								dataIndex : "name",
-								menuDisabled : true,
-								sortable : false,
-								width : 200
-							}, {
-								header : "建账完毕",
-								dataIndex : "inited",
-								menuDisabled : true,
-								sortable : false,
-								width : 70,
-								renderer : function(value) {
-									return value == 1
-											? "完毕"
-											: "<span style='color:red'>未完</span>";
-								}
-							}, {
-								header : "数据域",
-								dataIndex : "dataOrg",
-								menuDisabled : true,
-								sortable : false
-							}],
-					store : Ext.create("Ext.data.Store", {
-								model : modelName,
-								autoLoad : false,
-								data : []
-							}),
-					listeners : {
-						itemdblclick : {
-							fn : me.onEditWarehouse,
-							scope : me
-						}
-					}
-				});
-
-		return me.__mainGrid;
 	},
 
 	/**
