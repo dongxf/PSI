@@ -50,6 +50,7 @@ Ext.define("PSI.AFX.BaseOneGridMainForm", {
 				this.afxRefreshGrid(id);
 			},
 
+			// public
 			refreshGrid : function(id) {
 				this.afxRefreshGrid(id);
 			},
@@ -91,25 +92,25 @@ Ext.define("PSI.AFX.BaseOneGridMainForm", {
 				var grid = me.getMainGrid();
 				var el = grid.getEl() || Ext.getBody();
 				el.mask(PSI.Const.LOADING);
-				Ext.Ajax.request({
-							url : me.URL(me.afxGetRefreshGridURL()),
-							params : me.afxGetRefreshGridParams(),
-							method : "POST",
-							callback : function(options, success, response) {
-								var store = grid.getStore();
+				var r = {
+					url : me.URL(me.afxGetRefreshGridURL()),
+					params : me.afxGetRefreshGridParams(),
+					method : "POST",
+					callback : function(options, success, response) {
+						var store = grid.getStore();
 
-								store.removeAll();
+						store.removeAll();
 
-								if (success) {
-									var data = Ext.JSON
-											.decode(response.responseText);
-									store.add(data);
+						if (success) {
+							var data = me.decodeJSON(response.responseText);
+							store.add(data);
 
-									me.gotoGridRecord(id);
-								}
+							me.gotoGridRecord(id);
+						}
 
-								el.unmask();
-							}
-						});
+						el.unmask();
+					}
+				};
+				Ext.Ajax.request(r);
 			}
 		});
