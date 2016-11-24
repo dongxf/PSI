@@ -19,7 +19,9 @@ Ext.define("PSI.AFX.BaseOneGridMainForm", {
 
 				me.callParent(arguments);
 
-				me.freshGrid();
+				if (me.afxGetRefreshGridURL() != null) {
+					me.freshGrid();
+				}
 			},
 
 			// public
@@ -76,7 +78,7 @@ Ext.define("PSI.AFX.BaseOneGridMainForm", {
 
 				var store = me.getMainGrid().getStore();
 				var index = store.findExact("id", id) - 1;
-				
+
 				var result = null;
 				var preEntity = store.getAt(index);
 				if (preEntity) {

@@ -4,26 +4,58 @@
  * @author 李静波
  */
 Ext.define("PSI.Bizlog.MainForm", {
-	extend : "Ext.panel.Panel",
+	extend : "PSI.AFX.BaseOneGridMainForm",
 
-	initComponent : function() {
+	/**
+	 * 重载父类方法
+	 */
+	afxGetToolbarCmp : function() {
 		var me = this;
-		Ext.define("PSILog", {
+
+		return [{
+					text : "刷新",
+					handler : me.onRefresh,
+					scope : me,
+					iconCls : "PSI-button-refresh"
+				}, "-", {
+					text : "关闭",
+					iconCls : "PSI-button-exit",
+					handler : function() {
+						window.close();
+					}
+				}, "->", {
+					text : "一键升级数据库",
+					iconCls : "PSI-button-database",
+					scope : me,
+					handler : me.onUpdateDatabase
+				}];
+	},
+
+	/**
+	 * 重载父类方法
+	 */
+	afxGetMainGrid : function() {
+		var me = this;
+		if (me.__mainGrid) {
+			return me.__mainGrid;
+		}
+
+		var modelName = "PSI_Bizlog_MainForm_PSILog";
+		Ext.define(modelName, {
 					extend : "Ext.data.Model",
 					fields : ["id", "loginName", "userName", "ip", "ipFrom",
 							"content", "dt", "logCategory"],
 					idProperty : "id"
 				});
 		var store = Ext.create("Ext.data.Store", {
-					model : "PSILog",
+					model : modelName,
 					pageSize : 20,
 					proxy : {
 						type : "ajax",
-						extraParams : {},
 						actionMethods : {
 							read : "POST"
 						},
-						url : PSI.Const.BASE_URL + "Home/Bizlog/logList",
+						url : me.URL("Home/Bizlog/logList"),
 						reader : {
 							root : 'logs',
 							totalProperty : 'totalCount'
@@ -32,7 +64,7 @@ Ext.define("PSI.Bizlog.MainForm", {
 					autoLoad : true
 				});
 
-		var grid = Ext.create("Ext.grid.Panel", {
+		me.__mainGrid = Ext.create("Ext.grid.Panel", {
 					viewConfig : {
 						enableTextSelection : true
 					},
@@ -128,38 +160,7 @@ Ext.define("PSI.Bizlog.MainForm", {
 					}
 				});
 
-		me.__grid = grid;
-
-		Ext.apply(me, {
-					border : 0,
-					layout : "border",
-					tbar : [{
-								text : "刷新",
-								handler : me.onRefresh,
-								scope : me,
-								iconCls : "PSI-button-refresh"
-							}, "-", {
-								text : "关闭",
-								iconCls : "PSI-button-exit",
-								handler : function() {
-									window.close();
-								}
-							}, "->", {
-								text : "一键升级数据库",
-								iconCls : "PSI-button-database",
-								scope : me,
-								handler : me.onUpdateDatabase
-							}],
-					items : [{
-								region : "center",
-								layout : "fit",
-								xtype : "panel",
-								border : 0,
-								items : [grid]
-							}]
-				});
-
-		me.callParent(arguments);
+		return me.__mainGrid;
 	},
 
 	/**
