@@ -4,54 +4,96 @@
  * @author 李静波
  */
 Ext.define("PSI.Goods.BrandMainForm", {
-			extend : "Ext.panel.Panel",
+			extend : "PSI.AFX.BaseOneGridMainForm",
 
-			/**
-			 * 初始化组件
-			 */
-			initComponent : function() {
+			afxGetToolbarCmp : function() {
 				var me = this;
+				return [{
+							text : "新增品牌",
+							iconCls : "PSI-button-add",
+							handler : me.onAddBrand,
+							scope : me
+						}, {
+							text : "编辑品牌",
+							iconCls : "PSI-button-edit",
+							handler : me.onEditBrand,
+							scope : me
+						}, {
+							text : "删除品牌",
+							iconCls : "PSI-button-delete",
+							handler : me.onDeleteBrand,
+							scope : me
+						}, "-", {
+							text : "刷新",
+							iconCls : "PSI-button-refresh",
+							handler : me.onRefreshGrid,
+							scope : me
+						}, "-", {
+							text : "关闭",
+							iconCls : "PSI-button-exit",
+							handler : function() {
+								window.close();
+							}
+						}];
+			},
 
-				Ext.apply(me, {
-							border : 0,
-							layout : "border",
-							tbar : [{
-										text : "新增品牌",
-										iconCls : "PSI-button-add",
-										handler : me.onAddBrand,
-										scope : me
-									}, {
-										text : "编辑品牌",
-										iconCls : "PSI-button-edit",
-										handler : me.onEditBrand,
-										scope : me
-									}, {
-										text : "删除品牌",
-										iconCls : "PSI-button-delete",
-										handler : me.onDeleteBrand,
-										scope : me
-									}, "-", {
-										text : "刷新",
-										iconCls : "PSI-button-refresh",
-										handler : me.onRefreshGrid,
-										scope : me
-									}, "-", {
-										text : "关闭",
-										iconCls : "PSI-button-exit",
-										handler : function() {
-											window.close();
-										}
-									}],
-							items : [{
-										region : "center",
-										xtype : "panel",
-										layout : "fit",
-										border : 0,
-										items : [me.getGrid()]
-									}]
+			afxGetMainGrid : function() {
+				var me = this;
+				if (me.__mainGrid) {
+					return me.__mainGrid;
+				}
+
+				var modelName = "PSIGoodsBrand";
+				Ext.define(modelName, {
+							extend : "Ext.data.Model",
+							fields : ["id", "text", "fullName", "leaf",
+									"children"]
 						});
 
-				me.callParent(arguments);
+				var store = Ext.create("Ext.data.TreeStore", {
+							model : modelName,
+							proxy : {
+								type : "ajax",
+								actionMethods : {
+									read : "POST"
+								},
+								url : me.URL("Home/Goods/allBrands")
+							}
+						});
+
+				me.__mainGrid = Ext.create("Ext.tree.Panel", {
+							border : 0,
+							store : store,
+							rootVisible : false,
+							useArrows : true,
+							viewConfig : {
+								loadMask : true
+							},
+							columns : {
+								defaults : {
+									sortable : false,
+									menuDisabled : true,
+									draggable : false
+								},
+								items : [{
+											xtype : "treecolumn",
+											text : "品牌",
+											dataIndex : "text",
+											width : 500
+										}]
+							}
+						});
+
+				return me.__mainGrid;
+			},
+
+			/**
+			 * 重载父类方法
+			 */
+			afxRefreshGrid : function(id) {
+				var me = this;
+				var store = me.getMainGrid().getStore();
+				store.load();
 			},
 
 			/**
@@ -70,7 +112,7 @@ Ext.define("PSI.Goods.BrandMainForm", {
 			 */
 			onEditBrand : function() {
 				var me = this;
-				var item = me.getGrid().getSelectionModel().getSelection();
+				var item = me.getMainGrid().getSelectionModel().getSelection();
 				if (item == null || item.length != 1) {
 					PSI.MsgBox.showInfo("请选择要编辑的商品品牌");
 					return;
@@ -91,7 +133,7 @@ Ext.define("PSI.Goods.BrandMainForm", {
 			 */
 			onDeleteBrand : function() {
 				var me = this;
-				var item = me.getGrid().getSelectionModel().getSelection();
+				var item = me.getMainGrid().getSelectionModel().getSelection();
 				if (item == null || item.length != 1) {
 					PSI.MsgBox.showInfo("请选择要删除的商品品牌");
 					return;
@@ -104,7 +146,7 @@ Ext.define("PSI.Goods.BrandMainForm", {
 					var el = Ext.getBody();
 					el.mask("正在删除中...");
 					var r = {
-						url : PSI.Const.BASE_URL + "Home/Goods/deleteBrand",
+						url : me.URL("Home/Goods/deleteBrand"),
 						method : "POST",
 						params : {
 							id : brand.get("id")
@@ -131,66 +173,6 @@ Ext.define("PSI.Goods.BrandMainForm", {
 					Ext.Ajax.request(r);
 				};
 				PSI.MsgBox.confirm(info, confimFunc);
-			},
-
-			/**
-			 * 刷新Grid
-			 */
-			refreshGrid : function(id) {
-				var me = this;
-				var store = me.getGrid().getStore();
-				store.load();
-			},
-
-			getGrid : function() {
-				var me = this;
-				if (me.__grid) {
-					return me.__grid;
-				}
-
-				var modelName = "PSIGoodsBrand";
-				Ext.define(modelName, {
-							extend : "Ext.data.Model",
-							fields : ["id", "text", "fullName", "leaf",
-									"children"]
-						});
-
-				var store = Ext.create("Ext.data.TreeStore", {
-							model : modelName,
-							proxy : {
-								type : "ajax",
-								actionMethods : {
-									read : "POST"
-								},
-								url : PSI.Const.BASE_URL
-										+ "Home/Goods/allBrands"
-							}
-						});
-
-				me.__grid = Ext.create("Ext.tree.Panel", {
-							border : 0,
-							store : store,
-							rootVisible : false,
-							useArrows : true,
-							viewConfig : {
-								loadMask : true
-							},
-							columns : {
-								defaults : {
-									sortable : false,
-									menuDisabled : true,
-									draggable : false
-								},
-								items : [{
-											xtype : "treecolumn",
-											text : "品牌",
-											dataIndex : "text",
-											width : 500
-										}]
-							}
-						});
-
-				return me.__grid;
 			},
 
 			onRefreshGrid : function() {

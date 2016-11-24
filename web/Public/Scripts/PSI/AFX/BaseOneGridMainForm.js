@@ -47,29 +47,11 @@ Ext.define("PSI.AFX.BaseOneGridMainForm", {
 
 			// public
 			freshGrid : function(id) {
-				var me = this;
-				var grid = me.getMainGrid();
-				var el = grid.getEl() || Ext.getBody();
-				el.mask(PSI.Const.LOADING);
-				Ext.Ajax.request({
-							url : me.URL(me.afxGetRefreshGridURL()),
-							method : "POST",
-							callback : function(options, success, response) {
-								var store = grid.getStore();
+				this.afxRefreshGrid(id);
+			},
 
-								store.removeAll();
-
-								if (success) {
-									var data = Ext.JSON
-											.decode(response.responseText);
-									store.add(data);
-
-									me.gotoGridRecord(id);
-								}
-
-								el.unmask();
-							}
-						});
+			refreshGrid : function(id) {
+				this.afxRefreshGrid(id);
 			},
 
 			// public
@@ -96,5 +78,32 @@ Ext.define("PSI.AFX.BaseOneGridMainForm", {
 			// protected
 			afxGetRefreshGridURL : function() {
 				return null;
+			},
+
+			// protected
+			afxRefreshGrid : function(id) {
+				var me = this;
+				var grid = me.getMainGrid();
+				var el = grid.getEl() || Ext.getBody();
+				el.mask(PSI.Const.LOADING);
+				Ext.Ajax.request({
+							url : me.URL(me.afxGetRefreshGridURL()),
+							method : "POST",
+							callback : function(options, success, response) {
+								var store = grid.getStore();
+
+								store.removeAll();
+
+								if (success) {
+									var data = Ext.JSON
+											.decode(response.responseText);
+									store.add(data);
+
+									me.gotoGridRecord(id);
+								}
+
+								el.unmask();
+							}
+						});
 			}
 		});
