@@ -16,13 +16,22 @@ Ext.define("PSI.AFX.BaseMainForm", {
 						});
 
 				me.callParent(arguments);
+
+				me.afxInitComponent();
 			},
 
 			URL : function(url) {
 				return PSI.Const.BASE_URL + url;
 			},
 
+			decodeJSON : function(str) {
+				return Ext.JSON.decode(str);
+			},
+
 			afxGetToolbarCmp : function() {
 				return [];
+			},
+
+			afxInitComponent : function() {
 			}
 		});

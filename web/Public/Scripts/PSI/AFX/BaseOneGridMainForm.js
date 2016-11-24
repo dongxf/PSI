@@ -81,6 +81,11 @@ Ext.define("PSI.AFX.BaseOneGridMainForm", {
 			},
 
 			// protected
+			afxGetRefreshGridParams : function() {
+				return {};
+			},
+
+			// protected
 			afxRefreshGrid : function(id) {
 				var me = this;
 				var grid = me.getMainGrid();
@@ -88,6 +93,7 @@ Ext.define("PSI.AFX.BaseOneGridMainForm", {
 				el.mask(PSI.Const.LOADING);
 				Ext.Ajax.request({
 							url : me.URL(me.afxGetRefreshGridURL()),
+							params : me.afxGetRefreshGridParams(),
 							method : "POST",
 							callback : function(options, success, response) {
 								var store = grid.getStore();
