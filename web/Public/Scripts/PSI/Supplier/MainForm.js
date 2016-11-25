@@ -17,9 +17,6 @@ Ext.define("PSI.Supplier.MainForm", {
 		var me = this;
 
 		Ext.apply(me, {
-					border : 0,
-					layout : "border",
-					tbar : me.getToolbarCmp(),
 					items : [{
 								region : "north",
 								height : 90,
@@ -67,7 +64,10 @@ Ext.define("PSI.Supplier.MainForm", {
 		me.freshCategoryGrid();
 	},
 
-	getToolbarCmp : function() {
+	/**
+	 * 重载父类方法
+	 */
+	afxGetToolbarCmp : function() {
 		var me = this;
 
 		return [{
