@@ -1,6 +1,6 @@
 关于PSI
 -------------
->PSI是开源进销存系统。
+>PSI是一款基于SaaS模式(Software as a Service软件即服务)的企业管理软件。PSI以商贸企业的核心业务：采购、销售、库存（进销存）为切入点，最终目标是行业化的ERP解决方案。
 >
 >PSI是希腊字母Ψ的读音。
 >
@@ -24,13 +24,13 @@ PSI演示
 通过PSI源码在本地安装
 -------------
 > 本地环境搭建: http://my.oschina.net/u/134395/blog/376530
-> <br /> <br />
+> 
 > 用WampServer部署可能会遇到的问题：http://my.oschina.net/u/134395/blog/383754
-> <br /> <br />
+> 
 > 用Nginx部署可能会遇到的问题：http://my.oschina.net/u/134395/blog/390650
 >
 > lnmp部署参考：http://my.oschina.net/u/2525829/blog/532614
-> <br /> <br />
+> 
 > 用IIS如何配置：http://my.oschina.net/u/1415918/blog/511228
 
 PSI的开源协议
@@ -55,6 +55,8 @@ PSI行业版
 > 服装行业供应链管理系统   http://git.oschina.net/crm8000/PSI_Garment_Industry
 >
 > 汽配行业版  http://git.oschina.net/toalson/PSI_AutoParts_Industry
+>
+> 快递管理系统 http://git.oschina.net/crm8000/PSI_FMS
 
 如需要技术支持，请联系
 -------------
