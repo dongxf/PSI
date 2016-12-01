@@ -14,7 +14,7 @@
 
 PSI演示
 -------------
->PSI的演示见：<a href = 'http://psi.oschina.mopaas.com' target = '_blank'>http://psi.oschina.mopaasapp.com</a>
+>PSI的演示见：http://psi.butterfly.mopaasapp.com/web/
 
 
 源代码下载地址
