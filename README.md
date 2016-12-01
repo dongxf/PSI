@@ -14,7 +14,7 @@
 
 PSI演示
 -------------
->PSI的演示见：http://psi.butterfly.mopaasapp.com/web/
+>PSI的演示见：http://psi.butterfly.mopaasapp.com
 
 
 源代码下载地址
