@@ -2,15 +2,6 @@
 -------------
 >PSI是一款基于SaaS模式(Software as a Service软件即服务)的企业管理软件。PSI以商贸企业的核心业务：采购、销售、库存（进销存）为切入点，最终目标是行业化的ERP解决方案。
 >
->PSI是希腊字母Ψ的读音。
->
->产品寓意：PSI本身不完美，但追求的是不断改进的品质，距离终极产品就一步之遥(因为在希腊字母表中，Ψ之后是Ω，Ω有终极的意思)。
-
-一张图看懂开源进销存PSI
--------------
-<p>
-    <img src="http://static.oschina.net/uploads/space/2015/0306/111629_RuyO_134395.jpg"/>
-</p>
 
 PSI演示
 -------------
@@ -51,10 +42,6 @@ PSI的开源协议
 PSI行业版
 -------------
 > 食品行业版   http://git.oschina.net/crm8000/PSI_Food_Industry
->
-> 服装行业供应链管理系统   http://git.oschina.net/crm8000/PSI_Garment_Industry
->
-> 汽配行业版  http://git.oschina.net/toalson/PSI_AutoParts_Industry
 >
 > 快递管理系统 http://git.oschina.net/crm8000/PSI_FMS
 
