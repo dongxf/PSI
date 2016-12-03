@@ -127,7 +127,7 @@ class BizConfigService extends PSIBaseService {
 				array(
 						"id" => "9002-01",
 						"name" => "产品名称",
-						"value" => "开源进销存PSI",
+						"value" => "PSI",
 						"note" => "",
 						"showOrder" => 0
 				),
@@ -293,7 +293,7 @@ class BizConfigService extends PSIBaseService {
 			
 			if ($key == "9002-01") {
 				if (! $value) {
-					$value = "开源进销存PSI";
+					$value = "PSI";
 				}
 			}
 			
@@ -451,10 +451,10 @@ class BizConfigService extends PSIBaseService {
 	}
 
 	/**
-	 * 获得本产品名称，默认值是：开源进销存PSI
+	 * 获得本产品名称，默认值是：PSI
 	 */
 	public function getProductionName() {
-		$defaultName = "开源进销存PSI";
+		$defaultName = "PSI";
 		
 		$db = M();
 		if (! $this->columnExists($db, "t_config", "company_id")) {
