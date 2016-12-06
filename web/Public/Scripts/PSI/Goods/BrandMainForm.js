@@ -6,6 +6,9 @@
 Ext.define("PSI.Goods.BrandMainForm", {
 			extend : "PSI.AFX.BaseOneGridMainForm",
 
+			/**
+			 * 重载父类方法
+			 */
 			afxGetToolbarCmp : function() {
 				var me = this;
 				return [{
@@ -37,6 +40,9 @@ Ext.define("PSI.Goods.BrandMainForm", {
 						}];
 			},
 
+			/**
+			 * 重载父类方法
+			 */
 			afxGetMainGrid : function() {
 				var me = this;
 				if (me.__mainGrid) {
