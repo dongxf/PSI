@@ -1,17 +1,6 @@
 <?php
 
-function PSI_getMoPaasV2MySQLConfig() {
-	$services = getenv("VCAP_SERVICES");
-	$services_json = json_decode($services, true);
-	
-	// 数据库使用 MoPaaS提供的 MySQL-docker
-	$mysql_config = $services_json["MySQL-docker-5.5"][0]["credentials"];
-	
-	return $mysql_config;
-}
-
-// MoPaaS V3
-function PSI_getMoPaasV3MySQLConfig() {
+function PSI_getMoPaasMySQLConfig() {
 	$services = getenv("VCAP_SERVICES");
 	$services_json = json_decode($services, true);
 	
@@ -21,19 +10,8 @@ function PSI_getMoPaasV3MySQLConfig() {
 	return $mysql_config;
 }
 
-function PSI_getMoPaasMySQLConfig() {
-	$result = PSI_getMoPaasV2MySQLConfig();
-	if ($result) {
-		// 当前环境是MoPaaS V2
-		return $result;
-	}
-	
-	// MoPaas V3
-	return PSI_getMoPaasV3MySQLConfig();
-}
-
 function PSI_getHost() {
-	// MoPaaS V2
+	// MoPaaS V3
 	$cfg = PSI_getMoPaasMySQLConfig();
 	if ($cfg) {
 		return $cfg["host"];
@@ -44,7 +22,7 @@ function PSI_getHost() {
 }
 
 function PSI_getDBName() {
-	// MoPaaS V2
+	// MoPaaS V3
 	$cfg = PSI_getMoPaasMySQLConfig();
 	if ($cfg) {
 		return $cfg["db"];
@@ -54,7 +32,7 @@ function PSI_getDBName() {
 }
 
 function PSI_getUser() {
-	// MoPaaS V2
+	// MoPaaS V3
 	$cfg = PSI_getMoPaasMySQLConfig();
 	if ($cfg) {
 		return $cfg["user"];
@@ -64,7 +42,7 @@ function PSI_getUser() {
 }
 
 function PSI_getPassword() {
-	// MoPaaS V2
+	// MoPaaS V3
 	$cfg = PSI_getMoPaasMySQLConfig();
 	if ($cfg) {
 		return $cfg["password"];
@@ -74,7 +52,7 @@ function PSI_getPassword() {
 }
 
 function PSI_getPort() {
-	// MoPaaS V2
+	// MoPaaS V3
 	$cfg = PSI_getMoPaasMySQLConfig();
 	if ($cfg) {
 		return $cfg["port"];
@@ -91,8 +69,9 @@ return array(
 		'DB_NAME' => PSI_getDBName(), // 数据库名
 		'DB_USER' => PSI_getUser(), // 用户名
 		'DB_PWD' => PSI_getPassword(), // 密码
-		'DB_PORT' => PSI_getPort() // 端口
-);
+		'DB_PORT' => PSI_getPort()
+); // 端口
+
 
 /*
 
