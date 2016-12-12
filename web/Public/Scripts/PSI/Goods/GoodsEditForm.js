@@ -371,7 +371,7 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 							me.clearEdit();
 						} else {
 							me.close();
-							if (me.getPrantForm()) {
+							if (me.getParentForm()) {
 								me.getParentForm().freshGoodsGrid();
 							}
 						}

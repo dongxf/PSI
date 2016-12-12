@@ -23,162 +23,6 @@ Ext.define("PSI.Goods.MainForm", {
 	initComponent : function() {
 		var me = this;
 
-		var modelName = "PSIGoods";
-		Ext.define(modelName, {
-					extend : "Ext.data.Model",
-					fields : ["id", "code", "name", "spec", "unitId",
-							"unitName", "categoryId", "salePrice",
-							"purchasePrice", "barCode", "memo", "dataOrg",
-							"brandFullName"]
-				});
-
-		var store = Ext.create("Ext.data.Store", {
-					autoLoad : false,
-					model : modelName,
-					data : [],
-					pageSize : 20,
-					proxy : {
-						type : "ajax",
-						actionMethods : {
-							read : "POST"
-						},
-						url : PSI.Const.BASE_URL + "Home/Goods/goodsList",
-						reader : {
-							root : 'goodsList',
-							totalProperty : 'totalCount'
-						}
-					}
-				});
-
-		store.on("beforeload", function() {
-					store.proxy.extraParams = me.getQueryParam();
-				});
-		store.on("load", function(e, records, successful) {
-					if (successful) {
-						me.refreshCategoryCount();
-						me.gotoGoodsGridRecord(me.__lastId);
-					}
-				});
-
-		var goodsGrid = Ext.create("Ext.grid.Panel", {
-					viewConfig : {
-						enableTextSelection : true
-					},
-					title : "商品列表",
-					bbar : [{
-								id : "pagingToolbar",
-								border : 0,
-								xtype : "pagingtoolbar",
-								store : store
-							}, "-", {
-								xtype : "displayfield",
-								value : "每页显示"
-							}, {
-								id : "comboCountPerPage",
-								xtype : "combobox",
-								editable : false,
-								width : 60,
-								store : Ext.create("Ext.data.ArrayStore", {
-											fields : ["text"],
-											data : [["20"], ["50"], ["100"],
-													["300"], ["1000"]]
-										}),
-								value : 20,
-								listeners : {
-									change : {
-										fn : function() {
-											store.pageSize = Ext
-													.getCmp("comboCountPerPage")
-													.getValue();
-											store.currentPage = 1;
-											Ext.getCmp("pagingToolbar")
-													.doRefresh();
-										},
-										scope : me
-									}
-								}
-							}, {
-								xtype : "displayfield",
-								value : "条记录"
-							}],
-					columnLines : true,
-					columns : [Ext.create("Ext.grid.RowNumberer", {
-										text : "序号",
-										width : 30
-									}), {
-								header : "商品编码",
-								dataIndex : "code",
-								menuDisabled : true,
-								sortable : false
-							}, {
-								header : "品名",
-								dataIndex : "name",
-								menuDisabled : true,
-								sortable : false,
-								width : 300
-							}, {
-								header : "规格型号",
-								dataIndex : "spec",
-								menuDisabled : true,
-								sortable : false,
-								width : 200
-							}, {
-								header : "计量单位",
-								dataIndex : "unitName",
-								menuDisabled : true,
-								sortable : false,
-								width : 60
-							}, {
-								header : "品牌",
-								dataIndex : "brandFullName",
-								menuDisabled : true,
-								sortable : false
-							}, {
-								header : "销售价",
-								dataIndex : "salePrice",
-								menuDisabled : true,
-								sortable : false,
-								align : "right",
-								xtype : "numbercolumn"
-							}, {
-								header : "建议采购价",
-								dataIndex : "purchasePrice",
-								menuDisabled : true,
-								sortable : false,
-								align : "right",
-								xtype : "numbercolumn"
-							}, {
-								header : "条形码",
-								dataIndex : "barCode",
-								menuDisabled : true,
-								sortable : false
-							}, {
-								header : "备注",
-								dataIndex : "memo",
-								menuDisabled : true,
-								sortable : false,
-								width : 300
-							}, {
-								header : "数据域",
-								dataIndex : "dataOrg",
-								menuDisabled : true,
-								sortable : false
-							}],
-					store : store,
-					listeners : {
-						itemdblclick : {
-							fn : me.onEditGoods,
-							scope : me
-						},
-						select : {
-							fn : me.onGoodsSelect,
-							scope : me
-						}
-					}
-				});
-
-		me.goodsGrid = goodsGrid;
-
 		Ext.apply(me, {
 			border : 0,
 			layout : "border",
@@ -342,7 +186,7 @@ Ext.define("PSI.Goods.MainForm", {
 										region : "center",
 										layout : "fit",
 										border : 0,
-										items : [goodsGrid]
+										items : [me.getMainGrid()]
 									}, {
 										region : "south",
 										layout : "fit",
@@ -374,12 +218,176 @@ Ext.define("PSI.Goods.MainForm", {
 				"editQuerySpec", "editQueryBarCode"];
 	},
 
+	getMainGrid : function() {
+		var me = this;
+		if (me.__mainGrid) {
+			return me.__mainGrid;
+		}
+		var modelName = "PSIGoods";
+		Ext.define(modelName, {
+					extend : "Ext.data.Model",
+					fields : ["id", "code", "name", "spec", "unitId",
+							"unitName", "categoryId", "salePrice",
+							"purchasePrice", "barCode", "memo", "dataOrg",
+							"brandFullName"]
+				});
+
+		var store = Ext.create("Ext.data.Store", {
+					autoLoad : false,
+					model : modelName,
+					data : [],
+					pageSize : 20,
+					proxy : {
+						type : "ajax",
+						actionMethods : {
+							read : "POST"
+						},
+						url : PSI.Const.BASE_URL + "Home/Goods/goodsList",
+						reader : {
+							root : 'goodsList',
+							totalProperty : 'totalCount'
+						}
+					}
+				});
+
+		store.on("beforeload", function() {
+					store.proxy.extraParams = me.getQueryParam();
+				});
+		store.on("load", function(e, records, successful) {
+					if (successful) {
+						me.refreshCategoryCount();
+						me.gotoGoodsGridRecord(me.__lastId);
+					}
+				});
+
+		me.__mainGrid = Ext.create("Ext.grid.Panel", {
+					viewConfig : {
+						enableTextSelection : true
+					},
+					title : "商品列表",
+					bbar : [{
+								id : "pagingToolbar",
+								border : 0,
+								xtype : "pagingtoolbar",
+								store : store
+							}, "-", {
+								xtype : "displayfield",
+								value : "每页显示"
+							}, {
+								id : "comboCountPerPage",
+								xtype : "combobox",
+								editable : false,
+								width : 60,
+								store : Ext.create("Ext.data.ArrayStore", {
+											fields : ["text"],
+											data : [["20"], ["50"], ["100"],
+													["300"], ["1000"]]
+										}),
+								value : 20,
+								listeners : {
+									change : {
+										fn : function() {
+											store.pageSize = Ext
+													.getCmp("comboCountPerPage")
+													.getValue();
+											store.currentPage = 1;
+											Ext.getCmp("pagingToolbar")
+													.doRefresh();
+										},
+										scope : me
+									}
+								}
+							}, {
+								xtype : "displayfield",
+								value : "条记录"
+							}],
+					columnLines : true,
+					columns : [Ext.create("Ext.grid.RowNumberer", {
+										text : "序号",
+										width : 30
+									}), {
+								header : "商品编码",
+								dataIndex : "code",
+								menuDisabled : true,
+								sortable : false
+							}, {
+								header : "品名",
+								dataIndex : "name",
+								menuDisabled : true,
+								sortable : false,
+								width : 300
+							}, {
+								header : "规格型号",
+								dataIndex : "spec",
+								menuDisabled : true,
+								sortable : false,
+								width : 200
+							}, {
+								header : "计量单位",
+								dataIndex : "unitName",
+								menuDisabled : true,
+								sortable : false,
+								width : 60
+							}, {
+								header : "品牌",
+								dataIndex : "brandFullName",
+								menuDisabled : true,
+								sortable : false
+							}, {
+								header : "销售价",
+								dataIndex : "salePrice",
+								menuDisabled : true,
+								sortable : false,
+								align : "right",
+								xtype : "numbercolumn"
+							}, {
+								header : "建议采购价",
+								dataIndex : "purchasePrice",
+								menuDisabled : true,
+								sortable : false,
+								align : "right",
+								xtype : "numbercolumn"
+							}, {
+								header : "条形码",
+								dataIndex : "barCode",
+								menuDisabled : true,
+								sortable : false
+							}, {
+								header : "备注",
+								dataIndex : "memo",
+								menuDisabled : true,
+								sortable : false,
+								width : 300
+							}, {
+								header : "数据域",
+								dataIndex : "dataOrg",
+								menuDisabled : true,
+								sortable : false
+							}],
+					store : store,
+					listeners : {
+						itemdblclick : {
+							fn : me.onEditGoods,
+							scope : me
+						},
+						select : {
+							fn : me.onGoodsSelect,
+							scope : me
+						}
+					}
+				});
+
+		return me.__mainGrid;
+	},
+
 	/**
 	 * 新增商品分类
 	 */
 	onAddCategory : function() {
+		var me = this;
+
 		var form = Ext.create("PSI.Goods.CategoryEditForm", {
-					parentForm : this
+					parentForm : me
 				});
 
 		form.show();
@@ -389,6 +397,8 @@ Ext.define("PSI.Goods.MainForm", {
 	 * 编辑商品分类
 	 */
 	onEditCategory : function() {
+		var me = this;
+
 		var item = this.categoryGrid.getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
 			PSI.MsgBox.showInfo("请选择要编辑的商品分类");
@@ -398,7 +408,7 @@ Ext.define("PSI.Goods.MainForm", {
 		var category = item[0];
 
 		var form = Ext.create("PSI.Goods.CategoryEditForm", {
-					parentForm : this,
+					parentForm : me,
 					entity : category
 				});
 
@@ -472,8 +482,7 @@ Ext.define("PSI.Goods.MainForm", {
 		var me = this;
 		var item = me.getCategoryGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			var grid = me.goodsGrid;
-			grid.setTitle("商品列表");
+			me.getMainGrid().setTitle("商品列表");
 			return;
 		}
 
@@ -485,7 +494,7 @@ Ext.define("PSI.Goods.MainForm", {
 		me.getSIGrid().setTitle("商品安全库存");
 		me.getSIGrid().getStore().removeAll();
 
-		me.goodsGrid.getStore().currentPage = 1;
+		me.getMainGrid().getStore().currentPage = 1;
 
 		me.freshGoodsGrid();
 	},
@@ -523,7 +532,7 @@ Ext.define("PSI.Goods.MainForm", {
 
 		var category = item[0];
 
-		var item = this.goodsGrid.getSelectionModel().getSelection();
+		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
 			PSI.MsgBox.showInfo("请选择要编辑的商品");
 			return;
@@ -532,7 +541,7 @@ Ext.define("PSI.Goods.MainForm", {
 		var goods = item[0];
 		goods.set("categoryId", category.get("id"));
 		var form = Ext.create("PSI.Goods.GoodsEditForm", {
-					parentForm : this,
+					parentForm : me,
 					entity : goods
 				});
 
@@ -544,7 +553,7 @@ Ext.define("PSI.Goods.MainForm", {
 	 */
 	onDeleteGoods : function() {
 		var me = this;
-		var item = me.goodsGrid.getSelectionModel().getSelection();
+		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
 			PSI.MsgBox.showInfo("请选择要删除的商品");
 			return;
@@ -552,7 +561,7 @@ Ext.define("PSI.Goods.MainForm", {
 
 		var goods = item[0];
 
-		var store = me.goodsGrid.getStore();
+		var store = me.getMainGrid().getStore();
 		var index = store.findExact("id", goods.get("id"));
 		index--;
 		var preItem = store.getAt(index);
@@ -612,7 +621,7 @@ Ext.define("PSI.Goods.MainForm", {
 
 	gotoGoodsGridRecord : function(id) {
 		var me = this;
-		var grid = me.goodsGrid;
+		var grid = me.getMainGrid();
 		var store = grid.getStore();
 		if (id) {
 			var r = store.findExact("id", id);
@@ -727,7 +736,7 @@ Ext.define("PSI.Goods.MainForm", {
 	onQuery : function() {
 		var me = this;
 
-		me.goodsGrid.getStore().removeAll();
+		me.getMainGrid().getStore().removeAll();
 		me.getSIGrid().getStore().removeAll();
 
 		me.queryTotalGoodsCount();
@@ -839,7 +848,7 @@ Ext.define("PSI.Goods.MainForm", {
 
 	onGoodsSelect : function() {
 		var me = this;
-		var item = me.goodsGrid.getSelectionModel().getSelection();
+		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
 			me.getSIGrid().setTitle("商品安全库存");
 			me.getGoodsBOMGrid().setTitle("商品构成");
@@ -909,7 +918,7 @@ Ext.define("PSI.Goods.MainForm", {
 			return;
 		}
 
-		var item = me.goodsGrid.getSelectionModel().getSelection();
+		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
 			PSI.MsgBox.showInfo("请选择要设置安全库存的商品");
 			return;
