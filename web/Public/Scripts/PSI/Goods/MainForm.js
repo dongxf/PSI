@@ -24,191 +24,130 @@ Ext.define("PSI.Goods.MainForm", {
 		var me = this;
 
 		Ext.apply(me, {
-			border : 0,
-			layout : "border",
-			tbar : [{
-						text : "新增商品分类",
-						disabled : me.getPAddCategory() == "0",
-						iconCls : "PSI-button-add",
-						handler : me.onAddCategory,
-						scope : me
-					}, {
-						text : "编辑商品分类",
-						disabled : me.getPEditCategory() == "0",
-						iconCls : "PSI-button-edit",
-						handler : me.onEditCategory,
-						scope : me
-					}, {
-						text : "删除商品分类",
-						disabled : me.getPDeleteCategory() == "0",
-						iconCls : "PSI-button-delete",
-						handler : me.onDeleteCategory,
-						scope : me
-					}, "-", {
-						text : "新增商品",
-						disabled : me.getPAddGoods() == "0",
-						iconCls : "PSI-button-add-detail",
-						handler : me.onAddGoods,
-						scope : me
-					}, {
-						text : "导入商品",
-						disabled : me.getPImportGoods() == "0",
-						iconCls : "PSI-button-excelimport",
-						handler : me.onImportGoods,
-						scope : me
-					}, "-", {
-						text : "修改商品",
-						disabled : me.getPEditGoods() == "0",
-						iconCls : "PSI-button-edit-detail",
-						handler : me.onEditGoods,
-						scope : me
-					}, {
-						text : "删除商品",
-						disabled : me.getPDeleteGoods() == "0",
-						iconCls : "PSI-button-delete-detail",
-						handler : me.onDeleteGoods,
-						scope : me
-					}, "-", {
-						text : "设置商品安全库存",
-						disabled : me.getPGoodsSI() == "0",
-						iconCls : "PSI-button-view",
-						handler : me.onSafetyInventory,
-						scope : me
-					}, "-", {
-						text : "帮助",
-						iconCls : "PSI-help",
-						handler : function() {
-							window
-									.open("http://my.oschina.net/u/134395/blog/374778");
-						}
-					}, "-", {
-						text : "关闭",
-						iconCls : "PSI-button-exit",
-						handler : function() {
-							window.close();
-						}
-					}],
-			items : [{
-						region : "north",
-						border : 0,
-						height : 60,
-						title : "查询条件",
-						collapsible : true,
-						layout : {
-							type : "table",
-							columns : 5
-						},
-						items : [{
-									id : "editQueryCode",
-									labelWidth : 60,
-									labelAlign : "right",
-									labelSeparator : "",
-									fieldLabel : "商品编码",
-									margin : "5, 0, 0, 0",
-									xtype : "textfield",
-									listeners : {
-										specialkey : {
-											fn : me.onQueryEditSpecialKey,
-											scope : me
-										}
-									}
-								}, {
-									id : "editQueryName",
-									labelWidth : 60,
-									labelAlign : "right",
-									labelSeparator : "",
-									fieldLabel : "品名",
-									margin : "5, 0, 0, 0",
-									xtype : "textfield",
-									listeners : {
-										specialkey : {
-											fn : me.onQueryEditSpecialKey,
-											scope : me
-										}
-									}
-								}, {
-									id : "editQuerySpec",
-									labelWidth : 60,
-									labelAlign : "right",
-									labelSeparator : "",
-									fieldLabel : "规格型号",
-									margin : "5, 0, 0, 0",
-									xtype : "textfield",
-									listeners : {
-										specialkey : {
-											fn : me.onQueryEditSpecialKey,
-											scope : me
-										}
-									}
-								}, {
-									id : "editQueryBarCode",
-									labelWidth : 60,
-									labelAlign : "right",
-									labelSeparator : "",
-									fieldLabel : "条形码",
-									margin : "5, 0, 0, 0",
-									xtype : "textfield",
-									listeners : {
-										specialkey : {
-											fn : me.onLastQueryEditSpecialKey,
-											scope : me
-										}
-									}
-								}, {
-									xtype : "container",
+					border : 0,
+					layout : "border",
+					tbar : me.getToolbarCmp(),
+					items : [{
+								region : "north",
+								border : 0,
+								height : 60,
+								title : "查询条件",
+								collapsible : true,
+								layout : {
+									type : "table",
+									columns : 5
+								},
+								items : [{
+											id : "editQueryCode",
+											labelWidth : 60,
+											labelAlign : "right",
+											labelSeparator : "",
+											fieldLabel : "商品编码",
+											margin : "5, 0, 0, 0",
+											xtype : "textfield",
+											listeners : {
+												specialkey : {
+													fn : me.onQueryEditSpecialKey,
+													scope : me
+												}
+											}
+										}, {
+											id : "editQueryName",
+											labelWidth : 60,
+											labelAlign : "right",
+											labelSeparator : "",
+											fieldLabel : "品名",
+											margin : "5, 0, 0, 0",
+											xtype : "textfield",
+											listeners : {
+												specialkey : {
+													fn : me.onQueryEditSpecialKey,
+													scope : me
+												}
+											}
+										}, {
+											id : "editQuerySpec",
+											labelWidth : 60,
+											labelAlign : "right",
+											labelSeparator : "",
+											fieldLabel : "规格型号",
+											margin : "5, 0, 0, 0",
+											xtype : "textfield",
+											listeners : {
+												specialkey : {
+													fn : me.onQueryEditSpecialKey,
+													scope : me
+												}
+											}
+										}, {
+											id : "editQueryBarCode",
+											labelWidth : 60,
+											labelAlign : "right",
+											labelSeparator : "",
+											fieldLabel : "条形码",
+											margin : "5, 0, 0, 0",
+											xtype : "textfield",
+											listeners : {
+												specialkey : {
+													fn : me.onLastQueryEditSpecialKey,
+													scope : me
+												}
+											}
+										}, {
+											xtype : "container",
+											items : [{
+														xtype : "button",
+														text : "查询",
+														width : 100,
+														iconCls : "PSI-button-refresh",
+														margin : "5, 0, 0, 20",
+														handler : me.onQuery,
+														scope : me
+													}, {
+														xtype : "button",
+														text : "清空查询条件",
+														width : 100,
+														iconCls : "PSI-button-cancel",
+														margin : "5, 0, 0, 5",
+														handler : me.onClearQuery,
+														scope : me
+													}]
+										}]
+							}, {
+								region : "center",
+								layout : "border",
+								items : [{
+									region : "center",
+									xtype : "panel",
+									layout : "border",
+									border : 0,
 									items : [{
-												xtype : "button",
-												text : "查询",
-												width : 100,
-												iconCls : "PSI-button-refresh",
-												margin : "5, 0, 0, 20",
-												handler : me.onQuery,
-												scope : me
+												region : "center",
+												layout : "fit",
+												border : 0,
+												items : [me.getMainGrid()]
 											}, {
-												xtype : "button",
-												text : "清空查询条件",
-												width : 100,
-												iconCls : "PSI-button-cancel",
-												margin : "5, 0, 0, 5",
-												handler : me.onClearQuery,
-												scope : me
+												region : "south",
+												layout : "fit",
+												border : 0,
+												height : 200,
+												split : true,
+												xtype : "tabpanel",
+												items : [me.getSIGrid(),
+														me.getGoodsBOMGrid()]
 											}]
+								}, {
+									xtype : "panel",
+									region : "west",
+									layout : "fit",
+									width : 430,
+									split : true,
+									collapsible : true,
+									border : 0,
+									items : [me.getCategoryGrid()]
 								}]
-					}, {
-						region : "center",
-						layout : "border",
-						items : [{
-							region : "center",
-							xtype : "panel",
-							layout : "border",
-							border : 0,
-							items : [{
-										region : "center",
-										layout : "fit",
-										border : 0,
-										items : [me.getMainGrid()]
-									}, {
-										region : "south",
-										layout : "fit",
-										border : 0,
-										height : 200,
-										split : true,
-										xtype : "tabpanel",
-										items : [me.getSIGrid(),
-												me.getGoodsBOMGrid()]
-									}]
-						}, {
-							xtype : "panel",
-							region : "west",
-							layout : "fit",
-							width : 430,
-							split : true,
-							collapsible : true,
-							border : 0,
-							items : [me.getCategoryGrid()]
-						}]
-					}]
-		});
+							}]
+				});
 
 		me.callParent(arguments);
 
@@ -216,6 +155,66 @@ Ext.define("PSI.Goods.MainForm", {
 
 		me.__queryEditNameList = ["editQueryCode", "editQueryName",
 				"editQuerySpec", "editQueryBarCode"];
+	},
+
+	getToolbarCmp : function() {
+		var me = this;
+
+		return [{
+					text : "新增商品分类",
+					disabled : me.getPAddCategory() == "0",
+					iconCls : "PSI-button-add",
+					handler : me.onAddCategory,
+					scope : me
+				}, {
+					text : "编辑商品分类",
+					disabled : me.getPEditCategory() == "0",
+					iconCls : "PSI-button-edit",
+					handler : me.onEditCategory,
+					scope : me
+				}, {
+					text : "删除商品分类",
+					disabled : me.getPDeleteCategory() == "0",
+					iconCls : "PSI-button-delete",
+					handler : me.onDeleteCategory,
+					scope : me
+				}, "-", {
+					text : "新增商品",
+					disabled : me.getPAddGoods() == "0",
+					iconCls : "PSI-button-add-detail",
+					handler : me.onAddGoods,
+					scope : me
+				}, {
+					text : "导入商品",
+					disabled : me.getPImportGoods() == "0",
+					iconCls : "PSI-button-excelimport",
+					handler : me.onImportGoods,
+					scope : me
+				}, "-", {
+					text : "修改商品",
+					disabled : me.getPEditGoods() == "0",
+					iconCls : "PSI-button-edit-detail",
+					handler : me.onEditGoods,
+					scope : me
+				}, {
+					text : "删除商品",
+					disabled : me.getPDeleteGoods() == "0",
+					iconCls : "PSI-button-delete-detail",
+					handler : me.onDeleteGoods,
+					scope : me
+				}, "-", {
+					text : "设置商品安全库存",
+					disabled : me.getPGoodsSI() == "0",
+					iconCls : "PSI-button-view",
+					handler : me.onSafetyInventory,
+					scope : me
+				}, "-", {
+					text : "关闭",
+					iconCls : "PSI-button-exit",
+					handler : function() {
+						window.close();
+					}
+				}];
 	},
 
 	getMainGrid : function() {
