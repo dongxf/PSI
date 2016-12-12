@@ -37,82 +37,7 @@ Ext.define("PSI.Goods.MainForm", {
 									type : "table",
 									columns : 5
 								},
-								items : [{
-											id : "editQueryCode",
-											labelWidth : 60,
-											labelAlign : "right",
-											labelSeparator : "",
-											fieldLabel : "商品编码",
-											margin : "5, 0, 0, 0",
-											xtype : "textfield",
-											listeners : {
-												specialkey : {
-													fn : me.onQueryEditSpecialKey,
-													scope : me
-												}
-											}
-										}, {
-											id : "editQueryName",
-											labelWidth : 60,
-											labelAlign : "right",
-											labelSeparator : "",
-											fieldLabel : "品名",
-											margin : "5, 0, 0, 0",
-											xtype : "textfield",
-											listeners : {
-												specialkey : {
-													fn : me.onQueryEditSpecialKey,
-													scope : me
-												}
-											}
-										}, {
-											id : "editQuerySpec",
-											labelWidth : 60,
-											labelAlign : "right",
-											labelSeparator : "",
-											fieldLabel : "规格型号",
-											margin : "5, 0, 0, 0",
-											xtype : "textfield",
-											listeners : {
-												specialkey : {
-													fn : me.onQueryEditSpecialKey,
-													scope : me
-												}
-											}
-										}, {
-											id : "editQueryBarCode",
-											labelWidth : 60,
-											labelAlign : "right",
-											labelSeparator : "",
-											fieldLabel : "条形码",
-											margin : "5, 0, 0, 0",
-											xtype : "textfield",
-											listeners : {
-												specialkey : {
-													fn : me.onLastQueryEditSpecialKey,
-													scope : me
-												}
-											}
-										}, {
-											xtype : "container",
-											items : [{
-														xtype : "button",
-														text : "查询",
-														width : 100,
-														iconCls : "PSI-button-refresh",
-														margin : "5, 0, 0, 20",
-														handler : me.onQuery,
-														scope : me
-													}, {
-														xtype : "button",
-														text : "清空查询条件",
-														width : 100,
-														iconCls : "PSI-button-cancel",
-														margin : "5, 0, 0, 5",
-														handler : me.onClearQuery,
-														scope : me
-													}]
-										}]
+								items : me.getQueryCmp()
 							}, {
 								region : "center",
 								layout : "border",
@@ -214,6 +139,86 @@ Ext.define("PSI.Goods.MainForm", {
 					handler : function() {
 						window.close();
 					}
+				}];
+	},
+
+	getQueryCmp : function() {
+		var me = this;
+		return [{
+					id : "editQueryCode",
+					labelWidth : 60,
+					labelAlign : "right",
+					labelSeparator : "",
+					fieldLabel : "商品编码",
+					margin : "5, 0, 0, 0",
+					xtype : "textfield",
+					listeners : {
+						specialkey : {
+							fn : me.onQueryEditSpecialKey,
+							scope : me
+						}
+					}
+				}, {
+					id : "editQueryName",
+					labelWidth : 60,
+					labelAlign : "right",
+					labelSeparator : "",
+					fieldLabel : "品名",
+					margin : "5, 0, 0, 0",
+					xtype : "textfield",
+					listeners : {
+						specialkey : {
+							fn : me.onQueryEditSpecialKey,
+							scope : me
+						}
+					}
+				}, {
+					id : "editQuerySpec",
+					labelWidth : 60,
+					labelAlign : "right",
+					labelSeparator : "",
+					fieldLabel : "规格型号",
+					margin : "5, 0, 0, 0",
+					xtype : "textfield",
+					listeners : {
+						specialkey : {
+							fn : me.onQueryEditSpecialKey,
+							scope : me
+						}
+					}
+				}, {
+					id : "editQueryBarCode",
+					labelWidth : 60,
+					labelAlign : "right",
+					labelSeparator : "",
+					fieldLabel : "条形码",
+					margin : "5, 0, 0, 0",
+					xtype : "textfield",
+					listeners : {
+						specialkey : {
+							fn : me.onLastQueryEditSpecialKey,
+							scope : me
+						}
+					}
+				}, {
+					xtype : "container",
+					items : [{
+								xtype : "button",
+								text : "查询",
+								width : 100,
+								iconCls : "PSI-button-refresh",
+								margin : "5, 0, 0, 20",
+								handler : me.onQuery,
+								scope : me
+							}, {
+								xtype : "button",
+								text : "清空查询条件",
+								width : 100,
+								iconCls : "PSI-button-cancel",
+								margin : "5, 0, 0, 5",
+								handler : me.onClearQuery,
+								scope : me
+							}]
 				}];
 	},
 
