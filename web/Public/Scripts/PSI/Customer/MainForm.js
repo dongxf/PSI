@@ -541,8 +541,10 @@ Ext.define("PSI.Customer.MainForm", {
 	 * 新增客户分类
 	 */
 	onAddCategory : function() {
+		var me = this;
+
 		var form = Ext.create("PSI.Customer.CategoryEditForm", {
-					parentForm : this
+					parentForm : me
 				});
 
 		form.show();
@@ -566,7 +568,7 @@ Ext.define("PSI.Customer.MainForm", {
 		var category = item[0];
 
 		var form = Ext.create("PSI.Customer.CategoryEditForm", {
-					parentForm : this,
+					parentForm : me,
 					entity : category
 				});
 
