@@ -23,7 +23,242 @@ Ext.define("PSI.Customer.MainForm", {
 	initComponent : function() {
 		var me = this;
 
-		Ext.define("PSICustomerCategory", {
+		Ext.apply(me, {
+					tbar : me.getToolbarCmp(),
+					layout : "border",
+					items : [{
+								region : "north",
+								height : 90,
+								border : 0,
+								collapsible : true,
+								title : "查询条件",
+								layout : {
+									type : "table",
+									columns : 4
+								},
+								items : me.getQueryCmp()
+							}, {
+								region : "center",
+								layout : "border",
+								items : [{
+											region : "center",
+											xtype : "panel",
+											layout : "fit",
+											border : 0,
+											items : [me.getMainGrid()]
+										}, {
+											xtype : "panel",
+											region : "west",
+											layout : "fit",
+											width : 300,
+											minWidth : 200,
+											maxWidth : 350,
+											split : true,
+											border : 0,
+											items : [me.getCategoryGrid()]
+										}]
+							}]
+				});
+
+		me.callParent(arguments);
+
+		me.categoryGrid = me.getCategoryGrid();
+		me.customerGrid = me.getMainGrid();
+
+		me.__queryEditNameList = ["editQueryCode", "editQueryName",
+				"editQueryAddress", "editQueryContact", "editQueryMobile",
+				"editQueryTel", "editQueryQQ"];
+
+		me.freshCategoryGrid();
+	},
+
+	getToolbarCmp : function() {
+		var me = this;
+
+		return [{
+					text : "新增客户分类",
+					disabled : me.getPAddCategory() == "0",
+					iconCls : "PSI-button-add",
+					handler : me.onAddCategory,
+					scope : me
+				}, {
+					text : "编辑客户分类",
+					disabled : me.getPEditCategory() == "0",
+					iconCls : "PSI-button-edit",
+					handler : me.onEditCategory,
+					scope : me
+				}, {
+					text : "删除客户分类",
+					disabled : me.getPDeleteCategory() == "0",
+					iconCls : "PSI-button-delete",
+					handler : me.onDeleteCategory,
+					scope : me
+				}, "-", {
+					text : "新增客户",
+					disabled : me.getPAddCustomer() == "0",
+					iconCls : "PSI-button-add-detail",
+					handler : me.onAddCustomer,
+					scope : me
+				}, {
+					text : "导入客户",
+					disabled : me.getPImportCustomer() == "0",
+					iconCls : "PSI-button-add",
+					handler : me.onImportCustomer,
+					scope : me
+				}, {
+					text : "修改客户",
+					disabled : me.getPEditCustomer() == "0",
+					iconCls : "PSI-button-edit-detail",
+					handler : me.onEditCustomer,
+					scope : me
+				}, {
+					text : "删除客户",
+					disabled : me.getPDeleteCustomer() == "0",
+					iconCls : "PSI-button-delete-detail",
+					handler : me.onDeleteCustomer,
+					scope : me
+				}, "-", {
+					text : "关闭",
+					iconCls : "PSI-button-exit",
+					handler : function() {
+						window.close();
+					}
+				}];
+	},
+
+	getQueryCmp : function() {
+		var me = this;
+
+		return [{
+					id : "editQueryCode",
+					labelWidth : 60,
+					labelAlign : "right",
+					labelSeparator : "",
+					fieldLabel : "客户编码",
+					margin : "5, 0, 0, 0",
+					xtype : "textfield",
+					listeners : {
+						specialkey : {
+							fn : me.onQueryEditSpecialKey,
+							scope : me
+						}
+					}
+				}, {
+					id : "editQueryName",
+					labelWidth : 60,
+					labelAlign : "right",
+					labelSeparator : "",
+					fieldLabel : "客户名称",
+					margin : "5, 0, 0, 0",
+					xtype : "textfield",
+					listeners : {
+						specialkey : {
+							fn : me.onQueryEditSpecialKey,
+							scope : me
+						}
+					}
+				}, {
+					id : "editQueryAddress",
+					labelWidth : 60,
+					labelAlign : "right",
+					labelSeparator : "",
+					fieldLabel : "地址",
+					margin : "5, 0, 0, 0",
+					xtype : "textfield",
+					listeners : {
+						specialkey : {
+							fn : me.onQueryEditSpecialKey,
+							scope : me
+						}
+					}
+				}, {
+					id : "editQueryContact",
+					labelWidth : 60,
+					labelAlign : "right",
+					labelSeparator : "",
+					fieldLabel : "联系人",
+					margin : "5, 0, 0, 0",
+					xtype : "textfield",
+					listeners : {
+						specialkey : {
+							fn : me.onQueryEditSpecialKey,
+							scope : me
+						}
+					}
+				}, {
+					id : "editQueryMobile",
+					labelWidth : 60,
+					labelAlign : "right",
+					labelSeparator : "",
+					fieldLabel : "手机",
+					margin : "5, 0, 0, 0",
+					xtype : "textfield",
+					listeners : {
+						specialkey : {
+							fn : me.onQueryEditSpecialKey,
+							scope : me
+						}
+					}
+				}, {
+					id : "editQueryTel",
+					labelWidth : 60,
+					labelAlign : "right",
+					labelSeparator : "",
+					fieldLabel : "固话",
+					margin : "5, 0, 0, 0",
+					xtype : "textfield",
+					listeners : {
+						specialkey : {
+							fn : me.onQueryEditSpecialKey,
+							scope : me
+						}
+					}
+				}, {
+					id : "editQueryQQ",
+					labelWidth : 60,
+					labelAlign : "right",
+					labelSeparator : "",
+					fieldLabel : "QQ",
+					margin : "5, 0, 0, 0",
+					xtype : "textfield",
+					listeners : {
+						specialkey : {
+							fn : me.onLastQueryEditSpecialKey,
+							scope : me
+						}
+					}
+				}, {
+					xtype : "container",
+					items : [{
+								xtype : "button",
+								text : "查询",
+								width : 100,
+								iconCls : "PSI-button-refresh",
+								margin : "5, 0, 0, 20",
+								handler : me.onQuery,
+								scope : me
+							}, {
+								xtype : "button",
+								text : "清空查询条件",
+								width : 100,
+								iconCls : "PSI-button-cancel",
+								margin : "5, 0, 0, 5",
+								handler : me.onClearQuery,
+								scope : me
+							}]
+				}];
+	},
+
+	getCategoryGrid : function() {
+		var me = this;
+
+		if (me.__categoryGrid) {
+			return me.__categoryGrid;
+		}
+
+		var modelName = "PSICustomerCategory";
+
+		Ext.define(modelName, {
 					extend : "Ext.data.Model",
 					fields : ["id", "code", "name", {
 								name : "cnt",
@@ -31,7 +266,7 @@ Ext.define("PSI.Customer.MainForm", {
 							}]
 				});
 
-		var categoryGrid = Ext.create("Ext.grid.Panel", {
+		me.__categoryGrid = Ext.create("Ext.grid.Panel", {
 					viewConfig : {
 						enableTextSelection : true
 					},
@@ -66,7 +301,7 @@ Ext.define("PSI.Customer.MainForm", {
 								align : "right"
 							}],
 					store : Ext.create("Ext.data.Store", {
-								model : "PSICustomerCategory",
+								model : modelName,
 								autoLoad : false,
 								data : []
 							}),
@@ -81,9 +316,19 @@ Ext.define("PSI.Customer.MainForm", {
 						}
 					}
 				});
-		me.categoryGrid = categoryGrid;
 
-		Ext.define("PSICustomer", {
+		return me.__categoryGrid;
+	},
+
+	getMainGrid : function() {
+		var me = this;
+		if (me.__mainGrid) {
+			return me.__mainGrid;
+		}
+
+		var modelName = "PSICustomer";
+
+		Ext.define(modelName, {
 					extend : "Ext.data.Model",
 					fields : ["id", "code", "name", "contact01", "tel01",
 							"mobile01", "qq01", "contact02", "tel02",
@@ -95,7 +340,7 @@ Ext.define("PSI.Customer.MainForm", {
 
 		var store = Ext.create("Ext.data.Store", {
 					autoLoad : false,
-					model : "PSICustomer",
+					model : modelName,
 					data : [],
 					pageSize : 20,
 					proxy : {
@@ -128,7 +373,7 @@ Ext.define("PSI.Customer.MainForm", {
 					}
 				});
 
-		var customerGrid = Ext.create("Ext.grid.Panel", {
+		me.__mainGrid = Ext.create("Ext.grid.Panel", {
 					viewConfig : {
 						enableTextSelection : true
 					},
@@ -289,224 +534,7 @@ Ext.define("PSI.Customer.MainForm", {
 					}
 				});
 
-		me.customerGrid = customerGrid;
-
-		Ext.apply(me, {
-			tbar : [{
-						text : "新增客户分类",
-						disabled : me.getPAddCategory() == "0",
-						iconCls : "PSI-button-add",
-						handler : me.onAddCategory,
-						scope : me
-					}, {
-						text : "编辑客户分类",
-						disabled : me.getPEditCategory() == "0",
-						iconCls : "PSI-button-edit",
-						handler : me.onEditCategory,
-						scope : me
-					}, {
-						text : "删除客户分类",
-						disabled : me.getPDeleteCategory() == "0",
-						iconCls : "PSI-button-delete",
-						handler : me.onDeleteCategory,
-						scope : me
-					}, "-", {
-						text : "新增客户",
-						disabled : me.getPAddCustomer() == "0",
-						iconCls : "PSI-button-add-detail",
-						handler : me.onAddCustomer,
-						scope : me
-					}, {
-						text : "导入客户",
-						disabled : me.getPImportCustomer() == "0",
-						iconCls : "PSI-button-add",
-						handler : me.onImportCustomer,
-						scope : me
-					}, {
-						text : "修改客户",
-						disabled : me.getPEditCustomer() == "0",
-						iconCls : "PSI-button-edit-detail",
-						handler : me.onEditCustomer,
-						scope : me
-					}, {
-						text : "删除客户",
-						disabled : me.getPDeleteCustomer() == "0",
-						iconCls : "PSI-button-delete-detail",
-						handler : me.onDeleteCustomer,
-						scope : me
-					}, "-", {
-						text : "帮助",
-						iconCls : "PSI-help",
-						handler : function() {
-							window
-									.open("http://my.oschina.net/u/134395/blog/374871");
-						}
-					}, "-", {
-						text : "关闭",
-						iconCls : "PSI-button-exit",
-						handler : function() {
-							window.close();
-						}
-					}],
-			layout : "border",
-			items : [{
-						region : "north",
-						height : 90,
-						border : 0,
-						collapsible : true,
-						title : "查询条件",
-						layout : {
-							type : "table",
-							columns : 4
-						},
-						items : [{
-									id : "editQueryCode",
-									labelWidth : 60,
-									labelAlign : "right",
-									labelSeparator : "",
-									fieldLabel : "客户编码",
-									margin : "5, 0, 0, 0",
-									xtype : "textfield",
-									listeners : {
-										specialkey : {
-											fn : me.onQueryEditSpecialKey,
-											scope : me
-										}
-									}
-								}, {
-									id : "editQueryName",
-									labelWidth : 60,
-									labelAlign : "right",
-									labelSeparator : "",
-									fieldLabel : "客户名称",
-									margin : "5, 0, 0, 0",
-									xtype : "textfield",
-									listeners : {
-										specialkey : {
-											fn : me.onQueryEditSpecialKey,
-											scope : me
-										}
-									}
-								}, {
-									id : "editQueryAddress",
-									labelWidth : 60,
-									labelAlign : "right",
-									labelSeparator : "",
-									fieldLabel : "地址",
-									margin : "5, 0, 0, 0",
-									xtype : "textfield",
-									listeners : {
-										specialkey : {
-											fn : me.onQueryEditSpecialKey,
-											scope : me
-										}
-									}
-								}, {
-									id : "editQueryContact",
-									labelWidth : 60,
-									labelAlign : "right",
-									labelSeparator : "",
-									fieldLabel : "联系人",
-									margin : "5, 0, 0, 0",
-									xtype : "textfield",
-									listeners : {
-										specialkey : {
-											fn : me.onQueryEditSpecialKey,
-											scope : me
-										}
-									}
-								}, {
-									id : "editQueryMobile",
-									labelWidth : 60,
-									labelAlign : "right",
-									labelSeparator : "",
-									fieldLabel : "手机",
-									margin : "5, 0, 0, 0",
-									xtype : "textfield",
-									listeners : {
-										specialkey : {
-											fn : me.onQueryEditSpecialKey,
-											scope : me
-										}
-									}
-								}, {
-									id : "editQueryTel",
-									labelWidth : 60,
-									labelAlign : "right",
-									labelSeparator : "",
-									fieldLabel : "固话",
-									margin : "5, 0, 0, 0",
-									xtype : "textfield",
-									listeners : {
-										specialkey : {
-											fn : me.onQueryEditSpecialKey,
-											scope : me
-										}
-									}
-								}, {
-									id : "editQueryQQ",
-									labelWidth : 60,
-									labelAlign : "right",
-									labelSeparator : "",
-									fieldLabel : "QQ",
-									margin : "5, 0, 0, 0",
-									xtype : "textfield",
-									listeners : {
-										specialkey : {
-											fn : me.onLastQueryEditSpecialKey,
-											scope : me
-										}
-									}
-								}, {
-									xtype : "container",
-									items : [{
-												xtype : "button",
-												text : "查询",
-												width : 100,
-												iconCls : "PSI-button-refresh",
-												margin : "5, 0, 0, 20",
-												handler : me.onQuery,
-												scope : me
-											}, {
-												xtype : "button",
-												text : "清空查询条件",
-												width : 100,
-												iconCls : "PSI-button-cancel",
-												margin : "5, 0, 0, 5",
-												handler : me.onClearQuery,
-												scope : me
-											}]
-								}]
-					}, {
-						region : "center",
-						layout : "border",
-						items : [{
-									region : "center",
-									xtype : "panel",
-									layout : "fit",
-									border : 0,
-									items : [customerGrid]
-								}, {
-									xtype : "panel",
-									region : "west",
-									layout : "fit",
-									width : 300,
-									minWidth : 200,
-									maxWidth : 350,
-									split : true,
-									border : 0,
-									items : [categoryGrid]
-								}]
-					}]
-		});
-
-		me.callParent(arguments);
-
-		me.__queryEditNameList = ["editQueryCode", "editQueryName",
-				"editQueryAddress", "editQueryContact", "editQueryMobile",
-				"editQueryTel", "editQueryQQ"];
-
-		me.freshCategoryGrid();
+		return me.__mainGrid;
 	},
 
 	/**
