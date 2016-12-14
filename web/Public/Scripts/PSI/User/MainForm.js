@@ -313,8 +313,10 @@ Ext.define("PSI.User.MainForm", {
 	 * 新增组织机构
 	 */
 	onAddOrg : function() {
+		var me = this;
+
 		var form = Ext.create("PSI.User.OrgEditForm", {
-					parentForm : this
+					parentForm : me
 				});
 		form.show();
 	},
@@ -328,7 +330,7 @@ Ext.define("PSI.User.MainForm", {
 			return;
 		}
 
-		var tree = this.orgTree;
+		var tree = me.orgTree;
 		var item = tree.getSelectionModel().getSelection();
 		if (item === null || item.length !== 1) {
 			PSI.MsgBox.showInfo("请选择要编辑的组织机构");
@@ -338,7 +340,7 @@ Ext.define("PSI.User.MainForm", {
 		var org = item[0];
 
 		var form = Ext.create("PSI.User.OrgEditForm", {
-					parentForm : this,
+					parentForm : me,
 					entity : org
 				});
 		form.show();
@@ -391,24 +393,30 @@ Ext.define("PSI.User.MainForm", {
 	},
 
 	freshOrgGrid : function() {
-		this.orgTree.getStore().reload();
+		var me = this;
+
+		me.orgTree.getStore().reload();
 	},
 
 	freshUserGrid : function() {
-		var tree = this.orgTree;
+		var me = this;
+
+		var tree = me.orgTree;
 		var item = tree.getSelectionModel().getSelection();
 		if (item === null || item.length !== 1) {
 			return;
 		}
 
-		this.onOrgTreeNodeSelect(item[0]);
+		me.onOrgTreeNodeSelect(item[0]);
 	},
 
 	/**
 	 * 新增用户
 	 */
 	onAddUser : function() {
-		var tree = this.orgTree;
+		var me = this;
+
+		var tree = me.orgTree;
 		var item = tree.getSelectionModel().getSelection();
 		var org = null;
 		if (item != null && item.length > 0) {
@@ -416,7 +424,7 @@ Ext.define("PSI.User.MainForm", {
 		}
 
 		var editFrom = Ext.create("PSI.User.UserEditForm", {
-					parentForm : this,
+					parentForm : me,
 					defaultOrg : org
 				});
 		editFrom.show();
@@ -431,7 +439,7 @@ Ext.define("PSI.User.MainForm", {
 			return;
 		}
 
-		var item = this.grid.getSelectionModel().getSelection();
+		var item = me.grid.getSelectionModel().getSelection();
 		if (item === null || item.length !== 1) {
 			PSI.MsgBox.showInfo("请选择要编辑的用户");
 			return;
@@ -439,7 +447,7 @@ Ext.define("PSI.User.MainForm", {
 
 		var user = item[0].data;
 
-		var tree = this.orgTree;
+		var tree = me.orgTree;
 		var node = tree.getSelectionModel().getSelection();
 		if (node && node.length === 1) {
 			var org = node[0].data;
@@ -448,28 +456,30 @@ Ext.define("PSI.User.MainForm", {
 			user.orgName = org.fullName;
 		}
 
-		var editFrom = Ext.create("PSI.User.UserEditForm", {
-					parentForm : this,
+		var form = Ext.create("PSI.User.UserEditForm", {
+					parentForm : me,
 					entity : user
 				});
-		editFrom.show();
+		form.show();
 	},
 
 	/**
 	 * 修改用户密码
 	 */
 	onEditUserPassword : function() {
-		var item = this.grid.getSelectionModel().getSelection();
+		var me = this;
+
+		var item = me.grid.getSelectionModel().getSelection();
 		if (item === null || item.length !== 1) {
 			PSI.MsgBox.showInfo("请选择要修改密码的用户");
 			return;
 		}
 
 		var user = item[0].getData();
-		var editFrom = Ext.create("PSI.User.ChangeUserPasswordForm", {
+		var form = Ext.create("PSI.User.ChangeUserPasswordForm", {
 					entity : user
 				});
-		editFrom.show();
+		form.show();
 	},
 
 	/**
@@ -535,12 +545,14 @@ Ext.define("PSI.User.MainForm", {
 	},
 
 	onOrgStoreLoad : function() {
-		var tree = this.orgTree;
+		var me = this;
+
+		var tree = me.orgTree;
 		var root = tree.getRootNode();
 		if (root) {
 			var node = root.firstChild;
 			if (node) {
-				this.onOrgTreeNodeSelect(node);
+				me.onOrgTreeNodeSelect(node);
 			}
 		}
 	},
