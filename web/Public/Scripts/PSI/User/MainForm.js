@@ -24,14 +24,103 @@ Ext.define("PSI.User.MainForm", {
 	initComponent : function() {
 		var me = this;
 
-		Ext.define("PSIOrgModel", {
+		Ext.apply(me, {
+					border : 0,
+					layout : "border",
+					tbar : [{
+								text : "新增组织机构",
+								iconCls : "PSI-button-add",
+								disabled : me.getPAddOrg() == "0",
+								handler : me.onAddOrg,
+								scope : me
+							}, {
+								text : "编辑组织机构",
+								iconCls : "PSI-button-edit",
+								disabled : me.getPEditOrg() == "0",
+								handler : me.onEditOrg,
+								scope : me
+							}, {
+								text : "删除组织机构",
+								disabled : me.getPDeleteOrg() == "0",
+								iconCls : "PSI-button-delete",
+								handler : me.onDeleteOrg,
+								scope : me
+							}, "-", {
+								text : "新增用户",
+								disabled : me.getPAddUser() == "0",
+								iconCls : "PSI-button-add-user",
+								handler : me.onAddUser,
+								scope : me
+							}, {
+								text : "修改用户",
+								disabled : me.getPEditUser() == "0",
+								iconCls : "PSI-button-edit-user",
+								handler : me.onEditUser,
+								scope : me
+							}, {
+								text : "删除用户",
+								disabled : me.getPDeleteUser() == "0",
+								iconCls : "PSI-button-delete-user",
+								handler : me.onDeleteUser,
+								scope : me
+							}, "-", {
+								text : "修改用户密码",
+								disabled : me.getPChangePassword() == "0",
+								iconCls : "PSI-button-change-password",
+								handler : me.onEditUserPassword,
+								scope : me
+							}, "-", {
+								text : "帮助",
+								iconCls : "PSI-help",
+								handler : function() {
+									window.open(PSI.Const.BASE_URL
+											+ "/Home/Help/index?t=user");
+								}
+							}, "-", {
+								text : "关闭",
+								iconCls : "PSI-button-exit",
+								handler : function() {
+									window.close();
+								}
+							}],
+					items : [{
+								region : "center",
+								xtype : "panel",
+								layout : "fit",
+								border : 0,
+								items : [me.getUserGrid()]
+							}, {
+								xtype : "panel",
+								region : "west",
+								layout : "fit",
+								width : 440,
+								split : true,
+								border : 0,
+								items : [me.getOrgGrid()]
+							}]
+				});
+
+		me.callParent(arguments);
+
+		me.orgTree = me.getOrgGrid();
+		me.grid = me.getUserGrid();
+	},
+
+	getOrgGrid : function() {
+		var me = this;
+		if (me.__orgGrid) {
+			return me.__orgGrid;
+		}
+
+		var modelName = "PSIOrgModel";
+		Ext.define(modelName, {
 					extend : "Ext.data.Model",
 					fields : ["id", "text", "fullName", "orgCode", "dataOrg",
 							"leaf", "children"]
 				});
 
 		var orgStore = Ext.create("Ext.data.TreeStore", {
-					model : "PSIOrgModel",
+					model : modelName,
 					proxy : {
 						type : "ajax",
 						url : me.getBaseURL() + "Home/User/allOrgs"
@@ -70,7 +159,6 @@ Ext.define("PSI.User.MainForm", {
 								}]
 					}
 				});
-		me.orgTree = orgTree;
 
 		orgTree.on("select", function(rowModel, record) {
 					me.onOrgTreeNodeSelect(record);
@@ -78,7 +166,20 @@ Ext.define("PSI.User.MainForm", {
 
 		orgTree.on("itemdblclick", me.onEditOrg, me);
 
-		Ext.define("PSIUser", {
+		me.__orgGrid = orgTree;
+
+		return me.__orgGrid;
+	},
+
+	getUserGrid : function() {
+		var me = this;
+
+		if (me.__userGrid) {
+			return me.__userGrid;
+		}
+
+		var modelName = "PSIUser";
+		Ext.define(modelName, {
 					extend : "Ext.data.Model",
 					fields : ["id", "loginName", "name", "enabled", "orgCode",
 							"gender", "birthday", "idCardNumber", "tel",
@@ -86,7 +187,7 @@ Ext.define("PSI.User.MainForm", {
 				});
 		var storeGrid = Ext.create("Ext.data.Store", {
 					autoLoad : false,
-					model : "PSIUser",
+					model : modelName,
 					data : [],
 					pageSize : 20,
 					proxy : {
@@ -105,7 +206,7 @@ Ext.define("PSI.User.MainForm", {
 					storeGrid.proxy.extraParams = me.getUserParam();
 				});
 
-		var grid = Ext.create("Ext.grid.Panel", {
+		me.__userGrid = Ext.create("Ext.grid.Panel", {
 					title : "人员列表",
 					viewConfig : {
 						enableTextSelection : true
@@ -224,85 +325,7 @@ Ext.define("PSI.User.MainForm", {
 							}]
 				});
 
-		this.grid = grid;
-
-		Ext.apply(me, {
-					border : 0,
-					layout : "border",
-					tbar : [{
-								text : "新增组织机构",
-								iconCls : "PSI-button-add",
-								disabled : me.getPAddOrg() == "0",
-								handler : me.onAddOrg,
-								scope : me
-							}, {
-								text : "编辑组织机构",
-								iconCls : "PSI-button-edit",
-								disabled : me.getPEditOrg() == "0",
-								handler : me.onEditOrg,
-								scope : me
-							}, {
-								text : "删除组织机构",
-								disabled : me.getPDeleteOrg() == "0",
-								iconCls : "PSI-button-delete",
-								handler : me.onDeleteOrg,
-								scope : me
-							}, "-", {
-								text : "新增用户",
-								disabled : me.getPAddUser() == "0",
-								iconCls : "PSI-button-add-user",
-								handler : me.onAddUser,
-								scope : me
-							}, {
-								text : "修改用户",
-								disabled : me.getPEditUser() == "0",
-								iconCls : "PSI-button-edit-user",
-								handler : me.onEditUser,
-								scope : me
-							}, {
-								text : "删除用户",
-								disabled : me.getPDeleteUser() == "0",
-								iconCls : "PSI-button-delete-user",
-								handler : me.onDeleteUser,
-								scope : me
-							}, "-", {
-								text : "修改用户密码",
-								disabled : me.getPChangePassword() == "0",
-								iconCls : "PSI-button-change-password",
-								handler : me.onEditUserPassword,
-								scope : me
-							}, "-", {
-								text : "帮助",
-								iconCls : "PSI-help",
-								handler : function() {
-									window.open(PSI.Const.BASE_URL
-											+ "/Home/Help/index?t=user");
-								}
-							}, "-", {
-								text : "关闭",
-								iconCls : "PSI-button-exit",
-								handler : function() {
-									window.close();
-								}
-							}],
-					items : [{
-								region : "center",
-								xtype : "panel",
-								layout : "fit",
-								border : 0,
-								items : [grid]
-							}, {
-								xtype : "panel",
-								region : "west",
-								layout : "fit",
-								width : 440,
-								split : true,
-								border : 0,
-								items : [orgTree]
-							}]
-				});
-
-		me.callParent(arguments);
+		return me.__userGrid;
 	},
 
 	getGrid : function() {
@@ -330,7 +353,7 @@ Ext.define("PSI.User.MainForm", {
 			return;
 		}
 
-		var tree = me.orgTree;
+		var tree = me.getOrgGrid();
 		var item = tree.getSelectionModel().getSelection();
 		if (item === null || item.length !== 1) {
 			PSI.MsgBox.showInfo("请选择要编辑的组织机构");
@@ -351,7 +374,7 @@ Ext.define("PSI.User.MainForm", {
 	 */
 	onDeleteOrg : function() {
 		var me = this;
-		var tree = me.orgTree;
+		var tree = me.getOrgGrid();
 		var item = tree.getSelectionModel().getSelection();
 		if (item === null || item.length !== 1) {
 			PSI.MsgBox.showInfo("请选择要删除的组织机构");
@@ -395,13 +418,13 @@ Ext.define("PSI.User.MainForm", {
 	freshOrgGrid : function() {
 		var me = this;
 
-		me.orgTree.getStore().reload();
+		me.getOrgGrid().getStore().reload();
 	},
 
 	freshUserGrid : function() {
 		var me = this;
 
-		var tree = me.orgTree;
+		var tree = me.getOrgGrid();
 		var item = tree.getSelectionModel().getSelection();
 		if (item === null || item.length !== 1) {
 			return;
@@ -416,18 +439,18 @@ Ext.define("PSI.User.MainForm", {
 	onAddUser : function() {
 		var me = this;
 
-		var tree = me.orgTree;
+		var tree = me.getOrgGrid();
 		var item = tree.getSelectionModel().getSelection();
 		var org = null;
 		if (item != null && item.length > 0) {
 			org = item[0];
 		}
 
-		var editFrom = Ext.create("PSI.User.UserEditForm", {
+		var form = Ext.create("PSI.User.UserEditForm", {
 					parentForm : me,
 					defaultOrg : org
 				});
-		editFrom.show();
+		form.show();
 	},
 
 	/**
@@ -439,7 +462,7 @@ Ext.define("PSI.User.MainForm", {
 			return;
 		}
 
-		var item = me.grid.getSelectionModel().getSelection();
+		var item = me.getUserGrid().getSelectionModel().getSelection();
 		if (item === null || item.length !== 1) {
 			PSI.MsgBox.showInfo("请选择要编辑的用户");
 			return;
@@ -469,7 +492,7 @@ Ext.define("PSI.User.MainForm", {
 	onEditUserPassword : function() {
 		var me = this;
 
-		var item = me.grid.getSelectionModel().getSelection();
+		var item = me.getUserGrid().getSelectionModel().getSelection();
 		if (item === null || item.length !== 1) {
 			PSI.MsgBox.showInfo("请选择要修改密码的用户");
 			return;
@@ -487,7 +510,7 @@ Ext.define("PSI.User.MainForm", {
 	 */
 	onDeleteUser : function() {
 		var me = this;
-		var item = me.grid.getSelectionModel().getSelection();
+		var item = me.getUserGrid().getSelectionModel().getSelection();
 		if (item === null || item.length !== 1) {
 			PSI.MsgBox.showInfo("请选择要删除的用户");
 			return;
@@ -537,7 +560,7 @@ Ext.define("PSI.User.MainForm", {
 		}
 
 		var me = this;
-		var grid = me.getGrid();
+		var grid = me.getUserGrid();
 
 		grid.setTitle(org.fullName + " - 人员列表");
 
@@ -547,7 +570,7 @@ Ext.define("PSI.User.MainForm", {
 	onOrgStoreLoad : function() {
 		var me = this;
 
-		var tree = me.orgTree;
+		var tree = me.getOrgGrid();
 		var root = tree.getRootNode();
 		if (root) {
 			var node = root.firstChild;
@@ -559,7 +582,7 @@ Ext.define("PSI.User.MainForm", {
 
 	getUserParam : function() {
 		var me = this;
-		var item = me.orgTree.getSelectionModel().getSelection();
+		var item = me.getOrgGrid().getSelectionModel().getSelection();
 		if (item == null || item.length == 0) {
 			return {};
 		}
