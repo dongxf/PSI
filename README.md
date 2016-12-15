@@ -47,12 +47,12 @@ PSI行业版
 
 如需要技术支持，请联系
 -------------
-> QQ群： <a target="_blank" href="http://shang.qq.com/wpa/qunwpa?idkey=64808ce24f2a3186ccb1f37aad9ed591bcc4fb257d09749753aca98c6c73e400">414474186</a>
+>1、 QQ群： <a target="_blank" href="http://shang.qq.com/wpa/qunwpa?idkey=64808ce24f2a3186ccb1f37aad9ed591bcc4fb257d09749753aca98c6c73e400">414474186</a>
 >
-> PSI(免费VIP群)：108111233
+>2、 PSI(免费VIP群)：108111233
 > 加入本群的要求：1、实名；2、认真地在应用PSI，并愿意分享实际应用案例。
 >
-> 付费技术支持群：498771245
+>3、 付费技术支持群：498771245
 
 致谢
 -------------
