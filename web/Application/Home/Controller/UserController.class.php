@@ -113,17 +113,19 @@ class UserController extends PSIBaseController {
 	 */
 	public function loginPOST() {
 		if (IS_POST) {
-			$loginName = I("post.loginName");
-			$password = I("post.password");
-			$fromDevice = I("post.fromDevice");
 			$ip = I("post.ip");
 			$ipFrom = I("post.ipFrom");
 			
 			session("PSI_login_user_ip", $ip);
 			session("PSI_login_user_ip_from", $ipFrom);
 			
+			$params = array(
+					"loginName" => I("post.loginName"),
+					"password" => I("post.password")
+			);
+			
 			$us = new UserService();
-			$this->ajaxReturn($us->doLogin($loginName, $password, $fromDevice));
+			$this->ajaxReturn($us->doLogin($params));
 		}
 	}
 
