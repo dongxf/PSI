@@ -89,35 +89,29 @@ class UserService extends PSIBaseService {
 		return $dao->getLoginUserName($this->getLoginUserId());
 	}
 
+	/**
+	 * 当前登录用户带组织机构的用户全名
+	 *
+	 * @return string
+	 */
 	public function getLoignUserNameWithOrgFullName() {
-		$userName = $this->getLoginUserName();
-		if ($userName == "") {
-			return $userName;
-		}
-		$sql = "select o.full_name
-				from t_org o, t_user u
-				where o.id = u.org_id and u.id = '%s' ";
-		$data = M()->query($sql, $this->getLoginUserId());
-		$orgFullName = "";
-		if ($data) {
-			$orgFullName = $data[0]["full_name"];
-		}
-		
-		return addslashes($orgFullName . "\\" . $userName);
+		$dao = new UserDAO();
+		return $dao->getLoignUserNameWithOrgFullName($this->getLoginUserId());
 	}
 
+	/**
+	 * 获得当前登录用户的登录名
+	 *
+	 * @return string
+	 */
 	public function getLoginName() {
-		$sql = "select login_name from t_user where id = '%s' ";
-		
-		$data = M()->query($sql, $this->getLoginUserId());
-		
-		if ($data) {
-			return $data[0]["login_name"];
-		} else {
-			return "";
-		}
+		$dao = new UserDAO();
+		return $dao->getLoginName($this->getLoginUserId());
 	}
 
+	/**
+	 * 登录PSI
+	 */
 	public function doLogin($params) {
 		$dao = new UserDAO();
 		$loginUserId = $dao->doLogin($params);

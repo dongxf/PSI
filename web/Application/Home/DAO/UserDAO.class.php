@@ -102,4 +102,51 @@ class UserDAO extends PSIBaseDAO {
 			return "";
 		}
 	}
+
+	/**
+	 * 获得带组织机构的用户全名
+	 *
+	 * @param string $userId
+	 *        	用户id
+	 * @return string
+	 */
+	public function getLoignUserNameWithOrgFullName($userId) {
+		$db = $this->db;
+		
+		$userName = $this->getLoginUserName($userId);
+		if ($userName == "") {
+			return $userName;
+		}
+		
+		$sql = "select o.full_name
+				from t_org o, t_user u
+				where o.id = u.org_id and u.id = '%s' ";
+		$data = $db->query($sql, $userId);
+		$orgFullName = "";
+		if ($data) {
+			$orgFullName = $data[0]["full_name"];
+		}
+		
+		return addslashes($orgFullName . "\\" . $userName);
+	}
+
+	/**
+	 * 获得用户的登录名
+	 *
+	 * @param string $userId        	
+	 * @return string
+	 */
+	public function getLoginName($userId) {
+		$db = $this->db;
+		
+		$sql = "select login_name from t_user where id = '%s' ";
+		
+		$data = $db->query($sql, $userId);
+		
+		if ($data) {
+			return $data[0]["login_name"];
+		} else {
+			return "";
+		}
+	}
 }
