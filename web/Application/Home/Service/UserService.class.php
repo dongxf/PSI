@@ -14,6 +14,11 @@ use Home\DAO\UserDAO;
 class UserService extends PSIBaseService {
 	private $LOG_CATEGORY = "用户管理";
 
+	/**
+	 * 演示环境中显示在登录窗口上的提示文字
+	 *
+	 * @return string
+	 */
 	public function getDemoLoginInfo() {
 		if ($this->isDemo()) {
 			return "您当前处于演示环境，默认的登录名和密码均为 admin <br/>更多帮助请点击 [帮助] 按钮来查看 <br /><div style='color:red'>请勿在演示环境中保存正式数据，演示数据库通常每天在21:00后会清空一次</div>";
@@ -65,20 +70,23 @@ class UserService extends PSIBaseService {
 		return $ud->hasPermission($userId, $fid);
 	}
 
+	/**
+	 * 当前登录用户的id
+	 *
+	 * @return string|NULL
+	 */
 	public function getLoginUserId() {
 		return session("loginUserId");
 	}
 
+	/**
+	 * 当前登录用户的姓名
+	 *
+	 * @return string
+	 */
 	public function getLoginUserName() {
-		$sql = "select name from t_user where id = '%s' ";
-		
-		$data = M()->query($sql, $this->getLoginUserId());
-		
-		if ($data) {
-			return $data[0]["name"];
-		} else {
-			return "";
-		}
+		$dao = new UserDAO();
+		return $dao->getLoginUserName($this->getLoginUserId());
 	}
 
 	public function getLoignUserNameWithOrgFullName() {

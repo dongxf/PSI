@@ -80,4 +80,26 @@ class UserDAO extends PSIBaseDAO {
 		
 		return $data[0]["cnt"] > 0;
 	}
+
+	/**
+	 * 根据用户id查询用户名称
+	 *
+	 * @param string $userId
+	 *        	用户id
+	 *        	
+	 * @return string 用户姓名
+	 */
+	public function getLoginUserName($userId) {
+		$db = $this->db;
+		
+		$sql = "select name from t_user where id = '%s' ";
+		
+		$data = $db->query($sql, $userId);
+		
+		if ($data) {
+			return $data[0]["name"];
+		} else {
+			return "";
+		}
+	}
 }
