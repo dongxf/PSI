@@ -8,7 +8,8 @@ Ext.define("PSI.Home.MainForm", {
 				pSale : "",
 				pInventory : "",
 				pPurchase : "",
-				pMoney : ""
+				pMoney : "",
+				productionName : "PSI"
 			},
 
 			border : 0,
@@ -494,9 +495,10 @@ Ext.define("PSI.Home.MainForm", {
 			},
 
 			getInfoPortal : function() {
+				var me = this;
 				return {
 					border : 0,
-					html : "<h1>欢迎使用开源进销存PSI</h1>"
+					html : "<h1>欢迎使用" + me.getProductionName() + "</h1>"
 				}
 			},
 
