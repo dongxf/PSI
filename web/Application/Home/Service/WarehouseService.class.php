@@ -5,6 +5,7 @@ namespace Home\Service;
 use Home\Service\IdGenService;
 use Home\Service\BizlogService;
 use Home\Common\FIdConst;
+use Home\DAO\WarehouseDAO;
 
 /**
  * 基础数据仓库Service
@@ -58,59 +59,44 @@ class WarehouseService extends PSIBaseService {
 		$id = $params["id"];
 		$code = $params["code"];
 		$name = $params["name"];
+		
 		$ps = new PinyinService();
 		$py = $ps->toPY($name);
+		$params["py"] = $py;
+		
 		$db = M();
 		
 		$db->startTrans();
 		
+		$dao = new WarehouseDAO($db);
+		
 		$log = null;
 		
 		if ($id) {
-			// 修改
-			// 检查同编号的仓库是否存在
-			$sql = "select count(*) as cnt from t_warehouse where code = '%s' and id <> '%s' ";
-			$data = $db->query($sql, $code, $id);
-			$cnt = $data[0]["cnt"];
-			if ($cnt > 0) {
-				$db->rollback();
-				return $this->bad("编码为 [$code] 的仓库已经存在");
-			}
+			// 修改仓库
 			
-			$sql = "update t_warehouse 
-					set code = '%s', name = '%s', py = '%s' 
-					where id = '%s' ";
-			$rc = $db->execute($sql, $code, $name, $py, $id);
-			if ($rc === false) {
+			$rc = $dao->updateWarehouse($params);
+			if ($rc) {
 				$db->rollback();
-				return $this->sqlError(__LINE__);
+				return $rc;
 			}
 			
 			$log = "编辑仓库：编码 = $code,  名称 = $name";
 		} else {
-			// 新增
-			$idGen = new IdGenService();
-			$id = $idGen->newId();
-			
-			// 检查同编号的仓库是否存在
-			$sql = "select count(*) as cnt from t_warehouse where code = '%s' ";
-			$data = $db->query($sql, $code);
-			$cnt = $data[0]["cnt"];
-			if ($cnt > 0) {
-				$db->rollback();
-				return $this->bad("编码为 [$code] 的仓库已经存在");
-			}
+			// 新增仓库
 			
 			$us = new UserService();
-			$dataOrg = $us->getLoginUserDataOrg();
-			$companyId = $us->getCompanyId();
+			$params["dataOrg"] = $us->getLoginUserDataOrg();
+			$params["companyId"] = $us->getCompanyId();
 			
-			$sql = "insert into t_warehouse(id, code, name, inited, py, data_org, company_id) 
-					values ('%s', '%s', '%s', 0, '%s', '%s', '%s')";
-			$rc = $db->execute($sql, $id, $code, $name, $py, $dataOrg, $companyId);
-			if ($rc === false) {
+			$idGen = new IdGenService();
+			$id = $idGen->newId();
+			$params["id"] = $id;
+			
+			$rc = $dao->addWarehouse($params);
+			if ($rc) {
 				$db->rollback();
-				return $this->sqlError(__LINE__);
+				return $rc;
 			}
 			
 			$log = "新增仓库：编码 = {$code},  名称 = {$name}";
