@@ -62,13 +62,7 @@ class UserService extends PSIBaseService {
 			return $result;
 		}
 		
-		$sql = "select count(*) as cnt 
-				from  t_role_user ru, t_role_permission rp, t_permission p 
-				where ru.user_id = '%s' and ru.role_id = rp.role_id 
-				      and rp.permission_id = p.id and p.fid = '%s' ";
-		$data = M()->query($sql, $userId, $fid);
-		
-		return $data[0]["cnt"] > 0;
+		return $ud->hasPermission($userId, $fid);
 	}
 
 	public function getLoginUserId() {
