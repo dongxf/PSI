@@ -4,13 +4,15 @@
 Ext.define("PSI.App", {
 	config : {
 		userName : "",
-		productionName : "开源进销存PSI"
+		productionName : "PSI"
 	},
 
 	constructor : function(config) {
-		this.initConfig(config);
+		var me = this;
+		
+		me.initConfig(config);
 
-		this.createMainUI();
+		me.createMainUI();
 	},
 
 	createMainUI : function() {
@@ -157,7 +159,8 @@ Ext.define("PSI.App", {
 			if (fid == "-9995") {
 				window.open("http://psi.mydoc.io/");
 			} else if (fid == "-9993") {
-				window.open("https://zb.oschina.net/market/opus/134395_122");
+				var url = "https://zb.oschina.net/service/10565810c1d93056";
+				window.open(url);
 			} else if (fid === "-9999") {
 				// 重新登录
 				location.replace(PSI.Const.BASE_URL
