@@ -167,42 +167,20 @@ class WarehouseService extends PSIBaseService {
 			return $this->notOnlineError();
 		}
 		
-		$id = $params["id"];
-		$dataOrg = $params["dataOrg"];
-		
 		$db = M();
 		$db->startTrans();
 		
-		$sql = "select name, data_org from t_warehouse where id = '%s' ";
-		$data = $db->query($sql, $id);
-		if (! $data) {
-			$db->rollback();
-			return $this->bad("要编辑数据域的仓库不存在");
-		}
+		$dao = new WarehouseDAO($db);
+		$id = $params["id"];
+		$dataOrg = $params["dataOrg"];
+		$warehouse = $dao->getWarehouseById($id);
+		$oldDataOrg = $warehouse["dataOrg"];
+		$name = $warehouse["name"];
 		
-		$name = $data[0]["name"];
-		$oldDataOrg = $data[0]["data_org"];
-		if ($oldDataOrg == $dataOrg) {
+		$rc = $dao->editDataOrg($params);
+		if ($rc) {
 			$db->rollback();
-			return $this->bad("数据域没有改动，不用保存");
-		}
-		
-		// 检查新数据域是否存在
-		$sql = "select count(*) as cnt from t_user where data_org = '%s' ";
-		$data = $db->query($sql, $dataOrg);
-		$cnt = $data[0]["cnt"];
-		if ($cnt != 1) {
-			$db->rollback();
-			return $this->bad("数据域[{$dataOrg}]不存在");
-		}
-		
-		$sql = "update t_warehouse
-				set data_org = '%s'
-				where id = '%s' ";
-		$rc = $db->execute($sql, $dataOrg, $id);
-		if ($rc === false) {
-			$db->rollback();
-			return $this->sqlError(__LINE__);
+			return $rc;
 		}
 		
 		$log = "把仓库[{$name}]的数据域从旧值[{$oldDataOrg}]修改为新值[{$dataOrg}]";

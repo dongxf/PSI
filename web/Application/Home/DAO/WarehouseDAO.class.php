@@ -201,7 +201,7 @@ class WarehouseDAO extends PSIBaseDAO {
 
 	public function getWarehouseById($id) {
 		$db = $this->db;
-		$sql = "select code, name from t_warehouse where id = '%s' ";
+		$sql = "select code, name, data_org from t_warehouse where id = '%s' ";
 		$data = $db->query($sql, $id);
 		
 		if (! $data) {
@@ -210,7 +210,49 @@ class WarehouseDAO extends PSIBaseDAO {
 		
 		return array(
 				"code" => $data[0]["code"],
-				"name" => $data[0]["name"]
+				"name" => $data[0]["name"],
+				"dataOrg" => $data[0]["data_org"]
 		);
+	}
+
+	/**
+	 * 编辑仓库数据域
+	 */
+	public function editDataOrg($params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		$dataOrg = $params["dataOrg"];
+		
+		$sql = "select name, data_org from t_warehouse where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if (! $data) {
+			return $this->bad("要编辑数据域的仓库不存在");
+		}
+		
+		$name = $data[0]["name"];
+		$oldDataOrg = $data[0]["data_org"];
+		if ($oldDataOrg == $dataOrg) {
+			return $this->bad("数据域没有改动，不用保存");
+		}
+		
+		// 检查新数据域是否存在
+		$sql = "select count(*) as cnt from t_user where data_org = '%s' ";
+		$data = $db->query($sql, $dataOrg);
+		$cnt = $data[0]["cnt"];
+		if ($cnt != 1) {
+			return $this->bad("数据域[{$dataOrg}]不存在");
+		}
+		
+		$sql = "update t_warehouse
+				set data_org = '%s'
+				where id = '%s' ";
+		$rc = $db->execute($sql, $dataOrg, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		return null;
 	}
 }
