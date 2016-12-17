@@ -110,81 +110,18 @@ class WarehouseService extends PSIBaseService {
 		$db = M();
 		$db->startTrans();
 		
-		$sql = "select code, name, inited from t_warehouse where id = '%s' ";
-		$data = $db->query($sql, $id);
-		if (! $data) {
+		$dao = new WarehouseDAO($db);
+		
+		$warehouse = $dao->getWarehouseById($id);
+		if (! $warehouse) {
 			$db->rollback();
 			return $this->bad("要删除的仓库不存在");
 		}
 		
-		// 判断仓库是否能删除
-		$warehouse = $data[0];
-		$warehouseName = $warehouse["name"];
-		if ($warehouse["inited"] == 1) {
+		$rc = $dao->deleteWarehouse($params);
+		if ($rc) {
 			$db->rollback();
-			return $this->bad("仓库[{$warehouseName}]已经建账，不能删除");
-		}
-		
-		// 判断仓库是否在采购入库单中使用
-		$sql = "select count(*) as cnt from t_pw_bill where warehouse_id = '%s' ";
-		$data = $db->query($sql, $id);
-		$cnt = $data[0]["cnt"];
-		if ($cnt > 0) {
-			$db->rollback();
-			return $this->bad("仓库[$warehouseName]已经在采购入库单中使用，不能删除");
-		}
-		
-		// 判断仓库是否在采购退货出库单中使用
-		$sql = "select count(*) as cnt from t_pr_bill where warehouse_id = '%s' ";
-		$data = $db->query($sql, $id);
-		$cnt = $data[0]["cnt"];
-		if ($cnt > 0) {
-			$db->rollback();
-			return $this->bad("仓库[$warehouseName]已经在采购退货出库单中使用，不能删除");
-		}
-		
-		// 判断仓库是否在销售出库单中使用
-		$sql = "select count(*) as cnt from t_ws_bill where warehouse_id = '%s' ";
-		$data = $db->query($sql, $id);
-		$cnt = $data[0]["cnt"];
-		if ($cnt > 0) {
-			$db->rollback();
-			return $this->bad("仓库[$warehouseName]已经在销售出库单中使用，不能删除");
-		}
-		
-		// 判断仓库是否在销售退货入库单中使用
-		$sql = "select count(*) as cnt from t_sr_bill where warehouse_id = '%s' ";
-		$data = $db->query($sql, $id);
-		$cnt = $data[0]["cnt"];
-		if ($cnt > 0) {
-			$db->rollback();
-			return $this->bad("仓库[$warehouseName]已经在销售退货入库单中使用，不能删除");
-		}
-		
-		// 判断仓库是否在调拨单中使用
-		$sql = "select count(*) as cnt from t_it_bill 
-				where from_warehouse_id = '%s' or to_warehouse_id = '%s' ";
-		$data = $db->query($sql, $id, $id);
-		$cnt = $data[0]["cnt"];
-		if ($cnt > 0) {
-			$db->rollback();
-			return $this->bad("仓库[$warehouseName]已经在调拨单中使用，不能删除");
-		}
-		
-		// 判断仓库是否在盘点单中使用
-		$sql = "select count(*) as cnt from t_ic_bill where warehouse_id = '%s' ";
-		$data = $db->query($sql, $id);
-		$cnt = $data[0]["cnt"];
-		if ($cnt > 0) {
-			$db->rollback();
-			return $this->bad("仓库[$warehouseName]已经在盘点单中使用，不能删除");
-		}
-		
-		$sql = "delete from t_warehouse where id = '%s' ";
-		$rc = $db->execute($sql, $id);
-		if ($rc === false) {
-			$db->rollback();
-			return $this->sqlError(__LINE__);
+			return $rc;
 		}
 		
 		$log = "删除仓库： 编码 = {$warehouse['code']}， 名称 = {$warehouse['name']}";
