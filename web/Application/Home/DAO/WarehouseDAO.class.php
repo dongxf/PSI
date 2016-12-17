@@ -2,6 +2,8 @@
 
 namespace Home\DAO;
 
+use Home\Common\FIdConst;
+
 /**
  * 仓库 DAO
  *
@@ -21,9 +23,37 @@ class WarehouseDAO extends PSIBaseDAO {
 	/**
 	 * 获得所有的仓库列表
 	 */
-	public function warehouseList() {
+	public function warehouseList($params) {
 		$db = $this->db;
-		// TODO
+		
+		$loginUserId = $params["loginUserId"];
+		
+		$sql = "select id, code, name, inited, data_org from t_warehouse ";
+		$ds = new DataOrgDAO();
+		$queryParams = array();
+		$rs = $ds->buildSQL(FIdConst::WAREHOUSE, "t_warehouse", $loginUserId);
+		if ($rs) {
+			$sql .= " where " . $rs[0];
+			$queryParams = $rs[1];
+		}
+		
+		$sql .= " order by code";
+		
+		$result = array();
+		$data = $db->query($sql, $queryParams);
+		foreach ( $data as $i => $v ) {
+			$item = array(
+					"id" => $v["id"],
+					"code" => $v["code"],
+					"name" => $v["name"],
+					"inited" => $v["inited"],
+					"dataOrg" => $v["data_org"]
+			);
+			
+			$result[] = $item;
+		}
+		
+		return $result;
 	}
 
 	/**

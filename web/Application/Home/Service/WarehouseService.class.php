@@ -2,10 +2,9 @@
 
 namespace Home\Service;
 
-use Home\Service\IdGenService;
-use Home\Service\BizlogService;
-use Home\Common\FIdConst;
 use Home\DAO\WarehouseDAO;
+use Home\Service\BizlogService;
+use Home\Service\IdGenService;
 
 /**
  * 基础数据仓库Service
@@ -23,29 +22,14 @@ class WarehouseService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		$sql = "select id, code, name, inited, data_org from t_warehouse ";
-		$ds = new DataOrgService();
-		$queryParams = array();
-		$rs = $ds->buildSQL(FIdConst::WAREHOUSE, "t_warehouse");
-		if ($rs) {
-			$sql .= " where " . $rs[0];
-			$queryParams = $rs[1];
-		}
+		$us = new UserService();
+		$params = array(
+				"loginUserId" => $us->getLoginUserId()
+		);
 		
-		$sql .= " order by code";
+		$dao = new WarehouseDAO();
 		
-		$db = M();
-		$result = array();
-		$data = $db->query($sql, $queryParams);
-		foreach ( $data as $i => $v ) {
-			$result[$i]["id"] = $v["id"];
-			$result[$i]["code"] = $v["code"];
-			$result[$i]["name"] = $v["name"];
-			$result[$i]["inited"] = $v["inited"];
-			$result[$i]["dataOrg"] = $v["data_org"];
-		}
-		
-		return $result;
+		return $dao->warehouseList($params);
 	}
 
 	/**
