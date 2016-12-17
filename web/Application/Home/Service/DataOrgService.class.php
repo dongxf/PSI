@@ -20,7 +20,7 @@ class DataOrgService extends PSIBaseService {
 		
 		$dataOrgList = $us->getDataOrgForFId($fid);
 		if (count($dataOrgList) == 0) {
-			return null; // 没有数据域
+			return null; // 全部数据域
 		}
 		
 		// data_org is null 是为了兼容之前的版本遗留下的数据
