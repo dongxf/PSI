@@ -41,7 +41,7 @@ class WarehouseDAO extends PSIBaseDAO {
 		
 		$result = array();
 		$data = $db->query($sql, $queryParams);
-		foreach ( $data as $i => $v ) {
+		foreach ( $data as $v ) {
 			$item = array(
 					"id" => $v["id"],
 					"code" => $v["code"],
