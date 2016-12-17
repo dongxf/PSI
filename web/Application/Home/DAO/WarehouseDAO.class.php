@@ -255,4 +255,35 @@ class WarehouseDAO extends PSIBaseDAO {
 		// 操作成功
 		return null;
 	}
+
+	public function queryData($params) {
+		$db = $this->db;
+		
+		$fid = "1003-01";
+		$loginUserId = $params["loginUserId"];
+		
+		$queryKey = $params["queryKey"];
+		if ($queryKey == null) {
+			$queryKey = "";
+		}
+		
+		$sql = "select id, code, name from t_warehouse
+					where (code like '%s' or name like '%s' or py like '%s' ) ";
+		$key = "%{$queryKey}%";
+		$queryParams = array();
+		$queryParams[] = $key;
+		$queryParams[] = $key;
+		$queryParams[] = $key;
+		
+		$ds = new DataOrgDAO();
+		$rs = $ds->buildSQL($fid, "t_warehouse", $loginUserId);
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = array_merge($queryParams, $rs[1]);
+		}
+		
+		$sql .= " order by code";
+		
+		return $db->query($sql, $queryParams);
+	}
 }

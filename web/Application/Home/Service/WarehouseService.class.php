@@ -138,30 +138,19 @@ class WarehouseService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		if ($queryKey == null) {
-			$queryKey = "";
-		}
+		$us = new UserService();
+		$params = array(
+				"loginUserId" => $us->getLoginUserId(),
+				"queryKey" => $queryKey
+		);
 		
-		$sql = "select id, code, name from t_warehouse 
-					where (code like '%s' or name like '%s' or py like '%s' ) ";
-		$key = "%{$queryKey}%";
-		$queryParams = array();
-		$queryParams[] = $key;
-		$queryParams[] = $key;
-		$queryParams[] = $key;
-		
-		$ds = new DataOrgService();
-		$rs = $ds->buildSQL("1003-01", "t_warehouse");
-		if ($rs) {
-			$sql .= " and " . $rs[0];
-			$queryParams = array_merge($queryParams, $rs[1]);
-		}
-		
-		$sql .= " order by code";
-		
-		return M()->query($sql, $queryParams);
+		$dao = new WarehouseDAO();
+		return $dao->queryData($params);
 	}
 
+	/**
+	 * 编辑数据域
+	 */
 	public function editDataOrg($params) {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
