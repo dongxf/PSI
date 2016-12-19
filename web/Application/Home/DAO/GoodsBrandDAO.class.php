@@ -20,6 +20,9 @@ class GoodsBrandDAO extends PSIBaseDAO {
 		$this->db = $db;
 	}
 
+	/**
+	 * 用递归调用的方式查询所有品牌
+	 */
 	private function allBrandsInternal($db, $parentId, $rs) {
 		$result = array();
 		$sql = "select id, name, full_name
