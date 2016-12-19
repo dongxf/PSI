@@ -102,4 +102,13 @@ class GoodsBrandDAO extends PSIBaseDAO {
 		
 		return $result;
 	}
+
+	public function addBrand($params) {
+		$db = $this->db;
+		
+		// TODO
+		
+		// 操作成功
+		return null;
+	}
 }
