@@ -2,7 +2,7 @@
 
 namespace Home\Service;
 
-use Home\Common\FIdConst;
+use Home\DAO\BizlogDAO;
 
 /**
  * 业务日志Service
@@ -10,6 +10,15 @@ use Home\Common\FIdConst;
  * @author 李静波
  */
 class BizlogService extends PSIBaseService {
+	var $db;
+
+	function __construct($db = null) {
+		if ($db == null) {
+			$db = M();
+		}
+		
+		$this->db = $db;
+	}
 
 	/**
 	 * 返回日志列表
@@ -19,61 +28,16 @@ class BizlogService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		$page = $params["page"];
 		$start = $params["start"];
 		$limit = $params["limit"];
 		
-		$db = M();
+		$db = $this->db;
 		
-		$sql = "select b.id, u.login_name, u.name, b.ip, b.info, b.date_created, 
-					b.log_category, b.ip_from 
-				from t_biz_log b, t_user u
-				where b.user_id = u.id ";
-		$queryParams = array();
-		$ds = new DataOrgService();
-		$rs = $ds->buildSQL(FIdConst::BIZ_LOG, "b", $queryParams);
-		if ($rs) {
-			$sql .= " and " . $rs[0];
-			$queryParams = $rs[1];
-		}
+		$us = new UserService();
+		$params["loginUserId"] = $us->getLoginUserId();
 		
-		$sql .= " order by b.date_created desc
-				limit %d, %d ";
-		$queryParams[] = $start;
-		$queryParams[] = $limit;
-		
-		$data = $db->query($sql, $queryParams);
-		$result = array();
-		
-		foreach ( $data as $i => $v ) {
-			$result[$i]["id"] = $v["id"];
-			$result[$i]["loginName"] = $v["login_name"];
-			$result[$i]["userName"] = $v["name"];
-			$result[$i]["ip"] = $v["ip"];
-			$result[$i]["ipFrom"] = $v["ip_from"];
-			$result[$i]["content"] = $v["info"];
-			$result[$i]["dt"] = $v["date_created"];
-			$result[$i]["logCategory"] = $v["log_category"];
-		}
-		
-		$sql = "select count(*) as cnt 
-				from t_biz_log b, t_user u
-				where b.user_id = u.id";
-		$queryParams = array();
-		$ds = new DataOrgService();
-		$rs = $ds->buildSQL(FIdConst::BIZ_LOG, "b", $queryParams);
-		if ($rs) {
-			$sql .= " and " . $rs[0];
-			$queryParams = $rs[1];
-		}
-		
-		$data = $db->query($sql, $queryParams);
-		$cnt = $data[0]["cnt"];
-		
-		return array(
-				"logs" => $result,
-				"totalCount" => $cnt
-		);
+		$dao = new BizlogDAO($db);
+		return $dao->logList($params);
 	}
 
 	/**
@@ -97,35 +61,24 @@ class BizlogService extends PSIBaseService {
 		
 		$ipFrom = session("PSI_login_user_ip_from");
 		
-		$db = M();
-		$hasDataOrgColumn = $this->columnExists($db, "t_biz_log", "data_org");
-		$hasIpFromColumn = $this->columnExists($db, "t_biz_log", "ip_from");
-		$hasCompanyIdColumn = $this->columnExists($db, "t_biz_log", "company_id");
+		$db = $this->db;
 		
-		if ($hasDataOrgColumn && $hasIpFromColumn) {
-			$dataOrg = $us->getLoginUserDataOrg();
-			if ($hasCompanyIdColumn) {
-				$companyId = $us->getCompanyId();
-				
-				$sql = "insert into t_biz_log (user_id, info, ip, date_created, log_category, data_org, 
-							ip_from, company_id)
-						values ('%s', '%s', '%s',  now(), '%s', '%s', '%s', '%s')";
-				$db->execute($sql, $us->getLoginUserId(), $log, $ip, $category, $dataOrg, $ipFrom, 
-						$companyId);
-			} else {
-				// 兼容旧版本
-				
-				$sql = "insert into t_biz_log (user_id, info, ip, date_created, log_category, data_org, ip_from)
-					values ('%s', '%s', '%s',  now(), '%s', '%s', '%s')";
-				$db->execute($sql, $us->getLoginUserId(), $log, $ip, $category, $dataOrg, $ipFrom);
-			}
-		} else {
-			// 兼容旧版本
-			
-			$sql = "insert into t_biz_log (user_id, info, ip, date_created, log_category)
-					values ('%s', '%s', '%s',  now(), '%s')";
-			$db->execute($sql, $us->getLoginUserId(), $log, $ip, $category);
-		}
+		$dataOrg = $us->getLoginUserDataOrg();
+		$companyId = $us->getCompanyId();
+		
+		$params = array(
+				"loginUserId" => $us->getLoginUserId(),
+				"log" => $log,
+				"category" => $category,
+				"ip" => $ip,
+				"ipFrom" => $ipFrom,
+				"dataOrg" => $dataOrg,
+				"companyId" => $companyId
+		);
+		
+		$dao = new BizlogDAO($db);
+		
+		return $dao->insertBizlog($params);
 	}
 
 	private function getClientIP() {
