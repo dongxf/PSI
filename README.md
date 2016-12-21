@@ -43,7 +43,9 @@ PSI行业版
 -------------
 > 食品行业版   http://git.oschina.net/crm8000/PSI_Food_Industry
 >
-> 快递管理系统 http://git.oschina.net/crm8000/PSI_FMS
+> 快递管理系统 
+> web端：http://git.oschina.net/crm8000/PSI_FMS
+> 微信端：http://git.oschina.net/crm8000/PSI_FMS_H5
 
 如需要技术支持，请联系
 -------------
