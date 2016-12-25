@@ -2,6 +2,8 @@
 
 namespace Home\Service;
 
+use Home\DAO\IdGenDAO;
+
 /**
  * 生成UUIDService
  *
@@ -17,7 +19,7 @@ class IdGenService {
 			$db = M();
 		}
 		
-		$data = $db->query("select UUID() as uuid");
-		return strtoupper($data[0]["uuid"]);
+		$dao = new IdGenDAO($db);
+		return $dao->newId();
 	}
 }
