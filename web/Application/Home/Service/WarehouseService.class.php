@@ -74,7 +74,7 @@ class WarehouseService extends PSIBaseService {
 			$params["companyId"] = $us->getCompanyId();
 			
 			$idGen = new IdGenService();
-			$id = $idGen->newId();
+			$id = $idGen->newId($db);
 			$params["id"] = $id;
 			
 			$rc = $dao->addWarehouse($params);
