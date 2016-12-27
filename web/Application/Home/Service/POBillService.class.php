@@ -365,7 +365,8 @@ class POBillService extends PSIBaseService {
 							values ('%s', now(), '%s', %d, %f,
 								%f, '%s', %d, %f, %f, 0, %d, %d, '%s', '%s')";
 				$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsMoney, 
-						$goodsPrice, $id, $taxRate, $tax, $moneyWithTax, $goodsCount, $i, $dataOrg, $companyId);
+						$goodsPrice, $id, $taxRate, $tax, $moneyWithTax, $goodsCount, $i, $dataOrg, 
+						$companyId);
 				if ($rc === false) {
 					$db->rollback();
 					return $this->sqlError(__LINE__);
@@ -495,6 +496,10 @@ class POBillService extends PSIBaseService {
 				$result["orgId"] = $data[0]["id"];
 				$result["orgFullName"] = $data[0]["full_name"];
 			}
+			
+			// 采购订单默认付款方式
+			$bc = new BizConfigService();
+			$result["paymentType"] = $bc->getPOBillDefaultPayment();
 		}
 		
 		return $result;

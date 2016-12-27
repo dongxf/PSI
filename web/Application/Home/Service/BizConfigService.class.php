@@ -43,6 +43,8 @@ class BizConfigService extends PSIBaseService {
 				$result[$i]["displayValue"] = $v["value"] == 1 ? "允许编辑销售单价" : "不允许编辑销售单价";
 			} else if ($id == "2001-01" || $id == "2002-02") {
 				$result[$i]["displayValue"] = $this->getWarehouseName($v["value"]);
+			} else if ($id == "2001-02") {
+				$result[$i]["displayValue"] = $this->getPOBillPaymentName($v["value"]);
 			} else {
 				$result[$i]["displayValue"] = $v["value"];
 			}
@@ -95,6 +97,13 @@ class BizConfigService extends PSIBaseService {
 						"value" => "",
 						"note" => "",
 						"showOrder" => 200
+				),
+				array(
+						"id" => "2001-02",
+						"name" => "采购订单默认付款方式",
+						"value" => "0",
+						"note" => "",
+						"showOrder" => 201
 				),
 				array(
 						"id" => "2002-02",
@@ -345,7 +354,7 @@ class BizConfigService extends PSIBaseService {
 			if ($key == "9002-01") {
 				if ($this->isDemo()) {
 					// 演示环境下，不让修改产品名称
-					$value = "开源进销存PSI";
+					$value = "PSI";
 				}
 			}
 			
@@ -400,6 +409,9 @@ class BizConfigService extends PSIBaseService {
 			} else if ($key == "2001-01") {
 				$v = $this->getWarehouseName($value);
 				$log = "把[{$itemName}]设置为[{$v}]";
+			} else if ($key == "2001-02") {
+				$v = $this->getPOBillPaymentName($value);
+				$log = "把[{$itemName}]设置为[{$v}]";
 			} else if ($key == "2002-01") {
 				$v = $value == 1 ? "允许编辑销售单价" : "不允许编辑销售单价";
 				$log = "把[{$itemName}]设置为[{$v}]";
@@ -420,6 +432,19 @@ class BizConfigService extends PSIBaseService {
 		$db->commit();
 		
 		return $this->ok();
+	}
+
+	private function getPOBillPaymentName($id) {
+		switch ($id) {
+			case "0" :
+				return "记应付账款";
+			case "1" :
+				return "现金付款";
+			case "2" :
+				return "预付款";
+		}
+		
+		return "";
 	}
 
 	private function getWarehouseName($id) {
@@ -737,6 +762,31 @@ class BizConfigService extends PSIBaseService {
 			
 			if ($result == null || $result == "") {
 				$result = "SO";
+			}
+		}
+		
+		return $result;
+	}
+
+	/**
+	 * 获得采购订单默认付款方式
+	 */
+	public function getPOBillDefaultPayment() {
+		$result = "0";
+		
+		$db = M();
+		$us = new UserService();
+		$companyId = $us->getCompanyId();
+		
+		$id = "2001-02";
+		$sql = "select value from t_config
+				where id = '%s' and company_id = '%s' ";
+		$data = $db->query($sql, $id, $companyId);
+		if ($data) {
+			$result = $data[0]["value"];
+			
+			if ($result == null || $result == "") {
+				$result = "0";
 			}
 		}
 		
