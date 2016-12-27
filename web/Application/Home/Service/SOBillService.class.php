@@ -262,6 +262,10 @@ class SOBillService extends PSIBaseService {
 				$result["orgId"] = $data[0]["id"];
 				$result["orgFullName"] = $data[0]["full_name"];
 			}
+			
+			// 默认收款方式
+			$bc = new BizConfigService();
+			$result["receivingType"] = $bc->getSOBillDefaultReceving();
 		}
 		
 		return $result;
