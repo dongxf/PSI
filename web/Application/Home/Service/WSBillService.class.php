@@ -84,6 +84,10 @@ class WSBillService extends PSIBaseService {
 					
 					$result["items"] = $items;
 				}
+			} else {
+				// 销售出库单默认收款方式
+				$bc = new BizConfigService();
+				$result["receivingType"] = $bc->getWSBillDefaultReceving();
 			}
 			
 			return $result;

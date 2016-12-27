@@ -47,6 +47,8 @@ class BizConfigService extends PSIBaseService {
 				$result[$i]["displayValue"] = $this->getPOBillPaymentName($v["value"]);
 			} else if ($id == "2001-03") {
 				$result[$i]["displayValue"] = $this->getPWBillPaymentName($v["value"]);
+			} else if ($id == "2002-03") {
+				$result[$i]["displayValue"] = $this->getWSBillPaymentName($v["value"]);
 			} else {
 				$result[$i]["displayValue"] = $v["value"];
 			}
@@ -127,6 +129,13 @@ class BizConfigService extends PSIBaseService {
 						"value" => "0",
 						"note" => "当允许编辑的时候，还需要给用户赋予权限[销售出库单允许编辑销售单价]",
 						"showOrder" => 301
+				),
+				array(
+						"id" => "2002-03",
+						"name" => "销售出库单默认收款方式",
+						"value" => "0",
+						"note" => "",
+						"showOrder" => 302
 				),
 				array(
 						"id" => "1003-02",
@@ -430,6 +439,9 @@ class BizConfigService extends PSIBaseService {
 			} else if ($key == "2002-02") {
 				$v = $this->getWarehouseName($value);
 				$log = "把[{$itemName}]设置为[{$v}]";
+			} else if ($key == "2002-03") {
+				$v = $this->getWSBillPaymentName($value);
+				$log = "把[{$itemName}]设置为[{$v}]";
 			} else {
 				$log = "把[{$itemName}]设置为[{$value}]";
 			}
@@ -467,6 +479,19 @@ class BizConfigService extends PSIBaseService {
 				return "现金付款";
 			case "2" :
 				return "预付款";
+		}
+		
+		return "";
+	}
+
+	private function getWSBillPaymentName($id) {
+		switch ($id) {
+			case "0" :
+				return "记应收账款";
+			case "1" :
+				return "现金收款";
+			case "2" :
+				return "用预收款支付";
 		}
 		
 		return "";
@@ -829,6 +854,31 @@ class BizConfigService extends PSIBaseService {
 		$companyId = $us->getCompanyId();
 		
 		$id = "2001-03";
+		$sql = "select value from t_config
+				where id = '%s' and company_id = '%s' ";
+		$data = $db->query($sql, $id, $companyId);
+		if ($data) {
+			$result = $data[0]["value"];
+			
+			if ($result == null || $result == "") {
+				$result = "0";
+			}
+		}
+		
+		return $result;
+	}
+
+	/**
+	 * 获得销售出库单默认收款方式
+	 */
+	public function getWSBillDefaultReceving() {
+		$result = "0";
+		
+		$db = M();
+		$us = new UserService();
+		$companyId = $us->getCompanyId();
+		
+		$id = "2002-03";
 		$sql = "select value from t_config
 				where id = '%s' and company_id = '%s' ";
 		$data = $db->query($sql, $id, $companyId);
