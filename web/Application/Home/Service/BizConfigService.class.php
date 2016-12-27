@@ -48,7 +48,7 @@ class BizConfigService extends PSIBaseService {
 			} else if ($id == "2001-03") {
 				$result[$i]["displayValue"] = $this->getPWBillPaymentName($v["value"]);
 			} else if ($id == "2002-03") {
-				$result[$i]["displayValue"] = $this->getWSBillPaymentName($v["value"]);
+				$result[$i]["displayValue"] = $this->getWSBillRecevingName($v["value"]);
 			} else {
 				$result[$i]["displayValue"] = $v["value"];
 			}
@@ -440,7 +440,7 @@ class BizConfigService extends PSIBaseService {
 				$v = $this->getWarehouseName($value);
 				$log = "把[{$itemName}]设置为[{$v}]";
 			} else if ($key == "2002-03") {
-				$v = $this->getWSBillPaymentName($value);
+				$v = $this->getWSBillRecevingName($value);
 				$log = "把[{$itemName}]设置为[{$v}]";
 			} else {
 				$log = "把[{$itemName}]设置为[{$value}]";
@@ -484,7 +484,7 @@ class BizConfigService extends PSIBaseService {
 		return "";
 	}
 
-	private function getWSBillPaymentName($id) {
+	private function getWSBillRecevingName($id) {
 		switch ($id) {
 			case "0" :
 				return "记应收账款";
