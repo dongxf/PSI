@@ -140,13 +140,29 @@ Ext.define("PSI.BizConfig.EditForm", {
 																			"现金付款"],
 																	["2", "预付款"]]
 														}),
-												value : "0",
-												listeners : {
-													specialkey : {
-														fn : me.onEditSpecialKey,
-														scope : me
-													}
-												}
+												value : "0"
+											}, {
+												id : "editName2001-03",
+												xtype : "displayfield"
+											}, {
+												id : "editValue2001-03",
+												xtype : "combo",
+												queryMode : "local",
+												editable : false,
+												valueField : "id",
+												store : Ext.create(
+														"Ext.data.ArrayStore",
+														{
+															fields : ["id",
+																	"text"],
+															data : [
+																	["0",
+																			"记应付账款"],
+																	["1",
+																			"现金付款"],
+																	["2", "预付款"]]
+														}),
+												value : "0"
 											}]
 								}, {
 									title : "销售",
@@ -319,6 +335,7 @@ Ext.define("PSI.BizConfig.EditForm", {
 			'value1003-02' : Ext.getCmp("editValue1003-02").getValue(),
 			'value2001-01' : Ext.getCmp("editValue2001-01").getValue(),
 			'value2001-02' : Ext.getCmp("editValue2001-02").getValue(),
+			'value2001-03' : Ext.getCmp("editValue2001-03").getValue(),
 			'value2002-01' : Ext.getCmp("editValue2002-01").getValue(),
 			'value2002-02' : Ext.getCmp("editValue2002-02").getValue(),
 			'value9001-01' : Ext.getCmp("editValue9001-01").getValue(),

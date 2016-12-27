@@ -578,6 +578,10 @@ class PWBillService extends PSIBaseService {
 					
 					$result["items"] = $items;
 				}
+			} else {
+				// 采购入库单默认付款方式
+				$bc = new BizConfigService();
+				$result["paymentType"] = $bc->getPWBillDefaultPayment();
 			}
 		}
 		

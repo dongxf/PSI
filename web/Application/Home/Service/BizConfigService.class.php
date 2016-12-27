@@ -45,6 +45,8 @@ class BizConfigService extends PSIBaseService {
 				$result[$i]["displayValue"] = $this->getWarehouseName($v["value"]);
 			} else if ($id == "2001-02") {
 				$result[$i]["displayValue"] = $this->getPOBillPaymentName($v["value"]);
+			} else if ($id == "2001-03") {
+				$result[$i]["displayValue"] = $this->getPWBillPaymentName($v["value"]);
 			} else {
 				$result[$i]["displayValue"] = $v["value"];
 			}
@@ -104,6 +106,13 @@ class BizConfigService extends PSIBaseService {
 						"value" => "0",
 						"note" => "",
 						"showOrder" => 201
+				),
+				array(
+						"id" => "2001-03",
+						"name" => "采购入库单默认付款方式",
+						"value" => "0",
+						"note" => "",
+						"showOrder" => 202
 				),
 				array(
 						"id" => "2002-02",
@@ -412,6 +421,9 @@ class BizConfigService extends PSIBaseService {
 			} else if ($key == "2001-02") {
 				$v = $this->getPOBillPaymentName($value);
 				$log = "把[{$itemName}]设置为[{$v}]";
+			} else if ($key == "2001-03") {
+				$v = $this->getPWBillPaymentName($value);
+				$log = "把[{$itemName}]设置为[{$v}]";
 			} else if ($key == "2002-01") {
 				$v = $value == 1 ? "允许编辑销售单价" : "不允许编辑销售单价";
 				$log = "把[{$itemName}]设置为[{$v}]";
@@ -435,6 +447,19 @@ class BizConfigService extends PSIBaseService {
 	}
 
 	private function getPOBillPaymentName($id) {
+		switch ($id) {
+			case "0" :
+				return "记应付账款";
+			case "1" :
+				return "现金付款";
+			case "2" :
+				return "预付款";
+		}
+		
+		return "";
+	}
+
+	private function getPWBillPaymentName($id) {
 		switch ($id) {
 			case "0" :
 				return "记应付账款";
@@ -779,6 +804,31 @@ class BizConfigService extends PSIBaseService {
 		$companyId = $us->getCompanyId();
 		
 		$id = "2001-02";
+		$sql = "select value from t_config
+				where id = '%s' and company_id = '%s' ";
+		$data = $db->query($sql, $id, $companyId);
+		if ($data) {
+			$result = $data[0]["value"];
+			
+			if ($result == null || $result == "") {
+				$result = "0";
+			}
+		}
+		
+		return $result;
+	}
+
+	/**
+	 * 获得采购入库单默认付款方式
+	 */
+	public function getPWBillDefaultPayment() {
+		$result = "0";
+		
+		$db = M();
+		$us = new UserService();
+		$companyId = $us->getCompanyId();
+		
+		$id = "2001-03";
 		$sql = "select value from t_config
 				where id = '%s' and company_id = '%s' ";
 		$data = $db->query($sql, $id, $companyId);
