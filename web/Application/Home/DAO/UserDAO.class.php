@@ -149,4 +149,53 @@ class UserDAO extends PSIBaseDAO {
 			return "";
 		}
 	}
+
+	/**
+	 * 获得某个组织机构的人员
+	 */
+	public function users($params) {
+		$db = $this->db;
+		
+		$orgId = $params["orgId"];
+		$start = $params["start"];
+		$limit = $params["limit"];
+		
+		$sql = "select id, login_name,  name, enabled, org_code, gender, birthday, id_card_number, tel,
+				    tel02, address, data_org
+				from t_user
+				where org_id = '%s'
+				order by org_code
+				limit %d , %d ";
+		
+		$data = $db->query($sql, $orgId, $start, $limit);
+		
+		$result = array();
+		
+		foreach ( $data as $key => $value ) {
+			$result[$key]["id"] = $value["id"];
+			$result[$key]["loginName"] = $value["login_name"];
+			$result[$key]["name"] = $value["name"];
+			$result[$key]["enabled"] = $value["enabled"];
+			$result[$key]["orgCode"] = $value["org_code"];
+			$result[$key]["gender"] = $value["gender"];
+			$result[$key]["birthday"] = $value["birthday"];
+			$result[$key]["idCardNumber"] = $value["id_card_number"];
+			$result[$key]["tel"] = $value["tel"];
+			$result[$key]["tel02"] = $value["tel02"];
+			$result[$key]["address"] = $value["address"];
+			$result[$key]["dataOrg"] = $value["data_org"];
+		}
+		
+		$sql = "select count(*) as cnt
+				from t_user
+				where org_id = '%s' ";
+		
+		$data = $db->query($sql, $orgId);
+		$cnt = $data[0]["cnt"];
+		
+		return array(
+				"dataList" => $result,
+				"totalCount" => $cnt
+		);
+	}
 }
