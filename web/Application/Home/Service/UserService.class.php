@@ -5,6 +5,7 @@ namespace Home\Service;
 use Home\Common\DemoConst;
 use Home\Common\FIdConst;
 use Home\DAO\UserDAO;
+use Home\DAO\OrgDAO;
 
 /**
  * 用户Service
@@ -402,10 +403,19 @@ class UserService extends PSIBaseService {
 			}
 		}
 		
+		$params = array(
+				"id" => $id,
+				"name" => $name,
+				"parentId" => $parentId,
+				"orgCode" => $orgCode
+		);
+		
 		$db = M();
 		$db->startTrans();
 		
 		$log = null;
+		
+		$dao = new OrgDAO($db);
 		
 		if ($id) {
 			// 编辑
@@ -496,60 +506,12 @@ class UserService extends PSIBaseService {
 			$idGenService = new IdGenService();
 			$id = $idGenService->newId();
 			
-			$sql = "select full_name from t_org where id = '%s' ";
-			$parentOrg = $db->query($sql, $parentId);
-			$fullName = "";
-			if (! $parentOrg) {
-				$parentId = null;
-				$fullName = $name;
-			} else {
-				$fullName = $parentOrg[0]["full_name"] . "\\" . $name;
-			}
+			$params["id"] = $id;
 			
-			if ($parentId == null) {
-				$dataOrg = "01";
-				$sql = "select data_org from t_org 
-						where parent_id is null
-						order by data_org desc limit 1";
-				$data = $db->query($sql);
-				if ($data) {
-					$dataOrg = $this->incDataOrg($data[0]["data_org"]);
-				}
-				
-				$sql = "insert into t_org (id, name, full_name, org_code, parent_id, data_org) 
-						values ('%s', '%s', '%s', '%s', null, '%s')";
-				
-				$rc = $db->execute($sql, $id, $name, $fullName, $orgCode, $dataOrg);
-				if ($rc === false) {
-					$db->rollback();
-					return $this->sqlError(__LINE__);
-				}
-			} else {
-				$dataOrg = "";
-				$sql = "select data_org from t_org
-						where parent_id = '%s' 
-						order by data_org desc limit 1";
-				$data = $db->query($sql, $parentId);
-				if ($data) {
-					$dataOrg = $this->incDataOrg($data[0]["data_org"]);
-				} else {
-					$sql = "select data_org from t_org where id = '%s' ";
-					$data = $db->query($sql, $parentId);
-					if (! $data) {
-						$db->rollback();
-						return $this->bad("上级组织机构不存在");
-					}
-					$dataOrg = $data[0]["data_org"] . "01";
-				}
-				
-				$sql = "insert into t_org (id, name, full_name, org_code, parent_id, data_org) 
-						values ('%s', '%s', '%s', '%s', '%s', '%s')";
-				
-				$rc = $db->execute($sql, $id, $name, $fullName, $orgCode, $parentId, $dataOrg);
-				if ($rc === false) {
-					$db->rollback();
-					return $this->sqlError(__LINE__);
-				}
+			$rc = $dao->addOrg($params);
+			if ($rc) {
+				$db->rollback();
+				return $rc;
 			}
 			
 			$log = "新增组织机构：名称 = {$name} 编码 = {$orgCode}";
@@ -557,7 +519,7 @@ class UserService extends PSIBaseService {
 		
 		// 记录业务日志
 		if ($log) {
-			$bs = new BizlogService();
+			$bs = new BizlogService($db);
 			$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		}
 		
