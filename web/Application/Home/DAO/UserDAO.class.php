@@ -391,4 +391,117 @@ class UserDAO extends PSIBaseDAO {
 		// 操作成功
 		return null;
 	}
+
+	public function getUserById($id) {
+		$db = $this->db;
+		$sql = "select name from t_user where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if (! $data) {
+			return null;
+		}
+		
+		return array(
+				"name" => $data[0]["name"]
+		);
+	}
+
+	/**
+	 * 删除用户
+	 */
+	public function deleteUser($params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		
+		$userName = $params["name"];
+		
+		// 判断在采购入库单中是否使用了该用户
+		$sql = "select count(*) as cnt from t_pw_bill where biz_user_id = '%s' or input_user_id = '%s' ";
+		$data = $db->query($sql, $id, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("用户[{$userName}]已经在采购入库单中使用了，不能删除");
+		}
+		
+		// 判断在销售出库单中是否使用了该用户
+		$sql = "select count(*) as cnt from t_ws_bill where biz_user_id = '%s' or input_user_id = '%s' ";
+		$data = $db->query($sql, $id, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("用户[{$userName}]已经在销售出库单中使用了，不能删除");
+		}
+		
+		// 判断在销售退货入库单中是否使用了该用户
+		$sql = "select count(*) as cnt from t_sr_bill where biz_user_id = '%s' or input_user_id = '%s' ";
+		$data = $db->query($sql, $id, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("用户[{$userName}]已经在销售退货入库单中使用了，不能删除");
+		}
+		
+		// 判断在采购退货出库单中是否使用了该用户
+		$sql = "select count(*) as cnt from t_pr_bill where biz_user_id = '%s' or input_user_id = '%s' ";
+		$data = $db->query($sql, $id, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("用户[{$userName}]已经在采购退货出库单中使用了，不能删除");
+		}
+		
+		// 判断在调拨单中是否使用了该用户
+		$sql = "select count(*) as cnt from t_it_bill where biz_user_id = '%s' or input_user_id = '%s' ";
+		$data = $db->query($sql, $id, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("用户[{$userName}]已经在调拨单中使用了，不能删除");
+		}
+		
+		// 判断在盘点单中是否使用了该用户
+		$sql = "select count(*) as cnt from t_ic_bill where biz_user_id = '%s' or input_user_id = '%s' ";
+		$data = $db->query($sql, $id, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("用户[{$userName}]已经在盘点单中使用了，不能删除");
+		}
+		
+		// 判断在收款记录中是否使用了该用户
+		$sql = "select count(*) as cnt from t_receiving where rv_user_id = '%s' or input_user_id = '%s' ";
+		$data = $db->query($sql, $id, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("用户[{$userName}]已经在收款记录中使用了，不能删除");
+		}
+		
+		// 判断在付款记录中是否使用了该用户
+		$sql = "select count(*) as cnt from t_payment where pay_user_id = '%s' or input_user_id = '%s' ";
+		$data = $db->query($sql, $id, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("用户[{$userName}]已经在盘点单中使用了，不能删除");
+		}
+		
+		// 判断在采购订单中是否使用了该用户
+		$sql = "select count(*) as cnt from t_po_bill where biz_user_id = '%s' or input_user_id = '%s' ";
+		$data = $db->query($sql, $id, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("用户[{$userName}]已经在采购订单中使用了，不能删除");
+		}
+		
+		// TODO 如果增加了其他单据，同样需要做出判断是否使用了该用户
+		
+		$sql = "delete from t_role_user where user_id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		$sql = "delete from t_user where id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		return null;
+	}
 }
