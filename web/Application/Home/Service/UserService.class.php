@@ -449,7 +449,7 @@ class UserService extends PSIBaseService {
 		}
 		
 		$log = "删除组织机构： 名称 = {$name} 编码  = {$orgCode}";
-		$bs = new BizlogService();
+		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		
 		$db->commit();
