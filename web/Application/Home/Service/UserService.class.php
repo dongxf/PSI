@@ -577,34 +577,26 @@ class UserService extends PSIBaseService {
 			return $this->bad("在演示环境下，admin用户的密码不希望被您修改，请见谅");
 		}
 		
-		$password = $params["password"];
-		if (strlen($password) < 5) {
-			return $this->bad("密码长度不能小于5位");
-		}
-		
 		$db = M();
 		$db->startTrans();
 		
-		$sql = "select login_name, name from t_user where id = '%s' ";
-		$data = $db->query($sql, $id);
-		if (! $data) {
+		$dao = new UserDAO($db);
+		$user = $dao->getUserById($id);
+		if (! $user) {
 			$db->rollback();
 			return $this->bad("要修改密码的用户不存在");
 		}
-		$loginName = $data[0]["login_name"];
-		$name = $data[0]["name"];
+		$loginName = $user["loginName"];
+		$name = $user["name"];
 		
-		$sql = "update t_user 
-				set password = '%s' 
-				where id = '%s' ";
-		$rc = $db->execute($sql, md5($password), $id);
-		if ($rc === false) {
+		$rc = $dao->changePassword($params);
+		if ($rc) {
 			$db->rollback();
-			return $this->sqlError(__LINE__);
+			return $rc;
 		}
 		
 		$log = "修改用户[登录名 ={$loginName} 姓名 = {$name}]的密码";
-		$bs = new BizlogService();
+		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		
 		$db->commit();

@@ -394,13 +394,14 @@ class UserDAO extends PSIBaseDAO {
 
 	public function getUserById($id) {
 		$db = $this->db;
-		$sql = "select name from t_user where id = '%s' ";
+		$sql = "select login_name, name from t_user where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if (! $data) {
 			return null;
 		}
 		
 		return array(
+				"loginName" => $data[0]["login_name"],
 				"name" => $data[0]["name"]
 		);
 	}
@@ -497,6 +498,31 @@ class UserDAO extends PSIBaseDAO {
 		
 		$sql = "delete from t_user where id = '%s' ";
 		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		return null;
+	}
+
+	/**
+	 * 修改用户登录密码
+	 */
+	public function changePassword($params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		
+		$password = $params["password"];
+		if (strlen($password) < 5) {
+			return $this->bad("密码长度不能小于5位");
+		}
+		
+		$sql = "update t_user
+				set password = '%s'
+				where id = '%s' ";
+		$rc = $db->execute($sql, md5($password), $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
