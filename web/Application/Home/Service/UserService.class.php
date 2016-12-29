@@ -469,14 +469,6 @@ class UserService extends PSIBaseService {
 		$loginName = $params["loginName"];
 		$name = $params["name"];
 		$orgCode = $params["orgCode"];
-		$orgId = $params["orgId"];
-		$enabled = $params["enabled"];
-		$gender = $params["gender"];
-		$birthday = $params["birthday"];
-		$idCardNumber = $params["idCardNumber"];
-		$tel = $params["tel"];
-		$tel02 = $params["tel02"];
-		$address = $params["address"];
 		
 		if ($this->isDemo()) {
 			if ($id == DemoConst::ADMIN_USER_ID) {
@@ -486,149 +478,36 @@ class UserService extends PSIBaseService {
 		
 		$pys = new PinyinService();
 		$py = $pys->toPY($name);
+		$params["py"] = $py;
 		
 		$db = M();
 		$db->startTrans();
 		
+		$dao = new UserDAO($db);
+		
+		$log = null;
+		
 		if ($id) {
 			// 修改
-			// 检查登录名是否被使用
-			$sql = "select count(*) as cnt from t_user where login_name = '%s' and id <> '%s' ";
-			$data = $db->query($sql, $loginName, $id);
-			$cnt = $data[0]["cnt"];
-			if ($cnt > 0) {
-				$db->rollback();
-				return $this->bad("登录名 [$loginName] 已经存在");
-			}
 			
-			// 检查组织机构是否存在
-			$sql = "select count(*) as cnt from t_org where id = '%s' ";
-			$data = $db->query($sql, $orgId);
-			$cnt = $data[0]["cnt"];
-			if ($cnt != 1) {
+			$rc = $dao->updateUser($params);
+			if ($rc) {
 				$db->rollback();
-				return $this->bad("组织机构不存在");
-			}
-			
-			// 检查编码是否存在
-			$sql = "select count(*) as cnt from t_user 
-					where org_code = '%s' and id <> '%s' ";
-			$data = $db->query($sql, $orgCode, $id);
-			$cnt = $data[0]["cnt"];
-			if ($cnt > 0) {
-				$db->rollback();
-				return $this->bad("编码[$orgCode]已经被其他用户使用");
-			}
-			
-			$sql = "select org_id, data_org from t_user where id = '%s'";
-			$data = $db->query($sql, $id);
-			$oldOrgId = $data[0]["org_id"];
-			$dataOrg = $data[0]["data_org"];
-			if ($oldOrgId != $orgId) {
-				// 修改了用户的组织机构， 这个时候要调整数据域
-				$sql = "select data_org from t_user 
-						where org_id = '%s' 
-						order by data_org desc limit 1";
-				$data = $db->query($sql, $orgId);
-				if ($data) {
-					$dataOrg = $this->incDataOrg($data[0]["data_org"]);
-				} else {
-					$sql = "select data_org from t_org where id = '%s' ";
-					$data = $db->query($sql, $orgId);
-					$dataOrg = $data[0]["data_org"] . "0001";
-				}
-				$sql = "update t_user
-					set login_name = '%s', name = '%s', org_code = '%s',
-					    org_id = '%s', enabled = %d, py = '%s',
-					    gender = '%s', birthday = '%s', id_card_number = '%s',
-					    tel = '%s', tel02 = '%s', address = '%s', data_org = '%s'
-					where id = '%s' ";
-				$rc = $db->execute($sql, $loginName, $name, $orgCode, $orgId, $enabled, $py, 
-						$gender, $birthday, $idCardNumber, $tel, $tel02, $address, $dataOrg, $id);
-				if ($rc === false) {
-					$db->rollback();
-					return $this->sqlError(__LINE__);
-				}
-			} else {
-				$sql = "update t_user
-					set login_name = '%s', name = '%s', org_code = '%s',
-					    org_id = '%s', enabled = %d, py = '%s',
-					    gender = '%s', birthday = '%s', id_card_number = '%s',
-					    tel = '%s', tel02 = '%s', address = '%s'
-					where id = '%s' ";
-				$rc = $db->execute($sql, $loginName, $name, $orgCode, $orgId, $enabled, $py, 
-						$gender, $birthday, $idCardNumber, $tel, $tel02, $address, $id);
-				if ($rc === false) {
-					$db->rollback();
-					return $this->sqlError(__LINE__);
-				}
+				return $rc;
 			}
 			
 			$log = "编辑用户： 登录名 = {$loginName} 姓名 = {$name} 编码 = {$orgCode}";
 		} else {
 			// 新建
-			// 检查登录名是否被使用
-			$sql = "select count(*) as cnt from t_user where login_name = '%s' ";
-			$data = $db->query($sql, $loginName);
-			$cnt = $data[0]["cnt"];
-			if ($cnt > 0) {
-				$db->rollback();
-				return $this->bad("登录名 [$loginName] 已经存在");
-			}
 			
-			// 检查组织机构是否存在
-			$sql = "select count(*) as cnt from t_org where id = '%s' ";
-			$data = $db->query($sql, $orgId);
-			$cnt = $data[0]["cnt"];
-			if ($cnt != 1) {
-				$db->rollback();
-				return $this->bad("组织机构不存在");
-			}
-			
-			// 检查编码是否存在
-			$sql = "select count(*) as cnt from t_user where org_code = '%s' ";
-			$data = $db->query($sql, $orgCode);
-			$cnt = $data[0]["cnt"];
-			if ($cnt > 0) {
-				$db->rollback();
-				return $this->bad("编码[$orgCode]已经被其他用户使用");
-			}
-			
-			// 新增用户的默认密码
-			$password = md5("123456");
-			
-			// 生成数据域
-			$dataOrg = "";
-			$sql = "select data_org 
-					from t_user
-					where org_id = '%s'
-					order by data_org desc limit 1";
-			$data = $db->query($sql, $orgId);
-			if ($data) {
-				$dataOrg = $this->incDataOrgForUser($data[0]["data_org"]);
-			} else {
-				$sql = "select data_org from t_org where id = '%s' ";
-				$data = $db->query($sql, $orgId);
-				if ($data) {
-					$dataOrg = $data[0]["data_org"] . "0001";
-				} else {
-					$db->rollback();
-					return $this->bad("组织机构不存在");
-				}
-			}
-			
-			$idGen = new IdGenService();
+			$idGen = new IdGenService($db);
 			$id = $idGen->newId();
+			$params["id"] = $id;
 			
-			$sql = "insert into t_user (id, login_name, name, org_code, org_id, enabled, password, py,
-					gender, birthday, id_card_number, tel, tel02, address, data_org) 
-					values ('%s', '%s', '%s', '%s', '%s', %d, '%s', '%s',
-					'%s', '%s', '%s', '%s', '%s', '%s', '%s') ";
-			$rc = $db->execute($sql, $id, $loginName, $name, $orgCode, $orgId, $enabled, $password, 
-					$py, $gender, $birthday, $idCardNumber, $tel, $tel02, $address, $dataOrg);
-			if ($rc === false) {
+			$rc = $dao->addUser($params);
+			if ($rc) {
 				$db->rollback();
-				return $this->sqlError(__LINE__);
+				return $rc;
 			}
 			
 			$log = "新建用户： 登录名 = {$loginName} 姓名 = {$name} 编码 = {$orgCode}";
@@ -636,7 +515,7 @@ class UserService extends PSIBaseService {
 		
 		// 记录业务日志
 		if ($log) {
-			$bs = new BizlogService();
+			$bs = new BizlogService($db);
 			$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		}
 		

@@ -198,4 +198,197 @@ class UserDAO extends PSIBaseDAO {
 				"totalCount" => $cnt
 		);
 	}
+
+	/**
+	 * 做类似这种增长 '01010001' => '01010002', 用户的数据域+1
+	 */
+	private function incDataOrgForUser($dataOrg) {
+		$pre = substr($dataOrg, 0, strlen($dataOrg) - 4);
+		$seed = intval(substr($dataOrg, - 4)) + 1;
+		
+		return $pre . str_pad($seed, 4, "0", STR_PAD_LEFT);
+	}
+
+	/**
+	 * 新增用户
+	 */
+	public function addUser($params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		$loginName = $params["loginName"];
+		$name = $params["name"];
+		$orgCode = $params["orgCode"];
+		$orgId = $params["orgId"];
+		$enabled = $params["enabled"];
+		$gender = $params["gender"];
+		$birthday = $params["birthday"];
+		$idCardNumber = $params["idCardNumber"];
+		$tel = $params["tel"];
+		$tel02 = $params["tel02"];
+		$address = $params["address"];
+		
+		$py = $params["py"];
+		
+		// 检查登录名是否被使用
+		$sql = "select count(*) as cnt from t_user where login_name = '%s' ";
+		$data = $db->query($sql, $loginName);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("登录名 [$loginName] 已经存在");
+		}
+		
+		// 检查组织机构是否存在
+		$sql = "select count(*) as cnt from t_org where id = '%s' ";
+		$data = $db->query($sql, $orgId);
+		$cnt = $data[0]["cnt"];
+		if ($cnt != 1) {
+			return $this->bad("组织机构不存在");
+		}
+		
+		// 检查编码是否存在
+		$sql = "select count(*) as cnt from t_user where org_code = '%s' ";
+		$data = $db->query($sql, $orgCode);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("编码[$orgCode]已经被其他用户使用");
+		}
+		
+		// 新增用户的默认密码
+		$password = md5("123456");
+		
+		// 生成数据域
+		$dataOrg = "";
+		$sql = "select data_org
+					from t_user
+					where org_id = '%s'
+					order by data_org desc limit 1";
+		$data = $db->query($sql, $orgId);
+		if ($data) {
+			$dataOrg = $this->incDataOrgForUser($data[0]["data_org"]);
+		} else {
+			$sql = "select data_org from t_org where id = '%s' ";
+			$data = $db->query($sql, $orgId);
+			if ($data) {
+				$dataOrg = $data[0]["data_org"] . "0001";
+			} else {
+				return $this->bad("组织机构不存在");
+			}
+		}
+		
+		$sql = "insert into t_user (id, login_name, name, org_code, org_id, enabled, password, py,
+					gender, birthday, id_card_number, tel, tel02, address, data_org)
+					values ('%s', '%s', '%s', '%s', '%s', %d, '%s', '%s',
+					'%s', '%s', '%s', '%s', '%s', '%s', '%s') ";
+		$rc = $db->execute($sql, $id, $loginName, $name, $orgCode, $orgId, $enabled, $password, $py, 
+				$gender, $birthday, $idCardNumber, $tel, $tel02, $address, $dataOrg);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		return null;
+	}
+
+	/**
+	 * 做类似这种增长 '0101' => '0102'，组织机构的数据域+1
+	 */
+	private function incDataOrg($dataOrg) {
+		$pre = substr($dataOrg, 0, strlen($dataOrg) - 2);
+		$seed = intval(substr($dataOrg, - 2)) + 1;
+		
+		return $pre . str_pad($seed, 2, "0", STR_PAD_LEFT);
+	}
+
+	/**
+	 * 修改用户
+	 */
+	public function updateUser($params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		$loginName = $params["loginName"];
+		$name = $params["name"];
+		$orgCode = $params["orgCode"];
+		$orgId = $params["orgId"];
+		$enabled = $params["enabled"];
+		$gender = $params["gender"];
+		$birthday = $params["birthday"];
+		$idCardNumber = $params["idCardNumber"];
+		$tel = $params["tel"];
+		$tel02 = $params["tel02"];
+		$address = $params["address"];
+		
+		$py = $params["py"];
+		
+		// 检查登录名是否被使用
+		$sql = "select count(*) as cnt from t_user where login_name = '%s' and id <> '%s' ";
+		$data = $db->query($sql, $loginName, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("登录名 [$loginName] 已经存在");
+		}
+		
+		// 检查组织机构是否存在
+		$sql = "select count(*) as cnt from t_org where id = '%s' ";
+		$data = $db->query($sql, $orgId);
+		$cnt = $data[0]["cnt"];
+		if ($cnt != 1) {
+			return $this->bad("组织机构不存在");
+		}
+		
+		// 检查编码是否存在
+		$sql = "select count(*) as cnt from t_user
+					where org_code = '%s' and id <> '%s' ";
+		$data = $db->query($sql, $orgCode, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("编码[$orgCode]已经被其他用户使用");
+		}
+		
+		$sql = "select org_id, data_org from t_user where id = '%s'";
+		$data = $db->query($sql, $id);
+		$oldOrgId = $data[0]["org_id"];
+		$dataOrg = $data[0]["data_org"];
+		if ($oldOrgId != $orgId) {
+			// 修改了用户的组织机构， 这个时候要调整数据域
+			$sql = "select data_org from t_user
+						where org_id = '%s'
+						order by data_org desc limit 1";
+			$data = $db->query($sql, $orgId);
+			if ($data) {
+				$dataOrg = $this->incDataOrg($data[0]["data_org"]);
+			} else {
+				$sql = "select data_org from t_org where id = '%s' ";
+				$data = $db->query($sql, $orgId);
+				$dataOrg = $data[0]["data_org"] . "0001";
+			}
+			$sql = "update t_user
+					set login_name = '%s', name = '%s', org_code = '%s',
+					    org_id = '%s', enabled = %d, py = '%s',
+					    gender = '%s', birthday = '%s', id_card_number = '%s',
+					    tel = '%s', tel02 = '%s', address = '%s', data_org = '%s'
+					where id = '%s' ";
+			$rc = $db->execute($sql, $loginName, $name, $orgCode, $orgId, $enabled, $py, $gender, 
+					$birthday, $idCardNumber, $tel, $tel02, $address, $dataOrg, $id);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+		} else {
+			$sql = "update t_user
+					set login_name = '%s', name = '%s', org_code = '%s',
+					    org_id = '%s', enabled = %d, py = '%s',
+					    gender = '%s', birthday = '%s', id_card_number = '%s',
+					    tel = '%s', tel02 = '%s', address = '%s'
+					where id = '%s' ";
+			$rc = $db->execute($sql, $loginName, $name, $orgCode, $orgId, $enabled, $py, $gender, 
+					$birthday, $idCardNumber, $tel, $tel02, $address, $id);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+		}
+		
+		// 操作成功
+		return null;
+	}
 }
