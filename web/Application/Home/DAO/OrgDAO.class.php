@@ -95,4 +95,231 @@ class OrgDAO extends PSIBaseDAO {
 		// 操作成功
 		return null;
 	}
+
+	/**
+	 * 修改组织机构
+	 */
+	public function updateOrg($params) {
+		$db = $this->db;
+		
+		$parentId = $params["parentId"];
+		$id = $params["id"];
+		$name = $params["name"];
+		$orgCode = $params["orgCode"];
+		
+		// 编辑
+		if ($parentId == $id) {
+			return $this->bad("上级组织不能是自身");
+		}
+		$fullName = "";
+		
+		$sql = "select parent_id from t_org where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if (! $data) {
+			return $this->bad("要编辑的组织机构不存在");
+		}
+		$oldParentId = $data[0]["parent_id"];
+		
+		if ($parentId == "root") {
+			$parentId = null;
+		}
+		
+		if ($parentId == null) {
+			$fullName = $name;
+			$sql = "update t_org
+						set name = '%s', full_name = '%s', org_code = '%s', parent_id = null
+						where id = '%s' ";
+			$rc = $db->execute($sql, $name, $fullName, $orgCode, $id);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+		} else {
+			$tempParentId = $parentId;
+			while ( $tempParentId != null ) {
+				$sql = "select parent_id from t_org where id = '%s' ";
+				$d = $db->query($sql, $tempParentId);
+				if ($d) {
+					$tempParentId = $d[0]["parent_id"];
+					
+					if ($tempParentId == $id) {
+						return $this->bad("不能选择下级组织作为上级组织");
+					}
+				} else {
+					$tempParentId = null;
+				}
+			}
+			
+			$sql = "select full_name from t_org where id = '%s' ";
+			$data = $db->query($sql, $parentId);
+			if ($data) {
+				$parentFullName = $data[0]["full_name"];
+				$fullName = $parentFullName . "\\" . $name;
+				
+				$sql = "update t_org
+							set name = '%s', full_name = '%s', org_code = '%s', parent_id = '%s'
+							where id = '%s' ";
+				$rc = $db->execute($sql, $name, $fullName, $orgCode, $parentId, $id);
+				if ($rc === false) {
+					return $this->sqlError(__METHOD__, __LINE__);
+				}
+				
+				$log = "编辑组织机构：名称 = {$name} 编码 = {$orgCode}";
+			} else {
+				return $this->bad("上级组织不存在");
+			}
+		}
+		
+		if ($oldParentId != $parentId) {
+			// 上级组织机构发生了变化，这个时候，需要调整数据域
+			$rc = $this->modifyDataOrg($db, $parentId, $id);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+		}
+		
+		// 同步下级组织的full_name字段
+		$rc = $this->modifyFullName($db, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		return null;
+	}
+
+	private function modifyDataOrg($db, $parentId, $id) {
+		// 修改自身的数据域
+		$dataOrg = "";
+		if ($parentId == null) {
+			$sql = "select data_org from t_org
+					where parent_id is null and id <> '%s'
+					order by data_org desc limit 1";
+			$data = $db->query($sql, $id);
+			if (! $data) {
+				$dataOrg = "01";
+			} else {
+				$dataOrg = $this->incDataOrg($data[0]["data_org"]);
+			}
+		} else {
+			$sql = "select data_org from t_org
+					where parent_id = '%s' and id <> '%s'
+					order by data_org desc limit 1";
+			$data = $db->query($sql, $parentId, $id);
+			if ($data) {
+				$dataOrg = $this->incDataOrg($data[0]["data_org"]);
+			} else {
+				$sql = "select data_org from t_org where id = '%s' ";
+				$data = $db->query($sql, $parentId);
+				$dataOrg = $data[0]["data_org"] . "01";
+			}
+		}
+		
+		$sql = "update t_org
+				set data_org = '%s'
+				where id = '%s' ";
+		$rc = $db->execute($sql, $dataOrg, $id);
+		if ($rc === false) {
+			return false;
+		}
+		
+		// 修改 人员的数据域
+		$sql = "select id from t_user
+				where org_id = '%s'
+				order by org_code ";
+		$data = $db->query($sql, $id);
+		foreach ( $data as $i => $v ) {
+			$userId = $v["id"];
+			$index = str_pad($i + 1, 4, "0", STR_PAD_LEFT);
+			$udo = $dataOrg . $index;
+			
+			$sql = "update t_user
+					set data_org = '%s'
+					where id = '%s' ";
+			$rc = $db->execute($sql, $udo, $userId);
+			if ($rc === false) {
+				return false;
+			}
+		}
+		
+		// 修改下级组织机构的数据域
+		$rc = $this->modifySubDataOrg($db, $dataOrg, $id);
+		
+		if ($rc === false) {
+			return false;
+		}
+		
+		return true;
+	}
+
+	private function modifyFullName($db, $id) {
+		$sql = "select full_name from t_org where id = '%s' ";
+		$data = $db->query($sql, $id);
+		
+		if (! $data) {
+			return true;
+		}
+		
+		$fullName = $data[0]["full_name"];
+		
+		$sql = "select id, name from t_org where parent_id = '%s' ";
+		$data = $db->query($sql, $id);
+		foreach ( $data as $v ) {
+			$idChild = $v["id"];
+			$nameChild = $v["name"];
+			$fullNameChild = $fullName . "\\" . $nameChild;
+			$sql = "update t_org set full_name = '%s' where id = '%s' ";
+			$rc = $db->execute($sql, $fullNameChild, $idChild);
+			if ($rc === false) {
+				return false;
+			}
+			
+			$rc = $this->modifyFullName($db, $idChild); // 递归调用自身
+			if ($rc === false) {
+				return false;
+			}
+		}
+		
+		return true;
+	}
+
+	private function modifySubDataOrg($db, $parentDataOrg, $parentId) {
+		$sql = "select id from t_org where parent_id = '%s' order by org_code";
+		$data = $db->query($sql, $parentId);
+		foreach ( $data as $i => $v ) {
+			$subId = $v["id"];
+			
+			$next = str_pad($i + 1, 2, "0", STR_PAD_LEFT);
+			$dataOrg = $parentDataOrg . $next;
+			$sql = "update t_org
+					set data_org = '%s'
+					where id = '%s' ";
+			$db->execute($sql, $dataOrg, $subId);
+			
+			// 修改该组织机构的人员的数据域
+			$sql = "select id from t_user
+				where org_id = '%s'
+				order by org_code ";
+			$udata = $db->query($sql, $subId);
+			foreach ( $udata as $j => $u ) {
+				$userId = $u["id"];
+				$index = str_pad($j + 1, 4, "0", STR_PAD_LEFT);
+				$udo = $dataOrg . $index;
+				
+				$sql = "update t_user
+					set data_org = '%s'
+					where id = '%s' ";
+				$rc = $db->execute($sql, $udo, $userId);
+				if ($rc === false) {
+					return false;
+				}
+			}
+			
+			$rc = $this->modifySubDataOrg($db, $dataOrg, $subId); // 递归调用自身
+			if ($rc === false) {
+				return false;
+			}
+		}
+		
+		return true;
+	}
 }

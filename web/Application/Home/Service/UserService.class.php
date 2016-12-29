@@ -382,89 +382,12 @@ class UserService extends PSIBaseService {
 		$dao = new OrgDAO($db);
 		
 		if ($id) {
-			// 编辑
-			if ($parentId == $id) {
+			$rc = $dao->updateOrg($params);
+			if ($rc) {
 				$db->rollback();
-				return $this->bad("上级组织不能是自身");
+				return $rc;
 			}
-			$fullName = "";
-			
-			$sql = "select parent_id from t_org where id = '%s' ";
-			$data = $db->query($sql, $id);
-			if (! $data) {
-				$db->rollback();
-				return $this->bad("要编辑的组织机构不存在");
-			}
-			$oldParentId = $data[0]["parent_id"];
-			
-			if ($parentId == "root") {
-				$parentId = null;
-			}
-			
-			if ($parentId == null) {
-				$fullName = $name;
-				$sql = "update t_org 
-						set name = '%s', full_name = '%s', org_code = '%s', parent_id = null 
-						where id = '%s' ";
-				$rc = $db->execute($sql, $name, $fullName, $orgCode, $id);
-				if ($rc === false) {
-					$db->rollback();
-					return $this->sqlError(__LINE__);
-				}
-			} else {
-				$tempParentId = $parentId;
-				while ( $tempParentId != null ) {
-					$sql = "select parent_id from t_org where id = '%s' ";
-					$d = $db->query($sql, $tempParentId);
-					if ($d) {
-						$tempParentId = $d[0]["parent_id"];
-						
-						if ($tempParentId == $id) {
-							$db->rollback();
-							return $this->bad("不能选择下级组织作为上级组织");
-						}
-					} else {
-						$tempParentId = null;
-					}
-				}
-				
-				$sql = "select full_name from t_org where id = '%s' ";
-				$data = $db->query($sql, $parentId);
-				if ($data) {
-					$parentFullName = $data[0]["full_name"];
-					$fullName = $parentFullName . "\\" . $name;
-					
-					$sql = "update t_org 
-							set name = '%s', full_name = '%s', org_code = '%s', parent_id = '%s' 
-							where id = '%s' ";
-					$rc = $db->execute($sql, $name, $fullName, $orgCode, $parentId, $id);
-					if ($rc === false) {
-						$db->rollback();
-						return $this->sqlError(__LINE__);
-					}
-					
-					$log = "编辑组织机构：名称 = {$name} 编码 = {$orgCode}";
-				} else {
-					$db->rollback();
-					return $this->bad("上级组织不存在");
-				}
-			}
-			
-			if ($oldParentId != $parentId) {
-				// 上级组织机构发生了变化，这个时候，需要调整数据域
-				$rc = $this->modifyDataOrg($db, $parentId, $id);
-				if ($rc === false) {
-					$db->rollback();
-					return $this->sqlError(__LINE__);
-				}
-			}
-			
-			// 同步下级组织的full_name字段
-			$rc = $this->modifyFullName($db, $id);
-			if ($rc === false) {
-				$db->rollback();
-				return $this->sqlError(__LINE__);
-			}
+			$log = "编辑组织机构：名称 = {$name} 编码 = {$orgCode}";
 		} else {
 			// 新增
 			$idGenService = new IdGenService();
