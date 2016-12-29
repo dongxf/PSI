@@ -322,4 +322,60 @@ class OrgDAO extends PSIBaseDAO {
 		
 		return true;
 	}
+
+	/**
+	 * 删除组织机构
+	 */
+	public function deleteOrg($id) {
+		$db = $this->db;
+		
+		$sql = "select count(*) as cnt from t_org where parent_id = '%s' ";
+		$data = $db->query($sql, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("当前组织机构还有下级组织，不能删除");
+		}
+		
+		$sql = "select count(*) as cnt from t_user where org_id = '%s' ";
+		$data = $db->query($sql, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("当前组织机构还有用户，不能删除");
+		}
+		
+		// 检查当前组织机构在采购订单中是否使用了
+		$sql = "select count(*) as cnt from t_po_bill where org_id = '%s' ";
+		$data = $db->query($sql, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("当前组织机构在采购订单中使用了，不能删除");
+		}
+		
+		$sql = "delete from t_org where id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		return null;
+	}
+
+	/**
+	 * 根据id获得组织机构
+	 */
+	public function getOrgById($id) {
+		$db = $this->db;
+		
+		$sql = "select name, org_code from t_org where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if (! $data) {
+			return null;
+		}
+		
+		return array(
+				"name" => $data[0]["name"],
+				"orgCode" => $data[0]["org_code"]
+		);
+	}
 }

@@ -454,45 +454,19 @@ class UserService extends PSIBaseService {
 		$db = M();
 		$db->startTrans();
 		
-		$sql = "select name, org_code from t_org where id = '%s' ";
-		$data = $db->query($sql, $id);
-		if (! $data) {
+		$dao = new OrgDAO();
+		$org = $dao->getOrgById($id);
+		if (! $org) {
 			$db->rollback();
 			return $this->bad("要删除的组织机构不存在");
 		}
-		$name = $data[0]["name"];
-		$orgCode = $data[0]["org_code"];
+		$name = $org["name"];
+		$orgCode = $org["orgCode"];
 		
-		$sql = "select count(*) as cnt from t_org where parent_id = '%s' ";
-		$data = $db->query($sql, $id);
-		$cnt = $data[0]["cnt"];
-		if ($cnt > 0) {
+		$rc = $dao->deleteOrg($id);
+		if ($rc) {
 			$db->rollback();
-			return $this->bad("当前组织机构还有下级组织，不能删除");
-		}
-		
-		$sql = "select count(*) as cnt from t_user where org_id = '%s' ";
-		$data = $db->query($sql, $id);
-		$cnt = $data[0]["cnt"];
-		if ($cnt > 0) {
-			$db->rollback();
-			return $this->bad("当前组织机构还有用户，不能删除");
-		}
-		
-		// 检查当前组织机构在采购订单中是否使用了
-		$sql = "select count(*) as cnt from t_po_bill where org_id = '%s' ";
-		$data = $db->query($sql, $id);
-		$cnt = $data[0]["cnt"];
-		if ($cnt > 0) {
-			$db->rollback();
-			return $this->bad("当前组织机构在采购订单中使用了，不能删除");
-		}
-		
-		$sql = "delete from t_org where id = '%s' ";
-		$rc = $db->execute($sql, $id);
-		if ($rc === false) {
-			$db->rollback();
-			return $this->sqlError(__LINE__);
+			return $rc;
 		}
 		
 		$log = "删除组织机构： 名称 = {$name} 编码  = {$orgCode}";
