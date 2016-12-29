@@ -153,39 +153,18 @@ class UserService extends PSIBaseService {
 	}
 
 	public function allOrgs() {
-		$ds = new DataOrgService();
-		$queryParams = array();
-		$rs = $ds->buildSQL(FIdConst::USR_MANAGEMENT, "t_org");
-		
-		$sql = "select id, name, org_code, full_name, data_org 
-				from t_org 
-				where parent_id is null ";
-		if ($rs) {
-			$sql .= " and " . $rs[0];
-			$queryParams = $rs[1];
-		}
-		$sql .= " order by org_code";
-		$db = M();
-		$orgList1 = $db->query($sql, $queryParams);
-		$result = array();
-		
-		// 第一级组织
-		foreach ( $orgList1 as $i => $org1 ) {
-			$result[$i]["id"] = $org1["id"];
-			$result[$i]["text"] = $org1["name"];
-			$result[$i]["orgCode"] = $org1["org_code"];
-			$result[$i]["fullName"] = $org1["full_name"];
-			$result[$i]["dataOrg"] = $org1["data_org"];
-			
-			// 第二级
-			$c2 = $this->allOrgsInternal($org1["id"], $db);
-			
-			$result[$i]["children"] = $c2;
-			$result[$i]["leaf"] = count($c2) == 0;
-			$result[$i]["expanded"] = true;
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
 		}
 		
-		return $result;
+		$us = new UserService();
+		$params = array(
+				"loginUserId" => $us->getLoginUserId()
+		);
+		
+		$dao = new OrgDAO();
+		
+		return $dao->allOrgs($params);
 	}
 
 	public function users($params) {

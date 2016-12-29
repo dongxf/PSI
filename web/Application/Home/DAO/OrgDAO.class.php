@@ -2,6 +2,8 @@
 
 namespace Home\DAO;
 
+use Home\Common\FIdConst;
+
 /**
  * 组织机构 DAO
  *
@@ -377,5 +379,69 @@ class OrgDAO extends PSIBaseDAO {
 				"name" => $data[0]["name"],
 				"orgCode" => $data[0]["org_code"]
 		);
+	}
+
+	public function allOrgs($params) {
+		$db = $this->db;
+		
+		$loginUserId = $params["loginUserId"];
+		
+		$ds = new DataOrgDAO($db);
+		$queryParams = array();
+		$rs = $ds->buildSQL(FIdConst::USR_MANAGEMENT, "t_org", $loginUserId);
+		
+		$sql = "select id, name, org_code, full_name, data_org
+				from t_org
+				where parent_id is null ";
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = $rs[1];
+		}
+		$sql .= " order by org_code";
+		
+		$orgList1 = $db->query($sql, $queryParams);
+		$result = array();
+		
+		// 第一级组织
+		foreach ( $orgList1 as $i => $org1 ) {
+			$result[$i]["id"] = $org1["id"];
+			$result[$i]["text"] = $org1["name"];
+			$result[$i]["orgCode"] = $org1["org_code"];
+			$result[$i]["fullName"] = $org1["full_name"];
+			$result[$i]["dataOrg"] = $org1["data_org"];
+			
+			// 第二级
+			$c2 = $this->allOrgsInternal($org1["id"], $db);
+			
+			$result[$i]["children"] = $c2;
+			$result[$i]["leaf"] = count($c2) == 0;
+			$result[$i]["expanded"] = true;
+		}
+		
+		return $result;
+	}
+
+	private function allOrgsInternal($parentId, $db) {
+		$result = array();
+		$sql = "select id, name, org_code, full_name, data_org
+				from t_org
+				where parent_id = '%s'
+				order by org_code";
+		$data = $db->query($sql, $parentId);
+		foreach ( $data as $i => $v ) {
+			$result[$i]["id"] = $v["id"];
+			$result[$i]["text"] = $v["name"];
+			$result[$i]["orgCode"] = $v["org_code"];
+			$result[$i]["fullName"] = $v["full_name"];
+			$result[$i]["dataOrg"] = $v["data_org"];
+			
+			$c2 = $this->allOrgsInternal($v["id"], $db); // 递归调用自己
+			
+			$result[$i]["children"] = $c2;
+			$result[$i]["leaf"] = count($c2) == 0;
+			$result[$i]["expanded"] = true;
+		}
+		
+		return $result;
 	}
 }
