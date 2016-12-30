@@ -591,18 +591,22 @@ class UserService extends PSIBaseService {
 		return $this->ok($id);
 	}
 
+	/**
+	 * 清除保存登录用户id的session值
+	 */
 	public function clearLoginUserInSession() {
 		session("loginUserId", null);
 	}
 
+	/**
+	 * 修改“我的密码”
+	 */
 	public function changeMyPassword($params) {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
 		}
 		
 		$userId = $params["userId"];
-		$oldPassword = $params["oldPassword"];
-		$newPassword = $params["newPassword"];
 		
 		if ($this->isDemo() && $userId == DemoConst::ADMIN_USER_ID) {
 			return $this->bad("在演示环境下，admin用户的密码不希望被您修改，请见谅");
@@ -612,33 +616,29 @@ class UserService extends PSIBaseService {
 			return $this->bad("服务器环境发生变化，请重新登录后再操作");
 		}
 		
-		// 检验旧密码
 		$db = M();
-		$sql = "select count(*) as cnt from t_user where id = '%s' and password = '%s' ";
-		$data = $db->query($sql, $userId, md5($oldPassword));
-		$cnt = $data[0]["cnt"];
-		if ($cnt != 1) {
-			return $this->bad("旧密码不正确");
-		}
+		$db->startTrans();
 		
-		if (strlen($newPassword) < 5) {
-			return $this->bad("密码长度不能小于5位");
-		}
+		$dao = new UserDAO($db);
 		
-		$sql = "select login_name, name from t_user where id = '%s' ";
-		$data = $db->query($sql, $userId);
-		if (! $data) {
+		$user = $dao->getUserById($userId);
+		if (! $user) {
 			return $this->bad("要修改密码的用户不存在");
 		}
-		$loginName = $data[0]["login_name"];
-		$name = $data[0]["name"];
+		$loginName = $user["loginName"];
+		$name = $user["name"];
 		
-		$sql = "update t_user set password = '%s' where id = '%s' ";
-		$db->execute($sql, md5($newPassword), $userId);
+		$rc = $dao->changeMyPassword($params);
+		if ($rc) {
+			$db->rollback();
+			return $rc;
+		}
 		
 		$log = "用户[登录名 ={$loginName} 姓名 = {$name}]修改了自己的登录密码";
-		$bs = new BizlogService();
+		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, "用户管理");
+		
+		$db->commit();
 		
 		return $this->ok();
 	}

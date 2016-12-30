@@ -530,4 +530,33 @@ class UserDAO extends PSIBaseDAO {
 		// 操作成功
 		return null;
 	}
+
+	public function changeMyPassword($params) {
+		$db = $this->db;
+		
+		$userId = $params["userId"];
+		$oldPassword = $params["oldPassword"];
+		$newPassword = $params["newPassword"];
+		
+		// 检验旧密码
+		$sql = "select count(*) as cnt from t_user where id = '%s' and password = '%s' ";
+		$data = $db->query($sql, $userId, md5($oldPassword));
+		$cnt = $data[0]["cnt"];
+		if ($cnt != 1) {
+			return $this->bad("旧密码不正确");
+		}
+		
+		if (strlen($newPassword) < 5) {
+			return $this->bad("密码长度不能小于5位");
+		}
+		
+		$sql = "update t_user set password = '%s' where id = '%s' ";
+		$rc = $db->execute($sql, md5($newPassword), $userId);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		return null;
+	}
 }
