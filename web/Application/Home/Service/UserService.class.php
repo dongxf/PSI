@@ -420,7 +420,7 @@ class UserService extends PSIBaseService {
 		$db = M();
 		$db->startTrans();
 		
-		$dao = new OrgDAO();
+		$dao = new OrgDAO($db);
 		$org = $dao->getOrgById($id);
 		if (! $org) {
 			$db->rollback();
