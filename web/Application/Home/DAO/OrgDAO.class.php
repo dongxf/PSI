@@ -444,4 +444,27 @@ class OrgDAO extends PSIBaseDAO {
 		
 		return $result;
 	}
+
+	public function orgParentName($id) {
+		$db = $this->db;
+		
+		$result = array();
+		
+		$data = $db->query("select parent_id, name, org_code from t_org where id = '%s' ", $id);
+		
+		if ($data) {
+			$parentId = $data[0]["parent_id"];
+			$result["name"] = $data[0]["name"];
+			$result["orgCode"] = $data[0]["org_code"];
+			$result["parentOrgId"] = $parentId;
+			
+			$data = $db->query("select full_name from t_org where id = '%s' ", $parentId);
+			
+			if ($data) {
+				$result["parentOrgName"] = $data[0]["full_name"];
+			}
+		}
+		
+		return $result;
+	}
 }
