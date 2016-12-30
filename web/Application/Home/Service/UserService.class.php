@@ -648,35 +648,13 @@ class UserService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		if ($queryKey == null) {
-			$queryKey = "";
-		}
+		$params = array(
+				"queryKey" => $queryKey,
+				"loginUserId" => $this->getLoginUserId()
+		);
 		
-		$sql = "select id, login_name, name from t_user 
-				where (login_name like '%s' or name like '%s' or py like '%s') ";
-		$key = "%{$queryKey}%";
-		$queryParams = array();
-		$queryParams[] = $key;
-		$queryParams[] = $key;
-		$queryParams[] = $key;
-		
-		$ds = new DataOrgService();
-		$rs = $ds->buildSQL("-8999-02", "t_user");
-		if ($rs) {
-			$sql .= " and " . $rs[0];
-			$queryParams = array_merge($queryParams, $rs[1]);
-		}
-		
-		$sql .= " order by login_name 
-				limit 20";
-		$data = M()->query($sql, $queryParams);
-		$result = array();
-		foreach ( $data as $i => $v ) {
-			$result[$i]["id"] = $v["id"];
-			$result[$i]["loginName"] = $v["login_name"];
-			$result[$i]["name"] = $v["name"];
-		}
-		return $result;
+		$dao = new UserDAO();
+		return $dao->queryData($params);
 	}
 
 	/**

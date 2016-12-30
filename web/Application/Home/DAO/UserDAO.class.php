@@ -559,4 +559,44 @@ class UserDAO extends PSIBaseDAO {
 		// 操作成功
 		return null;
 	}
+
+	public function queryData($params) {
+		$db = $this->db;
+		
+		$queryKey = $params["queryKey"];
+		$loginUserId = $params["loginUserId"];
+		
+		if ($queryKey == null) {
+			$queryKey = "";
+		}
+		
+		$sql = "select id, login_name, name from t_user
+				where (login_name like '%s' or name like '%s' or py like '%s') ";
+		$key = "%{$queryKey}%";
+		$queryParams = array();
+		$queryParams[] = $key;
+		$queryParams[] = $key;
+		$queryParams[] = $key;
+		
+		$ds = new DataOrgDAO($db);
+		$rs = $ds->buildSQL("-8999-02", "t_user", $loginUserId);
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = array_merge($queryParams, $rs[1]);
+		}
+		
+		$sql .= " order by login_name
+				limit 20";
+		$data = $db->query($sql, $queryParams);
+		$result = array();
+		foreach ( $data as $i => $v ) {
+			$result[] = array(
+					"id" => $v["id"],
+					"loginName" => $v["login_name"],
+					"name" => $v["name"]
+			);
+		}
+		
+		return $result;
+	}
 }
