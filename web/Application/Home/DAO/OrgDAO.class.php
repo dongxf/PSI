@@ -467,4 +467,33 @@ class OrgDAO extends PSIBaseDAO {
 		
 		return $result;
 	}
+
+	public function orgWithDataOrg($params) {
+		$db = $this->db;
+		
+		$loginUserId = $params["loginUserId"];
+		
+		$sql = "select id, full_name
+				from t_org ";
+		
+		$queryParams = array();
+		$ds = new DataOrgDAO($db);
+		$rs = $ds->buildSQL("-8999-01", "t_org", $loginUserId);
+		if ($rs) {
+			$sql .= " where " . $rs[0];
+			$queryParams = $rs[1];
+		}
+		
+		$sql .= " order by full_name";
+		
+		$data = $db->query($sql, $queryParams);
+		
+		$result = array();
+		foreach ( $data as $i => $v ) {
+			$result[$i]["id"] = $v["id"];
+			$result[$i]["fullName"] = $v["full_name"];
+		}
+		
+		return $result;
+	}
 }

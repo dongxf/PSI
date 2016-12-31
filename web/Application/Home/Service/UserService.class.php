@@ -4,8 +4,8 @@ namespace Home\Service;
 
 use Home\Common\DemoConst;
 use Home\Common\FIdConst;
-use Home\DAO\UserDAO;
 use Home\DAO\OrgDAO;
+use Home\DAO\UserDAO;
 
 /**
  * 用户Service
@@ -541,29 +541,13 @@ class UserService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		$sql = "select id, full_name
-				from t_org ";
+		$params = array(
+				"loginUserId" => $this->getLoginUserId()
+		);
 		
-		$queryParams = array();
-		$ds = new DataOrgService();
-		$rs = $ds->buildSQL("-8999-01", "t_org");
-		if ($rs) {
-			$sql .= " where " . $rs[0];
-			$queryParams = $rs[1];
-		}
+		$dao = new OrgDAO();
 		
-		$sql .= " order by full_name";
-		
-		$db = M();
-		$data = $db->query($sql, $queryParams);
-		
-		$result = array();
-		foreach ( $data as $i => $v ) {
-			$result[$i]["id"] = $v["id"];
-			$result[$i]["fullName"] = $v["full_name"];
-		}
-		
-		return $result;
+		return $dao->orgWithDataOrg($params);
 	}
 
 	/**
