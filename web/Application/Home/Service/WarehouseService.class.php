@@ -88,7 +88,7 @@ class WarehouseService extends PSIBaseService {
 		
 		// 记录业务日志
 		if ($log) {
-			$bs = new BizlogService();
+			$bs = new BizlogService($db);
 			$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		}
 		
@@ -125,7 +125,7 @@ class WarehouseService extends PSIBaseService {
 		}
 		
 		$log = "删除仓库： 编码 = {$warehouse['code']}， 名称 = {$warehouse['name']}";
-		$bs = new BizlogService();
+		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		
 		$db->commit();
@@ -173,7 +173,7 @@ class WarehouseService extends PSIBaseService {
 		}
 		
 		$log = "把仓库[{$name}]的数据域从旧值[{$oldDataOrg}]修改为新值[{$dataOrg}]";
-		$bs = new BizlogService();
+		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		
 		$db->commit();
