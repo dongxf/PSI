@@ -642,4 +642,44 @@ class UserDAO extends PSIBaseDAO {
 		}
 		return $result;
 	}
+
+	/**
+	 * 获得当前登录用户所属公司的Id
+	 */
+	public function getCompanyId($params) {
+		$db = $this->db;
+		
+		$userId = $params["loginUserId"];
+		
+		$result = null;
+		
+		if (! $userId) {
+			return $result;
+		}
+		
+		// 获得当前登录用户所属公司的算法：
+		// 从最底层的组织机构向上找，直到parent_id为null的那个组织机构就是所属公司
+		
+		$sql = "select org_id from t_user where id = '%s' ";
+		$data = $db->query($sql, $userId);
+		if (! $data) {
+			return null;
+		}
+		$orgId = $data[0]["org_id"];
+		$found = false;
+		while ( ! $found ) {
+			$sql = "select id, parent_id from t_org where id = '%s' ";
+			$data = $db->query($sql, $orgId);
+			if (! $data) {
+				return $result;
+			}
+			
+			$orgId = $data[0]["parent_id"];
+			
+			$result = $data[0]["id"];
+			$found = $orgId == null;
+		}
+		
+		return $result;
+	}
 }
