@@ -483,16 +483,9 @@ class UserService extends PSIBaseService {
 	 * @return true: 存在
 	 */
 	public function userExists($userId, $db) {
-		if (! $db) {
-			$db = M();
-		}
-		if (! $userId) {
-			return false;
-		}
+		$dao = new UserDAO($db);
 		
-		$sql = "select count(*) as cnt from t_user where id = '%s' ";
-		$data = $db->query($sql, $userId);
-		return $data[0]["cnt"] == 1;
+		return $dao->getUserById($userId) != null;
 	}
 
 	/**
@@ -501,16 +494,9 @@ class UserService extends PSIBaseService {
 	 * @return boolean true: 存在
 	 */
 	public function orgExists($orgId, $db) {
-		if (! $db) {
-			$db = M();
-		}
-		if (! $orgId) {
-			return false;
-		}
+		$dao = new OrgDAO($db);
 		
-		$sql = "select count(*) as cnt from t_org where id = '%s' ";
-		$data = $db->query($sql, $orgId);
-		return $data[0]["cnt"] == 1;
+		return $dao->getOrgById($orgId) != null;
 	}
 
 	/**
@@ -521,15 +507,13 @@ class UserService extends PSIBaseService {
 			return null;
 		}
 		
-		$loginUserId = $this->getLoginUserId();
-		$db = M();
-		$sql = "select data_org from t_user where id = '%s' ";
-		$data = $db->query($sql, $loginUserId);
-		if ($data) {
-			return $data[0]["data_org"];
-		} else {
-			return null;
-		}
+		$params = array(
+				"loginUserId" => $this->getLoginUserId()
+		);
+		
+		$dao = new UserDAO();
+		
+		return $dao->getLoginUserDataOrg($params);
 	}
 
 	/**
