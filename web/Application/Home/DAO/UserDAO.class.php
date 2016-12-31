@@ -2,6 +2,8 @@
 
 namespace Home\DAO;
 
+use Home\Common\FIdConst;
+
 /**
  * 用户 DAO
  *
@@ -597,6 +599,47 @@ class UserDAO extends PSIBaseDAO {
 			);
 		}
 		
+		return $result;
+	}
+
+	/**
+	 * 查询用户数据域列表
+	 */
+	public function queryUserDataOrg($params) {
+		$db = $this->db;
+		
+		$queryKey = $params["queryKey"];
+		$loginUserId = $params["loginUserId"];
+		
+		if ($queryKey == null) {
+			$queryKey = "";
+		}
+		
+		$sql = "select id, data_org, name from t_user
+				where (login_name like '%s' or name like '%s' or py like '%s' or data_org like '%s') ";
+		$key = "%{$queryKey}%";
+		$queryParams = array();
+		$queryParams[] = $key;
+		$queryParams[] = $key;
+		$queryParams[] = $key;
+		$queryParams[] = $key;
+		
+		$ds = new DataOrgDAO($db);
+		$rs = $ds->buildSQL(FIdConst::WAREHOUSE_EDIT_DATAORG, "t_user", $loginUserId);
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = array_merge($queryParams, $rs[1]);
+		}
+		
+		$sql .= " order by data_org
+				limit 20";
+		$data = $db->query($sql, $queryParams);
+		$result = array();
+		foreach ( $data as $i => $v ) {
+			$result[$i]["id"] = $v["id"];
+			$result[$i]["dataOrg"] = $v["data_org"];
+			$result[$i]["name"] = $v["name"];
+		}
 		return $result;
 	}
 }
