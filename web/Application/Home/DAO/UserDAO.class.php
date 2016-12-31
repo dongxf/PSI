@@ -3,6 +3,7 @@
 namespace Home\DAO;
 
 use Home\Common\FIdConst;
+use Home\Common\DemoConst;
 
 /**
  * 用户 DAO
@@ -699,5 +700,37 @@ class UserDAO extends PSIBaseDAO {
 		} else {
 			return null;
 		}
+	}
+
+	/**
+	 * 获得当前登录用户的某个功能的数据域
+	 */
+	public function getDataOrgForFId($params) {
+		$fid = $params["fid"];
+		
+		$result = array();
+		$loginUserId = $params["loginUserId"];
+		
+		if ($loginUserId == DemoConst::ADMIN_USER_ID) {
+			// admin 是超级管理员
+			$result[] = "*";
+			return $result;
+		}
+		
+		$db = $this->db;
+		
+		$sql = "select distinct rpd.data_org
+				from t_role_permission rp, t_role_permission_dataorg rpd,
+					t_role_user ru
+				where ru.user_id = '%s' and ru.role_id = rp.role_id
+					and rp.role_id = rpd.role_id and rp.permission_id = rpd.permission_id
+					and rpd.permission_id = '%s' ";
+		$data = $db->query($sql, $loginUserId, $fid);
+		
+		foreach ( $data as $v ) {
+			$result[] = $v["data_org"];
+		}
+		
+		return $result;
 	}
 }
