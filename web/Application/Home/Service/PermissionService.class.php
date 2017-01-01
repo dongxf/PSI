@@ -4,6 +4,7 @@ namespace Home\Service;
 
 use Home\Common\DemoConst;
 use Home\Common\FIdConst;
+use Home\DAO\PermissionDAO;
 
 /**
  * 权限 Service
@@ -18,20 +19,14 @@ class PermissionService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		$sql = "select r.id, r.name from t_role r ";
-		$queryParams = array();
+		$us = new UserService();
+		$params = array(
+				"loginUserId" => $us->getLoginUserId()
+		);
 		
-		$ds = new DataOrgService();
-		$rs = $ds->buildSQL(FIdConst::PERMISSION_MANAGEMENT, "r");
-		if ($rs) {
-			$sql .= " where " . $rs[0];
-			$queryParams = $rs[1];
-		}
-		
-		$sql .= "	order by convert(name USING gbk) collate gbk_chinese_ci";
-		$data = M()->query($sql, $queryParams);
-		
-		return $data;
+		$dao = new PermissionDAO();
+	
+		return $dao->roleList($params);
 	}
 
 	public function permissionList($roleId) {
