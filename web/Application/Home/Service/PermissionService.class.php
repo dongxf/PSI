@@ -320,44 +320,26 @@ class PermissionService extends PSIBaseService {
 		$db = M();
 		$db->startTrans();
 		
-		$sql = "select name from t_role where id = '%s' ";
-		$data = $db->query($sql, $id);
-		if (! $data) {
+		$dao = new PermissionDAO($db);
+		$role = $dao->getRoleById($id);
+		
+		if (! $role) {
 			$db->rollback();
 			return $this->bad("要删除的角色不存在");
 		}
-		$roleName = $data[0]["name"];
+		$roleName = $role["name"];
 		
-		$sql = "delete from t_role_permission_dataorg where role_id = '%s' ";
-		$rc = $db->execute($sql, $id);
-		if ($rc === false) {
+		$params = array(
+				"id" => $id
+		);
+		$rc = $dao->deleteRole($params);
+		if ($rc) {
 			$db->rollback();
-			return $this->sqlError(__LINE__);
-		}
-		
-		$sql = "delete from t_role_permission where role_id = '%s' ";
-		$rc = $db->execute($sql, $id);
-		if ($rc === false) {
-			$db->rollback();
-			return $this->sqlError(__LINE__);
-		}
-		
-		$sql = "delete from t_role_user  where role_id = '%s' ";
-		$rc = $db->execute($sql, $id);
-		if ($rc === false) {
-			$db->rollback();
-			return $this->sqlError(__LINE__);
-		}
-		
-		$sql = "delete from t_role where id = '%s' ";
-		$rc = $db->execute($sql, $id);
-		if ($rc === false) {
-			$db->rollback();
-			return $this->sqlError(__LINE__);
+			return $rc;
 		}
 		
 		$log = "删除角色[{$roleName}]";
-		$bs = new BizlogService();
+		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		
 		$db->commit();

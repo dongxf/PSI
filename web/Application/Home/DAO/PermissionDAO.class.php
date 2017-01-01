@@ -240,4 +240,57 @@ class PermissionDAO extends PSIBaseDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 通过id获得角色
+	 */
+	public function getRoleById($id) {
+		$db = $this->db;
+		
+		$sql = "select name from t_role where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if (! $data) {
+			return null;
+		}
+		
+		return array(
+				"name" => $data[0]["name"]
+		);
+	}
+
+	/**
+	 * 删除角色
+	 */
+	public function deleteRole($params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		
+		$sql = "delete from t_role_permission_dataorg where role_id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		$sql = "delete from t_role_permission where role_id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		$sql = "delete from t_role_user  where role_id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		$sql = "delete from t_role where id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		return null;
+	}
 }
