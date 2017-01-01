@@ -20,6 +20,9 @@ class PermissionDAO extends PSIBaseDAO {
 		$this->db = $db;
 	}
 
+	/**
+	 * 角色列表
+	 */
 	public function roleList($params) {
 		$db = $this->db;
 		
@@ -39,5 +42,118 @@ class PermissionDAO extends PSIBaseDAO {
 		$data = $db->query($sql, $queryParams);
 		
 		return $data;
+	}
+
+	/**
+	 * 某个角色的权限列表
+	 */
+	public function permissionList($params) {
+		$db = $this->db;
+		
+		$roleId = $params["roleId"];
+		
+		$sql = "select p.id, p.name
+				from t_role r, t_role_permission rp, t_permission p
+				where r.id = rp.role_id and r.id = '%s' and rp.permission_id = p.id
+				order by convert(p.name USING gbk) collate gbk_chinese_ci";
+		$data = $db->query($sql, $roleId);
+		
+		$result = array();
+		foreach ( $data as $i => $v ) {
+			$pid = $v["id"];
+			$result[$i]["id"] = $pid;
+			$result[$i]["name"] = $v["name"];
+			
+			$sql = "select data_org
+					from t_role_permission_dataorg
+					where role_id = '%s' and permission_id = '%s' ";
+			$od = $db->query($sql, $roleId, $pid);
+			if ($od) {
+				$dataOrg = "";
+				foreach ( $od as $j => $item ) {
+					if ($j > 0) {
+						$dataOrg .= ";";
+					}
+					$dataOrg .= $item["data_org"];
+				}
+				$result[$i]["dataOrg"] = $dataOrg;
+			} else {
+				$result[$i]["dataOrg"] = "*";
+			}
+		}
+		
+		return $result;
+	}
+
+	/**
+	 * 某个角色包含的用户
+	 */
+	public function userList($params) {
+		$db = $this->db;
+		
+		$roleId = $params["roleId"];
+		
+		$sql = "select u.id, u.login_name, u.name, org.full_name
+				from t_role r, t_role_user ru, t_user u, t_org org
+				where r.id = ru.role_id and r.id = '%s' and ru.user_id = u.id and u.org_id = org.id ";
+		
+		$sql .= " order by convert(org.full_name USING gbk) collate gbk_chinese_ci";
+		$data = $db->query($sql, $roleId);
+		$result = array();
+		
+		foreach ( $data as $i => $v ) {
+			$result[$i]["id"] = $v["id"];
+			$result[$i]["name"] = $v["name"];
+			$result[$i]["orgFullName"] = $v["full_name"];
+			$result[$i]["loginName"] = $v["login_name"];
+		}
+		
+		return $result;
+	}
+
+	public function dataOrgList($params) {
+		$db = $this->db;
+		
+		$roleId = $params["roleId"];
+		$permissionId = $params["permissionId"];
+		
+		$sql = "select data_org
+				from t_role_permission_dataorg
+				where role_id = '%s' and permission_id = '%s' ";
+		$data = $db->query($sql, $roleId, $permissionId);
+		$result = array();
+		if ($data) {
+			foreach ( $data as $i => $v ) {
+				$dataOrg = $v["data_org"];
+				$result[$i]["dataOrg"] = $dataOrg;
+				if ($dataOrg == "*") {
+					$result[$i]["fullName"] = "[全部数据]";
+				} else if ($dataOrg == "#") {
+					$result[$i]["fullName"] = "[本人数据]";
+				} else {
+					$fullName = "";
+					$sql = "select full_name from t_org where data_org = '%s'";
+					$data = $db->query($sql, $dataOrg);
+					if ($data) {
+						$fullName = $data[0]["full_name"];
+					} else {
+						$sql = "select o.full_name, u.name
+							from t_org o, t_user u
+							where o.id = u.org_id and u.data_org = '%s' ";
+						$data = $db->query($sql, $dataOrg);
+						if ($data) {
+							$fullName = $data[0]["full_name"] . "\\" . $data[0]["name"];
+						}
+					}
+					
+					$result[$i]["fullName"] = $fullName;
+				}
+			}
+		} else {
+			$result[0]["dataOrg"] = "*";
+			$result[0]["fullName"] = "[全部数据]";
+		}
+		
+		return $result;
 	}
 }
