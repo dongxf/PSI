@@ -76,10 +76,6 @@ class PermissionService extends PSIBaseService {
 		
 		$dao = new PermissionDAO($db);
 		
-		$pid = explode(",", $permissionIdList);
-		$doList = explode(",", $dataOrgList);
-		$uid = explode(",", $userIdList);
-		
 		if ($id) {
 			// 编辑角色
 			
