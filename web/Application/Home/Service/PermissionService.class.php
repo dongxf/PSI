@@ -3,7 +3,6 @@
 namespace Home\Service;
 
 use Home\Common\DemoConst;
-use Home\Common\FIdConst;
 use Home\DAO\PermissionDAO;
 
 /**
@@ -75,6 +74,8 @@ class PermissionService extends PSIBaseService {
 		$db = M();
 		$db->startTrans();
 		
+		$dao = new PermissionDAO($db);
+		
 		$pid = explode(",", $permissionIdList);
 		$doList = explode(",", $dataOrgList);
 		$uid = explode(",", $userIdList);
@@ -82,74 +83,10 @@ class PermissionService extends PSIBaseService {
 		if ($id) {
 			// 编辑角色
 			
-			$sql = "update t_role set name = '%s' where id = '%s' ";
-			$rc = $db->execute($sql, $name, $id);
-			if ($rc === false) {
+			$rc = $dao->modifyRole($params);
+			if ($rc) {
 				$db->rollback();
-				return $this->sqlError(__LINE__);
-			}
-			
-			$sql = "delete from t_role_permission where role_id = '%s' ";
-			$rc = $db->execute($sql, $id);
-			if ($rc === false) {
-				$db->rollback();
-				return $this->sqlError(__LINE__);
-			}
-			
-			$sql = "delete from t_role_user where role_id = '%s' ";
-			$rc = $db->execute($sql, $id);
-			if ($rc === false) {
-				$db->rollback();
-				return $this->sqlError(__LINE__);
-			}
-			
-			if ($pid) {
-				foreach ( $pid as $i => $v ) {
-					$sql = "insert into t_role_permission (role_id, permission_id) 
-								values ('%s', '%s')";
-					$rc = $db->execute($sql, $id, $v);
-					if ($rc === false) {
-						$db->rollback();
-						return $this->sqlError(__LINE__);
-					}
-					
-					// 权限的数据域
-					$sql = "delete from t_role_permission_dataorg 
-								where role_id = '%s' and permission_id = '%s' ";
-					$rc = $db->execute($sql, $id, $v);
-					if ($rc === false) {
-						$db->rollback();
-						return $this->sqlError(__LINE__);
-					}
-					
-					$dataOrg = $doList[$i];
-					$oList = explode(";", $dataOrg);
-					foreach ( $oList as $item ) {
-						if (! $item) {
-							continue;
-						}
-						
-						$sql = "insert into t_role_permission_dataorg(role_id, permission_id, data_org)
-									values ('%s', '%s', '%s')";
-						$rc = $db->execute($sql, $id, $v, $item);
-						if ($rc === false) {
-							$db->rollback();
-							return $this->sqlError(__LINE__);
-						}
-					}
-				}
-			}
-			
-			if ($uid) {
-				foreach ( $uid as $v ) {
-					$sql = "insert into t_role_user (role_id, user_id) 
-								values ('%s', '%s') ";
-					$rc = $db->execute($sql, $id, $v);
-					if ($rc === false) {
-						$db->rollback();
-						return $this->sqlError(__LINE__);
-					}
-				}
+				return $rc;
 			}
 			
 			$log = "编辑角色[{$name}]";
@@ -157,66 +94,17 @@ class PermissionService extends PSIBaseService {
 			// 新增角色
 			
 			$idGen = new IdGenService();
-			$id = $idGen->newId();
+			$id = $idGen->newId($db);
 			$us = new UserService();
-			$loginUserDataOrg = $us->getLoginUserDataOrg();
-			$companyId = $us->getCompanyId();
 			
-			$sql = "insert into t_role (id, name, data_org, company_id) 
-					values ('%s', '%s', '%s', '%s') ";
-			$rc = $db->execute($sql, $id, $name, $loginUserDataOrg, $companyId);
-			if ($rc === false) {
+			$params["id"] = $id;
+			$params["dataOrg"] = $us->getLoginUserDataOrg();
+			$params["companyId"] = $us->getCompanyId();
+			
+			$rc = $dao->addRole($params);
+			if ($rc) {
 				$db->rollback();
-				return $this->sqlError(__LINE__);
-			}
-			
-			if ($pid) {
-				foreach ( $pid as $i => $v ) {
-					$sql = "insert into t_role_permission (role_id, permission_id) 
-								values ('%s', '%s')";
-					$rc = $db->execute($sql, $id, $v);
-					if ($rc === false) {
-						$db->rollback();
-						return $this->sqlError(__LINE__);
-					}
-					
-					// 权限的数据域
-					$sql = "delete from t_role_permission_dataorg 
-								where role_id = '%s' and permission_id = '%s' ";
-					$rc = $db->execute($sql, $id, $v);
-					if ($rc === false) {
-						$db->rollback();
-						return $this->sqlError(__LINE__);
-					}
-					
-					$dataOrg = $doList[$i];
-					$oList = explode(";", $dataOrg);
-					foreach ( $oList as $item ) {
-						if (! $item) {
-							continue;
-						}
-						
-						$sql = "insert into t_role_permission_dataorg(role_id, permission_id, data_org)
-									values ('%s', '%s', '%s')";
-						$rc = $db->execute($sql, $id, $v, $item);
-						if ($rc === false) {
-							$db->rollback();
-							return $this->sqlError(__LINE__);
-						}
-					}
-				}
-			}
-			
-			if ($uid) {
-				foreach ( $uid as $v ) {
-					$sql = "insert into t_role_user (role_id, user_id) 
-								values ('%s', '%s') ";
-					$rc = $db->execute($sql, $id, $v);
-					if ($rc === false) {
-						$db->rollback();
-						return $this->sqlError(__LINE__);
-					}
-				}
+				return $rc;
 			}
 			
 			$log = "新增角色[{$name}]";
@@ -224,7 +112,7 @@ class PermissionService extends PSIBaseService {
 		
 		// 记录业务日志
 		if ($log) {
-			$bs = new BizlogService();
+			$bs = new BizlogService($db);
 			$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		}
 		

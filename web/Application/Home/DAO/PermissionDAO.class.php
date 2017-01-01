@@ -367,4 +367,156 @@ class PermissionDAO extends PSIBaseDAO {
 		
 		return $result;
 	}
+
+	public function addRole($params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		$name = $params["name"];
+		$permissionIdList = $params["permissionIdList"];
+		$dataOrgList = $params["dataOrgList"];
+		$userIdList = $params["userIdList"];
+		
+		$loginUserDataOrg = $params["dataOrg"];
+		$companyId = $params["companyId"];
+		
+		$pid = explode(",", $permissionIdList);
+		$doList = explode(",", $dataOrgList);
+		$uid = explode(",", $userIdList);
+		
+		$sql = "insert into t_role (id, name, data_org, company_id)
+					values ('%s', '%s', '%s', '%s') ";
+		$rc = $db->execute($sql, $id, $name, $loginUserDataOrg, $companyId);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		if ($pid) {
+			foreach ( $pid as $i => $v ) {
+				$sql = "insert into t_role_permission (role_id, permission_id)
+								values ('%s', '%s')";
+				$rc = $db->execute($sql, $id, $v);
+				if ($rc === false) {
+					return $this->sqlError(__METHOD__, __LINE__);
+				}
+				
+				// 权限的数据域
+				$sql = "delete from t_role_permission_dataorg
+								where role_id = '%s' and permission_id = '%s' ";
+				$rc = $db->execute($sql, $id, $v);
+				if ($rc === false) {
+					return $this->sqlError(__METHOD__, __LINE__);
+				}
+				
+				$dataOrg = $doList[$i];
+				$oList = explode(";", $dataOrg);
+				foreach ( $oList as $item ) {
+					if (! $item) {
+						continue;
+					}
+					
+					$sql = "insert into t_role_permission_dataorg(role_id, permission_id, data_org)
+									values ('%s', '%s', '%s')";
+					$rc = $db->execute($sql, $id, $v, $item);
+					if ($rc === false) {
+						return $this->sqlError(__METHOD__, __LINE__);
+					}
+				}
+			}
+		}
+		
+		if ($uid) {
+			foreach ( $uid as $v ) {
+				$sql = "insert into t_role_user (role_id, user_id)
+								values ('%s', '%s') ";
+				$rc = $db->execute($sql, $id, $v);
+				if ($rc === false) {
+					return $this->sqlError(__METHOD__, __LINE__);
+				}
+			}
+		}
+		
+		// 操作成功
+		return null;
+	}
+
+	public function modifyRole($params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		$name = $params["name"];
+		$permissionIdList = $params["permissionIdList"];
+		$dataOrgList = $params["dataOrgList"];
+		$userIdList = $params["userIdList"];
+		
+		$pid = explode(",", $permissionIdList);
+		$doList = explode(",", $dataOrgList);
+		$uid = explode(",", $userIdList);
+		
+		$sql = "update t_role set name = '%s' where id = '%s' ";
+		$rc = $db->execute($sql, $name, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		$sql = "delete from t_role_permission where role_id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		$sql = "delete from t_role_user where role_id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		if ($pid) {
+			foreach ( $pid as $i => $v ) {
+				$sql = "insert into t_role_permission (role_id, permission_id)
+								values ('%s', '%s')";
+				$rc = $db->execute($sql, $id, $v);
+				if ($rc === false) {
+					return $this->sqlError(__METHOD__, __LINE__);
+				}
+				
+				// 权限的数据域
+				$sql = "delete from t_role_permission_dataorg
+								where role_id = '%s' and permission_id = '%s' ";
+				$rc = $db->execute($sql, $id, $v);
+				if ($rc === false) {
+					return $this->sqlError(__METHOD__, __LINE__);
+				}
+				
+				$dataOrg = $doList[$i];
+				$oList = explode(";", $dataOrg);
+				foreach ( $oList as $item ) {
+					if (! $item) {
+						continue;
+					}
+					
+					$sql = "insert into t_role_permission_dataorg(role_id, permission_id, data_org)
+									values ('%s', '%s', '%s')";
+					$rc = $db->execute($sql, $id, $v, $item);
+					if ($rc === false) {
+						return $this->sqlError(__METHOD__, __LINE__);
+					}
+				}
+			}
+		}
+		
+		if ($uid) {
+			foreach ( $uid as $v ) {
+				$sql = "insert into t_role_user (role_id, user_id)
+								values ('%s', '%s') ";
+				$rc = $db->execute($sql, $id, $v);
+				if ($rc === false) {
+					return $this->sqlError(__METHOD__, __LINE__);
+				}
+			}
+		}
+		
+		// 操作成功
+		return null;
+	}
 }
