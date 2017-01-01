@@ -380,33 +380,16 @@ class PermissionService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		$result = array();
-		$db = M();
-		$sql = "select full_name, data_org
-				from t_org ";
-		$queryParams = array();
-		$ds = new DataOrgService();
+		$us = new UserService();
 		
-		$rs = $ds->buildSQL(FIdConst::PERMISSION_MANAGEMENT, "t_org");
-		if ($rs) {
-			$sql .= " where " . $rs[0];
-			$queryParams = $rs[1];
-		}
-		$sql .= " order by convert(full_name USING gbk) collate gbk_chinese_ci";
+		$params = array(
+				"loginUserId" => $us->getLoginUserId()
+		);
 		
-		$data = $db->query($sql, $queryParams);
-		foreach ( $data as $i => $v ) {
-			$result[$i]["fullName"] = $v["full_name"];
-			$result[$i]["dataOrg"] = $v["data_org"];
-		}
+		$dao = new PermissionDAO();
 		
-		return $result;
+		return $dao->selectDataOrg($params);
 	}
-	
-	/**
-	 * const: 全部权限
-	 */
-	private $ALL_CATEGORY = "[全部]";
 
 	/**
 	 * 获得权限分类
@@ -416,20 +399,9 @@ class PermissionService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		$result = array();
+		$dao = new PermissionDAO();
 		
-		$result[0]["name"] = $this->ALL_CATEGORY;
-		
-		$db = M();
-		$sql = "select distinct category
-				from t_permission
-				order by convert(category USING gbk) collate gbk_chinese_ci";
-		$data = $db->query($sql);
-		foreach ( $data as $i => $v ) {
-			$result[$i + 1]["name"] = $v["category"];
-		}
-		
-		return $result;
+		return $dao->permissionCategory();
 	}
 
 	/**
@@ -440,29 +412,8 @@ class PermissionService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		$category = $params["category"];
+		$dao = new PermissionDAO();
 		
-		$sql = "select id, name
-				from t_permission ";
-		
-		$queryParams = array();
-		if ($category != $this->ALL_CATEGORY) {
-			$queryParams[] = $category;
-			
-			$sql .= " where category = '%s' ";
-		}
-		
-		$sql .= " order by convert(name USING gbk) collate gbk_chinese_ci";
-		$db = M();
-		$data = $db->query($sql, $queryParams);
-		
-		$result = array();
-		
-		foreach ( $data as $i => $v ) {
-			$result[$i]["id"] = $v["id"];
-			$result[$i]["name"] = $v["name"];
-		}
-		
-		return $result;
+		return $dao->permissionByCategory($params);
 	}
 }
