@@ -293,4 +293,78 @@ class PermissionDAO extends PSIBaseDAO {
 		// 操作成功
 		return null;
 	}
+
+	public function selectPermission($params) {
+		$db = $this->db;
+		
+		$idList = $params["idList"];
+		
+		$list = explode(",", $idList);
+		if (! $list) {
+			return array();
+		}
+		
+		$result = array();
+		
+		$sql = "select id, name from t_permission
+				order by convert(name USING gbk) collate gbk_chinese_ci";
+		$data = $db->query($sql);
+		
+		$index = 0;
+		
+		foreach ( $data as $v ) {
+			if (! in_array($v["id"], $list)) {
+				$result[$index]["id"] = $v["id"];
+				$result[$index]["name"] = $v["name"];
+				
+				$index ++;
+			}
+		}
+		
+		return $result;
+	}
+
+	public function selectUsers($params) {
+		$db = $this->db;
+		
+		$idList = $params["idList"];
+		
+		$loginUserId = $params["loginUserId"];
+		
+		$list = explode(",", $idList);
+		if (! $list) {
+			return array();
+		}
+		
+		$result = array();
+		
+		$sql = "select u.id, u.name, u.login_name, o.full_name
+				from t_user u, t_org o
+				where u.org_id = o.id ";
+		$queryParams = array();
+		$ds = new DataOrgDAO($db);
+		$rs = $ds->buildSQL(FIdConst::PERMISSION_MANAGEMENT, "u", $loginUserId);
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = $rs[1];
+		}
+		
+		$sql .= " order by convert(u.name USING gbk) collate gbk_chinese_ci";
+		$data = $db->query($sql, $queryParams);
+		
+		$index = 0;
+		
+		foreach ( $data as $v ) {
+			if (! in_array($v["id"], $list)) {
+				$result[$index]["id"] = $v["id"];
+				$result[$index]["name"] = $v["name"];
+				$result[$index]["loginName"] = $v["login_name"];
+				$result[$index]["orgFullName"] = $v["full_name"];
+				
+				$index ++;
+			}
+		}
+		
+		return $result;
+	}
 }

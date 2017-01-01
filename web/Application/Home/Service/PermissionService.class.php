@@ -238,29 +238,13 @@ class PermissionService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		$list = explode(",", $idList);
-		if (! $list) {
-			return array();
-		}
+		$params = array(
+				"idList" => $idList
+		);
 		
-		$result = array();
+		$dao = new PermissionDAO();
 		
-		$sql = "select id, name from t_permission 
-				order by convert(name USING gbk) collate gbk_chinese_ci";
-		$data = M()->query($sql);
-		
-		$index = 0;
-		
-		foreach ( $data as $v ) {
-			if (! in_array($v["id"], $list)) {
-				$result[$index]["id"] = $v["id"];
-				$result[$index]["name"] = $v["name"];
-				
-				$index ++;
-			}
-		}
-		
-		return $result;
+		return $dao->selectPermission($params);
 	}
 
 	public function selectUsers($idList) {
@@ -268,41 +252,16 @@ class PermissionService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		$list = explode(",", $idList);
-		if (! $list) {
-			return array();
-		}
+		$us = new UserService();
 		
-		$result = array();
+		$params = array(
+				"idList" => $idList,
+				"loginUserId" => $us->getLoginUserId()
+		);
 		
-		$sql = "select u.id, u.name, u.login_name, o.full_name 
-				from t_user u, t_org o 
-				where u.org_id = o.id ";
-		$queryParams = array();
-		$ds = new DataOrgService();
-		$rs = $ds->buildSQL(FIdConst::PERMISSION_MANAGEMENT, "u");
-		if ($rs) {
-			$sql .= " and " . $rs[0];
-			$queryParams = $rs[1];
-		}
+		$dao = new PermissionDAO();
 		
-		$sql .= " order by convert(u.name USING gbk) collate gbk_chinese_ci";
-		$data = M()->query($sql, $queryParams);
-		
-		$index = 0;
-		
-		foreach ( $data as $v ) {
-			if (! in_array($v["id"], $list)) {
-				$result[$index]["id"] = $v["id"];
-				$result[$index]["name"] = $v["name"];
-				$result[$index]["loginName"] = $v["login_name"];
-				$result[$index]["orgFullName"] = $v["full_name"];
-				
-				$index ++;
-			}
-		}
-		
-		return $result;
+		return $dao->selectUsers($params);
 	}
 
 	/**
