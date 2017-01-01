@@ -104,15 +104,6 @@ class BizConfigService extends PSIBaseService {
 		// 2015-11-19 为发布稳定版本，临时取消先进先出法
 		$result = 0;
 		
-		// $db = M();
-		// $sql = "select value from t_config where id = '1003-02' ";
-		// $data = $db->query($sql);
-		// if (! $data) {
-		// return $result;
-		// }
-		
-		// $result = intval($data[0]["value"]);
-		
 		return $result;
 	}
 
