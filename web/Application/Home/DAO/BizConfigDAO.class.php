@@ -521,4 +521,22 @@ class BizConfigDAO extends PSIBaseDAO {
 		// 操作成功
 		return null;
 	}
+
+	/**
+	 * 获得增值税税率
+	 */
+	public function getTaxRate($params) {
+		$db = $this->db;
+		$companyId = $params["companyId"];
+		
+		$sql = "select value from t_config
+				where id = '9001-01' and company_id = '%s' ";
+		$data = $db->query($sql, $companyId);
+		if ($data) {
+			$result = $data[0]["value"];
+			return intval($result);
+		} else {
+			return 17;
+		}
+	}
 }

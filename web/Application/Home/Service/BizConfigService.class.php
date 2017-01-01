@@ -72,19 +72,13 @@ class BizConfigService extends PSIBaseService {
 	 * 获得增值税税率
 	 */
 	public function getTaxRate() {
-		$db = M();
 		$us = new UserService();
-		$companyId = $us->getCompanyId();
+		$params = array(
+				"companyId" => $us->getCompanyId()
+		);
 		
-		$sql = "select value from t_config 
-				where id = '9001-01' and company_id = '%s' ";
-		$data = $db->query($sql, $companyId);
-		if ($data) {
-			$result = $data[0]["value"];
-			return intval($result);
-		} else {
-			return 17;
-		}
+		$dao = new BizConfigDAO();
+		return $dao->getTaxRate($params);
 	}
 
 	/**
