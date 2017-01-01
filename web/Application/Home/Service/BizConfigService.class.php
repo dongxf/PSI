@@ -85,33 +85,14 @@ class BizConfigService extends PSIBaseService {
 	 * 获得本产品名称，默认值是：PSI
 	 */
 	public function getProductionName() {
-		$defaultName = "PSI";
-		
-		$db = M();
-		if (! $this->columnExists($db, "t_config", "company_id")) {
-			// 兼容旧代码
-			return $defaultName;
-		}
-		
 		$us = new UserService();
-		$companyId = $us->getCompanyId();
+		$params = array(
+				"companyId" => $us->getCompanyId()
+		);
 		
-		$sql = "select value from t_config 
-				where id = '9002-01' and company_id = '%s' ";
-		$data = $db->query($sql, $companyId);
-		if ($data) {
-			return $data[0]["value"];
-		} else {
-			// 登录页面的时候，并不知道company_id的值
-			$sql = "select value from t_config
-				where id = '9002-01' ";
-			$data = $db->query($sql);
-			if ($data) {
-				return $data[0]["value"];
-			}
-			
-			return $defaultName;
-		}
+		$dao = new BizConfigDAO();
+		
+		return $dao->getProductionName($params);
 	}
 
 	/**

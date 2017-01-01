@@ -539,4 +539,32 @@ class BizConfigDAO extends PSIBaseDAO {
 			return 17;
 		}
 	}
+
+	/**
+	 * 获得本产品名称，默认值是：PSI
+	 */
+	public function getProductionName($params) {
+		$defaultName = "PSI";
+		
+		$db = $this->db;
+		
+		$companyId = $params["companyId"];
+		
+		$sql = "select value from t_config
+				where id = '9002-01' and company_id = '%s' ";
+		$data = $db->query($sql, $companyId);
+		if ($data) {
+			return $data[0]["value"];
+		} else {
+			// 登录页面的时候，并不知道company_id的值
+			$sql = "select value from t_config
+				where id = '9002-01' ";
+			$data = $db->query($sql);
+			if ($data) {
+				return $data[0]["value"];
+			}
+			
+			return $defaultName;
+		}
+	}
 }
