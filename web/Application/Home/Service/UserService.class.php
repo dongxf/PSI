@@ -29,6 +29,32 @@ class UserService extends PSIBaseService {
 	}
 
 	/**
+	 * 使用Memcache作为Session持久化容器
+	 */
+	private function initMemcacheAsSessionSaveHandler() {
+		$useMemcache = getenv("PSI_USE_MEMCACHE") == 1;
+		
+		if (! $useMemcache) {
+			return;
+		}
+		
+		$saveHandler = ini_get("session.save_handler");
+		if ($saveHandler == "memcached") {
+			// 已经初始化过了
+			return;
+		}
+		
+		$savePath = getenv("PSI_SESSION_SAVE_PATH");
+		if (! $savePath) {
+			// 没有设置保存路径
+			return;
+		}
+		
+		int_set("session.save_handler", "memcached");
+		ini_set("session.save_path", $savePath);
+	}
+
+	/**
 	 * 判断当前用户是否有$fid对应的权限
 	 *
 	 * @param string $fid
@@ -36,6 +62,8 @@ class UserService extends PSIBaseService {
 	 * @return boolean true：有对应的权限
 	 */
 	public function hasPermission($fid = null) {
+		$this->initMemcacheAsSessionSaveHandler();
+		
 		$result = session("loginUserId") != null;
 		if (! $result) {
 			return false;
