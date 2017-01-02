@@ -50,7 +50,7 @@ class UserService extends PSIBaseService {
 			return;
 		}
 		
-		int_set("session.save_handler", "memcached");
+		ini_set("session.save_handler", "memcached");
 		ini_set("session.save_path", $savePath);
 	}
 
