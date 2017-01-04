@@ -39,7 +39,7 @@ class UserService extends PSIBaseService {
 		}
 		
 		$saveHandler = ini_get("session.save_handler");
-		if ($saveHandler == "memcache") {
+		if ($saveHandler == "memcached") {
 			// 已经初始化过了
 			return;
 		}
@@ -50,7 +50,7 @@ class UserService extends PSIBaseService {
 			return;
 		}
 		
-		ini_set("session.save_handler", "memcache");
+		ini_set("session.save_handler", "memcached");
 		ini_set("session.save_path", $savePath);
 	}
 
