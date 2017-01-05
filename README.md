@@ -18,8 +18,6 @@ PSI演示
 > 
 > 用WampServer部署可能会遇到的问题：http://my.oschina.net/u/134395/blog/383754
 > 
-> 用Nginx部署可能会遇到的问题：http://my.oschina.net/u/134395/blog/390650
->
 > lnmp部署参考：http://my.oschina.net/u/2525829/blog/532614
 > 
 > 用IIS如何配置：http://my.oschina.net/u/1415918/blog/511228
