@@ -49,6 +49,10 @@ PSI行业版
 -------------
 >1、 普通QQ群： <a target="_blank" href="http://shang.qq.com/wpa/qunwpa?idkey=64808ce24f2a3186ccb1f37aad9ed591bcc4fb257d09749753aca98c6c73e400">414474186</a>
 >
+> 注意:
+> PSI部署环境是：https://www.mopaas.com/
+> 其他部署环境下的遇到技术，需要自己解决，即使加入QQ群也不会有太多的帮助。
+>
 >2、 PSI 免费VIP QQ群：108111233
 > 加入本群的要求：1、实名；2、认真地在应用PSI，并愿意分享实际应用案例。
 >
