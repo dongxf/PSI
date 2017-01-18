@@ -6,6 +6,7 @@ use Home\Common\FIdConst;
 use Home\DAO\GoodsBomDAO;
 use Home\DAO\GoodsBrandDAO;
 use Home\DAO\GoodsUnitDAO;
+use Home\DAO\GoodsCategoryDAO;
 
 /**
  * 商品Service
@@ -239,49 +240,11 @@ class GoodsService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		$code = $params["code"];
-		$name = $params["name"];
-		$spec = $params["spec"];
-		$barCode = $params["barCode"];
+		$us = new UserService();
+		$params["loginUserId"] = $us->getLoginUserId();
 		
-		$sql = "select id, code, name, full_name
-				from t_goods_category c
-				where (parent_id is null)
-				";
-		$queryParam = array();
-		$ds = new DataOrgService();
-		$rs = $ds->buildSQL(FIdConst::GOODS_CATEGORY, "c");
-		if ($rs) {
-			$sql .= " and " . $rs[0];
-			$queryParam = array_merge($queryParam, $rs[1]);
-		}
-		
-		$sql .= " order by code";
-		
-		$db = M();
-		$data = $db->query($sql, $queryParam);
-		$result = array();
-		foreach ( $data as $i => $v ) {
-			$id = $v["id"];
-			$result[$i]["id"] = $v["id"];
-			$result[$i]["text"] = $v["name"];
-			$result[$i]["code"] = $v["code"];
-			$fullName = $v["full_name"];
-			if (! $fullName) {
-				$fullName = $v["name"];
-			}
-			$result[$i]["fullName"] = $fullName;
-			
-			$children = $this->allCategoriesInternal($db, $id, $rs, $params);
-			
-			$result[$i]["children"] = $children;
-			$result[$i]["leaf"] = count($children) == 0;
-			$result[$i]["expanded"] = true;
-			
-			$result[$i]["cnt"] = $this->getGoodsCountWithAllSub($db, $id, $params, $rs);
-		}
-		
-		return $result;
+		$dao = new GoodsCategoryDAO();
+		return $dao->allCategories($params);
 	}
 
 	/**
