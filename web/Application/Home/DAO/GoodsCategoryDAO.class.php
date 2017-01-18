@@ -173,4 +173,177 @@ class GoodsCategoryDAO extends PSIBaseDAO {
 		
 		return $result;
 	}
+
+	public function getGoodsCategoryById($id) {
+		$db = $this->db;
+		
+		$sql = "select code, name from t_goods_category where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if ($data) {
+			return array(
+					"code" => $data[0]["code"],
+					"name" => $data[0]["name"]
+			);
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * 新增商品分类
+	 */
+	public function addGoodsCategory($params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		$code = $params["code"];
+		$name = $params["name"];
+		$parentId = $params["parentId"];
+		$dataOrg = $params["dataOrg"];
+		$companyId = $params["companyId"];
+		
+		// 检查同编码的分类是否存在
+		$sql = "select count(*) as cnt from t_goods_category where code = '%s' ";
+		$data = $db->query($sql, $code);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("编码为 [{$code}] 的分类已经存在");
+		}
+		
+		if ($parentId) {
+			$sql = "select full_name from t_goods_category where id = '%s' ";
+			$data = $db->query($sql, $parentId);
+			$fullName = "";
+			if ($data) {
+				$fullName = $data[0]["full_name"];
+				$fullName .= "\\" . $name;
+			}
+			
+			$sql = "insert into t_goods_category (id, code, name, data_org, parent_id,
+							full_name, company_id)
+						values ('%s', '%s', '%s', '%s', '%s', '%s', '%s')";
+			$rc = $db->execute($sql, $id, $code, $name, $dataOrg, $parentId, $fullName, $companyId);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+		} else {
+			$sql = "insert into t_goods_category (id, code, name, data_org, full_name, company_id)
+					values ('%s', '%s', '%s', '%s', '%s', '%s')";
+			$rc = $db->execute($sql, $id, $code, $name, $dataOrg, $name, $companyId);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+		}
+		
+		// 操作成功
+		return null;
+	}
+
+	/**
+	 * 同步子分类的full_name字段
+	 */
+	private function updateSubCategoryFullName($db, $id) {
+		$sql = "select full_name from t_goods_category where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if (! $data) {
+			return true;
+		}
+		
+		$fullName = $data[0]["full_name"];
+		$sql = "select id, name from t_goods_category where parent_id = '%s' ";
+		$data = $db->query($sql, $id);
+		foreach ( $data as $v ) {
+			$subId = $v["id"];
+			$name = $v["name"];
+			
+			$subFullName = $fullName . "\\" . $name;
+			$sql = "update t_goods_category
+					set full_name = '%s'
+					where id = '%s' ";
+			$rc = $db->execute($sql, $subFullName, $subId);
+			if ($rc === false) {
+				return false;
+			}
+			
+			$rc = $this->updateSubCategoryFullName($db, $subId); // 递归调用自身
+			if ($rc === false) {
+				return false;
+			}
+		}
+		
+		return true;
+	}
+
+	/**
+	 * 编辑商品分类
+	 */
+	public function updateGoodsCategory($params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		$code = $params["code"];
+		$name = $params["name"];
+		$parentId = $params["parentId"];
+		
+		// 检查同编码的分类是否存在
+		$sql = "select count(*) as cnt from t_goods_category where code = '%s' and id <> '%s' ";
+		$data = $db->query($sql, $code, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("编码为 [{$code}] 的分类已经存在");
+		}
+		
+		if ($parentId) {
+			if ($parentId == $id) {
+				return $this->bad("上级分类不能是自身");
+			}
+			
+			$tempParentId = $parentId;
+			while ( $tempParentId != null ) {
+				$sql = "select parent_id from t_goods_category where id = '%s' ";
+				$d = $db->query($sql, $tempParentId);
+				if ($d) {
+					$tempParentId = $d[0]["parent_id"];
+					
+					if ($tempParentId == $id) {
+						return $this->bad("不能选择下级分类作为上级分类");
+					}
+				} else {
+					$tempParentId = null;
+				}
+			}
+			
+			$sql = "select full_name from t_goods_category where id = '%s' ";
+			$data = $db->query($sql, $parentId);
+			$fullName = $name;
+			if ($data) {
+				$fullName = $data[0]["full_name"] . "\\" . $name;
+			}
+			
+			$sql = "update t_goods_category
+					set code = '%s', name = '%s', parent_id = '%s', full_name = '%s'
+					where id = '%s' ";
+			$rc = $db->execute($sql, $code, $name, $parentId, $fullName, $id);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+		} else {
+			$sql = "update t_goods_category
+					set code = '%s', name = '%s', parent_id = null, full_name = '%s'
+					where id = '%s' ";
+			$rc = $db->execute($sql, $code, $name, $name, $id);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+		}
+		
+		// 同步子分类的full_name字段
+		$rc = $this->updateSubCategoryFullName($db, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		return null;
+	}
 }

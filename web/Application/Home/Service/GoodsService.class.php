@@ -331,12 +331,12 @@ class GoodsService extends PSIBaseService {
 		$db = M();
 		$db->startTrans();
 		
+		$dao = new GoodsCategoryDAO($db);
+		
 		if ($parentId) {
 			// 检查id是否存在
-			$sql = "select count(*) as cnt from t_goods_category where id = '%s' ";
-			$data = $db->query($sql, $parentId);
-			$cnt = $data[0]["cnt"];
-			if ($cnt != 1) {
+			$parentCategory = $dao->getGoodsCategoryById($parentId);
+			if (! $parentCategory) {
 				$db->rollback();
 				return $this->bad("上级分类不存在");
 			}
@@ -344,114 +344,26 @@ class GoodsService extends PSIBaseService {
 		
 		if ($id) {
 			// 编辑
-			// 检查同编码的分类是否存在
-			$sql = "select count(*) as cnt from t_goods_category where code = '%s' and id <> '%s' ";
-			$data = $db->query($sql, $code, $id);
-			$cnt = $data[0]["cnt"];
-			if ($cnt > 0) {
+			$rc = $dao->updateGoodsCategory($params);
+			if ($rc) {
 				$db->rollback();
-				return $this->bad("编码为 [{$code}] 的分类已经存在");
-			}
-			
-			if ($parentId) {
-				if ($parentId == $id) {
-					$db->rollback();
-					return $this->bad("上级分类不能是自身");
-				}
-				
-				$tempParentId = $parentId;
-				while ( $tempParentId != null ) {
-					$sql = "select parent_id from t_goods_category where id = '%s' ";
-					$d = $db->query($sql, $tempParentId);
-					if ($d) {
-						$tempParentId = $d[0]["parent_id"];
-						
-						if ($tempParentId == $id) {
-							$db->rollback();
-							return $this->bad("不能选择下级分类作为上级分类");
-						}
-					} else {
-						$tempParentId = null;
-					}
-				}
-				
-				$sql = "select full_name from t_goods_category where id = '%s' ";
-				$data = $db->query($sql, $parentId);
-				$fullName = $name;
-				if ($data) {
-					$fullName = $data[0]["full_name"] . "\\" . $name;
-				}
-				
-				$sql = "update t_goods_category
-					set code = '%s', name = '%s', parent_id = '%s', full_name = '%s'
-					where id = '%s' ";
-				$rc = $db->execute($sql, $code, $name, $parentId, $fullName, $id);
-				if ($rc === false) {
-					$db->rollback();
-					return $this->sqlError(__LINE__);
-				}
-			} else {
-				$sql = "update t_goods_category
-					set code = '%s', name = '%s', parent_id = null, full_name = '%s'
-					where id = '%s' ";
-				$rc = $db->execute($sql, $code, $name, $name, $id);
-				if ($rc === false) {
-					$db->rollback();
-					return $this->sqlError(__LINE__);
-				}
-			}
-			
-			// 同步子分类的full_name字段
-			$rc = $this->updateSubCategoryFullName($db, $id);
-			if ($rc === false) {
-				$db->rollback();
-				return $this->sqlError(__LINE__);
+				return $rc;
 			}
 			
 			$log = "编辑商品分类: 编码 = {$code}， 分类名称 = {$name}";
 		} else {
 			// 新增
-			// 检查同编码的分类是否存在
-			$sql = "select count(*) as cnt from t_goods_category where code = '%s' ";
-			$data = $db->query($sql, $code);
-			$cnt = $data[0]["cnt"];
-			if ($cnt > 0) {
-				$db->rollback();
-				return $this->bad("编码为 [{$code}] 的分类已经存在");
-			}
-			
 			$idGen = new IdGenService();
 			$id = $idGen->newId();
+			$params["id"] = $id;
 			$us = new UserService();
-			$dataOrg = $us->getLoginUserDataOrg();
-			$companyId = $us->getCompanyId();
+			$params["dataOrg"] = $us->getLoginUserDataOrg();
+			$params["companyId"] = $us->getCompanyId();
 			
-			if ($parentId) {
-				$sql = "select full_name from t_goods_category where id = '%s' ";
-				$data = $db->query($sql, $parentId);
-				$fullName = "";
-				if ($data) {
-					$fullName = $data[0]["full_name"];
-					$fullName .= "\\" . $name;
-				}
-				
-				$sql = "insert into t_goods_category (id, code, name, data_org, parent_id, 
-							full_name, company_id)
-						values ('%s', '%s', '%s', '%s', '%s', '%s', '%s')";
-				$rc = $db->execute($sql, $id, $code, $name, $dataOrg, $parentId, $fullName, 
-						$companyId);
-				if ($rc === false) {
-					$db->rollback();
-					return $this->sqlError(__LINE__);
-				}
-			} else {
-				$sql = "insert into t_goods_category (id, code, name, data_org, full_name, company_id)
-					values ('%s', '%s', '%s', '%s', '%s', '%s')";
-				$rc = $db->execute($sql, $id, $code, $name, $dataOrg, $name, $companyId);
-				if ($rc === false) {
-					$db->rollback();
-					return $this->sqlError(__LINE__);
-				}
+			$rc = $dao->addGoodsCategory($params);
+			if ($rc) {
+				$db->rollback();
+				return $rc;
 			}
 			
 			$log = "新增商品分类: 编码 = {$code}， 分类名称 = {$name}";
@@ -459,7 +371,7 @@ class GoodsService extends PSIBaseService {
 		
 		// 记录业务日志
 		if ($log) {
-			$bs = new BizlogService();
+			$bs = new BizlogService($db);
 			$bs->insertBizlog($log, $this->LOG_CATEGORY_GOODS);
 		}
 		
