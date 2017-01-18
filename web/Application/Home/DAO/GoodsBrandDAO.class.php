@@ -174,7 +174,7 @@ class GoodsBrandDAO extends PSIBaseDAO {
 	}
 
 	/**
-	 * 编辑商品分类
+	 * 编辑商品品牌
 	 */
 	public function updateGoodsBrand($params) {
 		$db = $this->db;
@@ -253,5 +253,95 @@ class GoodsBrandDAO extends PSIBaseDAO {
 		
 		// 操作成功
 		return null;
+	}
+
+	public function getBrandById($id) {
+		$db = $this->db;
+		
+		$sql = "select name, full_name 
+				from t_goods_brand 
+				where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if ($data) {
+			return array(
+					"name" => $data[0]["name"],
+					"fullName" => $data[0]["full_name"]
+			);
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * 删除商品品牌
+	 */
+	public function deleteBrand($params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		$fullName = $params["fullName"];
+		
+		$sql = "select count(*) as cnt from t_goods
+				where brand_id = '%s' ";
+		$data = $db->query($sql, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("品牌[$fullName]已经在商品中使用，不能删除");
+		}
+		
+		$sql = "select count(*) as cnt from t_goods_brand where parent_id = '%s' ";
+		$data = $db->query($sql, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("品牌[$fullName]还有子品牌，所以不能被删除");
+		}
+		
+		$sql = "delete from t_goods_brand where id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		return null;
+	}
+
+	/**
+	 * 获得某个品牌的上级品牌全称
+	 */
+	public function brandParentName($params) {
+		$db = $this->db;
+		
+		$result = array();
+		
+		$id = $params["id"];
+		
+		$sql = "select name, parent_id
+				from t_goods_brand
+				where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if (! $data) {
+			return $result;
+		}
+		
+		$result["name"] = $data[0]["name"];
+		$parentId = $data[0]["parent_id"];
+		$result["parentBrandId"] = $parentId;
+		if ($parentId) {
+			$sql = "select full_name
+					from t_goods_brand
+					where id = '%s' ";
+			$data = $db->query($sql, $parentId);
+			if ($data) {
+				$result["parentBrandName"] = $data[0]["full_name"];
+			} else {
+				$result["parentBrandId"] = null;
+				$result["parentBrandName"] = null;
+			}
+		} else {
+			$result["parentBrandName"] = null;
+		}
+		
+		return $result;
 	}
 }

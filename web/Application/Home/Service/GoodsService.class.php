@@ -1206,38 +1206,8 @@ class GoodsService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		$result = array();
-		
-		$id = $params["id"];
-		
-		$db = M();
-		$sql = "select name, parent_id 
-				from t_goods_brand
-				where id = '%s' ";
-		$data = $db->query($sql, $id);
-		if (! $data) {
-			return $result;
-		}
-		
-		$result["name"] = $data[0]["name"];
-		$parentId = $data[0]["parent_id"];
-		$result["parentBrandId"] = $parentId;
-		if ($parentId) {
-			$sql = "select full_name 
-					from t_goods_brand
-					where id = '%s' ";
-			$data = $db->query($sql, $parentId);
-			if ($data) {
-				$result["parentBrandName"] = $data[0]["full_name"];
-			} else {
-				$result["parentBrandId"] = null;
-				$result["parentBrandName"] = null;
-			}
-		} else {
-			$result["parentBrandName"] = null;
-		}
-		
-		return $result;
+		$dao = new GoodsBrandDAO();
+		return $dao->brandParentName($params);
 	}
 
 	/**
@@ -1253,40 +1223,24 @@ class GoodsService extends PSIBaseService {
 		$db = M();
 		$db->startTrans();
 		
-		$sql = "select full_name from t_goods_brand where id = '%s' ";
-		$data = $db->query($sql, $id);
-		if (! $data) {
+		$dao = new GoodsBrandDAO($db);
+		$brand = $dao->getBrandById($id);
+		
+		if (! $brand) {
 			$db->rollback();
 			return $this->bad("要删除的品牌不存在");
 		}
-		$fullName = $data[0]["full_name"];
+		$fullName = $brand["fullName"];
+		$params["fullName"] = $fullName;
 		
-		$sql = "select count(*) as cnt from t_goods
-				where brand_id = '%s' ";
-		$data = $db->query($sql, $id);
-		$cnt = $data[0]["cnt"];
-		if ($cnt > 0) {
+		$rc = $dao->deleteBrand($params);
+		if ($rc) {
 			$db->rollback();
-			return $this->bad("品牌[$fullName]已经在商品中使用，不能删除");
-		}
-		
-		$sql = "select count(*) as cnt from t_goods_brand where parent_id = '%s' ";
-		$data = $db->query($sql, $id);
-		$cnt = $data[0]["cnt"];
-		if ($cnt > 0) {
-			$db->rollback();
-			return $this->bad("品牌[$fullName]还有子品牌，所以不能被删除");
-		}
-		
-		$sql = "delete from t_goods_brand where id = '%s' ";
-		$rc = $db->execute($sql, $id);
-		if ($rc === false) {
-			$db->rollback();
-			return $this->sqlError(__LINE__);
+			return $rc;
 		}
 		
 		$log = "删除商品品牌[$fullName]";
-		$bs = new BizlogService();
+		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY_BRAND);
 		
 		$db->commit();
