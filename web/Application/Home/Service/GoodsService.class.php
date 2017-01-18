@@ -299,25 +299,29 @@ class GoodsService extends PSIBaseService {
 		
 		$db = M();
 		$db->startTrans();
+		$dao = new GoodsDAO($db);
 		
-		$sql = "select name from t_goods_unit where id = '%s' ";
-		$data = $db->query($sql, $unitId);
-		if (! $data) {
+		$goodsUnitDAO = new GoodsUnitDAO($db);
+		$unit = $goodsUnitDAO->getGoodsUnitById($unitId);
+		
+		if (! $unit) {
 			$db->rollback();
 			return $this->bad("计量单位不存在");
 		}
-		$sql = "select name from t_goods_category where id = '%s' ";
-		$data = $db->query($sql, $categoryId);
-		if (! $data) {
+		
+		$goodsCategoryDAO = new GoodsCategoryDAO($db);
+		$category = $goodsCategoryDAO->getGoodsCategoryById($categoryId);
+		if (! $category) {
 			$db->rollback();
 			return $this->bad("商品分类不存在");
 		}
 		
 		// 检查商品品牌
 		if ($brandId) {
-			$sql = "select name from t_goods_brand where id = '%s' ";
-			$data = $db->query($sql, $brandId);
-			if (! $data) {
+			$brandDAO = new GoodsBrandDAO($db);
+			$brand = $brandDAO->getBrandById($brandId);
+			
+			if (! $brand) {
 				$db->rollback();
 				return $this->bad("商品品牌不存在");
 			}
@@ -326,83 +330,35 @@ class GoodsService extends PSIBaseService {
 		$ps = new PinyinService();
 		$py = $ps->toPY($name);
 		$specPY = $ps->toPY($spec);
+		
+		$params["py"] = $py;
+		$params["specPY"] = $specPY;
+		
 		$log = null;
 		
 		if ($id) {
 			// 编辑
-			// 检查商品编码是否唯一
-			$sql = "select count(*) as cnt from t_goods where code = '%s' and id <> '%s' ";
-			$data = $db->query($sql, $code, $id);
-			$cnt = $data[0]["cnt"];
-			if ($cnt > 0) {
+			$rc = $dao->updateGoods($params);
+			if ($rc) {
 				$db->rollback();
-				return $this->bad("编码为 [{$code}]的商品已经存在");
-			}
-			
-			// 如果录入了条形码，则需要检查条形码是否唯一
-			if ($barCode) {
-				$sql = "select count(*) as cnt from t_goods where bar_code = '%s' and id <> '%s' ";
-				$data = $db->query($sql, $barCode, $id);
-				$cnt = $data[0]["cnt"];
-				if ($cnt != 0) {
-					$db->rollback();
-					return $this->bad("条形码[{$barCode}]已经被其他商品使用");
-				}
-			}
-			
-			$sql = "update t_goods
-					set code = '%s', name = '%s', spec = '%s', category_id = '%s', 
-					    unit_id = '%s', sale_price = %f, py = '%s', purchase_price = %f,
-						bar_code = '%s', memo = '%s', spec_py = '%s',
-						brand_id = if('%s' = '', null, '%s')
-					where id = '%s' ";
-			
-			$rc = $db->execute($sql, $code, $name, $spec, $categoryId, $unitId, $salePrice, $py, 
-					$purchasePrice, $barCode, $memo, $specPY, $brandId, $brandId, $id);
-			if ($rc === false) {
-				$db->rollback();
-				return $this->sqlError(__LINE__);
+				return $rc;
 			}
 			
 			$log = "编辑商品: 商品编码 = {$code}, 品名 = {$name}, 规格型号 = {$spec}";
 		} else {
 			// 新增
-			// 检查商品编码是否唯一
-			$sql = "select count(*) as cnt from t_goods where code = '%s' ";
-			$data = $db->query($sql, $code);
-			$cnt = $data[0]["cnt"];
-			if ($cnt > 0) {
-				$db->rollback();
-				return $this->bad("编码为 [{$code}]的商品已经存在");
-			}
-			
-			// 如果录入了条形码，则需要检查条形码是否唯一
-			if ($barCode) {
-				$sql = "select count(*) as cnt from t_goods where bar_code = '%s' ";
-				$data = $db->query($sql, $barCode);
-				$cnt = $data[0]["cnt"];
-				if ($cnt != 0) {
-					$db->rollback();
-					return $this->bad("条形码[{$barCode}]已经被其他商品使用");
-				}
-			}
-			
 			$idGen = new IdGenService();
 			$id = $idGen->newId();
-			$us = new UserService();
-			$dataOrg = $us->getLoginUserDataOrg();
-			$companyId = $us->getCompanyId();
+			$params["id"] = $id;
 			
-			$sql = "insert into t_goods (id, code, name, spec, category_id, unit_id, sale_price, 
-						py, purchase_price, bar_code, memo, data_org, company_id, spec_py, brand_id)
-					values ('%s', '%s', '%s', '%s', '%s', '%s', %f, '%s', %f, '%s', '%s', '%s', '%s', '%s',
-						if('%s' = '', null, '%s'))";
-			$rc = $db->execute($sql, $id, $code, $name, $spec, $categoryId, $unitId, $salePrice, 
-					$py, $purchasePrice, $barCode, $memo, $dataOrg, $companyId, $specPY, $brandId, 
-					$brandId);
-			if ($rc === false) {
+			$us = new UserService();
+			$params["dataOrg"] = $us->getLoginUserDataOrg();
+			$params["companyId"] = $us->getCompanyId();
+			
+			$rc = $dao->addGoods($params);
+			if ($rc) {
 				$db->rollback();
-				return $this->sqlError(__LINE__);
+				return $rc;
 			}
 			
 			$log = "新增商品: 商品编码 = {$code}, 品名 = {$name}, 规格型号 = {$spec}";
@@ -410,7 +366,7 @@ class GoodsService extends PSIBaseService {
 		
 		// 记录业务日志
 		if ($log) {
-			$bs = new BizlogService();
+			$bs = new BizlogService($db);
 			$bs->insertBizlog($log, $this->LOG_CATEGORY_GOODS);
 		}
 		

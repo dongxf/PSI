@@ -128,7 +128,7 @@ class GoodsDAO extends PSIBaseDAO {
 				"totalCount" => $totalCount
 		);
 	}
-	
+
 	private function getBrandFullNameById($db, $brandId) {
 		$sql = "select full_name from t_goods_brand where id = '%s' ";
 		$data = $db->query($sql, $brandId);
@@ -138,5 +138,117 @@ class GoodsDAO extends PSIBaseDAO {
 			return null;
 		}
 	}
-	
+
+	/**
+	 * 新增商品
+	 */
+	public function addGoods($params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		$code = $params["code"];
+		$name = $params["name"];
+		$spec = $params["spec"];
+		$categoryId = $params["categoryId"];
+		$unitId = $params["unitId"];
+		$salePrice = $params["salePrice"];
+		$purchasePrice = $params["purchasePrice"];
+		$barCode = $params["barCode"];
+		$memo = $params["memo"];
+		$brandId = $params["brandId"];
+		
+		$dataOrg = $params["dataOrg"];
+		$companyId = $params["companyId"];
+		
+		$py = $params["py"];
+		$specPY = $params["specPY"];
+		
+		// 检查商品编码是否唯一
+		$sql = "select count(*) as cnt from t_goods where code = '%s' ";
+		$data = $db->query($sql, $code);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("编码为 [{$code}]的商品已经存在");
+		}
+		
+		// 如果录入了条形码，则需要检查条形码是否唯一
+		if ($barCode) {
+			$sql = "select count(*) as cnt from t_goods where bar_code = '%s' ";
+			$data = $db->query($sql, $barCode);
+			$cnt = $data[0]["cnt"];
+			if ($cnt != 0) {
+				return $this->bad("条形码[{$barCode}]已经被其他商品使用");
+			}
+		}
+		
+		$sql = "insert into t_goods (id, code, name, spec, category_id, unit_id, sale_price,
+						py, purchase_price, bar_code, memo, data_org, company_id, spec_py, brand_id)
+					values ('%s', '%s', '%s', '%s', '%s', '%s', %f, '%s', %f, '%s', '%s', '%s', '%s', '%s',
+						if('%s' = '', null, '%s'))";
+		$rc = $db->execute($sql, $id, $code, $name, $spec, $categoryId, $unitId, $salePrice, $py, 
+				$purchasePrice, $barCode, $memo, $dataOrg, $companyId, $specPY, $brandId, $brandId);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		return null;
+	}
+
+	/**
+	 * 编辑商品
+	 */
+	public function updateGoods($params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		$code = $params["code"];
+		$name = $params["name"];
+		$spec = $params["spec"];
+		$categoryId = $params["categoryId"];
+		$unitId = $params["unitId"];
+		$salePrice = $params["salePrice"];
+		$purchasePrice = $params["purchasePrice"];
+		$barCode = $params["barCode"];
+		$memo = $params["memo"];
+		$brandId = $params["brandId"];
+		
+		$py = $params["py"];
+		$specPY = $params["specPY"];
+		
+		// 编辑
+		// 检查商品编码是否唯一
+		$sql = "select count(*) as cnt from t_goods where code = '%s' and id <> '%s' ";
+		$data = $db->query($sql, $code, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("编码为 [{$code}]的商品已经存在");
+		}
+		
+		// 如果录入了条形码，则需要检查条形码是否唯一
+		if ($barCode) {
+			$sql = "select count(*) as cnt from t_goods where bar_code = '%s' and id <> '%s' ";
+			$data = $db->query($sql, $barCode, $id);
+			$cnt = $data[0]["cnt"];
+			if ($cnt != 0) {
+				return $this->bad("条形码[{$barCode}]已经被其他商品使用");
+			}
+		}
+		
+		$sql = "update t_goods
+				set code = '%s', name = '%s', spec = '%s', category_id = '%s',
+				    unit_id = '%s', sale_price = %f, py = '%s', purchase_price = %f,
+					bar_code = '%s', memo = '%s', spec_py = '%s',
+					brand_id = if('%s' = '', null, '%s')
+				where id = '%s' ";
+		
+		$rc = $db->execute($sql, $code, $name, $spec, $categoryId, $unitId, $salePrice, $py, 
+				$purchasePrice, $barCode, $memo, $specPY, $brandId, $brandId, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		return null;
+	}
 }
