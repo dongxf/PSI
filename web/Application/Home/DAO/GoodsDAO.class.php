@@ -128,4 +128,15 @@ class GoodsDAO extends PSIBaseDAO {
 				"totalCount" => $totalCount
 		);
 	}
+	
+	private function getBrandFullNameById($db, $brandId) {
+		$sql = "select full_name from t_goods_brand where id = '%s' ";
+		$data = $db->query($sql, $brandId);
+		if ($data) {
+			return $data[0]["full_name"];
+		} else {
+			return null;
+		}
+	}
+	
 }
