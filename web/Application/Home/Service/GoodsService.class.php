@@ -393,42 +393,25 @@ class GoodsService extends PSIBaseService {
 		$db = M();
 		$db->startTrans();
 		
-		$sql = "select code, name from t_goods_category where id = '%s' ";
-		$data = $db->query($sql, $id);
-		if (! $data) {
-			$db->rollback();
+		$dao = new GoodsCategoryDAO($db);
+		
+		$category = $dao->getGoodsCategoryById($id);
+		
+		if (! $category) {
 			return $this->bad("要删除的商品分类不存在");
 		}
-		$code = $data[0]["code"];
-		$name = $data[0]["name"];
+		$code = $category["code"];
+		$name = $category["name"];
+		$params["name"] = $name;
 		
-		$sql = "select count(*) as cnt from t_goods where category_id = '%s' ";
-		$data = $db->query($sql, $id);
-		$cnt = $data[0]["cnt"];
-		if ($cnt > 0) {
+		$rc = $dao->deleteCategory($params);
+		if ($rc) {
 			$db->rollback();
-			return $this->bad("还有属于商品分类 [{$name}] 的商品，不能删除该分类");
-		}
-		
-		// 判断是否还有子分类
-		$sql = "select count(*) as cnt from t_goods_category 
-				where parent_id = '%s' ";
-		$data = $db->query($sql, $id);
-		$cnt = $data[0]["cnt"];
-		if ($cnt > 0) {
-			$db->rollback();
-			return $this->bad("分类[{$name}]还有子分类，不能删除");
-		}
-		
-		$sql = "delete from t_goods_category where id = '%s' ";
-		$rc = $db->execute($sql, $id);
-		if ($rc === false) {
-			$db->rollback();
-			return $this->sqlError(__LINE__);
+			return $rc;
 		}
 		
 		$log = "删除商品分类：  编码 = {$code}， 分类名称 = {$name}";
-		$bs = new BizlogService();
+		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY_GOODS);
 		
 		$db->commit();

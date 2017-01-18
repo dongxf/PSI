@@ -346,4 +346,39 @@ class GoodsCategoryDAO extends PSIBaseDAO {
 		// 操作成功
 		return null;
 	}
+
+	/**
+	 * 删除商品分类
+	 */
+	public function deleteCategory($params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		$name = $params["name"];
+		
+		$sql = "select count(*) as cnt from t_goods where category_id = '%s' ";
+		$data = $db->query($sql, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("还有属于商品分类 [{$name}] 的商品，不能删除该分类");
+		}
+		
+		// 判断是否还有子分类
+		$sql = "select count(*) as cnt from t_goods_category
+				where parent_id = '%s' ";
+		$data = $db->query($sql, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("分类[{$name}]还有子分类，不能删除");
+		}
+		
+		$sql = "delete from t_goods_category where id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		return null;
+	}
 }
