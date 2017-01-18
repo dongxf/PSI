@@ -5,6 +5,7 @@ namespace Home\Service;
 use Home\Common\FIdConst;
 use Home\DAO\GoodsBomDAO;
 use Home\DAO\GoodsBrandDAO;
+use Home\DAO\GoodsUnitDAO;
 
 /**
  * 商品Service
@@ -24,12 +25,9 @@ class GoodsService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		$db = M();
-		$sql = "select id, name 
-				from t_goods_unit 
-				order by convert(name USING gbk) collate gbk_chinese_ci";
+		$dao = new GoodsUnitDAO();
 		
-		return $db->query($sql);
+		return $dao->allUnits();
 	}
 
 	/**
@@ -46,51 +44,36 @@ class GoodsService extends PSIBaseService {
 		$db = M();
 		$db->startTrans();
 		
+		$dao = new GoodsUnitDAO($db);
+		
 		$log = null;
 		
 		if ($id) {
 			// 编辑
-			// 检查计量单位是否存在
-			$sql = "select count(*) as cnt from t_goods_unit where name = '%s' and id <> '%s' ";
-			$data = $db->query($sql, $name, $id);
-			$cnt = $data[0]["cnt"];
-			if ($cnt > 0) {
-				$db->rollback();
-				return $this->bad("计量单位 [$name] 已经存在");
-			}
 			
-			$sql = "update t_goods_unit set name = '%s' where id = '%s' ";
-			$rc = $db->execute($sql, $name, $id);
-			if ($rc === false) {
+			$rc = $dao->updateUnit($params);
+			if ($rc) {
 				$db->rollback();
-				return $this->sqlError(__LINE__);
+				return $rc;
 			}
 			
 			$log = "编辑计量单位: $name";
 		} else {
 			// 新增
-			// 检查计量单位是否存在
-			$sql = "select count(*) as cnt from t_goods_unit where name = '%s' ";
-			$data = $db->query($sql, $name);
-			$cnt = $data[0]["cnt"];
-			if ($cnt > 0) {
-				$db->rollback();
-				return $this->bad("计量单位 [$name] 已经存在");
-			}
-			
 			$idGen = new IdGenService();
-			$id = $idGen->newId();
+			$id = $idGen->newId($db);
+			
+			$params["id"] = $id;
 			
 			$us = new UserService();
-			$dataOrg = $us->getLoginUserDataOrg();
-			$companyId = $us->getCompanyId();
+			$params["dataOrg"] = $us->getLoginUserDataOrg();
+			$params["companyId"] = $us->getCompanyId();
 			
-			$sql = "insert into t_goods_unit(id, name, data_org, company_id) 
-					values ('%s', '%s', '%s', '%s') ";
-			$rc = $db->execute($sql, $id, $name, $dataOrg, $companyId);
-			if ($rc === false) {
+			$rc = $dao->addUnit($params);
+			
+			if ($rc) {
 				$db->rollback();
-				return $this->sqlError(__LINE__);
+				return $rc;
 			}
 			
 			$log = "新增计量单位: $name";
@@ -98,7 +81,7 @@ class GoodsService extends PSIBaseService {
 		
 		// 记录业务日志
 		if ($log) {
-			$bs = new BizlogService();
+			$bs = new BizlogService($db);
 			$bs->insertBizlog($log, $this->LOG_CATEGORY_UNIT);
 		}
 		
@@ -120,32 +103,25 @@ class GoodsService extends PSIBaseService {
 		$db = M();
 		$db->startTrans();
 		
-		$sql = "select name from t_goods_unit where id = '%s' ";
-		$data = $db->query($sql, $id);
-		if (! $data) {
+		$dao = new GoodsUnitDAO($db);
+		
+		$goodsUnit = $dao->getGoodsUnitById($id);
+		if (! $goodsUnit) {
 			$db->rollback();
 			return $this->bad("要删除的商品计量单位不存在");
 		}
-		$name = $data[0]["name"];
 		
-		// 检查记录单位是否被使用
-		$sql = "select count(*) as cnt from t_goods where unit_id = '%s' ";
-		$data = $db->query($sql, $id);
-		$cnt = $data[0]["cnt"];
-		if ($cnt > 0) {
-			$db->rollback();
-			return $this->bad("商品计量单位 [$name] 已经被使用，不能删除");
-		}
+		$name = $goodsUnit["name"];
+		$params["name"] = $name;
 		
-		$sql = "delete from t_goods_unit where id = '%s' ";
-		$rc = $db->execute($sql, $id);
-		if ($rc === false) {
+		$rc = $dao->deleteUnit($params);
+		if ($rc) {
 			$db->rollback();
-			return $this->sqlError(__LINE__);
+			return $rc;
 		}
 		
 		$log = "删除商品计量单位: $name";
-		$bs = new BizlogService();
+		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY_UNIT);
 		
 		$db->commit();
