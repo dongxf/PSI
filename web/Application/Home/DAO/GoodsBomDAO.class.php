@@ -8,16 +8,25 @@ namespace Home\DAO;
  * @author 李静波
  */
 class GoodsBomDAO extends PSIBaseDAO {
+	var $db;
+
+	function __construct($db = null) {
+		if ($db == null) {
+			$db = M();
+		}
+		
+		$this->db = $db;
+	}
 
 	/**
 	 * 获得某个商品的商品构成
 	 */
 	public function goodsBOMList($params) {
+		$db = $this->db;
+		
 		$id = $params["id"];
 		
 		$result = array();
-		
-		$db = M();
 		
 		$sql = "select b.id, b.sub_goods_count, g.code, g.name, g.spec, u.name as unit_name
 				from t_goods_bom b, t_goods g, t_goods_unit u
