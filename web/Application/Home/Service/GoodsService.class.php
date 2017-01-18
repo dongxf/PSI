@@ -388,58 +388,29 @@ class GoodsService extends PSIBaseService {
 		$db = M();
 		$db->startTrans();
 		
-		$sql = "select code, name, spec from t_goods where id = '%s' ";
-		$data = $db->query($sql, $id);
-		if (! $data) {
+		$dao = new GoodsDAO($db);
+		$goods = $dao->getGoodsById($id);
+		
+		if (! $goods) {
 			$db->rollback();
 			return $this->bad("要删除的商品不存在");
 		}
-		$code = $data[0]["code"];
-		$name = $data[0]["name"];
-		$spec = $data[0]["spec"];
+		$code = $goods["code"];
+		$name = $goods["name"];
+		$spec = $goods["spec"];
 		
-		// 判断商品是否能删除
-		$sql = "select count(*) as cnt from t_po_bill_detail where goods_id = '%s' ";
-		$data = $db->query($sql, $id);
-		$cnt = $data[0]["cnt"];
-		if ($cnt > 0) {
-			$db->rollback();
-			return $this->bad("商品[{$code} {$name}]已经在采购订单中使用了，不能删除");
-		}
+		$params["code"] = $code;
+		$params["name"] = $name;
+		$params["spec"] = $spec;
 		
-		$sql = "select count(*) as cnt from t_pw_bill_detail where goods_id = '%s' ";
-		$data = $db->query($sql, $id);
-		$cnt = $data[0]["cnt"];
-		if ($cnt > 0) {
+		$rc = $dao->deleteGoods($params);
+		if ($rc) {
 			$db->rollback();
-			return $this->bad("商品[{$code} {$name}]已经在采购入库单中使用了，不能删除");
-		}
-		
-		$sql = "select count(*) as cnt from t_ws_bill_detail where goods_id = '%s' ";
-		$data = $db->query($sql, $id);
-		$cnt = $data[0]["cnt"];
-		if ($cnt > 0) {
-			$db->rollback();
-			return $this->bad("商品[{$code} {$name}]已经在销售出库单中使用了，不能删除");
-		}
-		
-		$sql = "select count(*) as cnt from t_inventory_detail where goods_id = '%s' ";
-		$data = $db->query($sql, $id);
-		$cnt = $data[0]["cnt"];
-		if ($cnt > 0) {
-			$db->rollback();
-			return $this->bad("商品[{$code} {$name}]在业务中已经使用了，不能删除");
-		}
-		
-		$sql = "delete from t_goods where id = '%s' ";
-		$rc = $db->execute($sql, $id);
-		if ($rc === false) {
-			$db->rollback();
-			return $this->sqlError(__LINE__);
+			return $rc;
 		}
 		
 		$log = "删除商品： 商品编码 = {$code}， 品名 = {$name}，规格型号 = {$spec}";
-		$bs = new BizlogService();
+		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY_GOODS);
 		
 		$db->commit();
