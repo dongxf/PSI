@@ -596,4 +596,51 @@ class GoodsDAO extends PSIBaseDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 查询商品种类总数
+	 */
+	public function getTotalGoodsCount($params) {
+		$db = $this->db;
+		
+		$code = $params["code"];
+		$name = $params["name"];
+		$spec = $params["spec"];
+		$barCode = $params["barCode"];
+		
+		$loginUserId = $params["loginUserId"];
+		
+		$sql = "select count(*) as cnt
+					from t_goods c
+					where (1 = 1) ";
+		$queryParam = array();
+		$ds = new DataOrgDAO($db);
+		$rs = $ds->buildSQL(FIdConst::GOODS, "c", $loginUserId);
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParam = array_merge($queryParam, $rs[1]);
+		}
+		if ($code) {
+			$sql .= " and (c.code like '%s') ";
+			$queryParam[] = "%{$code}%";
+		}
+		if ($name) {
+			$sql .= " and (c.name like '%s' or c.py like '%s') ";
+			$queryParam[] = "%{$name}%";
+			$queryParam[] = "%{$name}%";
+		}
+		if ($spec) {
+			$sql .= " and (c.spec like '%s')";
+			$queryParam[] = "%{$spec}%";
+		}
+		if ($barCode) {
+			$sql .= " and (c.bar_code = '%s') ";
+			$queryParam[] = $barCode;
+		}
+		$data = $db->query($sql, $queryParam);
+		
+		return array(
+				"cnt" => $data[0]["cnt"]
+		);
+	}
 }
