@@ -137,4 +137,51 @@ class GoodsSiDAO extends PSIBaseDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 设置商品的安全
+	 */
+	public function editSafetyInventory($bill) {
+		$db = $this->db;
+		
+		
+		$id = $bill["id"];
+		$items = $bill["items"];
+		
+		$idGen = new IdGenDAO($db);
+		
+		
+		$sql = "delete from t_goods_si where goods_id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		foreach ( $items as $v ) {
+			$warehouseId = $v["warehouseId"];
+			$si = $v["si"];
+			if (! $si) {
+				$si = 0;
+			}
+			if ($si < 0) {
+				$si = 0;
+			}
+			$upper = $v["invUpper"];
+			if (! $upper) {
+				$upper = 0;
+			}
+			if ($upper < 0) {
+				$upper = 0;
+			}
+			$sql = "insert into t_goods_si(id, goods_id, warehouse_id, safety_inventory, inventory_upper)
+						values ('%s', '%s', '%s', %d, %d)";
+			$rc = $db->execute($sql, $idGen->newId(), $id, $warehouseId, $si, $upper);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+		}
+		
+		// 操作成功
+		return null;
+	}
 }

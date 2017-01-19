@@ -535,56 +535,30 @@ class GoodsService extends PSIBaseService {
 		
 		$db = M();
 		
-		$id = $bill["id"];
-		$items = $bill["items"];
-		
-		$idGen = new IdGenService();
-		
 		$db->startTrans();
 		
-		$sql = "select code, name, spec from t_goods where id = '%s'";
-		$data = $db->query($sql, $id);
-		if (! $data) {
+		$id = $bill["id"];
+		
+		$goodsDAO = new GoodsDAO($db);
+		$goods = $goodsDAO->getGoodsById($id);
+		
+		if (! $goods) {
 			$db->rollback();
 			return $this->bad("商品不存在，无法设置商品安全库存");
 		}
-		$goodsCode = $data[0]["code"];
-		$goodsName = $data[0]["name"];
-		$goodsSpec = $data[0]["spec"];
+		$goodsCode = $goods["code"];
+		$goodsName = $goods["name"];
+		$goodsSpec = $goods["spec"];
 		
-		$sql = "delete from t_goods_si where goods_id = '%s' ";
-		$rc = $db->execute($sql, $id);
-		if ($rc === false) {
+		$dao = new GoodsSiDAO($db);
+		$rc = $dao->editSafetyInventory($bill);
+		if ($rc) {
 			$db->rollback();
-			return $this->sqlError(__LINE__);
+			
+			return $rc;
 		}
 		
-		foreach ( $items as $v ) {
-			$warehouseId = $v["warehouseId"];
-			$si = $v["si"];
-			if (! $si) {
-				$si = 0;
-			}
-			if ($si < 0) {
-				$si = 0;
-			}
-			$upper = $v["invUpper"];
-			if (! $upper) {
-				$upper = 0;
-			}
-			if ($upper < 0) {
-				$upper = 0;
-			}
-			$sql = "insert into t_goods_si(id, goods_id, warehouse_id, safety_inventory, inventory_upper)
-						values ('%s', '%s', '%s', %d, %d)";
-			$rc = $db->execute($sql, $idGen->newId(), $id, $warehouseId, $si, $upper);
-			if ($rc === false) {
-				$db->rollback();
-				return $this->sqlError(__LINE__);
-			}
-		}
-		
-		$bs = new BizlogService();
+		$bs = new BizlogService($db);
 		$log = "为商品[$goodsCode $goodsName $goodsSpec]设置安全库存";
 		$bs->insertBizlog($log, $this->LOG_CATEGORY_GOODS);
 		
