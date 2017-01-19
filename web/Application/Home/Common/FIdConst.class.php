@@ -180,6 +180,11 @@ class FIdConst {
 	const GOODS = "1001";
 	
 	/**
+	 * 商品在业务单据中的使用权限
+	 */
+	const GOODS_BILL = "1001-01";
+	
+	/**
 	 * 商品分类
 	 */
 	const GOODS_CATEGORY = "1001-02";

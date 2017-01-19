@@ -425,98 +425,32 @@ class GoodsService extends PSIBaseService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
+		$us = new UserService();
+		$params = array(
+				"queryKey" => $queryKey,
+				"loginUserId" => $us->getLoginUserId()
+		);
 		
-		if ($queryKey == null) {
-			$queryKey = "";
-		}
-		
-		$key = "%{$queryKey}%";
-		
-		$sql = "select g.id, g.code, g.name, g.spec, u.name as unit_name
-				from t_goods g, t_goods_unit u
-				where (g.unit_id = u.id)
-				and (g.code like '%s' or g.name like '%s' or g.py like '%s'
-					or g.spec like '%s' or g.spec_py like '%s') ";
-		$queryParams = array();
-		$queryParams[] = $key;
-		$queryParams[] = $key;
-		$queryParams[] = $key;
-		$queryParams[] = $key;
-		$queryParams[] = $key;
-		
-		$ds = new DataOrgService();
-		$rs = $ds->buildSQL("1001-01", "g");
-		if ($rs) {
-			$sql .= " and " . $rs[0];
-			$queryParams = array_merge($queryParams, $rs[1]);
-		}
-		
-		$sql .= " order by g.code 
-				limit 20";
-		$data = M()->query($sql, $queryParams);
-		$result = array();
-		foreach ( $data as $i => $v ) {
-			$result[$i]["id"] = $v["id"];
-			$result[$i]["code"] = $v["code"];
-			$result[$i]["name"] = $v["name"];
-			$result[$i]["spec"] = $v["spec"];
-			$result[$i]["unitName"] = $v["unit_name"];
-		}
-		
-		return $result;
+		$dao = new GoodsDAO();
+		return $dao->queryData($params);
 	}
 
 	/**
 	 * 商品字段，查询数据
-	 *
-	 * @param unknown $queryKey        	
 	 */
 	public function queryDataWithSalePrice($queryKey) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
 		
-		if ($queryKey == null) {
-			$queryKey = "";
-		}
+		$us = new UserService();
+		$params = array(
+				"queryKey" => $queryKey,
+				"loginUserId" => $us->getLoginUserId()
+		);
 		
-		$key = "%{$queryKey}%";
-		
-		$sql = "select g.id, g.code, g.name, g.spec, u.name as unit_name, g.sale_price, g.memo
-				from t_goods g, t_goods_unit u
-				where (g.unit_id = u.id)
-				and (g.code like '%s' or g.name like '%s' or g.py like '%s'
-					or g.spec like '%s' or g.spec_py like '%s') ";
-		
-		$queryParams = array();
-		$queryParams[] = $key;
-		$queryParams[] = $key;
-		$queryParams[] = $key;
-		$queryParams[] = $key;
-		$queryParams[] = $key;
-		
-		$ds = new DataOrgService();
-		$rs = $ds->buildSQL("1001-01", "g");
-		if ($rs) {
-			$sql .= " and " . $rs[0];
-			$queryParams = array_merge($queryParams, $rs[1]);
-		}
-		
-		$sql .= " order by g.code 
-				limit 20";
-		$data = M()->query($sql, $queryParams);
-		$result = array();
-		foreach ( $data as $i => $v ) {
-			$result[$i]["id"] = $v["id"];
-			$result[$i]["code"] = $v["code"];
-			$result[$i]["name"] = $v["name"];
-			$result[$i]["spec"] = $v["spec"];
-			$result[$i]["unitName"] = $v["unit_name"];
-			$result[$i]["salePrice"] = $v["sale_price"];
-			$result[$i]["memo"] = $v["memo"];
-		}
-		
-		return $result;
+		$dao = new GoodsDAO();
+		return $dao->queryDataWithSalePrice($params);
 	}
 
 	/**
@@ -527,47 +461,14 @@ class GoodsService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		if ($queryKey == null) {
-			$queryKey = "";
-		}
+		$us = new UserService();
+		$params = array(
+				"queryKey" => $queryKey,
+				"loginUserId" => $us->getLoginUserId()
+		);
 		
-		$key = "%{$queryKey}%";
-		
-		$sql = "select g.id, g.code, g.name, g.spec, u.name as unit_name, g.purchase_price, g.memo
-				from t_goods g, t_goods_unit u
-				where (g.unit_id = u.id)
-				and (g.code like '%s' or g.name like '%s' or g.py like '%s' 
-					or g.spec like '%s' or g.spec_py like '%s') ";
-		
-		$queryParams = array();
-		$queryParams[] = $key;
-		$queryParams[] = $key;
-		$queryParams[] = $key;
-		$queryParams[] = $key;
-		$queryParams[] = $key;
-		
-		$ds = new DataOrgService();
-		$rs = $ds->buildSQL("1001-01", "g");
-		if ($rs) {
-			$sql .= " and " . $rs[0];
-			$queryParams = array_merge($queryParams, $rs[1]);
-		}
-		
-		$sql .= " order by g.code 
-				limit 20";
-		$data = M()->query($sql, $queryParams);
-		$result = array();
-		foreach ( $data as $i => $v ) {
-			$result[$i]["id"] = $v["id"];
-			$result[$i]["code"] = $v["code"];
-			$result[$i]["name"] = $v["name"];
-			$result[$i]["spec"] = $v["spec"];
-			$result[$i]["unitName"] = $v["unit_name"];
-			$result[$i]["purchasePrice"] = $v["purchase_price"] == 0 ? null : $v["purchase_price"];
-			$result[$i]["memo"] = $v["memo"];
-		}
-		
-		return $result;
+		$dao = new GoodsDAO();
+		return $dao->queryDataWithPurchasePrice($params);
 	}
 
 	/**
