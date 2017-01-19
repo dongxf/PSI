@@ -88,4 +88,158 @@ class SupplierDAO extends PSIBaseDAO {
 		
 		return $db->query($sql, $queryParam);
 	}
+
+	/**
+	 * 某个分类下的供应商档案列表
+	 */
+	public function supplierList($params) {
+		$db = $this->db;
+		
+		$categoryId = $params["categoryId"];
+		$page = $params["page"];
+		$start = $params["start"];
+		$limit = $params["limit"];
+		
+		$code = $params["code"];
+		$name = $params["name"];
+		$address = $params["address"];
+		$contact = $params["contact"];
+		$mobile = $params["mobile"];
+		$tel = $params["tel"];
+		$qq = $params["qq"];
+		
+		$loginUserId = $params["loginUserId"];
+		
+		$sql = "select id, category_id, code, name, contact01, qq01, tel01, mobile01,
+				contact02, qq02, tel02, mobile02, init_payables, init_payables_dt,
+				address, address_shipping,
+				bank_name, bank_account, tax_number, fax, note, data_org
+				from t_supplier
+				where (category_id = '%s')";
+		$queryParam = array();
+		$queryParam[] = $categoryId;
+		if ($code) {
+			$sql .= " and (code like '%s' ) ";
+			$queryParam[] = "%{$code}%";
+		}
+		if ($name) {
+			$sql .= " and (name like '%s' or py like '%s' ) ";
+			$queryParam[] = "%{$name}%";
+			$queryParam[] = "%{$name}%";
+		}
+		if ($address) {
+			$sql .= " and (address like '%s' or address_shipping like '%s') ";
+			$queryParam[] = "%$address%";
+			$queryParam[] = "%$address%";
+		}
+		if ($contact) {
+			$sql .= " and (contact01 like '%s' or contact02 like '%s' ) ";
+			$queryParam[] = "%{$contact}%";
+			$queryParam[] = "%{$contact}%";
+		}
+		if ($mobile) {
+			$sql .= " and (mobile01 like '%s' or mobile02 like '%s' ) ";
+			$queryParam[] = "%{$mobile}%";
+			$queryParam[] = "%{$mobile}";
+		}
+		if ($tel) {
+			$sql .= " and (tel01 like '%s' or tel02 like '%s' ) ";
+			$queryParam[] = "%{$tel}%";
+			$queryParam[] = "%{$tel}";
+		}
+		if ($qq) {
+			$sql .= " and (qq01 like '%s' or qq02 like '%s' ) ";
+			$queryParam[] = "%{$qq}%";
+			$queryParam[] = "%{$qq}";
+		}
+		
+		$ds = new DataOrgDAO($db);
+		$rs = $ds->buildSQL(FIdConst::SUPPLIER, "t_supplier", $loginUserId);
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParam = array_merge($queryParam, $rs[1]);
+		}
+		
+		$queryParam[] = $start;
+		$queryParam[] = $limit;
+		$sql .= " order by code
+				limit %d, %d";
+		$result = array();
+		$data = $db->query($sql, $queryParam);
+		foreach ( $data as $i => $v ) {
+			$result[$i]["id"] = $v["id"];
+			$result[$i]["categoryId"] = $v["category_id"];
+			$result[$i]["code"] = $v["code"];
+			$result[$i]["name"] = $v["name"];
+			$result[$i]["address"] = $v["address"];
+			$result[$i]["addressShipping"] = $v["address_shipping"];
+			$result[$i]["contact01"] = $v["contact01"];
+			$result[$i]["qq01"] = $v["qq01"];
+			$result[$i]["tel01"] = $v["tel01"];
+			$result[$i]["mobile01"] = $v["mobile01"];
+			$result[$i]["contact02"] = $v["contact02"];
+			$result[$i]["qq02"] = $v["qq02"];
+			$result[$i]["tel02"] = $v["tel02"];
+			$result[$i]["mobile02"] = $v["mobile02"];
+			$result[$i]["initPayables"] = $v["init_payables"];
+			if ($v["init_payables_dt"]) {
+				$result[$i]["initPayablesDT"] = date("Y-m-d", strtotime($v["init_payables_dt"]));
+			}
+			$result[$i]["bankName"] = $v["bank_name"];
+			$result[$i]["bankAccount"] = $v["bank_account"];
+			$result[$i]["tax"] = $v["tax_number"];
+			$result[$i]["fax"] = $v["fax"];
+			$result[$i]["note"] = $v["note"];
+			$result[$i]["dataOrg"] = $v["data_org"];
+		}
+		
+		$sql = "select count(*) as cnt from t_supplier where (category_id  = '%s') ";
+		$queryParam = array();
+		$queryParam[] = $categoryId;
+		if ($code) {
+			$sql .= " and (code like '%s' ) ";
+			$queryParam[] = "%{$code}%";
+		}
+		if ($name) {
+			$sql .= " and (name like '%s' or py like '%s' ) ";
+			$queryParam[] = "%{$name}%";
+			$queryParam[] = "%{$name}%";
+		}
+		if ($address) {
+			$sql .= " and (address like '%s') ";
+			$queryParam[] = "%$address%";
+		}
+		if ($contact) {
+			$sql .= " and (contact01 like '%s' or contact02 like '%s' ) ";
+			$queryParam[] = "%{$contact}%";
+			$queryParam[] = "%{$contact}%";
+		}
+		if ($mobile) {
+			$sql .= " and (mobile01 like '%s' or mobile02 like '%s' ) ";
+			$queryParam[] = "%{$mobile}%";
+			$queryParam[] = "%{$mobile}";
+		}
+		if ($tel) {
+			$sql .= " and (tel01 like '%s' or tel02 like '%s' ) ";
+			$queryParam[] = "%{$tel}%";
+			$queryParam[] = "%{$tel}";
+		}
+		if ($qq) {
+			$sql .= " and (qq01 like '%s' or qq02 like '%s' ) ";
+			$queryParam[] = "%{$qq}%";
+			$queryParam[] = "%{$qq}";
+		}
+		$ds = new DataOrgDAO($db);
+		$rs = $ds->buildSQL(FIdConst::SUPPLIER, "t_supplier", $loginUserId);
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParam = array_merge($queryParam, $rs[1]);
+		}
+		$data = $db->query($sql, $queryParam);
+		
+		return array(
+				"supplierList" => $result,
+				"totalCount" => $data[0]["cnt"]
+		);
+	}
 }
