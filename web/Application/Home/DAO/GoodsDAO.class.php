@@ -471,4 +471,67 @@ class GoodsDAO extends PSIBaseDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 获得某个商品的详情
+	 */
+	public function getGoodsInfo($params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		$categoryId = $params["categoryId"];
+		
+		$sql = "select category_id, code, name, spec, unit_id, sale_price, purchase_price,
+					bar_code, memo, brand_id
+				from t_goods
+				where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if ($data) {
+			$result = array();
+			$categoryId = $data[0]["category_id"];
+			$result["categoryId"] = $categoryId;
+			
+			$result["code"] = $data[0]["code"];
+			$result["name"] = $data[0]["name"];
+			$result["spec"] = $data[0]["spec"];
+			$result["unitId"] = $data[0]["unit_id"];
+			$result["salePrice"] = $data[0]["sale_price"];
+			$brandId = $data[0]["brand_id"];
+			$result["brandId"] = $brandId;
+			
+			$v = $data[0]["purchase_price"];
+			if ($v == 0) {
+				$result["purchasePrice"] = null;
+			} else {
+				$result["purchasePrice"] = $v;
+			}
+			
+			$result["barCode"] = $data[0]["bar_code"];
+			$result["memo"] = $data[0]["memo"];
+			
+			$sql = "select full_name from t_goods_category where id = '%s' ";
+			$data = $db->query($sql, $categoryId);
+			if ($data) {
+				$result["categoryName"] = $data[0]["full_name"];
+			}
+			
+			if ($brandId) {
+				$sql = "select full_name from t_goods_brand where id = '%s' ";
+				$data = $db->query($sql, $brandId);
+				$result["brandFullName"] = $data[0]["full_name"];
+			}
+			
+			return $result;
+		} else {
+			$result = array();
+			
+			$sql = "select full_name from t_goods_category where id = '%s' ";
+			$data = $db->query($sql, $categoryId);
+			if ($data) {
+				$result["categoryId"] = $categoryId;
+				$result["categoryName"] = $data[0]["full_name"];
+			}
+			return $result;
+		}
+	}
 }
