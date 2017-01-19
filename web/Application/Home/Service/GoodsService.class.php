@@ -2,13 +2,12 @@
 
 namespace Home\Service;
 
-use Home\Common\FIdConst;
 use Home\DAO\GoodsBomDAO;
 use Home\DAO\GoodsBrandDAO;
-use Home\DAO\GoodsUnitDAO;
 use Home\DAO\GoodsCategoryDAO;
 use Home\DAO\GoodsDAO;
 use Home\DAO\GoodsSiDAO;
+use Home\DAO\GoodsUnitDAO;
 
 /**
  * 商品Service
