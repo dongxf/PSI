@@ -149,4 +149,46 @@ class CustomerDAO extends PSIBaseDAO {
 		// 操作成功
 		return null;
 	}
+
+	public function getCustomerCategoryById($id) {
+		$db = $this->db;
+		
+		$sql = "select code, name from t_customer_category where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if ($data) {
+			return array(
+					"code" => $data[0]["code"],
+					"name" => $data[0]["name"]
+			);
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * 删除客户分类
+	 */
+	public function deleteCategory($params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		
+		$name = $params["name"];
+		
+		$sql = "select count(*) as cnt from t_customer where category_id = '%s' ";
+		$query = $db->query($sql, $id);
+		$cnt = $query[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("当前分类 [{$name}] 下还有客户资料，不能删除");
+		}
+		
+		$sql = "delete from t_customer_category where id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		return null;
+	}
 }
