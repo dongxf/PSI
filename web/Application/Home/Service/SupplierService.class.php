@@ -148,6 +148,7 @@ class SupplierService extends PSIBaseService {
 		}
 		
 		$id = $params["id"];
+		$code = $params["code"];
 		$name = $params["name"];
 		
 		$ps = new PinyinService();
