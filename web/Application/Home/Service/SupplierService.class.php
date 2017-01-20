@@ -263,29 +263,15 @@ class SupplierService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		if ($queryKey == null) {
-			$queryKey = "";
-		}
+		$us = new UserService();
 		
-		$sql = "select id, code, name, tel01, fax, address_shipping, contact01 
-				from t_supplier
-				where (code like '%s' or name like '%s' or py like '%s') ";
-		$queryParams = array();
-		$key = "%{$queryKey}%";
-		$queryParams[] = $key;
-		$queryParams[] = $key;
-		$queryParams[] = $key;
+		$params = array(
+				"queryKey" => $queryKey,
+				"loginUserId" => $us->getLoginUserId()
+		);
 		
-		$ds = new DataOrgService();
-		$rs = $ds->buildSQL("1004-01", "t_supplier");
-		if ($rs) {
-			$sql .= " and " . $rs[0];
-			$queryParams = array_merge($queryParams, $rs[1]);
-		}
-		
-		$sql .= " order by code 
-				limit 20";
-		return M()->query($sql, $queryParams);
+		$dao = new SupplierDAO();
+		return $dao->queryData($params);
 	}
 
 	/**

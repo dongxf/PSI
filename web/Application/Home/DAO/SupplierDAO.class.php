@@ -662,4 +662,38 @@ class SupplierDAO extends PSIBaseDAO {
 			return null;
 		}
 	}
+
+	/**
+	 * 供应商字段， 查询数据
+	 */
+	public function queryData($params) {
+		$db = $this->db;
+		
+		$queryKey = $params["queryKey"];
+		$loginUserId = $params["loginUserId"];
+		
+		if ($queryKey == null) {
+			$queryKey = "";
+		}
+		
+		$sql = "select id, code, name, tel01, fax, address_shipping, contact01
+				from t_supplier
+				where (code like '%s' or name like '%s' or py like '%s') ";
+		$queryParams = array();
+		$key = "%{$queryKey}%";
+		$queryParams[] = $key;
+		$queryParams[] = $key;
+		$queryParams[] = $key;
+		
+		$ds = new DataOrgDAO($db);
+		$rs = $ds->buildSQL(FIdConst::SUPPLIER_BILL, "t_supplier", $loginUserId);
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = array_merge($queryParams, $rs[1]);
+		}
+		
+		$sql .= " order by code
+				limit 20";
+		return $db->query($sql, $queryParams);
+	}
 }

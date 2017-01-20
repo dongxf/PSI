@@ -140,6 +140,11 @@ class FIdConst {
 	const SUPPLIER = "1004";
 	
 	/**
+	 * 供应商档案在业务单据中的使用权限
+	 */
+	const SUPPLIER_BILL = "1004-01";
+	
+	/**
 	 * 供应商分类
 	 */
 	const SUPPLIER_CATEGORY = "1004-02";
