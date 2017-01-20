@@ -93,7 +93,7 @@ class SupplierService extends PSIBaseService {
 		
 		// 记录业务日志
 		if ($log) {
-			$bs = new BizlogService();
+			$bs = new BizlogService($db);
 			$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		}
 		
@@ -114,29 +114,24 @@ class SupplierService extends PSIBaseService {
 		
 		$db = M();
 		$db->startTrans();
-		$data = $db->query("select code, name from t_supplier_category where id = '%s' ", $id);
-		if (! $data) {
+		$dao = new SupplierDAO($dao);
+		
+		$category = $dao->getSupplierCategoryById($id);
+		if (! $category) {
 			$db->rollback();
 			return $this->bad("要删除的分类不存在");
 		}
 		
-		$category = $data[0];
+		$params["name"] = $category["name"];
 		
-		$query = $db->query("select count(*) as cnt from t_supplier where category_id = '%s' ", $id);
-		$cnt = $query[0]["cnt"];
-		if ($cnt > 0) {
+		$rc = $dao->deleteSupplierCategory($params);
+		if ($rc) {
 			$db->rollback();
-			return $this->bad("当前分类 [{$category['name']}] 下还有供应商档案，不能删除");
-		}
-		
-		$rc = $db->execute("delete from t_supplier_category where id = '%s' ", $id);
-		if ($rc === false) {
-			$db->rollback();
-			return $this->sqlError(__LINE__);
+			return $rc;
 		}
 		
 		$log = "删除供应商分类： 编码 = {$category['code']}, 分类名称 = {$category['name']}";
-		$bs = new BizlogService();
+		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		
 		$db->commit();
