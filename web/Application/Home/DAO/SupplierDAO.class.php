@@ -418,19 +418,19 @@ class SupplierDAO extends PSIBaseDAO {
 		$dataOrg = $params["dataOrg"];
 		$companyId = $params["companyId"];
 		
-		$initPayables = floatval($initPayables);
-		if ($initPayables && $initPayablesDT) {
-			$sql = "select count(*) as cnt
+		$sql = "select count(*) as cnt
 					from t_payables_detail
 					where ca_id = '%s' and ca_type = 'supplier' and ref_type <> '应付账款期初建账'
 						and company_id = '%s' ";
-			$data = $db->query($sql, $id, $companyId);
-			$cnt = $data[0]["cnt"];
-			if ($cnt > 0) {
-				// 已经有往来业务发生，就不能修改应付账了
-				return null;
-			}
-			
+		$data = $db->query($sql, $id, $companyId);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			// 已经有往来业务发生，就不能修改应付账了
+			return null;
+		}
+		
+		$initPayables = floatval($initPayables);
+		if ($initPayables && $initPayablesDT) {
 			$sql = "update t_supplier
 					set init_payables = %f, init_payables_dt = '%s'
 					where id = '%s' ";
@@ -491,6 +491,33 @@ class SupplierDAO extends PSIBaseDAO {
 				if ($rc === false) {
 					return $this->sqlError(__METHOD__, __LINE__);
 				}
+			}
+		} else {
+			// 清除应付账款初始化数据
+			$sql = "update t_supplier
+					set init_payables = null, init_payables_dt = null
+					where id = '%s' ";
+			$rc = $db->execute($sql, $id);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+			
+			// 明细账
+			$sql = "delete from t_payables_detail
+					where ca_id = '%s' and ca_type = 'supplier' and ref_type = '应付账款期初建账'
+						and company_id = '%s' ";
+			$rc = $db->execute($sql, $id, $companyId);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+			
+			// 总账
+			$sql = "delete from t_payables
+					where ca_id = '%s' and ca_type = 'supplier'
+						and company_id = '%s' ";
+			$rc = $db->execute($sql, $id, $companyId);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
 			}
 		}
 		
