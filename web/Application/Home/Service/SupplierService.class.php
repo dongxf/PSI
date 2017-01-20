@@ -114,7 +114,7 @@ class SupplierService extends PSIBaseService {
 		
 		$db = M();
 		$db->startTrans();
-		$dao = new SupplierDAO($dao);
+		$dao = new SupplierDAO($db);
 		
 		$category = $dao->getSupplierCategoryById($id);
 		if (! $category) {
