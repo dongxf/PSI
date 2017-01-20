@@ -242,4 +242,66 @@ class SupplierDAO extends PSIBaseDAO {
 				"totalCount" => $data[0]["cnt"]
 		);
 	}
+
+	/**
+	 * 新增供应商分类
+	 */
+	public function addSupplierCategory($params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		$code = $params["code"];
+		$name = $params["name"];
+		
+		$dataOrg = $params["dataOrg"];
+		$companyId = $params["companyId"];
+		
+		// 检查分类编码是否已经存在
+		$sql = "select count(*) as cnt from t_supplier_category where code = '%s' ";
+		$data = $db->query($sql, $code);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("编码为 [$code] 的分类已经存在");
+		}
+		
+		$sql = "insert into t_supplier_category (id, code, name, data_org, company_id)
+					values ('%s', '%s', '%s', '%s', '%s') ";
+		$rc = $db->execute($sql, $id, $code, $name, $dataOrg, $companyId);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		return null;
+	}
+
+	/**
+	 * 编辑供应商分类
+	 */
+	public function updateSupplierCategory($params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		$code = $params["code"];
+		$name = $params["name"];
+		
+		// 检查分类编码是否已经存在
+		$sql = "select count(*) as cnt from t_supplier_category where code = '%s' and id <> '%s' ";
+		$data = $db->query($sql, $code, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("编码为 [$code] 的分类已经存在");
+		}
+		
+		$sql = "update t_supplier_category
+				set code = '%s', name = '%s'
+				where id = '%s' ";
+		$rc = $db->execute($sql, $code, $name, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		return null;
+	}
 }

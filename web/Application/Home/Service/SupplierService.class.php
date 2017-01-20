@@ -2,10 +2,9 @@
 
 namespace Home\Service;
 
-use Home\Service\IdGenService;
-use Home\Service\BizlogService;
-use Home\Common\FIdConst;
 use Home\DAO\SupplierDAO;
+use Home\Service\BizlogService;
+use Home\Service\IdGenService;
 
 /**
  * 供应商档案Service
@@ -60,53 +59,33 @@ class SupplierService extends PSIBaseService {
 		$db = M();
 		$db->startTrans();
 		
+		$dao = new SupplierDAO($db);
+		
 		$log = null;
 		
 		if ($id) {
 			// 编辑
-			// 检查分类编码是否已经存在
-			$sql = "select count(*) as cnt from t_supplier_category where code = '%s' and id <> '%s' ";
-			$data = $db->query($sql, $code, $id);
-			$cnt = $data[0]["cnt"];
-			if ($cnt > 0) {
+			$rc = $dao->updateSupplierCategory($params);
+			if ($rc) {
 				$db->rollback();
-				return $this->bad("编码为 [$code] 的分类已经存在");
-			}
-			
-			$sql = "update t_supplier_category 
-					set code = '%s', name = '%s' 
-					where id = '%s' ";
-			$rc = $db->execute($sql, $code, $name, $id);
-			if ($rc === false) {
-				$db->rollback();
-				return $this->sqlError(__LINE__);
+				return $rc;
 			}
 			
 			$log = "编辑供应商分类: 编码 = $code, 分类名 = $name";
 		} else {
 			// 新增
-			// 检查分类编码是否已经存在
-			$sql = "select count(*) as cnt from t_supplier_category where code = '%s' ";
-			$data = $db->query($sql, $code);
-			$cnt = $data[0]["cnt"];
-			if ($cnt > 0) {
-				$db->rollback();
-				return $this->bad("编码为 [$code] 的分类已经存在");
-			}
-			
 			$idGen = new IdGenService();
 			$id = $idGen->newId();
+			$params["id"] = $id;
 			
 			$us = new UserService();
-			$dataOrg = $us->getLoginUserDataOrg();
-			$companyId = $us->getCompanyId();
+			$params["dataOrg"] = $us->getLoginUserDataOrg();
+			$params["companyId"] = $us->getCompanyId();
 			
-			$sql = "insert into t_supplier_category (id, code, name, data_org, company_id) 
-					values ('%s', '%s', '%s', '%s', '%s') ";
-			$rc = $db->execute($sql, $id, $code, $name, $dataOrg, $companyId);
-			if ($rc === false) {
+			$rc = $dao->addSupplierCategory($params);
+			if ($rc) {
 				$db->rollback();
-				return $this->sqlError(__LINE__);
+				return $rc;
 			}
 			
 			$log = "新增供应商分类：编码 = $code, 分类名 = $name";
