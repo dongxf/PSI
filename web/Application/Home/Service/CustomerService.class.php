@@ -364,68 +364,27 @@ class CustomerService extends PSIBaseService {
 		$db = M();
 		$db->startTrans();
 		
-		$sql = "select code, name from t_customer where id = '%s' ";
-		$data = $db->query($sql, $id);
-		if (! $data) {
+		$dao = new CustomerDAO($db);
+		
+		$customer = $dao->getCustomerById($id);
+		
+		if (! $customer) {
 			$db->rollback();
 			return $this->bad("要删除的客户资料不存在");
 		}
-		$code = $data[0]["code"];
-		$name = $data[0]["name"];
+		$code = $customer["code"];
+		$name = $customer["name"];
+		$params["code"] = $code;
+		$params["name"] = $name;
 		
-		// 判断是否能删除客户资料
-		$sql = "select count(*) as cnt from t_ws_bill where customer_id = '%s' ";
-		$data = $db->query($sql, $id);
-		$cnt = $data[0]["cnt"];
-		if ($cnt > 0) {
+		$rc = $dao->deleteCustomer($params);
+		if ($rc) {
 			$db->rollback();
-			return $this->bad("客户资料 [{$code} {$name}] 已经在销售出库单中使用了，不能删除");
-		}
-		
-		$sql = "select count(*) as cnt 
-				from t_receivables_detail r, t_receiving v
-				where r.ref_number = v.ref_number and r.ref_type = v.ref_type
-				  and r.ca_id = '%s' and r.ca_type = 'customer' ";
-		$data = $db->query($sql, $id);
-		$cnt = $data[0]["cnt"];
-		if ($cnt > 0) {
-			$db->rollback();
-			return $this->bad("客户资料 [{$code} {$name}] 已经有收款记录，不能删除");
-		}
-		
-		// 判断在销售退货入库单中是否使用了客户资料
-		$sql = "select count(*) as cnt from t_sr_bill where customer_id = '%s' ";
-		$data = $db->query($sql, $id);
-		$cnt = $data[0]["cnt"];
-		if ($cnt > 0) {
-			$db->rollback();
-			return $this->bad("客户资料 [{$code} {$name}]已经在销售退货入库单中使用了，不能删除");
-		}
-		
-		$sql = "delete from t_customer where id = '%s' ";
-		$rc = $db->execute($sql, $id);
-		if ($rc === false) {
-			$db->rollback();
-			return $this->sqlError(__LINE__);
-		}
-		
-		// 删除客户应收总账和明细账
-		$sql = "delete from t_receivables where ca_id = '%s' and ca_type = 'customer' ";
-		$rc = $db->execute($sql, $id);
-		if ($rc === false) {
-			$db->rollback();
-			return $this->sqlError(__LINE__);
-		}
-		
-		$sql = "delete from t_receivables_detail where ca_id = '%s' and ca_type = 'customer' ";
-		$rc = $db->execute($sql, $id);
-		if ($rc === false) {
-			$db->rollback();
-			return $this->sqlError(__LINE__);
+			return $rc;
 		}
 		
 		$log = "删除客户资料：编码 = {$code},  名称 = {$name}";
-		$bs = new BizlogService();
+		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		
 		$db->commit();

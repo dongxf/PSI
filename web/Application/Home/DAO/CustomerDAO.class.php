@@ -412,7 +412,83 @@ class CustomerDAO extends PSIBaseDAO {
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
+		
 		// 操作成功
 		return null;
+	}
+
+	/**
+	 * 删除客户资料
+	 */
+	public function deleteCustomer($params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		
+		$code = $params["code"];
+		$name = $params["name"];
+		
+		// 判断是否能删除客户资料
+		$sql = "select count(*) as cnt from t_ws_bill where customer_id = '%s' ";
+		$data = $db->query($sql, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("客户资料 [{$code} {$name}] 已经在销售出库单中使用了，不能删除");
+		}
+		
+		$sql = "select count(*) as cnt
+				from t_receivables_detail r, t_receiving v
+				where r.ref_number = v.ref_number and r.ref_type = v.ref_type
+				  and r.ca_id = '%s' and r.ca_type = 'customer' ";
+		$data = $db->query($sql, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("客户资料 [{$code} {$name}] 已经有收款记录，不能删除");
+		}
+		
+		// 判断在销售退货入库单中是否使用了客户资料
+		$sql = "select count(*) as cnt from t_sr_bill where customer_id = '%s' ";
+		$data = $db->query($sql, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("客户资料 [{$code} {$name}]已经在销售退货入库单中使用了，不能删除");
+		}
+		
+		$sql = "delete from t_customer where id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 删除客户应收总账和明细账
+		$sql = "delete from t_receivables where ca_id = '%s' and ca_type = 'customer' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		$sql = "delete from t_receivables_detail where ca_id = '%s' and ca_type = 'customer' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		return null;
+	}
+
+	public function getCustomerById($id) {
+		$db = $this->db;
+		
+		$sql = "select code, name from t_customer where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if ($data) {
+			return array(
+					"code" => $data[0]["code"],
+					"name" => $data[0]["name"]
+			);
+		} else {
+			return null;
+		}
 	}
 }
