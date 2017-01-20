@@ -245,6 +245,11 @@ class FIdConst {
 	const CUSTOMER = "1007";
 	
 	/**
+	 * 客户资料在业务单据中的使用权限
+	 */
+	const CUSTOMER_BILL = "1007-01";
+	
+	/**
 	 * 客户分类
 	 */
 	const CUSTOMER_CATEGORY = "1007-02";
