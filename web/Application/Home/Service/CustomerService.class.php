@@ -106,7 +106,7 @@ class CustomerService extends PSIBaseService {
 		
 		$params["name"] = $category["name"];
 		
-		$rc = $dao->deleteCategory($params);
+		$rc = $dao->deleteCustomerCategory($params);
 		if ($rc) {
 			$db->rollback();
 			return $rc;

@@ -168,7 +168,7 @@ class CustomerDAO extends PSIBaseDAO {
 	/**
 	 * 删除客户分类
 	 */
-	public function deleteCategory($params) {
+	public function deleteCustomerCategory($params) {
 		$db = $this->db;
 		
 		$id = $params["id"];
