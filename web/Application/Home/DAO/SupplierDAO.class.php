@@ -579,4 +579,87 @@ class SupplierDAO extends PSIBaseDAO {
 		// 操作成功
 		return null;
 	}
+
+	/**
+	 * 删除供应商
+	 */
+	public function deleteSupplier($params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		
+		$code = $params["code"];
+		$name = $params["name"];
+		
+		// 判断是否能删除供应商
+		$sql = "select count(*) as cnt from t_pw_bill where supplier_id = '%s' ";
+		$data = $db->query($sql, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("供应商档案 [{$code} {$name}] 在采购入库单中已经被使用，不能删除");
+		}
+		$sql = "select count(*) as cnt
+				from t_payables_detail p, t_payment m
+				where p.ref_type = m.ref_type and p.ref_number = m.ref_number
+				and p.ca_id = '%s' and p.ca_type = 'supplier' ";
+		$data = $db->query($sql, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("供应商档案 [{$code} {$name}] 已经产生付款记录，不能删除");
+		}
+		
+		// 判断采购退货出库单中是否使用该供应商
+		$sql = "select count(*) as cnt from t_pr_bill where supplier_id = '%s' ";
+		$data = $db->query($sql, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("供应商档案 [{$code} {$name}] 在采购退货出库单中已经被使用，不能删除");
+		}
+		
+		// 判断在采购订单中是否已经使用该供应商
+		$sql = "select count(*) as cnt from t_po_bill where supplier_id = '%s' ";
+		$data = $db->query($sql, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("供应商档案 [{$code} {$name}] 在采购订单中已经被使用，不能删除");
+		}
+		
+		$sql = "delete from t_supplier where id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 删除应付总账
+		$sql = "delete from t_payables where ca_id = '%s' and ca_type = 'supplier' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 删除应付明细账
+		$sql = "delete from t_payables_detail where ca_id = '%s' and ca_type = 'supplier' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		return null;
+	}
+
+	public function getSupplierById($id) {
+		$db = $this->db;
+		
+		$sql = "select code, name from t_supplier where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if ($data) {
+			return array(
+					"code" => $data[0]["code"],
+					"name" => $data[0]["name"]
+			);
+		} else {
+			return null;
+		}
+	}
 }

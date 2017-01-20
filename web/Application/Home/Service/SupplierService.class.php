@@ -229,76 +229,25 @@ class SupplierService extends PSIBaseService {
 		$db = M();
 		$db->startTrans();
 		
-		$sql = "select code, name from t_supplier where id = '%s' ";
-		$data = $db->query($sql, $id);
-		if (! $data) {
+		$dao = new SupplierDAO($db);
+		
+		$supplier = $dao->getSupplierById($id);
+		
+		if (! $supplier) {
 			$db->rollback();
 			return $this->bad("要删除的供应商档案不存在");
 		}
-		$code = $data[0]["code"];
-		$name = $data[0]["name"];
+		$code = $supplier["code"];
+		$name = $supplier["name"];
 		
-		// 判断是否能删除供应商
-		$sql = "select count(*) as cnt from t_pw_bill where supplier_id = '%s' ";
-		$data = $db->query($sql, $id);
-		$cnt = $data[0]["cnt"];
-		if ($cnt > 0) {
+		$rc = $dao->deleteSupplier($params);
+		if ($rc) {
 			$db->rollback();
-			return $this->bad("供应商档案 [{$code} {$name}] 在采购入库单中已经被使用，不能删除");
-		}
-		$sql = "select count(*) as cnt 
-				from t_payables_detail p, t_payment m 
-				where p.ref_type = m.ref_type and p.ref_number = m.ref_number 
-				and p.ca_id = '%s' and p.ca_type = 'supplier' ";
-		$data = $db->query($sql, $id);
-		$cnt = $data[0]["cnt"];
-		if ($cnt > 0) {
-			$db->rollback();
-			return $this->bad("供应商档案 [{$code} {$name}] 已经产生付款记录，不能删除");
-		}
-		
-		// 判断采购退货出库单中是否使用该供应商
-		$sql = "select count(*) as cnt from t_pr_bill where supplier_id = '%s' ";
-		$data = $db->query($sql, $id);
-		$cnt = $data[0]["cnt"];
-		if ($cnt > 0) {
-			$db->rollback();
-			return $this->bad("供应商档案 [{$code} {$name}] 在采购退货出库单中已经被使用，不能删除");
-		}
-		
-		// 判断在采购订单中是否已经使用该供应商
-		$sql = "select count(*) as cnt from t_po_bill where supplier_id = '%s' ";
-		$data = $db->query($sql, $id);
-		$cnt = $data[0]["cnt"];
-		if ($cnt > 0) {
-			$db->rollback();
-			return $this->bad("供应商档案 [{$code} {$name}] 在采购订单中已经被使用，不能删除");
-		}
-		
-		$sql = "delete from t_supplier where id = '%s' ";
-		$rc = $db->execute($sql, $id);
-		if ($rc === false) {
-			$db->rollback();
-			return $this->sqlError(__LINE__);
-		}
-		
-		// 删除应付总账、明细账
-		$sql = "delete from t_payables where ca_id = '%s' and ca_type = 'supplier' ";
-		$rc = $db->execute($sql, $id);
-		if ($rc === false) {
-			$db->rollback();
-			return $this->sqlError(__LINE__);
-		}
-		
-		$sql = "delete from t_payables_detail where ca_id = '%s' and ca_type = 'supplier' ";
-		$rc = $db->execute($sql, $id);
-		if ($rc === false) {
-			$db->rollback();
-			return $this->sqlError(__LINE__);
+			return $rc;
 		}
 		
 		$log = "删除供应商档案：编码 = {$code},  名称 = {$name}";
-		$bs = new BizlogService();
+		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		
 		$db->commit();
