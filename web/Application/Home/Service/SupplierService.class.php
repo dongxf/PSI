@@ -148,42 +148,21 @@ class SupplierService extends PSIBaseService {
 		}
 		
 		$id = $params["id"];
-		$code = $params["code"];
 		$name = $params["name"];
-		$address = $params["address"];
-		$addressShipping = $params["addressShipping"];
-		$contact01 = $params["contact01"];
-		$mobile01 = $params["mobile01"];
-		$tel01 = $params["tel01"];
-		$qq01 = $params["qq01"];
-		$contact02 = $params["contact02"];
-		$mobile02 = $params["mobile02"];
-		$tel02 = $params["tel02"];
-		$qq02 = $params["qq02"];
-		$initPayables = $params["initPayables"];
-		$initPayablesDT = $params["initPayablesDT"];
-		$bankName = $params["bankName"];
-		$bankAccount = $params["bankAccount"];
-		$tax = $params["tax"];
-		$fax = $params["fax"];
-		$note = $params["note"];
 		
 		$ps = new PinyinService();
 		$py = $ps->toPY($name);
+		$params["py"] = $py;
 		
 		$categoryId = $params["categoryId"];
 		
 		$db = M();
 		$db->startTrans();
 		
-		$us = new UserService();
-		$dataOrg = $us->getLoginUserDataOrg();
-		$companyId = $us->getCompanyId();
+		$dao = new SupplierDAO($db);
 		
-		$sql = "select count(*) as cnt from t_supplier_category where id = '%s' ";
-		$data = $db->query($sql, $categoryId);
-		$cnt = $data[0]["cnt"];
-		if ($cnt == 0) {
+		$category = $dao->getSupplierCategoryById($categoryId);
+		if (! $category) {
 			$db->rollback();
 			return $this->bad("供应商分类不存在");
 		}
@@ -192,30 +171,10 @@ class SupplierService extends PSIBaseService {
 		
 		if ($id) {
 			// 编辑
-			// 检查编码是否已经存在
-			$sql = "select count(*) as cnt from t_supplier where code = '%s'  and id <> '%s' ";
-			$data = $db->query($sql, $code, $id);
-			$cnt = $data[0]["cnt"];
-			if ($cnt > 0) {
+			$rc = $dao->updateSupplier($params);
+			if ($rc) {
 				$db->rollback();
-				return $this->bad("编码为 [$code] 的供应商已经存在");
-			}
-			
-			$sql = "update t_supplier 
-					set code = '%s', name = '%s', category_id = '%s', py = '%s', 
-					contact01 = '%s', qq01 = '%s', tel01 = '%s', mobile01 = '%s', 
-					contact02 = '%s', qq02 = '%s', tel02 = '%s', mobile02 = '%s',
-					address = '%s', address_shipping = '%s',
-					bank_name = '%s', bank_account = '%s', tax_number = '%s',
-					fax = '%s', note = '%s'
-					where id = '%s'  ";
-			
-			$rc = $db->execute($sql, $code, $name, $categoryId, $py, $contact01, $qq01, $tel01, 
-					$mobile01, $contact02, $qq02, $tel02, $mobile02, $address, $addressShipping, 
-					$bankName, $bankAccount, $tax, $fax, $note, $id);
-			if ($rc === false) {
-				$db->rollback();
-				return $this->sqlError(__LINE__);
+				return $rc;
 			}
 			
 			$log = "编辑供应商：编码 = $code, 名称 = $name";
@@ -223,122 +182,32 @@ class SupplierService extends PSIBaseService {
 			// 新增
 			$idGen = new IdGenService();
 			$id = $idGen->newId();
+			$params["id"] = $id;
 			
-			// 检查编码是否已经存在
-			$sql = "select count(*) as cnt from t_supplier where code = '%s' ";
-			$data = $db->query($sql, $code);
-			$cnt = $data[0]["cnt"];
-			if ($cnt > 0) {
-				$db->rollback();
-				return $this->bad("编码为 [$code] 的供应商已经存在");
-			}
+			$us = new UserService();
+			$params["dataOrg"] = $us->getLoginUserDataOrg();
+			$params["companyId"] = $us->getCompanyId();
 			
-			$sql = "insert into t_supplier (id, category_id, code, name, py, contact01, 
-					qq01, tel01, mobile01, contact02, qq02,
-					tel02, mobile02, address, address_shipping,
-					bank_name, bank_account, tax_number, fax, note, data_org, company_id) 
-					values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
-							'%s', '%s', '%s', '%s',
-							'%s', '%s', '%s', '%s', '%s', '%s', '%s')  ";
-			$rc = $db->execute($sql, $id, $categoryId, $code, $name, $py, $contact01, $qq01, $tel01, 
-					$mobile01, $contact02, $qq02, $tel02, $mobile02, $address, $addressShipping, 
-					$bankName, $bankAccount, $tax, $fax, $note, $dataOrg, $companyId);
-			if ($rc === false) {
+			$rc = $dao->addSupplier($params);
+			if ($rc) {
 				$db->rollback();
-				return $this->sqlError(__LINE__);
+				return $rc;
 			}
 			
 			$log = "新增供应商：编码 = {$code}, 名称 = {$name}";
 		}
 		
-		// 记录业务日志
-		if ($log) {
-			$bs = new BizlogService();
-			$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		// 处理应付期初余额
+		$rc = $dao->initPayables($params);
+		if ($rc) {
+			$db->rollback();
+			return $rc;
 		}
 		
-		// 处理应付期初余额
-		
-		$initPayables = floatval($initPayables);
-		if ($initPayables && $initPayablesDT) {
-			$sql = "select count(*) as cnt 
-					from t_payables_detail 
-					where ca_id = '%s' and ca_type = 'supplier' and ref_type <> '应付账款期初建账' 
-						and company_id = '%s' ";
-			$data = $db->query($sql, $id, $companyId);
-			$cnt = $data[0]["cnt"];
-			if ($cnt > 0) {
-				// 已经有往来业务发生，就不能修改应付账了
-				$db->commit();
-				return $this->ok($id);
-			}
-			
-			$sql = "update t_supplier 
-					set init_payables = %f, init_payables_dt = '%s' 
-					where id = '%s' ";
-			$rc = $db->execute($sql, $initPayables, $initPayablesDT, $id);
-			if ($rc === false) {
-				$db->rollback();
-				return $this->sqlError(__LINE__);
-			}
-			
-			// 应付明细账
-			$sql = "select id from t_payables_detail 
-					where ca_id = '%s' and ca_type = 'supplier' and ref_type = '应付账款期初建账' 
-						and company_id = '%s' ";
-			$data = $db->query($sql, $id, $companyId);
-			if ($data) {
-				$payId = $data[0]["id"];
-				$sql = "update t_payables_detail 
-						set pay_money = %f ,  balance_money = %f , biz_date = '%s', date_created = now(), act_money = 0 
-						where id = '%s' ";
-				$rc = $db->execute($sql, $initPayables, $initPayables, $initPayablesDT, $payId);
-				if ($rc === false) {
-					$db->rollback();
-					return $this->sqlError(__LINE__);
-				}
-			} else {
-				$idGen = new IdGenService();
-				$payId = $idGen->newId();
-				$sql = "insert into t_payables_detail (id, pay_money, act_money, balance_money, ca_id,
-						ca_type, ref_type, ref_number, biz_date, date_created, data_org, company_id) 
-						values ('%s', %f, 0, %f, '%s', 'supplier', '应付账款期初建账', '%s', '%s', now(), '%s', '%s') ";
-				$rc = $db->execute($sql, $payId, $initPayables, $initPayables, $id, $id, 
-						$initPayablesDT, $dataOrg, $companyId);
-				if ($rc === false) {
-					$db->rollback();
-					return $this->sqlError(__LINE__);
-				}
-			}
-			
-			// 应付总账
-			$sql = "select id from t_payables 
-					where ca_id = '%s' and ca_type = 'supplier' 
-						and company_id = '%s' ";
-			$data = $db->query($sql, $id, $companyId);
-			if ($data) {
-				$pId = $data[0]["id"];
-				$sql = "update t_payables 
-						set pay_money = %f ,  balance_money = %f , act_money = 0 
-						where id = '%s' ";
-				$rc = $db->execute($sql, $initPayables, $initPayables, $pId);
-				if ($rc === false) {
-					$db->rollback();
-					return $this->sqlError(__LINE__);
-				}
-			} else {
-				$idGen = new IdGenService();
-				$pId = $idGen->newId();
-				$sql = "insert into t_payables (id, pay_money, act_money, balance_money, ca_id, 
-							ca_type, data_org, company_id)
-						values ('%s', %f, 0, %f, '%s', 'supplier', '%s', '%s') ";
-				$rc = $db->execute($sql, $pId, $initPayables, $initPayables, $id, $dataOrg, 
-						$companyId);
-				if ($rc === false) {
-					$db->rollback();
-					return $this->sqlError(__LINE__);
-				}
-			}
+		// 记录业务日志
+		if ($log) {
+			$bs = new BizlogService($db);
+			$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		}
 		
 		$db->commit();
