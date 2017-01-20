@@ -155,6 +155,10 @@ class SupplierService extends PSIBaseService {
 		$py = $ps->toPY($name);
 		$params["py"] = $py;
 		
+		$us = new UserService();
+		$params["dataOrg"] = $us->getLoginUserDataOrg();
+		$params["companyId"] = $us->getCompanyId();
+		
 		$categoryId = $params["categoryId"];
 		
 		$db = M();
@@ -184,10 +188,6 @@ class SupplierService extends PSIBaseService {
 			$idGen = new IdGenService();
 			$id = $idGen->newId();
 			$params["id"] = $id;
-			
-			$us = new UserService();
-			$params["dataOrg"] = $us->getLoginUserDataOrg();
-			$params["companyId"] = $us->getCompanyId();
 			
 			$rc = $dao->addSupplier($params);
 			if ($rc) {
