@@ -87,4 +87,66 @@ class CustomerDAO extends PSIBaseDAO {
 				 order by c.code";
 		return $db->query($sql, $queryParam);
 	}
+
+	/**
+	 * 新增客户分类
+	 */
+	public function addCustomerCategory($params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		$code = $params["code"];
+		$name = $params["name"];
+		
+		$dataOrg = $params["dataOrg"];
+		$companyId = $params["companyId"];
+		
+		// 检查分类编码是否已经存在
+		$sql = "select count(*) as cnt from t_customer_category where code = '%s' ";
+		$data = $db->query($sql, $code);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("编码为 [{$code}] 的客户分类已经存在");
+		}
+		
+		$sql = "insert into t_customer_category (id, code, name, data_org, company_id)
+				values ('%s', '%s', '%s', '%s', '%s') ";
+		$rc = $db->execute($sql, $id, $code, $name, $dataOrg, $companyId);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		return null;
+	}
+
+	/**
+	 * 编辑客户分类
+	 */
+	public function updateCustomerCategory($params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		$code = $params["code"];
+		$name = $params["name"];
+		
+		// 检查分类编码是否已经存在
+		$sql = "select count(*) as cnt from t_customer_category where code = '%s' and id <> '%s' ";
+		$data = $db->query($sql, $code, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("编码为 [{$code}] 的分类已经存在");
+		}
+		
+		$sql = "update t_customer_category
+				set code = '%s', name = '%s'
+				where id = '%s' ";
+		$rc = $db->execute($sql, $code, $name, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		return null;
+	}
 }
