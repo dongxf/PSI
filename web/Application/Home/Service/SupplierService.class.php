@@ -282,72 +282,29 @@ class SupplierService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		$id = $params["id"];
-		
-		$result = array();
-		
-		$db = M();
-		$sql = "select category_id, code, name, contact01, qq01, mobile01, tel01,
-					contact02, qq02, mobile02, tel02, address, address_shipping,
-					init_payables, init_payables_dt,
-					bank_name, bank_account, tax_number, fax, note
-				from t_supplier
-				where id = '%s' ";
-		$data = $db->query($sql, $id);
-		if ($data) {
-			$result["categoryId"] = $data[0]["category_id"];
-			$result["code"] = $data[0]["code"];
-			$result["name"] = $data[0]["name"];
-			$result["contact01"] = $data[0]["contact01"];
-			$result["qq01"] = $data[0]["qq01"];
-			$result["mobile01"] = $data[0]["mobile01"];
-			$result["tel01"] = $data[0]["tel01"];
-			$result["contact02"] = $data[0]["contact02"];
-			$result["qq02"] = $data[0]["qq02"];
-			$result["mobile02"] = $data[0]["mobile02"];
-			$result["tel02"] = $data[0]["tel02"];
-			$result["address"] = $data[0]["address"];
-			$result["addressShipping"] = $data[0]["address_shipping"];
-			$result["initPayables"] = $data[0]["init_payables"];
-			$d = $data[0]["init_payables_dt"];
-			if ($d) {
-				$result["initPayablesDT"] = $this->toYMD($d);
-			}
-			$result["bankName"] = $data[0]["bank_name"];
-			$result["bankAccount"] = $data[0]["bank_account"];
-			$result["tax"] = $data[0]["tax_number"];
-			$result["fax"] = $data[0]["fax"];
-			$result["note"] = $data[0]["note"];
-		}
-		
-		return $result;
+		$dao = new SupplierDAO();
+		return $dao->supplierInfo($params);
 	}
 
 	/**
 	 * 判断供应商是否存在
 	 */
 	public function supplierExists($supplierId, $db) {
-		if (! $db) {
-			$db = M();
-		}
+		$dao = new SupplierDAO($db);
 		
-		$sql = "select count(*) as cnt from t_supplier where id = '%s' ";
-		$data = $db->query($sql, $supplierId);
-		return $data[0]["cnt"] == 1;
+		$supplier = $dao->getSupplierById($supplierId);
+		return $supplier != null;
 	}
 
 	/**
 	 * 根据供应商Id查询供应商名称
 	 */
 	public function getSupplierNameById($supplierId, $db) {
-		if (! $db) {
-			$db = M();
-		}
+		$dao = new SupplierDAO($db);
 		
-		$sql = "select name from t_supplier where id = '%s' ";
-		$data = $db->query($sql, $supplierId);
-		if ($data) {
-			return $data[0]["name"];
+		$supplier = $dao->getSupplierById($supplierId);
+		if ($supplier) {
+			return $supplier["name"];
 		} else {
 			return "";
 		}

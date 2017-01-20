@@ -29,4 +29,11 @@ class PSIBaseDAO {
 		$info = "数据库错误，请联系管理员<br />错误定位：{$fileName} - {$codeLine}行";
 		return $this->bad($info);
 	}
+
+	/**
+	 * 把时间类型格式化成类似2015-08-13的格式
+	 */
+	protected function toYMD($d) {
+		return date("Y-m-d", strtotime($d));
+	}
 }
