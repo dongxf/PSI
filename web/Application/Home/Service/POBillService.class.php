@@ -2,8 +2,11 @@
 
 namespace Home\Service;
 
-use Home\Common\FIdConst;
 use Home\DAO\POBillDAO;
+use Home\DAO\SupplierDAO;
+use Home\DAO\OrgDAO;
+use Home\DAO\UserDAO;
+use Home\DAO\IdGenDAO;
 
 /**
  * 采购订单Service
@@ -67,6 +70,8 @@ class POBillService extends PSIBaseService {
 		
 		$db->startTrans();
 		
+		$dao = new POBillDAO($db);
+		
 		$id = $bill["id"];
 		$dealDate = $bill["dealDate"];
 		if (! $this->dateIsValid($dealDate)) {
@@ -75,22 +80,29 @@ class POBillService extends PSIBaseService {
 		}
 		
 		$supplierId = $bill["supplierId"];
-		$ss = new SupplierService();
-		if (! $ss->supplierExists($supplierId, $db)) {
+		$supplierDAO = new SupplierDAO($db);
+		$supplier = $supplierDAO->getSupplierById($supplierId);
+		if (! $supplier) {
 			$db->rollback();
 			return $this->bad("供应商不存在");
 		}
+		
 		$orgId = $bill["orgId"];
-		$us = new UserService();
-		if (! $us->orgExists($orgId, $db)) {
+		$orgDAO = new OrgDAO($db);
+		$org = $orgDAO->getOrgById($orgId);
+		if (! $org) {
 			$db->rollback();
 			return $this->bad("组织机构不存在");
 		}
+		
 		$bizUserId = $bill["bizUserId"];
-		if (! $us->userExists($bizUserId, $db)) {
+		$userDAO = new UserDAO($db);
+		$user = $userDAO->getUserById($bizUserId);
+		if (! $user) {
 			$db->rollback();
 			return $this->bad("业务员不存在");
 		}
+		
 		$paymentType = $bill["paymentType"];
 		$contact = $bill["contact"];
 		$tel = $bill["tel"];
@@ -100,97 +112,42 @@ class POBillService extends PSIBaseService {
 		
 		$items = $bill["items"];
 		
-		$idGen = new IdGenService();
+		$idGen = new IdGenDAO($db);
 		
+		$us = new UserService();
 		$companyId = $us->getCompanyId();
-		if (! $companyId) {
-			$db->rollback();
-			return $this->bad("所属公司不存在");
-		}
+		$bill["companyId"] = $companyId;
+		$bill["loginUserId"] = $us->getLoginUserId();
+		$bill["dataOrg"] = $us->getLoginUserDataOrg();
+		
+		$dao = new POBillDAO($db);
 		
 		$log = null;
 		if ($id) {
 			// 编辑
-			$sql = "select ref, data_org, bill_status, company_id from t_po_bill where id = '%s' ";
-			$data = $db->query($sql, $id);
-			if (! $data) {
+			$oldBill = $dao->getPOBillById($id);
+			if (! $oldBill) {
 				$db->rollback();
 				return $this->bad("要编辑的采购订单不存在");
 			}
-			$ref = $data[0]["ref"];
-			$dataOrg = $data[0]["data_org"];
-			$companyId = $data[0]["company_id"];
-			$billStatus = $data[0]["bill_status"];
+			
+			$ref = $oldBill["ref"];
+			$dataOrg = $oldBill["dataOrg"];
+			$companyId = $oldBill["companyId"];
+			$billStatus = $oldBill["billStatus"];
 			if ($billStatus != 0) {
-				$db->rollback();
 				return $this->bad("当前采购订单已经审核，不能再编辑");
 			}
 			
-			$sql = "delete from t_po_bill_detail where pobill_id = '%s' ";
-			$rc = $db->execute($sql, $id);
-			if ($rc === false) {
+			$bill["ref"] = $ref;
+			$bill["dataOrg"] = $dataOrg;
+			$bill["companyId"] = $companyId;
+			$bill["billStatus"] = $billStatus;
+			
+			$rc = $dao->updatePOBill($bill);
+			if ($rc) {
 				$db->rollback();
-				return $this->sqlError(__LINE__);
-			}
-			
-			foreach ( $items as $i => $v ) {
-				$goodsId = $v["goodsId"];
-				if (! $goodsId) {
-					continue;
-				}
-				$goodsCount = $v["goodsCount"];
-				$goodsPrice = $v["goodsPrice"];
-				$goodsMoney = $v["goodsMoney"];
-				$taxRate = $v["taxRate"];
-				$tax = $v["tax"];
-				$moneyWithTax = $v["moneyWithTax"];
-				
-				$sql = "insert into t_po_bill_detail(id, date_created, goods_id, goods_count, goods_money,
-							goods_price, pobill_id, tax_rate, tax, money_with_tax, pw_count, left_count, 
-							show_order, data_org, company_id)
-						values ('%s', now(), '%s', %d, %f,
-							%f, '%s', %d, %f, %f, 0, %d, %d, '%s', '%s')";
-				$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsMoney, 
-						$goodsPrice, $id, $taxRate, $tax, $moneyWithTax, $goodsCount, $i, $dataOrg, 
-						$companyId);
-				if ($rc === false) {
-					$db->rollback();
-					return $this->sqlError(__LINE__);
-				}
-			}
-			
-			// 同步主表的金额合计字段
-			$sql = "select sum(goods_money) as sum_goods_money, sum(tax) as sum_tax, 
-							sum(money_with_tax) as sum_money_with_tax
-						from t_po_bill_detail
-						where pobill_id = '%s' ";
-			$data = $db->query($sql, $id);
-			$sumGoodsMoney = $data[0]["sum_goods_money"];
-			if (! $sumGoodsMoney) {
-				$sumGoodsMoney = 0;
-			}
-			$sumTax = $data[0]["sum_tax"];
-			if (! $sumTax) {
-				$sumTax = 0;
-			}
-			$sumMoneyWithTax = $data[0]["sum_money_with_tax"];
-			if (! $sumMoneyWithTax) {
-				$sumMoneyWithTax = 0;
-			}
-			
-			$sql = "update t_po_bill
-					set goods_money = %f, tax = %f, money_with_tax = %f,
-						deal_date = '%s', supplier_id = '%s',
-						deal_address = '%s', contact = '%s', tel = '%s', fax = '%s',
-						org_id = '%s', biz_user_id = '%s', payment_type = %d,
-						bill_memo = '%s', input_user_id = '%s', date_created = now()
-					where id = '%s' ";
-			$rc = $db->execute($sql, $sumGoodsMoney, $sumTax, $sumMoneyWithTax, $dealDate, 
-					$supplierId, $dealAddress, $contact, $tel, $fax, $orgId, $bizUserId, 
-					$paymentType, $billMemo, $us->getLoginUserId(), $id);
-			if ($rc === false) {
-				$db->rollback();
-				return $this->sqlError(__LINE__);
+				return $rc;
 			}
 			
 			$log = "编辑采购订单，单号：{$ref}";
@@ -198,79 +155,15 @@ class POBillService extends PSIBaseService {
 			// 新建采购订单
 			
 			$id = $idGen->newId();
-			$ref = $this->genNewBillRef();
+			$bill["id"] = $id;
 			
-			$us = new UserService();
-			$dataOrg = $us->getLoginUserDataOrg();
+			$ref = $dao->genNewBillRef($bill);
+			$bill["ref"] = $ref;
 			
-			// 主表
-			$sql = "insert into t_po_bill(id, ref, bill_status, deal_date, biz_dt, org_id, biz_user_id,
-							goods_money, tax, money_with_tax, input_user_id, supplier_id, contact, tel, fax,
-							deal_address, bill_memo, payment_type, date_created, data_org, company_id)
-						values ('%s', '%s', 0, '%s', '%s', '%s', '%s', 
-							0, 0, 0, '%s', '%s', '%s', '%s', '%s', 
-							'%s', '%s', %d, now(), '%s', '%s')";
-			$rc = $db->execute($sql, $id, $ref, $dealDate, $dealDate, $orgId, $bizUserId, 
-					$us->getLoginUserId(), $supplierId, $contact, $tel, $fax, $dealAddress, 
-					$billMemo, $paymentType, $dataOrg, $companyId);
-			if ($rc === false) {
+			$rc = $dao->addPOBill($bill);
+			if ($rc) {
 				$db->rollback();
-				return $this->sqlError(__LINE__);
-			}
-			
-			// 明细记录
-			foreach ( $items as $i => $v ) {
-				$goodsId = $v["goodsId"];
-				if (! $goodsId) {
-					continue;
-				}
-				$goodsCount = $v["goodsCount"];
-				$goodsPrice = $v["goodsPrice"];
-				$goodsMoney = $v["goodsMoney"];
-				$taxRate = $v["taxRate"];
-				$tax = $v["tax"];
-				$moneyWithTax = $v["moneyWithTax"];
-				
-				$sql = "insert into t_po_bill_detail(id, date_created, goods_id, goods_count, goods_money,
-								goods_price, pobill_id, tax_rate, tax, money_with_tax, pw_count, left_count, 
-								show_order, data_org, company_id)
-							values ('%s', now(), '%s', %d, %f,
-								%f, '%s', %d, %f, %f, 0, %d, %d, '%s', '%s')";
-				$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsMoney, 
-						$goodsPrice, $id, $taxRate, $tax, $moneyWithTax, $goodsCount, $i, $dataOrg, 
-						$companyId);
-				if ($rc === false) {
-					$db->rollback();
-					return $this->sqlError(__LINE__);
-				}
-			}
-			
-			// 同步主表的金额合计字段
-			$sql = "select sum(goods_money) as sum_goods_money, sum(tax) as sum_tax, 
-							sum(money_with_tax) as sum_money_with_tax
-						from t_po_bill_detail
-						where pobill_id = '%s' ";
-			$data = $db->query($sql, $id);
-			$sumGoodsMoney = $data[0]["sum_goods_money"];
-			if (! $sumGoodsMoney) {
-				$sumGoodsMoney = 0;
-			}
-			$sumTax = $data[0]["sum_tax"];
-			if (! $sumTax) {
-				$sumTax = 0;
-			}
-			$sumMoneyWithTax = $data[0]["sum_money_with_tax"];
-			if (! $sumMoneyWithTax) {
-				$sumMoneyWithTax = 0;
-			}
-			
-			$sql = "update t_po_bill
-						set goods_money = %f, tax = %f, money_with_tax = %f
-						where id = '%s' ";
-			$rc = $db->execute($sql, $sumGoodsMoney, $sumTax, $sumMoneyWithTax, $id);
-			if ($rc === false) {
-				$db->rollback();
-				return $this->sqlError(__LINE__);
+				return $rc;
 			}
 			
 			$log = "新建采购订单，单号：{$ref}";
@@ -278,7 +171,7 @@ class POBillService extends PSIBaseService {
 		
 		// 记录业务日志
 		if ($log) {
-			$bs = new BizlogService();
+			$bs = new BizlogService($db);
 			$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		}
 		

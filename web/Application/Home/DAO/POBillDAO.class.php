@@ -23,7 +23,7 @@ class POBillDAO extends PSIBaseDAO {
 	/**
 	 * 生成新的采购订单号
 	 */
-	private function genNewBillRef($params) {
+	public function genNewBillRef($params) {
 		$db = $this->db;
 		
 		$bs = new BizConfigDAO($db);
@@ -217,5 +217,217 @@ class POBillDAO extends PSIBaseDAO {
 		}
 		
 		return $result;
+	}
+
+	/**
+	 * 新建采购订单
+	 */
+	public function addPOBill($bill) {
+		$db = $this->db;
+		
+		$id = $bill["id"];
+		$ref = $bill["ref"];
+		$dealDate = $bill["dealDate"];
+		$supplierId = $bill["supplierId"];
+		$orgId = $bill["orgId"];
+		$bizUserId = $bill["bizUserId"];
+		$paymentType = $bill["paymentType"];
+		$contact = $bill["contact"];
+		$tel = $bill["tel"];
+		$fax = $bill["fax"];
+		$dealAddress = $bill["dealAddress"];
+		$billMemo = $bill["billMemo"];
+		
+		$items = $bill["items"];
+		
+		$dataOrg = $bill["dataOrg"];
+		$loginUserId = $bill["loginUserId"];
+		$companyId = $bill["companyId"];
+		
+		// 主表
+		$sql = "insert into t_po_bill(id, ref, bill_status, deal_date, biz_dt, org_id, biz_user_id,
+					goods_money, tax, money_with_tax, input_user_id, supplier_id, contact, tel, fax,
+					deal_address, bill_memo, payment_type, date_created, data_org, company_id)
+				values ('%s', '%s', 0, '%s', '%s', '%s', '%s',
+					0, 0, 0, '%s', '%s', '%s', '%s', '%s',
+					'%s', '%s', %d, now(), '%s', '%s')";
+		$rc = $db->execute($sql, $id, $ref, $dealDate, $dealDate, $orgId, $bizUserId, $loginUserId, 
+				$supplierId, $contact, $tel, $fax, $dealAddress, $billMemo, $paymentType, $dataOrg, 
+				$companyId);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		$idGen = new IdGenDAO($db);
+		
+		// 明细记录
+		foreach ( $items as $i => $v ) {
+			$goodsId = $v["goodsId"];
+			if (! $goodsId) {
+				continue;
+			}
+			$goodsCount = $v["goodsCount"];
+			$goodsPrice = $v["goodsPrice"];
+			$goodsMoney = $v["goodsMoney"];
+			$taxRate = $v["taxRate"];
+			$tax = $v["tax"];
+			$moneyWithTax = $v["moneyWithTax"];
+			
+			$sql = "insert into t_po_bill_detail(id, date_created, goods_id, goods_count, goods_money,
+						goods_price, pobill_id, tax_rate, tax, money_with_tax, pw_count, left_count,
+						show_order, data_org, company_id)
+					values ('%s', now(), '%s', %d, %f,
+						%f, '%s', %d, %f, %f, 0, %d, %d, '%s', '%s')";
+			$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsMoney, 
+					$goodsPrice, $id, $taxRate, $tax, $moneyWithTax, $goodsCount, $i, $dataOrg, 
+					$companyId);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+		}
+		
+		// 同步主表的金额合计字段
+		$sql = "select sum(goods_money) as sum_goods_money, sum(tax) as sum_tax,
+					sum(money_with_tax) as sum_money_with_tax
+				from t_po_bill_detail
+				where pobill_id = '%s' ";
+		$data = $db->query($sql, $id);
+		$sumGoodsMoney = $data[0]["sum_goods_money"];
+		if (! $sumGoodsMoney) {
+			$sumGoodsMoney = 0;
+		}
+		$sumTax = $data[0]["sum_tax"];
+		if (! $sumTax) {
+			$sumTax = 0;
+		}
+		$sumMoneyWithTax = $data[0]["sum_money_with_tax"];
+		if (! $sumMoneyWithTax) {
+			$sumMoneyWithTax = 0;
+		}
+		
+		$sql = "update t_po_bill
+				set goods_money = %f, tax = %f, money_with_tax = %f
+				where id = '%s' ";
+		$rc = $db->execute($sql, $sumGoodsMoney, $sumTax, $sumMoneyWithTax, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		return null;
+	}
+
+	/**
+	 * 编辑采购订单
+	 */
+	public function updatePOBill($bill) {
+		$db = $this->db;
+		
+		$id = $bill["id"];
+		$dealDate = $bill["dealDate"];
+		$supplierId = $bill["supplierId"];
+		$orgId = $bill["orgId"];
+		$bizUserId = $bill["bizUserId"];
+		$paymentType = $bill["paymentType"];
+		$contact = $bill["contact"];
+		$tel = $bill["tel"];
+		$fax = $bill["fax"];
+		$dealAddress = $bill["dealAddress"];
+		$billMemo = $bill["billMemo"];
+		
+		$items = $bill["items"];
+		
+		$loginUserId = $bill["loginUserId"];
+		
+		$ref = $bill["ref"];
+		$dataOrg = $bill["dataOrg"];
+		$companyId = $bill["companyId"];
+		
+		$sql = "delete from t_po_bill_detail where pobill_id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		$idGen = new IdGenDAO($db);
+		
+		foreach ( $items as $i => $v ) {
+			$goodsId = $v["goodsId"];
+			if (! $goodsId) {
+				continue;
+			}
+			$goodsCount = $v["goodsCount"];
+			$goodsPrice = $v["goodsPrice"];
+			$goodsMoney = $v["goodsMoney"];
+			$taxRate = $v["taxRate"];
+			$tax = $v["tax"];
+			$moneyWithTax = $v["moneyWithTax"];
+			
+			$sql = "insert into t_po_bill_detail(id, date_created, goods_id, goods_count, goods_money,
+						goods_price, pobill_id, tax_rate, tax, money_with_tax, pw_count, left_count,
+						show_order, data_org, company_id)
+					values ('%s', now(), '%s', %d, %f,
+						%f, '%s', %d, %f, %f, 0, %d, %d, '%s', '%s')";
+			$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsMoney, 
+					$goodsPrice, $id, $taxRate, $tax, $moneyWithTax, $goodsCount, $i, $dataOrg, 
+					$companyId);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+		}
+		
+		// 同步主表的金额合计字段
+		$sql = "select sum(goods_money) as sum_goods_money, sum(tax) as sum_tax,
+							sum(money_with_tax) as sum_money_with_tax
+						from t_po_bill_detail
+						where pobill_id = '%s' ";
+		$data = $db->query($sql, $id);
+		$sumGoodsMoney = $data[0]["sum_goods_money"];
+		if (! $sumGoodsMoney) {
+			$sumGoodsMoney = 0;
+		}
+		$sumTax = $data[0]["sum_tax"];
+		if (! $sumTax) {
+			$sumTax = 0;
+		}
+		$sumMoneyWithTax = $data[0]["sum_money_with_tax"];
+		if (! $sumMoneyWithTax) {
+			$sumMoneyWithTax = 0;
+		}
+		
+		$sql = "update t_po_bill
+				set goods_money = %f, tax = %f, money_with_tax = %f,
+					deal_date = '%s', supplier_id = '%s',
+					deal_address = '%s', contact = '%s', tel = '%s', fax = '%s',
+					org_id = '%s', biz_user_id = '%s', payment_type = %d,
+					bill_memo = '%s', input_user_id = '%s', date_created = now()
+				where id = '%s' ";
+		$rc = $db->execute($sql, $sumGoodsMoney, $sumTax, $sumMoneyWithTax, $dealDate, $supplierId, 
+				$dealAddress, $contact, $tel, $fax, $orgId, $bizUserId, $paymentType, $billMemo, 
+				$loginUserId, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		return null;
+	}
+
+	public function getPOBillById($id) {
+		$db = $this->db;
+		
+		$sql = "select ref, data_org, bill_status, company_id
+				from t_po_bill where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if ($data) {
+			return array(
+					"ref" => $data[0]["ref"],
+					"dataOrg" => $data[0]["data_org"],
+					"billStatus" => $data[0]["bill_status"],
+					"companyId" => $data[0]["company_id"]
+			);
+		} else {
+			return null;
+		}
 	}
 }
