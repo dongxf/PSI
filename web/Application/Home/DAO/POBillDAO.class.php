@@ -430,4 +430,27 @@ class POBillDAO extends PSIBaseDAO {
 			return null;
 		}
 	}
+
+	/**
+	 * 删除采购订单
+	 */
+	public function deletePOBill($params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		
+		$sql = "delete from t_po_bill_detail where pobill_id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		$sql = "delete from t_po_bill where id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		return null;
+	}
 }

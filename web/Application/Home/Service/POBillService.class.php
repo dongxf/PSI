@@ -343,35 +343,29 @@ class POBillService extends PSIBaseService {
 		
 		$db->startTrans();
 		
-		$sql = "select ref, bill_status from t_po_bill where id = '%s' ";
-		$data = $db->query($sql, $id);
-		if (! $data) {
+		$dao = new POBillDAO($db);
+		
+		$bill = $dao->getPOBillById($id);
+		
+		if (! $bill) {
 			$db->rollback();
 			return $this->bad("要删除的采购订单不存在");
 		}
-		$ref = $data[0]["ref"];
-		$billStatus = $data[0]["bill_status"];
+		$ref = $bill["ref"];
+		$billStatus = $bill["billStatus"];
 		if ($billStatus > 0) {
 			$db->rollback();
 			return $this->bad("采购订单(单号：{$ref})已经审核，不能被删除");
 		}
 		
-		$sql = "delete from t_po_bill_detail where pobill_id = '%s' ";
-		$rc = $db->execute($sql, $id);
-		if ($rc === false) {
+		$rc = $dao->deletePOBill($params);
+		if ($rc) {
 			$db->rollback();
-			return $this->sqlError(__LINE__);
-		}
-		
-		$sql = "delete from t_po_bill where id = '%s' ";
-		$rc = $db->execute($sql, $id);
-		if ($rc === false) {
-			$db->rollback();
-			return $this->sqlError(__LINE__);
+			return $rc;
 		}
 		
 		$log = "删除采购订单，单号：{$ref}";
-		$bs = new BizlogService();
+		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		
 		$db->commit();
