@@ -591,4 +591,28 @@ class BizConfigDAO extends PSIBaseDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 获得采购订单默认付款方式
+	 */
+	public function getPOBillDefaultPayment($params) {
+		$result = "0";
+		
+		$db = $this->db;
+		$companyId = $params["companyId"];
+		
+		$id = "2001-02";
+		$sql = "select value from t_config
+				where id = '%s' and company_id = '%s' ";
+		$data = $db->query($sql, $id, $companyId);
+		if ($data) {
+			$result = $data[0]["value"];
+			
+			if ($result == null || $result == "") {
+				$result = "0";
+			}
+		}
+		
+		return $result;
+	}
 }
