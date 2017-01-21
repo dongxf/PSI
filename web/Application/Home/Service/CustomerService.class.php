@@ -2,7 +2,6 @@
 
 namespace Home\Service;
 
-use Home\Common\FIdConst;
 use Home\DAO\CustomerDAO;
 use Home\DAO\IdGenDAO;
 
