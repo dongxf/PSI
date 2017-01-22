@@ -53,6 +53,38 @@ class POBillService extends PSIBaseService {
 		return $dao->pobillList($params);
 	}
 
+	private function checkPOBill($bill) {
+		$db = $this->db;
+		
+		$dealDate = $bill["dealDate"];
+		if (! $this->dateIsValid($dealDate)) {
+			return $this->bad("交货日期不正确");
+		}
+		
+		$supplierId = $bill["supplierId"];
+		$supplierDAO = new SupplierDAO($db);
+		$supplier = $supplierDAO->getSupplierById($supplierId);
+		if (! $supplier) {
+			return $this->bad("供应商不存在");
+		}
+		
+		$orgId = $bill["orgId"];
+		$orgDAO = new OrgDAO($db);
+		$org = $orgDAO->getOrgById($orgId);
+		if (! $org) {
+			return $this->bad("组织机构不存在");
+		}
+		
+		$bizUserId = $bill["bizUserId"];
+		$userDAO = new UserDAO($db);
+		$user = $userDAO->getUserById($bizUserId);
+		if (! $user) {
+			return $this->bad("业务员不存在");
+		}
+		
+		return null;
+	}
+
 	/**
 	 * 新建或编辑采购订单
 	 */
@@ -73,54 +105,17 @@ class POBillService extends PSIBaseService {
 		$dao = new POBillDAO($db);
 		
 		$id = $bill["id"];
-		$dealDate = $bill["dealDate"];
-		if (! $this->dateIsValid($dealDate)) {
+		
+		$rc = $this->checkPOBill($bill);
+		if ($rc) {
 			$db->rollback();
-			return $this->bad("交货日期不正确");
+			return $rc;
 		}
-		
-		$supplierId = $bill["supplierId"];
-		$supplierDAO = new SupplierDAO($db);
-		$supplier = $supplierDAO->getSupplierById($supplierId);
-		if (! $supplier) {
-			$db->rollback();
-			return $this->bad("供应商不存在");
-		}
-		
-		$orgId = $bill["orgId"];
-		$orgDAO = new OrgDAO($db);
-		$org = $orgDAO->getOrgById($orgId);
-		if (! $org) {
-			$db->rollback();
-			return $this->bad("组织机构不存在");
-		}
-		
-		$bizUserId = $bill["bizUserId"];
-		$userDAO = new UserDAO($db);
-		$user = $userDAO->getUserById($bizUserId);
-		if (! $user) {
-			$db->rollback();
-			return $this->bad("业务员不存在");
-		}
-		
-		$paymentType = $bill["paymentType"];
-		$contact = $bill["contact"];
-		$tel = $bill["tel"];
-		$fax = $bill["fax"];
-		$dealAddress = $bill["dealAddress"];
-		$billMemo = $bill["billMemo"];
-		
-		$items = $bill["items"];
-		
-		$idGen = new IdGenDAO($db);
 		
 		$us = new UserService();
-		$companyId = $us->getCompanyId();
-		$bill["companyId"] = $companyId;
+		$bill["companyId"] = $us->getCompanyId();
 		$bill["loginUserId"] = $us->getLoginUserId();
 		$bill["dataOrg"] = $us->getLoginUserDataOrg();
-		
-		$dao = new POBillDAO($db);
 		
 		$log = null;
 		if ($id) {
@@ -154,6 +149,7 @@ class POBillService extends PSIBaseService {
 		} else {
 			// 新建采购订单
 			
+			$idGen = new IdGenDAO($db);
 			$id = $idGen->newId();
 			$bill["id"] = $id;
 			
