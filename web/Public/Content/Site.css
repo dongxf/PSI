@@ -77,3 +77,8 @@
 #msg-div .msg p {
     margin: 0;
 }
+
+.x-panel-header-default {
+	background-image: none;
+	background-color: #DAE6F3;
+}
