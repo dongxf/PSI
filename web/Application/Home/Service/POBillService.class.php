@@ -17,28 +17,6 @@ class POBillService extends PSIBaseService {
 	private $LOG_CATEGORY = "采购订单";
 
 	/**
-	 * 生成新的采购订单号
-	 */
-	private function genNewBillRef() {
-		$bs = new BizConfigService();
-		$pre = $bs->getPOBillRefPre();
-		
-		$mid = date("Ymd");
-		
-		$sql = "select ref from t_po_bill where ref like '%s' order by ref desc limit 1";
-		$data = M()->query($sql, $pre . $mid . "%");
-		$sufLength = 3;
-		$suf = str_pad("1", $sufLength, "0", STR_PAD_LEFT);
-		if ($data) {
-			$ref = $data[0]["ref"];
-			$nextNumber = intval(substr($ref, strlen($pre . $mid))) + 1;
-			$suf = str_pad($nextNumber, $sufLength, "0", STR_PAD_LEFT);
-		}
-		
-		return $pre . $mid . $suf;
-	}
-
-	/**
 	 * 获得采购订单主表信息列表
 	 */
 	public function pobillList($params) {
