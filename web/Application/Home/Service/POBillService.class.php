@@ -237,25 +237,11 @@ class POBillService extends PSIBaseService {
 			return $this->notOnlineError();
 		}
 		
-		$id = $params["id"];
 		$db = M();
 		
 		$db->startTrans();
 		
 		$dao = new POBillDAO($db);
-		
-		$bill = $dao->getPOBillById($id);
-		
-		if (! $bill) {
-			$db->rollback();
-			return $this->bad("要删除的采购订单不存在");
-		}
-		$ref = $bill["ref"];
-		$billStatus = $bill["billStatus"];
-		if ($billStatus > 0) {
-			$db->rollback();
-			return $this->bad("采购订单(单号：{$ref})已经审核，不能被删除");
-		}
 		
 		$rc = $dao->deletePOBill($params);
 		if ($rc) {
@@ -263,6 +249,7 @@ class POBillService extends PSIBaseService {
 			return $rc;
 		}
 		
+		$ref = $params["ref"];
 		$log = "删除采购订单，单号：{$ref}";
 		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY);

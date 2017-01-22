@@ -434,10 +434,23 @@ class POBillDAO extends PSIBaseDAO {
 	/**
 	 * 删除采购订单
 	 */
-	public function deletePOBill($params) {
+	public function deletePOBill(& $params) {
 		$db = $this->db;
 		
 		$id = $params["id"];
+		
+		$bill = $this->getPOBillById($id);
+		
+		if (! $bill) {
+			return $this->bad("要删除的采购订单不存在");
+		}
+		$ref = $bill["ref"];
+		$billStatus = $bill["billStatus"];
+		if ($billStatus > 0) {
+			return $this->bad("采购订单(单号：{$ref})已经审核，不能被删除");
+		}
+		
+		$params["ref"] = $ref;
 		
 		$sql = "delete from t_po_bill_detail where pobill_id = '%s' ";
 		$rc = $db->execute($sql, $id);
@@ -585,6 +598,10 @@ class POBillDAO extends PSIBaseDAO {
 		$billStatus = $bill["billStatus"];
 		if ($billStatus > 1000) {
 			return $this->bad("采购订单(单号:{$ref})不能取消审核");
+		}
+		
+		if ($billStatus == 0) {
+			return $this->bad("采购订单(单号:{$ref})还没有审核，无需进行取消审核操作");
 		}
 		
 		$sql = "select count(*) as cnt from t_po_pw where po_id = '%s' ";
