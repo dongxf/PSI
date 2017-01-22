@@ -218,34 +218,32 @@ class POBillService extends PSIBaseService {
 		
 		$db->startTrans();
 		
-		$sql = "select ref, bill_status from t_po_bill where id = '%s' ";
-		$data = $db->query($sql, $id);
-		if (! $data) {
+		$dao = new POBillDAO($db);
+		
+		$bill = $dao->getPOBillById($id);
+		
+		if (! $bill) {
 			$db->rollback();
 			return $this->bad("要审核的采购订单不存在");
 		}
-		$ref = $data[0]["ref"];
-		$billStatus = $data[0]["bill_status"];
+		$ref = $bill["ref"];
+		$billStatus = $bill["bill_status"];
 		if ($billStatus > 0) {
 			$db->rollback();
 			return $this->bad("采购订单(单号：$ref)已经被审核，不能再次审核");
 		}
 		
-		$sql = "update t_po_bill
-					set bill_status = 1000,
-						confirm_user_id = '%s',
-						confirm_date = now()
-					where id = '%s' ";
 		$us = new UserService();
-		$rc = $db->execute($sql, $us->getLoginUserId(), $id);
-		if ($rc === false) {
+		$params["loginUserId"] = $us->getLoginUserId();
+		$rc = $dao->commitPOBill($params);
+		if ($rc) {
 			$db->rollback();
-			return $this->sqlError(__LINE__);
+			return $rc;
 		}
 		
 		// 记录业务日志
 		$log = "审核采购订单，单号：{$ref}";
-		$bs = new BizlogService();
+		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		
 		$db->commit();
@@ -305,43 +303,22 @@ class POBillService extends PSIBaseService {
 		}
 		
 		$id = $params["id"];
-		$db = M();
 		
+		$db = M();
 		$db->startTrans();
 		
-		$sql = "select ref, bill_status from t_po_bill where id = '%s' ";
-		$data = $db->query($sql, $id);
-		if (! $data) {
+		$dao = new POBillDAO($db);
+		$rc = $dao->cancelConfirmPOBill($params);
+		if ($rc) {
 			$db->rollback();
-			return $this->bad("要取消审核的采购订单不存在");
-		}
-		$ref = $data[0]["ref"];
-		$billStatus = $data[0]["bill_status"];
-		if ($billStatus > 1000) {
-			$db->rollback();
-			return $this->bad("采购订单(单号:{$ref})不能取消审核");
+			return $rc;
 		}
 		
-		$sql = "select count(*) as cnt from t_po_pw where po_id = '%s' ";
-		$data = $db->query($sql, $id);
-		$cnt = $data[0]["cnt"];
-		if ($cnt > 0) {
-			$db->rollback();
-			return $this->bad("采购订单(单号:{$ref})已经生成了采购入库单，不能取消审核");
-		}
-		
-		$sql = "update t_po_bill
-					set bill_status = 0, confirm_user_id = null, confirm_date = null
-					where id = '%s' ";
-		$rc = $db->execute($sql, $id);
-		if ($rc === false) {
-			$db->rollback();
-			return $this->sqlError(__LINE__);
-		}
+		$ref = $params["ref"];
 		
 		// 记录业务日志
 		$log = "取消审核采购订单，单号：{$ref}";
-		$bs = new BizlogService();
+		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		
 		$db->commit();
