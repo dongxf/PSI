@@ -18,6 +18,9 @@ class WarehouseDAO extends PSIBaseExDAO {
 		$db = $this->db;
 		
 		$loginUserId = $params["loginUserId"];
+		if ($this->loginUserIdNotExists($loginUserId)) {
+			return $this->emptyResult();
+		}
 		
 		$sql = "select id, code, name, inited, data_org from t_warehouse ";
 		$ds = new DataOrgDAO();
@@ -58,6 +61,14 @@ class WarehouseDAO extends PSIBaseExDAO {
 		$py = $params["py"];
 		$dataOrg = $params["dataOrg"];
 		$companyId = $params["companyId"];
+		
+		if ($this->dataOrgNotExists($dataOrg)) {
+			return $this->bad("参数dataOrg不正确");
+		}
+		
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->bad("参数companyId不正确");
+		}
 		
 		// 检查同编号的仓库是否存在
 		$sql = "select count(*) as cnt from t_warehouse where code = '%s' ";
@@ -259,6 +270,9 @@ class WarehouseDAO extends PSIBaseExDAO {
 		$db = $this->db;
 		
 		$loginUserId = $params["loginUserId"];
+		if ($this->loginUserIdNotExists($loginUserId)) {
+			return $this->emptyResult();
+		}
 		
 		$queryKey = $params["queryKey"];
 		if ($queryKey == null) {
@@ -273,7 +287,7 @@ class WarehouseDAO extends PSIBaseExDAO {
 		$queryParams[] = $key;
 		$queryParams[] = $key;
 		
-		$ds = new DataOrgDAO();
+		$ds = new DataOrgDAO($db);
 		$rs = $ds->buildSQL(FIdConst::WAREHOUSE_BILL, "t_warehouse", $loginUserId);
 		if ($rs) {
 			$sql .= " and " . $rs[0];
