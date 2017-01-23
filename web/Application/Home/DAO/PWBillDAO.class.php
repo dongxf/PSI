@@ -21,6 +21,31 @@ class PWBillDAO extends PSIBaseDAO {
 	}
 
 	/**
+	 * 生成新的采购入库单单号
+	 */
+	private function genNewBillRef($bill) {
+		$db = $this->db;
+		
+		$companyId = $bill["companyId"];
+		
+		$bs = new BizConfigDAO($db);
+		$pre = $bs->getPWBillRefPre($companyId);
+		
+		$mid = date("Ymd");
+		
+		$sql = "select ref from t_pw_bill where ref like '%s' order by ref desc limit 1";
+		$data = $db->query($sql, $pre . $mid . "%");
+		$suf = "001";
+		if ($data) {
+			$ref = $data[0]["ref"];
+			$nextNumber = intval(substr($ref, strlen($pre . $mid))) + 1;
+			$suf = str_pad($nextNumber, 3, "0", STR_PAD_LEFT);
+		}
+		
+		return $pre . $mid . $suf;
+	}
+
+	/**
 	 * 获得采购入库单主表列表
 	 */
 	public function pwbillList($params) {
