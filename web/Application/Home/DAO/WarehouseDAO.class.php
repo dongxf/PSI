@@ -9,16 +9,7 @@ use Home\Common\FIdConst;
  *
  * @author 李静波
  */
-class WarehouseDAO extends PSIBaseDAO {
-	var $db;
-
-	function __construct($db = null) {
-		if ($db == null) {
-			$db = M();
-		}
-		
-		$this->db = $db;
-	}
+class WarehouseDAO extends PSIBaseExDAO {
 
 	/**
 	 * 获得所有的仓库列表
@@ -59,15 +50,14 @@ class WarehouseDAO extends PSIBaseDAO {
 	/**
 	 * 新增一个仓库
 	 */
-	public function addWarehouse($params) {
-		$id = $params["id"];
+	public function addWarehouse(& $params) {
+		$db = $this->db;
+		
 		$code = $params["code"];
 		$name = $params["name"];
 		$py = $params["py"];
 		$dataOrg = $params["dataOrg"];
 		$companyId = $params["companyId"];
-		
-		$db = $this->db;
 		
 		// 检查同编号的仓库是否存在
 		$sql = "select count(*) as cnt from t_warehouse where code = '%s' ";
@@ -76,6 +66,9 @@ class WarehouseDAO extends PSIBaseDAO {
 		if ($cnt > 0) {
 			return $this->bad("编码为 [$code] 的仓库已经存在");
 		}
+		
+		$id = $this->newId();
+		$params["id"] = $id;
 		
 		$sql = "insert into t_warehouse(id, code, name, inited, py, data_org, company_id)
 					values ('%s', '%s', '%s', 0, '%s', '%s', '%s')";
@@ -91,7 +84,7 @@ class WarehouseDAO extends PSIBaseDAO {
 	/**
 	 * 修改仓库
 	 */
-	public function updateWarehouse($params) {
+	public function updateWarehouse(& $params) {
 		$id = $params["id"];
 		$code = $params["code"];
 		$name = $params["name"];
@@ -107,9 +100,14 @@ class WarehouseDAO extends PSIBaseDAO {
 			return $this->bad("编码为 [$code] 的仓库已经存在");
 		}
 		
+		$warehouse = $this->getWarehouseById($id);
+		if (! $warehouse) {
+			return $this->bad("要编辑的仓库不存在");
+		}
+		
 		$sql = "update t_warehouse
-					set code = '%s', name = '%s', py = '%s'
-					where id = '%s' ";
+				set code = '%s', name = '%s', py = '%s'
+				where id = '%s' ";
 		$rc = $db->execute($sql, $code, $name, $py, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
@@ -122,19 +120,19 @@ class WarehouseDAO extends PSIBaseDAO {
 	/**
 	 * 删除仓库
 	 */
-	public function deleteWarehouse($params) {
+	public function deleteWarehouse(& $params) {
 		$db = $this->db;
 		
 		$id = $params["id"];
 		
-		$sql = "select code, name, inited from t_warehouse where id = '%s' ";
-		$data = $db->query($sql, $id);
-		if (! $data) {
+		// 判断仓库是否能删除
+		$warehouse = $this->getWarehouseById($id);
+		if (! $warehouse) {
 			return $this->bad("要删除的仓库不存在");
 		}
+		$params["code"] = $warehouse["code"];
+		$params["name"] = $warehouse["name"];
 		
-		// 判断仓库是否能删除
-		$warehouse = $data[0];
 		$warehouseName = $warehouse["name"];
 		if ($warehouse["inited"] == 1) {
 			return $this->bad("仓库[{$warehouseName}]已经建账，不能删除");
@@ -201,7 +199,7 @@ class WarehouseDAO extends PSIBaseDAO {
 
 	public function getWarehouseById($id) {
 		$db = $this->db;
-		$sql = "select code, name, data_org from t_warehouse where id = '%s' ";
+		$sql = "select code, name, data_org, inited from t_warehouse where id = '%s' ";
 		$data = $db->query($sql, $id);
 		
 		if (! $data) {
@@ -211,14 +209,15 @@ class WarehouseDAO extends PSIBaseDAO {
 		return array(
 				"code" => $data[0]["code"],
 				"name" => $data[0]["name"],
-				"dataOrg" => $data[0]["data_org"]
+				"dataOrg" => $data[0]["data_org"],
+				"inited" => $data[0]["inited"]
 		);
 	}
 
 	/**
 	 * 编辑仓库数据域
 	 */
-	public function editDataOrg($params) {
+	public function editDataOrg(& $params) {
 		$db = $this->db;
 		
 		$id = $params["id"];
@@ -259,7 +258,6 @@ class WarehouseDAO extends PSIBaseDAO {
 	public function queryData($params) {
 		$db = $this->db;
 		
-		$fid = "1003-01";
 		$loginUserId = $params["loginUserId"];
 		
 		$queryKey = $params["queryKey"];
@@ -276,7 +274,7 @@ class WarehouseDAO extends PSIBaseDAO {
 		$queryParams[] = $key;
 		
 		$ds = new DataOrgDAO();
-		$rs = $ds->buildSQL($fid, "t_warehouse", $loginUserId);
+		$rs = $ds->buildSQL(FIdConst::WAREHOUSE_BILL, "t_warehouse", $loginUserId);
 		if ($rs) {
 			$sql .= " and " . $rs[0];
 			$queryParams = array_merge($queryParams, $rs[1]);

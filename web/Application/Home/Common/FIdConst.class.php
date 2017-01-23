@@ -115,6 +115,11 @@ class FIdConst {
 	const WAREHOUSE = "1003";
 	
 	/**
+	 * 仓库在业务单据中的使用权限
+	 */
+	const WAREHOUSE_BILL = "1003-01";
+	
+	/**
 	 * 新增仓库
 	 */
 	const WAREHOUSE_ADD = "1003-02";

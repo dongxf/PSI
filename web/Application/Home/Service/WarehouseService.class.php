@@ -4,7 +4,6 @@ namespace Home\Service;
 
 use Home\DAO\WarehouseDAO;
 use Home\Service\BizlogService;
-use Home\Service\IdGenService;
 
 /**
  * 基础数据仓库Service
@@ -73,24 +72,20 @@ class WarehouseService extends PSIBaseService {
 			$params["dataOrg"] = $us->getLoginUserDataOrg();
 			$params["companyId"] = $us->getCompanyId();
 			
-			$idGen = new IdGenService();
-			$id = $idGen->newId($db);
-			$params["id"] = $id;
-			
 			$rc = $dao->addWarehouse($params);
 			if ($rc) {
 				$db->rollback();
 				return $rc;
 			}
 			
+			$id = $params["id"];
+			
 			$log = "新增仓库：编码 = {$code},  名称 = {$name}";
 		}
 		
 		// 记录业务日志
-		if ($log) {
-			$bs = new BizlogService($db);
-			$bs->insertBizlog($log, $this->LOG_CATEGORY);
-		}
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		
 		$db->commit();
 		
@@ -112,19 +107,13 @@ class WarehouseService extends PSIBaseService {
 		
 		$dao = new WarehouseDAO($db);
 		
-		$warehouse = $dao->getWarehouseById($id);
-		if (! $warehouse) {
-			$db->rollback();
-			return $this->bad("要删除的仓库不存在");
-		}
-		
 		$rc = $dao->deleteWarehouse($params);
 		if ($rc) {
 			$db->rollback();
 			return $rc;
 		}
 		
-		$log = "删除仓库： 编码 = {$warehouse['code']}， 名称 = {$warehouse['name']}";
+		$log = "删除仓库： 编码 = {$params['code']}， 名称 = {$params['name']}";
 		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		
@@ -163,6 +152,11 @@ class WarehouseService extends PSIBaseService {
 		$id = $params["id"];
 		$dataOrg = $params["dataOrg"];
 		$warehouse = $dao->getWarehouseById($id);
+		if (! $warehouse) {
+			$db->rollback();
+			return $this->bad("仓库不存在");
+		}
+		
 		$oldDataOrg = $warehouse["dataOrg"];
 		$name = $warehouse["name"];
 		
