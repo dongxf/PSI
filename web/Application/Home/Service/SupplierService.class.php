@@ -4,7 +4,6 @@ namespace Home\Service;
 
 use Home\DAO\SupplierDAO;
 use Home\Service\BizlogService;
-use Home\Service\IdGenService;
 
 /**
  * 供应商档案Service
