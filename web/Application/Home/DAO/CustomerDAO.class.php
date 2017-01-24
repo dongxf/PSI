@@ -202,10 +202,12 @@ class CustomerDAO extends PSIBaseExDAO {
 		return null;
 	}
 
-	public function addCustomer($params) {
+	/**
+	 * 新增客户资料
+	 */
+	public function addCustomer(& $params) {
 		$db = $this->db;
 		
-		$id = $params["id"];
 		$code = $params["code"];
 		$name = $params["name"];
 		$address = $params["address"];
@@ -229,6 +231,12 @@ class CustomerDAO extends PSIBaseExDAO {
 		
 		$dataOrg = $params["dataOrg"];
 		$companyId = $params["companyId"];
+		if ($this->dataOrgNotExists($dataOrg)) {
+			return $this->badParam("dataOrg");
+		}
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->badParam("companyId");
+		}
 		
 		// 检查编码是否已经存在
 		$sql = "select count(*) as cnt from t_customer where code = '%s' ";
@@ -237,6 +245,10 @@ class CustomerDAO extends PSIBaseExDAO {
 		if ($cnt > 0) {
 			return $this->bad("编码为 [{$code}] 的客户已经存在");
 		}
+		
+		$idGen = new IdGenDAO($db);
+		$id = $idGen->newId();
+		$params["id"] = $id;
 		
 		$sql = "insert into t_customer (id, category_id, code, name, py, contact01,
 				qq01, tel01, mobile01, contact02, qq02, tel02, mobile02, address, address_receipt,
@@ -258,7 +270,7 @@ class CustomerDAO extends PSIBaseExDAO {
 	/**
 	 * 初始化应收账款
 	 */
-	public function initReceivables($params) {
+	public function initReceivables(& $params) {
 		$db = $this->db;
 		
 		$idGen = new IdGenDAO($db);
@@ -374,7 +386,7 @@ class CustomerDAO extends PSIBaseExDAO {
 		return null;
 	}
 
-	public function updateCustomer($params) {
+	public function updateCustomer(& $params) {
 		$db = $this->db;
 		
 		$id = $params["id"];
@@ -430,13 +442,20 @@ class CustomerDAO extends PSIBaseExDAO {
 	/**
 	 * 删除客户资料
 	 */
-	public function deleteCustomer($params) {
+	public function deleteCustomer(& $params) {
 		$db = $this->db;
 		
 		$id = $params["id"];
 		
-		$code = $params["code"];
-		$name = $params["name"];
+		$customer = $this->getCustomerById($id);
+		
+		if (! $customer) {
+			return $this->bad("要删除的客户资料不存在");
+		}
+		$code = $customer["code"];
+		$name = $customer["name"];
+		$params["code"] = $code;
+		$params["name"] = $name;
 		
 		// 判断是否能删除客户资料
 		$sql = "select count(*) as cnt from t_ws_bill where customer_id = '%s' ";
@@ -522,6 +541,9 @@ class CustomerDAO extends PSIBaseExDAO {
 		$qq = $params["qq"];
 		
 		$loginUserId = $params["loginUserId"];
+		if ($this->loginUserIdNotExists($loginUserId)) {
+			return $this->emptyResult();
+		}
 		
 		$sql = "select id, category_id, code, name, address, contact01, qq01, tel01, mobile01,
 				 contact02, qq02, tel02, mobile02, init_receivables, init_receivables_dt,
@@ -664,6 +686,9 @@ class CustomerDAO extends PSIBaseExDAO {
 		$db = $this->db;
 		
 		$loginUserId = $params["loginUserId"];
+		if ($this->loginUserIdNotExists($loginUserId)) {
+			return $this->emptyResult();
+		}
 		
 		$queryKey = $params["queryKey"];
 		if ($queryKey == null) {

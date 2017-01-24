@@ -56,4 +56,8 @@ class PSIBaseExDAO extends PSIBaseDAO {
 	protected function emptyResult() {
 		return array();
 	}
+
+	protected function badParam($param) {
+		return $this->bad("参数" . $param . "不正确");
+	}
 }

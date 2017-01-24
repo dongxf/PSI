@@ -156,16 +156,13 @@ class CustomerService extends PSIBaseService {
 			$log = "编辑客户：编码 = {$code}, 名称 = {$name}";
 		} else {
 			// 新增
-			$idGen = new IdGenDAO($db);
-			$id = $idGen->newId();
-			
-			$params["id"] = $id;
-			
 			$rc = $dao->addCustomer($params);
 			if ($rc) {
 				$db->rollback();
 				return $rc;
 			}
+			
+			$id = $params["id"];
 			
 			$log = "新增客户：编码 = {$code}, 名称 = {$name}";
 		}
@@ -178,10 +175,8 @@ class CustomerService extends PSIBaseService {
 		}
 		
 		// 记录业务日志
-		if ($log) {
-			$bs = new BizlogService($db);
-			$bs->insertBizlog($log, $this->LOG_CATEGORY);
-		}
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		
 		$db->commit();
 		
@@ -217,23 +212,14 @@ class CustomerService extends PSIBaseService {
 		
 		$dao = new CustomerDAO($db);
 		
-		$customer = $dao->getCustomerById($id);
-		
-		if (! $customer) {
-			$db->rollback();
-			return $this->bad("要删除的客户资料不存在");
-		}
-		$code = $customer["code"];
-		$name = $customer["name"];
-		$params["code"] = $code;
-		$params["name"] = $name;
-		
 		$rc = $dao->deleteCustomer($params);
 		if ($rc) {
 			$db->rollback();
 			return $rc;
 		}
 		
+		$code = $params["code"];
+		$name = $params["name"];
 		$log = "删除客户资料：编码 = {$code},  名称 = {$name}";
 		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY);
