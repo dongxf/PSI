@@ -9,16 +9,7 @@ use Home\Common\FIdConst;
  *
  * @author 李静波
  */
-class GoodsSiDAO extends PSIBaseDAO {
-	var $db;
-
-	function __construct($db = null) {
-		if ($db == null) {
-			$db = M();
-		}
-		
-		$this->db = $db;
-	}
+class GoodsSiDAO extends PSIBaseExDAO {
 
 	/**
 	 * 获得某个商品的安全库存列表
@@ -28,6 +19,9 @@ class GoodsSiDAO extends PSIBaseDAO {
 		
 		$id = $params["id"];
 		$loginUserId = $params["loginUserId"];
+		if ($this->loginUserIdNotExists($loginUserId)) {
+			return $this->emptyResult();
+		}
 		
 		$result = array();
 		
@@ -95,6 +89,9 @@ class GoodsSiDAO extends PSIBaseDAO {
 		
 		$id = $params["id"];
 		$loginUserId = $params["loginUserId"];
+		if ($this->loginUserIdNotExists($loginUserId)) {
+			return $this->emptyResult();
+		}
 		
 		$result = array();
 		
@@ -141,15 +138,20 @@ class GoodsSiDAO extends PSIBaseDAO {
 	/**
 	 * 设置商品的安全
 	 */
-	public function editSafetyInventory($bill) {
+	public function editSafetyInventory(& $bill) {
 		$db = $this->db;
-		
 		
 		$id = $bill["id"];
 		$items = $bill["items"];
 		
-		$idGen = new IdGenDAO($db);
+		$goodsDAO = new GoodsDAO($db);
+		$goods = $goodsDAO->getGoodsById($id);
 		
+		if (! $goods) {
+			return $this->bad("商品不存在，无法设置商品安全库存");
+		}
+		
+		$idGen = new IdGenDAO($db);
 		
 		$sql = "delete from t_goods_si where goods_id = '%s' ";
 		$rc = $db->execute($sql, $id);
@@ -157,8 +159,14 @@ class GoodsSiDAO extends PSIBaseDAO {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
 		
+		$warehouseDAO = new WarehouseDAO($db);
+		
 		foreach ( $items as $v ) {
 			$warehouseId = $v["warehouseId"];
+			if (! $warehouseDAO->getWarehouseById($warehouseId)) {
+				return $this->bad("仓库不存在(id={$warehouseId})");
+			}
+			
 			$si = $v["si"];
 			if (! $si) {
 				$si = 0;
@@ -173,13 +181,18 @@ class GoodsSiDAO extends PSIBaseDAO {
 			if ($upper < 0) {
 				$upper = 0;
 			}
+			
 			$sql = "insert into t_goods_si(id, goods_id, warehouse_id, safety_inventory, inventory_upper)
-						values ('%s', '%s', '%s', %d, %d)";
+					values ('%s', '%s', '%s', %d, %d)";
 			$rc = $db->execute($sql, $idGen->newId(), $id, $warehouseId, $si, $upper);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
 		}
+		
+		$bill["code"] = $goods["code"];
+		$bill["name"] = $goods["name"];
+		$bill["spec"] = $goods["spec"];
 		
 		// 操作成功
 		return null;
