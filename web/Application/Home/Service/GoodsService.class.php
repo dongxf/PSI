@@ -156,21 +156,11 @@ class GoodsService extends PSIBaseService {
 		$id = $params["id"];
 		$code = $params["code"];
 		$name = $params["name"];
-		$parentId = $params["parentId"];
 		
 		$db = M();
 		$db->startTrans();
 		
 		$dao = new GoodsCategoryDAO($db);
-		
-		if ($parentId) {
-			// 检查id是否存在
-			$parentCategory = $dao->getGoodsCategoryById($parentId);
-			if (! $parentCategory) {
-				$db->rollback();
-				return $this->bad("上级分类不存在");
-			}
-		}
 		
 		if ($id) {
 			// 编辑
@@ -183,9 +173,7 @@ class GoodsService extends PSIBaseService {
 			$log = "编辑商品分类: 编码 = {$code}， 分类名称 = {$name}";
 		} else {
 			// 新增
-			$idGen = new IdGenService();
-			$id = $idGen->newId();
-			$params["id"] = $id;
+			
 			$us = new UserService();
 			$params["dataOrg"] = $us->getLoginUserDataOrg();
 			$params["companyId"] = $us->getCompanyId();
@@ -196,14 +184,14 @@ class GoodsService extends PSIBaseService {
 				return $rc;
 			}
 			
+			$id = $params["id"];
+			
 			$log = "新增商品分类: 编码 = {$code}， 分类名称 = {$name}";
 		}
 		
 		// 记录业务日志
-		if ($log) {
-			$bs = new BizlogService($db);
-			$bs->insertBizlog($log, $this->LOG_CATEGORY_GOODS);
-		}
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY_GOODS);
 		
 		$db->commit();
 		
@@ -218,21 +206,10 @@ class GoodsService extends PSIBaseService {
 			return $this->notOnlineError();
 		}
 		
-		$id = $params["id"];
-		
 		$db = M();
 		$db->startTrans();
 		
 		$dao = new GoodsCategoryDAO($db);
-		
-		$category = $dao->getGoodsCategoryById($id);
-		
-		if (! $category) {
-			return $this->bad("要删除的商品分类不存在");
-		}
-		$code = $category["code"];
-		$name = $category["name"];
-		$params["name"] = $name;
 		
 		$rc = $dao->deleteCategory($params);
 		if ($rc) {
@@ -240,6 +217,8 @@ class GoodsService extends PSIBaseService {
 			return $rc;
 		}
 		
+		$code = $params["code"];
+		$name = $params["name"];
 		$log = "删除商品分类：  编码 = {$code}， 分类名称 = {$name}";
 		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY_GOODS);

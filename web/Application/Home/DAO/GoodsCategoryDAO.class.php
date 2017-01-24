@@ -9,7 +9,7 @@ use Home\Common\FIdConst;
  *
  * @author 李静波
  */
-class GoodsCategoryDAO extends PSIBaseDAO {
+class GoodsCategoryDAO extends PSIBaseExDAO {
 	var $db;
 
 	function __construct($db = null) {
@@ -134,6 +134,9 @@ class GoodsCategoryDAO extends PSIBaseDAO {
 		$barCode = $params["barCode"];
 		
 		$loginUserId = $params["loginUserId"];
+		if ($this->loginUserIdNotExists($loginUserId)) {
+			return $this->emptyResult();
+		}
 		
 		$sql = "select id, code, name, full_name
 				from t_goods_category c
@@ -192,15 +195,29 @@ class GoodsCategoryDAO extends PSIBaseDAO {
 	/**
 	 * 新增商品分类
 	 */
-	public function addGoodsCategory($params) {
+	public function addGoodsCategory(& $params) {
 		$db = $this->db;
 		
-		$id = $params["id"];
 		$code = $params["code"];
 		$name = $params["name"];
 		$parentId = $params["parentId"];
+		
 		$dataOrg = $params["dataOrg"];
 		$companyId = $params["companyId"];
+		if ($this->dataOrgNotExists($dataOrg)) {
+			return $this->badParam("dataOrg");
+		}
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->badParam("companyId");
+		}
+		
+		if ($parentId) {
+			// 检查parentId是否存在
+			$parentCategory = $this->getGoodsCategoryById($parentId);
+			if (! $parentCategory) {
+				return $this->bad("上级分类不存在");
+			}
+		}
 		
 		// 检查同编码的分类是否存在
 		$sql = "select count(*) as cnt from t_goods_category where code = '%s' ";
@@ -209,6 +226,8 @@ class GoodsCategoryDAO extends PSIBaseDAO {
 		if ($cnt > 0) {
 			return $this->bad("编码为 [{$code}] 的分类已经存在");
 		}
+		
+		$id = $this->newId();
 		
 		if ($parentId) {
 			$sql = "select full_name from t_goods_category where id = '%s' ";
@@ -234,6 +253,8 @@ class GoodsCategoryDAO extends PSIBaseDAO {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
 		}
+		
+		$params["id"] = $id;
 		
 		// 操作成功
 		return null;
@@ -277,13 +298,26 @@ class GoodsCategoryDAO extends PSIBaseDAO {
 	/**
 	 * 编辑商品分类
 	 */
-	public function updateGoodsCategory($params) {
+	public function updateGoodsCategory(& $params) {
 		$db = $this->db;
 		
 		$id = $params["id"];
 		$code = $params["code"];
 		$name = $params["name"];
 		$parentId = $params["parentId"];
+		
+		$category = $this->getGoodsCategoryById($id);
+		if (! $category) {
+			return $this->bad("要编辑的商品分类不存在");
+		}
+		
+		if ($parentId) {
+			// 检查parentId是否存在
+			$parentCategory = $this->getGoodsCategoryById($parentId);
+			if (! $parentCategory) {
+				return $this->bad("上级分类不存在");
+			}
+		}
 		
 		// 检查同编码的分类是否存在
 		$sql = "select count(*) as cnt from t_goods_category where code = '%s' and id <> '%s' ";
@@ -350,11 +384,18 @@ class GoodsCategoryDAO extends PSIBaseDAO {
 	/**
 	 * 删除商品分类
 	 */
-	public function deleteCategory($params) {
+	public function deleteCategory(& $params) {
 		$db = $this->db;
 		
 		$id = $params["id"];
-		$name = $params["name"];
+		
+		$category = $this->getGoodsCategoryById($id);
+		
+		if (! $category) {
+			return $this->bad("要删除的商品分类不存在");
+		}
+		$code = $category["code"];
+		$name = $category["name"];
 		
 		$sql = "select count(*) as cnt from t_goods where category_id = '%s' ";
 		$data = $db->query($sql, $id);
@@ -377,6 +418,9 @@ class GoodsCategoryDAO extends PSIBaseDAO {
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
+		
+		$params["code"] = $code;
+		$params["name"] = $name;
 		
 		// 操作成功
 		return null;
