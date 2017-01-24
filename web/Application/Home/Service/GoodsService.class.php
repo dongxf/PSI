@@ -451,19 +451,6 @@ class GoodsService extends PSIBaseService {
 		
 		$db->startTrans();
 		
-		$id = $bill["id"];
-		
-		$goodsDAO = new GoodsDAO($db);
-		$goods = $goodsDAO->getGoodsById($id);
-		
-		if (! $goods) {
-			$db->rollback();
-			return $this->bad("商品不存在，无法设置商品安全库存");
-		}
-		$goodsCode = $goods["code"];
-		$goodsName = $goods["name"];
-		$goodsSpec = $goods["spec"];
-		
 		$dao = new GoodsSiDAO($db);
 		$rc = $dao->editSafetyInventory($bill);
 		if ($rc) {
@@ -472,6 +459,9 @@ class GoodsService extends PSIBaseService {
 			return $rc;
 		}
 		
+		$goodsCode = $bill["code"];
+		$goodsName = $bill["name"];
+		$goodsSpec = $bill["spec"];
 		$bs = new BizlogService($db);
 		$log = "为商品[$goodsCode $goodsName $goodsSpec]设置安全库存";
 		$bs->insertBizlog($log, $this->LOG_CATEGORY_GOODS);
