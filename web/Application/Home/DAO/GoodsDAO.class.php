@@ -320,14 +320,18 @@ class GoodsDAO extends PSIBaseExDAO {
 	/**
 	 * 删除商品
 	 */
-	public function deleteGoods($params) {
+	public function deleteGoods(& $params) {
 		$db = $this->db;
 		
 		$id = $params["id"];
 		
-		$code = $params["code"];
-		$name = $params["name"];
-		$spec = $params["spec"];
+		$goods = $this->getGoodsById($id);
+		if (! $goods) {
+			return $this->bad("要删除的商品不存在");
+		}
+		$code = $goods["code"];
+		$name = $goods["name"];
+		$spec = $goods["spec"];
 		
 		// 判断商品是否能删除
 		$sql = "select count(*) as cnt from t_po_bill_detail where goods_id = '%s' ";
@@ -363,6 +367,10 @@ class GoodsDAO extends PSIBaseExDAO {
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
+		
+		$params["code"] = $code;
+		$params["name"] = $name;
+		$params["spec"] = $spec;
 		
 		// 操作成功
 		return null;

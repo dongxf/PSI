@@ -310,25 +310,10 @@ class GoodsService extends PSIBaseService {
 			return $this->notOnlineError();
 		}
 		
-		$id = $params["id"];
-		
 		$db = M();
 		$db->startTrans();
 		
 		$dao = new GoodsDAO($db);
-		$goods = $dao->getGoodsById($id);
-		
-		if (! $goods) {
-			$db->rollback();
-			return $this->bad("要删除的商品不存在");
-		}
-		$code = $goods["code"];
-		$name = $goods["name"];
-		$spec = $goods["spec"];
-		
-		$params["code"] = $code;
-		$params["name"] = $name;
-		$params["spec"] = $spec;
 		
 		$rc = $dao->deleteGoods($params);
 		if ($rc) {
@@ -336,6 +321,9 @@ class GoodsService extends PSIBaseService {
 			return $rc;
 		}
 		
+		$code = $params["code"];
+		$name = $params["name"];
+		$spec = $params["spec"];
 		$log = "删除商品： 商品编码 = {$code}， 品名 = {$name}，规格型号 = {$spec}";
 		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY_GOODS);
