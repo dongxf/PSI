@@ -21,6 +21,9 @@ class CustomerService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
+		$us = new UserService();
+		$params["loginUserId"] = $us->getLoginUserId();
+		
 		$dao = new CustomerDAO();
 		return $dao->categoryList($params);
 	}
@@ -55,9 +58,6 @@ class CustomerService extends PSIBaseService {
 			$log = "编辑客户分类: 编码 = {$code}, 分类名 = {$name}";
 		} else {
 			// 新增
-			$idGen = new IdGenDAO($db);
-			$id = $idGen->newId();
-			$params["id"] = $id;
 			
 			$us = new UserService();
 			$params["dataOrg"] = $us->getLoginUserDataOrg();
@@ -69,13 +69,14 @@ class CustomerService extends PSIBaseService {
 				return $rc;
 			}
 			
+			$id = $params["id"];
+			
 			$log = "新增客户分类：编码 = {$code}, 分类名 = {$name}";
 		}
 		
-		if ($log) {
-			$bs = new BizlogService($db);
-			$bs->insertBizlog($log, $this->LOG_CATEGORY);
-		}
+		// 记录业务日志
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		
 		$db->commit();
 		
@@ -97,21 +98,13 @@ class CustomerService extends PSIBaseService {
 		
 		$dao = new CustomerDAO($db);
 		
-		$category = $dao->getCustomerCategoryById($id);
-		if (! $category) {
-			$db->rollback();
-			return $this->bad("要删除的分类不存在");
-		}
-		
-		$params["name"] = $category["name"];
-		
 		$rc = $dao->deleteCustomerCategory($params);
 		if ($rc) {
 			$db->rollback();
 			return $rc;
 		}
 		
-		$log = "删除客户分类： 编码 = {$category['code']}, 分类名称 = {$category['name']}";
+		$log = "删除客户分类： 编码 = {$params['code']}, 分类名称 = {$params['name']}";
 		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		

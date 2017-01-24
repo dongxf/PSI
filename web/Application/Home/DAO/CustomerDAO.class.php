@@ -9,16 +9,7 @@ use Home\Common\FIdConst;
  *
  * @author 李静波
  */
-class CustomerDAO extends PSIBaseDAO {
-	var $db;
-
-	function __construct($db = null) {
-		if ($db == null) {
-			$db = M();
-		}
-		
-		$this->db = $db;
-	}
+class CustomerDAO extends PSIBaseExDAO {
 
 	/**
 	 * 客户分类列表
@@ -35,6 +26,9 @@ class CustomerDAO extends PSIBaseDAO {
 		$qq = $params["qq"];
 		
 		$loginUserId = $params["loginUserId"];
+		if ($this->loginUserIdNotExists($loginUserId)) {
+			return $this->emptyResult();
+		}
 		
 		$sql = "select c.id, c.code, c.name, count(u.id) as cnt
 				 from t_customer_category c
@@ -91,15 +85,21 @@ class CustomerDAO extends PSIBaseDAO {
 	/**
 	 * 新增客户分类
 	 */
-	public function addCustomerCategory($params) {
+	public function addCustomerCategory(& $params) {
 		$db = $this->db;
 		
-		$id = $params["id"];
 		$code = $params["code"];
 		$name = $params["name"];
 		
 		$dataOrg = $params["dataOrg"];
 		$companyId = $params["companyId"];
+		
+		if ($this->dataOrgNotExists($dataOrg)) {
+			return $this->bad("参数dataOrg不正确");
+		}
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->bad("参数companyId不正确");
+		}
 		
 		// 检查分类编码是否已经存在
 		$sql = "select count(*) as cnt from t_customer_category where code = '%s' ";
@@ -108,6 +108,10 @@ class CustomerDAO extends PSIBaseDAO {
 		if ($cnt > 0) {
 			return $this->bad("编码为 [{$code}] 的客户分类已经存在");
 		}
+		
+		$idGen = new IdGenDAO($db);
+		$id = $idGen->newId();
+		$params["id"] = $id;
 		
 		$sql = "insert into t_customer_category (id, code, name, data_org, company_id)
 				values ('%s', '%s', '%s', '%s', '%s') ";
@@ -123,7 +127,7 @@ class CustomerDAO extends PSIBaseDAO {
 	/**
 	 * 编辑客户分类
 	 */
-	public function updateCustomerCategory($params) {
+	public function updateCustomerCategory(& $params) {
 		$db = $this->db;
 		
 		$id = $params["id"];
@@ -168,11 +172,17 @@ class CustomerDAO extends PSIBaseDAO {
 	/**
 	 * 删除客户分类
 	 */
-	public function deleteCustomerCategory($params) {
+	public function deleteCustomerCategory(& $params) {
 		$db = $this->db;
 		
 		$id = $params["id"];
 		
+		$category = $this->getCustomerCategoryById($id);
+		if (! $category) {
+			return $this->bad("要删除的分类不存在");
+		}
+		$params["code"] = $category["code"];
+		$params["name"] = $category["name"];
 		$name = $params["name"];
 		
 		$sql = "select count(*) as cnt from t_customer where category_id = '%s' ";
