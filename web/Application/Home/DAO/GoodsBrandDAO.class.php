@@ -9,16 +9,7 @@ use Home\Common\FIdConst;
  *
  * @author 李静波
  */
-class GoodsBrandDAO extends PSIBaseDAO {
-	var $db;
-
-	function __construct($db = null) {
-		if ($db == null) {
-			$db = M();
-		}
-		
-		$this->db = $db;
-	}
+class GoodsBrandDAO extends PSIBaseExDAO {
 
 	/**
 	 * 用递归调用的方式查询所有品牌
@@ -65,6 +56,9 @@ class GoodsBrandDAO extends PSIBaseDAO {
 		$db = $this->db;
 		
 		$loginUserId = $params["loginUserId"];
+		if ($this->loginUserIdNotExists($loginUserId)) {
+			return $this->emptyResult();
+		}
 		
 		$result = array();
 		$sql = "select id, name, full_name
@@ -106,14 +100,20 @@ class GoodsBrandDAO extends PSIBaseDAO {
 	/**
 	 * 新增商品品牌
 	 */
-	public function addBrand($params) {
+	public function addBrand(& $params) {
 		$db = $this->db;
 		
-		$id = $params["id"];
 		$name = $params["name"];
 		$parentId = $params["parentId"];
+		
 		$dataOrg = $params["dataOrg"];
 		$companyId = $params["companyId"];
+		if ($this->dataOrgNotExists($dataOrg)) {
+			return $this->badParam("dataOrg");
+		}
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->badParam("companyId");
+		}
 		
 		// 检查上级品牌是否存在
 		$fullName = $name;
@@ -128,21 +128,24 @@ class GoodsBrandDAO extends PSIBaseDAO {
 			$fullName = $data[0]["full_name"] . "\\" . $name;
 		}
 		
+		$id = $this->newId();
 		if ($parentId) {
 			$sql = "insert into t_goods_brand(id, name, full_name, parent_id, data_org, company_id)
-						values ('%s', '%s', '%s', '%s', '%s', '%s')";
+					values ('%s', '%s', '%s', '%s', '%s', '%s')";
 			$rc = $db->execute($sql, $id, $name, $fullName, $parentId, $dataOrg, $companyId);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
 		} else {
 			$sql = "insert into t_goods_brand(id, name, full_name, parent_id, data_org, company_id)
-						values ('%s', '%s', '%s', null, '%s', '%s')";
+					values ('%s', '%s', '%s', null, '%s', '%s')";
 			$rc = $db->execute($sql, $id, $name, $fullName, $dataOrg, $companyId);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
 		}
+		
+		$params["id"] = $id;
 		
 		// 操作成功
 		return null;
@@ -176,21 +179,16 @@ class GoodsBrandDAO extends PSIBaseDAO {
 	/**
 	 * 编辑商品品牌
 	 */
-	public function updateGoodsBrand($params) {
+	public function updateGoodsBrand(& $params) {
 		$db = $this->db;
 		
 		$id = $params["id"];
 		$name = $params["name"];
 		$parentId = $params["parentId"];
-		$dataOrg = $params["dataOrg"];
-		$companyId = $params["companyId"];
 		
 		// 检查品牌是否存在
-		$sql = "select name
-				from t_goods_brand
-				where id = '%s' ";
-		$data = $db->query($sql, $id);
-		if (! $data) {
+		$brand = $this->getBrandById($id);
+		if (! $brand) {
 			return $this->bad("要编辑的品牌不存在");
 		}
 		
@@ -275,11 +273,15 @@ class GoodsBrandDAO extends PSIBaseDAO {
 	/**
 	 * 删除商品品牌
 	 */
-	public function deleteBrand($params) {
+	public function deleteBrand(& $params) {
 		$db = $this->db;
 		
 		$id = $params["id"];
-		$fullName = $params["fullName"];
+		$brand = $this->getBrandById($id);
+		if (! $brand) {
+			return $this->bad("要删除的商品品牌不存在");
+		}
+		$fullName = $brand["fullName"];
 		
 		$sql = "select count(*) as cnt from t_goods
 				where brand_id = '%s' ";
@@ -301,6 +303,8 @@ class GoodsBrandDAO extends PSIBaseDAO {
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
+		
+		$params["fullName"] = $fullName;
 		
 		// 操作成功
 		return null;

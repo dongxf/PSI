@@ -7,16 +7,7 @@ namespace Home\DAO;
  *
  * @author 李静波
  */
-class GoodsBomDAO extends PSIBaseDAO {
-	var $db;
-
-	function __construct($db = null) {
-		if ($db == null) {
-			$db = M();
-		}
-		
-		$this->db = $db;
-	}
+class GoodsBomDAO extends PSIBaseExDAO {
 
 	/**
 	 * 获得某个商品的商品构成

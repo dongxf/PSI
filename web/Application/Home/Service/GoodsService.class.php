@@ -536,7 +536,6 @@ class GoodsService extends PSIBaseService {
 		
 		$id = $params["id"];
 		$name = $params["name"];
-		$parentId = $params["parentId"];
 		
 		$db = M();
 		$db->startTrans();
@@ -546,9 +545,6 @@ class GoodsService extends PSIBaseService {
 		$log = null;
 		
 		$us = new UserService();
-		$dataOrg = $us->getLoginUserDataOrg();
-		$companyId = $us->getCompanyId();
-		
 		$params["dataOrg"] = $us->getLoginUserDataOrg();
 		$params["companyId"] = $us->getCompanyId();
 		
@@ -565,24 +561,20 @@ class GoodsService extends PSIBaseService {
 		} else {
 			// 新增品牌
 			
-			$idGen = new IdGenService();
-			$id = $idGen->newId($db);
-			$params["id"] = $id;
-			
 			$rc = $dao->addBrand($params);
 			if ($rc) {
 				$db->rollback();
 				return $rc;
 			}
 			
+			$id = $params["id"];
+			
 			$log = "新增商品品牌[$name]";
 		}
 		
 		// 记录业务日志
-		if ($log) {
-			$bs = new BizlogService($db);
-			$bs->insertBizlog($log, $this->LOG_CATEGORY_BRAND);
-		}
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY_BRAND);
 		
 		$db->commit();
 		
@@ -609,20 +601,10 @@ class GoodsService extends PSIBaseService {
 			return $this->notOnlineError();
 		}
 		
-		$id = $params["id"];
-		
 		$db = M();
 		$db->startTrans();
 		
 		$dao = new GoodsBrandDAO($db);
-		$brand = $dao->getBrandById($id);
-		
-		if (! $brand) {
-			$db->rollback();
-			return $this->bad("要删除的品牌不存在");
-		}
-		$fullName = $brand["fullName"];
-		$params["fullName"] = $fullName;
 		
 		$rc = $dao->deleteBrand($params);
 		if ($rc) {
@@ -630,6 +612,7 @@ class GoodsService extends PSIBaseService {
 			return $rc;
 		}
 		
+		$fullName = $params["fullName"];
 		$log = "删除商品品牌[$fullName]";
 		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY_BRAND);
