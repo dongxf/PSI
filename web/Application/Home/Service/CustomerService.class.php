@@ -3,7 +3,6 @@
 namespace Home\Service;
 
 use Home\DAO\CustomerDAO;
-use Home\DAO\IdGenDAO;
 
 /**
  * 客户Service
