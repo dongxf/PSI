@@ -9,16 +9,7 @@ use Home\Common\FIdConst;
  *
  * @author 李静波
  */
-class GoodsDAO extends PSIBaseDAO {
-	var $db;
-
-	function __construct($db = null) {
-		if ($db == null) {
-			$db = M();
-		}
-		
-		$this->db = $db;
-	}
+class GoodsDAO extends PSIBaseExDAO {
 
 	/**
 	 * 商品列表
@@ -36,6 +27,9 @@ class GoodsDAO extends PSIBaseDAO {
 		$limit = $params["limit"];
 		
 		$loginUserId = $params["loginUserId"];
+		if ($this->loginUserIdNotExists($loginUserId)) {
+			return $this->emptyResult();
+		}
 		
 		$result = array();
 		$sql = "select g.id, g.code, g.name, g.sale_price, g.spec,  g.unit_id, u.name as unit_name,
@@ -142,10 +136,9 @@ class GoodsDAO extends PSIBaseDAO {
 	/**
 	 * 新增商品
 	 */
-	public function addGoods($params) {
+	public function addGoods(& $params) {
 		$db = $this->db;
 		
-		$id = $params["id"];
 		$code = $params["code"];
 		$name = $params["name"];
 		$spec = $params["spec"];
@@ -159,9 +152,36 @@ class GoodsDAO extends PSIBaseDAO {
 		
 		$dataOrg = $params["dataOrg"];
 		$companyId = $params["companyId"];
+		if ($this->dataOrgNotExists($dataOrg)) {
+			return $this->badParam("dataOrg");
+		}
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->badParam("companyId");
+		}
 		
 		$py = $params["py"];
 		$specPY = $params["specPY"];
+		
+		$goodsUnitDAO = new GoodsUnitDAO($db);
+		$unit = $goodsUnitDAO->getGoodsUnitById($unitId);
+		if (! $unit) {
+			return $this->bad("计量单位不存在");
+		}
+		
+		$goodsCategoryDAO = new GoodsCategoryDAO($db);
+		$category = $goodsCategoryDAO->getGoodsCategoryById($categoryId);
+		if (! $category) {
+			return $this->bad("商品分类不存在");
+		}
+		
+		// 检查商品品牌
+		if ($brandId) {
+			$brandDAO = new GoodsBrandDAO($db);
+			$brand = $brandDAO->getBrandById($brandId);
+			if (! $brand) {
+				return $this->bad("商品品牌不存在");
+			}
+		}
 		
 		// 检查商品编码是否唯一
 		$sql = "select count(*) as cnt from t_goods where code = '%s' ";
@@ -181,15 +201,18 @@ class GoodsDAO extends PSIBaseDAO {
 			}
 		}
 		
+		$id = $this->newId();
 		$sql = "insert into t_goods (id, code, name, spec, category_id, unit_id, sale_price,
-						py, purchase_price, bar_code, memo, data_org, company_id, spec_py, brand_id)
-					values ('%s', '%s', '%s', '%s', '%s', '%s', %f, '%s', %f, '%s', '%s', '%s', '%s', '%s',
-						if('%s' = '', null, '%s'))";
+					py, purchase_price, bar_code, memo, data_org, company_id, spec_py, brand_id)
+				values ('%s', '%s', '%s', '%s', '%s', '%s', %f, '%s', %f, '%s', '%s', '%s', '%s', '%s',
+					if('%s' = '', null, '%s'))";
 		$rc = $db->execute($sql, $id, $code, $name, $spec, $categoryId, $unitId, $salePrice, $py, 
 				$purchasePrice, $barCode, $memo, $dataOrg, $companyId, $specPY, $brandId, $brandId);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
+		
+		$params["id"] = $id;
 		
 		// 操作成功
 		return null;
@@ -198,7 +221,7 @@ class GoodsDAO extends PSIBaseDAO {
 	/**
 	 * 编辑商品
 	 */
-	public function updateGoods($params) {
+	public function updateGoods(& $params) {
 		$db = $this->db;
 		
 		$id = $params["id"];
@@ -215,6 +238,32 @@ class GoodsDAO extends PSIBaseDAO {
 		
 		$py = $params["py"];
 		$specPY = $params["specPY"];
+		
+		$goods = $this->getGoodsById($id);
+		if (! $goods) {
+			return $this->bad("要编辑的商品不存在");
+		}
+		
+		$goodsUnitDAO = new GoodsUnitDAO($db);
+		$unit = $goodsUnitDAO->getGoodsUnitById($unitId);
+		if (! $unit) {
+			return $this->bad("计量单位不存在");
+		}
+		
+		$goodsCategoryDAO = new GoodsCategoryDAO($db);
+		$category = $goodsCategoryDAO->getGoodsCategoryById($categoryId);
+		if (! $category) {
+			return $this->bad("商品分类不存在");
+		}
+		
+		// 检查商品品牌
+		if ($brandId) {
+			$brandDAO = new GoodsBrandDAO($db);
+			$brand = $brandDAO->getBrandById($brandId);
+			if (! $brand) {
+				return $this->bad("商品品牌不存在");
+			}
+		}
 		
 		// 编辑
 		// 检查商品编码是否唯一

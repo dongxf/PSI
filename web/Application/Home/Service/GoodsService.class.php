@@ -255,50 +255,14 @@ class GoodsService extends PSIBaseService {
 		$code = $params["code"];
 		$name = $params["name"];
 		$spec = $params["spec"];
-		$categoryId = $params["categoryId"];
-		$unitId = $params["unitId"];
-		$salePrice = $params["salePrice"];
-		$purchasePrice = $params["purchasePrice"];
-		$barCode = $params["barCode"];
-		$memo = $params["memo"];
-		$brandId = $params["brandId"];
 		
 		$db = M();
 		$db->startTrans();
 		$dao = new GoodsDAO($db);
 		
-		$goodsUnitDAO = new GoodsUnitDAO($db);
-		$unit = $goodsUnitDAO->getGoodsUnitById($unitId);
-		
-		if (! $unit) {
-			$db->rollback();
-			return $this->bad("计量单位不存在");
-		}
-		
-		$goodsCategoryDAO = new GoodsCategoryDAO($db);
-		$category = $goodsCategoryDAO->getGoodsCategoryById($categoryId);
-		if (! $category) {
-			$db->rollback();
-			return $this->bad("商品分类不存在");
-		}
-		
-		// 检查商品品牌
-		if ($brandId) {
-			$brandDAO = new GoodsBrandDAO($db);
-			$brand = $brandDAO->getBrandById($brandId);
-			
-			if (! $brand) {
-				$db->rollback();
-				return $this->bad("商品品牌不存在");
-			}
-		}
-		
 		$ps = new PinyinService();
-		$py = $ps->toPY($name);
-		$specPY = $ps->toPY($spec);
-		
-		$params["py"] = $py;
-		$params["specPY"] = $specPY;
+		$params["py"] = $ps->toPY($name);
+		$params["specPY"] = $ps->toPY($spec);
 		
 		$log = null;
 		
@@ -313,9 +277,6 @@ class GoodsService extends PSIBaseService {
 			$log = "编辑商品: 商品编码 = {$code}, 品名 = {$name}, 规格型号 = {$spec}";
 		} else {
 			// 新增
-			$idGen = new IdGenService();
-			$id = $idGen->newId();
-			$params["id"] = $id;
 			
 			$us = new UserService();
 			$params["dataOrg"] = $us->getLoginUserDataOrg();
@@ -327,14 +288,14 @@ class GoodsService extends PSIBaseService {
 				return $rc;
 			}
 			
+			$id = $params["id"];
+			
 			$log = "新增商品: 商品编码 = {$code}, 品名 = {$name}, 规格型号 = {$spec}";
 		}
 		
 		// 记录业务日志
-		if ($log) {
-			$bs = new BizlogService($db);
-			$bs->insertBizlog($log, $this->LOG_CATEGORY_GOODS);
-		}
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY_GOODS);
 		
 		$db->commit();
 		
