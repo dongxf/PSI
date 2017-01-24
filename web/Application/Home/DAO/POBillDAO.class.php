@@ -9,25 +9,16 @@ use Home\Common\FIdConst;
  *
  * @author 李静波
  */
-class POBillDAO extends PSIBaseDAO {
-	var $db;
-
-	function __construct($db = null) {
-		if ($db == null) {
-			$db = M();
-		}
-		
-		$this->db = $db;
-	}
+class POBillDAO extends PSIBaseExDAO {
 
 	/**
 	 * 生成新的采购订单号
 	 */
-	public function genNewBillRef($params) {
+	private function genNewBillRef($companyId) {
 		$db = $this->db;
 		
 		$bs = new BizConfigDAO($db);
-		$pre = $bs->getPOBillRefPre($params);
+		$pre = $bs->getPOBillRefPre($companyId);
 		
 		$mid = date("Ymd");
 		
@@ -61,6 +52,9 @@ class POBillDAO extends PSIBaseDAO {
 		$paymentType = $params["paymentType"];
 		
 		$loginUserId = $params["loginUserId"];
+		if ($this->loginUserIdNotExists($loginUserId)) {
+			return $this->emptyResult();
+		}
 		
 		$queryParams = array();
 		
@@ -222,11 +216,9 @@ class POBillDAO extends PSIBaseDAO {
 	/**
 	 * 新建采购订单
 	 */
-	public function addPOBill($bill) {
+	public function addPOBill(& $bill) {
 		$db = $this->db;
 		
-		$id = $bill["id"];
-		$ref = $bill["ref"];
 		$dealDate = $bill["dealDate"];
 		$supplierId = $bill["supplierId"];
 		$orgId = $bill["orgId"];
@@ -243,6 +235,42 @@ class POBillDAO extends PSIBaseDAO {
 		$dataOrg = $bill["dataOrg"];
 		$loginUserId = $bill["loginUserId"];
 		$companyId = $bill["companyId"];
+		if ($this->dataOrgNotExists($dataOrg)) {
+			return $this->badParam("dataOrg");
+		}
+		if ($this->loginUserIdNotExists($loginUserId)) {
+			return $this->badParam("loginUserId");
+		}
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->badParam("companyId");
+		}
+		
+		if (! $this->dateIsValid($dealDate)) {
+			return $this->bad("交货日期不正确");
+		}
+		
+		$supplierDAO = new SupplierDAO($db);
+		$supplier = $supplierDAO->getSupplierById($supplierId);
+		if (! $supplier) {
+			return $this->bad("供应商不存在");
+		}
+		
+		$orgDAO = new OrgDAO($db);
+		$org = $orgDAO->getOrgById($orgId);
+		if (! $org) {
+			return $this->bad("组织机构不存在");
+		}
+		
+		$userDAO = new UserDAO($db);
+		$user = $userDAO->getUserById($bizUserId);
+		if (! $user) {
+			return $this->bad("业务员不存在");
+		}
+		
+		$idGen = new IdGenDAO($db);
+		
+		$id = $idGen->newId();
+		$ref = $this->genNewBillRef($companyId);
 		
 		// 主表
 		$sql = "insert into t_po_bill(id, ref, bill_status, deal_date, biz_dt, org_id, biz_user_id,
@@ -258,14 +286,18 @@ class POBillDAO extends PSIBaseDAO {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
 		
-		$idGen = new IdGenDAO($db);
-		
 		// 明细记录
+		$goodsDAO = new GoodsDAO($db);
 		foreach ( $items as $i => $v ) {
 			$goodsId = $v["goodsId"];
 			if (! $goodsId) {
 				continue;
 			}
+			$goods = $goodsDAO->getGoodsById($goodsId);
+			if (! $goods) {
+				continue;
+			}
+			
 			$goodsCount = $v["goodsCount"];
 			$goodsPrice = $v["goodsPrice"];
 			$goodsMoney = $v["goodsMoney"];
@@ -313,6 +345,9 @@ class POBillDAO extends PSIBaseDAO {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
 		
+		$bill["id"] = $id;
+		$bill["ref"] = $ref;
+		
 		// 操作成功
 		return null;
 	}
@@ -320,10 +355,23 @@ class POBillDAO extends PSIBaseDAO {
 	/**
 	 * 编辑采购订单
 	 */
-	public function updatePOBill($bill) {
+	public function updatePOBill(& $bill) {
 		$db = $this->db;
 		
 		$id = $bill["id"];
+		$poBill = $this->getPOBillById($id);
+		if (! $poBill) {
+			return $this->bad("要编辑的采购订单不存在");
+		}
+		
+		$ref = $poBill["ref"];
+		$dataOrg = $poBill["dataOrg"];
+		$companyId = $poBill["companyId"];
+		$billStatus = $poBill["billStatus"];
+		if ($billStatus != 0) {
+			return $this->bad("当前采购订单已经审核，不能再编辑");
+		}
+		
 		$dealDate = $bill["dealDate"];
 		$supplierId = $bill["supplierId"];
 		$orgId = $bill["orgId"];
@@ -338,10 +386,31 @@ class POBillDAO extends PSIBaseDAO {
 		$items = $bill["items"];
 		
 		$loginUserId = $bill["loginUserId"];
+		if ($this->loginUserIdNotExists($loginUserId)) {
+			return $this->badParam("loginUserId");
+		}
 		
-		$ref = $bill["ref"];
-		$dataOrg = $bill["dataOrg"];
-		$companyId = $bill["companyId"];
+		if (! $this->dateIsValid($dealDate)) {
+			return $this->bad("交货日期不正确");
+		}
+		
+		$supplierDAO = new SupplierDAO($db);
+		$supplier = $supplierDAO->getSupplierById($supplierId);
+		if (! $supplier) {
+			return $this->bad("供应商不存在");
+		}
+		
+		$orgDAO = new OrgDAO($db);
+		$org = $orgDAO->getOrgById($orgId);
+		if (! $org) {
+			return $this->bad("组织机构不存在");
+		}
+		
+		$userDAO = new UserDAO($db);
+		$user = $userDAO->getUserById($bizUserId);
+		if (! $user) {
+			return $this->bad("业务员不存在");
+		}
 		
 		$sql = "delete from t_po_bill_detail where pobill_id = '%s' ";
 		$rc = $db->execute($sql, $id);
@@ -350,12 +419,17 @@ class POBillDAO extends PSIBaseDAO {
 		}
 		
 		$idGen = new IdGenDAO($db);
+		$goodsDAO = new GoodsDAO($db);
 		
 		foreach ( $items as $i => $v ) {
 			$goodsId = $v["goodsId"];
 			if (! $goodsId) {
 				continue;
 			}
+			if (! $goodsDAO->getGoodsById($goodsId)) {
+				continue;
+			}
+			
 			$goodsCount = $v["goodsCount"];
 			$goodsPrice = $v["goodsPrice"];
 			$goodsMoney = $v["goodsMoney"];
@@ -408,6 +482,8 @@ class POBillDAO extends PSIBaseDAO {
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
+		
+		$bill["ref"] = $ref;
 		
 		// 操作成功
 		return null;

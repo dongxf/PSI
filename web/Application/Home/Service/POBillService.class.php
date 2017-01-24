@@ -3,10 +3,6 @@
 namespace Home\Service;
 
 use Home\DAO\POBillDAO;
-use Home\DAO\SupplierDAO;
-use Home\DAO\OrgDAO;
-use Home\DAO\UserDAO;
-use Home\DAO\IdGenDAO;
 
 /**
  * 采购订单Service
@@ -31,38 +27,6 @@ class POBillService extends PSIBaseService {
 		return $dao->pobillList($params);
 	}
 
-	private function checkPOBill($bill) {
-		$db = $this->db;
-		
-		$dealDate = $bill["dealDate"];
-		if (! $this->dateIsValid($dealDate)) {
-			return $this->bad("交货日期不正确");
-		}
-		
-		$supplierId = $bill["supplierId"];
-		$supplierDAO = new SupplierDAO($db);
-		$supplier = $supplierDAO->getSupplierById($supplierId);
-		if (! $supplier) {
-			return $this->bad("供应商不存在");
-		}
-		
-		$orgId = $bill["orgId"];
-		$orgDAO = new OrgDAO($db);
-		$org = $orgDAO->getOrgById($orgId);
-		if (! $org) {
-			return $this->bad("组织机构不存在");
-		}
-		
-		$bizUserId = $bill["bizUserId"];
-		$userDAO = new UserDAO($db);
-		$user = $userDAO->getUserById($bizUserId);
-		if (! $user) {
-			return $this->bad("业务员不存在");
-		}
-		
-		return null;
-	}
-
 	/**
 	 * 新建或编辑采购订单
 	 */
@@ -82,40 +46,16 @@ class POBillService extends PSIBaseService {
 		
 		$dao = new POBillDAO($db);
 		
-		$id = $bill["id"];
-		
-		$rc = $this->checkPOBill($bill);
-		if ($rc) {
-			$db->rollback();
-			return $rc;
-		}
-		
 		$us = new UserService();
 		$bill["companyId"] = $us->getCompanyId();
 		$bill["loginUserId"] = $us->getLoginUserId();
 		$bill["dataOrg"] = $us->getLoginUserDataOrg();
 		
+		$id = $bill["id"];
+		
 		$log = null;
 		if ($id) {
 			// 编辑
-			$oldBill = $dao->getPOBillById($id);
-			if (! $oldBill) {
-				$db->rollback();
-				return $this->bad("要编辑的采购订单不存在");
-			}
-			
-			$ref = $oldBill["ref"];
-			$dataOrg = $oldBill["dataOrg"];
-			$companyId = $oldBill["companyId"];
-			$billStatus = $oldBill["billStatus"];
-			if ($billStatus != 0) {
-				return $this->bad("当前采购订单已经审核，不能再编辑");
-			}
-			
-			$bill["ref"] = $ref;
-			$bill["dataOrg"] = $dataOrg;
-			$bill["companyId"] = $companyId;
-			$bill["billStatus"] = $billStatus;
 			
 			$rc = $dao->updatePOBill($bill);
 			if ($rc) {
@@ -123,16 +63,11 @@ class POBillService extends PSIBaseService {
 				return $rc;
 			}
 			
+			$ref = $bill["ref"];
+			
 			$log = "编辑采购订单，单号：{$ref}";
 		} else {
 			// 新建采购订单
-			
-			$idGen = new IdGenDAO($db);
-			$id = $idGen->newId();
-			$bill["id"] = $id;
-			
-			$ref = $dao->genNewBillRef($bill);
-			$bill["ref"] = $ref;
 			
 			$rc = $dao->addPOBill($bill);
 			if ($rc) {
@@ -140,14 +75,15 @@ class POBillService extends PSIBaseService {
 				return $rc;
 			}
 			
+			$id = $bill["id"];
+			$ref = $bill["ref"];
+			
 			$log = "新建采购订单，单号：{$ref}";
 		}
 		
 		// 记录业务日志
-		if ($log) {
-			$bs = new BizlogService($db);
-			$bs->insertBizlog($log, $this->LOG_CATEGORY);
-		}
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		
 		$db->commit();
 		

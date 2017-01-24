@@ -53,6 +53,21 @@ class PSIBaseExDAO extends PSIBaseDAO {
 		return $cnt != 1;
 	}
 
+	/**
+	 * 判断日期是否是正确的Y-m-d格式
+	 *
+	 * @param string $date        	
+	 * @return boolean true: 是正确的格式
+	 */
+	protected function dateIsValid($date) {
+		$dt = strtotime($date);
+		if (! $dt) {
+			return false;
+		}
+		
+		return date("Y-m-d", $dt) == $date;
+	}
+
 	protected function emptyResult() {
 		return array();
 	}

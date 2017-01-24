@@ -571,11 +571,10 @@ class BizConfigDAO extends PSIBaseDAO {
 	/**
 	 * 获得采购订单单号前缀
 	 */
-	public function getPOBillRefPre($params) {
+	public function getPOBillRefPre($companyId) {
 		$result = "PO";
 		
 		$db = $this->db;
-		$companyId = $params["companyId"];
 		
 		$id = "9003-01";
 		$sql = "select value from t_config
