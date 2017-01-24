@@ -7,16 +7,7 @@ namespace Home\DAO;
  *
  * @author 李静波
  */
-class GoodsUnitDAO extends PSIBaseDAO {
-	var $db;
-
-	function __construct($db = null) {
-		if ($db == null) {
-			$db = M();
-		}
-		
-		$this->db = $db;
-	}
+class GoodsUnitDAO extends PSIBaseExDAO {
 
 	/**
 	 * 返回所有商品计量单位
@@ -34,7 +25,7 @@ class GoodsUnitDAO extends PSIBaseDAO {
 	/**
 	 * 新增商品计量单位
 	 */
-	public function addUnit($params) {
+	public function addUnit(& $params) {
 		$db = $this->db;
 		
 		$name = $params["name"];
@@ -47,10 +38,17 @@ class GoodsUnitDAO extends PSIBaseDAO {
 			return $this->bad("计量单位 [$name] 已经存在");
 		}
 		
-		$id = $params["id"];
-		
 		$dataOrg = $params["dataOrg"];
 		$companyId = $params["companyId"];
+		if ($this->dataOrgNotExists($dataOrg)) {
+			return $this->badParam("dataOrg");
+		}
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->badParam("companyId");
+		}
+		
+		$id = $this->newId();
+		$params["id"] = $id;
 		
 		$sql = "insert into t_goods_unit(id, name, data_org, company_id)
 					values ('%s', '%s', '%s', '%s') ";
@@ -66,7 +64,7 @@ class GoodsUnitDAO extends PSIBaseDAO {
 	/**
 	 * 编辑商品计量单位
 	 */
-	public function updateUnit($params) {
+	public function updateUnit(& $params) {
 		$db = $this->db;
 		
 		$id = $params["id"];
@@ -110,11 +108,17 @@ class GoodsUnitDAO extends PSIBaseDAO {
 	/**
 	 * 删除商品计量单位
 	 */
-	public function deleteUnit($params) {
+	public function deleteUnit(& $params) {
 		$db = $this->db;
 		
 		$id = $params["id"];
-		$name = $params["name"];
+		
+		$goodsUnit = $this->getGoodsUnitById($id);
+		if (! $goodsUnit) {
+			return $this->bad("要删除的商品计量单位不存在");
+		}
+		
+		$name = $goodsUnit["name"];
 		
 		// 检查记录单位是否被使用
 		$sql = "select count(*) as cnt from t_goods where unit_id = '%s' ";
@@ -129,6 +133,8 @@ class GoodsUnitDAO extends PSIBaseDAO {
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
+		
+		$params["name"] = $name;
 		
 		// 操作成功
 		return null;

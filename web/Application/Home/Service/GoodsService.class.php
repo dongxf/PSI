@@ -62,30 +62,25 @@ class GoodsService extends PSIBaseService {
 			$log = "编辑计量单位: $name";
 		} else {
 			// 新增
-			$idGen = new IdGenService();
-			$id = $idGen->newId($db);
-			
-			$params["id"] = $id;
 			
 			$us = new UserService();
 			$params["dataOrg"] = $us->getLoginUserDataOrg();
 			$params["companyId"] = $us->getCompanyId();
 			
 			$rc = $dao->addUnit($params);
-			
 			if ($rc) {
 				$db->rollback();
 				return $rc;
 			}
 			
+			$id = $params["id"];
+			
 			$log = "新增计量单位: $name";
 		}
 		
 		// 记录业务日志
-		if ($log) {
-			$bs = new BizlogService($db);
-			$bs->insertBizlog($log, $this->LOG_CATEGORY_UNIT);
-		}
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY_UNIT);
 		
 		$db->commit();
 		
@@ -107,21 +102,13 @@ class GoodsService extends PSIBaseService {
 		
 		$dao = new GoodsUnitDAO($db);
 		
-		$goodsUnit = $dao->getGoodsUnitById($id);
-		if (! $goodsUnit) {
-			$db->rollback();
-			return $this->bad("要删除的商品计量单位不存在");
-		}
-		
-		$name = $goodsUnit["name"];
-		$params["name"] = $name;
-		
 		$rc = $dao->deleteUnit($params);
 		if ($rc) {
 			$db->rollback();
 			return $rc;
 		}
 		
+		$name = $params["name"];
 		$log = "删除商品计量单位: $name";
 		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY_UNIT);
