@@ -74,13 +74,6 @@ Ext.define("PSI.Purchase.PWMainForm", {
 					handler : me.onCommit,
 					id : "buttonCommit"
 				}, "-", {
-					text : "帮助",
-					iconCls : "PSI-help",
-					handler : function() {
-						window
-								.open("http://my.oschina.net/u/134395/blog/379622");
-					}
-				}, "-", {
 					text : "关闭",
 					iconCls : "PSI-button-exit",
 					handler : function() {
