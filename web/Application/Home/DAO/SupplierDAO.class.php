@@ -9,16 +9,7 @@ use Home\Common\FIdConst;
  *
  * @author 李静波
  */
-class SupplierDAO extends PSIBaseDAO {
-	var $db;
-
-	function __construct($db = null) {
-		if ($db == null) {
-			$db = M();
-		}
-		
-		$this->db = $db;
-	}
+class SupplierDAO extends PSIBaseExDAO {
 
 	/**
 	 * 供应商分类列表
@@ -35,6 +26,9 @@ class SupplierDAO extends PSIBaseDAO {
 		$qq = $params["qq"];
 		
 		$loginUserId = $params["loginUserId"];
+		if ($this->loginUserIdNotExists($loginUserId)) {
+			return $this->emptyResult();
+		}
 		
 		$sql = "select c.id, c.code, c.name, count(s.id) as cnt
 				from t_supplier_category c
@@ -109,6 +103,9 @@ class SupplierDAO extends PSIBaseDAO {
 		$qq = $params["qq"];
 		
 		$loginUserId = $params["loginUserId"];
+		if ($this->loginUserIdNotExists($loginUserId)) {
+			return $this->emptyResult();
+		}
 		
 		$sql = "select id, category_id, code, name, contact01, qq01, tel01, mobile01,
 				contact02, qq02, tel02, mobile02, init_payables, init_payables_dt,
@@ -246,15 +243,20 @@ class SupplierDAO extends PSIBaseDAO {
 	/**
 	 * 新增供应商分类
 	 */
-	public function addSupplierCategory($params) {
+	public function addSupplierCategory(& $params) {
 		$db = $this->db;
 		
-		$id = $params["id"];
 		$code = $params["code"];
 		$name = $params["name"];
 		
 		$dataOrg = $params["dataOrg"];
 		$companyId = $params["companyId"];
+		if ($this->dataOrgNotExists($dataOrg)) {
+			return $this->badParam("dataOrg");
+		}
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->badParam("companyId");
+		}
 		
 		// 检查分类编码是否已经存在
 		$sql = "select count(*) as cnt from t_supplier_category where code = '%s' ";
@@ -263,6 +265,10 @@ class SupplierDAO extends PSIBaseDAO {
 		if ($cnt > 0) {
 			return $this->bad("编码为 [$code] 的分类已经存在");
 		}
+		
+		$idGen = new IdGenDAO($db);
+		$id = $idGen->newId();
+		$params["id"] = $id;
 		
 		$sql = "insert into t_supplier_category (id, code, name, data_org, company_id)
 					values ('%s', '%s', '%s', '%s', '%s') ";
@@ -278,7 +284,7 @@ class SupplierDAO extends PSIBaseDAO {
 	/**
 	 * 编辑供应商分类
 	 */
-	public function updateSupplierCategory($params) {
+	public function updateSupplierCategory(& $params) {
 		$db = $this->db;
 		
 		$id = $params["id"];
@@ -323,10 +329,17 @@ class SupplierDAO extends PSIBaseDAO {
 	/**
 	 * 删除供应商分类
 	 */
-	public function deleteSupplierCategory($params) {
+	public function deleteSupplierCategory(& $params) {
 		$db = $this->db;
 		
 		$id = $params["id"];
+		
+		$category = $this->getSupplierCategoryById($id);
+		if (! $category) {
+			return $this->bad("要删除的分类不存在");
+		}
+		
+		$params["name"] = $category["name"];
 		$name = $params["name"];
 		
 		$sql = "select count(*) as cnt 
@@ -352,10 +365,9 @@ class SupplierDAO extends PSIBaseDAO {
 	/**
 	 * 新建供应商档案
 	 */
-	public function addSupplier($params) {
+	public function addSupplier(& $params) {
 		$db = $this->db;
 		
-		$id = $params["id"];
 		$code = $params["code"];
 		$name = $params["name"];
 		$address = $params["address"];
@@ -376,6 +388,12 @@ class SupplierDAO extends PSIBaseDAO {
 		
 		$dataOrg = $params["dataOrg"];
 		$companyId = $params["companyId"];
+		if ($this->dataOrgNotExists($dataOrg)) {
+			return $this->badParam("dataOrg");
+		}
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->badParam("companyId");
+		}
 		
 		$categoryId = $params["categoryId"];
 		$py = $params["py"];
@@ -387,6 +405,9 @@ class SupplierDAO extends PSIBaseDAO {
 		if ($cnt > 0) {
 			return $this->bad("编码为 [$code] 的供应商已经存在");
 		}
+		
+		$id = $this->newId();
+		$params["id"] = $id;
 		
 		$sql = "insert into t_supplier (id, category_id, code, name, py, contact01,
 					qq01, tel01, mobile01, contact02, qq02,
@@ -401,6 +422,7 @@ class SupplierDAO extends PSIBaseDAO {
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
+		
 		// 操作成功
 		return null;
 	}
@@ -408,7 +430,7 @@ class SupplierDAO extends PSIBaseDAO {
 	/**
 	 * 初始化应付账款
 	 */
-	public function initPayables($params) {
+	public function initPayables(& $params) {
 		$db = $this->db;
 		
 		$id = $params["id"];
@@ -417,11 +439,17 @@ class SupplierDAO extends PSIBaseDAO {
 		
 		$dataOrg = $params["dataOrg"];
 		$companyId = $params["companyId"];
+		if ($this->dataOrgNotExists($dataOrg)) {
+			return $this->badParam("dataOrg");
+		}
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->badParam("companyId");
+		}
 		
 		$sql = "select count(*) as cnt
-					from t_payables_detail
-					where ca_id = '%s' and ca_type = 'supplier' and ref_type <> '应付账款期初建账'
-						and company_id = '%s' ";
+				from t_payables_detail
+				where ca_id = '%s' and ca_type = 'supplier' and ref_type <> '应付账款期初建账'
+					and company_id = '%s' ";
 		$data = $db->query($sql, $id, $companyId);
 		$cnt = $data[0]["cnt"];
 		if ($cnt > 0) {
@@ -528,7 +556,7 @@ class SupplierDAO extends PSIBaseDAO {
 	/**
 	 * 编辑供应商档案
 	 */
-	public function updateSupplier($params) {
+	public function updateSupplier(& $params) {
 		$db = $this->db;
 		
 		$id = $params["id"];
@@ -583,13 +611,19 @@ class SupplierDAO extends PSIBaseDAO {
 	/**
 	 * 删除供应商
 	 */
-	public function deleteSupplier($params) {
+	public function deleteSupplier(& $params) {
 		$db = $this->db;
 		
 		$id = $params["id"];
 		
-		$code = $params["code"];
-		$name = $params["name"];
+		$supplier = $this->getSupplierById($id);
+		
+		if (! $supplier) {
+			$db->rollback();
+			return $this->bad("要删除的供应商档案不存在");
+		}
+		$code = $supplier["code"];
+		$name = $supplier["name"];
 		
 		// 判断是否能删除供应商
 		$sql = "select count(*) as cnt from t_pw_bill where supplier_id = '%s' ";
@@ -644,6 +678,9 @@ class SupplierDAO extends PSIBaseDAO {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
 		
+		$params["code"] = $code;
+		$params["name"] = $name;
+		
 		// 操作成功
 		return null;
 	}
@@ -671,6 +708,10 @@ class SupplierDAO extends PSIBaseDAO {
 		
 		$queryKey = $params["queryKey"];
 		$loginUserId = $params["loginUserId"];
+		
+		if ($this->loginUserIdNotExists($loginUserId)) {
+			return $this->emptyResult();
+		}
 		
 		if ($queryKey == null) {
 			$queryKey = "";

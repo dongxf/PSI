@@ -74,9 +74,6 @@ class SupplierService extends PSIBaseService {
 			$log = "编辑供应商分类: 编码 = $code, 分类名 = $name";
 		} else {
 			// 新增
-			$idGen = new IdGenService();
-			$id = $idGen->newId();
-			$params["id"] = $id;
 			
 			$us = new UserService();
 			$params["dataOrg"] = $us->getLoginUserDataOrg();
@@ -88,14 +85,14 @@ class SupplierService extends PSIBaseService {
 				return $rc;
 			}
 			
+			$id = $params["id"];
+			
 			$log = "新增供应商分类：编码 = $code, 分类名 = $name";
 		}
 		
 		// 记录业务日志
-		if ($log) {
-			$bs = new BizlogService($db);
-			$bs->insertBizlog($log, $this->LOG_CATEGORY);
-		}
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		
 		$db->commit();
 		
@@ -116,21 +113,13 @@ class SupplierService extends PSIBaseService {
 		$db->startTrans();
 		$dao = new SupplierDAO($db);
 		
-		$category = $dao->getSupplierCategoryById($id);
-		if (! $category) {
-			$db->rollback();
-			return $this->bad("要删除的分类不存在");
-		}
-		
-		$params["name"] = $category["name"];
-		
 		$rc = $dao->deleteSupplierCategory($params);
 		if ($rc) {
 			$db->rollback();
 			return $rc;
 		}
 		
-		$log = "删除供应商分类： 编码 = {$category['code']}, 分类名称 = {$category['name']}";
+		$log = "删除供应商分类： 编码 = {$params['code']}, 分类名称 = {$params['name']}";
 		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		
@@ -185,15 +174,13 @@ class SupplierService extends PSIBaseService {
 			$log = "编辑供应商：编码 = $code, 名称 = $name";
 		} else {
 			// 新增
-			$idGen = new IdGenService();
-			$id = $idGen->newId();
-			$params["id"] = $id;
-			
 			$rc = $dao->addSupplier($params);
 			if ($rc) {
 				$db->rollback();
 				return $rc;
 			}
+			
+			$id = $params["id"];
 			
 			$log = "新增供应商：编码 = {$code}, 名称 = {$name}";
 		}
@@ -206,10 +193,8 @@ class SupplierService extends PSIBaseService {
 		}
 		
 		// 记录业务日志
-		if ($log) {
-			$bs = new BizlogService($db);
-			$bs->insertBizlog($log, $this->LOG_CATEGORY);
-		}
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		
 		$db->commit();
 		
@@ -231,21 +216,14 @@ class SupplierService extends PSIBaseService {
 		
 		$dao = new SupplierDAO($db);
 		
-		$supplier = $dao->getSupplierById($id);
-		
-		if (! $supplier) {
-			$db->rollback();
-			return $this->bad("要删除的供应商档案不存在");
-		}
-		$code = $supplier["code"];
-		$name = $supplier["name"];
-		
 		$rc = $dao->deleteSupplier($params);
 		if ($rc) {
 			$db->rollback();
 			return $rc;
 		}
 		
+		$code = $params["code"];
+		$name = $params["name"];
 		$log = "删除供应商档案：编码 = {$code},  名称 = {$name}";
 		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY);
