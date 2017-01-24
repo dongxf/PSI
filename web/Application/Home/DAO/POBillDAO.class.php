@@ -636,11 +636,24 @@ class POBillDAO extends PSIBaseExDAO {
 	/**
 	 * 审核采购订单
 	 */
-	public function commitPOBill($params) {
+	public function commitPOBill(& $params) {
 		$db = $this->db;
 		
 		$id = $params["id"];
 		$loginUserId = $params["loginUserId"];
+		if ($this->loginUserIdNotExists($loginUserId)) {
+			return $this->badParam("loginUserId");
+		}
+		
+		$bill = $this->getPOBillById($id);
+		if (! $bill) {
+			return $this->bad("要审核的采购订单不存在");
+		}
+		$ref = $bill["ref"];
+		$billStatus = $bill["billStatus"];
+		if ($billStatus > 0) {
+			return $this->bad("采购订单(单号：$ref)已经被审核，不能再次审核");
+		}
 		
 		$sql = "update t_po_bill
 				set bill_status = 1000,
@@ -651,6 +664,8 @@ class POBillDAO extends PSIBaseExDAO {
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
+		
+		$params["ref"] = $ref;
 		
 		// 操作成功
 		return null;

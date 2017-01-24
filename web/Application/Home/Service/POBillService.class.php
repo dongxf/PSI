@@ -127,33 +127,22 @@ class POBillService extends PSIBaseService {
 			return $this->notOnlineError();
 		}
 		
-		$id = $params["id"];
 		$db = M();
-		
 		$db->startTrans();
 		
 		$dao = new POBillDAO($db);
 		
-		$bill = $dao->getPOBillById($id);
-		
-		if (! $bill) {
-			$db->rollback();
-			return $this->bad("要审核的采购订单不存在");
-		}
-		$ref = $bill["ref"];
-		$billStatus = $bill["bill_status"];
-		if ($billStatus > 0) {
-			$db->rollback();
-			return $this->bad("采购订单(单号：$ref)已经被审核，不能再次审核");
-		}
-		
 		$us = new UserService();
 		$params["loginUserId"] = $us->getLoginUserId();
+		
 		$rc = $dao->commitPOBill($params);
 		if ($rc) {
 			$db->rollback();
 			return $rc;
 		}
+		
+		$ref = $params["ref"];
+		$id = $params["id"];
 		
 		// 记录业务日志
 		$log = "审核采购订单，单号：{$ref}";
