@@ -384,6 +384,9 @@ class GoodsDAO extends PSIBaseExDAO {
 		
 		$queryKey = $params["queryKey"];
 		$loginUserId = $params["loginUserId"];
+		if ($this->loginUserIdNotExists($loginUserId)) {
+			return $this->emptyResult();
+		}
 		
 		if ($queryKey == null) {
 			$queryKey = "";
@@ -433,6 +436,9 @@ class GoodsDAO extends PSIBaseExDAO {
 		
 		$queryKey = $params["queryKey"];
 		$loginUserId = $params["loginUserId"];
+		if ($this->loginUserIdNotExists($loginUserId)) {
+			return $this->emptyResult();
+		}
 		
 		if ($queryKey == null) {
 			$queryKey = "";
@@ -485,6 +491,9 @@ class GoodsDAO extends PSIBaseExDAO {
 		
 		$queryKey = $params["queryKey"];
 		$loginUserId = $params["loginUserId"];
+		if ($this->loginUserIdNotExists($loginUserId)) {
+			return $this->emptyResult();
+		}
 		
 		if ($queryKey == null) {
 			$queryKey = "";
