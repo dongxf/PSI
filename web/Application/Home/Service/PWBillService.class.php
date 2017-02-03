@@ -57,216 +57,47 @@ class PWBillService extends PSIBaseService {
 		}
 		
 		$id = $bill["id"];
-		$bizDT = $bill["bizDT"];
-		$warehouseId = $bill["warehouseId"];
-		$supplierId = $bill["supplierId"];
-		$bizUserId = $bill["bizUserId"];
-		$paymentType = $bill["paymentType"];
-		
-		$pobillRef = $bill["pobillRef"];
 		
 		$db = M();
 		
-		$sql = "select count(*) as cnt from t_warehouse where id = '%s' ";
-		$data = $db->query($sql, $warehouseId);
-		$cnt = $data[0]["cnt"];
-		if ($cnt == 0) {
-			return $this->bad("入库仓库不存在");
-		}
-		
-		$sql = "select count(*) as cnt from t_supplier where id = '%s' ";
-		$data = $db->query($sql, $supplierId);
-		$cnt = $data[0]["cnt"];
-		if ($cnt == 0) {
-			return $this->bad("供应商不存在");
-		}
-		
-		$sql = "select count(*) as cnt from t_user where id = '%s' ";
-		$data = $db->query($sql, $bizUserId);
-		$cnt = $data[0]["cnt"];
-		if ($cnt == 0) {
-			return $this->bad("业务人员不存在");
-		}
-		
-		// 检查业务日期
-		if (! $this->dateIsValid($bizDT)) {
-			return $this->bad("业务日期不正确");
-		}
-		
 		$db->startTrans();
 		
-		$idGen = new IdGenService();
-		$us = new UserService();
-		$dataOrg = $us->getLoginUserDataOrg();
+		$dao = new PWBillDAO($db);
 		
 		$log = null;
 		
 		if ($id) {
 			// 编辑采购入库单
-			$sql = "select ref, bill_status, data_org, company_id from t_pw_bill where id = '%s' ";
-			$data = $db->query($sql, $id);
-			if (! $data) {
+			
+			$rc = $dao->updatePWBill($bill);
+			if ($rc) {
 				$db->rollback();
-				return $this->bad("要编辑的采购入库单不存在");
-			}
-			$dataOrg = $data[0]["data_org"];
-			$billStatus = $data[0]["bill_status"];
-			$companyId = $data[0]["company_id"];
-			$ref = $data[0]["ref"];
-			if ($billStatus != 0) {
-				$db->rollback();
-				return $this->bad("当前采购入库单已经提交入库，不能再编辑");
+				return $rc;
 			}
 			
-			$sql = "delete from t_pw_bill_detail where pwbill_id = '%s' ";
-			$rc = $db->execute($sql, $id);
-			if ($rc === false) {
-				$db->rollback();
-				return $this->sqlError(__LINE__);
-			}
-			
-			// 明细记录
-			$items = $bill["items"];
-			foreach ( $items as $i => $item ) {
-				$goodsId = $item["goodsId"];
-				$goodsCount = intval($item["goodsCount"]);
-				$memo = $item["memo"];
-				if ($goodsId != null && $goodsCount != 0) {
-					// 检查商品是否存在
-					$sql = "select count(*) as cnt from t_goods where id = '%s' ";
-					$data = $db->query($sql, $goodsId);
-					$cnt = $data[0]["cnt"];
-					if ($cnt == 1) {
-						$goodsPrice = $item["goodsPrice"];
-						$goodsMoney = $item["goodsMoney"];
-						
-						$sql = "insert into t_pw_bill_detail (id, date_created, goods_id, goods_count, goods_price,
-									goods_money,  pwbill_id, show_order, data_org, memo, company_id)
-									values ('%s', now(), '%s', %d, %f, %f, '%s', %d, '%s', '%s', '%s')";
-						$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, 
-								$goodsPrice, $goodsMoney, $id, $i, $dataOrg, $memo, $companyId);
-						if ($rc === false) {
-							$db->rollback();
-							return $this->sqlError(__LINE__);
-						}
-					}
-				}
-			}
-			
-			$sql = "select sum(goods_money) as goods_money from t_pw_bill_detail 
-						where pwbill_id = '%s' ";
-			$data = $db->query($sql, $id);
-			$totalMoney = $data[0]["goods_money"];
-			if (! $totalMoney) {
-				$totalMoney = 0;
-			}
-			$sql = "update t_pw_bill 
-						set goods_money = %f, warehouse_id = '%s', 
-							supplier_id = '%s', biz_dt = '%s',
-							biz_user_id = '%s', payment_type = %d
-						where id = '%s' ";
-			$rc = $db->execute($sql, $totalMoney, $warehouseId, $supplierId, $bizDT, $bizUserId, 
-					$paymentType, $id);
-			if ($rc === false) {
-				$db->rollback();
-				return $this->sqlError(__LINE__);
-			}
+			$ref = $bill["ref"];
 			
 			$log = "编辑采购入库单: 单号 = {$ref}";
 		} else {
 			// 新建采购入库单
 			
-			$companyId = $us->getCompanyId();
+			$us = new UserService();
+			$bill["companyId"] = $us->getCompanyId();
+			$bill["loginUserId"] = $us->getLoginUserId();
+			$bill["dataOrg"] = $us->getLoginUserDataOrg();
 			
-			$id = $idGen->newId();
-			
-			$sql = "insert into t_pw_bill (id, ref, supplier_id, warehouse_id, biz_dt, 
-						biz_user_id, bill_status, date_created, goods_money, input_user_id, payment_type,
-						data_org, company_id) 
-						values ('%s', '%s', '%s', '%s', '%s', '%s', 0, now(), 0, '%s', %d, '%s', '%s')";
-			
-			$ref = $this->genNewBillRef();
-			
-			$rc = $db->execute($sql, $id, $ref, $supplierId, $warehouseId, $bizDT, $bizUserId, 
-					$us->getLoginUserId(), $paymentType, $dataOrg, $companyId);
-			if ($rc === false) {
+			$rc = $dao->addPWBill($bill);
+			if ($rc) {
 				$db->rollback();
-				return $this->sqlError(__LINE__);
+				return $rc;
 			}
 			
-			// 明细记录
-			$items = $bill["items"];
-			foreach ( $items as $i => $item ) {
-				$goodsId = $item["goodsId"];
-				$goodsCount = intval($item["goodsCount"]);
-				$memo = $item["memo"];
-				if ($goodsId != null && $goodsCount != 0) {
-					// 检查商品是否存在
-					$sql = "select count(*) as cnt from t_goods where id = '%s' ";
-					$data = $db->query($sql, $goodsId);
-					$cnt = $data[0]["cnt"];
-					if ($cnt == 1) {
-						
-						$goodsPrice = $item["goodsPrice"];
-						$goodsMoney = $item["goodsMoney"];
-						
-						$sql = "insert into t_pw_bill_detail 
-									(id, date_created, goods_id, goods_count, goods_price,
-									goods_money,  pwbill_id, show_order, data_org, memo, company_id)
-								values ('%s', now(), '%s', %d, %f, %f, '%s', %d, '%s', '%s', '%s')";
-						$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, 
-								$goodsPrice, $goodsMoney, $id, $i, $dataOrg, $memo, $companyId);
-						if ($rc === false) {
-							$db->rollback();
-							return $this->sqlError(__LINE__);
-						}
-					}
-				}
-			}
+			$id = $bill["id"];
+			$ref = $bill["ref"];
 			
-			$sql = "select sum(goods_money) as goods_money from t_pw_bill_detail 
-						where pwbill_id = '%s' ";
-			$data = $db->query($sql, $id);
-			$totalMoney = $data[0]["goods_money"];
-			if (! $totalMoney) {
-				$totalMoney = 0;
-			}
-			$sql = "update t_pw_bill
-						set goods_money = %f 
-						where id = '%s' ";
-			$rc = $db->execute($sql, $totalMoney, $id);
-			if ($rc === false) {
-				$db->rollback();
-				return $this->sqlError(__LINE__);
-			}
-			
+			$pobillRef = $bill["pobillRef"];
 			if ($pobillRef) {
 				// 从采购订单生成采购入库单
-				$sql = "select id, company_id from t_po_bill where ref = '%s' ";
-				$data = $db->query($sql, $pobillRef);
-				if (! $data) {
-					$db->rollback();
-					return $this->sqlError(__LINE__);
-				}
-				$pobillId = $data[0]["id"];
-				$companyId = $data[0]["company_id"];
-				
-				$sql = "update t_pw_bill
-							set company_id = '%s'
-							where id = '%s' ";
-				$rc = $db->execute($sql, $companyId, $id);
-				if ($rc === false) {
-					$db->rollback();
-					return $this->sqlError(__LINE__);
-				}
-				
-				$sql = "insert into t_po_pw(po_id, pw_id) values('%s', '%s')";
-				$rc = $db->execute($sql, $pobillId, $id);
-				if (! $rc) {
-					$db->rollback();
-					return $this->sqlError(__LINE__);
-				}
-				
 				$log = "从采购订单(单号：{$pobillRef})生成采购入库单: 单号 = {$ref}";
 			} else {
 				// 手工新建采购入库单
@@ -275,51 +106,19 @@ class PWBillService extends PSIBaseService {
 		}
 		
 		// 同步库存账中的在途库存
-		$sql = "select goods_id
-				from t_pw_bill_detail
-				where pwbill_id = '%s' 
-				order by show_order";
-		$data = $db->query($sql, $id);
-		foreach ( $data as $v ) {
-			$goodsId = $v["goods_id"];
-			
-			$rc = $this->updateAfloatInventory($db, $warehouseId, $goodsId);
-			if ($rc === false) {
-				$db->rollback();
-				return $this->sqlError(__LINE__);
-			}
+		$rc = $dao->updateAfloatInventoryByPWBill($bill);
+		if ($rc) {
+			$db->rollback();
+			return $rc;
 		}
 		
 		// 记录业务日志
-		if ($log) {
-			$bs = new BizlogService();
-			$bs->insertBizlog($log, $this->LOG_CATEGORY);
-		}
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		
 		$db->commit();
 		
 		return $this->ok($id);
-	}
-
-	/**
-	 * 生成新的采购入库单单号
-	 */
-	private function genNewBillRef() {
-		$bs = new BizConfigService();
-		$pre = $bs->getPWBillRefPre();
-		
-		$mid = date("Ymd");
-		
-		$sql = "select ref from t_pw_bill where ref like '%s' order by ref desc limit 1";
-		$data = M()->query($sql, $pre . $mid . "%");
-		$suf = "001";
-		if ($data) {
-			$ref = $data[0]["ref"];
-			$nextNumber = intval(substr($ref, strlen($pre . $mid))) + 1;
-			$suf = str_pad($nextNumber, 3, "0", STR_PAD_LEFT);
-		}
-		
-		return $pre . $mid . $suf;
 	}
 
 	/**
@@ -330,127 +129,13 @@ class PWBillService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		$id = $params["id"];
-		$pobillRef = $params["pobillRef"];
+		$us = new UserService();
+		$params["loginUserId"] = $us->getLoginUserId();
+		$params["loginUserName"] = $us->getLoginUserName();
+		$params["companyId"] = $us->getCompanyId();
 		
-		$result["id"] = $id;
-		
-		$db = M();
-		$sql = "select p.ref, p.bill_status, p.supplier_id, s.name as supplier_name, 
-				p.warehouse_id, w.name as  warehouse_name, 
-				p.biz_user_id, u.name as biz_user_name, p.biz_dt, p.payment_type 
-				from t_pw_bill p, t_supplier s, t_warehouse w, t_user u 
-				where p.id = '%s' and p.supplier_id = s.id and p.warehouse_id = w.id 
-				  and p.biz_user_id = u.id";
-		$data = $db->query($sql, $id);
-		if ($data) {
-			$v = $data[0];
-			$result["ref"] = $v["ref"];
-			$result["billStatus"] = $v["bill_status"];
-			$result["supplierId"] = $v["supplier_id"];
-			$result["supplierName"] = $v["supplier_name"];
-			$result["warehouseId"] = $v["warehouse_id"];
-			$result["warehouseName"] = $v["warehouse_name"];
-			$result["bizUserId"] = $v["biz_user_id"];
-			$result["bizUserName"] = $v["biz_user_name"];
-			$result["bizDT"] = date("Y-m-d", strtotime($v["biz_dt"]));
-			$result["paymentType"] = $v["payment_type"];
-			
-			// 采购的商品明细
-			$items = array();
-			$sql = "select p.id, p.goods_id, g.code, g.name, g.spec, u.name as unit_name, 
-					p.goods_count, p.goods_price, p.goods_money, p.memo 
-					from t_pw_bill_detail p, t_goods g, t_goods_unit u 
-					where p.goods_Id = g.id and g.unit_id = u.id and p.pwbill_id = '%s' 
-					order by p.show_order";
-			$data = $db->query($sql, $id);
-			foreach ( $data as $i => $v ) {
-				$items[$i]["id"] = $v["id"];
-				$items[$i]["goodsId"] = $v["goods_id"];
-				$items[$i]["goodsCode"] = $v["code"];
-				$items[$i]["goodsName"] = $v["name"];
-				$items[$i]["goodsSpec"] = $v["spec"];
-				$items[$i]["unitName"] = $v["unit_name"];
-				$items[$i]["goodsCount"] = $v["goods_count"];
-				$items[$i]["goodsPrice"] = $v["goods_price"];
-				$items[$i]["goodsMoney"] = $v["goods_money"];
-				$items[$i]["memo"] = $v["memo"];
-			}
-			
-			$result["items"] = $items;
-			
-			// 查询该单据是否是由采购订单生成的
-			$sql = "select po_id from t_po_pw where pw_id = '%s' ";
-			$data = $db->query($sql, $id);
-			if ($data) {
-				$result["genBill"] = true;
-			} else {
-				$result["genBill"] = false;
-			}
-		} else {
-			// 新建采购入库单
-			$us = new UserService();
-			$result["bizUserId"] = $us->getLoginUserId();
-			$result["bizUserName"] = $us->getLoginUserName();
-			
-			$ts = new BizConfigService();
-			$sql = "select value from t_config where id = '2001-01' ";
-			$data = $db->query($sql);
-			if ($data) {
-				$warehouseId = $data[0]["value"];
-				$sql = "select id, name from t_warehouse where id = '%s' ";
-				$data = $db->query($sql, $warehouseId);
-				if ($data) {
-					$result["warehouseId"] = $data[0]["id"];
-					$result["warehouseName"] = $data[0]["name"];
-				}
-			}
-			
-			if ($pobillRef) {
-				// 由采购订单生成采购入库单
-				$sql = "select p.id, p.supplier_id, s.name as supplier_name, p.deal_date,
-							p.payment_type
-						from t_po_bill p, t_supplier s
-						where p.ref = '%s' and p.supplier_id = s.id ";
-				$data = $db->query($sql, $pobillRef);
-				if ($data) {
-					$v = $data[0];
-					$result["supplierId"] = $v["supplier_id"];
-					$result["supplierName"] = $v["supplier_name"];
-					$result["dealDate"] = $this->toYMD($v["deal_date"]);
-					$result["paymentType"] = $v["payment_type"];
-					
-					$pobillId = $v["id"];
-					// 采购的明细
-					$items = array();
-					$sql = "select p.id, p.goods_id, g.code, g.name, g.spec, u.name as unit_name,
-								p.goods_count, p.goods_price, p.goods_money
-							from t_po_bill_detail p, t_goods g, t_goods_unit u
-							where p.pobill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id
-							order by p.show_order ";
-					$data = $db->query($sql, $pobillId);
-					foreach ( $data as $i => $v ) {
-						$items[$i]["id"] = $v["id"];
-						$items[$i]["goodsId"] = $v["goods_id"];
-						$items[$i]["goodsCode"] = $v["code"];
-						$items[$i]["goodsName"] = $v["name"];
-						$items[$i]["goodsSpec"] = $v["spec"];
-						$items[$i]["unitName"] = $v["unit_name"];
-						$items[$i]["goodsCount"] = $v["goods_count"];
-						$items[$i]["goodsPrice"] = $v["goods_price"];
-						$items[$i]["goodsMoney"] = $v["goods_money"];
-					}
-					
-					$result["items"] = $items;
-				}
-			} else {
-				// 采购入库单默认付款方式
-				$bc = new BizConfigService();
-				$result["paymentType"] = $bc->getPWBillDefaultPayment();
-			}
-		}
-		
-		return $result;
+		$dao = new PWBillDAO();
+		return $dao->pwBillInfo($params);
 	}
 
 	/**

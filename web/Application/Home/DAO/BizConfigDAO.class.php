@@ -637,4 +637,51 @@ class BizConfigDAO extends PSIBaseDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 获得采购入库单默认付款方式
+	 */
+	public function getPWBillDefaultPayment($companyId) {
+		$result = "0";
+		
+		$db = $this->db;
+		
+		$id = "2001-03";
+		$sql = "select value from t_config
+				where id = '%s' and company_id = '%s' ";
+		$data = $db->query($sql, $id, $companyId);
+		if ($data) {
+			$result = $data[0]["value"];
+			
+			if ($result == null || $result == "") {
+				$result = "0";
+			}
+		}
+		
+		return $result;
+	}
+
+	/**
+	 * 获得采购入库单默认仓库
+	 */
+	public function getPWBillDefaultWarehouse($companyId) {
+		$db = $this->db;
+		
+		$sql = "select value from t_config 
+				where id = '2001-01' and company_id = '%s' ";
+		$data = $db->query($sql, $companyId);
+		if ($data) {
+			$warehouseId = $data[0]["value"];
+			$sql = "select id, name from t_warehouse where id = '%s' ";
+			$data = $db->query($sql, $warehouseId);
+			if ($data) {
+				return array(
+						"id" => $data[0]["id"],
+						"name" => $data[0]["name"]
+				);
+			}
+		}
+		
+		return null;
+	}
 }
