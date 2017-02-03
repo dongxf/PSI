@@ -149,66 +149,20 @@ class PWBillService extends PSIBaseService {
 		$db = M();
 		$db->startTrans();
 		
-		$sql = "select ref, bill_status, warehouse_id from t_pw_bill where id = '%s' ";
-		$data = $db->query($sql, $id);
-		if (! $data) {
+		$dao = new PWBillDAO($db);
+		$params = array(
+				"id" => $id
+		);
+		$rc = $dao->deletePWBill($params);
+		if ($rc) {
 			$db->rollback();
-			return $this->bad("要删除的采购入库单不存在");
-		}
-		$ref = $data[0]["ref"];
-		$billStatus = $data[0]["bill_status"];
-		if ($billStatus != 0) {
-			$db->rollback();
-			return $this->bad("当前采购入库单已经提交入库，不能删除");
-		}
-		$warehouseId = $data[0]["warehouse_id"];
-		
-		$sql = "select goods_id
-				from t_pw_bill_detail
-				where pwbill_id = '%s'
-				order by show_order";
-		$data = $db->query($sql, $id);
-		$goodsIdList = array();
-		foreach ( $data as $v ) {
-			$goodsIdList[] = $v["goods_id"];
-		}
-		
-		$sql = "delete from t_pw_bill_detail where pwbill_id = '%s' ";
-		$rc = $db->execute($sql, $id);
-		if ($rc === false) {
-			$db->rollback();
-			return $this->sqlError(__LINE__);
-		}
-		
-		$sql = "delete from t_pw_bill where id = '%s' ";
-		$rc = $db->execute($sql, $id);
-		if ($rc === false) {
-			$db->rollback();
-			return $this->sqlError(__LINE__);
-		}
-		
-		// 删除从采购订单生成的记录
-		$sql = "delete from t_po_pw where pw_id = '%s' ";
-		$rc = $db->execute($sql, $id);
-		if ($rc === false) {
-			$db->rollback();
-			return $this->sqlError(__LINE__);
-		}
-		
-		// 同步库存账中的在途库存
-		foreach ( $goodsIdList as $v ) {
-			$goodsId = $v;
-			
-			$rc = $this->updateAfloatInventory($db, $warehouseId, $goodsId);
-			if ($rc === false) {
-				$db->rollback();
-				return $this->sqlError(__LINE__);
-			}
+			return $rc;
 		}
 		
 		// 记录业务日志
+		$ref = $params["ref"];
 		$log = "删除采购入库单: 单号 = {$ref}";
-		$bs = new BizlogService();
+		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		
 		$db->commit();

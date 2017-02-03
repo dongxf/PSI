@@ -468,7 +468,8 @@ class PWBillDAO extends PSIBaseExDAO {
 	}
 
 	public function getPWBillById($id) {
-		$sql = "select ref, bill_status, data_org, company_id from t_pw_bill where id = '%s' ";
+		$sql = "select ref, bill_status, data_org, company_id, warehouse_id 
+				from t_pw_bill where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if (! $data) {
 			return null;
@@ -477,7 +478,8 @@ class PWBillDAO extends PSIBaseExDAO {
 					"ref" => $data[0]["ref"],
 					"billStatus" => $data[0]["bill_status"],
 					"dataOrg" => $data[0]["data_org"],
-					"companyId" => $data[0]["company_id"]
+					"companyId" => $data[0]["company_id"],
+					"warehouseId" => $data[0]["warehouse_id"]
 			);
 		}
 	}
@@ -675,5 +677,70 @@ class PWBillDAO extends PSIBaseExDAO {
 		}
 		
 		return $result;
+	}
+
+	/**
+	 * 删除采购入库单
+	 */
+	public function deletePWBill(& $params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		
+		$bill = $this->getPWBillById($id);
+		if (! $bill) {
+			return $this->bad("要删除的采购入库单不存在");
+		}
+		
+		$ref = $bill["ref"];
+		$billStatus = $bill["billStatus"];
+		if ($billStatus != 0) {
+			return $this->bad("当前采购入库单已经提交入库，不能删除");
+		}
+		$warehouseId = $bill["warehouseId"];
+		
+		$sql = "select goods_id
+				from t_pw_bill_detail
+				where pwbill_id = '%s'
+				order by show_order";
+		$data = $db->query($sql, $id);
+		$goodsIdList = array();
+		foreach ( $data as $v ) {
+			$goodsIdList[] = $v["goods_id"];
+		}
+		
+		$sql = "delete from t_pw_bill_detail where pwbill_id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__LINE__);
+		}
+		
+		$sql = "delete from t_pw_bill where id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__LINE__);
+		}
+		
+		// 删除从采购订单生成的记录
+		$sql = "delete from t_po_pw where pw_id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__LINE__);
+		}
+		
+		// 同步库存账中的在途库存
+		foreach ( $goodsIdList as $v ) {
+			$goodsId = $v;
+			
+			$rc = $this->updateAfloatInventory($db, $warehouseId, $goodsId);
+			if ($rc === false) {
+				return $this->sqlError(__LINE__);
+			}
+		}
+		
+		$params["ref"] = $ref;
+		
+		// 操作成功
+		return null;
 	}
 }
