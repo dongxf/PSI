@@ -684,4 +684,16 @@ class BizConfigDAO extends PSIBaseDAO {
 		
 		return null;
 	}
+
+	/**
+	 * 获得存货计价方法
+	 * 0： 移动平均法
+	 * 1：先进先出法
+	 */
+	public function getInventoryMethod($companyId) {
+		// 2015-11-19 为发布稳定版本，临时取消先进先出法
+		$result = 0;
+		
+		return $result;
+	}
 }
