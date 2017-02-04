@@ -749,13 +749,10 @@ class PWBillDAO extends PSIBaseExDAO {
 		
 		$id = $params["id"];
 		
-		$bc = new BizConfigDAO($db);
-		$companyId = $params["companyId"];
-		if ($this->companyIdNotExists($companyId)) {
-			return $this->badParam("companyId");
+		$loginUserId = $params["loginUserId"];
+		if ($this->loginUserIdNotExists($loginUserId)) {
+			return $this->badParam("loginUserId");
 		}
-		// true: 先进先出法
-		$fifo = $bc->getInventoryMethod($companyId) == 1;
 		
 		$sql = "select ref, warehouse_id, bill_status, biz_dt, biz_user_id,  goods_money, supplier_id,
 					payment_type, company_id
@@ -779,26 +776,35 @@ class PWBillDAO extends PSIBaseExDAO {
 		$warehouseId = $data[0]["warehouse_id"];
 		$paymentType = $data[0]["payment_type"];
 		$companyId = $data[0]["company_id"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->badParam("companyId");
+		}
 		
-		$sql = "select name, inited from t_warehouse where id = '%s' ";
-		$data = $db->query($sql, $warehouseId);
-		if (! $data) {
+		$bc = new BizConfigDAO($db);
+		// true: 先进先出法
+		$fifo = $bc->getInventoryMethod($companyId) == 1;
+		
+		$warehouseDAO = new WarehouseDAO($db);
+		$warehouse = $warehouseDAO->getWarehouseById($warehouseId);
+		if (! $warehouse) {
 			return $this->bad("要入库的仓库不存在");
 		}
-		$inited = $data[0]["inited"];
+		$inited = $warehouse["inited"];
 		if ($inited == 0) {
-			return $this->bad("仓库 [{$data[0]['name']}] 还没有完成建账，不能做采购入库的操作");
+			return $this->bad("仓库 [{$warehouse['name']}] 还没有完成建账，不能做采购入库的操作");
 		}
 		
 		// 检查供应商是否存在
-		$ss = new SupplierService();
-		if (! $ss->supplierExists($supplierId, $db)) {
+		$supplierDAO = new SupplierDAO($db);
+		$supplier = $supplierDAO->getSupplierById($supplierId);
+		if (! $supplier) {
 			return $this->bad("供应商不存在");
 		}
 		
 		// 检查业务员是否存在
-		$us = new UserService();
-		if (! $us->userExists($bizUserId, $db)) {
+		$userDAO = new UserDAO($db);
+		$user = $userDAO->getUserById($bizUserId);
+		if (! $user) {
 			return $this->bad("业务员不存在");
 		}
 		
@@ -815,7 +821,7 @@ class PWBillDAO extends PSIBaseExDAO {
 			$goodsCount = intval($v["goods_count"]);
 			if ($goodsCount <= 0) {
 				$db->rollback();
-				return $this->bad("采购数量不能小于0");
+				return $this->bad("采购数量不能小于1");
 			}
 			$goodsPrice = floatval($v["goods_price"]);
 			if ($goodsPrice < 0) {
@@ -855,8 +861,8 @@ class PWBillDAO extends PSIBaseExDAO {
 			$balancePrice = (float)0;
 			// 库存总账
 			$sql = "select in_count, in_money, balance_count, balance_money
-						from t_inventory
-						where warehouse_id = '%s' and goods_id = '%s' ";
+					from t_inventory
+					where warehouse_id = '%s' and goods_id = '%s' ";
 			$data = $db->query($sql, $warehouseId, $goodsId);
 			if ($data) {
 				$inCount = intval($data[0]["in_count"]);
@@ -873,13 +879,13 @@ class PWBillDAO extends PSIBaseExDAO {
 				$balancePrice = $balanceMoney / $balanceCount;
 				
 				$sql = "update t_inventory
-							set in_count = %d, in_price = %f, in_money = %f,
-							balance_count = %d, balance_price = %f, balance_money = %f
-							where warehouse_id = '%s' and goods_id = '%s' ";
+						set in_count = %d, in_price = %f, in_money = %f,
+						balance_count = %d, balance_price = %f, balance_money = %f
+						where warehouse_id = '%s' and goods_id = '%s' ";
 				$rc = $db->execute($sql, $inCount, $inPrice, $inMoney, $balanceCount, $balancePrice, 
 						$balanceMoney, $warehouseId, $goodsId);
 				if ($rc === false) {
-					return $this->sqlError(__LINE__);
+					return $this->sqlError(__METHOD__, __LINE__);
 				}
 			} else {
 				$inCount = $goodsCount;
@@ -890,47 +896,47 @@ class PWBillDAO extends PSIBaseExDAO {
 				$balancePrice = $balanceMoney / $balanceCount;
 				
 				$sql = "insert into t_inventory (in_count, in_price, in_money, balance_count,
-							balance_price, balance_money, warehouse_id, goods_id)
-							values (%d, %f, %f, %d, %f, %f, '%s', '%s')";
+						balance_price, balance_money, warehouse_id, goods_id)
+						values (%d, %f, %f, %d, %f, %f, '%s', '%s')";
 				$rc = $db->execute($sql, $inCount, $inPrice, $inMoney, $balanceCount, $balancePrice, 
 						$balanceMoney, $warehouseId, $goodsId);
 				if ($rc === false) {
-					return $this->sqlError(__LINE__);
+					return $this->sqlError(__METHOD__, __LINE__);
 				}
 			}
 			
 			// 库存明细账
 			$sql = "insert into t_inventory_detail (in_count, in_price, in_money, balance_count,
-						balance_price, balance_money, warehouse_id, goods_id, biz_date,
-						biz_user_id, date_created, ref_number, ref_type)
-						values (%d, %f, %f, %d, %f, %f, '%s', '%s', '%s', '%s', now(), '%s', '采购入库')";
+					balance_price, balance_money, warehouse_id, goods_id, biz_date,
+					biz_user_id, date_created, ref_number, ref_type)
+					values (%d, %f, %f, %d, %f, %f, '%s', '%s', '%s', '%s', now(), '%s', '采购入库')";
 			$rc = $db->execute($sql, $goodsCount, $goodsPrice, $goodsMoney, $balanceCount, 
 					$balancePrice, $balanceMoney, $warehouseId, $goodsId, $bizDT, $bizUserId, $ref);
 			if ($rc === false) {
-				return $this->sqlError(__LINE__);
+				return $this->sqlError(__METHOD__, __LINE__);
 			}
 			
 			// 先进先出
 			if ($fifo) {
 				$dt = date("Y-m-d H:i:s");
 				$sql = "insert into t_inventory_fifo (in_count, in_price, in_money, balance_count,
-							balance_price, balance_money, warehouse_id, goods_id, date_created, in_ref,
-							in_ref_type, pwbilldetail_id)
-							values (%d, %f, %f, %d, %f, %f, '%s', '%s', '%s', '%s', '采购入库', '%s')";
+						balance_price, balance_money, warehouse_id, goods_id, date_created, in_ref,
+						in_ref_type, pwbilldetail_id)
+						values (%d, %f, %f, %d, %f, %f, '%s', '%s', '%s', '%s', '采购入库', '%s')";
 				$rc = $db->execute($sql, $goodsCount, $goodsPrice, $goodsMoney, $goodsCount, 
 						$goodsPrice, $goodsMoney, $warehouseId, $goodsId, $dt, $ref, $pwbilldetailId);
 				if ($rc === false) {
-					return $this->sqlError(__LINE__);
+					return $this->sqlError(__METHOD__, __LINE__);
 				}
 				
 				// fifo 明细记录
 				$sql = "insert into t_inventory_fifo_detail(in_count, in_price, in_money, balance_count,
-							balance_price, balance_money, warehouse_id, goods_id, date_created, pwbilldetail_id)
-							values (%d, %f, %f, %d, %f, %f, '%s', '%s', '%s', '%s')";
+						balance_price, balance_money, warehouse_id, goods_id, date_created, pwbilldetail_id)
+						values (%d, %f, %f, %d, %f, %f, '%s', '%s', '%s', '%s')";
 				$rc = $db->execute($sql, $goodsCount, $goodsPrice, $goodsMoney, $goodsCount, 
 						$goodsPrice, $goodsMoney, $warehouseId, $goodsId, $dt, $pwbilldetailId);
 				if ($rc === false) {
-					return $this->sqlError(__LINE__);
+					return $this->sqlError(__METHOD__, __LINE__);
 				}
 			}
 		}
@@ -938,7 +944,7 @@ class PWBillDAO extends PSIBaseExDAO {
 		$sql = "update t_pw_bill set bill_status = 1000 where id = '%s' ";
 		$rc = $db->execute($sql, $id);
 		if ($rc === false) {
-			return $this->sqlError(__LINE__);
+			return $this->sqlError(__METHOD__, __LINE__);
 		}
 		
 		if ($paymentType == 0) {
@@ -947,12 +953,10 @@ class PWBillDAO extends PSIBaseExDAO {
 			$sql = "insert into t_payables_detail (id, pay_money, act_money, balance_money,
 					ca_id, ca_type, date_created, ref_number, ref_type, biz_date, company_id)
 					values ('%s', %f, 0, %f, '%s', 'supplier', now(), '%s', '采购入库', '%s', '%s')";
-			$idGen = new IdGenService();
-			$rc = $db->execute($sql, $idGen->newId(), $billPayables, $billPayables, $supplierId, 
+			$rc = $db->execute($sql, $this->newId(), $billPayables, $billPayables, $supplierId, 
 					$ref, $bizDT, $companyId);
 			if ($rc === false) {
-				$db->rollback();
-				return $this->sqlError(__LINE__);
+				return $this->sqlError(__METHOD__, __LINE__);
 			}
 			
 			// 应付总账
@@ -970,8 +974,7 @@ class PWBillDAO extends PSIBaseExDAO {
 						where id = '%s' ";
 				$rc = $db->execute($sql, $payMoney, $payMoney, $pId);
 				if ($rc === false) {
-					$db->rollback();
-					return $this->sqlError(__LINE__);
+					return $this->sqlError(__METHOD__, __LINE__);
 				}
 			} else {
 				$payMoney = $billPayables;
@@ -979,11 +982,10 @@ class PWBillDAO extends PSIBaseExDAO {
 				$sql = "insert into t_payables (id, pay_money, act_money, balance_money,
 						ca_id, ca_type, company_id)
 						values ('%s', %f, 0, %f, '%s', 'supplier', '%s')";
-				$rc = $db->execute($sql, $idGen->newId(), $payMoney, $payMoney, $supplierId, 
+				$rc = $db->execute($sql, $this->newId(), $payMoney, $payMoney, $supplierId, 
 						$companyId);
 				if ($rc === false) {
-					$db->rollback();
-					return $this->sqlError(__LINE__);
+					return $this->sqlError(__METHOD__, __LINE__);
 				}
 			}
 		} else if ($paymentType == 1) {
@@ -1016,8 +1018,7 @@ class PWBillDAO extends PSIBaseExDAO {
 							values (%f, %f, '%s', '%s')";
 				$rc = $db->execute($sql, $outCash, $balanceCash, $bizDT, $companyId);
 				if ($rc === false) {
-					$db->rollback();
-					return $this->sqlError(__LINE__);
+					return $this->sqlError(__METHOD__, __LINE__);
 				}
 				
 				// 记现金明细账
@@ -1026,8 +1027,7 @@ class PWBillDAO extends PSIBaseExDAO {
 							values (%f, %f, '%s', '采购入库', '%s', now(), '%s')";
 				$rc = $db->execute($sql, $outCash, $balanceCash, $bizDT, $ref, $companyId);
 				if ($rc === false) {
-					$db->rollback();
-					return $this->sqlError(__LINE__);
+					return $this->sqlError(__METHOD__, __LINE__);
 				}
 			} else {
 				$balanceCash = $data[0]["balance_money"] - $outCash;
@@ -1037,8 +1037,7 @@ class PWBillDAO extends PSIBaseExDAO {
 							where biz_date = '%s' and company_id = '%s' ";
 				$rc = $db->execute($sql, $sumOutMoney, $balanceCash, $bizDT, $companyId);
 				if ($rc === false) {
-					$db->rollback();
-					return $this->sqlError(__LINE__);
+					return $this->sqlError(__METHOD__, __LINE__);
 				}
 				
 				// 记现金明细账
@@ -1047,8 +1046,7 @@ class PWBillDAO extends PSIBaseExDAO {
 							values (%f, %f, '%s', '采购入库', '%s', now(), '%s')";
 				$rc = $db->execute($sql, $outCash, $balanceCash, $bizDT, $ref, $companyId);
 				if ($rc === false) {
-					$db->rollback();
-					return $this->sqlError(__LINE__);
+					return $this->sqlError(__METHOD__, __LINE__);
 				}
 			}
 			
@@ -1058,8 +1056,7 @@ class PWBillDAO extends PSIBaseExDAO {
 							where biz_date > '%s' and company_id = '%s' ";
 			$rc = $db->execute($sql, $outCash, $bizDT, $companyId);
 			if ($rc === false) {
-				$db->rollback();
-				return $this->sqlError(__LINE__);
+				return $this->sqlError(__METHOD__, __LINE__);
 			}
 			
 			$sql = "update t_cash_detail
@@ -1067,8 +1064,7 @@ class PWBillDAO extends PSIBaseExDAO {
 							where biz_date > '%s' and company_id = '%s' ";
 			$rc = $db->execute($sql, $outCash, $bizDT, $companyId);
 			if ($rc === false) {
-				$db->rollback();
-				return $this->sqlError(__LINE__);
+				return $this->sqlError(__METHOD__, __LINE__);
 			}
 		} else if ($paymentType == 2) {
 			// 2: 预付款
@@ -1087,23 +1083,20 @@ class PWBillDAO extends PSIBaseExDAO {
 				$totalBalanceMoney = 0;
 			}
 			if ($outMoney > $totalBalanceMoney) {
-				$db->rollback();
-				$ss = new SupplierService();
-				$supplierName = $ss->getSupplierNameById($supplierId, $db);
-				return $this->bad(
-						"供应商[{$supplierName}]预付款余额不足，无法完成支付<br/><br/>余额:{$totalBalanceMoney}元，付款金额:{$outMoney}元");
+				$supplierName = $supplier["name"];
+				$info = "供应商[{$supplierName}]预付款余额不足，无法完成支付<br/><br/>余额:{$totalBalanceMoney}元，付款金额:{$outMoney}元";
+				return $this->bad($info);
 			}
 			
 			// 预付款总账
 			$sql = "update t_pre_payment
-						set out_money = %f, balance_money = %f
-						where supplier_id = '%s' and company_id = '%s' ";
+					set out_money = %f, balance_money = %f
+					where supplier_id = '%s' and company_id = '%s' ";
 			$totalOutMoney += $outMoney;
 			$totalBalanceMoney -= $outMoney;
 			$rc = $db->execute($sql, $totalOutMoney, $totalBalanceMoney, $supplierId, $companyId);
 			if (! $rc) {
-				$db->rollback();
-				return $this->sqlError();
+				return $this->sqlError(__METHOD__, __LINE__);
 			}
 			
 			// 预付款明细账
@@ -1111,10 +1104,8 @@ class PWBillDAO extends PSIBaseExDAO {
 						biz_date, date_created, ref_number, ref_type, biz_user_id, input_user_id,
 						company_id)
 						values ('%s', '%s', %f, %f, '%s', now(), '%s', '采购入库', '%s', '%s', '%s')";
-			$idGen = new IdGenService();
-			$us = new UserService();
-			$rc = $db->execute($sql, $idGen->newId(), $supplierId, $outMoney, $totalBalanceMoney, 
-					$bizDT, $ref, $bizUserId, $us->getLoginUserId(), $companyId);
+			$rc = $db->execute($sql, $this->newId(), $supplierId, $outMoney, $totalBalanceMoney, 
+					$bizDT, $ref, $bizUserId, $loginUserId, $companyId);
 			if (! $rc) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
@@ -1134,6 +1125,8 @@ class PWBillDAO extends PSIBaseExDAO {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
 		}
+		
+		$params["ref"] = $ref;
 		
 		// 操作成功
 		return null;
