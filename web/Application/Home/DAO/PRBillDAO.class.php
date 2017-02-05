@@ -189,4 +189,176 @@ class PRBillDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 采购退货出库单列表
+	 */
+	public function prbillList($params) {
+		$db = $this->db;
+		
+		$page = $params["page"];
+		$start = $params["start"];
+		$limit = $params["limit"];
+		
+		$billStatus = $params["billStatus"];
+		$ref = $params["ref"];
+		$fromDT = $params["fromDT"];
+		$toDT = $params["toDT"];
+		$warehouseId = $params["warehouseId"];
+		$supplierId = $params["supplierId"];
+		$receivingType = $params["receivingType"];
+		
+		$loginUserId = $params["loginUserId"];
+		if ($this->loginUserIdNotExists($loginUserId)) {
+			return $this->emptyResult();
+		}
+		
+		$result = array();
+		$queryParams = array();
+		$sql = "select p.id, p.ref, p.bill_status, w.name as warehouse_name, p.bizdt,
+					p.rejection_money, u1.name as biz_user_name, u2.name as input_user_name,
+					s.name as supplier_name, p.date_created, p.receiving_type
+				from t_pr_bill p, t_warehouse w, t_user u1, t_user u2, t_supplier s
+				where (p.warehouse_id = w.id)
+					and (p.biz_user_id = u1.id)
+					and (p.input_user_id = u2.id)
+					and (p.supplier_id = s.id) ";
+		
+		$ds = new DataOrgDAO($db);
+		$rs = $ds->buildSQL(FIdConst::PURCHASE_REJECTION, "p", $loginUserId);
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = $rs[1];
+		}
+		
+		if ($billStatus != - 1) {
+			$sql .= " and (p.bill_status = %d) ";
+			$queryParams[] = $billStatus;
+		}
+		if ($ref) {
+			$sql .= " and (p.ref like '%s') ";
+			$queryParams[] = "%{$ref}%";
+		}
+		if ($fromDT) {
+			$sql .= " and (p.bizdt >= '%s') ";
+			$queryParams[] = $fromDT;
+		}
+		if ($toDT) {
+			$sql .= " and (p.bizdt <= '%s') ";
+			$queryParams[] = $toDT;
+		}
+		if ($supplierId) {
+			$sql .= " and (p.supplier_id = '%s') ";
+			$queryParams[] = $supplierId;
+		}
+		if ($warehouseId) {
+			$sql .= " and (p.warehouse_id = '%s') ";
+			$queryParams[] = $warehouseId;
+		}
+		if ($receivingType != - 1) {
+			$sql .= " and (p.receiving_type = %d) ";
+			$queryParams[] = $receivingType;
+		}
+		
+		$sql .= " order by p.bizdt desc, p.ref desc
+				limit %d, %d";
+		$queryParams[] = $start;
+		$queryParams[] = $limit;
+		$data = $db->query($sql, $queryParams);
+		foreach ( $data as $i => $v ) {
+			$result[$i]["id"] = $v["id"];
+			$result[$i]["ref"] = $v["ref"];
+			$result[$i]["billStatus"] = $v["bill_status"] == 0 ? "待出库" : "已出库";
+			$result[$i]["warehouseName"] = $v["warehouse_name"];
+			$result[$i]["supplierName"] = $v["supplier_name"];
+			$result[$i]["rejMoney"] = $v["rejection_money"];
+			$result[$i]["bizUserName"] = $v["biz_user_name"];
+			$result[$i]["inputUserName"] = $v["input_user_name"];
+			$result[$i]["bizDT"] = $this->toYMD($v["bizdt"]);
+			$result[$i]["dateCreated"] = $v["date_created"];
+			$result[$i]["receivingType"] = $v["receiving_type"];
+		}
+		
+		$sql = "select count(*) as cnt
+				from t_pr_bill p, t_warehouse w, t_user u1, t_user u2, t_supplier s
+				where (p.warehouse_id = w.id)
+					and (p.biz_user_id = u1.id)
+					and (p.input_user_id = u2.id)
+					and (p.supplier_id = s.id) ";
+		$queryParams = array();
+		$ds = new DataOrgDAO($db);
+		$rs = $ds->buildSQL(FIdConst::PURCHASE_REJECTION, "p", $loginUserId);
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = $rs[1];
+		}
+		
+		if ($billStatus != - 1) {
+			$sql .= " and (p.bill_status = %d) ";
+			$queryParams[] = $billStatus;
+		}
+		if ($ref) {
+			$sql .= " and (p.ref like '%s') ";
+			$queryParams[] = "%{$ref}%";
+		}
+		if ($fromDT) {
+			$sql .= " and (p.bizdt >= '%s') ";
+			$queryParams[] = $fromDT;
+		}
+		if ($toDT) {
+			$sql .= " and (p.bizdt <= '%s') ";
+			$queryParams[] = $toDT;
+		}
+		if ($supplierId) {
+			$sql .= " and (p.supplier_id = '%s') ";
+			$queryParams[] = $supplierId;
+		}
+		if ($warehouseId) {
+			$sql .= " and (p.warehouse_id = '%s') ";
+			$queryParams[] = $warehouseId;
+		}
+		if ($receivingType != - 1) {
+			$sql .= " and (p.receiving_type = %d) ";
+			$queryParams[] = $receivingType;
+		}
+		
+		$data = $db->query($sql, $queryParams);
+		$cnt = $data[0]["cnt"];
+		
+		return array(
+				"dataList" => $result,
+				"totalCount" => $cnt
+		);
+	}
+
+	/**
+	 * 采购退货出库单明细列表
+	 */
+	public function prBillDetailList($params) {
+		$db = $this->db;
+		
+		// id：采购退货出库单id
+		$id = $params["id"];
+		
+		$sql = "select g.code, g.name, g.spec, u.name as unit_name,
+					p.rejection_goods_count as rej_count, p.rejection_goods_price as rej_price,
+					p.rejection_money as rej_money
+				from t_pr_bill_detail p, t_goods g, t_goods_unit u
+				where p.goods_id = g.id and g.unit_id = u.id and p.prbill_id = '%s'
+					and p.rejection_goods_count > 0
+				order by p.show_order";
+		$result = array();
+		$data = $db->query($sql, $id);
+		foreach ( $data as $i => $v ) {
+			$result[$i]["goodsCode"] = $v["code"];
+			$result[$i]["goodsName"] = $v["name"];
+			$result[$i]["goodsSpec"] = $v["spec"];
+			$result[$i]["unitName"] = $v["unit_name"];
+			$result[$i]["rejCount"] = $v["rej_count"];
+			$result[$i]["rejPrice"] = $v["rej_price"];
+			$result[$i]["rejMoney"] = $v["rej_money"];
+		}
+		
+		return $result;
+	}
 }
