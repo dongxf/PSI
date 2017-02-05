@@ -10,7 +10,7 @@ use Home\DAO\PRBillDAO;
  *
  * @author 李静波
  */
-class PRBillService extends PSIBaseService {
+class PRBillService extends PSIBaseExService {
 	private $LOG_CATEGORY = "采购退货出库";
 
 	/**
