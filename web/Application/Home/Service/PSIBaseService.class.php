@@ -167,6 +167,13 @@ class PSIBaseService {
 		$cnt = $data[0]["cnt"];
 		return $cnt == 1;
 	}
+
+	/**
+	 * 当前登录用户的id
+	 */
+	protected function getLoginUserId() {
+		return session("loginUserId");
+	}
 	
 	/**
 	 * 当前数据库版本

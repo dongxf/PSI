@@ -328,8 +328,7 @@ class PRBillService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		$us = new UserService();
-		$params["loginUserId"] = $us->getLoginUserId();
+		$params["loginUserId"] = $this->getLoginUserId();
 		
 		$dao = new PRBillDAO();
 		return $dao->selectPWBillList($params);
