@@ -11,6 +11,9 @@ use Home\Common\FIdConst;
  */
 class PRBillDAO extends PSIBaseExDAO {
 
+	/**
+	 * 选择可以退货的采购入库单
+	 */
 	public function selectPWBillList($params) {
 		$db = $this->db;
 		
@@ -127,5 +130,63 @@ class PRBillDAO extends PSIBaseExDAO {
 				"dataList" => $result,
 				"totalCount" => $cnt
 		);
+	}
+
+	/**
+	 * 根据采购入库单的id查询采购入库单的详细信息
+	 */
+	public function getPWBillInfoForPRBill($params) {
+		$db = $this->db;
+		
+		// 采购入库单id
+		$id = $params["id"];
+		
+		$result = array();
+		
+		$sql = "select p.ref,s.id as supplier_id, s.name as supplier_name,
+					w.id as warehouse_id, w.name as warehouse_name
+				from t_pw_bill p, t_supplier s, t_warehouse w
+				where p.supplier_id = s.id
+					and p.warehouse_id = w.id
+					and p.id = '%s' ";
+		
+		$data = $db->query($sql, $id);
+		if (! $data) {
+			return $result;
+		}
+		
+		$result["ref"] = $data[0]["ref"];
+		$result["supplierId"] = $data[0]["supplier_id"];
+		$result["supplierName"] = $data[0]["supplier_name"];
+		$result["warehouseId"] = $data[0]["warehouse_id"];
+		$result["warehouseName"] = $data[0]["warehouse_name"];
+		
+		$items = array();
+		
+		$sql = "select p.id, g.id as goods_id, g.code as goods_code, g.name as goods_name,
+					g.spec as goods_spec, u.name as unit_name,
+					p.goods_count, p.goods_price, p.goods_money
+				from t_pw_bill_detail p, t_goods g, t_goods_unit u
+				where p.goods_id = g.id
+					and g.unit_id = u.id
+					and p.pwbill_id = '%s'
+				order by p.show_order ";
+		$data = $db->query($sql, $id);
+		foreach ( $data as $i => $v ) {
+			$items[$i]["id"] = $v["id"];
+			$items[$i]["goodsId"] = $v["goods_id"];
+			$items[$i]["goodsCode"] = $v["goods_code"];
+			$items[$i]["goodsName"] = $v["goods_name"];
+			$items[$i]["goodsSpec"] = $v["goods_spec"];
+			$items[$i]["unitName"] = $v["unit_name"];
+			$items[$i]["goodsCount"] = $v["goods_count"];
+			$items[$i]["goodsPrice"] = $v["goods_price"];
+			$items[$i]["goodsMoney"] = $v["goods_money"];
+			$items[$i]["rejPrice"] = $v["goods_price"];
+		}
+		
+		$result["items"] = $items;
+		
+		return $result;
 	}
 }
