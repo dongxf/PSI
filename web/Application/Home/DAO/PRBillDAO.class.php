@@ -45,6 +45,241 @@ class PRBillDAO extends PSIBaseExDAO {
 	public function addPRBill(& $bill) {
 		$db = $this->db;
 		
+		$bizDT = $bill["bizDT"];
+		$warehouseId = $bill["warehouseId"];
+		$warehouseDAO = new WarehouseDAO($db);
+		$warehouse = $warehouseDAO->getWarehouseById($warehouseId);
+		if (! $warehouse) {
+			return $this->bad("选择的仓库不存在，无法保存");
+		}
+		
+		$bizUserId = $bill["bizUserId"];
+		$userDAO = new UserDAO($db);
+		$user = $userDAO->getUserById($bizUserId);
+		if (! $user) {
+			return $this->bad("选择的业务人员不存在，无法保存");
+		}
+		
+		$pwBillId = $bill["pwBillId"];
+		$sql = "select supplier_id from t_pw_bill where id = '%s' ";
+		$data = $db->query($sql, $pwBillId);
+		if (! $data) {
+			return $this->bad("选择采购入库单不存在，无法保存");
+		}
+		$supplierId = $data[0]["supplier_id"];
+		
+		$receivingType = $bill["receivingType"];
+		
+		$items = $bill["items"];
+		
+		// 检查业务日期
+		if (! $this->dateIsValid($bizDT)) {
+			return $this->bad("业务日期不正确");
+		}
+		
+		$id = $this->newId();
+		
+		$dataOrg = $bill["dataOrg"];
+		if ($this->dataOrgNotExists($dataOrg)) {
+			return $this->badParam("dataOrg");
+		}
+		$companyId = $bill["companyId"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->badParam("companyId");
+		}
+		$loginUserId = $bill["loginUserId"];
+		if ($this->loginUserIdNotExists($loginUserId)) {
+			return $this->badParam("loginUserId");
+		}
+		
+		// 新增采购退货出库单
+		$ref = $this->genNewBillRef($companyId);
+		
+		// 主表
+		$sql = "insert into t_pr_bill(id, bill_status, bizdt, biz_user_id, supplier_id, date_created,
+					input_user_id, ref, warehouse_id, pw_bill_id, receiving_type, data_org, company_id)
+				values ('%s', 0, '%s', '%s', '%s', now(), '%s', '%s', '%s', '%s', %d, '%s', '%s')";
+		$rc = $db->execute($sql, $id, $bizDT, $bizUserId, $supplierId, $loginUserId, $ref, 
+				$warehouseId, $pwBillId, $receivingType, $dataOrg, $companyId);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 明细表
+		$sql = "insert into t_pr_bill_detail(id, date_created, goods_id, goods_count, goods_price,
+				goods_money, rejection_goods_count, rejection_goods_price, rejection_money, show_order,
+				prbill_id, pwbilldetail_id, data_org, company_id)
+				values ('%s', now(), '%s', %d, %f, %f, %d, %f, %f, %d, '%s', '%s', '%s', '%s')";
+		foreach ( $items as $i => $v ) {
+			$pwbillDetailId = $v["id"];
+			$goodsId = $v["goodsId"];
+			$goodsCount = $v["goodsCount"];
+			$goodsPrice = $v["goodsPrice"];
+			$goodsMoney = $goodsCount * $goodsPrice;
+			$rejCount = $v["rejCount"];
+			$rejPrice = $v["rejPrice"];
+			$rejMoney = $v["rejMoney"];
+			
+			$rc = $db->execute($sql, $this->newId(), $goodsId, $goodsCount, $goodsPrice, 
+					$goodsMoney, $rejCount, $rejPrice, $rejMoney, $i, $id, $pwbillDetailId, $dataOrg, 
+					$companyId);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+		}
+		
+		$sql = "select sum(rejection_money) as rej_money
+				from t_pr_bill_detail
+				where prbill_id = '%s' ";
+		$data = $db->query($sql, $id);
+		$rejMoney = $data[0]["rej_money"];
+		
+		$sql = "update t_pr_bill
+				set rejection_money = %f
+				where id = '%s' ";
+		$rc = $db->execute($sql, $rejMoney, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		$bill["id"] = $id;
+		$bill["ref"] = $ref;
+		
+		// 操作成功
+		return null;
+	}
+
+	public function getPRBillById($id) {
+		$db = $this->db;
+		
+		$sql = "select ref, bill_status, data_org, company_id
+				from t_pr_bill
+				where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if (! $data) {
+			return null;
+		} else {
+			return array(
+					"ref" => $data[0]["ref"],
+					"billStatus" => $data[0]["bill_status"],
+					"dataOrg" => $data[0]["data_org"],
+					"companyId" => $data[0]["company_id"]
+			);
+		}
+	}
+
+	/**
+	 * 编辑采购退货出库单
+	 *
+	 * @param array $bill        	
+	 * @return NULL|array
+	 */
+	public function updatePRBill(& $bill) {
+		$db = $this->db;
+		
+		$id = $bill["id"];
+		
+		$loginUserId = $bill["loginUserId"];
+		if ($this->loginUserIdNotExists($loginUserId)) {
+			return $this->badParam("loginUserId");
+		}
+		
+		$bizDT = $bill["bizDT"];
+		$warehouseId = $bill["warehouseId"];
+		$warehouseDAO = new WarehouseDAO($db);
+		$warehouse = $warehouseDAO->getWarehouseById($warehouseId);
+		if (! $warehouse) {
+			return $this->bad("选择的仓库不存在，无法保存");
+		}
+		
+		$bizUserId = $bill["bizUserId"];
+		$userDAO = new UserDAO($db);
+		$user = $userDAO->getUserById($bizUserId);
+		if (! $user) {
+			return $this->bad("选择的业务人员不存在，无法保存");
+		}
+		
+		$pwBillId = $bill["pwBillId"];
+		$sql = "select supplier_id from t_pw_bill where id = '%s' ";
+		$data = $db->query($sql, $pwBillId);
+		if (! $data) {
+			return $this->bad("选择采购入库单不存在，无法保存");
+		}
+		$supplierId = $data[0]["supplier_id"];
+		
+		$receivingType = $bill["receivingType"];
+		
+		$items = $bill["items"];
+		
+		// 检查业务日期
+		if (! $this->dateIsValid($bizDT)) {
+			return $this->bad("业务日期不正确");
+		}
+		
+		$oldBill = $this->getPRBillById($id);
+		if (! $oldBill) {
+			return $this->bad("要编辑的采购退货出库单不存在");
+		}
+		$ref = $oldBill["ref"];
+		$companyId = $oldBill["companyId"];
+		$billStatus = $oldBill["billStatus"];
+		if ($billStatus != 0) {
+			return $this->bad("采购退货出库单(单号：$ref)已经提交，不能再被编辑");
+		}
+		$dataOrg = $oldBill["data_org"];
+		
+		// 明细表
+		$sql = "delete from t_pr_bill_detail where prbill_id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		$sql = "insert into t_pr_bill_detail(id, date_created, goods_id, goods_count, goods_price,
+				goods_money, rejection_goods_count, rejection_goods_price, rejection_money, show_order,
+				prbill_id, pwbilldetail_id, data_org, company_id)
+				values ('%s', now(), '%s', %d, %f, %f, %d, %f, %f, %d, '%s', '%s', '%s', '%s')";
+		foreach ( $items as $i => $v ) {
+			$pwbillDetailId = $v["id"];
+			$goodsId = $v["goodsId"];
+			$goodsCount = $v["goodsCount"];
+			$goodsPrice = $v["goodsPrice"];
+			$goodsMoney = $goodsCount * $goodsPrice;
+			$rejCount = $v["rejCount"];
+			$rejPrice = $v["rejPrice"];
+			$rejMoney = $v["rejMoney"];
+			
+			$rc = $db->execute($sql, $this->newId(), $goodsId, $goodsCount, $goodsPrice, 
+					$goodsMoney, $rejCount, $rejPrice, $rejMoney, $i, $id, $pwbillDetailId, $dataOrg, 
+					$companyId);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+		}
+		
+		$sql = "select sum(rejection_money) as rej_money
+				from t_pr_bill_detail
+				where prbill_id = '%s' ";
+		$data = $db->query($sql, $id);
+		$rejMoney = $data[0]["rej_money"];
+		if (! $rejMoney) {
+			$rejMoney = 0;
+		}
+		
+		$sql = "update t_pr_bill
+				set rejection_money = %f,
+					bizdt = '%s', biz_user_id = '%s',
+					date_created = now(), input_user_id = '%s',
+					warehouse_id = '%s', receiving_type = %d
+				where id = '%s' ";
+		$rc = $db->execute($sql, $rejMoney, $bizDT, $bizUserId, $loginUserId, $warehouseId, 
+				$receivingType, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		$bill["ref"] = $ref;
+		
 		// 操作成功
 		return null;
 	}
