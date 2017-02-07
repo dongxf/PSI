@@ -27,6 +27,14 @@ class PSIBaseExService extends PSIBaseService {
 	}
 
 	/**
+	 * 当前登录用户的姓名
+	 */
+	protected function getLoginUserName() {
+		$us = $this->us();
+		return $us->getLoginUserName();
+	}
+
+	/**
 	 * 当前登录用户的数据域
 	 */
 	protected function getLoginUserDataOrg() {

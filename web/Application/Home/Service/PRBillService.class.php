@@ -12,105 +12,16 @@ use Home\DAO\PRBillDAO;
 class PRBillService extends PSIBaseExService {
 	private $LOG_CATEGORY = "采购退货出库";
 
-	/**
-	 * 生成新的采购退货出库单单号
-	 *
-	 * @return string
-	 */
-	private function genNewBillRef() {
-		$bs = new BizConfigService();
-		$pre = $bs->getPRBillRefPre();
-		
-		$mid = date("Ymd");
-		
-		$sql = "select ref from t_pr_bill where ref like '%s' order by ref desc limit 1";
-		$data = M()->query($sql, $pre . $mid . "%");
-		$sufLength = 3;
-		$suf = str_pad("1", $sufLength, "0", STR_PAD_LEFT);
-		if ($data) {
-			$ref = $data[0]["ref"];
-			$nextNumber = intval(substr($ref, strlen($pre . $mid))) + 1;
-			$suf = str_pad($nextNumber, $sufLength, "0", STR_PAD_LEFT);
-		}
-		
-		return $pre . $mid . $suf;
-	}
-
 	public function prBillInfo($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
 		
-		$id = $params["id"];
+		$params["loginUserId"] = $this->getLoginUserId();
+		$params["loginUserName"] = $this->getLoginUserName();
 		
-		$result = array();
-		
-		if ($id) {
-			// 编辑
-			$db = M();
-			$sql = "select p.ref, p.bill_status, p.warehouse_id, w.name as warehouse_name,
-						p.biz_user_id, u.name as biz_user_name, pw.ref as pwbill_ref,
-						s.name as supplier_name, s.id as supplier_id,
-						p.pw_bill_id as pwbill_id, p.bizdt, p.receiving_type
-					from t_pr_bill p, t_warehouse w, t_user u, t_pw_bill pw, t_supplier s
-					where p.id = '%s' 
-						and p.warehouse_id = w.id
-						and p.biz_user_id = u.id
-						and p.pw_bill_id = pw.id
-						and p.supplier_id = s.id ";
-			$data = $db->query($sql, $id);
-			if (! $data) {
-				return $result;
-			}
-			
-			$result["ref"] = $data[0]["ref"];
-			$result["billStatus"] = $data[0]["bill_status"];
-			$result["bizUserId"] = $data[0]["biz_user_id"];
-			$result["bizUserName"] = $data[0]["biz_user_name"];
-			$result["warehouseId"] = $data[0]["warehouse_id"];
-			$result["warehouseName"] = $data[0]["warehouse_name"];
-			$result["pwbillRef"] = $data[0]["pwbill_ref"];
-			$result["supplierId"] = $data[0]["supplier_id"];
-			$result["supplierName"] = $data[0]["supplier_name"];
-			$result["pwbillId"] = $data[0]["pwbill_id"];
-			$result["bizDT"] = $this->toYMD($data[0]["bizdt"]);
-			$result["receivingType"] = $data[0]["receiving_type"];
-			
-			$items = array();
-			$sql = "select p.pwbilldetail_id as id, p.goods_id, g.code as goods_code, g.name as goods_name,
-						g.spec as goods_spec, u.name as unit_name, p.goods_count,
-						p.goods_price, p.goods_money, p.rejection_goods_count as rej_count,
-						p.rejection_goods_price as rej_price, p.rejection_money as rej_money
-					from t_pr_bill_detail p, t_goods g, t_goods_unit u
-					where p.prbill_id = '%s'
-						and p.goods_id = g.id
-						and g.unit_id = u.id
-					order by p.show_order";
-			$data = $db->query($sql, $id);
-			foreach ( $data as $i => $v ) {
-				$items[$i]["id"] = $v["id"];
-				$items[$i]["goodsId"] = $v["goods_id"];
-				$items[$i]["goodsCode"] = $v["goods_code"];
-				$items[$i]["goodsName"] = $v["goods_name"];
-				$items[$i]["goodsSpec"] = $v["goods_spec"];
-				$items[$i]["unitName"] = $v["unit_name"];
-				$items[$i]["goodsCount"] = $v["goods_count"];
-				$items[$i]["goodsPrice"] = $v["goods_price"];
-				$items[$i]["goodsMoney"] = $v["goods_money"];
-				$items[$i]["rejCount"] = $v["rej_count"];
-				$items[$i]["rejPrice"] = $v["rej_price"];
-				$items[$i]["rejMoney"] = $v["rej_money"];
-			}
-			
-			$result["items"] = $items;
-		} else {
-			// 新建
-			$us = new UserService();
-			$result["bizUserId"] = $us->getLoginUserId();
-			$result["bizUserName"] = $us->getLoginUserName();
-		}
-		
-		return $result;
+		$dao = new PRBillDAO();
+		return $dao->prBillInfo($params);
 	}
 
 	/**
@@ -240,33 +151,14 @@ class PRBillService extends PSIBaseExService {
 		
 		$db->startTrans();
 		
-		$sql = "select ref, bill_status from t_pr_bill where id = '%s' ";
-		$data = $db->query($sql, $id);
-		if (! $data) {
+		$dao = new PRBillDAO($db);
+		$rc = $dao->deletePRBill($params);
+		if ($rc) {
 			$db->rollback();
-			return $this->bad("要删除的采购退货出库单不存在");
-		}
-		$ref = $data[0]["ref"];
-		$billStatus = $data[0]["bill_status"];
-		if ($billStatus != 0) {
-			$db->rollback();
-			return $this->bad("采购退货出库单(单号：$ref)已经提交，不能被删除");
+			return $rc;
 		}
 		
-		$sql = "delete from t_pr_bill_detail where prbill_id = '%s'";
-		$rc = $db->execute($sql, $id);
-		if ($rc === false) {
-			$db->rollback();
-			return $this->sqlError(__LINE__);
-		}
-		
-		$sql = "delete from t_pr_bill where id = '%s' ";
-		$rc = $db->execute($sql, $id);
-		if ($rc === false) {
-			$db->rollback();
-			return $this->sqlError(__LINE__);
-		}
-		
+		$ref = $params["ref"];
 		$bs = new BizlogService();
 		$log = "删除采购退货出库单，单号：$ref";
 		$bs->insertBizlog($log, $this->LOG_CATEGORY);
