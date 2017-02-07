@@ -12,6 +12,44 @@ use Home\Common\FIdConst;
 class PRBillDAO extends PSIBaseExDAO {
 
 	/**
+	 * 生成新的采购退货出库单单号
+	 *
+	 * @return string
+	 */
+	private function genNewBillRef($companyId) {
+		$db = $this->db;
+		
+		$bs = new BizConfigDAO($db);
+		$pre = $bs->getPRBillRefPre($companyId);
+		
+		$mid = date("Ymd");
+		
+		$sql = "select ref from t_pr_bill where ref like '%s' order by ref desc limit 1";
+		$data = $db->query($sql, $pre . $mid . "%");
+		$sufLength = 3;
+		$suf = str_pad("1", $sufLength, "0", STR_PAD_LEFT);
+		if ($data) {
+			$ref = $data[0]["ref"];
+			$nextNumber = intval(substr($ref, strlen($pre . $mid))) + 1;
+			$suf = str_pad($nextNumber, $sufLength, "0", STR_PAD_LEFT);
+		}
+		
+		return $pre . $mid . $suf;
+	}
+
+	/**
+	 * 新建采购退货出库单
+	 *
+	 * @param array $bill        	
+	 */
+	public function addPRBill(& $bill) {
+		$db = $this->db;
+		
+		// 操作成功
+		return null;
+	}
+
+	/**
 	 * 选择可以退货的采购入库单
 	 */
 	public function selectPWBillList($params) {
