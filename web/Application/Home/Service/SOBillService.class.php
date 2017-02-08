@@ -231,35 +231,16 @@ class SOBillService extends PSIBaseExService {
 		
 		$db->startTrans();
 		
-		$sql = "select ref, bill_status from t_so_bill where id = '%s' ";
-		$data = $db->query($sql, $id);
-		if (! $data) {
+		$dao = new SOBillDAO($db);
+		$rc = $dao->deleteSOBill($params);
+		if ($rc) {
 			$db->rollback();
-			return $this->bad("要删除的销售订单不存在");
-		}
-		$ref = $data[0]["ref"];
-		$billStatus = $data[0]["bill_status"];
-		if ($billStatus > 0) {
-			$db->rollback();
-			return $this->bad("销售订单(单号：{$ref})已经审核，不能被删除");
+			return $rc;
 		}
 		
-		$sql = "delete from t_so_bill_detail where sobill_id = '%s' ";
-		$rc = $db->execute($sql, $id);
-		if ($rc === false) {
-			$db->rollback();
-			return $this->sqlError(__LINE__);
-		}
-		
-		$sql = "delete from t_so_bill where id = '%s' ";
-		$rc = $db->execute($sql, $id);
-		if ($rc === false) {
-			$db->rollback();
-			return $this->sqlError(__LINE__);
-		}
-		
+		$ref = $params["ref"];
 		$log = "删除销售订单，单号：{$ref}";
-		$bs = new BizlogService();
+		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		
 		$db->commit();

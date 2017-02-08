@@ -507,4 +507,43 @@ class SOBillDAO extends PSIBaseExDAO {
 		
 		return null;
 	}
+
+	/**
+	 * 删除销售订单
+	 *
+	 * @param array $params        	
+	 * @return null|array
+	 */
+	public function deleteSOBill(& $params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		
+		$bill = $this->getSOBillById($id);
+		
+		if (! $bill) {
+			return $this->bad("要删除的销售订单不存在");
+		}
+		$ref = $bill["ref"];
+		$billStatus = $bill["billStatus"];
+		if ($billStatus > 0) {
+			return $this->bad("销售订单(单号：{$ref})已经审核，不能被删除");
+		}
+		
+		$sql = "delete from t_so_bill_detail where sobill_id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		$sql = "delete from t_so_bill where id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		$params["ref"] = $ref;
+		
+		return null;
+	}
 }
