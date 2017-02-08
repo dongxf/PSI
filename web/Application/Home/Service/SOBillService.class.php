@@ -158,220 +158,48 @@ class SOBillService extends PSIBaseExService {
 		
 		$db->startTrans();
 		
+		$dao = new SOBillDAO($db);
+		
 		$id = $bill["id"];
-		$dealDate = $bill["dealDate"];
-		if (! $this->dateIsValid($dealDate)) {
-			$db->rollback();
-			return $this->bad("交货日期不正确");
-		}
-		
-		$customerId = $bill["customerId"];
-		$cs = new CustomerService();
-		if (! $cs->customerExists($customerId, $db)) {
-			$db->rollback();
-			return $this->bad("客户不存在");
-		}
-		$orgId = $bill["orgId"];
-		$us = new UserService();
-		if (! $us->orgExists($orgId, $db)) {
-			$db->rollback();
-			return $this->bad("组织机构不存在");
-		}
-		$bizUserId = $bill["bizUserId"];
-		if (! $us->userExists($bizUserId, $db)) {
-			$db->rollback();
-			return $this->bad("业务员不存在");
-		}
-		$receivingType = $bill["receivingType"];
-		$contact = $bill["contact"];
-		$tel = $bill["tel"];
-		$fax = $bill["fax"];
-		$dealAddress = $bill["dealAddress"];
-		$billMemo = $bill["billMemo"];
-		
-		$items = $bill["items"];
-		
-		$idGen = new IdGenService();
-		
-		$companyId = $us->getCompanyId();
-		if (! $companyId) {
-			$db->rollback();
-			return $this->bad("所属公司不存在");
-		}
 		
 		$log = null;
+		
 		if ($id) {
 			// 编辑
-			$sql = "select ref, data_org, bill_status, company_id from t_so_bill where id = '%s' ";
-			$data = $db->query($sql, $id);
-			if (! $data) {
+			
+			$bill["loginUserId"] = $this->getLoginUserId();
+			
+			$rc = $dao->updateSOBill($bill);
+			if ($rc) {
 				$db->rollback();
-				return $this->bad("要编辑的销售订单不存在");
-			}
-			$ref = $data[0]["ref"];
-			$dataOrg = $data[0]["data_org"];
-			$companyId = $data[0]["company_id"];
-			$billStatus = $data[0]["bill_status"];
-			if ($billStatus != 0) {
-				$db->rollback();
-				return $this->bad("当前销售订单已经审核，不能再编辑");
+				return $rc;
 			}
 			
-			$sql = "delete from t_so_bill_detail where sobill_id = '%s' ";
-			$rc = $db->execute($sql, $id);
-			if ($rc === false) {
-				$db->rollback();
-				return $this->sqlError(__LINE__);
-			}
-			
-			foreach ( $items as $i => $v ) {
-				$goodsId = $v["goodsId"];
-				if (! $goodsId) {
-					continue;
-				}
-				$goodsCount = $v["goodsCount"];
-				$goodsPrice = $v["goodsPrice"];
-				$goodsMoney = $v["goodsMoney"];
-				$taxRate = $v["taxRate"];
-				$tax = $v["tax"];
-				$moneyWithTax = $v["moneyWithTax"];
-				
-				$sql = "insert into t_so_bill_detail(id, date_created, goods_id, goods_count, goods_money,
-							goods_price, sobill_id, tax_rate, tax, money_with_tax, ws_count, left_count, 
-							show_order, data_org, company_id)
-						values ('%s', now(), '%s', %d, %f,
-							%f, '%s', %d, %f, %f, 0, %d, %d, '%s', '%s')";
-				$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsMoney, 
-						$goodsPrice, $id, $taxRate, $tax, $moneyWithTax, $goodsCount, $i, $dataOrg, 
-						$companyId);
-				if ($rc === false) {
-					$db->rollback();
-					return $this->sqlError(__LINE__);
-				}
-			}
-			
-			// 同步主表的金额合计字段
-			$sql = "select sum(goods_money) as sum_goods_money, sum(tax) as sum_tax, 
-							sum(money_with_tax) as sum_money_with_tax
-						from t_so_bill_detail
-						where sobill_id = '%s' ";
-			$data = $db->query($sql, $id);
-			$sumGoodsMoney = $data[0]["sum_goods_money"];
-			if (! $sumGoodsMoney) {
-				$sumGoodsMoney = 0;
-			}
-			$sumTax = $data[0]["sum_tax"];
-			if (! $sumTax) {
-				$sumTax = 0;
-			}
-			$sumMoneyWithTax = $data[0]["sum_money_with_tax"];
-			if (! $sumMoneyWithTax) {
-				$sumMoneyWithTax = 0;
-			}
-			
-			$sql = "update t_so_bill
-					set goods_money = %f, tax = %f, money_with_tax = %f,
-						deal_date = '%s', customer_id = '%s',
-						deal_address = '%s', contact = '%s', tel = '%s', fax = '%s',
-						org_id = '%s', biz_user_id = '%s', receiving_type = %d,
-						bill_memo = '%s', input_user_id = '%s', date_created = now()
-					where id = '%s' ";
-			$rc = $db->execute($sql, $sumGoodsMoney, $sumTax, $sumMoneyWithTax, $dealDate, 
-					$customerId, $dealAddress, $contact, $tel, $fax, $orgId, $bizUserId, 
-					$receivingType, $billMemo, $us->getLoginUserId(), $id);
-			if ($rc === false) {
-				$db->rollback();
-				return $this->sqlError(__LINE__);
-			}
+			$ref = $bill["ref"];
 			
 			$log = "编辑销售订单，单号：{$ref}";
 		} else {
 			// 新建销售订单
 			
-			$id = $idGen->newId();
-			$ref = $this->genNewBillRef();
+			$bill["loginUserId"] = $this->getLoginUserId();
+			$bill["dataOrg"] = $this->getLoginUserDataOrg();
+			$bill["companyId"] = $this->getCompanyId();
 			
-			$us = new UserService();
-			$dataOrg = $us->getLoginUserDataOrg();
-			
-			// 主表
-			$sql = "insert into t_so_bill(id, ref, bill_status, deal_date, biz_dt, org_id, biz_user_id,
-							goods_money, tax, money_with_tax, input_user_id, customer_id, contact, tel, fax,
-							deal_address, bill_memo, receiving_type, date_created, data_org, company_id)
-						values ('%s', '%s', 0, '%s', '%s', '%s', '%s', 
-							0, 0, 0, '%s', '%s', '%s', '%s', '%s', 
-							'%s', '%s', %d, now(), '%s', '%s')";
-			$rc = $db->execute($sql, $id, $ref, $dealDate, $dealDate, $orgId, $bizUserId, 
-					$us->getLoginUserId(), $customerId, $contact, $tel, $fax, $dealAddress, 
-					$billMemo, $receivingType, $dataOrg, $companyId);
-			if ($rc === false) {
+			$rc = $dao->addSOBill($bill);
+			if ($rc) {
 				$db->rollback();
-				return $this->sqlError(__LINE__);
+				return $rc;
 			}
 			
-			// 明细记录
-			foreach ( $items as $i => $v ) {
-				$goodsId = $v["goodsId"];
-				if (! $goodsId) {
-					continue;
-				}
-				$goodsCount = $v["goodsCount"];
-				$goodsPrice = $v["goodsPrice"];
-				$goodsMoney = $v["goodsMoney"];
-				$taxRate = $v["taxRate"];
-				$tax = $v["tax"];
-				$moneyWithTax = $v["moneyWithTax"];
-				
-				$sql = "insert into t_so_bill_detail(id, date_created, goods_id, goods_count, goods_money,
-								goods_price, sobill_id, tax_rate, tax, money_with_tax, ws_count, left_count, 
-								show_order, data_org, company_id)
-							values ('%s', now(), '%s', %d, %f,
-								%f, '%s', %d, %f, %f, 0, %d, %d, '%s', '%s')";
-				$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsMoney, 
-						$goodsPrice, $id, $taxRate, $tax, $moneyWithTax, $goodsCount, $i, $dataOrg, 
-						$companyId);
-				if ($rc === false) {
-					$db->rollback();
-					return $this->sqlError(__LINE__);
-				}
-			}
-			
-			// 同步主表的金额合计字段
-			$sql = "select sum(goods_money) as sum_goods_money, sum(tax) as sum_tax, 
-							sum(money_with_tax) as sum_money_with_tax
-						from t_so_bill_detail
-						where sobill_id = '%s' ";
-			$data = $db->query($sql, $id);
-			$sumGoodsMoney = $data[0]["sum_goods_money"];
-			if (! $sumGoodsMoney) {
-				$sumGoodsMoney = 0;
-			}
-			$sumTax = $data[0]["sum_tax"];
-			if (! $sumTax) {
-				$sumTax = 0;
-			}
-			$sumMoneyWithTax = $data[0]["sum_money_with_tax"];
-			if (! $sumMoneyWithTax) {
-				$sumMoneyWithTax = 0;
-			}
-			
-			$sql = "update t_so_bill
-						set goods_money = %f, tax = %f, money_with_tax = %f
-						where id = '%s' ";
-			$rc = $db->execute($sql, $sumGoodsMoney, $sumTax, $sumMoneyWithTax, $id);
-			if ($rc === false) {
-				$db->rollback();
-				return $this->sqlError(__LINE__);
-			}
+			$id = $bill["id"];
+			$ref = $bill["ref"];
 			
 			$log = "新建销售订单，单号：{$ref}";
 		}
 		
 		// 记录业务日志
-		if ($log) {
-			$bs = new BizlogService();
-			$bs->insertBizlog($log, $this->LOG_CATEGORY);
-		}
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		
 		$db->commit();
 		
