@@ -2,7 +2,6 @@
 
 namespace Home\Service;
 
-use Home\Common\FIdConst;
 use Home\DAO\SOBillDAO;
 
 /**
@@ -12,28 +11,6 @@ use Home\DAO\SOBillDAO;
  */
 class SOBillService extends PSIBaseExService {
 	private $LOG_CATEGORY = "销售订单";
-
-	/**
-	 * 生成新的销售订单号
-	 */
-	private function genNewBillRef() {
-		$bs = new BizConfigService();
-		$pre = $bs->getSOBillRefPre();
-		
-		$mid = date("Ymd");
-		
-		$sql = "select ref from t_so_bill where ref like '%s' order by ref desc limit 1";
-		$data = M()->query($sql, $pre . $mid . "%");
-		$sufLength = 3;
-		$suf = str_pad("1", $sufLength, "0", STR_PAD_LEFT);
-		if ($data) {
-			$ref = $data[0]["ref"];
-			$nextNumber = intval(substr($ref, strlen($pre . $mid))) + 1;
-			$suf = str_pad($nextNumber, $sufLength, "0", STR_PAD_LEFT);
-		}
-		
-		return $pre . $mid . $suf;
-	}
 
 	/**
 	 * 获得销售订单主表信息列表
