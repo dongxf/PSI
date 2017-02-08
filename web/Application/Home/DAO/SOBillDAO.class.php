@@ -13,6 +13,9 @@ class SOBillDAO extends PSIBaseExDAO {
 
 	/**
 	 * 获得销售订单主表信息列表
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function sobillList($params) {
 		$db = $this->db;
@@ -154,5 +157,42 @@ class SOBillDAO extends PSIBaseExDAO {
 				"dataList" => $result,
 				"totalCount" => $cnt
 		);
+	}
+
+	/**
+	 * 获得某个销售订单的明细信息
+	 *
+	 * @param array $params        	
+	 * @return array
+	 */
+	public function soBillDetailList($params) {
+		$db = $this->db;
+		
+		// id:销售订单id
+		$id = $params["id"];
+		
+		$sql = "select s.id, g.code, g.name, g.spec, s.goods_count, s.goods_price, s.goods_money,
+					s.tax_rate, s.tax, s.money_with_tax, u.name as unit_name
+				from t_so_bill_detail s, t_goods g, t_goods_unit u
+				where s.sobill_id = '%s' and s.goods_id = g.id and g.unit_id = u.id
+				order by s.show_order";
+		$result = array();
+		$data = $db->query($sql, $id);
+		
+		foreach ( $data as $i => $v ) {
+			$result[$i]["id"] = $v["id"];
+			$result[$i]["goodsCode"] = $v["code"];
+			$result[$i]["goodsName"] = $v["name"];
+			$result[$i]["goodsSpec"] = $v["spec"];
+			$result[$i]["goodsCount"] = $v["goods_count"];
+			$result[$i]["goodsPrice"] = $v["goods_price"];
+			$result[$i]["goodsMoney"] = $v["goods_money"];
+			$result[$i]["taxRate"] = $v["tax_rate"];
+			$result[$i]["tax"] = $v["tax"];
+			$result[$i]["moneyWithTax"] = $v["money_with_tax"];
+			$result[$i]["unitName"] = $v["unit_name"];
+		}
+		
+		return $result;
 	}
 }

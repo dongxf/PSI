@@ -386,32 +386,8 @@ class SOBillService extends PSIBaseExService {
 			return $this->emptyResult();
 		}
 		
-		$id = $params["id"];
-		$db = M();
-		
-		$sql = "select s.id, g.code, g.name, g.spec, s.goods_count, s.goods_price, s.goods_money,
-					s.tax_rate, s.tax, s.money_with_tax, u.name as unit_name
-				from t_so_bill_detail s, t_goods g, t_goods_unit u
-				where s.sobill_id = '%s' and s.goods_id = g.id and g.unit_id = u.id
-				order by s.show_order";
-		$result = array();
-		$data = $db->query($sql, $id);
-		
-		foreach ( $data as $i => $v ) {
-			$result[$i]["id"] = $v["id"];
-			$result[$i]["goodsCode"] = $v["code"];
-			$result[$i]["goodsName"] = $v["name"];
-			$result[$i]["goodsSpec"] = $v["spec"];
-			$result[$i]["goodsCount"] = $v["goods_count"];
-			$result[$i]["goodsPrice"] = $v["goods_price"];
-			$result[$i]["goodsMoney"] = $v["goods_money"];
-			$result[$i]["taxRate"] = $v["tax_rate"];
-			$result[$i]["tax"] = $v["tax"];
-			$result[$i]["moneyWithTax"] = $v["money_with_tax"];
-			$result[$i]["unitName"] = $v["unit_name"];
-		}
-		
-		return $result;
+		$dao = new SOBillDAO();
+		return $dao->soBillDetailList($params);
 	}
 
 	/**
