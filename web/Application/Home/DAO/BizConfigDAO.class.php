@@ -742,4 +742,30 @@ class BizConfigDAO extends PSIBaseDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 获得销售订单默认收款方式
+	 *
+	 * @param string $companyId        	
+	 * @return int
+	 */
+	public function getSOBillDefaultReceving($companyId) {
+		$db = $this->db;
+		
+		$result = "0";
+		
+		$id = "2002-04";
+		$sql = "select value from t_config
+				where id = '%s' and company_id = '%s' ";
+		$data = $db->query($sql, $id, $companyId);
+		if ($data) {
+			$result = $data[0]["value"];
+			
+			if ($result == null || $result == "") {
+				$result = "0";
+			}
+		}
+		
+		return $result;
+	}
 }

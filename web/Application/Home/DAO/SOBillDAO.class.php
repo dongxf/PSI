@@ -546,4 +546,189 @@ class SOBillDAO extends PSIBaseExDAO {
 		
 		return null;
 	}
+
+	/**
+	 * 获得销售订单的信息
+	 *
+	 * @param array $params        	
+	 * @return array
+	 */
+	public function soBillInfo($params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		
+		$companyId = $params["companyId"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->emptyResult();
+		}
+		
+		$result = array();
+		
+		$cs = new BizConfigDAO($db);
+		$result["taxRate"] = $cs->getTaxRate(array(
+				"companyId" => $companyId
+		));
+		
+		if ($id) {
+			// 编辑销售订单
+			$sql = "select s.ref, s.deal_date, s.deal_address, s.customer_id,
+						c.name as customer_name, s.contact, s.tel, s.fax,
+						s.org_id, o.full_name, s.biz_user_id, u.name as biz_user_name,
+						s.receiving_type, s.bill_memo, s.bill_status
+					from t_so_bill s, t_customer c, t_user u, t_org o
+					where s.id = '%s' and s.customer_Id = c.id
+						and s.biz_user_id = u.id
+						and s.org_id = o.id";
+			$data = $db->query($sql, $id);
+			if ($data) {
+				$v = $data[0];
+				$result["ref"] = $v["ref"];
+				$result["dealDate"] = $this->toYMD($v["deal_date"]);
+				$result["dealAddress"] = $v["deal_address"];
+				$result["customerId"] = $v["customer_id"];
+				$result["customerName"] = $v["customer_name"];
+				$result["contact"] = $v["contact"];
+				$result["tel"] = $v["tel"];
+				$result["fax"] = $v["fax"];
+				$result["orgId"] = $v["org_id"];
+				$result["orgFullName"] = $v["full_name"];
+				$result["bizUserId"] = $v["biz_user_id"];
+				$result["bizUserName"] = $v["biz_user_name"];
+				$result["receivingType"] = $v["receiving_type"];
+				$result["billMemo"] = $v["bill_memo"];
+				$result["billStatus"] = $v["bill_status"];
+				
+				// 明细表
+				$sql = "select s.id, s.goods_id, g.code, g.name, g.spec, s.goods_count, s.goods_price, s.goods_money,
+					s.tax_rate, s.tax, s.money_with_tax, u.name as unit_name
+				from t_so_bill_detail s, t_goods g, t_goods_unit u
+				where s.sobill_id = '%s' and s.goods_id = g.id and g.unit_id = u.id
+				order by s.show_order";
+				$items = array();
+				$data = $db->query($sql, $id);
+				
+				foreach ( $data as $i => $v ) {
+					$items[$i]["goodsId"] = $v["goods_id"];
+					$items[$i]["goodsCode"] = $v["code"];
+					$items[$i]["goodsName"] = $v["name"];
+					$items[$i]["goodsSpec"] = $v["spec"];
+					$items[$i]["goodsCount"] = $v["goods_count"];
+					$items[$i]["goodsPrice"] = $v["goods_price"];
+					$items[$i]["goodsMoney"] = $v["goods_money"];
+					$items[$i]["taxRate"] = $v["tax_rate"];
+					$items[$i]["tax"] = $v["tax"];
+					$items[$i]["moneyWithTax"] = $v["money_with_tax"];
+					$items[$i]["unitName"] = $v["unit_name"];
+				}
+				
+				$result["items"] = $items;
+			}
+		} else {
+			// 新建销售订单
+			$loginUserId = $params["loginUserId"];
+			$result["bizUserId"] = $loginUserId;
+			$result["bizUserName"] = $params["loginUserName"];
+			
+			$sql = "select o.id, o.full_name
+					from t_org o, t_user u
+					where o.id = u.org_id and u.id = '%s' ";
+			$data = $db->query($sql, $loginUserId);
+			if ($data) {
+				$result["orgId"] = $data[0]["id"];
+				$result["orgFullName"] = $data[0]["full_name"];
+			}
+			
+			// 默认收款方式
+			$bc = new BizConfigDAO($db);
+			$result["receivingType"] = $bc->getSOBillDefaultReceving($companyId);
+		}
+		
+		return $result;
+	}
+
+	/**
+	 * 审核销售订单
+	 *
+	 * @param array $params        	
+	 * @return null|array
+	 */
+	public function commitSOBill(& $params) {
+		$db = $this->db;
+		
+		$loginUserId = $params["loginUserId"];
+		if ($this->loginUserIdNotExists($loginUserId)) {
+			return $this->badParam("loginUserId");
+		}
+		
+		$id = $params["id"];
+		
+		$bill = $this->getSOBillById($id);
+		
+		if (! $bill) {
+			return $this->bad("要审核的销售订单不存在");
+		}
+		$ref = $bill["ref"];
+		$billStatus = $bill["billStatus"];
+		if ($billStatus > 0) {
+			return $this->bad("销售订单(单号：$ref)已经被审核，不能再次审核");
+		}
+		
+		$sql = "update t_so_bill
+				set bill_status = 1000,
+					confirm_user_id = '%s',
+					confirm_date = now()
+				where id = '%s' ";
+		$rc = $db->execute($sql, $loginUserId, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		$params["ref"] = $ref;
+		
+		return null;
+	}
+
+	/**
+	 * 取消销售订单审核
+	 */
+	public function cancelConfirmSOBill(& $params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		
+		$bill = $this->getSOBillById($id);
+		
+		if (! $bill) {
+			return $this->bad("要取消审核的销售订单不存在");
+		}
+		$ref = $bill["ref"];
+		$billStatus = $bill["billStatus"];
+		if ($billStatus == 0) {
+			return $this->bad("销售订单(单号:{$ref})还没有审核，无需取消审核操作");
+		}
+		if ($billStatus > 1000) {
+			return $this->bad("销售订单(单号:{$ref})不能取消审核");
+		}
+		
+		$sql = "select count(*) as cnt from t_so_ws where so_id = '%s' ";
+		$data = $db->query($sql, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("销售订单(单号:{$ref})已经生成了销售出库单，不能取消审核");
+		}
+		
+		$sql = "update t_so_bill
+				set bill_status = 0, confirm_user_id = null, confirm_date = null
+				where id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		$params["ref"] = $ref;
+		
+		// 操作成功
+		return null;
+	}
 }

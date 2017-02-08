@@ -49,4 +49,8 @@ class PSIBaseExService extends PSIBaseService {
 		$us = $this->us();
 		return $us->getCompanyId();
 	}
+
+	protected function db() {
+		return M();
+	}
 }
