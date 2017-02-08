@@ -195,4 +195,16 @@ class SOBillDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 新建销售订单
+	 *
+	 * @param array $bill        	
+	 * @return null|array
+	 */
+	public function addSOBill(& $bill) {
+		$db = $this->db;
+		
+		return null;
+	}
 }
