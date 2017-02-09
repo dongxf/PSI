@@ -194,4 +194,17 @@ class WSBillDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 新建销售出库单
+	 * 
+	 * @param array $bill        	
+	 * @return NULL|array
+	 */
+	public function addWSBill(& $bill) {
+		$db = $this->db;
+		
+		// 操作成功
+		return null;
+	}
 }
