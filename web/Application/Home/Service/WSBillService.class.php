@@ -241,30 +241,6 @@ class WSBillService extends PSIBaseExService {
 	}
 
 	/**
-	 * 生成新的销售出库单单号
-	 *
-	 * @return string
-	 */
-	private function genNewBillRef() {
-		$bs = new BizConfigService();
-		$pre = $bs->getWSBillRefPre();
-		
-		$mid = date("Ymd");
-		
-		$sql = "select ref from t_ws_bill where ref like '%s' order by ref desc limit 1";
-		$data = M()->query($sql, $pre . $mid . "%");
-		$sufLength = 3;
-		$suf = str_pad("1", $sufLength, "0", STR_PAD_LEFT);
-		if ($data) {
-			$ref = $data[0]["ref"];
-			$nextNumber = intval(substr($ref, strlen($pre . $mid))) + 1;
-			$suf = str_pad($nextNumber, $sufLength, "0", STR_PAD_LEFT);
-		}
-		
-		return $pre . $mid . $suf;
-	}
-
-	/**
 	 * 获得销售出库单主表列表
 	 */
 	public function wsbillList($params) {
