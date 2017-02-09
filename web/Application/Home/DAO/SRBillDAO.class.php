@@ -698,4 +698,74 @@ class SRBillDAO extends PSIBaseExDAO {
 		// 操作成功
 		return null;
 	}
+
+	/**
+	 * 获得退货入库单单据数据
+	 */
+	public function srBillInfo($params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		
+		if (! $id) {
+			// 新增单据
+			$result["bizUserId"] = $params["loginUserId"];
+			$result["bizUserName"] = $params["loginUserName"];
+			return $result;
+		} else {
+			// 编辑单据
+			$result = array();
+			$sql = "select w.id, w.ref, w.bill_status, w.bizdt, c.id as customer_id, c.name as customer_name,
+					 u.id as biz_user_id, u.name as biz_user_name,
+					 h.id as warehouse_id, h.name as warehouse_name, wsBill.ref as ws_bill_ref,
+						w.payment_type
+					 from t_sr_bill w, t_customer c, t_user u, t_warehouse h, t_ws_bill wsBill
+					 where w.customer_id = c.id and w.biz_user_id = u.id
+					 and w.warehouse_id = h.id
+					 and w.id = '%s' and wsBill.id = w.ws_bill_id";
+			$data = $db->query($sql, $id);
+			if ($data) {
+				$result["ref"] = $data[0]["ref"];
+				$result["billStatus"] = $data[0]["bill_status"];
+				$result["bizDT"] = date("Y-m-d", strtotime($data[0]["bizdt"]));
+				$result["customerId"] = $data[0]["customer_id"];
+				$result["customerName"] = $data[0]["customer_name"];
+				$result["warehouseId"] = $data[0]["warehouse_id"];
+				$result["warehouseName"] = $data[0]["warehouse_name"];
+				$result["bizUserId"] = $data[0]["biz_user_id"];
+				$result["bizUserName"] = $data[0]["biz_user_name"];
+				$result["wsBillRef"] = $data[0]["ws_bill_ref"];
+				$result["paymentType"] = $data[0]["payment_type"];
+			}
+			
+			$sql = "select d.id, g.id as goods_id, g.code, g.name, g.spec, u.name as unit_name, d.goods_count,
+					d.goods_price, d.goods_money,
+					d.rejection_goods_count, d.rejection_goods_price, d.rejection_sale_money,
+					d.wsbilldetail_id, d.sn_note
+					 from t_sr_bill_detail d, t_goods g, t_goods_unit u
+					 where d.srbill_id = '%s' and d.goods_id = g.id and g.unit_id = u.id
+					 order by d.show_order";
+			$data = $db->query($sql, $id);
+			$items = array();
+			foreach ( $data as $i => $v ) {
+				$items[$i]["id"] = $v["wsbilldetail_id"];
+				$items[$i]["goodsId"] = $v["goods_id"];
+				$items[$i]["goodsCode"] = $v["code"];
+				$items[$i]["goodsName"] = $v["name"];
+				$items[$i]["goodsSpec"] = $v["spec"];
+				$items[$i]["unitName"] = $v["unit_name"];
+				$items[$i]["goodsCount"] = $v["goods_count"];
+				$items[$i]["goodsPrice"] = $v["goods_price"];
+				$items[$i]["goodsMoney"] = $v["goods_money"];
+				$items[$i]["rejCount"] = $v["rejection_goods_count"];
+				$items[$i]["rejPrice"] = $v["rejection_goods_price"];
+				$items[$i]["rejMoney"] = $v["rejection_sale_money"];
+				$items[$i]["sn"] = $v["sn_note"];
+			}
+			
+			$result["items"] = $items;
+			
+			return $result;
+		}
+	}
 }
