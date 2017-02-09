@@ -814,4 +814,27 @@ class BizConfigDAO extends PSIBaseDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 获得销售退货入库单单号前缀
+	 */
+	public function getSRBillRefPre($companyId) {
+		$result = "SR";
+		
+		$db = $this->db;
+		
+		$id = "9003-05";
+		$sql = "select value from t_config
+				where id = '%s' and company_id = '%s' ";
+		$data = $db->query($sql, $id, $companyId);
+		if ($data) {
+			$result = $data[0]["value"];
+			
+			if ($result == null || $result == "") {
+				$result = "SR";
+			}
+		}
+		
+		return $result;
+	}
 }
