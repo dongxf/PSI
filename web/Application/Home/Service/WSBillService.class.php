@@ -184,204 +184,46 @@ class WSBillService extends PSIBaseExService {
 		}
 		
 		$id = $bill["id"];
-		$bizDT = $bill["bizDT"];
-		$warehouseId = $bill["warehouseId"];
-		$customerId = $bill["customerId"];
-		$bizUserId = $bill["bizUserId"];
-		$receivingType = $bill["receivingType"];
-		$billMemo = $bill["billMemo"];
-		$items = $bill["items"];
 		
 		$sobillRef = $bill["sobillRef"];
 		
-		$db = M();
+		$db = $this->db();
 		$db->startTrans();
 		
-		// 检查客户
-		$sql = "select count(*) as cnt from t_customer where id = '%s' ";
-		$data = $db->query($sql, $customerId);
-		$cnt = $data[0]["cnt"];
-		if ($cnt != 1) {
-			$db->rollback();
-			return $this->bad("选择的客户不存在，无法保存数据");
-		}
-		
-		// 检查仓库
-		$sql = "select count(*) as cnt from t_warehouse where id = '%s' ";
-		$data = $db->query($sql, $warehouseId);
-		$cnt = $data[0]["cnt"];
-		if ($cnt != 1) {
-			$db->rollback();
-			return $this->bad("选择的仓库不存在，无法保存数据");
-		}
-		
-		// 检查业务员
-		$sql = "select count(*) as cnt from t_user where id = '%s' ";
-		$data = $db->query($sql, $bizUserId);
-		$cnt = $data[0]["cnt"];
-		if ($cnt != 1) {
-			$db->rollback();
-			return $this->bad("选择的业务员不存在，无法保存数据");
-		}
-		
-		// 检查业务日期
-		if (! $this->dateIsValid($bizDT)) {
-			$db->rollback();
-			return $this->bad("业务日期不正确");
-		}
-		
-		$idGen = new IdGenService();
+		$dao = new WSBillDAO($db);
 		
 		$log = null;
 		
 		if ($id) {
 			// 编辑
-			$sql = "select ref, bill_status, data_org, company_id from t_ws_bill where id = '%s' ";
-			$data = $db->query($sql, $id);
-			if (! $data) {
-				$db->rollback();
-				return $this->bad("要编辑的销售出库单不存在");
-			}
-			$ref = $data[0]["ref"];
-			$billStatus = $data[0]["bill_status"];
-			if ($billStatus != 0) {
-				$db->rollback();
-				return $this->bad("销售出库单[单号：{$ref}]已经提交出库了，不能再编辑");
-			}
-			$dataOrg = $data[0]["data_org"];
-			$companyId = $data[0]["company_id"];
 			
-			$sql = "delete from t_ws_bill_detail where wsbill_id = '%s' ";
-			$rc = $db->execute($sql, $id);
-			if ($rc === false) {
+			$bill["loginUserId"] = $this->getLoginUserId();
+			
+			$rc = $dao->updateWSBill($bill);
+			if ($rc) {
 				$db->rollback();
-				return $this->sqlError(__LINE__);
+				return $rc;
 			}
 			
-			$sql = "insert into t_ws_bill_detail (id, date_created, goods_id, 
-						goods_count, goods_price, goods_money,
-						show_order, wsbill_id, sn_note, data_org, memo, company_id) 
-						values ('%s', now(), '%s', %d, %f, %f, %d, '%s', '%s', '%s', '%s', '%s')";
-			foreach ( $items as $i => $v ) {
-				$goodsId = $v["goodsId"];
-				if ($goodsId) {
-					$goodsCount = intval($v["goodsCount"]);
-					$goodsPrice = floatval($v["goodsPrice"]);
-					$goodsMoney = floatval($v["goodsMoney"]);
-					
-					$sn = $v["sn"];
-					$memo = $v["memo"];
-					
-					$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsPrice, 
-							$goodsMoney, $i, $id, $sn, $dataOrg, $memo, $companyId);
-					if ($rc === false) {
-						$db->rollback();
-						return $this->sqlError(__LINE__);
-					}
-				}
-			}
-			$sql = "select sum(goods_money) as sum_goods_money from t_ws_bill_detail where wsbill_id = '%s' ";
-			$data = $db->query($sql, $id);
-			$sumGoodsMoney = $data[0]["sum_goods_money"];
-			if (! $sumGoodsMoney) {
-				$sumGoodsMoney = 0;
-			}
-			
-			$sql = "update t_ws_bill 
-						set sale_money = %f, customer_id = '%s', warehouse_id = '%s', 
-						biz_user_id = '%s', bizdt = '%s', receiving_type = %d,
-						memo = '%s'
-						where id = '%s' ";
-			$rc = $db->execute($sql, $sumGoodsMoney, $customerId, $warehouseId, $bizUserId, $bizDT, 
-					$receivingType, $billMemo, $id);
-			if ($rc === false) {
-				$db->rollback();
-				return $this->sqlError(__LINE__);
-			}
-			
+			$ref = $bill["ref"];
 			$log = "编辑销售出库单，单号 = {$ref}";
 		} else {
-			$us = new UserService();
-			$dataOrg = $us->getLoginUserDataOrg();
-			$companyId = $us->getCompanyId();
+			// 新建销售出库单
 			
-			// 新增
-			$id = $idGen->newId();
-			$ref = $this->genNewBillRef();
-			$sql = "insert into t_ws_bill(id, bill_status, bizdt, biz_user_id, customer_id,  date_created,
-						input_user_id, ref, warehouse_id, receiving_type, data_org, company_id, memo) 
-					values ('%s', 0, '%s', '%s', '%s', now(), '%s', '%s', '%s', %d, '%s', '%s', '%s')";
+			$bill["dataOrg"] = $this->getLoginUserDataOrg();
+			$bill["companyId"] = $this->getCompanyId();
+			$bill["loginUserId"] = $this->getLoginUserId();
 			
-			$rc = $db->execute($sql, $id, $bizDT, $bizUserId, $customerId, $us->getLoginUserId(), 
-					$ref, $warehouseId, $receivingType, $dataOrg, $companyId, $billMemo);
-			if ($rc === false) {
+			$rc = $dao->addWSBill($bill);
+			if ($rc) {
 				$db->rollback();
-				return $this->sqlError(__LINE__);
+				return $rc;
 			}
 			
-			$sql = "insert into t_ws_bill_detail (id, date_created, goods_id, 
-						goods_count, goods_price, goods_money,
-						show_order, wsbill_id, sn_note, data_org, memo, company_id) 
-						values ('%s', now(), '%s', %d, %f, %f, %d, '%s', '%s', '%s', '%s', '%s')";
-			foreach ( $items as $i => $v ) {
-				$goodsId = $v["goodsId"];
-				if ($goodsId) {
-					$goodsCount = intval($v["goodsCount"]);
-					$goodsPrice = floatval($v["goodsPrice"]);
-					$goodsMoney = floatval($v["goodsMoney"]);
-					
-					$sn = $v["sn"];
-					$memo = $v["memo"];
-					
-					$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsPrice, 
-							$goodsMoney, $i, $id, $sn, $dataOrg, $memo, $companyId);
-					if ($rc === false) {
-						$db->rollback();
-						return $this->sqlError(__LINE__);
-					}
-				}
-			}
-			$sql = "select sum(goods_money) as sum_goods_money from t_ws_bill_detail where wsbill_id = '%s' ";
-			$data = $db->query($sql, $id);
-			$sumGoodsMoney = $data[0]["sum_goods_money"];
-			if (! $sumGoodsMoney) {
-				$sumGoodsMoney = 0;
-			}
-			
-			$sql = "update t_ws_bill set sale_money = %f where id = '%s' ";
-			$rc = $db->execute($sql, $sumGoodsMoney, $id);
-			if ($rc === false) {
-				$db->rollback();
-				return $this->sqlError(__LINE__);
-			}
-			
+			$id = $bill["id"];
+			$ref = $bill["ref"];
 			if ($sobillRef) {
 				// 从销售订单生成销售出库单
-				$sql = "select id, company_id from t_so_bill where ref = '%s' ";
-				$data = $db->query($sql, $sobillRef);
-				if (! $data) {
-					$db->rollback();
-					return $this->sqlError(__LINE__);
-				}
-				$sobillId = $data[0]["id"];
-				$companyId = $data[0]["company_id"];
-				
-				$sql = "update t_ws_bill
-							set company_id = '%s'
-							where id = '%s' ";
-				$rc = $db->execute($sql, $companyId, $id);
-				if ($rc === false) {
-					$db->rollback();
-					return $this->sqlError(__LINE__);
-				}
-				
-				$sql = "insert into t_so_ws(so_id, ws_id) values('%s', '%s')";
-				$rc = $db->execute($sql, $sobillId, $id);
-				if (! $rc) {
-					$db->rollback();
-					return $this->sqlError(__LINE__);
-				}
-				
 				$log = "从销售订单(单号：{$sobillRef})生成销售出库单: 单号 = {$ref}";
 			} else {
 				// 手工新建销售出库单
@@ -390,10 +232,8 @@ class WSBillService extends PSIBaseExService {
 		}
 		
 		// 记录业务日志
-		if ($log) {
-			$bs = new BizlogService();
-			$bs->insertBizlog($log, $this->LOG_CATEGORY);
-		}
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		
 		$db->commit();
 		

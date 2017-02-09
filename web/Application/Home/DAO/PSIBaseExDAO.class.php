@@ -8,6 +8,10 @@ namespace Home\DAO;
  * @author 李静波
  */
 class PSIBaseExDAO extends PSIBaseDAO {
+	/**
+	 *
+	 * @var \Think\Model $db
+	 */
 	protected $db;
 
 	function __construct($db) {

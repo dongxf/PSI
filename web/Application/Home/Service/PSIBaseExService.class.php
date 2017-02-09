@@ -50,6 +50,11 @@ class PSIBaseExService extends PSIBaseService {
 		return $us->getCompanyId();
 	}
 
+	/**
+	 * 数据库操作类
+	 * 
+	 * @return \Think\Model
+	 */
 	protected function db() {
 		return M();
 	}

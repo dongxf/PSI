@@ -768,4 +768,27 @@ class BizConfigDAO extends PSIBaseDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 获得销售出库单单号前缀
+	 */
+	public function getWSBillRefPre($companyId) {
+		$result = "WS";
+		
+		$db = $this->db;
+		
+		$id = "9003-04";
+		$sql = "select value from t_config
+				where id = '%s' and company_id = '%s' ";
+		$data = $db->query($sql, $id, $companyId);
+		if ($data) {
+			$result = $data[0]["value"];
+			
+			if ($result == null || $result == "") {
+				$result = "WS";
+			}
+		}
+		
+		return $result;
+	}
 }
