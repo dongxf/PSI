@@ -30,30 +30,6 @@ class WSBillService extends PSIBaseExService {
 	}
 
 	/**
-	 * 判断是否可以编辑商品销售单价
-	 *
-	 * @return boolean true:可以编辑销售单价
-	 */
-	private function canEditGoodsPrice() {
-		// 首先判断业务设置中是否允许销售出库编辑销售单价（全局控制）
-		$db = M();
-		$sql = "select value from t_config where id = '2002-01' ";
-		$data = $db->query($sql);
-		if (! $data) {
-			return false;
-		}
-		
-		$v = intval($data[0]["value"]);
-		if ($v == 0) {
-			return false;
-		}
-		
-		$us = new UserService();
-		// 在业务设置中启用编辑的前提下，还需要判断对应的权限（具体的用户）
-		return $us->hasPermission("2002-01");
-	}
-
-	/**
 	 * 新增或编辑销售出库单
 	 */
 	public function editWSBill($params) {
