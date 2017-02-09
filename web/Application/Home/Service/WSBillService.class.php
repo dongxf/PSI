@@ -727,7 +727,7 @@ class WSBillService extends PSIBaseExService {
 		
 		$dao = new WSBillDAO($this->db());
 		
-		$bill = $dao->pdf($params);
+		$bill = $dao->getDataForPDF($params);
 		if (! $bill) {
 			return;
 		}

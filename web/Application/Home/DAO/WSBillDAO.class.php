@@ -700,7 +700,7 @@ class WSBillDAO extends PSIBaseExDAO {
 	/**
 	 * 销售出库单生成pdf文件
 	 */
-	public function pdf($params) {
+	public function getDataForPDF($params) {
 		$ref = $params["ref"];
 		
 		$db = $this->db;
