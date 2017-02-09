@@ -10,7 +10,7 @@ use Home\Service\BizlogService;
  *
  * @author 李静波
  */
-class WarehouseService extends PSIBaseService {
+class WarehouseService extends PSIBaseExService {
 	private $LOG_CATEGORY = "基础数据-仓库";
 
 	/**
@@ -21,12 +21,11 @@ class WarehouseService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		$us = new UserService();
 		$params = array(
-				"loginUserId" => $us->getLoginUserId()
+				"loginUserId" => $this->getLoginUserId()
 		);
 		
-		$dao = new WarehouseDAO();
+		$dao = new WarehouseDAO($this->db());
 		
 		return $dao->warehouseList($params);
 	}
@@ -47,7 +46,7 @@ class WarehouseService extends PSIBaseService {
 		$py = $ps->toPY($name);
 		$params["py"] = $py;
 		
-		$db = M();
+		$db = $this->db();
 		
 		$db->startTrans();
 		
@@ -68,9 +67,8 @@ class WarehouseService extends PSIBaseService {
 		} else {
 			// 新增仓库
 			
-			$us = new UserService();
-			$params["dataOrg"] = $us->getLoginUserDataOrg();
-			$params["companyId"] = $us->getCompanyId();
+			$params["dataOrg"] = $this->getLoginUserDataOrg();
+			$params["companyId"] = $this->getCompanyId();
 			
 			$rc = $dao->addWarehouse($params);
 			if ($rc) {
@@ -102,7 +100,7 @@ class WarehouseService extends PSIBaseService {
 		
 		$id = $params["id"];
 		
-		$db = M();
+		$db = $this->db();
 		$db->startTrans();
 		
 		$dao = new WarehouseDAO($db);
@@ -127,13 +125,12 @@ class WarehouseService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		$us = new UserService();
 		$params = array(
-				"loginUserId" => $us->getLoginUserId(),
+				"loginUserId" => $this->getLoginUserId(),
 				"queryKey" => $queryKey
 		);
 		
-		$dao = new WarehouseDAO();
+		$dao = new WarehouseDAO($this->db());
 		return $dao->queryData($params);
 	}
 
@@ -145,7 +142,7 @@ class WarehouseService extends PSIBaseService {
 			return $this->notOnlineError();
 		}
 		
-		$db = M();
+		$db = $this->db();
 		$db->startTrans();
 		
 		$dao = new WarehouseDAO($db);
