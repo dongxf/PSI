@@ -768,4 +768,41 @@ class SRBillDAO extends PSIBaseExDAO {
 			return $result;
 		}
 	}
+
+	/**
+	 * 删除销售退货入库单
+	 */
+	public function deleteSRBill(& $params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		
+		$bill = $this->getSRBillById($id);
+		if (! $bill) {
+			return $this->bad("要删除的销售退货入库单不存在");
+		}
+		
+		$billStatus = $bill["billStatus"];
+		$ref = $bill["ref"];
+		if ($billStatus != 0) {
+			return $this->bad("销售退货入库单[单号: {$ref}]已经提交，不能删除");
+		}
+		
+		$sql = "delete from t_sr_bill_detail where srbill_id = '%s'";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		$sql = "delete from t_sr_bill where id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		$params["ref"] = $ref;
+		
+		// 操作成功
+		return null;
+	}
 }

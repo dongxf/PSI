@@ -154,38 +154,18 @@ class SRBillService extends PSIBaseExService {
 		
 		$id = $params["id"];
 		
-		$db = M();
+		$db = $this->db();
 		$db->startTrans();
 		
-		$sql = "select bill_status, ref from t_sr_bill where id = '%s' ";
-		$data = $db->query($sql, $id);
-		if (! $data) {
+		$dao = new SRBillDAO($db);
+		$rc = $dao->deleteSRBill($params);
+		if ($rc) {
 			$db->rollback();
-			return $this->bad("要删除的销售退货入库单不存在");
+			return $rc;
 		}
 		
-		$billStatus = $data[0]["bill_status"];
-		$ref = $data[0]["ref"];
-		if ($billStatus != 0) {
-			$db->rollback();
-			return $this->bad("销售退货入库单[单号: {$ref}]已经提交，不能删除");
-		}
-		
-		$sql = "delete from t_sr_bill_detail where srbill_id = '%s'";
-		$rc = $db->execute($sql, $id);
-		if ($rc === false) {
-			$db->rollback();
-			return $this->sqlError(__LINE__);
-		}
-		
-		$sql = "delete from t_sr_bill where id = '%s' ";
-		$rc = $db->execute($sql, $id);
-		if ($rc === false) {
-			$db->rollback();
-			return $this->sqlError(__LINE__);
-		}
-		
-		$bs = new BizlogService();
+		$ref = $params["ref"];
+		$bs = new BizlogService($db);
 		$log = "删除销售退货入库单，单号：{$ref}";
 		$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		
