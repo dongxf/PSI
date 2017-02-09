@@ -753,6 +753,10 @@ class WSBillService extends PSIBaseExService {
 		$pdf->SetFont("stsongstdlight", "", 10);
 		$pdf->AddPage();
 		
+		/**
+		 * 注意：
+		 * TCPDF中，用来拼接HTML的字符串需要用单引号，否则HTML中元素的属性就不会被解析
+		 */
 		$html = '
 				<table>
 					<tr><td colspan="2">单号：' . $ref . '</td></tr>
