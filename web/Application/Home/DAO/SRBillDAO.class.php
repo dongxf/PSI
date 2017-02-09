@@ -412,13 +412,290 @@ class SRBillDAO extends PSIBaseExDAO {
 
 	/**
 	 * 新建销售退货入库单
-	 * 
+	 *
 	 * @param array $bill        	
 	 * @return NULL|array
 	 */
 	public function addSRBill(& $bill) {
 		$db = $this->db;
 		
+		$bizDT = $bill["bizDT"];
+		$customerId = $bill["customerId"];
+		$warehouseId = $bill["warehouseId"];
+		$bizUserId = $bill["bizUserId"];
+		$items = $bill["items"];
+		$wsBillId = $bill["wsBillId"];
+		$paymentType = $bill["paymentType"];
+		
+		$wsBillDAO = new WSBillDAO($db);
+		$wsBill = $wsBillDAO->getWSBillById($wsBillId);
+		if (! $wsBill) {
+			return $this->bad("选择的销售出库单不存在");
+		}
+		
+		$customerDAO = new CustomerDAO($db);
+		$customer = $customerDAO->getCustomerById($customerId);
+		if (! $customer) {
+			return $this->bad("选择的客户不存在");
+		}
+		
+		$warehouseDAO = new WarehouseDAO($db);
+		$warehouse = $warehouseDAO->getWarehouseById($warehouseId);
+		if (! $warehouse) {
+			return $this->bad("选择的仓库不存在");
+		}
+		
+		$userDAO = new UserDAO($db);
+		$user = $userDAO->getUserById($bizUserId);
+		if (! $user) {
+			return $this->bad("选择的业务员不存在");
+		}
+		
+		// 检查业务日期
+		if (! $this->dateIsValid($bizDT)) {
+			return $this->bad("业务日期不正确");
+		}
+		
+		$dataOrg = $bill["dataOrg"];
+		$companyId = $bill["companyId"];
+		$loginUserId = $bill["loginUserId"];
+		if ($this->dataOrgNotExists($dataOrg)) {
+			return $this->badParam("dataOrg");
+		}
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->badParam("companyId");
+		}
+		if ($this->loginUserIdNotExists($loginUserId)) {
+			return $this->badParam("loginUserId");
+		}
+		
+		$id = $this->newId();
+		$ref = $this->genNewBillRef($companyId);
+		$sql = "insert into t_sr_bill(id, bill_status, bizdt, biz_user_id, customer_id,
+					date_created, input_user_id, ref, warehouse_id, ws_bill_id, payment_type,
+					data_org, company_id)
+				values ('%s', 0, '%s', '%s', '%s',
+					  now(), '%s', '%s', '%s', '%s', %d, '%s', '%s')";
+		
+		$rc = $db->execute($sql, $id, $bizDT, $bizUserId, $customerId, $loginUserId, $ref, 
+				$warehouseId, $wsBillId, $paymentType, $dataOrg, $companyId);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		foreach ( $items as $i => $v ) {
+			$wsBillDetailId = $v["id"];
+			$sql = "select inventory_price, goods_count, goods_price, goods_money
+					from t_ws_bill_detail
+					where id = '%s' ";
+			$data = $db->query($sql, $wsBillDetailId);
+			if (! $data) {
+				continue;
+			}
+			$goodsCount = $data[0]["goods_count"];
+			$goodsPrice = $data[0]["goods_price"];
+			$goodsMoney = $data[0]["goods_money"];
+			$inventoryPrice = $data[0]["inventory_price"];
+			$rejCount = $v["rejCount"];
+			$rejPrice = $v["rejPrice"];
+			if ($rejCount == null) {
+				$rejCount = 0;
+			}
+			$rejSaleMoney = $rejCount * $rejPrice;
+			$inventoryMoney = $rejCount * $inventoryPrice;
+			$goodsId = $v["goodsId"];
+			$sn = $v["sn"];
+			
+			$sql = "insert into t_sr_bill_detail(id, date_created, goods_id, goods_count, goods_money,
+					goods_price, inventory_money, inventory_price, rejection_goods_count,
+					rejection_goods_price, rejection_sale_money, show_order, srbill_id, wsbilldetail_id,
+						sn_note, data_org, company_id)
+					values('%s', now(), '%s', %d, %f, %f, %f, %f, %d,
+					%f, %f, %d, '%s', '%s', '%s', '%s', '%s') ";
+			$rc = $db->execute($sql, $this->newId(), $goodsId, $goodsCount, $goodsMoney, 
+					$goodsPrice, $inventoryMoney, $inventoryPrice, $rejCount, $rejPrice, 
+					$rejSaleMoney, $i, $id, $wsBillDetailId, $sn, $dataOrg, $companyId);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+		}
+		
+		// 更新主表的汇总信息
+		$sql = "select sum(rejection_sale_money) as rej_money,
+				sum(inventory_money) as inv_money
+				from t_sr_bill_detail
+				where srbill_id = '%s' ";
+		$data = $db->query($sql, $id);
+		$rejMoney = $data[0]["rej_money"];
+		$invMoney = $data[0]["inv_money"];
+		$profit = $invMoney - $rejMoney;
+		$sql = "update t_sr_bill
+				set rejection_sale_money = %f, inventory_money = %f, profit = %f
+				where id = '%s' ";
+		$rc = $db->execute($sql, $rejMoney, $invMoney, $profit, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		$bill["id"] = $id;
+		$bill["ref"] = $ref;
+		
+		// 操作成功
+		return null;
+	}
+
+	public function getSRBillById($id) {
+		$db = $this->db;
+		$sql = "select bill_status, ref, data_org, company_id from t_sr_bill where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if (! $data) {
+			return null;
+		} else {
+			return array(
+					"ref" => $data[0]["ref"],
+					"billStatus" => $data[0]["bill_status"],
+					"dataOrg" => $data[0]["data_org"],
+					"companyId" => $data[0]["company_id"]
+			);
+		}
+	}
+
+	/**
+	 * 编辑销售退货入库单
+	 *
+	 * @param array $bill        	
+	 * @return NULL|array
+	 */
+	public function updateSRBill(& $bill) {
+		$db = $this->db;
+		
+		$id = $bill["id"];
+		
+		$oldBill = $this->getSRBillById($id);
+		if (! $oldBill) {
+			return $this->bad("要编辑的销售退货入库单不存在");
+		}
+		$billStatus = $oldBill["billStatus"];
+		if ($billStatus != 0) {
+			return $this->bad("销售退货入库单已经提交，不能再编辑");
+		}
+		$ref = $oldBill["ref"];
+		$dataOrg = $oldBill["dataOrg"];
+		$companyId = $oldBill["companyId"];
+		
+		$bizDT = $bill["bizDT"];
+		$customerId = $bill["customerId"];
+		$warehouseId = $bill["warehouseId"];
+		$bizUserId = $bill["bizUserId"];
+		$items = $bill["items"];
+		$paymentType = $bill["paymentType"];
+		
+		$customerDAO = new CustomerDAO($db);
+		$customer = $customerDAO->getCustomerById($customerId);
+		if (! $customer) {
+			return $this->bad("选择的客户不存在");
+		}
+		
+		$warehouseDAO = new WarehouseDAO($db);
+		$warehouse = $warehouseDAO->getWarehouseById($warehouseId);
+		if (! $warehouse) {
+			return $this->bad("选择的仓库不存在");
+		}
+		
+		$userDAO = new UserDAO($db);
+		$user = $userDAO->getUserById($bizUserId);
+		if (! $user) {
+			return $this->bad("选择的业务员不存在");
+		}
+		
+		// 检查业务日期
+		if (! $this->dateIsValid($bizDT)) {
+			return $this->bad("业务日期不正确");
+		}
+		
+		$loginUserId = $bill["loginUserId"];
+		if ($this->loginUserIdNotExists($loginUserId)) {
+			return $this->badParam("loginUserId");
+		}
+		
+		// 主表
+		$sql = "update t_sr_bill
+				set bizdt = '%s', biz_user_id = '%s', date_created = now(),
+				   input_user_id = '%s', warehouse_id = '%s',
+					payment_type = %d
+				where id = '%s' ";
+		$db->execute($sql, $bizDT, $bizUserId, $loginUserId, $warehouseId, $paymentType, $id);
+		
+		// 退货明细
+		$sql = "delete from t_sr_bill_detail where srbill_id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		foreach ( $items as $i => $v ) {
+			$wsBillDetailId = $v["id"];
+			$sql = "select inventory_price, goods_count, goods_price, goods_money
+					from t_ws_bill_detail
+					where id = '%s' ";
+			$data = $db->query($sql, $wsBillDetailId);
+			if (! $data) {
+				continue;
+			}
+			$goodsCount = $data[0]["goods_count"];
+			$goodsPrice = $data[0]["goods_price"];
+			$goodsMoney = $data[0]["goods_money"];
+			$inventoryPrice = $data[0]["inventory_price"];
+			$rejCount = $v["rejCount"];
+			$rejPrice = $v["rejPrice"];
+			if ($rejCount == null) {
+				$rejCount = 0;
+			}
+			$rejSaleMoney = $v["rejMoney"];
+			$inventoryMoney = $rejCount * $inventoryPrice;
+			$goodsId = $v["goodsId"];
+			$sn = $v["sn"];
+			
+			$sql = "insert into t_sr_bill_detail(id, date_created, goods_id, goods_count, goods_money,
+					goods_price, inventory_money, inventory_price, rejection_goods_count,
+					rejection_goods_price, rejection_sale_money, show_order, srbill_id, wsbilldetail_id,
+						sn_note, data_org, company_id)
+					values('%s', now(), '%s', %d, %f, %f, %f, %f, %d,
+						%f, %f, %d, '%s', '%s', '%s', '%s', '%s') ";
+			$rc = $db->execute($sql, $this->newId(), $goodsId, $goodsCount, $goodsMoney, 
+					$goodsPrice, $inventoryMoney, $inventoryPrice, $rejCount, $rejPrice, 
+					$rejSaleMoney, $i, $id, $wsBillDetailId, $sn, $dataOrg, $companyId);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+		}
+		
+		// 更新主表的汇总信息
+		$sql = "select sum(rejection_sale_money) as rej_money,
+				sum(inventory_money) as inv_money
+				from t_sr_bill_detail
+				where srbill_id = '%s' ";
+		$data = $db->query($sql, $id);
+		$rejMoney = $data[0]["rej_money"];
+		if (! $rejMoney) {
+			$rejMoney = 0;
+		}
+		$invMoney = $data[0]["inv_money"];
+		if (! $invMoney) {
+			$invMoney = 0;
+		}
+		$profit = $invMoney - $rejMoney;
+		$sql = "update t_sr_bill
+				set rejection_sale_money = %f, inventory_money = %f, profit = %f
+				where id = '%s' ";
+		$rc = $db->execute($sql, $rejMoney, $invMoney, $profit, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		$bill["ref"] = $ref;
+		
+		// 操作成功
 		return null;
 	}
 }
