@@ -652,4 +652,48 @@ class WSBillDAO extends PSIBaseExDAO {
 			return $result;
 		}
 	}
+
+	/**
+	 * 删除销售出库单
+	 */
+	public function deleteWSBill(& $params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		
+		$bill = $this->getWSBillById($id);
+		
+		if (! $bill) {
+			return $this->bad("要删除的销售出库单不存在");
+		}
+		$ref = $bill["ref"];
+		$billStatus = $bill["billStatus"];
+		if ($billStatus != 0) {
+			return $this->bad("销售出库单已经提交出库，不能删除");
+		}
+		
+		$sql = "delete from t_ws_bill_detail where wsbill_id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		$sql = "delete from t_ws_bill where id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 删除从销售订单生成的记录
+		$sql = "delete from t_so_ws where ws_id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		$params["ref"] = $ref;
+		
+		// 操作成功
+		return null;
+	}
 }

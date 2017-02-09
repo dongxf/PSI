@@ -135,46 +135,19 @@ class WSBillService extends PSIBaseExService {
 		}
 		
 		$id = $params["id"];
-		$db = M();
+		$db = $this->db();
 		$db->startTrans();
 		
-		$sql = "select ref, bill_status from t_ws_bill where id = '%s' ";
-		$data = $db->query($sql, $id);
-		if (! $data) {
+		$dao = new WSBillDAO($db);
+		$rc = $dao->deleteWSBill($params);
+		if ($rc) {
 			$db->rollback();
-			return $this->bad("要删除的销售出库单不存在");
-		}
-		$ref = $data[0]["ref"];
-		$billStatus = $data[0]["bill_status"];
-		if ($billStatus != 0) {
-			$db->rollback();
-			return $this->bad("销售出库单已经提交出库，不能删除");
+			return $rc;
 		}
 		
-		$sql = "delete from t_ws_bill_detail where wsbill_id = '%s' ";
-		$rc = $db->execute($sql, $id);
-		if ($rc === false) {
-			$db->rollback();
-			return $this->sqlError(__LINE__);
-		}
-		
-		$sql = "delete from t_ws_bill where id = '%s' ";
-		$rc = $db->execute($sql, $id);
-		if ($rc === false) {
-			$db->rollback();
-			return $this->sqlError(__LINE__);
-		}
-		
-		// 删除从销售订单生成的记录
-		$sql = "delete from t_so_ws where ws_id = '%s' ";
-		$rc = $db->execute($sql, $id);
-		if ($rc === false) {
-			$db->rollback();
-			return $this->sqlError(__LINE__);
-		}
-		
+		$ref = $params["ref"];
 		$log = "删除销售出库单，单号: {$ref}";
-		$bs = new BizlogService();
+		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		
 		$db->commit();
