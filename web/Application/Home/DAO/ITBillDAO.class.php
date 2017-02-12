@@ -147,4 +147,33 @@ class ITBillDAO extends PSIBaseExDAO {
 				"totalCount" => $cnt
 		);
 	}
+
+	/**
+	 * 调拨单的明细记录
+	 */
+	public function itBillDetailList($params) {
+		$db = $this->db;
+		
+		// id: 调拨单id
+		$id = $params["id"];
+		
+		$result = array();
+		
+		$sql = "select t.id, g.code, g.name, g.spec, u.name as unit_name, t.goods_count
+				from t_it_bill_detail t, t_goods g, t_goods_unit u
+				where t.itbill_id = '%s' and t.goods_id = g.id and g.unit_id = u.id
+				order by t.show_order ";
+		
+		$data = $db->query($sql, $id);
+		foreach ( $data as $i => $v ) {
+			$result[$i]["id"] = $v["id"];
+			$result[$i]["goodsCode"] = $v["code"];
+			$result[$i]["goodsName"] = $v["name"];
+			$result[$i]["goodsSpec"] = $v["spec"];
+			$result[$i]["unitName"] = $v["unit_name"];
+			$result[$i]["goodsCount"] = $v["goods_count"];
+		}
+		
+		return $result;
+	}
 }
