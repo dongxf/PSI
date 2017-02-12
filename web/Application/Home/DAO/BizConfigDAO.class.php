@@ -837,4 +837,27 @@ class BizConfigDAO extends PSIBaseDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 获得调拨单单号前缀
+	 */
+	public function getITBillRefPre($companyId) {
+		$result = "IT";
+		
+		$db = $this->db;
+		
+		$id = "9003-06";
+		$sql = "select value from t_config
+				where id = '%s' and company_id = '%s' ";
+		$data = $db->query($sql, $id, $companyId);
+		if ($data) {
+			$result = $data[0]["value"];
+			
+			if ($result == null || $result == "") {
+				$result = "IT";
+			}
+		}
+		
+		return $result;
+	}
 }

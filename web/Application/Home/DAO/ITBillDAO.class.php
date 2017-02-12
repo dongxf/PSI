@@ -12,6 +12,32 @@ use Home\Common\FIdConst;
 class ITBillDAO extends PSIBaseExDAO {
 
 	/**
+	 * 生成新的调拨单单号
+	 *
+	 * @return string
+	 */
+	private function genNewBillRef($companyId) {
+		$db = $this->db;
+		
+		$bs = new BizConfigDAO($db);
+		$pre = $bs->getITBillRefPre($companyId);
+		
+		$mid = date("Ymd");
+		
+		$sql = "select ref from t_it_bill where ref like '%s' order by ref desc limit 1";
+		$data = $db->query($sql, $pre . $mid . "%");
+		$sufLength = 3;
+		$suf = str_pad("1", $sufLength, "0", STR_PAD_LEFT);
+		if ($data) {
+			$ref = $data[0]["ref"];
+			$nextNumber = intval(substr($ref, strlen($pre . $mid))) + 1;
+			$suf = str_pad($nextNumber, $sufLength, "0", STR_PAD_LEFT);
+		}
+		
+		return $pre . $mid . $suf;
+	}
+
+	/**
 	 * 调拨单主表列表信息
 	 */
 	public function itbillList($params) {
@@ -175,5 +201,18 @@ class ITBillDAO extends PSIBaseExDAO {
 		}
 		
 		return $result;
+	}
+
+	/**
+	 * 新建调拨单
+	 *
+	 * @param array $bill        	
+	 * @return NULL|array
+	 */
+	public function addITBill(& $bill) {
+		$db = $this->db;
+		
+		// 操作成功
+		return null;
 	}
 }
