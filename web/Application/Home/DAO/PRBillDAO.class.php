@@ -108,8 +108,8 @@ class PRBillDAO extends PSIBaseExDAO {
 		// 明细表
 		$sql = "insert into t_pr_bill_detail(id, date_created, goods_id, goods_count, goods_price,
 				goods_money, rejection_goods_count, rejection_goods_price, rejection_money, show_order,
-				prbill_id, pwbilldetail_id, data_org, company_id)
-				values ('%s', now(), '%s', %d, %f, %f, %d, %f, %f, %d, '%s', '%s', '%s', '%s')";
+				prbill_id, pwbilldetail_id, data_org, company_id, inventory_price, inventory_money)
+				values ('%s', now(), '%s', %d, %f, %f, %d, %f, %f, %d, '%s', '%s', '%s', '%s', 0, 0)";
 		foreach ( $items as $i => $v ) {
 			$pwbillDetailId = $v["id"];
 			$goodsId = $v["goodsId"];
@@ -237,8 +237,8 @@ class PRBillDAO extends PSIBaseExDAO {
 		
 		$sql = "insert into t_pr_bill_detail(id, date_created, goods_id, goods_count, goods_price,
 				goods_money, rejection_goods_count, rejection_goods_price, rejection_money, show_order,
-				prbill_id, pwbilldetail_id, data_org, company_id)
-				values ('%s', now(), '%s', %d, %f, %f, %d, %f, %f, %d, '%s', '%s', '%s', '%s')";
+				prbill_id, pwbilldetail_id, data_org, company_id, inventory_price, inventory_money)
+				values ('%s', now(), '%s', %d, %f, %f, %d, %f, %f, %d, '%s', '%s', '%s', '%s', 0, 0)";
 		foreach ( $items as $i => $v ) {
 			$pwbillDetailId = $v["id"];
 			$goodsId = $v["goodsId"];
