@@ -9,16 +9,7 @@ use Home\Common\DemoConst;
  *
  * @author 李静波
  */
-class DataOrgDAO extends PSIBaseDAO {
-	var $db;
-
-	function __construct($db = null) {
-		if ($db == null) {
-			$db = M();
-		}
-		
-		$this->db = $db;
-	}
+class DataOrgDAO extends PSIBaseExDAO {
 
 	private function getLoginUserDataOrg($loginUserId) {
 		$db = $this->db;
