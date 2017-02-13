@@ -7,16 +7,7 @@ namespace Home\DAO;
  *
  * @author 李静波
  */
-class IdGenDAO extends PSIBaseDAO {
-	var $db;
-
-	function __construct($db = null) {
-		if ($db == null) {
-			$db = M();
-		}
-		
-		$this->db = $db;
-	}
+class IdGenDAO extends PSIBaseExDAO {
 
 	/**
 	 * 创建一个新的UUID
