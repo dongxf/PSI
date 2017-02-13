@@ -10,15 +10,6 @@ use Home\Common\FIdConst;
  * @author 李静波
  */
 class GoodsCategoryDAO extends PSIBaseExDAO {
-	var $db;
-
-	function __construct($db = null) {
-		if ($db == null) {
-			$db = M();
-		}
-		
-		$this->db = $db;
-	}
 
 	private function allCategoriesInternal($db, $parentId, $rs, $params) {
 		$code = $params["code"];
