@@ -10,16 +10,7 @@ use Home\Service\BizlogService;
  *
  * @author 李静波
  */
-class BizConfigDAO extends PSIBaseDAO {
-	var $db;
-
-	function __construct($db = null) {
-		if ($db == null) {
-			$db = M();
-		}
-		
-		$this->db = $db;
-	}
+class BizConfigDAO extends PSIBaseExDAO {
 
 	private function getDefaultConfig() {
 		return array(
