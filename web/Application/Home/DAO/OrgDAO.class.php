@@ -463,6 +463,9 @@ class OrgDAO extends PSIBaseExDAO {
 		$db = $this->db;
 		
 		$loginUserId = $params["loginUserId"];
+		if ($this->loginUserIdNotExists($loginUserId)) {
+			return $this->emptyResult();
+		}
 		
 		$sql = "select id, full_name
 				from t_org ";
