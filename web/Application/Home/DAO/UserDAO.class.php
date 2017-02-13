@@ -10,16 +10,7 @@ use Home\Common\DemoConst;
  *
  * @author 李静波
  */
-class UserDAO extends PSIBaseDAO {
-	var $db;
-
-	function __construct($db = null) {
-		if ($db == null) {
-			$db = M();
-		}
-		
-		$this->db = $db;
-	}
+class UserDAO extends PSIBaseExDAO {
 
 	/**
 	 * 判断某个用户是否被禁用

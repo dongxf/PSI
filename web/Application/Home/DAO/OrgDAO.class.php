@@ -9,16 +9,7 @@ use Home\Common\FIdConst;
  *
  * @author 李静波
  */
-class OrgDAO extends PSIBaseDAO {
-	var $db;
-
-	function __construct($db = null) {
-		if ($db == null) {
-			$db = M();
-		}
-		
-		$this->db = $db;
-	}
+class OrgDAO extends PSIBaseExDAO {
 
 	/**
 	 * 做类似这种增长 '0101' => '0102'，组织机构的数据域+1
