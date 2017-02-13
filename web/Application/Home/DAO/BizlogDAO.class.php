@@ -9,16 +9,7 @@ use Home\Common\FIdConst;
  *
  * @author 李静波
  */
-class BizlogDAO extends PSIBaseDAO {
-	var $db;
-
-	function __construct($db = null) {
-		if ($db == null) {
-			$db = M();
-		}
-		
-		$this->db = $db;
-	}
+class BizlogDAO extends PSIBaseExDAO {
 
 	/**
 	 * 返回日志列表
