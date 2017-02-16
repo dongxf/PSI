@@ -12,6 +12,11 @@ use Home\Service\BizlogService;
  */
 class BizConfigDAO extends PSIBaseExDAO {
 
+	/**
+	 * 默认配置
+	 *
+	 * @return array
+	 */
 	private function getDefaultConfig() {
 		return array(
 				array(
@@ -239,6 +244,9 @@ class BizConfigDAO extends PSIBaseExDAO {
 
 	/**
 	 * 返回所有的配置项
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function allConfigs($params) {
 		$db = $this->db;
@@ -285,6 +293,9 @@ class BizConfigDAO extends PSIBaseExDAO {
 
 	/**
 	 * 返回所有的配置项，附带着附加数据集
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function allConfigsWithExtData($params) {
 		$db = $this->db;
@@ -335,6 +346,9 @@ class BizConfigDAO extends PSIBaseExDAO {
 
 	/**
 	 * 保存配置项
+	 * 
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function edit($params) {
 		$db = $this->db;
