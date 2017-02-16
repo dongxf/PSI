@@ -14,6 +14,8 @@ class ITBillDAO extends PSIBaseExDAO {
 	/**
 	 * 生成新的调拨单单号
 	 *
+	 * @param string $companyId        	
+	 *
 	 * @return string
 	 */
 	private function genNewBillRef($companyId) {
@@ -39,6 +41,9 @@ class ITBillDAO extends PSIBaseExDAO {
 
 	/**
 	 * 调拨单主表列表信息
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function itbillList($params) {
 		$db = $this->db;
@@ -176,6 +181,9 @@ class ITBillDAO extends PSIBaseExDAO {
 
 	/**
 	 * 调拨单的明细记录
+	 * 
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function itBillDetailList($params) {
 		$db = $this->db;
