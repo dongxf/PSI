@@ -549,12 +549,17 @@ class POBillDAO extends PSIBaseExDAO {
 	public function poBillInfo($params) {
 		$db = $this->db;
 		
+		$companyId = $params["companyId"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->emptyResult();
+		}
+		
 		$id = $params["id"];
 		
 		$result = array();
 		
 		$bcDAO = new BizConfigDAO($db);
-		$result["taxRate"] = $bcDAO->getTaxRate($params);
+		$result["taxRate"] = $bcDAO->getTaxRate($companyId);
 		
 		if ($id) {
 			// 编辑采购订单

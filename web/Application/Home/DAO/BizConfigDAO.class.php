@@ -346,7 +346,7 @@ class BizConfigDAO extends PSIBaseExDAO {
 
 	/**
 	 * 保存配置项
-	 * 
+	 *
 	 * @param array $params        	
 	 * @return NULL|array
 	 */
@@ -529,10 +529,12 @@ class BizConfigDAO extends PSIBaseExDAO {
 
 	/**
 	 * 获得增值税税率
+	 *
+	 * @param string $companyId        	
+	 * @return int
 	 */
-	public function getTaxRate($params) {
+	public function getTaxRate($companyId) {
 		$db = $this->db;
-		$companyId = $params["companyId"];
 		
 		$sql = "select value from t_config
 				where id = '9001-01' and company_id = '%s' ";

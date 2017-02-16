@@ -73,12 +73,9 @@ class BizConfigService extends PSIBaseService {
 	 */
 	public function getTaxRate() {
 		$us = new UserService();
-		$params = array(
-				"companyId" => $us->getCompanyId()
-		);
 		
 		$dao = new BizConfigDAO();
-		return $dao->getTaxRate($params);
+		return $dao->getTaxRate($us->getCompanyId());
 	}
 
 	/**

@@ -566,9 +566,7 @@ class SOBillDAO extends PSIBaseExDAO {
 		$result = array();
 		
 		$cs = new BizConfigDAO($db);
-		$result["taxRate"] = $cs->getTaxRate(array(
-				"companyId" => $companyId
-		));
+		$result["taxRate"] = $cs->getTaxRate($companyId);
 		
 		if ($id) {
 			// 编辑销售订单
