@@ -131,4 +131,33 @@ class ICBillDAO extends PSIBaseExDAO {
 				"totalCount" => $cnt
 		);
 	}
+
+	/**
+	 * 盘点单明细记录
+	 */
+	public function icBillDetailList($params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		
+		$result = array();
+		
+		$sql = "select t.id, g.code, g.name, g.spec, u.name as unit_name, t.goods_count, t.goods_money
+				from t_ic_bill_detail t, t_goods g, t_goods_unit u
+				where t.icbill_id = '%s' and t.goods_id = g.id and g.unit_id = u.id
+				order by t.show_order ";
+		
+		$data = $db->query($sql, $id);
+		foreach ( $data as $i => $v ) {
+			$result[$i]["id"] = $v["id"];
+			$result[$i]["goodsCode"] = $v["code"];
+			$result[$i]["goodsName"] = $v["name"];
+			$result[$i]["goodsSpec"] = $v["spec"];
+			$result[$i]["unitName"] = $v["unit_name"];
+			$result[$i]["goodsCount"] = $v["goods_count"];
+			$result[$i]["goodsMoney"] = $v["goods_money"];
+		}
+		
+		return $result;
+	}
 }
