@@ -22,6 +22,11 @@ class PSIBaseExDAO extends PSIBaseDAO {
 		$this->db = $db;
 	}
 
+	/**
+	 * 生成全局唯一Id （UUID）
+	 * 
+	 * @return string
+	 */
 	protected function newId() {
 		$idGen = new IdGenDAO($this->db);
 		return $idGen->newId();
