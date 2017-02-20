@@ -867,4 +867,30 @@ class BizConfigDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 获得盘点单单号前缀
+	 * 
+	 * @param string $companyId        	
+	 * @return string
+	 */
+	public function getICBillRefPre($companyId) {
+		$result = "IC";
+		
+		$db = $this->db;
+		
+		$id = "9003-07";
+		$sql = "select value from t_config
+				where id = '%s' and company_id = '%s' ";
+		$data = $db->query($sql, $id, $companyId);
+		if ($data) {
+			$result = $data[0]["value"];
+			
+			if ($result == null || $result == "") {
+				$result = "IC";
+			}
+		}
+		
+		return $result;
+	}
 }
