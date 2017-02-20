@@ -424,4 +424,45 @@ class ITBillDAO extends PSIBaseExDAO {
 		// 操作成功
 		return null;
 	}
+
+	/**
+	 * 删除调拨单
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
+	 */
+	public function deleteITBill(& $params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		
+		$bill = $this->getITBillById($id);
+		if (! $bill) {
+			return $this->bad("要删除的调拨单不存在");
+		}
+		
+		$ref = $bill["ref"];
+		$billStatus = $bill["billStatus"];
+		
+		if ($billStatus != 0) {
+			return $this->bad("调拨单(单号：$ref)已经提交，不能被删除");
+		}
+		
+		$sql = "delete from t_it_bill_detail where itbill_id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		$sql = "delete from t_it_bill where id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		$params["ref"] = $ref;
+		
+		// 操作成功
+		return null;
+	}
 }

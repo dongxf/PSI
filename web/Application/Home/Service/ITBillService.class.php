@@ -202,37 +202,17 @@ class ITBillService extends PSIBaseExService {
 		$db = M();
 		$db->startTrans();
 		
-		$sql = "select ref, bill_status from t_it_bill where id = '%s' ";
-		$data = $db->query($sql, $id);
+		$dao = new ITBillDAO($db);
 		
-		if (! $data) {
+		$rc = $dao->deleteITBill($params);
+		if ($rc) {
 			$db->rollback();
-			return $this->bad("要删除的调拨单不存在");
+			return $rc;
 		}
 		
-		$ref = $data[0]["ref"];
-		$billStatus = $data[0]["bill_status"];
+		$ref = $params["ref"];
 		
-		if ($billStatus != 0) {
-			$db->rollback();
-			return $this->bad("调拨单(单号：$ref)已经提交，不能被删除");
-		}
-		
-		$sql = "delete from t_it_bill_detail where itbill_id = '%s' ";
-		$rc = $db->execute($sql, $id);
-		if ($rc === false) {
-			$db->rollback();
-			return $this->sqlError(__LINE__);
-		}
-		
-		$sql = "delete from t_it_bill where id = '%s' ";
-		$rc = $db->execute($sql, $id);
-		if ($rc === false) {
-			$db->rollback();
-			return $this->sqlError(__LINE__);
-		}
-		
-		$bs = new BizlogService();
+		$bs = new BizlogService($db);
 		$log = "删除调拨单，单号：$ref";
 		$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		
