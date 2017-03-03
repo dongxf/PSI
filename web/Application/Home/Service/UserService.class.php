@@ -62,8 +62,9 @@ class UserService extends PSIBaseService {
 	 * @return boolean true：有对应的权限
 	 */
 	public function hasPermission($fid = null) {
-		$this->initMemcacheAsSessionSaveHandler();
-		
+		// TODO 需要和MoPaaS技术人员进一步咨询
+		// $this->initMemcacheAsSessionSaveHandler();
+		//
 		$result = session("loginUserId") != null;
 		if (! $result) {
 			return false;
