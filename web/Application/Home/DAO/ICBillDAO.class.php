@@ -378,4 +378,63 @@ class ICBillDAO extends PSIBaseExDAO {
 		// 操作成功
 		return null;
 	}
+
+	/**
+	 * 获得某个盘点单的详情
+	 */
+	public function icBillInfo($params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		
+		$result = array();
+		
+		if ($id) {
+			// 编辑
+			$sql = "select t.ref, t.bill_status, t.bizdt, t.biz_user_id, u.name as biz_user_name,
+						w.id as warehouse_id, w.name as warehouse_name
+					from t_ic_bill t, t_user u, t_warehouse w
+					where t.id = '%s' and t.biz_user_id = u.id
+					      and t.warehouse_id = w.id";
+			$data = $db->query($sql, $id);
+			if (! $data) {
+				return $result;
+			}
+			
+			$result["bizUserId"] = $data[0]["biz_user_id"];
+			$result["bizUserName"] = $data[0]["biz_user_name"];
+			$result["ref"] = $data[0]["ref"];
+			$result["billStatus"] = $data[0]["bill_status"];
+			$result["bizDT"] = date("Y-m-d", strtotime($data[0]["bizdt"]));
+			$result["warehouseId"] = $data[0]["warehouse_id"];
+			$result["warehouseName"] = $data[0]["warehouse_name"];
+			
+			$items = array();
+			$sql = "select t.id, g.id as goods_id, g.code, g.name, g.spec, u.name as unit_name,
+						t.goods_count, t.goods_money
+				from t_ic_bill_detail t, t_goods g, t_goods_unit u
+				where t.icbill_id = '%s' and t.goods_id = g.id and g.unit_id = u.id
+				order by t.show_order ";
+			
+			$data = $db->query($sql, $id);
+			foreach ( $data as $i => $v ) {
+				$items[$i]["id"] = $v["id"];
+				$items[$i]["goodsId"] = $v["goods_id"];
+				$items[$i]["goodsCode"] = $v["code"];
+				$items[$i]["goodsName"] = $v["name"];
+				$items[$i]["goodsSpec"] = $v["spec"];
+				$items[$i]["unitName"] = $v["unit_name"];
+				$items[$i]["goodsCount"] = $v["goods_count"];
+				$items[$i]["goodsMoney"] = $v["goods_money"];
+			}
+			
+			$result["items"] = $items;
+		} else {
+			// 新建
+			$result["bizUserId"] = $params["loginUserId"];
+			$result["bizUserName"] = $params["loginUserName"];
+		}
+		
+		return $result;
+	}
 }
