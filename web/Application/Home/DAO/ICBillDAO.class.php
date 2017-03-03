@@ -437,4 +437,43 @@ class ICBillDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 删除盘点单
+	 */
+	public function deleteICBill(& $params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		
+		$bill = $this->getICBillById($id);
+		
+		if (! $bill) {
+			return $this->bad("要删除的盘点单不存在");
+		}
+		
+		$ref = $bill["ref"];
+		$billStatus = $bill["billStatus"];
+		
+		if ($billStatus != 0) {
+			return $this->bad("盘点单(单号：$ref)已经提交，不能被删除");
+		}
+		
+		$sql = "delete from t_ic_bill_detail where icbill_id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		$sql = "delete from t_ic_bill where id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		$params["ref"] = $ref;
+		
+		// 操作成功
+		return null;
+	}
 }

@@ -125,40 +125,19 @@ class ICBillService extends PSIBaseExService {
 		
 		$id = $params["id"];
 		
-		$db = M();
+		$db = $this->db();
 		$db->startTrans();
 		
-		$sql = "select ref, bill_status from t_ic_bill where id = '%s' ";
-		$data = $db->query($sql, $id);
-		
-		if (! $data) {
+		$dao = new ICBillDAO($db);
+		$rc = $dao->deleteICBill($params);
+		if ($rc) {
 			$db->rollback();
-			return $this->bad("要删除的盘点单不存在");
+			return $rc;
 		}
 		
-		$ref = $data[0]["ref"];
-		$billStatus = $data[0]["bill_status"];
+		$bs = new BizlogService($db);
 		
-		if ($billStatus != 0) {
-			$db->rollback();
-			return $this->bad("盘点单(单号：$ref)已经提交，不能被删除");
-		}
-		
-		$sql = "delete from t_ic_bill_detail where icbill_id = '%s' ";
-		$rc = $db->execute($sql, $id);
-		if ($rc === false) {
-			$db->rollback();
-			return $this->sqlError(__LINE__);
-		}
-		
-		$sql = "delete from t_ic_bill where id = '%s' ";
-		$rc = $db->execute($sql, $id);
-		if ($rc === false) {
-			$db->rollback();
-			return $this->sqlError(__LINE__);
-		}
-		
-		$bs = new BizlogService();
+		$ref = $params["ref"];
 		$log = "删除盘点单，单号：$ref";
 		$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		
