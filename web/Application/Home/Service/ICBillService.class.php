@@ -13,30 +13,6 @@ class ICBillService extends PSIBaseExService {
 	private $LOG_CATEGORY = "库存盘点";
 
 	/**
-	 * 生成新的盘点单单号
-	 *
-	 * @return string
-	 */
-	private function genNewBillRef() {
-		$bs = new BizConfigService();
-		$pre = $bs->getICBillRefPre();
-		
-		$mid = date("Ymd");
-		
-		$sql = "select ref from t_ic_bill where ref like '%s' order by ref desc limit 1";
-		$data = M()->query($sql, $pre . $mid . "%");
-		$sufLength = 3;
-		$suf = str_pad("1", $sufLength, "0", STR_PAD_LEFT);
-		if ($data) {
-			$ref = $data[0]["ref"];
-			$nextNumber = intval(substr($ref, strlen($pre . $mid))) + 1;
-			$suf = str_pad($nextNumber, $sufLength, "0", STR_PAD_LEFT);
-		}
-		
-		return $pre . $mid . $suf;
-	}
-
-	/**
 	 * 获得某个盘点单的详情
 	 */
 	public function icBillInfo($params) {
@@ -113,144 +89,47 @@ class ICBillService extends PSIBaseExService {
 			return $this->bad("传入的参数错误，不是正确的JSON格式");
 		}
 		
-		$db = M();
+		$db = $this->db();
 		$db->startTrans();
 		
+		$dao = new ICBillDAO($db);
+		
 		$id = $bill["id"];
-		$bizDT = $bill["bizDT"];
-		$warehouseId = $bill["warehouseId"];
-		$sql = "select name from t_warehouse where id = '%s' ";
-		$data = $db->query($sql, $warehouseId);
-		if (! $data) {
-			$db->rollback();
-			return $this->bad("盘点仓库不存在，无法保存");
-		}
-		
-		$bizUserId = $bill["bizUserId"];
-		$sql = "select name from t_user where id = '%s' ";
-		$data = $db->query($sql, $bizUserId);
-		if (! $data) {
-			$db->rollback();
-			return $this->bad("业务人员不存在，无法保存");
-		}
-		
-		// 检查业务日期
-		if (! $this->dateIsValid($bizDT)) {
-			$db->rollback();
-			return $this->bad("业务日期不正确");
-		}
-		
-		$items = $bill["items"];
-		
-		$idGen = new IdGenService();
-		$us = new UserService();
-		$dataOrg = $us->getLoginUserDataOrg();
 		
 		$log = null;
 		
 		if ($id) {
 			// 编辑单据
-			$sql = "select ref, bill_status, data_org, company_id from t_ic_bill where id = '%s' ";
-			$data = $db->query($sql, $id);
-			if (! $data) {
+			
+			$bill["loginUserId"] = $this->getLoginUserId();
+			$rc = $dao->updateICBill($bill);
+			if ($rc) {
 				$db->rollback();
-				return $this->bad("要编辑的盘点点不存在，无法保存");
+				return $rc;
 			}
 			
-			$ref = $data[0]["ref"];
-			$dataOrg = $data[0]["data_org"];
-			$companyId = $data[0]["company_id"];
-			$billStatus = $data[0]["bill_status"];
-			if ($billStatus != 0) {
-				$db->rollback();
-				return $this->bad("盘点单(单号：$ref)已经提交，不能再编辑");
-			}
-			
-			// 主表
-			$sql = "update t_ic_bill
-					set bizdt = '%s', biz_user_id = '%s', date_created = now(), 
-						input_user_id = '%s', warehouse_id = '%s'
-					where id = '%s' ";
-			$rc = $db->execute($sql, $bizDT, $bizUserId, $us->getLoginUserId(), $warehouseId, $id);
-			if ($rc === false) {
-				$db->rollback();
-				return $this->sqlError(__LINE__);
-			}
-			
-			// 明细表
-			$sql = "delete from t_ic_bill_detail where icbill_id = '%s' ";
-			$rc = $db->execute($sql, $id);
-			if ($rc === false) {
-				$db->rollback();
-				return $this->sqlError(__LINE__);
-			}
-			
-			$sql = "insert into t_ic_bill_detail(id, date_created, goods_id, goods_count, goods_money,
-						show_order, icbill_id, data_org, company_id)
-					values ('%s', now(), '%s', %d, %f, %d, '%s', '%s', '%s')";
-			foreach ( $items as $i => $v ) {
-				$goodsId = $v["goodsId"];
-				if (! $goodsId) {
-					continue;
-				}
-				$goodsCount = $v["goodsCount"];
-				$goodsMoney = $v["goodsMoney"];
-				
-				$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsMoney, $i, 
-						$id, $dataOrg, $companyId);
-				if ($rc === false) {
-					$db->rollback();
-					return $this->sqlError(__LINE__);
-				}
-			}
-			
+			$ref = $bill["ref"];
 			$log = "编辑盘点单，单号：$ref";
 		} else {
 			// 新建单据
-			$id = $idGen->newId();
-			$ref = $this->genNewBillRef();
 			
-			$companyId = $us->getCompanyId();
+			$bill["dataOrg"] = $this->getLoginUserDataOrg();
+			$bill["companyId"] = $this->getCompanyId();
+			$bill["loginUserId"] = $this->getLoginUserId();
 			
-			// 主表
-			$sql = "insert into t_ic_bill(id, bill_status, bizdt, biz_user_id, date_created, 
-						input_user_id, ref, warehouse_id, data_org, company_id)
-					values ('%s', 0, '%s', '%s', now(), '%s', '%s', '%s', '%s', '%s')";
-			$rc = $db->execute($sql, $id, $bizDT, $bizUserId, $us->getLoginUserId(), $ref, 
-					$warehouseId, $dataOrg, $companyId);
-			if ($rc === false) {
+			$rc = $dao->addICBill($bill);
+			if ($rc) {
 				$db->rollback();
-				return $this->sqlError(__LINE__);
+				return $rc;
 			}
 			
-			// 明细表
-			$sql = "insert into t_ic_bill_detail(id, date_created, goods_id, goods_count, goods_money,
-						show_order, icbill_id, data_org, company_id)
-					values ('%s', now(), '%s', %d, %f, %d, '%s', '%s', '%s')";
-			foreach ( $items as $i => $v ) {
-				$goodsId = $v["goodsId"];
-				if (! $goodsId) {
-					continue;
-				}
-				$goodsCount = $v["goodsCount"];
-				$goodsMoney = $v["goodsMoney"];
-				
-				$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsMoney, $i, 
-						$id, $dataOrg, $companyId);
-				if ($rc === false) {
-					$db->rollback();
-					return $this->sqlError(__LINE__);
-				}
-			}
-			
+			$ref = $bill["ref"];
 			$log = "新建盘点单，单号：$ref";
 		}
 		
 		// 记录业务日志
-		if ($log) {
-			$bs = new BizlogService();
-			$bs->insertBizlog($log, $this->LOG_CATEGORY);
-		}
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		
 		$db->commit();
 		
