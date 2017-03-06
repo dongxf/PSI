@@ -183,4 +183,45 @@ class PayablesDAO extends PSIBaseExDAO {
 			);
 		}
 	}
+
+	/**
+	 * 每笔应付账款的明细记录
+	 */
+	public function payDetailList($params) {
+		$db = $this->db;
+		
+		$caType = $params["caType"];
+		$caId = $params["caId"];
+		$page = $params["page"];
+		$start = $params["start"];
+		$limit = $params["limit"];
+		
+		$sql = "select id, ref_type, ref_number, pay_money, act_money, balance_money, date_created, biz_date
+				from t_payables_detail
+				where ca_type = '%s' and ca_id = '%s'
+				order by biz_date desc, date_created desc
+				limit %d , %d ";
+		$data = $db->query($sql, $caType, $caId, $start, $limit);
+		$result = array();
+		foreach ( $data as $i => $v ) {
+			$result[$i]["id"] = $v["id"];
+			$result[$i]["refType"] = $v["ref_type"];
+			$result[$i]["refNumber"] = $v["ref_number"];
+			$result[$i]["bizDT"] = date("Y-m-d", strtotime($v["biz_date"]));
+			$result[$i]["dateCreated"] = $v["date_created"];
+			$result[$i]["payMoney"] = $v["pay_money"];
+			$result[$i]["actMoney"] = $v["act_money"];
+			$result[$i]["balanceMoney"] = $v["balance_money"];
+		}
+		
+		$sql = "select count(*) as cnt from t_payables_detail
+				where ca_type = '%s' and ca_id = '%s' ";
+		$data = $db->query($sql, $caType, $caId);
+		$cnt = $data[0]["cnt"];
+		
+		return array(
+				"dataList" => $result,
+				"totalCount" => $cnt
+		);
+	}
 }
