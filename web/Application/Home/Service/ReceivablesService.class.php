@@ -61,42 +61,8 @@ class ReceivablesService extends PSIBaseExService {
 			return $this->emptyResult();
 		}
 		
-		$refType = $params["refType"];
-		$refNumber = $params["refNumber"];
-		$page = $params["page"];
-		$start = $params["start"];
-		$limit = $params["limit"];
-		
-		$db = M();
-		$sql = "select r.id, r.act_money, r.biz_date, r.date_created, r.remark, u.name as rv_user_name,
-				user.name as input_user_name 
-				from t_receiving r, t_user u, t_user user 
-				where r.rv_user_id = u.id and r.input_user_id = user.id 
-				  and r.ref_type = '%s' and r.ref_number = '%s'
-				order by r.date_created desc
-				limit %d , %d ";
-		$data = $db->query($sql, $refType, $refNumber, $start, $limit);
-		$result = array();
-		foreach ( $data as $i => $v ) {
-			$result[$i]["id"] = $v["id"];
-			$result[$i]["actMoney"] = $v["act_money"];
-			$result[$i]["bizDate"] = date("Y-m-d", strtotime($v["biz_date"]));
-			$result[$i]["dateCreated"] = $v["date_created"];
-			$result[$i]["bizUserName"] = $v["rv_user_name"];
-			$result[$i]["inputUserName"] = $v["input_user_name"];
-			$result[$i]["remark"] = $v["remark"];
-		}
-		
-		$sql = "select count(*) as cnt 
-				from t_receiving 
-				where ref_type = '%s' and ref_number = '%s' ";
-		$data = $db->query($sql, $refType, $refNumber);
-		$cnt = $data[0]["cnt"];
-		
-		return array(
-				"dataList" => $result,
-				"totalCount" => $cnt
-		);
+		$dao = new ReceivablesDAO($this->db());
+		return $dao->rvRecordList($params);
 	}
 
 	/**
