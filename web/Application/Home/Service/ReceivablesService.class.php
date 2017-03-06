@@ -73,115 +73,27 @@ class ReceivablesService extends PSIBaseExService {
 			return $this->notOnlineError();
 		}
 		
-		$refType = $params["refType"];
-		$refNumber = $params["refNumber"];
-		$bizDT = $params["bizDT"];
-		$actMoney = $params["actMoney"];
-		$bizUserId = $params["bizUserId"];
-		$remark = $params["remark"];
-		if (! $remark) {
-			$remark = "";
-		}
+		$params["companyId"] = $this->getCompanyId();
+		$params["dataOrg"] = $this->getLoginUserDataOrg();
+		$params["loginUserId"] = $this->getLoginUserId();
 		
-		$db = M();
+		$db = $this->db();
 		$db->startTrans();
 		
-		$billId = "";
-		if ($refType == "销售出库") {
-			$sql = "select id from t_ws_bill where ref = '%s' ";
-			$data = $db->query($sql, $refNumber);
-			if (! $data) {
-				$db->rollback();
-				return $this->bad("单号为 [{$refNumber}] 的销售出库单不存在，无法录入收款记录");
-			}
-			
-			$billId = $data[0]["id"];
-		}
-		
-		// 检查收款人是否存在
-		$sql = "select count(*) as cnt from t_user where id = '%s' ";
-		$data = $db->query($sql, $bizUserId);
-		$cnt = $data[0]["cnt"];
-		if ($cnt != 1) {
+		$dao = new ReceivablesDAO($db);
+		$rc = $dao->addRvRecord($params);
+		if ($rc) {
 			$db->rollback();
-			return $this->bad("收款人不存在，无法收款");
+			return $rc;
 		}
 		
-		if (! $this->dateIsValid($bizDT)) {
-			$db->rollback();
-			return $this->bad("收款日期不正确");
-		}
-		
-		$sql = "insert into t_receiving (id, act_money, biz_date, date_created, input_user_id,
-					rv_user_id, remark, ref_number, ref_type, bill_id, data_org, company_id) 
-					values ('%s', %f, '%s', now(), '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')";
-		$idGen = new IdGenService();
-		$us = new UserService();
-		
-		$companyId = $us->getCompanyId();
-		$dataOrg = $us->getLoginUserDataOrg();
-		
-		$rc = $db->execute($sql, $idGen->newId(), $actMoney, $bizDT, $us->getLoginUserId(), 
-				$bizUserId, $remark, $refNumber, $refType, $billId, $dataOrg, $companyId);
-		if ($rc === false) {
-			$db->rollback();
-			return $this->sqlError(__LINE__);
-		}
-		
+		// 记录业务日志
+		$refType = $params["refType"];
+		$refNumber = $params["refNumber"];
+		$actMoney = $params["actMoney"];
 		$log = "为 {$refType} - 单号：{$refNumber} 收款：{$actMoney}元";
-		$bs = new BizlogService();
+		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY);
-		
-		// 应收明细账
-		$sql = "select ca_id, ca_type, act_money, balance_money, company_id 
-					from t_receivables_detail 
-					where ref_number = '%s' and ref_type = '%s' ";
-		$data = $db->query($sql, $refNumber, $refType);
-		if (! $data) {
-			$db->rollback();
-			return $this->bad("数据库错误，没有应收明细对应，无法收款");
-		}
-		$caId = $data[0]["ca_id"];
-		$caType = $data[0]["ca_type"];
-		$companyId = $data[0]["company_id"];
-		$actMoneyDetail = $data[0]["act_money"];
-		$balanceMoneyDetail = $data[0]["balance_money"];
-		$actMoneyDetail += $actMoney;
-		$balanceMoneyDetail -= $actMoney;
-		$sql = "update t_receivables_detail 
-					set act_money = %f, balance_money = %f 
-					where ref_number = '%s' and ref_type = '%s' 
-					  and ca_id = '%s' and ca_type = '%s' ";
-		$rc = $db->execute($sql, $actMoneyDetail, $balanceMoneyDetail, $refNumber, $refType, $caId, 
-				$caType);
-		if ($rc === false) {
-			$db->rollback();
-			return $this->sqlError(__LINE__);
-		}
-		
-		// 应收总账
-		$sql = "select sum(rv_money) as sum_rv_money, sum(act_money) as sum_act_money
-					from t_receivables_detail
-					where ca_id = '%s' and ca_type = '%s' and company_id = '%s' ";
-		$data = $db->query($sql, $caId, $caType, $companyId);
-		$sumRvMoney = $data[0]["sum_rv_money"];
-		if (! $sumRvMoney) {
-			$sumRvMoney = 0;
-		}
-		$sumActMoney = $data[0]["sum_act_money"];
-		if (! $sumActMoney) {
-			$sumActMoney = 0;
-		}
-		$sumBalanceMoney = $sumRvMoney - $sumActMoney;
-		
-		$sql = "update t_receivables 
-					set act_money = %f, balance_money = %f 
-					where ca_id = '%s' and ca_type = '%s' and company_id = '%s' ";
-		$rc = $db->execute($sql, $sumActMoney, $sumBalanceMoney, $caId, $caType, $companyId);
-		if ($rc === false) {
-			$db->rollback();
-			return $this->sqlError(__LINE__);
-		}
 		
 		$db->commit();
 		
@@ -193,17 +105,8 @@ class ReceivablesService extends PSIBaseExService {
 			return $this->emptyResult();
 		}
 		
-		$id = $params["id"];
-		$sql = "select act_money, balance_money from t_receivables where id = '%s' ";
-		$data = M()->query($sql, $id);
-		if (! $data) {
-			return array();
-		} else {
-			return array(
-					"actMoney" => $data[0]["act_money"],
-					"balanceMoney" => $data[0]["balance_money"]
-			);
-		}
+		$dao = new ReceivablesDAO($this->db());
+		return $dao->refreshRvInfo($params);
 	}
 
 	public function refreshRvDetailInfo($params) {
@@ -211,16 +114,7 @@ class ReceivablesService extends PSIBaseExService {
 			return $this->emptyResult();
 		}
 		
-		$id = $params["id"];
-		$sql = "select act_money, balance_money from t_receivables_detail where id = '%s' ";
-		$data = M()->query($sql, $id);
-		if (! $data) {
-			return array();
-		} else {
-			return array(
-					"actMoney" => $data[0]["act_money"],
-					"balanceMoney" => $data[0]["balance_money"]
-			);
-		}
+		$dao = new ReceivablesDAO($this->db());
+		return $dao->refreshRvDetailInfo($params);
 	}
 }

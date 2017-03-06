@@ -284,4 +284,150 @@ class ReceivablesDAO extends PSIBaseExDAO {
 				"totalCount" => $cnt
 		);
 	}
+
+	/**
+	 * 收款记录
+	 */
+	public function addRvRecord($params) {
+		$db = $this->db;
+		
+		$companyId = $params["companyId"];
+		$dataOrg = $params["dataOrg"];
+		$loginUserId = $params["loginUserId"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->badParam("companyId");
+		}
+		if ($this->dataOrgNotExists($dataOrg)) {
+			return $this->badParam("dataOrg");
+		}
+		if ($this->loginUserIdNotExists($loginUserId)) {
+			return $this->badParam("loginUserId");
+		}
+		
+		$refType = $params["refType"];
+		$refNumber = $params["refNumber"];
+		$bizDT = $params["bizDT"];
+		$actMoney = $params["actMoney"];
+		$bizUserId = $params["bizUserId"];
+		$remark = $params["remark"];
+		if (! $remark) {
+			$remark = "";
+		}
+		
+		$billId = "";
+		if ($refType == "销售出库") {
+			$sql = "select id from t_ws_bill where ref = '%s' ";
+			$data = $db->query($sql, $refNumber);
+			if (! $data) {
+				return $this->bad("单号为 [{$refNumber}] 的销售出库单不存在，无法录入收款记录");
+			}
+			
+			$billId = $data[0]["id"];
+		}
+		
+		// 检查收款人是否存在
+		$userDAO = new UserDAO($db);
+		$user = $userDAO->getUserById($bizUserId);
+		if (! $user) {
+			return $this->bad("收款人不存在，无法收款");
+		}
+		
+		if (! $this->dateIsValid($bizDT)) {
+			return $this->bad("收款日期不正确");
+		}
+		
+		$sql = "insert into t_receiving (id, act_money, biz_date, date_created, input_user_id,
+				rv_user_id, remark, ref_number, ref_type, bill_id, data_org, company_id)
+				values ('%s', %f, '%s', now(), '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')";
+		
+		$rc = $db->execute($sql, $this->newId(), $actMoney, $bizDT, $loginUserId, $bizUserId, 
+				$remark, $refNumber, $refType, $billId, $dataOrg, $companyId);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 应收明细账
+		$sql = "select ca_id, ca_type, act_money, balance_money, company_id
+				from t_receivables_detail
+				where ref_number = '%s' and ref_type = '%s' ";
+		$data = $db->query($sql, $refNumber, $refType);
+		if (! $data) {
+			return $this->bad("数据库错误，没有应收明细对应，无法收款");
+		}
+		$caId = $data[0]["ca_id"];
+		$caType = $data[0]["ca_type"];
+		$companyId = $data[0]["company_id"];
+		$actMoneyDetail = $data[0]["act_money"];
+		$balanceMoneyDetail = $data[0]["balance_money"];
+		$actMoneyDetail += $actMoney;
+		$balanceMoneyDetail -= $actMoney;
+		$sql = "update t_receivables_detail
+				set act_money = %f, balance_money = %f
+				where ref_number = '%s' and ref_type = '%s'
+					and ca_id = '%s' and ca_type = '%s' 
+					and company_id = '%s' ";
+		$rc = $db->execute($sql, $actMoneyDetail, $balanceMoneyDetail, $refNumber, $refType, $caId, 
+				$caType, $companyId);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 应收总账
+		$sql = "select sum(rv_money) as sum_rv_money, sum(act_money) as sum_act_money
+				from t_receivables_detail
+				where ca_id = '%s' and ca_type = '%s' and company_id = '%s' ";
+		$data = $db->query($sql, $caId, $caType, $companyId);
+		$sumRvMoney = $data[0]["sum_rv_money"];
+		if (! $sumRvMoney) {
+			$sumRvMoney = 0;
+		}
+		$sumActMoney = $data[0]["sum_act_money"];
+		if (! $sumActMoney) {
+			$sumActMoney = 0;
+		}
+		$sumBalanceMoney = $sumRvMoney - $sumActMoney;
+		
+		$sql = "update t_receivables
+				set act_money = %f, balance_money = %f
+				where ca_id = '%s' and ca_type = '%s' and company_id = '%s' ";
+		$rc = $db->execute($sql, $sumActMoney, $sumBalanceMoney, $caId, $caType, $companyId);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		return null;
+	}
+
+	public function refreshRvInfo($params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		$sql = "select act_money, balance_money from t_receivables where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if (! $data) {
+			return $this->emptyResult();
+		} else {
+			return array(
+					"actMoney" => $data[0]["act_money"],
+					"balanceMoney" => $data[0]["balance_money"]
+			);
+		}
+	}
+
+	public function refreshRvDetailInfo($params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		$sql = "select act_money, balance_money from t_receivables_detail where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if (! $data) {
+			return $this->emptyResult();
+		} else {
+			return array(
+					"actMoney" => $data[0]["act_money"],
+					"balanceMoney" => $data[0]["balance_money"]
+			);
+		}
+	}
 }
