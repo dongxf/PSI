@@ -3,13 +3,14 @@
 namespace Home\Service;
 
 use Home\Common\FIdConst;
+use Home\DAO\PayablesDAO;
 
 /**
  * 应付账款Service
  *
  * @author 李静波
  */
-class PayablesService extends PSIBaseService {
+class PayablesService extends PSIBaseExService {
 	private $LOG_CATEGORY = "应付账款管理";
 
 	/**
@@ -20,46 +21,10 @@ class PayablesService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		$result = array();
-		$result[0]["id"] = "";
-		$result[0]["name"] = "[全部]";
+		$params["loginUserId"] = $this->getLoginUserId();
 		
-		$db = M();
-		
-		$id = $params["id"];
-		if ($id == "supplier") {
-			$sql = "select id, name from t_supplier_category ";
-			$queryParams = array();
-			$ds = new DataOrgService();
-			$rs = $ds->buildSQL(FIdConst::PAYABLES, "t_supplier_category");
-			if ($rs) {
-				$sql .= " where " . $rs[0];
-				$queryParams = $rs[1];
-			}
-			$sql .= " order by code";
-			$data = $db->query($sql, $queryParams);
-			foreach ( $data as $i => $v ) {
-				$result[$i + 1]["id"] = $v["id"];
-				$result[$i + 1]["name"] = $v["name"];
-			}
-		} else {
-			$sql = "select id,  code, name from t_customer_category ";
-			$queryParams = array();
-			$ds = new DataOrgService();
-			$rs = $ds->buildSQL(FIdConst::PAYABLES, "t_customer_category");
-			if ($rs) {
-				$sql .= " where " . $rs[0];
-				$queryParams = $rs[1];
-			}
-			$sql .= " order by code";
-			$data = $db->query($sql, $queryParams);
-			foreach ( $data as $i => $v ) {
-				$result[$i + 1]["id"] = $v["id"];
-				$result[$i + 1]["name"] = $v["name"];
-			}
-		}
-		
-		return $result;
+		$dao = new PayablesDAO($this->db());
+		return $dao->payCategoryList($params);
 	}
 
 	/**
