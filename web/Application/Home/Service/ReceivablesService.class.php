@@ -49,41 +49,8 @@ class ReceivablesService extends PSIBaseExService {
 			return $this->emptyResult();
 		}
 		
-		$caType = $params["caType"];
-		$caId = $params["caId"];
-		$page = $params["page"];
-		$start = $params["start"];
-		$limit = $params["limit"];
-		
-		$db = M();
-		$sql = "select id, rv_money, act_money, balance_money, ref_type, ref_number, date_created, biz_date 
-				from t_receivables_detail 
-				where ca_type = '%s' and ca_id = '%s'
-				order by biz_date desc, date_created desc
-				limit %d , %d ";
-		$data = $db->query($sql, $caType, $caId, $start, $limit);
-		$result = array();
-		foreach ( $data as $i => $v ) {
-			$result[$i]["id"] = $v["id"];
-			$result[$i]["refType"] = $v["ref_type"];
-			$result[$i]["refNumber"] = $v["ref_number"];
-			$result[$i]["dateCreated"] = $v["date_created"];
-			$result[$i]["bizDT"] = date("Y-m-d", strtotime($v["biz_date"]));
-			$result[$i]["rvMoney"] = $v["rv_money"];
-			$result[$i]["actMoney"] = $v["act_money"];
-			$result[$i]["balanceMoney"] = $v["balance_money"];
-		}
-		
-		$sql = "select count(*) as cnt 
-				from t_receivables_detail 
-				where ca_type = '%s' and ca_id = '%s' ";
-		$data = $db->query($sql, $caType, $caId);
-		$cnt = $data[0]["cnt"];
-		
-		return array(
-				"dataList" => $result,
-				"totalCount" => $cnt
-		);
+		$dao = new ReceivablesDAO($this->db());
+		return $dao->rvDetailList($params);
 	}
 
 	/**
