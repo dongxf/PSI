@@ -2,12 +2,14 @@
 
 namespace Home\Service;
 
+use Home\DAO\PrePaymentDAO;
+
 /**
  * 预付款Service
  *
  * @author 李静波
  */
-class PrePaymentService extends PSIBaseService {
+class PrePaymentService extends PSIBaseExService {
 	private $LOG_CATEGORY = "预付款管理";
 
 	public function addPrePaymentInfo() {
@@ -15,11 +17,9 @@ class PrePaymentService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		$us = new UserService();
-		
 		return array(
-				"bizUserId" => $us->getLoginUserId(),
-				"bizUserName" => $us->getLoginUserName()
+				"bizUserId" => $this->getLoginUserId(),
+				"bizUserName" => $this->getLoginUserName()
 		);
 	}
 
@@ -28,11 +28,9 @@ class PrePaymentService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		$us = new UserService();
-		
 		return array(
-				"bizUserId" => $us->getLoginUserId(),
-				"bizUserName" => $us->getLoginUserName()
+				"bizUserId" => $this->getLoginUserId(),
+				"bizUserName" => $this->getLoginUserName()
 		);
 	}
 
@@ -44,104 +42,23 @@ class PrePaymentService extends PSIBaseService {
 			return $this->notOnlineError();
 		}
 		
-		$supplierId = $params["supplierId"];
-		$bizUserId = $params["bizUserId"];
-		$bizDT = $params["bizDT"];
-		$inMoney = $params["inMoney"];
+		$params["companyId"] = $this->getCompanyId();
+		$params["loginUserId"] = $this->getLoginUserId();
 		
-		$db = M();
+		$db = $this->db();
 		$db->startTrans();
 		
-		// 检查客户
-		$cs = new SupplierService();
-		if (! $cs->supplierExists($supplierId, $db)) {
+		$dao = new PrePaymentDAO($db);
+		$rc = $dao->addPrePayment($params);
+		if ($rc) {
 			$db->rollback();
-			return $this->bad("供应商不存在，无法付预付款");
-		}
-		
-		// 检查业务日期
-		if (! $this->dateIsValid($bizDT)) {
-			$db->rollback();
-			return $this->bad("业务日期不正确");
-		}
-		
-		// 检查收款人是否存在
-		$us = new UserService();
-		if (! $us->userExists($bizUserId, $db)) {
-			$db->rollback();
-			return $this->bad("收款人不存在");
-		}
-		
-		$inMoney = floatval($inMoney);
-		if ($inMoney <= 0) {
-			$db->rollback();
-			return $this->bad("付款金额需要是正数");
-		}
-		
-		$idGen = new IdGenService();
-		
-		$companyId = $us->getCompanyId();
-		
-		$sql = "select in_money, balance_money from t_pre_payment
-					where supplier_id = '%s' and company_id = '%s' ";
-		$data = $db->query($sql, $supplierId, $companyId);
-		if (! $data) {
-			// 总账
-			$sql = "insert into t_pre_payment(id, supplier_id, in_money, balance_money, company_id)
-						values ('%s', '%s', %f, %f, '%s')";
-			$rc = $db->execute($sql, $idGen->newId(), $supplierId, $inMoney, $inMoney, $companyId);
-			if (! $rc) {
-				$db->rollback();
-				return $this->sqlError(__LINE__);
-			}
-			
-			// 明细账
-			$sql = "insert into t_pre_payment_detail(id, supplier_id, in_money, balance_money, date_created,
-							ref_number, ref_type, biz_user_id, input_user_id, biz_date, company_id)
-						values('%s', '%s', %f, %f, now(), '', '预付供应商采购货款', '%s', '%s', '%s', '%s')";
-			$rc = $db->execute($sql, $idGen->newId(), $supplierId, $inMoney, $inMoney, $bizUserId, 
-					$us->getLoginUserId(), $bizDT, $companyId);
-			if (! $rc) {
-				$db->rollback();
-				return $this->sqlError(__LINE__);
-			}
-		} else {
-			$totalInMoney = $data[0]["in_money"];
-			$totalBalanceMoney = $data[0]["balance_money"];
-			if (! $totalInMoney) {
-				$totalInMoney = 0;
-			}
-			if (! $totalBalanceMoney) {
-				$totalBalanceMoney = 0;
-			}
-			
-			$totalInMoney += $inMoney;
-			$totalBalanceMoney += $inMoney;
-			// 总账
-			$sql = "update t_pre_payment
-						set in_money = %f, balance_money = %f
-						where supplier_id = '%s' and company_id = '%s' ";
-			$rc = $db->execute($sql, $totalInMoney, $totalBalanceMoney, $supplierId, $companyId);
-			if (! $rc) {
-				$db->rollback();
-				return $this->sqlError(__LINE__);
-			}
-			
-			// 明细账
-			$sql = "insert into t_pre_payment_detail(id, supplier_id, in_money, balance_money, date_created,
-							ref_number, ref_type, biz_user_id, input_user_id, biz_date, company_id)
-						values('%s', '%s', %f, %f, now(), '', '预付供应商采购货款', '%s', '%s', '%s', '%s')";
-			$rc = $db->execute($sql, $idGen->newId(), $supplierId, $inMoney, $totalBalanceMoney, 
-					$bizUserId, $us->getLoginUserId(), $bizDT, $companyId);
-			if (! $rc) {
-				$db->rollback();
-				return $this->sqlError(__LINE__);
-			}
+			return $rc;
 		}
 		
 		// 记录业务日志
-		$bs = new BizlogService();
-		$supplierName = $cs->getSupplierNameById($supplierId, $db);
+		$bs = new BizlogService($db);
+		$supplierName = $params["supplierName"];
+		$inMoney = $params["inMoney"];
 		$log = "付供应商[{$supplierName}]预付款：{$inMoney}元";
 		$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		
