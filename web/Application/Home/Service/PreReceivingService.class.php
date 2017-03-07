@@ -2,12 +2,14 @@
 
 namespace Home\Service;
 
+use Home\DAO\PreReceivingDAO;
+
 /**
  * 预收款Service
  *
  * @author 李静波
  */
-class PreReceivingService extends PSIBaseService {
+class PreReceivingService extends PSIBaseExService {
 	private $LOG_CATEGORY = "预收款管理";
 
 	public function addPreReceivingInfo() {
@@ -15,11 +17,9 @@ class PreReceivingService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		$us = new UserService();
-		
 		return array(
-				"bizUserId" => $us->getLoginUserId(),
-				"bizUserName" => $us->getLoginUserName()
+				"bizUserId" => $this->getLoginUserId(),
+				"bizUserName" => $this->getLoginUserName()
 		);
 	}
 
@@ -28,11 +28,9 @@ class PreReceivingService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		$us = new UserService();
-		
 		return array(
-				"bizUserId" => $us->getLoginUserId(),
-				"bizUserName" => $us->getLoginUserName()
+				"bizUserId" => $this->getLoginUserId(),
+				"bizUserName" => $this->getLoginUserName()
 		);
 	}
 
@@ -44,104 +42,23 @@ class PreReceivingService extends PSIBaseService {
 			return $this->notOnlineError();
 		}
 		
-		$customerId = $params["customerId"];
-		$bizUserId = $params["bizUserId"];
-		$bizDT = $params["bizDT"];
-		$inMoney = $params["inMoney"];
+		$params["companyId"] = $this->getCompanyId();
+		$params["loginUserId"] = $this->getLoginUserId();
 		
-		$db = M();
+		$db = $this->db();
 		$db->startTrans();
 		
-		// 检查客户
-		$cs = new CustomerService();
-		if (! $cs->customerExists($customerId, $db)) {
+		$dao = new PreReceivingDAO($db);
+		$rc = $dao->addPreReceiving($params);
+		if ($rc) {
 			$db->rollback();
-			return $this->bad("客户不存在，无法预收款");
-		}
-		
-		// 检查业务日期
-		if (! $this->dateIsValid($bizDT)) {
-			$db->rollback();
-			return $this->bad("业务日期不正确");
-		}
-		
-		// 检查收款人是否存在
-		$us = new UserService();
-		if (! $us->userExists($bizUserId, $db)) {
-			$db->rollback();
-			return $this->bad("收款人不存在");
-		}
-		
-		$companyId = $us->getCompanyId();
-		
-		$inMoney = floatval($inMoney);
-		if ($inMoney <= 0) {
-			$db->rollback();
-			return $this->bad("收款金额需要是正数");
-		}
-		
-		$idGen = new IdGenService();
-		
-		$sql = "select in_money, balance_money from t_pre_receiving
-					where customer_id = '%s' and company_id = '%s' ";
-		$data = $db->query($sql, $customerId, $companyId);
-		if (! $data) {
-			// 总账
-			$sql = "insert into t_pre_receiving(id, customer_id, in_money, balance_money, company_id)
-						values ('%s', '%s', %f, %f, '%s')";
-			$rc = $db->execute($sql, $idGen->newId(), $customerId, $inMoney, $inMoney, $companyId);
-			if ($rc === false) {
-				$db->rollback();
-				return $this->sqlError(__LINE__);
-			}
-			
-			// 明细账
-			$sql = "insert into t_pre_receiving_detail(id, customer_id, in_money, balance_money, date_created,
-							ref_number, ref_type, biz_user_id, input_user_id, biz_date, company_id)
-						values('%s', '%s', %f, %f, now(), '', '收预收款', '%s', '%s', '%s', '%s')";
-			$rc = $db->execute($sql, $idGen->newId(), $customerId, $inMoney, $inMoney, $bizUserId, 
-					$us->getLoginUserId(), $bizDT, $companyId);
-			if ($rc === false) {
-				$db->rollback();
-				return $this->sqlError(__LINE__);
-			}
-		} else {
-			$totalInMoney = $data[0]["in_money"];
-			$totalBalanceMoney = $data[0]["balance_money"];
-			if (! $totalInMoney) {
-				$totalInMoney = 0;
-			}
-			if (! $totalBalanceMoney) {
-				$totalBalanceMoney = 0;
-			}
-			
-			$totalInMoney += $inMoney;
-			$totalBalanceMoney += $inMoney;
-			// 总账
-			$sql = "update t_pre_receiving
-						set in_money = %f, balance_money = %f
-						where customer_id = '%s' and company_id = '%s' ";
-			$rc = $db->execute($sql, $totalInMoney, $totalBalanceMoney, $customerId, $companyId);
-			if ($rc === false) {
-				$db->rollback();
-				return $this->sqlError(__LINE__);
-			}
-			
-			// 明细账
-			$sql = "insert into t_pre_receiving_detail(id, customer_id, in_money, balance_money, date_created,
-							ref_number, ref_type, biz_user_id, input_user_id, biz_date, company_id)
-						values('%s', '%s', %f, %f, now(), '', '收预收款', '%s', '%s', '%s', '%s')";
-			$rc = $db->execute($sql, $idGen->newId(), $customerId, $inMoney, $totalBalanceMoney, 
-					$bizUserId, $us->getLoginUserId(), $bizDT, $companyId);
-			if ($rc === false) {
-				$db->rollback();
-				return $this->sqlError(__LINE__);
-			}
+			return $rc;
 		}
 		
 		// 记录业务日志
-		$bs = new BizlogService();
-		$customerName = $cs->getCustomerNameById($customerId, $db);
+		$bs = new BizlogService($db);
+		$customerName = $params["customerName"];
+		$inMoney = $params["inMoney"];
 		$log = "收取客户[{$customerName}]预收款：{$inMoney}元";
 		$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		
