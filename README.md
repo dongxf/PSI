@@ -12,6 +12,11 @@ PSI演示
 -------------
 >源码下载地址：http://git.oschina.net/crm8000/PSI/repository/archive/master
 
+PSI在魔泊云的部署指南
+-------------
+> https://my.oschina.net/u/134395/blog/853473
+
+
 通过PSI源码在本地安装
 -------------
 > 本地环境搭建: http://my.oschina.net/u/134395/blog/376530
