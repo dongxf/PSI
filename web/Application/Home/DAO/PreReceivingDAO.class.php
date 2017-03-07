@@ -2,8 +2,6 @@
 
 namespace Home\DAO;
 
-use Home\Common\FIdConst;
-
 /**
  * 预收款 DAO
  *
@@ -204,5 +202,109 @@ class PreReceivingDAO extends PSIBaseExDAO {
 		
 		// 操作陈功
 		return null;
+	}
+
+	public function prereceivingList($params) {
+		$db = $this->db;
+		
+		$page = $params["page"];
+		$start = $params["start"];
+		$limit = $params["limit"];
+		
+		$categoryId = $params["categoryId"];
+		$companyId = $params["companyId"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->emptyResult();
+		}
+		
+		$sql = "select r.id, c.id as customer_id, c.code, c.name,
+					r.in_money, r.out_money, r.balance_money
+				from t_pre_receiving r, t_customer c
+				where r.customer_id = c.id and c.category_id = '%s'
+					and r.company_id = '%s'
+				limit %d , %d
+				";
+		$data = $db->query($sql, $categoryId, $companyId, $start, $limit);
+		
+		$result = array();
+		foreach ( $data as $i => $v ) {
+			$result[$i]["id"] = $v["id"];
+			$result[$i]["customerId"] = $v["customer_id"];
+			$result[$i]["code"] = $v["code"];
+			$result[$i]["name"] = $v["name"];
+			$result[$i]["inMoney"] = $v["in_money"];
+			$result[$i]["outMoney"] = $v["out_money"];
+			$result[$i]["balanceMoney"] = $v["balance_money"];
+		}
+		
+		$sql = "select count(*) as cnt
+				from t_pre_receiving r, t_customer c
+				where r.customer_id = c.id and c.category_id = '%s'
+					and r.company_id = '%s'
+				";
+		$data = $db->query($sql, $categoryId, $companyId);
+		$cnt = $data[0]["cnt"];
+		
+		return array(
+				"dataList" => $result,
+				"totalCount" => $cnt
+		);
+	}
+
+	public function prereceivingDetailList($params) {
+		$db = $this->db;
+		
+		$companyId = $params["companyId"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->emptyResult();
+		}
+		
+		$page = $params["page"];
+		$start = $params["start"];
+		$limit = $params["limit"];
+		
+		$customerId = $params["customerId"];
+		$dtFrom = $params["dtFrom"];
+		$dtTo = $params["dtTo"];
+		
+		$sql = "select d.id, d.ref_type, d.ref_number, d.in_money, d.out_money, d.balance_money,
+					d.biz_date, d.date_created,
+					u1.name as biz_user_name, u2.name as input_user_name
+				from t_pre_receiving_detail d, t_user u1, t_user u2
+				where d.customer_id = '%s' and d.biz_user_id = u1.id and d.input_user_id = u2.id
+					and (d.biz_date between '%s' and '%s')
+					and d.company_id = '%s'
+				order by d.date_created
+				limit %d , %d
+				";
+		$data = $db->query($sql, $customerId, $dtFrom, $dtTo, $companyId, $start, $limit);
+		$result = array();
+		foreach ( $data as $i => $v ) {
+			$result[$i]["id"] = $v["id"];
+			$result[$i]["refType"] = $v["ref_type"];
+			$result[$i]["refNumber"] = $v["ref_number"];
+			$result[$i]["inMoney"] = $v["in_money"];
+			$result[$i]["outMoney"] = $v["out_money"];
+			$result[$i]["balanceMoney"] = $v["balance_money"];
+			$result[$i]["bizDT"] = $this->toYMD($v["biz_date"]);
+			$result[$i]["dateCreated"] = $v["date_created"];
+			$result[$i]["bizUserName"] = $v["biz_user_name"];
+			$result[$i]["inputUserName"] = $v["input_user_name"];
+		}
+		
+		$sql = "select count(*) as cnt
+				from t_pre_receiving_detail d, t_user u1, t_user u2
+				where d.customer_id = '%s' and d.biz_user_id = u1.id and d.input_user_id = u2.id
+					and (d.biz_date between '%s' and '%s')
+					and d.company_id = '%s'
+				";
+		
+		$data = $db->query($sql, $customerId, $dtFrom, $dtTo, $companyId);
+		$cnt = $data[0]["cnt"];
+		
+		return array(
+				"dataList" => $result,
+				"totalCount" => $cnt
+		);
 	}
 }
