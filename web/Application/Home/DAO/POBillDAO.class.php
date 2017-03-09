@@ -718,4 +718,48 @@ class POBillDAO extends PSIBaseExDAO {
 		// 操作成功
 		return null;
 	}
+
+	/**
+	 * 查询采购订单的数据，用于生成PDF文件
+	 *
+	 * @param array $params        	
+	 *
+	 * @return NULL|array
+	 */
+	public function getDataForPDF($params) {
+		$db = $this->db;
+		
+		$ref = $params["ref"];
+		
+		$sql = "select p.id, p.bill_status, p.goods_money, p.tax, p.money_with_tax,
+					s.name as supplier_name, p.contact, p.tel, p.fax, p.deal_address,
+					p.deal_date, p.payment_type, p.bill_memo, p.date_created,
+					o.full_name as org_name, u1.name as biz_user_name, u2.name as input_user_name,
+					p.confirm_user_id, p.confirm_date
+				from t_po_bill p, t_supplier s, t_org o, t_user u1, t_user u2
+				where (p.supplier_id = s.id) and (p.org_id = o.id)
+					and (p.biz_user_id = u1.id) and (p.input_user_id = u2.id) 
+					and (p.ref = '%s')";
+		
+		$data = $db->query($sql, $ref);
+		if (! $data) {
+			return null;
+		}
+		
+		$v = $data[0];
+		$id = $v["id"];
+		
+		$result = array();
+		
+		$result["billStatus"] = $v["bill_status"];
+		$result["supplierName"] = $v["supplier_name"];
+		$result["goodsMoney"] = $v["goods_money"];
+		$result["tax"] = $v["tax"];
+		$result["moneyWithTax"] = $v["money_with_tax"];
+		$result["dealDate"] = $this->toYMD($v["deal_date"]);
+		$result["dealAddress"] = $v["deal_address"];
+		$result["bizUserName"]=$v["biz_user_name"];
+		
+		return $result;
+	}
 }

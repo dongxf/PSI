@@ -131,6 +131,12 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 					handler : me.onGenPWBill,
 					id : "buttonGenPWBill"
 				}, "-", {
+					text : "单据生成pdf",
+					id : "buttonPDF",
+					iconCls : "PSI-button-pdf",
+					scope : me,
+					handler : me.onPDF
+				}, "-", {
 					text : "关闭",
 					iconCls : "PSI-button-exit",
 					handler : function() {
@@ -969,5 +975,18 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 					pobillRef : bill.get("ref")
 				});
 		form.show();
+	},
+	
+	onPDF: function(){
+		var me = this;
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			PSI.MsgBox.showInfo("没有选择要生成pdf文件的采购订单");
+			return;
+		}
+		var bill = item[0];
+
+		var url = PSI.Const.BASE_URL + "Home/Purchase/poBillPdf?ref=" + bill.get("ref");
+		window.open(url);
 	}
 });

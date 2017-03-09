@@ -235,4 +235,16 @@ class PurchaseController extends PSIBaseController {
 			$this->ajaxReturn($ps->cancelConfirmPOBill($params));
 		}
 	}
+	
+	/**
+	 * 采购订单生成PDF文件
+	 */
+	public function poBillPdf(){
+		$params = array(
+				"ref" => I("get.ref")
+		);
+		
+		$ps = new POBillService();
+		$ps->pdf($params);
+	}
 }
