@@ -758,7 +758,31 @@ class POBillDAO extends PSIBaseExDAO {
 		$result["moneyWithTax"] = $v["money_with_tax"];
 		$result["dealDate"] = $this->toYMD($v["deal_date"]);
 		$result["dealAddress"] = $v["deal_address"];
-		$result["bizUserName"]=$v["biz_user_name"];
+		$result["bizUserName"] = $v["biz_user_name"];
+		
+		$sql = "select p.id, g.code, g.name, g.spec, p.goods_count, p.goods_price, p.goods_money,
+					p.tax_rate, p.tax, p.money_with_tax, u.name as unit_name
+				from t_po_bill_detail p, t_goods g, t_goods_unit u
+				where p.pobill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id
+				order by p.show_order";
+		$items = array();
+		$data = $db->query($sql, $id);
+		
+		foreach ( $data as $v ) {
+			$item = array(
+					"goodsCode" => $v["code"],
+					"goodsName" => $v["name"],
+					"goodsSpec" => $v["spec"],
+					"goodsCount" => $v["goods_count"],
+					"unitName" => $v["unit_name"],
+					"goodsPrice" => $v["goods_price"],
+					"goodsMoney" => $v["goods_money"]
+			);
+			
+			$items[] = $item;
+		}
+		
+		$result["items"] = $items;
 		
 		return $result;
 	}
