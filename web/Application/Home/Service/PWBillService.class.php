@@ -9,7 +9,7 @@ use Home\DAO\PWBillDAO;
  *
  * @author 李静波
  */
-class PWBillService extends PSIBaseService {
+class PWBillService extends PSIBaseExService {
 	private $LOG_CATEGORY = "采购入库";
 
 	/**
@@ -23,7 +23,7 @@ class PWBillService extends PSIBaseService {
 		$us = new UserService();
 		$params["loginUserId"] = $us->getLoginUserId();
 		
-		$dao = new PWBillDAO();
+		$dao = new PWBillDAO($this->db());
 		return $dao->pwbillList($params);
 	}
 
@@ -39,7 +39,7 @@ class PWBillService extends PSIBaseService {
 				"id" => $pwbillId
 		);
 		
-		$dao = new PWBillDAO();
+		$dao = new PWBillDAO($this->db());
 		return $dao->pwBillDetailList($params);
 	}
 
@@ -58,7 +58,7 @@ class PWBillService extends PSIBaseService {
 		
 		$id = $bill["id"];
 		
-		$db = M();
+		$db = $this->db();
 		
 		$db->startTrans();
 		
@@ -129,12 +129,11 @@ class PWBillService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		$us = new UserService();
-		$params["loginUserId"] = $us->getLoginUserId();
-		$params["loginUserName"] = $us->getLoginUserName();
-		$params["companyId"] = $us->getCompanyId();
+		$params["loginUserId"] = $this->getLoginUserId();
+		$params["loginUserName"] = $this->getLoginUserName();
+		$params["companyId"] = $this->getCompanyId();
 		
-		$dao = new PWBillDAO();
+		$dao = new PWBillDAO($this->db());
 		return $dao->pwBillInfo($params);
 	}
 
@@ -146,7 +145,7 @@ class PWBillService extends PSIBaseService {
 			return $this->notOnlineError();
 		}
 		
-		$db = M();
+		$db = $this->db();
 		$db->startTrans();
 		
 		$dao = new PWBillDAO($db);
@@ -178,13 +177,12 @@ class PWBillService extends PSIBaseService {
 			return $this->notOnlineError();
 		}
 		
-		$db = M();
+		$db = $this->db();
 		$db->startTrans();
 		
-		$us = new UserService();
 		$params = array(
 				"id" => $id,
-				"loginUserId" => $us->getLoginUserId()
+				"loginUserId" => $this->getLoginUserId()
 		);
 		
 		$dao = new PWBillDAO($db);
@@ -205,5 +203,86 @@ class PWBillService extends PSIBaseService {
 		$db->commit();
 		
 		return $this->ok($id);
+	}
+
+	/**
+	 * 采购订单生成pdf文件
+	 */
+	public function pdf($params) {
+		if ($this->isNotOnline()) {
+			return;
+		}
+		
+		$bs = new BizConfigService();
+		$productionName = $bs->getProductionName();
+		
+		$ref = $params["ref"];
+		
+		$dao = new PWBillDAO($this->db());
+		
+		$bill = $dao->getDataForPDF($params);
+		if (! $bill) {
+			return;
+		}
+		
+		$ps = new PDFService();
+		$pdf = $ps->getInstance();
+		$pdf->SetTitle("采购入库单，单号：{$ref}");
+		
+		$pdf->setHeaderFont(Array(
+				"stsongstdlight",
+				"",
+				16
+		));
+		
+		$pdf->setFooterFont(Array(
+				"stsongstdlight",
+				"",
+				14
+		));
+		
+		$pdf->SetHeaderData("", 0, $productionName, "采购入库单");
+		
+		$pdf->SetFont("stsongstdlight", "", 10);
+		$pdf->AddPage();
+		
+		/**
+		 * 注意：
+		 * TCPDF中，用来拼接HTML的字符串需要用单引号，否则HTML中元素的属性就不会被解析
+		 */
+		$html = '
+				<table>
+					<tr><td colspan="2">单号：' . $ref . '</td></tr>
+					<tr><td colspan="2">供应商：' . $bill["supplierName"] . '</td></tr>
+					<tr><td>业务日期：' . $bill["bizDT"] . '</td><td>入库仓库:' . $bill["warehouseName"] . '</td></tr>
+					<tr><td>业务员：' . $bill["bizUserName"] . '</td><td></td></tr>
+					<tr><td colspan="2">采购货款:' . $bill["goodsMoney"] . '</td></tr>
+				</table>
+				';
+		$pdf->writeHTML($html);
+		
+		$html = '<table border="1" cellpadding="1">
+					<tr><td>商品编号</td><td>商品名称</td><td>规格型号</td><td>数量</td><td>单位</td>
+						<td>采购单价</td><td>采购金额</td>
+					</tr>
+				';
+		foreach ( $bill["items"] as $v ) {
+			$html .= '<tr>';
+			$html .= '<td>' . $v["goodsCode"] . '</td>';
+			$html .= '<td>' . $v["goodsName"] . '</td>';
+			$html .= '<td>' . $v["goodsSpec"] . '</td>';
+			$html .= '<td align="right">' . $v["goodsCount"] . '</td>';
+			$html .= '<td>' . $v["unitName"] . '</td>';
+			$html .= '<td align="right">' . $v["goodsPrice"] . '</td>';
+			$html .= '<td align="right">' . $v["goodsMoney"] . '</td>';
+			$html .= '</tr>';
+		}
+		
+		$html .= "";
+		
+		$html .= '</table>';
+		$pdf->writeHTML($html, true, false, true, false, '');
+		
+		$pdf->Output("$ref.pdf", "I");
 	}
 }

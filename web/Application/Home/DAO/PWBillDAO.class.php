@@ -1131,4 +1131,68 @@ class PWBillDAO extends PSIBaseExDAO {
 		// 操作成功
 		return null;
 	}
+
+	/**
+	 * 查询采购入库单的数据，用于生成PDF文件
+	 *
+	 * @param array $params        	
+	 *
+	 * @return NULL|array
+	 */
+	public function getDataForPDF($params) {
+		$db = $this->db;
+		
+		$ref = $params["ref"];
+		
+		$sql = "select p.id, p.bill_status, p.ref, p.biz_dt, u1.name as biz_user_name, u2.name as input_user_name,
+					p.goods_money, w.name as warehouse_name, s.name as supplier_name,
+					p.date_created, p.payment_type
+				from t_pw_bill p, t_warehouse w, t_supplier s, t_user u1, t_user u2
+				where (p.warehouse_id = w.id) and (p.supplier_id = s.id)
+				and (p.biz_user_id = u1.id) and (p.input_user_id = u2.id) 
+				and (p.ref = '%s')";
+		
+		$data = $db->query($sql, $ref);
+		if (! $data) {
+			return null;
+		}
+		
+		$v = $data[0];
+		$id = $v["id"];
+		
+		$result = array();
+		
+		$result["billStatus"] = $v["bill_status"];
+		$result["supplierName"] = $v["supplier_name"];
+		$result["goodsMoney"] = $v["goods_money"];
+		$result["bizDT"] = $this->toYMD($v["biz_dt"]);
+		$result["warehouseName"] = $v["warehouse_name"];
+		$result["bizUserName"] = $v["biz_user_name"];
+		
+		$sql = "select g.code, g.name, g.spec, u.name as unit_name, p.goods_count, p.goods_price,
+					p.goods_money
+				from t_pw_bill_detail p, t_goods g, t_goods_unit u
+				where p.pwbill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id
+				order by p.show_order ";
+		$items = array();
+		$data = $db->query($sql, $id);
+		
+		foreach ( $data as $v ) {
+			$item = array(
+					"goodsCode" => $v["code"],
+					"goodsName" => $v["name"],
+					"goodsSpec" => $v["spec"],
+					"goodsCount" => $v["goods_count"],
+					"unitName" => $v["unit_name"],
+					"goodsPrice" => $v["goods_price"],
+					"goodsMoney" => $v["goods_money"]
+			);
+			
+			$items[] = $item;
+		}
+		
+		$result["items"] = $items;
+		
+		return $result;
+	}
 }
