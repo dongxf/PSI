@@ -503,6 +503,7 @@ Ext.define("PSI.Home.MainForm", {
 			},
 
 			onWindowBeforeUnload : function(e) {
-				return (window.event.returnValue = e.returnValue = '确认离开当前页面？');
+				return true;
+				//return (window.event.returnValue = e.returnValue = '确认离开当前页面？');
 			}
 		});
