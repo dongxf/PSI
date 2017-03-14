@@ -73,6 +73,12 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
 					scope : me,
 					handler : me.onCommit
 				}, "-", {
+					text : "单据生成pdf",
+					id : "buttonPDF",
+					iconCls : "PSI-button-pdf",
+					scope : me,
+					handler : me.onPDF
+				}, "-", {
 					text : "关闭",
 					iconCls : "PSI-button-exit",
 					handler : function() {
@@ -735,5 +741,19 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
 		result.receivingType = receivingType;
 
 		return result;
+	},
+
+	onPDF : function() {
+		var me = this;
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			PSI.MsgBox.showInfo("没有选择要生成pdf文件的采购退货出库单");
+			return;
+		}
+		var bill = item[0];
+
+		var url = PSI.Const.BASE_URL + "Home/PurchaseRej/prBillPdf?ref="
+				+ bill.get("ref");
+		window.open(url);
 	}
 });

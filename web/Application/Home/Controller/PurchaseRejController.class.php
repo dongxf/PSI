@@ -166,4 +166,16 @@ class PurchaseRejController extends PSIBaseController {
 			$this->ajaxReturn($pr->commitPRBill($params));
 		}
 	}
+
+	/**
+	 * 采购退货出库单生成PDF文件
+	 */
+	public function prBillPdf() {
+		$params = array(
+				"ref" => I("get.ref")
+		);
+		
+		$ps = new PRBillService();
+		$ps->pdf($params);
+	}
 }

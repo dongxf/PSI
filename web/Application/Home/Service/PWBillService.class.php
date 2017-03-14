@@ -206,7 +206,7 @@ class PWBillService extends PSIBaseExService {
 	}
 
 	/**
-	 * 采购订单生成pdf文件
+	 * 采购入库单生成pdf文件
 	 */
 	public function pdf($params) {
 		if ($this->isNotOnline()) {
