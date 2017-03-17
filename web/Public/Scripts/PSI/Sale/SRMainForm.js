@@ -74,6 +74,12 @@ Ext.define("PSI.Sale.SRMainForm", {
 					scope : me,
 					handler : me.onCommit
 				}, "-", {
+					text : "单据生成pdf",
+					id : "buttonPDF",
+					iconCls : "PSI-button-pdf",
+					scope : me,
+					handler : me.onPDF
+				}, "-", {
 					text : "关闭",
 					iconCls : "PSI-button-exit",
 					handler : function() {
@@ -741,5 +747,18 @@ Ext.define("PSI.Sale.SRMainForm", {
 		result.paymentType = paymentType;
 
 		return result;
+	},
+
+	onPDF : function() {
+		var me = this;
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			PSI.MsgBox.showInfo("没有选择要生成pdf文件的销售退货入库单");
+			return;
+		}
+		var bill = item[0];
+
+		var url = PSI.Const.BASE_URL + "Home/Sale/srBillPdf?ref=" + bill.get("ref");
+		window.open(url);
 	}
 });

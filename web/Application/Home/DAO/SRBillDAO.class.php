@@ -1227,4 +1227,57 @@ class SRBillDAO extends PSIBaseExDAO {
 		// 操作成功
 		return null;
 	}
+	
+	/**
+	 * 销售退货入库单生成pdf文件
+	 */
+	public function getDataForPDF($params) {
+		$ref = $params["ref"];
+	
+		$db = $this->db;
+		$sql = "select w.id, w.bizdt, c.name as customer_name, u.name as biz_user_name,
+				 	user.name as input_user_name, h.name as warehouse_name, w.rejection_sale_money,
+				 	w.bill_status, w.date_created, w.payment_type
+				 from t_sr_bill w, t_customer c, t_user u, t_user user, t_warehouse h
+				 where (w.customer_id = c.id) and (w.biz_user_id = u.id)
+				 and (w.input_user_id = user.id) and (w.warehouse_id = h.id) 
+					and (w.ref = '%s')";
+		$data = $db->query($sql, $ref);
+		if (! $data) {
+			return null;
+		}
+	
+		$id = $data[0]["id"];
+	
+		$bill["bizDT"] = $this->toYMD($data[0]["bizdt"]);
+		$bill["customerName"] = $data[0]["customer_name"];
+		$bill["warehouseName"] = $data[0]["warehouse_name"];
+		$bill["bizUserName"] = $data[0]["biz_user_name"];
+		$bill["rejMoney"] = $data[0]["rejection_sale_money"];
+	
+		// 明细表
+		$sql = "select s.id, g.code, g.name, g.spec, u.name as unit_name,
+				   s.rejection_goods_count, s.rejection_goods_price, s.rejection_sale_money,
+					s.sn_note
+				from t_sr_bill_detail s, t_goods g, t_goods_unit u
+				where s.srbill_id = '%s' and s.goods_id = g.id and g.unit_id = u.id
+					and s.rejection_goods_count > 0
+				order by s.show_order";
+		$data = $db->query($sql, $id);
+		$items = array();
+		foreach ( $data as $i => $v ) {
+			$items[$i]["goodsCode"] = $v["code"];
+			$items[$i]["goodsName"] = $v["name"];
+			$items[$i]["goodsSpec"] = $v["spec"];
+			$items[$i]["unitName"] = $v["unit_name"];
+			$items[$i]["goodsCount"] = $v["rejection_goods_count"];
+			$items[$i]["goodsPrice"] = $v["rejection_goods_price"];
+			$items[$i]["goodsMoney"] = $v["rejection_sale_money"];
+			$items[$i]["sn"] = $v["sn_note"];
+		}
+		$bill["items"] = $items;
+	
+		return $bill;
+	}
+	
 }

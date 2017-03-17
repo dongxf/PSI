@@ -421,4 +421,16 @@ class SaleController extends PSIBaseController {
 		$ws = new SOBillService();
 		$ws->pdf($params);
 	}
+
+	/**
+	 * 销售退货入库单生成pdf文件
+	 */
+	public function srBillPdf() {
+		$params = array(
+				"ref" => I("get.ref")
+		);
+		
+		$ws = new SRBillService();
+		$ws->pdf($params);
+	}
 }
