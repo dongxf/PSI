@@ -134,6 +134,21 @@ Ext.define("PSI.Goods.MainForm", {
 					handler : me.onSafetyInventory,
 					scope : me
 				}, "-", {
+					text : "商品组合",
+					menu : [{
+								text : "新增",
+								scope : me,
+								handler : me.onAddBOM
+							}, {
+								text : "编辑",
+								scope : me,
+								handler : me.onEditBOM
+							}, {
+								text : "删除",
+								scope : me,
+								handler : me.onDeleteBOM
+							}]
+				}, "-", {
 					text : "关闭",
 					iconCls : "PSI-button-exit",
 					handler : function() {
@@ -1140,5 +1155,26 @@ Ext.define("PSI.Goods.MainForm", {
 				});
 
 		return me.__bomGrid;
+	},
+
+	/**
+	 * 新增商品构成项
+	 */
+	onAddBOM : function() {
+		PSI.MsgBox.showInfo("TODO");
+	},
+
+	/**
+	 * 编辑商品构成项
+	 */
+	onEditBOM : function() {
+		PSI.MsgBox.showInfo("TODO");
+	},
+
+	/**
+	 * 删除商品构成项
+	 */
+	onDeleteBOM : function() {
+		PSI.MsgBox.showInfo("TODO");
 	}
 });
