@@ -742,4 +742,56 @@ class ITBillDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 销售出库单生成pdf文件
+	 */
+	public function getDataForPDF($params) {
+		$ref = $params["ref"];
+		
+		$db = $this->db;
+		$sql = "select t.id, t.bizdt, t.bill_status,
+					fw.name as from_warehouse_name,
+					tw.name as to_warehouse_name,
+					u.name as biz_user_name,
+					u1.name as input_user_name,
+					t.date_created
+				from t_it_bill t, t_warehouse fw, t_warehouse tw,
+				   t_user u, t_user u1
+				where (t.from_warehouse_id = fw.id)
+				  and (t.to_warehouse_id = tw.id)
+				  and (t.biz_user_id = u.id)
+				  and (t.input_user_id = u1.id) 
+					and (t.ref = '%s')";
+		$data = $db->query($sql, $ref);
+		if (! $data) {
+			return null;
+		}
+		
+		$id = $data[0]["id"];
+		
+		$bill["bizDT"] = $this->toYMD($data[0]["bizdt"]);
+		$bill["fromWarehouseName"] = $data[0]["from_warehouse_name"];
+		$bill["toWarehouseName"] = $data[0]["to_warehouse_name"];
+		$bill["bizUserName"] = $data[0]["biz_user_name"];
+		$bill["saleMoney"] = $data[0]["sale_money"];
+		
+		// 明细表
+		$sql = "select t.id, g.code, g.name, g.spec, u.name as unit_name, t.goods_count
+				from t_it_bill_detail t, t_goods g, t_goods_unit u
+				where t.itbill_id = '%s' and t.goods_id = g.id and g.unit_id = u.id
+				order by t.show_order ";
+		$data = $db->query($sql, $id);
+		$items = array();
+		foreach ( $data as $i => $v ) {
+			$items[$i]["goodsCode"] = $v["code"];
+			$items[$i]["goodsName"] = $v["name"];
+			$items[$i]["goodsSpec"] = $v["spec"];
+			$items[$i]["unitName"] = $v["unit_name"];
+			$items[$i]["goodsCount"] = $v["goods_count"];
+		}
+		$bill["items"] = $items;
+		
+		return $bill;
+	}
 }

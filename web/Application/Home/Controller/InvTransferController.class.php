@@ -129,4 +129,16 @@ class InvTransferController extends PSIBaseController {
 			$this->ajaxReturn($is->commitITBill($params));
 		}
 	}
+
+	/**
+	 * 调拨单生成pdf文件
+	 */
+	public function pdf() {
+		$params = array(
+				"ref" => I("get.ref")
+		);
+		
+		$ws = new ITBillService();
+		$ws->pdf($params);
+	}
 }

@@ -178,4 +178,80 @@ class ITBillService extends PSIBaseExService {
 		
 		return $this->ok($id);
 	}
+
+	/**
+	 * 调拨单生成pdf文件
+	 */
+	public function pdf($params) {
+		if ($this->isNotOnline()) {
+			return;
+		}
+		
+		$bs = new BizConfigService();
+		$productionName = $bs->getProductionName();
+		
+		$ref = $params["ref"];
+		
+		$dao = new ITBillDAO($this->db());
+		
+		$bill = $dao->getDataForPDF($params);
+		if (! $bill) {
+			return;
+		}
+		
+		$ps = new PDFService();
+		$pdf = $ps->getInstance();
+		$pdf->SetTitle("调拨单，单号：{$ref}");
+		
+		$pdf->setHeaderFont(Array(
+				"stsongstdlight",
+				"",
+				16
+		));
+		
+		$pdf->setFooterFont(Array(
+				"stsongstdlight",
+				"",
+				14
+		));
+		
+		$pdf->SetHeaderData("", 0, $productionName, "调拨单");
+		
+		$pdf->SetFont("stsongstdlight", "", 10);
+		$pdf->AddPage();
+		
+		/**
+		 * 注意：
+		 * TCPDF中，用来拼接HTML的字符串需要用单引号，否则HTML中元素的属性就不会被解析
+		 */
+		$html = '
+				<table>
+					<tr><td colspan="2">单号：' . $ref . '</td></tr>
+					<tr><td>调出仓库：' . $bill["fromWarehouseName"] . '</td><td>调入仓库:' . $bill["toWarehouseName"] . '</td></tr>
+					<tr><td>业务员：' . $bill["bizUserName"] . '</td><td>业务日期：' . $bill["bizDT"] . '</td></tr>
+				</table>
+				';
+		$pdf->writeHTML($html);
+		
+		$html = '<table border="1" cellpadding="1">
+					<tr><td>商品编号</td><td>商品名称</td><td>规格型号</td><td>数量</td><td>单位</td>
+					</tr>
+				';
+		foreach ( $bill["items"] as $v ) {
+			$html .= '<tr>';
+			$html .= '<td>' . $v["goodsCode"] . '</td>';
+			$html .= '<td>' . $v["goodsName"] . '</td>';
+			$html .= '<td>' . $v["goodsSpec"] . '</td>';
+			$html .= '<td align="right">' . $v["goodsCount"] . '</td>';
+			$html .= '<td>' . $v["unitName"] . '</td>';
+			$html .= '</tr>';
+		}
+		
+		$html .= "";
+		
+		$html .= '</table>';
+		$pdf->writeHTML($html, true, false, true, false, '');
+		
+		$pdf->Output("$ref.pdf", "I");
+	}
 }
