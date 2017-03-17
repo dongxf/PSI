@@ -685,4 +685,52 @@ class ICBillDAO extends PSIBaseExDAO {
 		// 操作成功
 		return null;
 	}
+
+	/**
+	 * 盘点单生成pdf文件
+	 */
+	public function getDataForPDF($params) {
+		$ref = $params["ref"];
+		
+		$db = $this->db;
+		$sql = "select t.id, t.bizdt, t.bill_status,
+				w.name as warehouse_name,
+				u.name as biz_user_name,
+				u1.name as input_user_name,
+				t.date_created
+				from t_ic_bill t, t_warehouse w, t_user u, t_user u1
+				where (t.warehouse_id = w.id)
+				and (t.biz_user_id = u.id)
+				and (t.input_user_id = u1.id) 
+				and (t.ref = '%s')";
+		$data = $db->query($sql, $ref);
+		if (! $data) {
+			return null;
+		}
+		
+		$id = $data[0]["id"];
+		
+		$bill["bizDT"] = $this->toYMD($data[0]["bizdt"]);
+		$bill["warehouseName"] = $data[0]["warehouse_name"];
+		$bill["bizUserName"] = $data[0]["biz_user_name"];
+		
+		// 明细表
+		$sql = "select t.id, g.code, g.name, g.spec, u.name as unit_name, t.goods_count, t.goods_money
+				from t_ic_bill_detail t, t_goods g, t_goods_unit u
+				where t.icbill_id = '%s' and t.goods_id = g.id and g.unit_id = u.id
+				order by t.show_order ";
+		$data = $db->query($sql, $id);
+		$items = array();
+		foreach ( $data as $i => $v ) {
+			$items[$i]["goodsCode"] = $v["code"];
+			$items[$i]["goodsName"] = $v["name"];
+			$items[$i]["goodsSpec"] = $v["spec"];
+			$items[$i]["unitName"] = $v["unit_name"];
+			$items[$i]["goodsCount"] = $v["goods_count"];
+			$items[$i]["goodsMoney"] = $v["goods_money"];
+		}
+		$bill["items"] = $items;
+		
+		return $bill;
+	}
 }

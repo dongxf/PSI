@@ -744,7 +744,7 @@ class ITBillDAO extends PSIBaseExDAO {
 	}
 
 	/**
-	 * 销售出库单生成pdf文件
+	 * 调拨单生成pdf文件
 	 */
 	public function getDataForPDF($params) {
 		$ref = $params["ref"];

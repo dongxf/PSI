@@ -127,4 +127,16 @@ class InvCheckController extends PSIBaseController {
 			$this->ajaxReturn($ic->commitICBill($params));
 		}
 	}
+
+	/**
+	 * 盘点单生成pdf文件
+	 */
+	public function pdf() {
+		$params = array(
+				"ref" => I("get.ref")
+		);
+		
+		$ws = new ICBillService();
+		$ws->pdf($params);
+	}
 }
