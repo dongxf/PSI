@@ -298,7 +298,7 @@ class SaleController extends PSIBaseController {
 	}
 
 	/**
-	 * 生成pdf文件
+	 * 销售出库单生成pdf文件
 	 */
 	public function pdf() {
 		$params = array(
@@ -408,5 +408,17 @@ class SaleController extends PSIBaseController {
 			$ps = new SOBillService();
 			$this->ajaxReturn($ps->cancelConfirmSOBill($params));
 		}
+	}
+
+	/**
+	 * 销售订单生成pdf文件
+	 */
+	public function soBillPdf() {
+		$params = array(
+				"ref" => I("get.ref")
+		);
+		
+		$ws = new SOBillService();
+		$ws->pdf($params);
 	}
 }

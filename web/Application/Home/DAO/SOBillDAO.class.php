@@ -729,4 +729,56 @@ class SOBillDAO extends PSIBaseExDAO {
 		// 操作成功
 		return null;
 	}
+
+	/**
+	 * 销售订单生成pdf文件
+	 */
+	public function getDataForPDF($params) {
+		$ref = $params["ref"];
+		
+		$db = $this->db;
+		$sql = "select s.id, s.bill_status, s.goods_money, s.tax, s.money_with_tax,
+					c.name as customer_name, s.contact, s.tel, s.fax, s.deal_address,
+					s.deal_date, s.receiving_type, s.bill_memo, s.date_created,
+					o.full_name as org_name, u1.name as biz_user_name, u2.name as input_user_name,
+					s.confirm_user_id, s.confirm_date
+				from t_so_bill s, t_customer c, t_org o, t_user u1, t_user u2
+				where (s.customer_id = c.id) and (s.org_id = o.id)
+					and (s.biz_user_id = u1.id) and (s.input_user_id = u2.id) 
+					and (s.ref = '%s')";
+		$data = $db->query($sql, $ref);
+		if (! $data) {
+			return null;
+		}
+		
+		$id = $data[0]["id"];
+		
+		$bill["bizDT"] = $this->toYMD($data[0]["bizdt"]);
+		$bill["customerName"] = $data[0]["customer_name"];
+		$bill["warehouseName"] = $data[0]["warehouse_name"];
+		$bill["bizUserName"] = $data[0]["biz_user_name"];
+		$bill["saleMoney"] = $data[0]["goods_money"];
+		$bill["dealAddress"]=$data[0]["deal_address"];
+		
+		// 明细表
+		$sql = "select s.id, g.code, g.name, g.spec, s.goods_count, s.goods_price, s.goods_money,
+					s.tax_rate, s.tax, s.money_with_tax, u.name as unit_name
+				from t_so_bill_detail s, t_goods g, t_goods_unit u
+				where s.sobill_id = '%s' and s.goods_id = g.id and g.unit_id = u.id
+				order by s.show_order";
+		$data = $db->query($sql, $id);
+		$items = array();
+		foreach ( $data as $i => $v ) {
+			$items[$i]["goodsCode"] = $v["code"];
+			$items[$i]["goodsName"] = $v["name"];
+			$items[$i]["goodsSpec"] = $v["spec"];
+			$items[$i]["unitName"] = $v["unit_name"];
+			$items[$i]["goodsCount"] = $v["goods_count"];
+			$items[$i]["goodsPrice"] = $v["goods_price"];
+			$items[$i]["goodsMoney"] = $v["goods_money"];
+		}
+		$bill["items"] = $items;
+		
+		return $bill;
+	}
 }
