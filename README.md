@@ -27,6 +27,12 @@ PSI在魔泊云的部署指南
 > 
 > 用IIS如何配置：http://my.oschina.net/u/1415918/blog/511228
 
+本地开发使用的环境
+-------------
+> Windows 7(32位)、Eclipse、 XAMPP
+> 集中下载链接：http://pan.baidu.com/s/1pLyMcND 密码：jpy7
+
+
 PSI的开源协议
 -------------
 >PSI的开源协议为GPL v3
