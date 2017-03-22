@@ -134,7 +134,7 @@ Ext.define("PSI.Goods.MainForm", {
 					handler : me.onSafetyInventory,
 					scope : me
 				}, "-", {
-					text : "商品组合",
+					text : "商品构成",
 					menu : [{
 								text : "新增",
 								scope : me,
@@ -1161,7 +1161,20 @@ Ext.define("PSI.Goods.MainForm", {
 	 * 新增商品构成项
 	 */
 	onAddBOM : function() {
-		PSI.MsgBox.showInfo("TODO");
+		var me = this;
+
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			PSI.MsgBox.showInfo("请选择一个商品");
+			return;
+		}
+
+		var goods = item[0];
+
+		var form = Ext.create("PSI.Goods.GoodsBOMEditForm", {
+					goods : goods
+				});
+		form.show();
 	},
 
 	/**

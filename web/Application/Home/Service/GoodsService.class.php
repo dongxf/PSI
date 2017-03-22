@@ -633,4 +633,17 @@ class GoodsService extends PSIBaseService {
 		$dao = new GoodsBomDAO();
 		return $dao->goodsBOMList($params);
 	}
+
+	/**
+	 * 新增或编辑商品构成
+	 * 
+	 * @param array $params        	
+	 */
+	public function editGoodsBOM($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
+		return $this->todo();
+	}
 }

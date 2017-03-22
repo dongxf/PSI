@@ -517,4 +517,16 @@ class GoodsController extends PSIBaseController {
 			$this->ajaxReturn($gs->goodsBOMList($params));
 		}
 	}
+
+	/**
+	 * 新增或编辑商品构成
+	 */
+	public function editGoodsBOM() {
+		if (IS_POST) {
+			$params = array();
+			
+			$gs = new GoodsService();
+			$this->ajaxReturn($gs->editGoodsBOM($params));
+		}
+	}
 }
