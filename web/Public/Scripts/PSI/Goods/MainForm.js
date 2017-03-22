@@ -138,14 +138,17 @@ Ext.define("PSI.Goods.MainForm", {
 					menu : [{
 								text : "新增",
 								scope : me,
+								iconCls : "PSI-button-add",
 								handler : me.onAddBOM
 							}, {
 								text : "编辑",
 								scope : me,
+								iconCls : "PSI-button-edit",
 								handler : me.onEditBOM
 							}, {
 								text : "删除",
 								scope : me,
+								iconCls : "PSI-button-delete",
 								handler : me.onDeleteBOM
 							}]
 				}, "-", {
