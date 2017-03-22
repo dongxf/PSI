@@ -2,7 +2,7 @@
  * 客户分类 - 新增或编辑界面
  */
 Ext.define("PSI.Customer.CategoryEditForm", {
-	extend : "PSI.AFX.BaseForm",
+	extend : "PSI.AFX.BaseDialogForm",
 
 	initComponent : function() {
 		var me = this;

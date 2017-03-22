@@ -2,7 +2,7 @@
  * 登录界面
  */
 Ext.define("PSI.User.LoginForm", {
-	extend : 'PSI.AFX.BaseForm',
+	extend : 'PSI.AFX.BaseDialogForm',
 
 	config : {
 		demoInfo : "",

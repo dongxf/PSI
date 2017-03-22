@@ -2,7 +2,7 @@
  * 仓库 - 编辑数据域
  */
 Ext.define("PSI.Warehouse.EditDataOrgForm", {
-	extend : "PSI.AFX.BaseForm",
+	extend : "PSI.AFX.BaseDialogForm",
 
 	/**
 	 * 初始化组件

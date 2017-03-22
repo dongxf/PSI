@@ -1,7 +1,7 @@
 /**
- * PSI 窗体基类
+ * PSI 对话框窗体基类
  */
-Ext.define("PSI.AFX.BaseForm", {
+Ext.define("PSI.AFX.BaseDialogForm", {
 			extend : 'Ext.window.Window',
 
 			config : {

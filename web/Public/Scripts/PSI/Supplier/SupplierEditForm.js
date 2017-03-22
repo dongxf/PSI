@@ -2,7 +2,7 @@
  * 供应商档案 - 新建或编辑界面
  */
 Ext.define("PSI.Supplier.SupplierEditForm", {
-	extend : "PSI.AFX.BaseForm",
+	extend : "PSI.AFX.BaseDialogForm",
 
 	initComponent : function() {
 		var me = this;

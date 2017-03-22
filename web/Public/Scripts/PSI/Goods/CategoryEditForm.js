@@ -2,7 +2,7 @@
  * 商品分类 - 编辑界面
  */
 Ext.define("PSI.Goods.CategoryEditForm", {
-	extend : "PSI.AFX.BaseForm",
+	extend : "PSI.AFX.BaseDialogForm",
 
 	/**
 	 * 初始化组件

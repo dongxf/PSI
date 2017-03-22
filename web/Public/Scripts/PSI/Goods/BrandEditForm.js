@@ -2,7 +2,7 @@
  * 新增或编辑商品品牌
  */
 Ext.define("PSI.Goods.BrandEditForm", {
-	extend : "PSI.AFX.BaseForm",
+	extend : "PSI.AFX.BaseDialogForm",
 
 	/**
 	 * 初始化组件
