@@ -1,7 +1,7 @@
 /**
- * 仓库 - 新增或编辑界面
+ * 商品构成 - 新增或编辑界面
  */
-Ext.define("PSI.Warehouse.EditForm", {
+Ext.define("PSI.Goods.GoodsBOMEditForm", {
 			extend : "PSI.AFX.BaseDialogForm",
 
 			/**
@@ -49,7 +49,7 @@ Ext.define("PSI.Warehouse.EditForm", {
 				buttons.push(btn);
 
 				Ext.apply(me, {
-							title : entity == null ? "新增仓库" : "编辑仓库",
+							title : entity == null ? "新增商品构成" : "编辑商品构成",
 							width : 400,
 							height : 140,
 							layout : "fit",
@@ -64,7 +64,7 @@ Ext.define("PSI.Warehouse.EditForm", {
 								}
 							},
 							items : [{
-								id : "PSI_Warehouse_EditForm_editForm",
+								id : "PSI_Goods_GoodsBOMEditForm_editForm",
 								xtype : "form",
 								layout : {
 									type : "table",
@@ -87,32 +87,17 @@ Ext.define("PSI.Warehouse.EditForm", {
 									value : entity == null ? null : entity
 											.get("id")
 								}, {
-									id : "PSI_Warehouse_EditForm_editCode",
-									fieldLabel : "仓库编码",
+									id : "PSI_Goods_GoodsBOMEditForm_editSubGoods",
+									fieldLabel : "子商品",
 									allowBlank : false,
-									blankText : "没有输入仓库编码",
+									blankText : "没有输入子商品",
 									beforeLabelTextTpl : PSI.Const.REQUIRED,
 									name : "code",
 									value : entity == null ? null : entity
 											.get("code"),
 									listeners : {
 										specialkey : {
-											fn : me.onEditCodeSpecialKey,
-											scope : me
-										}
-									}
-								}, {
-									id : "PSI_Warehouse_EditForm_editName",
-									fieldLabel : "仓库名称",
-									allowBlank : false,
-									blankText : "没有输入仓库名称",
-									beforeLabelTextTpl : PSI.Const.REQUIRED,
-									name : "name",
-									value : entity == null ? null : entity
-											.get("name"),
-									listeners : {
-										specialkey : {
-											fn : me.onEditNameSpecialKey,
+											fn : me.onEditSubGoodsSpecialKey,
 											scope : me
 										}
 									}
@@ -123,10 +108,9 @@ Ext.define("PSI.Warehouse.EditForm", {
 
 				me.callParent(arguments);
 
-				me.editForm = Ext.getCmp("PSI_Warehouse_EditForm_editForm");
+				me.editForm = Ext.getCmp("PSI_Goods_GoodsBOMEditForm_editForm");
 
-				me.editCode = Ext.getCmp("PSI_Warehouse_EditForm_editCode");
-				me.editName = Ext.getCmp("PSI_Warehouse_EditForm_editName");
+				me.editSubGoods = Ext.getCmp("PSI_Goods_GoodsBOMEditForm_editSubGoods");
 			},
 
 			/**
@@ -138,7 +122,7 @@ Ext.define("PSI.Warehouse.EditForm", {
 				var el = f.getEl();
 				el.mask(PSI.Const.SAVING);
 				var sf = {
-					url : me.URL("/Home/Warehouse/editWarehouse"),
+					url : me.URL("/Home/Goods/editGoodsBOM"),
 					method : "POST",
 					success : function(form, action) {
 						me.__lastId = action.result.id;
@@ -156,7 +140,7 @@ Ext.define("PSI.Warehouse.EditForm", {
 					failure : function(form, action) {
 						el.unmask();
 						PSI.MsgBox.showInfo(action.result.msg, function() {
-									me.editCode.focus();
+									me.editSubGoods.focus();
 								});
 					}
 				};
