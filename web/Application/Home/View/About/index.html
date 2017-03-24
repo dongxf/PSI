@@ -4,16 +4,6 @@
 	type="text/javascript"></script>
 <script>
 	Ext.onReady(function() {
-		var app = Ext.create("PSI.App", {
-			userName : "{$loginUserName}",
-			productionName : "{$productionName}"
-		});
-
-		app.setAppHeader({
-			title : "{$title}",
-			iconCls : "PSI-fid-9994"
-		});
-
 		var form = Ext.create("PSI.About.MainForm", {
 			productionName : "{$productionName}"
 		});

@@ -150,7 +150,7 @@ Ext.define("PSI.Warehouse.MainForm", {
 
 		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			PSI.MsgBox.showInfo("请选择要编辑的仓库");
+			me.showInfo("请选择要编辑的仓库");
 			return;
 		}
 
@@ -171,7 +171,7 @@ Ext.define("PSI.Warehouse.MainForm", {
 		var me = this;
 		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			PSI.MsgBox.showInfo("请选择要删除的仓库");
+			me.showInfo("请选择要删除的仓库");
 			return;
 		}
 
@@ -193,23 +193,23 @@ Ext.define("PSI.Warehouse.MainForm", {
 				callback : function(options, success, response) {
 					el.unmask();
 					if (success) {
-						var data = Ext.JSON.decode(response.responseText);
+						var data = me.decodeJSON(response.responseText);
 						if (data.success) {
-							PSI.MsgBox.tip("成功完成删除操作");
+							me.tip("成功完成删除操作");
 							me.freshGrid(preIndex);
 						} else {
-							PSI.MsgBox.showInfo(data.msg);
+							me.showInfo(data.msg);
 						}
 					} else {
-						PSI.MsgBox.showInfo("网络错误");
+						me.showInfo("网络错误");
 					}
 				}
 			};
 
-			Ext.Ajax.request(r);
+			me.ajax(r);
 		};
 
-		PSI.MsgBox.confirm(info, funcConfirm);
+		me.confirm(info, funcConfirm);
 	},
 
 	/**
@@ -220,7 +220,7 @@ Ext.define("PSI.Warehouse.MainForm", {
 
 		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			PSI.MsgBox.showInfo("请选择要编辑数据域的仓库");
+			me.showInfo("请选择要编辑数据域的仓库");
 			return;
 		}
 

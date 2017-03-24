@@ -28,6 +28,22 @@ Ext.define("PSI.AFX.BaseMainForm", {
 				return Ext.JSON.decode(str);
 			},
 
+			tip : function(info) {
+				PSI.MsgBox.tip(info);
+			},
+
+			showInfo : function(info) {
+				PSI.MsgBox.showInfo(info);
+			},
+
+			confirm : function(confirmInfo, funcOnYes) {
+				PSI.MsgBox.confirm(confirmInfo, funcOnYes);
+			},
+
+			ajax : function(r) {
+				Ext.Ajax.request(r);
+			},
+
 			afxGetToolbarCmp : function() {
 				return [];
 			},
