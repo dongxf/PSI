@@ -14,7 +14,7 @@ use Home\DAO\GoodsUnitDAO;
  *
  * @author 李静波
  */
-class GoodsService extends PSIBaseService {
+class GoodsService extends PSIBaseExService {
 	private $LOG_CATEGORY_GOODS = "基础数据-商品";
 	private $LOG_CATEGORY_UNIT = "基础数据-商品计量单位";
 	private $LOG_CATEGORY_BRAND = "基础数据-商品品牌";
@@ -636,7 +636,7 @@ class GoodsService extends PSIBaseService {
 
 	/**
 	 * 新增或编辑商品构成
-	 * 
+	 *
 	 * @param array $params        	
 	 */
 	public function editGoodsBOM($params) {
@@ -645,5 +645,19 @@ class GoodsService extends PSIBaseService {
 		}
 		
 		return $this->todo();
+	}
+
+	/**
+	 * 子商品字段，查询数据
+	 */
+	public function queryDataForSubGoods($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$params["loginUserId"] = $this->getLoginUserId();
+		
+		$dao = new GoodsDAO($this->db());
+		return $dao->queryDataForSubGoods($params);
 	}
 }
