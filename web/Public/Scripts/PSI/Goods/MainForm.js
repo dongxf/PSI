@@ -33,6 +33,7 @@ Ext.define("PSI.Goods.MainForm", {
 								height : 60,
 								title : "查询条件",
 								collapsible : true,
+								collapseMode : "mini",
 								layout : {
 									type : "table",
 									columns : 5
@@ -54,9 +55,11 @@ Ext.define("PSI.Goods.MainForm", {
 											}, {
 												region : "south",
 												layout : "fit",
-												border : 0,
 												height : 200,
 												split : true,
+												collapsible : true,
+												collapseMode : "mini",
+												header : false,
 												xtype : "tabpanel",
 												items : [me.getSIGrid(),
 														me.getGoodsBOMGrid()]
@@ -68,6 +71,7 @@ Ext.define("PSI.Goods.MainForm", {
 									width : 430,
 									split : true,
 									collapsible : true,
+									header : false,
 									border : 0,
 									items : [me.getCategoryGrid()]
 								}]

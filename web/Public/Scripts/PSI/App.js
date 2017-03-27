@@ -9,7 +9,7 @@ Ext.define("PSI.App", {
 
 	constructor : function(config) {
 		var me = this;
-		
+
 		me.initConfig(config);
 
 		me.createMainUI();
@@ -91,6 +91,7 @@ Ext.define("PSI.App", {
 									maxWidth : 250,
 									split : true,
 									collapsible : true,
+									collapseMode : "mini",
 									collapsed : me.getRecentFidPanelCollapsed(),
 									header : false,
 									layout : "fit",
