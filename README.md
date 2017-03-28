@@ -8,29 +8,9 @@ PSI演示
 >PSI的演示见：http://psi.butterfly.mopaasapp.com
 
 
-源代码下载地址
--------------
->源码下载地址：http://git.oschina.net/crm8000/PSI/repository/archive/master
-
 PSI在魔泊云的部署指南
 -------------
 > https://my.oschina.net/u/134395/blog/853473
-
-
-通过PSI源码在本地安装
--------------
-> 本地环境搭建: http://my.oschina.net/u/134395/blog/376530
-> 
-> 用WampServer部署可能会遇到的问题：http://my.oschina.net/u/134395/blog/383754
-> 
-> lnmp部署参考：http://my.oschina.net/u/2525829/blog/532614
-> 
-> 用IIS如何配置：http://my.oschina.net/u/1415918/blog/511228
-
-本地开发使用的环境
--------------
-> Windows 7(32位)、Eclipse、 XAMPP
-> 集中下载链接：http://pan.baidu.com/s/1pLyMcND 密码：jpy7
 
 
 PSI的开源协议
@@ -42,10 +22,6 @@ PSI的开源协议
 
 >
 >关于开源协议和私有化PSI代码的详细解释，可以参考这里：http://my.oschina.net/u/134395/blog/524350
-
-更多文档
--------------
-> 更多文档，请参考：http://my.oschina.net/u/134395
 
 
 PSI行业版
