@@ -56,8 +56,8 @@ Ext.define("PSI.Goods.GoodsBOMEditForm", {
 
 		Ext.apply(me, {
 			title : entity == null ? "新增商品构成" : "编辑商品构成",
-			width : 400,
-			height : 300,
+			width : 520,
+			height : 370,
 			layout : "fit",
 			listeners : {
 				show : {
@@ -80,11 +80,9 @@ Ext.define("PSI.Goods.GoodsBOMEditForm", {
 				bodyPadding : 5,
 				defaultType : 'textfield',
 				fieldDefaults : {
-					labelWidth : 60,
 					labelAlign : "right",
 					labelSeparator : "",
 					msgTarget : 'side',
-					width : 370,
 					margin : "5"
 				},
 				items : [{
@@ -92,24 +90,28 @@ Ext.define("PSI.Goods.GoodsBOMEditForm", {
 							name : "id",
 							value : entity == null ? null : entity.get("id")
 						}, {
-							xtype : "displayfield",
 							fieldLabel : "商品编码",
+							width : 470,
+							readOnly : true,
 							value : goods.get("code")
 						}, {
-							xtype : "displayfield",
 							fieldLabel : "品名",
+							width : 470,
+							readOnly : true,
 							value : goods.get("name")
 						}, {
-							xtype : "displayfield",
 							fieldLabel : "规格型号",
+							readOnly : true,
+							width : 470,
 							value : goods.get("spec")
 						}, {
-							xtype : "displayfield",
 							fieldLabel : "商品单位",
+							readOnly : true,
 							value : goods.get("unitName")
 						}, {
-							id : "PSI_Goods_GoodsBOMEditForm_editSubGoods",
-							fieldLabel : "子商品",
+							id : "PSI_Goods_GoodsBOMEditForm_editSubGoodsCode",
+							fieldLabel : "子商品编码",
+							width : 470,
 							allowBlank : false,
 							blankText : "没有输入子商品",
 							beforeLabelTextTpl : PSI.Const.REQUIRED,
@@ -122,11 +124,30 @@ Ext.define("PSI.Goods.GoodsBOMEditForm", {
 								}
 							}
 						}, {
+							fieldLabel : "子商品名称",
+							width : 470,
+							readOnly : true,
+							id : "PSI_Goods_GoodsBOMEditForm_editSubGoodsName"
+						}, {
+							fieldLabel : "子商品规格型号",
+							readOnly : true,
+							width : 470,
+							id : "PSI_Goods_GoodsBOMEditForm_editSubGoodsSpec"
+						}, {
 							id : "PSI_Goods_GoodsBOMEditForm_editSubGoodsCount",
 							xtype : "numberfield",
 							fieldLabel : "子商品数量",
 							allowDecimals : false,
-							hideTrigger : true
+							hideTrigger : true,
+							name : "subGoodsCount"
+						}, {
+							fieldLabel : "子商品单位",
+							readOnly : true,
+							id : "PSI_Goods_GoodsBOMEditForm_editSubGoodsUnitName"
+						}, {
+							xtype : "hidden",
+							id : "PSI_Goods_GoodsBOMEditForm_editSubGoodsId",
+							name : "subGoodsId"
 						}],
 				buttons : buttons
 			}]
@@ -139,6 +160,14 @@ Ext.define("PSI.Goods.GoodsBOMEditForm", {
 		me.editSubGoods = Ext.getCmp("PSI_Goods_GoodsBOMEditForm_editSubGoods");
 		me.editSubGoodsCount = Ext
 				.getCmp("PSI_Goods_GoodsBOMEditForm_editSubGoodsCount");
+		me.editSubGoodsId = Ext
+				.getCmp("PSI_Goods_GoodsBOMEditForm_editSubGoodsId");
+		me.editSubGoodsCode = Ext
+				.getCmp("PSI_Goods_GoodsBOMEditForm_editSubGoodsCode");
+		me.editSubGoodsSpec = Ext
+				.getCmp("PSI_Goods_GoodsBOMEditForm_editSubGoodsSpec");
+		me.editSubGoodsUnitName = Ext
+				.getCmp("PSI_Goods_GoodsBOMEditForm_editSubGoodsUnitName");
 	},
 
 	/**

@@ -1148,9 +1148,9 @@ Ext.define("PSI.Goods.MainForm", {
 								xtype : "numbercolumn",
 								format : "0"
 							}, {
-								header : "计量单位",
+								header : "子商品计量单位",
 								dataIndex : "unitName",
-								width : 80,
+								width : 100,
 								menuDisabled : true,
 								sortable : false
 							}],
