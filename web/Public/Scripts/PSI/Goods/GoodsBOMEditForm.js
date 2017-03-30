@@ -88,7 +88,7 @@ Ext.define("PSI.Goods.GoodsBOMEditForm", {
 				items : [{
 							xtype : "hidden",
 							name : "id",
-							value : entity == null ? null : entity.get("id")
+							value : goods.get("id")
 						}, {
 							fieldLabel : "商品编码",
 							width : 470,

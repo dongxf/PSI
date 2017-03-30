@@ -523,7 +523,11 @@ class GoodsController extends PSIBaseController {
 	 */
 	public function editGoodsBOM() {
 		if (IS_POST) {
-			$params = array();
+			$params = array(
+					"id" => I("post.id"),
+					"subGoodsId" => I("post.subGoodsId"),
+					"subGoodsCount" => I("post.subGoodsCount")
+			);
 			
 			$gs = new GoodsService();
 			$this->ajaxReturn($gs->editGoodsBOM($params));
@@ -539,7 +543,7 @@ class GoodsController extends PSIBaseController {
 					"queryKey" => I("post.queryKey"),
 					"parentGoodsId" => I("post.parentGoodsId")
 			);
-
+			
 			$gs = new GoodsService();
 			$this->ajaxReturn($gs->queryDataForSubGoods($params));
 		}
