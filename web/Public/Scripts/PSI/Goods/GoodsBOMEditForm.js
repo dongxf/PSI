@@ -155,6 +155,10 @@ Ext.define("PSI.Goods.GoodsBOMEditForm", {
 							xtype : "hidden",
 							id : "PSI_Goods_GoodsBOMEditForm_editSubGoodsId",
 							name : "subGoodsId"
+						}, {
+							xtype : "hidden",
+							name : "addBOM",
+							value : entity == null ? "1" : "0"
 						}],
 				buttons : buttons
 			}]

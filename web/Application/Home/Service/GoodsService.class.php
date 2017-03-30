@@ -644,7 +644,27 @@ class GoodsService extends PSIBaseExService {
 			return $this->notOnlineError();
 		}
 		
-		return $this->todo();
+		$db = $this->db();
+		$db->startTrans();
+		
+		$dao = new GoodsBomDAO($db);
+		
+		$addBOM = $params["addBOM"] == "1";
+		$rc = null;
+		
+		if ($addBOM) {
+			$rc = $dao->addGoodsBOM($params);
+		} else {
+			$rc = $dao->updateGoodsBOM($params);
+		}
+		
+		if ($rc) {
+			$db->rollback();
+			return $rc;
+		}
+		$db->commit();
+		
+		return $this->ok();
 	}
 
 	/**

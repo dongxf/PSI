@@ -525,6 +525,7 @@ class GoodsController extends PSIBaseController {
 		if (IS_POST) {
 			$params = array(
 					"id" => I("post.id"),
+					"addBOM" => I("post.addBOM"),
 					"subGoodsId" => I("post.subGoodsId"),
 					"subGoodsCount" => I("post.subGoodsCount")
 			);
