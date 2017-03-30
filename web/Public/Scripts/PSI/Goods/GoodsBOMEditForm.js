@@ -157,7 +157,8 @@ Ext.define("PSI.Goods.GoodsBOMEditForm", {
 
 		me.editForm = Ext.getCmp("PSI_Goods_GoodsBOMEditForm_editForm");
 
-		me.editSubGoods = Ext.getCmp("PSI_Goods_GoodsBOMEditForm_editSubGoods");
+		me.editSubGoodsCode = Ext.getCmp("PSI_Goods_GoodsBOMEditForm_editSubGoodsCode");
+		me.editSubGoodsName = Ext.getCmp("PSI_Goods_GoodsBOMEditForm_editSubGoodsName");
 		me.editSubGoodsCount = Ext
 				.getCmp("PSI_Goods_GoodsBOMEditForm_editSubGoodsCount");
 		me.editSubGoodsId = Ext
@@ -229,7 +230,7 @@ Ext.define("PSI.Goods.GoodsBOMEditForm", {
 		var me = this;
 		me.editCode.focus();
 
-		var editors = [me.editCode, me.editName];
+		var editors = [me.editSubGoodsCode, me.editSubGoodsCount];
 		for (var i = 0; i < editors.length; i++) {
 			var edit = editors[i];
 			edit.setValue(null);
@@ -248,7 +249,7 @@ Ext.define("PSI.Goods.GoodsBOMEditForm", {
 
 	onWndShow : function() {
 		var me = this;
-		var editCode = me.editCode;
+		var editCode = me.editSubGoodsCode;
 		editCode.focus();
 		editCode.setValue(editCode.getValue());
 	}
