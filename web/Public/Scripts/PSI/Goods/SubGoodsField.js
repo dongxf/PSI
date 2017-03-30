@@ -205,11 +205,11 @@ Ext.define("PSI.Goods.SubGoodsField", {
 			return;
 		}
 
-		var data = item[0].getData();
+		var data = item[0];
 
 		me.wnd.close();
 		me.focus();
-		me.setValue(data.code);
+		me.setValue(data.get("code"));
 		me.focus();
 
 		if (me.getParentCmp() && me.getParentCmp().__setGoodsInfo) {

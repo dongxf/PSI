@@ -116,10 +116,11 @@ Ext.define("PSI.Goods.GoodsBOMEditForm", {
 							blankText : "没有输入子商品",
 							beforeLabelTextTpl : PSI.Const.REQUIRED,
 							xtype : "psi_subgoodsfield",
+							parentCmp : me,
 							parentGoodsId : me.goods.get("id"),
 							listeners : {
 								specialkey : {
-									fn : me.onEditSubGoodsSpecialKey,
+									fn : me.onEditCodeSpecialKey,
 									scope : me
 								}
 							}
@@ -139,7 +140,13 @@ Ext.define("PSI.Goods.GoodsBOMEditForm", {
 							fieldLabel : "子商品数量",
 							allowDecimals : false,
 							hideTrigger : true,
-							name : "subGoodsCount"
+							name : "subGoodsCount",
+							listeners : {
+								specialkey : {
+									fn : me.onEditCountSpecialKey,
+									scope : me
+								}
+							}
 						}, {
 							fieldLabel : "子商品单位",
 							readOnly : true,
@@ -157,8 +164,10 @@ Ext.define("PSI.Goods.GoodsBOMEditForm", {
 
 		me.editForm = Ext.getCmp("PSI_Goods_GoodsBOMEditForm_editForm");
 
-		me.editSubGoodsCode = Ext.getCmp("PSI_Goods_GoodsBOMEditForm_editSubGoodsCode");
-		me.editSubGoodsName = Ext.getCmp("PSI_Goods_GoodsBOMEditForm_editSubGoodsName");
+		me.editSubGoodsCode = Ext
+				.getCmp("PSI_Goods_GoodsBOMEditForm_editSubGoodsCode");
+		me.editSubGoodsName = Ext
+				.getCmp("PSI_Goods_GoodsBOMEditForm_editSubGoodsName");
 		me.editSubGoodsCount = Ext
 				.getCmp("PSI_Goods_GoodsBOMEditForm_editSubGoodsCount");
 		me.editSubGoodsId = Ext
@@ -198,7 +207,7 @@ Ext.define("PSI.Goods.GoodsBOMEditForm", {
 			failure : function(form, action) {
 				el.unmask();
 				PSI.MsgBox.showInfo(action.result.msg, function() {
-							me.editSubGoods.focus();
+							me.editSubGoodsCode.focus();
 						});
 			}
 		};
@@ -209,13 +218,13 @@ Ext.define("PSI.Goods.GoodsBOMEditForm", {
 		var me = this;
 
 		if (e.getKey() == e.ENTER) {
-			var editName = me.editName;
-			editName.focus();
-			editName.setValue(editName.getValue());
+			var edit = me.editSubGoodsCount;
+			edit.focus();
+			edit.setValue(edit.getValue());
 		}
 	},
 
-	onEditNameSpecialKey : function(field, e) {
+	onEditCountSpecialKey : function(field, e) {
 		var me = this;
 
 		if (e.getKey() == e.ENTER) {
@@ -242,7 +251,7 @@ Ext.define("PSI.Goods.GoodsBOMEditForm", {
 		var me = this;
 		if (me.__lastId) {
 			if (me.getParentForm()) {
-				me.getParentForm().freshGrid(me.__lastId);
+				//me.getParentForm().freshGrid(me.__lastId);
 			}
 		}
 	},
@@ -252,5 +261,12 @@ Ext.define("PSI.Goods.GoodsBOMEditForm", {
 		var editCode = me.editSubGoodsCode;
 		editCode.focus();
 		editCode.setValue(editCode.getValue());
+	},
+
+	__setGoodsInfo : function(goods) {
+		var me = this;
+		me.editSubGoodsName.setValue(goods.get("name"));
+		me.editSubGoodsSpec.setValue(goods.get("spec"));
+		me.editSubGoodsUnitName.setValue(goods.get("unitName"));
 	}
 });
