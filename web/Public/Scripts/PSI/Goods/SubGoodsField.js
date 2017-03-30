@@ -14,14 +14,20 @@ Ext.define("PSI.Goods.SubGoodsField", {
 	 * 初始化组件
 	 */
 	initComponent : function() {
-		this.enableKeyEvents = true;
+		var me = this;
 
-		this.callParent(arguments);
+		me.enableKeyEvents = true;
 
-		this.on("keydown", function(field, e) {
+		me.callParent(arguments);
+
+		me.on("keydown", function(field, e) {
 					if (e.getKey() == e.BACKSPACE) {
 						field.setValue(null);
 						e.preventDefault();
+						if (me.getParentCmp()
+								&& me.getParentCmp().__setGoodsInfo) {
+							me.getParentCmp().__setGoodsInfo(null);
+						}
 						return false;
 					}
 
@@ -213,7 +219,7 @@ Ext.define("PSI.Goods.SubGoodsField", {
 		me.focus();
 
 		if (me.getParentCmp() && me.getParentCmp().__setGoodsInfo) {
-			me.getParentCmp().__setGoodsInfo(data)
+			me.getParentCmp().__setGoodsInfo(data);
 		}
 	}
 });

@@ -251,7 +251,7 @@ Ext.define("PSI.Goods.GoodsBOMEditForm", {
 		var me = this;
 		if (me.__lastId) {
 			if (me.getParentForm()) {
-				//me.getParentForm().freshGrid(me.__lastId);
+				// me.getParentForm().freshGrid(me.__lastId);
 			}
 		}
 	},
@@ -265,8 +265,16 @@ Ext.define("PSI.Goods.GoodsBOMEditForm", {
 
 	__setGoodsInfo : function(goods) {
 		var me = this;
-		me.editSubGoodsName.setValue(goods.get("name"));
-		me.editSubGoodsSpec.setValue(goods.get("spec"));
-		me.editSubGoodsUnitName.setValue(goods.get("unitName"));
+		if (goods) {
+			me.editSubGoodsId.setValue(goods.get("id"));
+			me.editSubGoodsName.setValue(goods.get("name"));
+			me.editSubGoodsSpec.setValue(goods.get("spec"));
+			me.editSubGoodsUnitName.setValue(goods.get("unitName"));
+		} else {
+			me.editSubGoodsId.setValue(null);
+			me.editSubGoodsName.setValue(null);
+			me.editSubGoodsSpec.setValue(null);
+			me.editSubGoodsUnitName.setValue(null);
+		}
 	}
 });
