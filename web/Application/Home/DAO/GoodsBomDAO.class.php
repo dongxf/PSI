@@ -36,6 +36,15 @@ class GoodsBomDAO extends PSIBaseExDAO {
 		return $result;
 	}
 
+	/**
+	 * 检查子商品是否形成了循环引用
+	 * 
+	 * @param string $id
+	 *        	商品id
+	 * @param string $subGoodsId
+	 *        	子商品id
+	 * @return array|NULL
+	 */
 	private function checkSubGoods($id, $subGoodsId) {
 		if ($id == $subGoodsId) {
 			return $this->bad("子商品不能是自身");
