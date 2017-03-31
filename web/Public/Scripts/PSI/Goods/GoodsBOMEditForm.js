@@ -241,9 +241,11 @@ Ext.define("PSI.Goods.GoodsBOMEditForm", {
 
 	clearEdit : function() {
 		var me = this;
-		me.editCode.focus();
+		me.editSubGoodsCode.focus();
 
-		var editors = [me.editSubGoodsCode, me.editSubGoodsCount];
+		var editors = [me.editSubGoodsId, me.editSubGoodsCode,
+				me.editSubGoodsName, me.editSubGoodsSpec, me.editSubGoodsCount,
+				me.editSubGoodsUnitName];
 		for (var i = 0; i < editors.length; i++) {
 			var edit = editors[i];
 			edit.setValue(null);

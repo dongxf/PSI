@@ -38,7 +38,7 @@ class GoodsBomDAO extends PSIBaseExDAO {
 
 	/**
 	 * 检查子商品是否形成了循环引用
-	 * 
+	 *
 	 * @param string $id
 	 *        	商品id
 	 * @param string $subGoodsId
@@ -102,6 +102,22 @@ class GoodsBomDAO extends PSIBaseExDAO {
 		$rc = $this->checkSubGoods($id, $subGoodsId);
 		if ($rc) {
 			return $rc;
+		}
+		
+		$sql = "select count(*) as cnt 
+				from t_goods_bom
+				where goods_id = '%s' and sub_goods_id = '%s' ";
+		$data = $db->query($sql, $id, $subGoodsId);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("子商品已经存在，不能再新增");
+		}
+		
+		$sql = "insert into t_goods_bom(id, goods_id, sub_goods_id, sub_goods_count, parent_id)
+				values ('%s', '%s', '%s', %d, null)";
+		$rc = $db->execute($sql, $this->newId(), $id, $subGoodsId, $subGoodsCount);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
 		}
 		
 		return null;
