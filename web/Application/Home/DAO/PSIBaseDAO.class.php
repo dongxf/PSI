@@ -36,4 +36,24 @@ class PSIBaseDAO {
 	protected function toYMD($d) {
 		return date("Y-m-d", strtotime($d));
 	}
+
+	/**
+	 * 当前功能还没有开发
+	 *
+	 * @param string $info
+	 *        	附加信息
+	 */
+	protected function todo($info = null) {
+		if ($info) {
+			return array(
+					"success" => false,
+					"msg" => "TODO: 功能还没开发, 附加信息：$info"
+			);
+		} else {
+			return array(
+					"success" => false,
+					"msg" => "TODO: 功能还没开发"
+			);
+		}
+	}
 }

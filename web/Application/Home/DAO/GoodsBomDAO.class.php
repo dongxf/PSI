@@ -130,6 +130,6 @@ class GoodsBomDAO extends PSIBaseExDAO {
 	 * @return NULL|array
 	 */
 	public function updateGoodsBOM($params) {
-		return null;
+		return $this->todo();
 	}
 }
