@@ -36,13 +36,37 @@ class GoodsBomDAO extends PSIBaseExDAO {
 		return $result;
 	}
 
+	private function checkSubGoods($id, $subGoodsId) {
+		if ($id == $subGoodsId) {
+			return $this->bad("子商品不能是自身");
+		}
+		
+		$db = $this->db;
+		// 检查子商品是否形成了循环引用
+		// 目前只检查一级
+		// TODO 用递归算法检查
+		
+		$sql = "select id, sub_goods_id
+				from t_goods_bom
+				where goods_id = '%s' ";
+		$data = $db->query($sql, $subGoodsId);
+		foreach ( $data as $v ) {
+			$sgi = $v["sub_goods_id"];
+			if ($id == $sgi) {
+				return $this->bad("子商品形成了循环引用");
+			}
+		}
+		
+		return null;
+	}
+
 	/**
 	 * 新增商品构成
 	 *
 	 * @param array $params        	
 	 * @return NULL|array
 	 */
-	public function addGoodsBOM($params) {
+	public function addGoodsBOM(& $params) {
 		// id: 商品id
 		$id = $params["id"];
 		
@@ -64,6 +88,11 @@ class GoodsBomDAO extends PSIBaseExDAO {
 		
 		if ($subGoodsCount <= 0) {
 			return $this->bad("子商品数量需要大于0");
+		}
+		
+		$rc = $this->checkSubGoods($id, $subGoodsId);
+		if ($rc) {
+			return $rc;
 		}
 		
 		return null;
