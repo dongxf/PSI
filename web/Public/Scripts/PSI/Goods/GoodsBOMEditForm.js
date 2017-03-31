@@ -255,10 +255,8 @@ Ext.define("PSI.Goods.GoodsBOMEditForm", {
 
 	onWndClose : function() {
 		var me = this;
-		if (me.__lastId) {
-			if (me.getParentForm()) {
-				// me.getParentForm().freshGrid(me.__lastId);
-			}
+		if (me.getParentForm()) {
+			me.getParentForm().refreshGoodsBOM();
 		}
 	},
 

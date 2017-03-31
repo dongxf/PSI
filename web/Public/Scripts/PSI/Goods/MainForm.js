@@ -881,6 +881,18 @@ Ext.define("PSI.Goods.MainForm", {
 			return;
 		}
 
+		me.refreshGoodsSI();
+
+		me.refreshGoodsBOM();
+	},
+
+	refreshGoodsSI : function() {
+		var me = this;
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			return;
+		}
+
 		var goods = item[0];
 		var info = goods.get("code") + " " + goods.get("name") + " "
 				+ goods.get("spec");
@@ -910,6 +922,16 @@ Ext.define("PSI.Goods.MainForm", {
 						el.unmask();
 					}
 				});
+	},
+
+	refreshGoodsBOM : function() {
+		var me = this;
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			return;
+		}
+
+		var goods = item[0];
 
 		var gridBOM = me.getGoodsBOMGrid();
 		var elBOM = gridBOM.getEl() || Ext.getBody();
@@ -1179,6 +1201,7 @@ Ext.define("PSI.Goods.MainForm", {
 		var goods = item[0];
 
 		var form = Ext.create("PSI.Goods.GoodsBOMEditForm", {
+					parentForm : me,
 					goods : goods
 				});
 		form.show();
