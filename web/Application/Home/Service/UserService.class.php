@@ -162,9 +162,8 @@ class UserService extends PSIBaseExService {
 			return $this->emptyResult();
 		}
 		
-		$us = new UserService();
 		$params = array(
-				"loginUserId" => $us->getLoginUserId()
+				"loginUserId" => $this->getLoginUserId()
 		);
 		
 		$dao = new OrgDAO($this->db());
@@ -233,10 +232,8 @@ class UserService extends PSIBaseExService {
 		}
 		
 		// 记录业务日志
-		if ($log) {
-			$bs = new BizlogService($db);
-			$bs->insertBizlog($log, $this->LOG_CATEGORY);
-		}
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		
 		$db->commit();
 		
