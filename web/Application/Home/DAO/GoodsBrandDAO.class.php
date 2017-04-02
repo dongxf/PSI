@@ -66,7 +66,7 @@ class GoodsBrandDAO extends PSIBaseExDAO {
 				where (parent_id is null)
 				";
 		$queryParam = array();
-		$ds = new DataOrgDAO();
+		$ds = new DataOrgDAO($db);
 		$rs = $ds->buildSQL(FIdConst::GOODS_BRAND, "b", $loginUserId);
 		if ($rs) {
 			$sql .= " and " . $rs[0];
