@@ -10,7 +10,7 @@ use Home\DAO\PermissionDAO;
  *
  * @author 李静波
  */
-class PermissionService extends PSIBaseService {
+class PermissionService extends PSIBaseExService {
 	private $LOG_CATEGORY = "权限管理";
 
 	public function roleList() {
@@ -18,12 +18,11 @@ class PermissionService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		$us = new UserService();
 		$params = array(
-				"loginUserId" => $us->getLoginUserId()
+				"loginUserId" => $this->getLoginUserId()
 		);
 		
-		$dao = new PermissionDAO();
+		$dao = new PermissionDAO($this->db());
 		
 		return $dao->roleList($params);
 	}
@@ -37,7 +36,7 @@ class PermissionService extends PSIBaseService {
 				"roleId" => $roleId
 		);
 		
-		$dao = new PermissionDAO();
+		$dao = new PermissionDAO($this->db());
 		
 		return $dao->permissionList($params);
 	}
@@ -51,7 +50,7 @@ class PermissionService extends PSIBaseService {
 				"roleId" => $roleId
 		);
 		
-		$dao = new PermissionDAO();
+		$dao = new PermissionDAO($this->db());
 		
 		return $dao->userList($params);
 	}
@@ -71,7 +70,7 @@ class PermissionService extends PSIBaseService {
 			return $this->bad("在演示环境下，系统管理角色不希望被您修改，请见谅");
 		}
 		
-		$db = M();
+		$db = $this->db();
 		$db->startTrans();
 		
 		$dao = new PermissionDAO($db);
@@ -91,11 +90,10 @@ class PermissionService extends PSIBaseService {
 			
 			$idGen = new IdGenService();
 			$id = $idGen->newId($db);
-			$us = new UserService();
 			
 			$params["id"] = $id;
-			$params["dataOrg"] = $us->getLoginUserDataOrg();
-			$params["companyId"] = $us->getCompanyId();
+			$params["dataOrg"] = $this->getLoginUserDataOrg();
+			$params["companyId"] = $this->getCompanyId();
 			
 			$rc = $dao->addRole($params);
 			if ($rc) {
@@ -107,10 +105,8 @@ class PermissionService extends PSIBaseService {
 		}
 		
 		// 记录业务日志
-		if ($log) {
-			$bs = new BizlogService($db);
-			$bs->insertBizlog($log, $this->LOG_CATEGORY);
-		}
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		
 		$db->commit();
 		
@@ -126,7 +122,7 @@ class PermissionService extends PSIBaseService {
 				"idList" => $idList
 		);
 		
-		$dao = new PermissionDAO();
+		$dao = new PermissionDAO($this->db());
 		
 		return $dao->selectPermission($params);
 	}
@@ -136,14 +132,12 @@ class PermissionService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		$us = new UserService();
-		
 		$params = array(
 				"idList" => $idList,
-				"loginUserId" => $us->getLoginUserId()
+				"loginUserId" => $this->getLoginUserId()
 		);
 		
-		$dao = new PermissionDAO();
+		$dao = new PermissionDAO($this->db());
 		
 		return $dao->selectUsers($params);
 	}
@@ -160,7 +154,7 @@ class PermissionService extends PSIBaseService {
 			return $this->bad("在演示环境下，系统管理角色不希望被您删除，请见谅");
 		}
 		
-		$db = M();
+		$db = $this->db();
 		$db->startTrans();
 		
 		$dao = new PermissionDAO($db);
@@ -195,7 +189,7 @@ class PermissionService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		$dao = new PermissionDAO();
+		$dao = new PermissionDAO($this->db());
 		
 		return $dao->dataOrgList($params);
 	}
@@ -205,13 +199,11 @@ class PermissionService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		$us = new UserService();
-		
 		$params = array(
-				"loginUserId" => $us->getLoginUserId()
+				"loginUserId" => $this->getLoginUserId()
 		);
 		
-		$dao = new PermissionDAO();
+		$dao = new PermissionDAO($this->db());
 		
 		return $dao->selectDataOrg($params);
 	}
@@ -224,7 +216,7 @@ class PermissionService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		$dao = new PermissionDAO();
+		$dao = new PermissionDAO($this->db());
 		
 		return $dao->permissionCategory();
 	}
@@ -237,7 +229,7 @@ class PermissionService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		$dao = new PermissionDAO();
+		$dao = new PermissionDAO($this->db());
 		
 		return $dao->permissionByCategory($params);
 	}
