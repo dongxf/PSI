@@ -7,7 +7,7 @@ namespace Home\Service;
  *
  * @author 李静波
  */
-class BillViewService extends PSIBaseService {
+class BillViewService extends PSIBaseExService {
 
 	/**
 	 * 由单号查询采购入库单信息
@@ -21,7 +21,7 @@ class BillViewService extends PSIBaseService {
 		
 		$result = array();
 		
-		$db = M();
+		$db = $this->db();
 		$sql = "select p.id, s.name as supplier_name,
 				w.name as  warehouse_name,
 				u.name as biz_user_name, p.biz_dt
@@ -77,7 +77,7 @@ class BillViewService extends PSIBaseService {
 		
 		$result = array();
 		
-		$db = M();
+		$db = $this->db();
 		$sql = "select w.id, w.bizdt, c.name as customer_name,
 					  u.name as biz_user_name,
 					  h.name as warehouse_name, w.memo
@@ -135,7 +135,7 @@ class BillViewService extends PSIBaseService {
 		
 		$result = array();
 		
-		$db = M();
+		$db = $this->db();
 		$sql = "select p.id, w.name as warehouse_name,
 						u.name as biz_user_name, pw.ref as pwbill_ref,
 						s.name as supplier_name, 
@@ -199,7 +199,7 @@ class BillViewService extends PSIBaseService {
 		
 		$ref = $params["ref"];
 		
-		$db = M();
+		$db = $this->db();
 		$result = array();
 		$sql = "select w.id, w.bizdt, c.name as customer_name,
 					 u.name as biz_user_name,
@@ -261,7 +261,7 @@ class BillViewService extends PSIBaseService {
 		
 		$result = array();
 		
-		$db = M();
+		$db = $this->db();
 		$sql = "select t.id, t.bizdt, u.name as biz_user_name,
 						wf.name as from_warehouse_name,
 						wt.name as to_warehouse_name
@@ -314,7 +314,7 @@ class BillViewService extends PSIBaseService {
 		
 		$result = array();
 		
-		$db = M();
+		$db = $this->db();
 		$sql = "select t.id, t.bizdt, u.name as biz_user_name,
 						w.name as warehouse_name
 					from t_ic_bill t, t_user u, t_warehouse w
