@@ -9,7 +9,7 @@ use Home\DAO\CustomerDAO;
  *
  * @author 李静波
  */
-class CustomerService extends PSIBaseService {
+class CustomerService extends PSIBaseExService {
 	private $LOG_CATEGORY = "客户关系-客户资料";
 
 	/**
@@ -20,10 +20,9 @@ class CustomerService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		$us = new UserService();
-		$params["loginUserId"] = $us->getLoginUserId();
+		$params["loginUserId"] = $this->getLoginUserId();
 		
-		$dao = new CustomerDAO();
+		$dao = new CustomerDAO($this->db());
 		return $dao->categoryList($params);
 	}
 
@@ -39,7 +38,7 @@ class CustomerService extends PSIBaseService {
 		$code = $params["code"];
 		$name = $params["name"];
 		
-		$db = M();
+		$db = $this->db();
 		$db->startTrans();
 		
 		$dao = new CustomerDAO($db);
@@ -58,9 +57,8 @@ class CustomerService extends PSIBaseService {
 		} else {
 			// 新增
 			
-			$us = new UserService();
-			$params["dataOrg"] = $us->getLoginUserDataOrg();
-			$params["companyId"] = $us->getCompanyId();
+			$params["dataOrg"] = $this->getLoginUserDataOrg();
+			$params["companyId"] = $this->getCompanyId();
 			
 			$rc = $dao->addCustomerCategory($params);
 			if ($rc) {
@@ -92,7 +90,7 @@ class CustomerService extends PSIBaseService {
 		
 		$id = $params["id"];
 		
-		$db = M();
+		$db = $this->db();
 		$db->startTrans();
 		
 		$dao = new CustomerDAO($db);
@@ -127,14 +125,13 @@ class CustomerService extends PSIBaseService {
 		$ps = new PinyinService();
 		$params["py"] = $ps->toPY($name);
 		
-		$db = M();
+		$db = $this->db();
 		$db->startTrans();
 		
 		$dao = new CustomerDAO($db);
 		
-		$us = new UserService();
-		$params["dataOrg"] = $us->getLoginUserDataOrg();
-		$params["companyId"] = $us->getCompanyId();
+		$params["dataOrg"] = $this->getLoginUserDataOrg();
+		$params["companyId"] = $this->getCompanyId();
 		
 		$category = $dao->getCustomerCategoryById($params["categoryId"]);
 		if (! $category) {
@@ -190,10 +187,9 @@ class CustomerService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		$us = new UserService();
-		$params["loginUserId"] = $us->getLoginUserId();
+		$params["loginUserId"] = $this->getLoginUserId();
 		
-		$dao = new CustomerDAO();
+		$dao = new CustomerDAO($this->db());
 		return $dao->customerList($params);
 	}
 
@@ -206,7 +202,7 @@ class CustomerService extends PSIBaseService {
 		}
 		
 		$id = $params["id"];
-		$db = M();
+		$db = $this->db();
 		$db->startTrans();
 		
 		$dao = new CustomerDAO($db);
@@ -236,10 +232,9 @@ class CustomerService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		$us = new UserService();
-		$params["loginUserId"] = $us->getLoginUserId();
+		$params["loginUserId"] = $this->getLoginUserId();
 		
-		$dao = new CustomerDAO();
+		$dao = new CustomerDAO($this->db());
 		return $dao->queryData($params);
 	}
 
@@ -251,7 +246,7 @@ class CustomerService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		$dao = new CustomerDAO();
+		$dao = new CustomerDAO($this->db());
 		return $dao->customerInfo($params);
 	}
 
