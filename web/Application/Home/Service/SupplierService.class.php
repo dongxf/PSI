@@ -10,7 +10,7 @@ use Home\Service\BizlogService;
  *
  * @author 李静波
  */
-class SupplierService extends PSIBaseService {
+class SupplierService extends PSIBaseExService {
 	private $LOG_CATEGORY = "基础数据-供应商档案";
 
 	/**
@@ -21,10 +21,9 @@ class SupplierService extends PSIBaseService {
 			return $this->notOnlineError();
 		}
 		
-		$us = new UserService();
-		$params["loginUserId"] = $us->getLoginUserId();
+		$params["loginUserId"] = $this->getLoginUserId();
 		
-		$dao = new SupplierDAO();
+		$dao = new SupplierDAO($this->db());
 		return $dao->categoryList($params);
 	}
 
@@ -36,10 +35,9 @@ class SupplierService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		$us = new UserService();
-		$params["loginUserId"] = $us->getLoginUserId();
+		$params["loginUserId"] = $this->getLoginUserId();
 		
-		$dao = new SupplierDAO();
+		$dao = new SupplierDAO($this->db());
 		return $dao->supplierList($params);
 	}
 
@@ -55,7 +53,7 @@ class SupplierService extends PSIBaseService {
 		$code = $params["code"];
 		$name = $params["name"];
 		
-		$db = M();
+		$db = $this->db();
 		$db->startTrans();
 		
 		$dao = new SupplierDAO($db);
@@ -74,9 +72,8 @@ class SupplierService extends PSIBaseService {
 		} else {
 			// 新增
 			
-			$us = new UserService();
-			$params["dataOrg"] = $us->getLoginUserDataOrg();
-			$params["companyId"] = $us->getCompanyId();
+			$params["dataOrg"] = $this->getLoginUserDataOrg();
+			$params["companyId"] = $this->getCompanyId();
 			
 			$rc = $dao->addSupplierCategory($params);
 			if ($rc) {
@@ -108,7 +105,7 @@ class SupplierService extends PSIBaseService {
 		
 		$id = $params["id"];
 		
-		$db = M();
+		$db = $this->db();
 		$db->startTrans();
 		$dao = new SupplierDAO($db);
 		
@@ -143,13 +140,12 @@ class SupplierService extends PSIBaseService {
 		$py = $ps->toPY($name);
 		$params["py"] = $py;
 		
-		$us = new UserService();
-		$params["dataOrg"] = $us->getLoginUserDataOrg();
-		$params["companyId"] = $us->getCompanyId();
+		$params["dataOrg"] = $this->getLoginUserDataOrg();
+		$params["companyId"] = $this->getCompanyId();
 		
 		$categoryId = $params["categoryId"];
 		
-		$db = M();
+		$db = $this->db();
 		$db->startTrans();
 		
 		$dao = new SupplierDAO($db);
@@ -210,7 +206,7 @@ class SupplierService extends PSIBaseService {
 		
 		$id = $params["id"];
 		
-		$db = M();
+		$db = $this->db();
 		$db->startTrans();
 		
 		$dao = new SupplierDAO($db);
@@ -240,14 +236,12 @@ class SupplierService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		$us = new UserService();
-		
 		$params = array(
 				"queryKey" => $queryKey,
-				"loginUserId" => $us->getLoginUserId()
+				"loginUserId" => $this->getLoginUserId()
 		);
 		
-		$dao = new SupplierDAO();
+		$dao = new SupplierDAO($this->db());
 		return $dao->queryData($params);
 	}
 
@@ -259,7 +253,7 @@ class SupplierService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		$dao = new SupplierDAO();
+		$dao = new SupplierDAO($this->db());
 		return $dao->supplierInfo($params);
 	}
 
