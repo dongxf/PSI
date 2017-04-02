@@ -316,7 +316,7 @@ class UserService extends PSIBaseExService {
 		$py = $pys->toPY($name);
 		$params["py"] = $py;
 		
-		$db = M();
+		$db = $this->db();
 		$db->startTrans();
 		
 		$dao = new UserDAO($db);
@@ -350,10 +350,8 @@ class UserService extends PSIBaseExService {
 		}
 		
 		// 记录业务日志
-		if ($log) {
-			$bs = new BizlogService($db);
-			$bs->insertBizlog($log, $this->LOG_CATEGORY);
-		}
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		
 		$db->commit();
 		
@@ -375,7 +373,7 @@ class UserService extends PSIBaseExService {
 		}
 		
 		// 检查用户是否存在，以及是否能删除
-		$db = M();
+		$db = $this->db();
 		$db->startTrans();
 		
 		$dao = new UserDAO($db);
@@ -413,7 +411,7 @@ class UserService extends PSIBaseExService {
 			return $this->bad("在演示环境下，admin用户的密码不希望被您修改，请见谅");
 		}
 		
-		$db = M();
+		$db = $this->db();
 		$db->startTrans();
 		
 		$dao = new UserDAO($db);
@@ -465,7 +463,7 @@ class UserService extends PSIBaseExService {
 			return $this->bad("服务器环境发生变化，请重新登录后再操作");
 		}
 		
-		$db = M();
+		$db = $this->db();
 		$db->startTrans();
 		
 		$dao = new UserDAO($db);
@@ -502,7 +500,7 @@ class UserService extends PSIBaseExService {
 				"loginUserId" => $this->getLoginUserId()
 		);
 		
-		$dao = new UserDAO();
+		$dao = new UserDAO($this->db());
 		return $dao->queryData($params);
 	}
 
