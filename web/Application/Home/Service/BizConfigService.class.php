@@ -21,7 +21,7 @@ class BizConfigService extends PSIBaseExService {
 			return $this->emptyResult();
 		}
 		
-		$dao = new BizConfigDAO();
+		$dao = new BizConfigDAO($this->db());
 		
 		return $dao->allConfigs($params);
 	}
@@ -37,7 +37,7 @@ class BizConfigService extends PSIBaseExService {
 		$us = new UserService();
 		$params["loginUserId"] = $us->getLoginUserId();
 		
-		$dao = new BizConfigDAO();
+		$dao = new BizConfigDAO($this->db());
 		
 		return $dao->allConfigsWithExtData($params);
 	}
@@ -50,7 +50,7 @@ class BizConfigService extends PSIBaseExService {
 			return $this->notOnlineError();
 		}
 		
-		$db = M();
+		$db = $this->db();
 		
 		$db->startTrans();
 		
@@ -74,7 +74,7 @@ class BizConfigService extends PSIBaseExService {
 	public function getTaxRate() {
 		$us = new UserService();
 		
-		$dao = new BizConfigDAO();
+		$dao = new BizConfigDAO($this->db());
 		return $dao->getTaxRate($us->getCompanyId());
 	}
 
@@ -110,9 +110,8 @@ class BizConfigService extends PSIBaseExService {
 	public function getPOBillRefPre() {
 		$result = "PO";
 		
-		$db = M();
-		$us = new UserService();
-		$companyId = $us->getCompanyId();
+		$db = $this->db();
+		$companyId = $this->getCompanyId();
 		
 		$id = "9003-01";
 		$sql = "select value from t_config 
@@ -135,9 +134,8 @@ class BizConfigService extends PSIBaseExService {
 	public function getPWBillRefPre() {
 		$result = "PW";
 		
-		$db = M();
-		$us = new UserService();
-		$companyId = $us->getCompanyId();
+		$db = $this->db();
+		$companyId = $this->getCompanyId();
 		
 		$id = "9003-02";
 		$sql = "select value from t_config 
@@ -160,9 +158,8 @@ class BizConfigService extends PSIBaseExService {
 	public function getPRBillRefPre() {
 		$result = "PR";
 		
-		$db = M();
-		$us = new UserService();
-		$companyId = $us->getCompanyId();
+		$db = $this->db();
+		$companyId = $this->getCompanyId();
 		
 		$id = "9003-03";
 		$sql = "select value from t_config 
@@ -185,9 +182,8 @@ class BizConfigService extends PSIBaseExService {
 	public function getWSBillRefPre() {
 		$result = "WS";
 		
-		$db = M();
-		$us = new UserService();
-		$companyId = $us->getCompanyId();
+		$db = $this->db();
+		$companyId = $this->getCompanyId();
 		
 		$id = "9003-04";
 		$sql = "select value from t_config 
@@ -210,9 +206,8 @@ class BizConfigService extends PSIBaseExService {
 	public function getSRBillRefPre() {
 		$result = "SR";
 		
-		$db = M();
-		$us = new UserService();
-		$companyId = $us->getCompanyId();
+		$db = $this->db();
+		$companyId = $this->getCompanyId();
 		
 		$id = "9003-05";
 		$sql = "select value from t_config 
@@ -235,9 +230,8 @@ class BizConfigService extends PSIBaseExService {
 	public function getITBillRefPre() {
 		$result = "IT";
 		
-		$db = M();
-		$us = new UserService();
-		$companyId = $us->getCompanyId();
+		$db = $this->db();
+		$companyId = $this->getCompanyId();
 		
 		$id = "9003-06";
 		$sql = "select value from t_config 
@@ -260,9 +254,8 @@ class BizConfigService extends PSIBaseExService {
 	public function getICBillRefPre() {
 		$result = "IC";
 		
-		$db = M();
-		$us = new UserService();
-		$companyId = $us->getCompanyId();
+		$db = $this->db();
+		$companyId = $this->getCompanyId();
 		
 		$id = "9003-07";
 		$sql = "select value from t_config 
@@ -287,12 +280,10 @@ class BizConfigService extends PSIBaseExService {
 			return $this->emptyResult();
 		}
 		
-		$db = M();
+		$db = $this->db();
 		$result = array();
 		
-		$us = new UserService();
-		
-		$companyId = $us->getCompanyId();
+		$companyId = $this->getCompanyId();
 		
 		$sql = "select id, name
 				from t_org
@@ -324,9 +315,8 @@ class BizConfigService extends PSIBaseExService {
 	public function getSOBillRefPre() {
 		$result = "PO";
 		
-		$db = M();
-		$us = new UserService();
-		$companyId = $us->getCompanyId();
+		$db = $this->db();
+		$companyId = $this->getCompanyId();
 		
 		$id = "9003-08";
 		$sql = "select value from t_config
@@ -349,9 +339,8 @@ class BizConfigService extends PSIBaseExService {
 	public function getPOBillDefaultPayment() {
 		$result = "0";
 		
-		$db = M();
-		$us = new UserService();
-		$companyId = $us->getCompanyId();
+		$db = $this->db();
+		$companyId = $this->getCompanyId();
 		
 		$id = "2001-02";
 		$sql = "select value from t_config
@@ -374,9 +363,8 @@ class BizConfigService extends PSIBaseExService {
 	public function getPWBillDefaultPayment() {
 		$result = "0";
 		
-		$db = M();
-		$us = new UserService();
-		$companyId = $us->getCompanyId();
+		$db = $this->db();
+		$companyId = $this->getCompanyId();
 		
 		$id = "2001-03";
 		$sql = "select value from t_config
