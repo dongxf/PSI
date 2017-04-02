@@ -27,7 +27,7 @@ class GoodsService extends PSIBaseExService {
 			return $this->emptyResult();
 		}
 		
-		$dao = new GoodsUnitDAO();
+		$dao = new GoodsUnitDAO($this->db());
 		
 		return $dao->allUnits();
 	}
@@ -43,7 +43,7 @@ class GoodsService extends PSIBaseExService {
 		$id = $params["id"];
 		$name = $params["name"];
 		
-		$db = M();
+		$db = $this->db();
 		$db->startTrans();
 		
 		$dao = new GoodsUnitDAO($db);
@@ -63,9 +63,8 @@ class GoodsService extends PSIBaseExService {
 		} else {
 			// 新增
 			
-			$us = new UserService();
-			$params["dataOrg"] = $us->getLoginUserDataOrg();
-			$params["companyId"] = $us->getCompanyId();
+			$params["dataOrg"] = $this->getLoginUserDataOrg();
+			$params["companyId"] = $this->getCompanyId();
 			
 			$rc = $dao->addUnit($params);
 			if ($rc) {
@@ -97,7 +96,7 @@ class GoodsService extends PSIBaseExService {
 		
 		$id = $params["id"];
 		
-		$db = M();
+		$db = $this->db();
 		$db->startTrans();
 		
 		$dao = new GoodsUnitDAO($db);
@@ -126,10 +125,9 @@ class GoodsService extends PSIBaseExService {
 			return $this->emptyResult();
 		}
 		
-		$us = new UserService();
-		$params["loginUserId"] = $us->getLoginUserId();
+		$params["loginUserId"] = $this->getLoginUserId();
 		
-		$dao = new GoodsCategoryDAO();
+		$dao = new GoodsCategoryDAO($this->db());
 		return $dao->allCategories($params);
 	}
 
@@ -141,7 +139,7 @@ class GoodsService extends PSIBaseExService {
 			return $this->emptyResult();
 		}
 		
-		$dao = new GoodsCategoryDAO();
+		$dao = new GoodsCategoryDAO($this->db());
 		return $dao->getCategoryInfo($params);
 	}
 
@@ -157,7 +155,7 @@ class GoodsService extends PSIBaseExService {
 		$code = $params["code"];
 		$name = $params["name"];
 		
-		$db = M();
+		$db = $this->db();
 		$db->startTrans();
 		
 		$dao = new GoodsCategoryDAO($db);
@@ -174,9 +172,8 @@ class GoodsService extends PSIBaseExService {
 		} else {
 			// 新增
 			
-			$us = new UserService();
-			$params["dataOrg"] = $us->getLoginUserDataOrg();
-			$params["companyId"] = $us->getCompanyId();
+			$params["dataOrg"] = $this->getLoginUserDataOrg();
+			$params["companyId"] = $this->getCompanyId();
 			
 			$rc = $dao->addGoodsCategory($params);
 			if ($rc) {
@@ -206,7 +203,7 @@ class GoodsService extends PSIBaseExService {
 			return $this->notOnlineError();
 		}
 		
-		$db = M();
+		$db = $this->db();
 		$db->startTrans();
 		
 		$dao = new GoodsCategoryDAO($db);
@@ -236,10 +233,9 @@ class GoodsService extends PSIBaseExService {
 			return $this->emptyResult();
 		}
 		
-		$us = new UserService();
-		$params["loginUserId"] = $us->getLoginUserId();
+		$params["loginUserId"] = $this->getLoginUserId();
 		
-		$dao = new GoodsDAO();
+		$dao = new GoodsDAO($this->db());
 		return $dao->goodsList($params);
 	}
 
@@ -256,7 +252,7 @@ class GoodsService extends PSIBaseExService {
 		$name = $params["name"];
 		$spec = $params["spec"];
 		
-		$db = M();
+		$db = $this->db();
 		$db->startTrans();
 		$dao = new GoodsDAO($db);
 		
@@ -278,9 +274,8 @@ class GoodsService extends PSIBaseExService {
 		} else {
 			// 新增
 			
-			$us = new UserService();
-			$params["dataOrg"] = $us->getLoginUserDataOrg();
-			$params["companyId"] = $us->getCompanyId();
+			$params["dataOrg"] = $this->getLoginUserDataOrg();
+			$params["companyId"] = $this->getCompanyId();
 			
 			$rc = $dao->addGoods($params);
 			if ($rc) {
@@ -310,7 +305,7 @@ class GoodsService extends PSIBaseExService {
 			return $this->notOnlineError();
 		}
 		
-		$db = M();
+		$db = $this->db();
 		$db->startTrans();
 		
 		$dao = new GoodsDAO($db);
@@ -340,13 +335,13 @@ class GoodsService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		$us = new UserService();
+		
 		$params = array(
 				"queryKey" => $queryKey,
-				"loginUserId" => $us->getLoginUserId()
+				"loginUserId" => $this->getLoginUserId()
 		);
 		
-		$dao = new GoodsDAO();
+		$dao = new GoodsDAO($this->db());
 		return $dao->queryData($params);
 	}
 
@@ -358,13 +353,12 @@ class GoodsService extends PSIBaseExService {
 			return $this->emptyResult();
 		}
 		
-		$us = new UserService();
 		$params = array(
 				"queryKey" => $queryKey,
-				"loginUserId" => $us->getLoginUserId()
+				"loginUserId" => $this->getLoginUserId()
 		);
 		
-		$dao = new GoodsDAO();
+		$dao = new GoodsDAO($this->db());
 		return $dao->queryDataWithSalePrice($params);
 	}
 
@@ -376,13 +370,12 @@ class GoodsService extends PSIBaseExService {
 			return $this->emptyResult();
 		}
 		
-		$us = new UserService();
 		$params = array(
 				"queryKey" => $queryKey,
-				"loginUserId" => $us->getLoginUserId()
+				"loginUserId" => $this->getLoginUserId()
 		);
 		
-		$dao = new GoodsDAO();
+		$dao = new GoodsDAO($this->db());
 		return $dao->queryDataWithPurchasePrice($params);
 	}
 
@@ -399,7 +392,7 @@ class GoodsService extends PSIBaseExService {
 				"categoryId" => $categoryId
 		);
 		
-		$dao = new GoodsDAO();
+		$dao = new GoodsDAO($this->db());
 		return $dao->getGoodsInfo($params);
 	}
 
@@ -411,10 +404,9 @@ class GoodsService extends PSIBaseExService {
 			return $this->emptyResult();
 		}
 		
-		$us = new UserService();
-		$params["loginUserId"] = $us->getLoginUserId();
+		$params["loginUserId"] = $this->getLoginUserId();
 		
-		$dao = new GoodsSiDAO();
+		$dao = new GoodsSiDAO($this->db());
 		return $dao->goodsSafetyInventoryList($params);
 	}
 
@@ -426,10 +418,9 @@ class GoodsService extends PSIBaseExService {
 			return $this->emptyResult();
 		}
 		
-		$us = new UserService();
-		$params["loginUserId"] = $us->getLoginUserId();
+		$params["loginUserId"] = $this->getLoginUserId();
 		
-		$dao = new GoodsSiDAO();
+		$dao = new GoodsSiDAO($this->db());
 		return $dao->siInfo($params);
 	}
 
@@ -447,7 +438,7 @@ class GoodsService extends PSIBaseExService {
 			return $this->bad("传入的参数错误，不是正确的JSON格式");
 		}
 		
-		$db = M();
+		$db = $this->db();
 		
 		$db->startTrans();
 		
@@ -479,7 +470,7 @@ class GoodsService extends PSIBaseExService {
 			return $this->notOnlineError();
 		}
 		
-		$dao = new GoodsDAO();
+		$dao = new GoodsDAO($this->db());
 		return $dao->queryGoodsInfoByBarcode($params);
 	}
 
@@ -491,7 +482,7 @@ class GoodsService extends PSIBaseExService {
 			return $this->notOnlineError();
 		}
 		
-		$dao = new GoodsDAO();
+		$dao = new GoodsDAO($this->db());
 		return $dao->queryGoodsInfoByBarcodeForPW($params);
 	}
 
@@ -503,10 +494,9 @@ class GoodsService extends PSIBaseExService {
 			return $this->emptyResult();
 		}
 		
-		$us = new UserService();
-		$params["loginUserId"] = $us->getLoginUserId();
+		$params["loginUserId"] = $this->getLoginUserId();
 		
-		$dao = new GoodsDAO();
+		$dao = new GoodsDAO($this->db());
 		return $dao->getTotalGoodsCount($params);
 	}
 
@@ -517,12 +507,12 @@ class GoodsService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		$us = new UserService();
+		
 		$params = array(
-				"loginUserId" => $us->getLoginUserId()
+				"loginUserId" => $this->getLoginUserId()
 		);
 		
-		$dao = new GoodsBrandDAO();
+		$dao = new GoodsBrandDAO($this->db());
 		return $dao->allBrands($params);
 	}
 
@@ -537,16 +527,15 @@ class GoodsService extends PSIBaseExService {
 		$id = $params["id"];
 		$name = $params["name"];
 		
-		$db = M();
+		$db = $this->db();
 		$db->startTrans();
 		
 		$dao = new GoodsBrandDAO($db);
 		
 		$log = null;
 		
-		$us = new UserService();
-		$params["dataOrg"] = $us->getLoginUserDataOrg();
-		$params["companyId"] = $us->getCompanyId();
+		$params["dataOrg"] = $this->getLoginUserDataOrg();
+		$params["companyId"] = $this->getCompanyId();
 		
 		if ($id) {
 			// 编辑品牌
@@ -589,7 +578,7 @@ class GoodsService extends PSIBaseExService {
 			return $this->emptyResult();
 		}
 		
-		$dao = new GoodsBrandDAO();
+		$dao = new GoodsBrandDAO($this->db());
 		return $dao->brandParentName($params);
 	}
 
@@ -601,7 +590,7 @@ class GoodsService extends PSIBaseExService {
 			return $this->notOnlineError();
 		}
 		
-		$db = M();
+		$db = $this->db();
 		$db->startTrans();
 		
 		$dao = new GoodsBrandDAO($db);
@@ -630,7 +619,7 @@ class GoodsService extends PSIBaseExService {
 			return $this->emptyResult();
 		}
 		
-		$dao = new GoodsBomDAO();
+		$dao = new GoodsBomDAO($this->db());
 		return $dao->goodsBOMList($params);
 	}
 
