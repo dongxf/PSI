@@ -107,7 +107,7 @@ class PSIBaseService {
 		} else {
 			// 判断当前用户是否被禁用
 			// 被禁用的用户，及时当前是在线，也视为已经退出
-			$ud = new UserDAO();
+			$ud = new UserDAO(M());
 			if ($ud->isDisabled($userId)) {
 				return true;
 			}

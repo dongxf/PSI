@@ -12,7 +12,7 @@ use Home\DAO\UserDAO;
  *
  * @author 李静波
  */
-class UserService extends PSIBaseService {
+class UserService extends PSIBaseExService {
 	private $LOG_CATEGORY = "用户管理";
 
 	/**
@@ -79,7 +79,7 @@ class UserService extends PSIBaseService {
 		
 		// 判断用户是否被禁用
 		// 被禁用的用户，视为没有权限
-		$ud = new UserDAO();
+		$ud = new UserDAO($this->db());
 		if ($ud->isDisabled($userId)) {
 			return false;
 		}
@@ -115,7 +115,7 @@ class UserService extends PSIBaseService {
 	 * @return string
 	 */
 	public function getLoginUserName() {
-		$dao = new UserDAO();
+		$dao = new UserDAO($this->db());
 		return $dao->getLoginUserName($this->getLoginUserId());
 	}
 
@@ -125,7 +125,7 @@ class UserService extends PSIBaseService {
 	 * @return string
 	 */
 	public function getLoignUserNameWithOrgFullName() {
-		$dao = new UserDAO();
+		$dao = new UserDAO($this->db());
 		return $dao->getLoignUserNameWithOrgFullName($this->getLoginUserId());
 	}
 
@@ -135,7 +135,7 @@ class UserService extends PSIBaseService {
 	 * @return string
 	 */
 	public function getLoginName() {
-		$dao = new UserDAO();
+		$dao = new UserDAO($this->db());
 		return $dao->getLoginName($this->getLoginUserId());
 	}
 
@@ -143,7 +143,7 @@ class UserService extends PSIBaseService {
 	 * 登录PSI
 	 */
 	public function doLogin($params) {
-		$dao = new UserDAO();
+		$dao = new UserDAO($this->db());
 		$loginUserId = $dao->doLogin($params);
 		
 		if ($loginUserId) {
@@ -167,7 +167,7 @@ class UserService extends PSIBaseService {
 				"loginUserId" => $us->getLoginUserId()
 		);
 		
-		$dao = new OrgDAO();
+		$dao = new OrgDAO($this->db());
 		
 		return $dao->allOrgs($params);
 	}
@@ -177,7 +177,7 @@ class UserService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		$dao = new UserDAO();
+		$dao = new UserDAO($this->db());
 		return $dao->users($params);
 	}
 
@@ -202,7 +202,7 @@ class UserService extends PSIBaseService {
 				"orgCode" => $orgCode
 		);
 		
-		$db = M();
+		$db = $this->db();
 		$db->startTrans();
 		
 		$log = null;
@@ -248,7 +248,7 @@ class UserService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		$dao = new OrgDAO();
+		$dao = new OrgDAO($this->db());
 		return $dao->orgParentName($id);
 	}
 
@@ -266,7 +266,7 @@ class UserService extends PSIBaseService {
 			}
 		}
 		
-		$db = M();
+		$db = $this->db();
 		$db->startTrans();
 		
 		$dao = new OrgDAO($db);
@@ -540,7 +540,7 @@ class UserService extends PSIBaseService {
 				"loginUserId" => $this->getLoginUserId()
 		);
 		
-		$dao = new UserDAO();
+		$dao = new UserDAO($this->db());
 		
 		return $dao->getLoginUserDataOrg($params);
 	}
@@ -560,7 +560,7 @@ class UserService extends PSIBaseService {
 				"loginUserId" => $this->getLoginUserId()
 		);
 		
-		$dao = new UserDAO();
+		$dao = new UserDAO($this->db());
 		
 		return $dao->getDataOrgForFId($params);
 	}
@@ -574,7 +574,7 @@ class UserService extends PSIBaseService {
 				"loginUserId" => $this->getLoginUserId()
 		);
 		
-		$dao = new OrgDAO();
+		$dao = new OrgDAO($this->db());
 		
 		return $dao->orgWithDataOrg($params);
 	}
@@ -587,7 +587,7 @@ class UserService extends PSIBaseService {
 				"loginUserId" => $this->getLoginUserId()
 		);
 		
-		$dao = new UserDAO();
+		$dao = new UserDAO($this->db());
 		
 		return $dao->getCompanyId($params);
 	}
@@ -605,7 +605,7 @@ class UserService extends PSIBaseService {
 				"loginUserId" => $this->getLoginUserId()
 		);
 		
-		$dao = new UserDAO();
+		$dao = new UserDAO($this->db());
 		
 		return $dao->queryUserDataOrg($params);
 	}

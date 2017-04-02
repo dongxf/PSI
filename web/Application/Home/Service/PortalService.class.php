@@ -9,7 +9,7 @@ use Home\Common\FIdConst;
  *
  * @author 李静波
  */
-class PortalService extends PSIBaseService {
+class PortalService extends PSIBaseExService {
 
 	public function inventoryPortal() {
 		if ($this->isNotOnline()) {
@@ -18,7 +18,7 @@ class PortalService extends PSIBaseService {
 		
 		$result = array();
 		
-		$db = M();
+		$db = $this->db();
 		$sql = "select id, name 
 				from t_warehouse 
 				where (inited = 1) ";
@@ -77,7 +77,7 @@ class PortalService extends PSIBaseService {
 		
 		$result = array();
 		
-		$db = M();
+		$db = $this->db();
 		
 		// 当月
 		$sql = "select year(now()) as y, month(now()) as m";
@@ -175,7 +175,7 @@ class PortalService extends PSIBaseService {
 		
 		$result = array();
 		
-		$db = M();
+		$db = $this->db();
 		
 		// 当月
 		$sql = "select year(now()) as y, month(now()) as m";
@@ -256,7 +256,7 @@ class PortalService extends PSIBaseService {
 		
 		$result = array();
 		
-		$db = M();
+		$db = $this->db();
 		$us = new UserService();
 		$companyId = $us->getCompanyId();
 		

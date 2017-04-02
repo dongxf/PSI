@@ -10,7 +10,7 @@ use Home\DAO\BizConfigDAO;
  *
  * @author 李静波
  */
-class BizConfigService extends PSIBaseService {
+class BizConfigService extends PSIBaseExService {
 	private $LOG_CATEGORY = "业务设置";
 
 	/**
@@ -87,7 +87,7 @@ class BizConfigService extends PSIBaseService {
 				"companyId" => $us->getCompanyId()
 		);
 		
-		$dao = new BizConfigDAO();
+		$dao = new BizConfigDAO($this->db());
 		
 		return $dao->getProductionName($params);
 	}
