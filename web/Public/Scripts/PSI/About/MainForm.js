@@ -4,7 +4,8 @@
 Ext.define("PSI.About.MainForm", {
 	extend : 'Ext.window.Window',
 	config : {
-		productionName : "开源进销存PSI"
+		productionName : "开源进销存PSI",
+		phpVersion : ""
 	},
 
 	modal : true,
@@ -34,6 +35,7 @@ Ext.define("PSI.About.MainForm", {
 						+ "</p>"
 						+ "<p>产品源码下载请访问  <a href='http://git.oschina.net/crm8000/PSI' target='_blank'>http://git.oschina.net/crm8000/PSI</a></p>"
 						+ "<p>技术支持QQ群 414474186</p>"
+						+ "<p>php版本号:" + me.getPhpVersion() + "</p>"
 			}],
 			buttons : [{
 						id : "buttonAboutFormOK",

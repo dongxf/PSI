@@ -22,6 +22,8 @@ class AboutController extends PSIBaseController {
 			$this->initVar();
 			
 			$this->assign("title", "关于");
+
+			$this->assign("phpVersion", phpversion());
 			
 			$this->display();
 		} else {

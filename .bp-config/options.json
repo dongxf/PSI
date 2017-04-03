@@ -1,3 +1,4 @@
 { 
-"PHP_EXTENSIONS": ["pdo", "bz2", "zlib", "curl", "mcrypt", "mbstring", "mysql", "pdo_mysql", "memcached"] 
+"PHP_EXTENSIONS": ["pdo", "bz2", "zlib", "curl", "mcrypt", "mbstring", "mysql", "pdo_mysql", "memcached"],
+"PHP_VERSION": "7.0.6" 
 } 
