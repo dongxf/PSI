@@ -40,7 +40,7 @@ class POBillService extends PSIBaseExService {
 			return $this->bad("传入的参数错误，不是正确的JSON格式");
 		}
 		
-		$db = M();
+		$db = $this->db();
 		
 		$db->startTrans();
 		
@@ -98,12 +98,11 @@ class POBillService extends PSIBaseExService {
 			return $this->emptyResult();
 		}
 		
-		$us = new UserService();
-		$params["companyId"] = $us->getCompanyId();
-		$params["loginUserId"] = $us->getLoginUserId();
-		$params["loginUserName"] = $us->getLoginUserName();
+		$params["companyId"] = $this->getCompanyId();
+		$params["loginUserId"] = $this->getLoginUserId();
+		$params["loginUserName"] = $this->getLoginUserName();
 		
-		$dao = new POBillDAO();
+		$dao = new POBillDAO($this->db());
 		return $dao->poBillInfo($params);
 	}
 
@@ -115,7 +114,7 @@ class POBillService extends PSIBaseExService {
 			return $this->emptyResult();
 		}
 		
-		$dao = new POBillDAO();
+		$dao = new POBillDAO($this->db());
 		return $dao->poBillDetailList($params);
 	}
 
@@ -127,13 +126,12 @@ class POBillService extends PSIBaseExService {
 			return $this->notOnlineError();
 		}
 		
-		$db = M();
+		$db = $this->db();
 		$db->startTrans();
 		
 		$dao = new POBillDAO($db);
 		
-		$us = new UserService();
-		$params["loginUserId"] = $us->getLoginUserId();
+		$params["loginUserId"] = $this->getLoginUserId();
 		
 		$rc = $dao->commitPOBill($params);
 		if ($rc) {
@@ -162,7 +160,7 @@ class POBillService extends PSIBaseExService {
 			return $this->notOnlineError();
 		}
 		
-		$db = M();
+		$db = $this->db();
 		
 		$db->startTrans();
 		
@@ -194,7 +192,7 @@ class POBillService extends PSIBaseExService {
 		
 		$id = $params["id"];
 		
-		$db = M();
+		$db = $this->db();
 		$db->startTrans();
 		
 		$dao = new POBillDAO($db);
