@@ -20,8 +20,8 @@ Ext.define("PSI.AFX.BaseMainExForm", {
 				PSI.MsgBox.tip(info);
 			},
 
-			showInfo : function(info) {
-				PSI.MsgBox.showInfo(info);
+			showInfo : function(info, func) {
+				PSI.MsgBox.showInfo(info, func);
 			},
 
 			confirm : function(confirmInfo, funcOnYes) {

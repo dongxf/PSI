@@ -2,7 +2,7 @@
  * 用户管理 - 主界面
  */
 Ext.define("PSI.User.MainForm", {
-	extend : "Ext.panel.Panel",
+	extend : "PSI.AFX.BaseMainExForm",
 
 	config : {
 		pAddOrg : null,
@@ -14,10 +14,6 @@ Ext.define("PSI.User.MainForm", {
 		pChangePassword : null
 	},
 
-	getBaseURL : function() {
-		return PSI.Const.BASE_URL;
-	},
-
 	/**
 	 * 初始化组件
 	 */
@@ -25,8 +21,6 @@ Ext.define("PSI.User.MainForm", {
 		var me = this;
 
 		Ext.apply(me, {
-					border : 0,
-					layout : "border",
 					tbar : [{
 								text : "新增组织机构",
 								iconCls : "PSI-button-add",
@@ -73,8 +67,8 @@ Ext.define("PSI.User.MainForm", {
 								text : "帮助",
 								iconCls : "PSI-help",
 								handler : function() {
-									window.open(PSI.Const.BASE_URL
-											+ "/Home/Help/index?t=user");
+									window.open(me
+											.URL("/Home/Help/index?t=user"));
 								}
 							}, "-", {
 								text : "关闭",
@@ -123,7 +117,7 @@ Ext.define("PSI.User.MainForm", {
 					model : modelName,
 					proxy : {
 						type : "ajax",
-						url : me.getBaseURL() + "Home/User/allOrgs"
+						url : me.URL("Home/User/allOrgs")
 					}
 				});
 
@@ -195,7 +189,7 @@ Ext.define("PSI.User.MainForm", {
 						actionMethods : {
 							read : "POST"
 						},
-						url : PSI.Const.BASE_URL + "Home/User/users",
+						url : me.URL("Home/User/users"),
 						reader : {
 							root : 'dataList',
 							totalProperty : 'totalCount'
@@ -356,7 +350,7 @@ Ext.define("PSI.User.MainForm", {
 		var tree = me.getOrgGrid();
 		var item = tree.getSelectionModel().getSelection();
 		if (item === null || item.length !== 1) {
-			PSI.MsgBox.showInfo("请选择要编辑的组织机构");
+			me.showInfo("请选择要编辑的组织机构");
 			return;
 		}
 
@@ -377,7 +371,7 @@ Ext.define("PSI.User.MainForm", {
 		var tree = me.getOrgGrid();
 		var item = tree.getSelectionModel().getSelection();
 		if (item === null || item.length !== 1) {
-			PSI.MsgBox.showInfo("请选择要删除的组织机构");
+			me.showInfo("请选择要删除的组织机构");
 			return;
 		}
 
@@ -386,8 +380,7 @@ Ext.define("PSI.User.MainForm", {
 		var funcConfirm = function() {
 			Ext.getBody().mask("正在删除中...");
 			var r = {
-				url : me.getBaseURL() + "Home/User/deleteOrg",
-				method : "POST",
+				url : me.URL("Home/User/deleteOrg"),
 				params : {
 					id : org.id
 				},
@@ -395,24 +388,24 @@ Ext.define("PSI.User.MainForm", {
 					Ext.getBody().unmask();
 
 					if (success) {
-						var data = Ext.JSON.decode(response.responseText);
+						var data = me.decodeJSON(response.responseText);
 						if (data.success) {
-							PSI.MsgBox.showInfo("成功完成删除操作", function() {
+							me.showInfo("成功完成删除操作", function() {
 										me.freshOrgGrid();
 									});
 						} else {
-							PSI.MsgBox.showInfo(data.msg);
+							me.showInfo(data.msg);
 						}
 					}
 				}
 			};
 
-			Ext.Ajax.request(r);
+			me.ajax(r);
 		};
 
 		var info = "请确认是否删除组织机构 <span style='color:red'>" + org.fullName
 				+ "</span> ?";
-		PSI.MsgBox.confirm(info, funcConfirm);
+		me.confirm(info, funcConfirm);
 	},
 
 	freshOrgGrid : function() {
@@ -464,7 +457,7 @@ Ext.define("PSI.User.MainForm", {
 
 		var item = me.getUserGrid().getSelectionModel().getSelection();
 		if (item === null || item.length !== 1) {
-			PSI.MsgBox.showInfo("请选择要编辑的用户");
+			me.showInfo("请选择要编辑的用户");
 			return;
 		}
 
@@ -494,7 +487,7 @@ Ext.define("PSI.User.MainForm", {
 
 		var item = me.getUserGrid().getSelectionModel().getSelection();
 		if (item === null || item.length !== 1) {
-			PSI.MsgBox.showInfo("请选择要修改密码的用户");
+			me.showInfo("请选择要修改密码的用户");
 			return;
 		}
 
@@ -512,7 +505,7 @@ Ext.define("PSI.User.MainForm", {
 		var me = this;
 		var item = me.getUserGrid().getSelectionModel().getSelection();
 		if (item === null || item.length !== 1) {
-			PSI.MsgBox.showInfo("请选择要删除的用户");
+			me.showInfo("请选择要删除的用户");
 			return;
 		}
 
@@ -521,8 +514,7 @@ Ext.define("PSI.User.MainForm", {
 		var funcConfirm = function() {
 			Ext.getBody().mask("正在删除中...");
 			var r = {
-				url : me.getBaseURL() + "Home/User/deleteUser",
-				method : "POST",
+				url : me.URL("Home/User/deleteUser"),
 				params : {
 					id : user.id
 				},
@@ -530,23 +522,23 @@ Ext.define("PSI.User.MainForm", {
 					Ext.getBody().unmask();
 
 					if (success) {
-						var data = Ext.JSON.decode(response.responseText);
+						var data = me.decodeJSON(response.responseText);
 						if (data.success) {
-							PSI.MsgBox.showInfo("成功完成删除操作", function() {
+							me.showInfo("成功完成删除操作", function() {
 										me.freshUserGrid();
 									});
 						} else {
-							PSI.MsgBox.showInfo(data.msg);
+							me.showInfo(data.msg);
 						}
 					}
 				}
 			};
-			Ext.Ajax.request(r);
+			me.ajax(r);
 		};
 
 		var info = "请确认是否删除用户 <span style='color:red'>" + user.name
 				+ "</span> ?";
-		PSI.MsgBox.confirm(info, funcConfirm);
+		me.confirm(info, funcConfirm);
 	},
 
 	onOrgTreeNodeSelect : function(rec) {
