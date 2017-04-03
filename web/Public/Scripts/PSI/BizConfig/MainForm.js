@@ -53,13 +53,6 @@ Ext.define("PSI.BizConfig.MainForm", {
 							handler : me.onEdit,
 							scope : me
 						}, "-", {
-							text : "帮助",
-							iconCls : "PSI-help",
-							handler : function() {
-								var url = "http://my.oschina.net/u/134395/blog/378538";
-								window.open(url);
-							}
-						}, "-", {
 							text : "关闭",
 							iconCls : "PSI-button-exit",
 							handler : function() {
