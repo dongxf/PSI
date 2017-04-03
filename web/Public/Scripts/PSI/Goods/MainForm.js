@@ -4,7 +4,7 @@
  * @author 李静波
  */
 Ext.define("PSI.Goods.MainForm", {
-	extend : "Ext.panel.Panel",
+	extend : "PSI.AFX.BaseMainExForm",
 
 	config : {
 		pAddCategory : null,
@@ -24,8 +24,6 @@ Ext.define("PSI.Goods.MainForm", {
 		var me = this;
 
 		Ext.apply(me, {
-					border : 0,
-					layout : "border",
 					tbar : me.getToolbarCmp(),
 					items : [{
 								region : "north",
@@ -268,7 +266,7 @@ Ext.define("PSI.Goods.MainForm", {
 						actionMethods : {
 							read : "POST"
 						},
-						url : PSI.Const.BASE_URL + "Home/Goods/goodsList",
+						url : me.URL("Home/Goods/goodsList"),
 						reader : {
 							root : 'goodsList',
 							totalProperty : 'totalCount'
@@ -427,7 +425,7 @@ Ext.define("PSI.Goods.MainForm", {
 
 		var item = this.categoryGrid.getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			PSI.MsgBox.showInfo("请选择要编辑的商品分类");
+			me.showInfo("请选择要编辑的商品分类");
 			return;
 		}
 
@@ -448,7 +446,7 @@ Ext.define("PSI.Goods.MainForm", {
 		var me = this;
 		var item = me.categoryGrid.getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			PSI.MsgBox.showInfo("请选择要删除的商品分类");
+			me.showInfo("请选择要删除的商品分类");
 			return;
 		}
 
@@ -458,38 +456,33 @@ Ext.define("PSI.Goods.MainForm", {
 
 		var info = "请确认是否删除商品分类: <span style='color:red'>"
 				+ category.get("text") + "</span>";
-		var me = this;
-		PSI.MsgBox.confirm(info, function() {
-					var el = Ext.getBody();
-					el.mask("正在删除中...");
-					Ext.Ajax.request({
-								url : PSI.Const.BASE_URL
-										+ "Home/Goods/deleteCategory",
-								method : "POST",
-								params : {
-									id : category.get("id")
-								},
-								callback : function(options, success, response) {
-									el.unmask();
 
-									if (success) {
-										var data = Ext.JSON
-												.decode(response.responseText);
-										if (data.success) {
-											PSI.MsgBox.tip("成功完成删除操作")
-											me.freshCategoryGrid();
-										} else {
-											PSI.MsgBox.showInfo(data.msg);
-										}
-									} else {
-										PSI.MsgBox.showInfo("网络错误", function() {
-													window.location.reload();
-												});
-									}
+		me.confirm(info, function() {
+			var el = Ext.getBody();
+			el.mask("正在删除中...");
+			me.ajax({
+						url : me.URL("Home/Goods/deleteCategory"),
+						params : {
+							id : category.get("id")
+						},
+						callback : function(options, success, response) {
+							el.unmask();
+
+							if (success) {
+								var data = me.decodeJSON(response.responseText);
+								if (data.success) {
+									me.tip("成功完成删除操作")
+									me.freshCategoryGrid();
+								} else {
+									me.showInfo(data.msg);
 								}
+							} else {
+								me.showInfo("网络错误");
+							}
+						}
 
-							});
-				});
+					});
+		});
 	},
 
 	/**
@@ -529,13 +522,15 @@ Ext.define("PSI.Goods.MainForm", {
 	 * 新增商品
 	 */
 	onAddGoods : function() {
-		if (this.getCategoryGrid().getStore().getCount() == 0) {
-			PSI.MsgBox.showInfo("没有商品分类，请先新增商品分类");
+		var me = this;
+
+		if (me.getCategoryGrid().getStore().getCount() == 0) {
+			me.showInfo("没有商品分类，请先新增商品分类");
 			return;
 		}
 
 		var form = Ext.create("PSI.Goods.GoodsEditForm", {
-					parentForm : this
+					parentForm : me
 				});
 
 		form.show();
@@ -550,9 +545,9 @@ Ext.define("PSI.Goods.MainForm", {
 			return;
 		}
 
-		var item = this.getCategoryGrid().getSelectionModel().getSelection();
+		var item = me.getCategoryGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			PSI.MsgBox.showInfo("请选择商品分类");
+			me.showInfo("请选择商品分类");
 			return;
 		}
 
@@ -560,7 +555,7 @@ Ext.define("PSI.Goods.MainForm", {
 
 		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			PSI.MsgBox.showInfo("请选择要编辑的商品");
+			me.showInfo("请选择要编辑的商品");
 			return;
 		}
 
@@ -581,7 +576,7 @@ Ext.define("PSI.Goods.MainForm", {
 		var me = this;
 		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			PSI.MsgBox.showInfo("请选择要删除的商品");
+			me.showInfo("请选择要删除的商品");
 			return;
 		}
 
@@ -598,37 +593,32 @@ Ext.define("PSI.Goods.MainForm", {
 		var info = "请确认是否删除商品: <span style='color:red'>" + goods.get("name")
 				+ " " + goods.get("spec") + "</span>";
 
-		PSI.MsgBox.confirm(info, function() {
-					var el = Ext.getBody();
-					el.mask("正在删除中...");
-					Ext.Ajax.request({
-								url : PSI.Const.BASE_URL
-										+ "Home/Goods/deleteGoods",
-								method : "POST",
-								params : {
-									id : goods.get("id")
-								},
-								callback : function(options, success, response) {
-									el.unmask();
+		me.confirm(info, function() {
+			var el = Ext.getBody();
+			el.mask("正在删除中...");
+			me.ajax({
+						url : me.URL("Home/Goods/deleteGoods"),
+						params : {
+							id : goods.get("id")
+						},
+						callback : function(options, success, response) {
+							el.unmask();
 
-									if (success) {
-										var data = Ext.JSON
-												.decode(response.responseText);
-										if (data.success) {
-											PSI.MsgBox.tip("成功完成删除操作");
-											me.freshGoodsGrid();
-										} else {
-											PSI.MsgBox.showInfo(data.msg);
-										}
-									} else {
-										PSI.MsgBox.showInfo("网络错误", function() {
-													window.location.reload();
-												});
-									}
+							if (success) {
+								var data = me.decodeJSON(response.responseText);
+								if (data.success) {
+									me.tip("成功完成删除操作");
+									me.freshGoodsGrid();
+								} else {
+									me.showInfo(data.msg);
 								}
+							} else {
+								me.showInfo("网络错误");
+							}
+						}
 
-							});
-				});
+					});
+		});
 	},
 
 	gotoCategoryGridRecord : function(id) {
@@ -902,9 +892,8 @@ Ext.define("PSI.Goods.MainForm", {
 
 		var el = grid.getEl() || Ext.getBody();
 		el.mask(PSI.Const.LOADING);
-		Ext.Ajax.request({
-					url : PSI.Const.BASE_URL
-							+ "Home/Goods/goodsSafetyInventoryList",
+		me.ajax({
+					url : me.URL("Home/Goods/goodsSafetyInventoryList"),
 					method : "POST",
 					params : {
 						id : goods.get("id")
@@ -915,7 +904,7 @@ Ext.define("PSI.Goods.MainForm", {
 						store.removeAll();
 
 						if (success) {
-							var data = Ext.JSON.decode(response.responseText);
+							var data = me.decodeJSON(response.responseText);
 							store.add(data);
 						}
 
@@ -936,8 +925,8 @@ Ext.define("PSI.Goods.MainForm", {
 		var gridBOM = me.getGoodsBOMGrid();
 		var elBOM = gridBOM.getEl() || Ext.getBody();
 		elBOM.mask(PSI.Const.LOADING);
-		Ext.Ajax.request({
-					url : PSI.Const.BASE_URL + "Home/Goods/goodsBOMList",
+		me.ajax({
+					url : me.URL("Home/Goods/goodsBOMList"),
 					method : "POST",
 					params : {
 						id : goods.get("id")
@@ -948,7 +937,7 @@ Ext.define("PSI.Goods.MainForm", {
 						store.removeAll();
 
 						if (success) {
-							var data = Ext.JSON.decode(response.responseText);
+							var data = me.decodeJSON(response.responseText);
 							store.add(data);
 						}
 
@@ -968,7 +957,7 @@ Ext.define("PSI.Goods.MainForm", {
 
 		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			PSI.MsgBox.showInfo("请选择要设置安全库存的商品");
+			me.showInfo("请选择要设置安全库存的商品");
 			return;
 		}
 
@@ -1016,7 +1005,7 @@ Ext.define("PSI.Goods.MainForm", {
 				actionMethods : {
 					read : "POST"
 				},
-				url : PSI.Const.BASE_URL + "Home/Goods/allCategories"
+				url : me.URL("Home/Goods/allCategories")
 			},
 			listeners : {
 				beforeload : {
@@ -1106,14 +1095,13 @@ Ext.define("PSI.Goods.MainForm", {
 
 	queryTotalGoodsCount : function() {
 		var me = this;
-		Ext.Ajax.request({
-					url : PSI.Const.BASE_URL + "Home/Goods/getTotalGoodsCount",
-					method : "POST",
+		me.ajax({
+					url : me.URL("Home/Goods/getTotalGoodsCount"),
 					params : me.getQueryParamForCategory(),
 					callback : function(options, success, response) {
 
 						if (success) {
-							var data = Ext.JSON.decode(response.responseText);
+							var data = me.decodeJSON(response.responseText);
 							Ext.getCmp("fieldTotalGoodsCount").setValue("共有商品"
 									+ data.cnt + "种");
 						}
@@ -1194,7 +1182,7 @@ Ext.define("PSI.Goods.MainForm", {
 
 		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			PSI.MsgBox.showInfo("请选择一个商品");
+			me.showInfo("请选择一个商品");
 			return;
 		}
 
@@ -1211,13 +1199,16 @@ Ext.define("PSI.Goods.MainForm", {
 	 * 编辑商品构成项
 	 */
 	onEditBOM : function() {
-		PSI.MsgBox.showInfo("TODO");
+		var me = this;
+		me.showInfo("TODO");
 	},
 
 	/**
 	 * 删除商品构成项
 	 */
 	onDeleteBOM : function() {
-		PSI.MsgBox.showInfo("TODO");
+		var me = this;
+
+		me.showInfo("TODO");
 	}
 });
