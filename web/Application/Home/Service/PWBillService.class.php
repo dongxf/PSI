@@ -20,8 +20,7 @@ class PWBillService extends PSIBaseExService {
 			return $this->emptyResult();
 		}
 		
-		$us = new UserService();
-		$params["loginUserId"] = $us->getLoginUserId();
+		$params["loginUserId"] = $this->getLoginUserId();
 		
 		$dao = new PWBillDAO($this->db());
 		return $dao->pwbillList($params);
@@ -81,10 +80,9 @@ class PWBillService extends PSIBaseExService {
 		} else {
 			// 新建采购入库单
 			
-			$us = new UserService();
-			$bill["companyId"] = $us->getCompanyId();
-			$bill["loginUserId"] = $us->getLoginUserId();
-			$bill["dataOrg"] = $us->getLoginUserDataOrg();
+			$bill["companyId"] = $this->getCompanyId();
+			$bill["loginUserId"] = $this->getLoginUserId();
+			$bill["dataOrg"] = $this->getLoginUserDataOrg();
 			
 			$rc = $dao->addPWBill($bill);
 			if ($rc) {
