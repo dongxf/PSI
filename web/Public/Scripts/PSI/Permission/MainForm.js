@@ -2,7 +2,7 @@
  * 权限管理 - 主界面
  */
 Ext.define("PSI.Permission.MainForm", {
-	extend : "Ext.panel.Panel",
+	extend : "PSI.AFX.BaseMainExForm",
 
 	config : {
 		pAdd : "",
@@ -17,8 +17,6 @@ Ext.define("PSI.Permission.MainForm", {
 		var me = this;
 
 		Ext.apply(me, {
-			border : 0,
-			layout : "border",
 			tbar : me.getToolbarCmp(),
 			items : [{
 				region : "center",
@@ -230,14 +228,13 @@ Ext.define("PSI.Permission.MainForm", {
 		var store = grid.getStore();
 		var me = this;
 		Ext.getBody().mask("数据加载中...");
-		Ext.Ajax.request({
-					url : PSI.Const.BASE_URL + "Home/Permission/roleList",
-					method : "POST",
+		me.ajax({
+					url : me.URL("Home/Permission/roleList"),
 					callback : function(options, success, response) {
 						store.removeAll();
 
 						if (success) {
-							var data = Ext.JSON.decode(response.responseText);
+							var data = me.decodeJSON(response.responseText);
 							store.add(data);
 
 							if (data.length > 0) {
@@ -277,17 +274,16 @@ Ext.define("PSI.Permission.MainForm", {
 		var el = grid.getEl() || Ext.getBody();
 
 		el.mask("数据加载中...");
-		Ext.Ajax.request({
-					url : PSI.Const.BASE_URL + "Home/Permission/permissionList",
+		me.ajax({
+					url : me.URL("Home/Permission/permissionList"),
 					params : {
 						roleId : role.id
 					},
-					method : "POST",
 					callback : function(options, success, response) {
 						store.removeAll();
 
 						if (success) {
-							var data = Ext.JSON.decode(response.responseText);
+							var data = me.decodeJSON(response.responseText);
 							store.add(data);
 						}
 
@@ -300,17 +296,16 @@ Ext.define("PSI.Permission.MainForm", {
 		var userEl = userGrid.getEl() || Ext.getBody();
 		userGrid.setTitle("属于角色 [" + role.name + "] 的人员列表");
 		userEl.mask("数据加载中...");
-		Ext.Ajax.request({
-					url : PSI.Const.BASE_URL + "Home/Permission/userList",
+		me.ajax({
+					url : me.URL("Home/Permission/userList"),
 					params : {
 						roleId : role.id
 					},
-					method : "POST",
 					callback : function(options, success, response) {
 						userStore.removeAll();
 
 						if (success) {
-							var data = Ext.JSON.decode(response.responseText);
+							var data = me.decodeJSON(response.responseText);
 							userStore.add(data);
 						}
 
@@ -341,7 +336,7 @@ Ext.define("PSI.Permission.MainForm", {
 		var items = grid.getSelectionModel().getSelection();
 
 		if (items == null || items.length != 1) {
-			PSI.MsgBox.showInfo("请选择要编辑的角色");
+			me.showInfo("请选择要编辑的角色");
 			return;
 		}
 
@@ -364,7 +359,7 @@ Ext.define("PSI.Permission.MainForm", {
 		var items = grid.getSelectionModel().getSelection();
 
 		if (items == null || items.length != 1) {
-			PSI.MsgBox.showInfo("请选择要删除的角色");
+			me.showInfo("请选择要删除的角色");
 			return;
 		}
 
@@ -375,8 +370,7 @@ Ext.define("PSI.Permission.MainForm", {
 		var funcConfirm = function() {
 			Ext.getBody().mask("正在删除中...");
 			var r = {
-				url : PSI.Const.BASE_URL + "Home/Permission/deleteRole",
-				method : "POST",
+				url : me.URL("Home/Permission/deleteRole"),
 				params : {
 					id : role.id
 				},
@@ -386,20 +380,20 @@ Ext.define("PSI.Permission.MainForm", {
 					if (success) {
 						var data = Ext.JSON.decode(response.responseText);
 						if (data.success) {
-							PSI.MsgBox.showInfo("成功完成删除操作", function() {
+							me.showInfo("成功完成删除操作", function() {
 										me.refreshRoleGrid();
 									});
 						} else {
-							PSI.MsgBox.showInfo(data.msg);
+							me.showInfo(data.msg);
 						}
 					}
 				}
 			};
 
-			Ext.Ajax.request(r);
+			me.ajax(r);
 		};
 
-		PSI.MsgBox.confirm(info, funcConfirm);
+		me.confirm(info, funcConfirm);
 	},
 
 	getDataOrgGrid : function() {
@@ -466,18 +460,17 @@ Ext.define("PSI.Permission.MainForm", {
 		var store = grid.getStore();
 
 		el.mask("数据加载中...");
-		Ext.Ajax.request({
-					url : PSI.Const.BASE_URL + "Home/Permission/dataOrgList",
+		me.ajax({
+					url : me.URL("Home/Permission/dataOrgList"),
 					params : {
 						roleId : role.get("id"),
 						permissionId : permission.get("id")
 					},
-					method : "POST",
 					callback : function(options, success, response) {
 						store.removeAll();
 
 						if (success) {
-							var data = Ext.JSON.decode(response.responseText);
+							var data = me.decodeJSON(response.responseText);
 							store.add(data);
 						}
 
