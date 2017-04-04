@@ -130,30 +130,6 @@ Ext.define("PSI.Goods.MainForm", {
 					handler : me.onDeleteGoods,
 					scope : me
 				}, "-", {
-					text : "设置商品安全库存",
-					disabled : me.getPGoodsSI() == "0",
-					iconCls : "PSI-button-view",
-					handler : me.onSafetyInventory,
-					scope : me
-				}, "-", {
-					text : "商品构成",
-					menu : [{
-								text : "新增",
-								scope : me,
-								iconCls : "PSI-button-add",
-								handler : me.onAddBOM
-							}, {
-								text : "编辑",
-								scope : me,
-								iconCls : "PSI-button-edit",
-								handler : me.onEditBOM
-							}, {
-								text : "删除",
-								scope : me,
-								iconCls : "PSI-button-delete",
-								handler : me.onDeleteBOM
-							}]
-				}, "-", {
 					text : "关闭",
 					iconCls : "PSI-button-exit",
 					handler : function() {
@@ -799,6 +775,13 @@ Ext.define("PSI.Goods.MainForm", {
 						enableTextSelection : true
 					},
 					title : "商品安全库存",
+					tbar : ["-", {
+								text : "设置商品安全库存",
+								disabled : me.getPGoodsSI() == "0",
+								iconCls : "PSI-button-view",
+								handler : me.onSafetyInventory,
+								scope : me
+							}, "-"],
 					columnLines : true,
 					columns : [{
 								header : "仓库编码",
@@ -1130,6 +1113,22 @@ Ext.define("PSI.Goods.MainForm", {
 						enableTextSelection : true
 					},
 					title : "商品构成",
+					tbar : [{
+								text : "新增子商品",
+								scope : me,
+								iconCls : "PSI-button-add",
+								handler : me.onAddBOM
+							}, "-", {
+								text : "编辑子商品",
+								scope : me,
+								iconCls : "PSI-button-edit",
+								handler : me.onEditBOM
+							}, "-", {
+								text : "删除子商品",
+								scope : me,
+								iconCls : "PSI-button-delete",
+								handler : me.onDeleteBOM
+							}],
 					columnLines : true,
 					columns : [{
 								header : "子商品编码",
