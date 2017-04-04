@@ -1104,8 +1104,8 @@ Ext.define("PSI.Goods.MainForm", {
 		var modelName = "PSIGoodsBOM";
 		Ext.define(modelName, {
 					extend : "Ext.data.Model",
-					fields : ["id", "goodsId", "goodsCode", "goodsName", "goodsCount",
-							"goodsSpec", "unitName"]
+					fields : ["id", "goodsId", "goodsCode", "goodsName",
+							"goodsCount", "goodsSpec", "unitName"]
 				});
 
 		me.__bomGrid = Ext.create("Ext.grid.Panel", {
@@ -1206,18 +1206,18 @@ Ext.define("PSI.Goods.MainForm", {
 		}
 
 		var goods = item[0];
-		
+
 		var item = me.getGoodsBOMGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
 			me.showInfo("请选择要编辑的子商品");
 			return;
 		}
 		var subGoods = item[0];
-		
+
 		var form = Ext.create("PSI.Goods.GoodsBOMEditForm", {
 					parentForm : me,
 					goods : goods,
-					entity: subGoods
+					entity : subGoods
 				});
 		form.show();
 	},
@@ -1228,6 +1228,55 @@ Ext.define("PSI.Goods.MainForm", {
 	onDeleteBOM : function() {
 		var me = this;
 
-		me.showInfo("TODO");
+		var me = this;
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			me.showInfo("请选择一个商品");
+			return;
+		}
+
+		var goods = item[0];
+
+		var item = me.getGoodsBOMGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			me.showInfo("请选择要删除的子商品");
+			return;
+		}
+		var subGoods = item[0];
+
+		var info = "请确认是否删除子商品: <span style='color:red'>"
+				+ subGoods.get("goodsName") + " " + subGoods.get("goodsSpec")
+				+ "</span>?";
+
+		var confirmFunc = function() {
+			var el = Ext.getBody();
+			el.mask("正在删除中...");
+
+			var r = {
+				url : me.URL("Home/Goods/deleteGoodsBOM"),
+				params : {
+					id : subGoods.get("id")
+				},
+				callback : function(options, success, response) {
+					el.unmask();
+
+					if (success) {
+						var data = me.decodeJSON(response.responseText);
+						if (data.success) {
+							me.tip("成功完成删除操作");
+							me.refreshGoodsBOM();
+						} else {
+							me.showInfo(data.msg);
+						}
+					} else {
+						me.showInfo("网络错误");
+					}
+				}
+
+			};
+			me.ajax(r);
+		};
+
+		me.confirm(info, confirmFunc);
 	}
 });

@@ -211,4 +211,26 @@ class GoodsBomDAO extends PSIBaseExDAO {
 				"unitName" => $unitName
 		);
 	}
+
+	/**
+	 * 删除商品构成中的子商品
+	 *
+	 * @param array $params        	
+	 * @return null|array
+	 */
+	public function deleteGoodsBOM($params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		
+		$sql = "delete from t_goods_bom where id = '%s' ";
+		
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		return null;
+	}
 }

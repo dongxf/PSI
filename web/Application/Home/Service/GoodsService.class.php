@@ -669,16 +669,42 @@ class GoodsService extends PSIBaseExService {
 		$dao = new GoodsDAO($this->db());
 		return $dao->queryDataForSubGoods($params);
 	}
-	
+
 	/**
 	 * 查询子商品的详细信息
 	 */
-	public function getSubGoodsInfo($params){
-		if ($this->isNotOnline()){
+	public function getSubGoodsInfo($params) {
+		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
 		
 		$dao = new GoodsBomDAO($this->db());
 		return $dao->getSubGoodsInfo($params);
+	}
+
+	/**
+	 * 删除商品构成中的子商品
+	 *
+	 * @param array $params        	
+	 */
+	public function deleteGoodsBOM($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
+		$db = $this->db();
+		$db->startTrans();
+		
+		$dao = new GoodsBomDAO($db);
+		
+		$rc = $dao->deleteGoodsBOM($params);
+		if ($rc) {
+			$db->rollback();
+			return $rc;
+		}
+		
+		$db->commit();
+		
+		return $this->ok();
 	}
 }
