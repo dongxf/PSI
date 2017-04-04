@@ -132,7 +132,40 @@ class GoodsBomDAO extends PSIBaseExDAO {
 	 * @return NULL|array
 	 */
 	public function updateGoodsBOM($params) {
-		return $this->todo();
+		// id: 商品id
+		$id = $params["id"];
+		
+		$subGoodsId = $params["subGoodsId"];
+		$subGoodsCount = intval($params["subGoodsCount"]);
+		
+		$db = $this->db;
+		
+		$goodsDAO = new GoodsDAO($db);
+		$goods = $goodsDAO->getGoodsById($id);
+		if (! $goods) {
+			return $this->bad("商品不存在");
+		}
+		
+		$subGoods = $goodsDAO->getGoodsById($subGoodsId);
+		if (! $subGoods) {
+			return $this->bad("子商品不存在");
+		}
+		
+		if ($subGoodsCount <= 0) {
+			return $this->bad("子商品数量需要大于0");
+		}
+		
+		$sql = "update t_goods_bom
+				set sub_goods_count = %d
+				where goods_id = '%s' and sub_goods_id = '%s' ";
+		
+		$rc = $db->execute($sql, $subGoodsCount, $id, $subGoodsId);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		return null;
 	}
 
 	public function getSubGoodsInfo($params) {

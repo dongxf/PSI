@@ -289,6 +289,8 @@ Ext.define("PSI.Goods.GoodsBOMEditForm", {
 						me.editSubGoodsUnitName.setValue(data.unitName);
 						me.editSubGoodsCount.setValue(data.count);
 
+						me.editSubGoodsId.setValue(subGoods.get("goodsId"));
+
 						me.editSubGoodsCode.setReadOnly(true);
 						me.editSubGoodsCount.focus();
 					} else {
