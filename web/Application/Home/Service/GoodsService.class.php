@@ -8,7 +8,6 @@ use Home\DAO\GoodsCategoryDAO;
 use Home\DAO\GoodsDAO;
 use Home\DAO\GoodsSiDAO;
 use Home\DAO\GoodsUnitDAO;
-use Home\DAO\BizlogDAO;
 
 /**
  * 商品Service
@@ -642,7 +641,6 @@ class GoodsService extends PSIBaseExService {
 		
 		$addBOM = $params["addBOM"] == "1";
 		$rc = null;
-		
 		if ($addBOM) {
 			$rc = $dao->addGoodsBOM($params);
 		} else {
@@ -653,6 +651,19 @@ class GoodsService extends PSIBaseExService {
 			$db->rollback();
 			return $rc;
 		}
+		
+		$goodsInfo = "编码：" . $params["goodsCode"] . " 名称：" . $params["goodsName"] . " 规格: " . $params["goodsSpec"];
+		$subGoodsInfo = "编码： " . $params["subGoodsCode"] . " 名称：" . $params["subGoodsName"] . " 规格：" . $params["subGoodsSpec"];
+		
+		$log = null;
+		if ($addBOM) {
+			$log = "给商品[$goodsInfo]新增子商品[$subGoodsInfo]";
+		} else {
+			$log = "编辑商品[$goodsInfo]的子商品[$subGoodsInfo]信息 ";
+		}
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY_GOODS_BOM);
+		
 		$db->commit();
 		
 		return $this->ok();

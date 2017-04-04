@@ -122,6 +122,13 @@ class GoodsBomDAO extends PSIBaseExDAO {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
 		
+		$params["goodsCode"] = $goods["code"];
+		$params["goodsName"] = $goods["name"];
+		$params["goodsSpec"] = $goods["spec"];
+		$params["subGoodsCode"] = $subGoods["code"];
+		$params["subGoodsName"] = $subGoods["name"];
+		$params["subGoodsSpec"] = $subGoods["spec"];
+		
 		return null;
 	}
 
@@ -131,7 +138,7 @@ class GoodsBomDAO extends PSIBaseExDAO {
 	 * @param array $params        	
 	 * @return NULL|array
 	 */
-	public function updateGoodsBOM($params) {
+	public function updateGoodsBOM(& $params) {
 		// id: 商品id
 		$id = $params["id"];
 		
@@ -163,6 +170,13 @@ class GoodsBomDAO extends PSIBaseExDAO {
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
+		
+		$params["goodsCode"] = $goods["code"];
+		$params["goodsName"] = $goods["name"];
+		$params["goodsSpec"] = $goods["spec"];
+		$params["subGoodsCode"] = $subGoods["code"];
+		$params["subGoodsName"] = $subGoods["name"];
+		$params["subGoodsSpec"] = $subGoods["spec"];
 		
 		// 操作成功
 		return null;
