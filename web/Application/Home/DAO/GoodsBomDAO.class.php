@@ -218,10 +218,29 @@ class GoodsBomDAO extends PSIBaseExDAO {
 	 * @param array $params        	
 	 * @return null|array
 	 */
-	public function deleteGoodsBOM($params) {
+	public function deleteGoodsBOM(& $params) {
 		$db = $this->db;
 		
 		$id = $params["id"];
+		
+		$sql = "select goods_id, sub_goods_id
+				from t_goods_bom
+				where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if (! $data) {
+			return $this->bad("要删除的子商品不存在");
+		}
+		$goodsId = $data[0]["goods_id"];
+		$subGoodsId = $data[0]["sub_goods_id"];
+		$goodsDAO = new GoodsDAO($db);
+		$goods = $goodsDAO->getGoodsById($goodsId);
+		if (! $goods) {
+			return $this->badParam("goodsId");
+		}
+		$subGoods = $goodsDAO->getGoodsById($subGoodsId);
+		if (! $subGoods) {
+			return $this->badParam("subGoodsId");
+		}
 		
 		$sql = "delete from t_goods_bom where id = '%s' ";
 		
@@ -229,6 +248,13 @@ class GoodsBomDAO extends PSIBaseExDAO {
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
+		
+		$params["goodsCode"] = $goods["code"];
+		$params["goodsName"] = $goods["name"];
+		$params["goodsSpec"] = $goods["spec"];
+		$params["subGoodsCode"] = $subGoods["code"];
+		$params["subGoodsName"] = $subGoods["name"];
+		$params["subGoodsSpec"] = $subGoods["spec"];
 		
 		// 操作成功
 		return null;

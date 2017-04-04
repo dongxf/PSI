@@ -8,6 +8,7 @@ use Home\DAO\GoodsCategoryDAO;
 use Home\DAO\GoodsDAO;
 use Home\DAO\GoodsSiDAO;
 use Home\DAO\GoodsUnitDAO;
+use Home\DAO\BizlogDAO;
 
 /**
  * 商品Service
@@ -18,6 +19,7 @@ class GoodsService extends PSIBaseExService {
 	private $LOG_CATEGORY_GOODS = "基础数据-商品";
 	private $LOG_CATEGORY_UNIT = "基础数据-商品计量单位";
 	private $LOG_CATEGORY_BRAND = "基础数据-商品品牌";
+	private $LOG_CATEGORY_GOODS_BOM = "基础数据-商品构成";
 
 	/**
 	 * 返回所有商品计量单位
@@ -702,6 +704,12 @@ class GoodsService extends PSIBaseExService {
 			$db->rollback();
 			return $rc;
 		}
+		
+		$bs = new BizlogService($db);
+		$goodsInfo = "编码：" . $params["goodsCode"] . " 名称：" . $params["goodsName"] . " 规格: " . $params["goodsSpec"];
+		$subGoodsInfo = "编码： " . $params["subGoodsCode"] . " 名称：" . $params["subGoodsName"] . " 规格：" . $params["subGoodsSpec"];
+		$log = "从商品[$goodsInfo]中删除子商品[$subGoodsInfo]";
+		$bs->insertBizlog($log, $this->LOG_CATEGORY_GOODS_BOM);
 		
 		$db->commit();
 		
