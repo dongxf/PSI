@@ -1104,7 +1104,7 @@ Ext.define("PSI.Goods.MainForm", {
 		var modelName = "PSIGoodsBOM";
 		Ext.define(modelName, {
 					extend : "Ext.data.Model",
-					fields : ["id", "goodsCode", "goodsName", "goodsCount",
+					fields : ["id", "goodsId", "goodsCode", "goodsName", "goodsCount",
 							"goodsSpec", "unitName"]
 				});
 
@@ -1174,7 +1174,7 @@ Ext.define("PSI.Goods.MainForm", {
 	},
 
 	/**
-	 * 新增商品构成项
+	 * 新增子商品
 	 */
 	onAddBOM : function() {
 		var me = this;
@@ -1195,15 +1195,35 @@ Ext.define("PSI.Goods.MainForm", {
 	},
 
 	/**
-	 * 编辑商品构成项
+	 * 编辑子商品
 	 */
 	onEditBOM : function() {
 		var me = this;
-		me.showInfo("TODO");
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			me.showInfo("请选择一个商品");
+			return;
+		}
+
+		var goods = item[0];
+		
+		var item = me.getGoodsBOMGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			me.showInfo("请选择要编辑的子商品");
+			return;
+		}
+		var subGoods = item[0];
+		
+		var form = Ext.create("PSI.Goods.GoodsBOMEditForm", {
+					parentForm : me,
+					goods : goods,
+					entity: subGoods
+				});
+		form.show();
 	},
 
 	/**
-	 * 删除商品构成项
+	 * 删除子商品
 	 */
 	onDeleteBOM : function() {
 		var me = this;

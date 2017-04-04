@@ -669,4 +669,16 @@ class GoodsService extends PSIBaseExService {
 		$dao = new GoodsDAO($this->db());
 		return $dao->queryDataForSubGoods($params);
 	}
+	
+	/**
+	 * 查询子商品的详细信息
+	 */
+	public function getSubGoodsInfo($params){
+		if ($this->isNotOnline()){
+			return $this->emptyResult();
+		}
+		
+		$dao = new GoodsBomDAO($this->db());
+		return $dao->getSubGoodsInfo($params);
+	}
 }

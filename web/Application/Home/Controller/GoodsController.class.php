@@ -549,4 +549,19 @@ class GoodsController extends PSIBaseController {
 			$this->ajaxReturn($gs->queryDataForSubGoods($params));
 		}
 	}
+
+	/**
+	 * 查询子商品的详细信息
+	 */
+	public function getSubGoodsInfo() {
+		if (IS_POST) {
+			$params = array(
+					"goodsId" => I("post.goodsId"),
+					"subGoodsId" => I("post.subGoodsId")
+			);
+			
+			$gs = new GoodsService();
+			$this->ajaxReturn($gs->getSubGoodsInfo($params));
+		}
+	}
 }

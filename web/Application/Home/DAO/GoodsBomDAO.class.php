@@ -19,13 +19,15 @@ class GoodsBomDAO extends PSIBaseExDAO {
 		
 		$result = array();
 		
-		$sql = "select b.id, b.sub_goods_count, g.code, g.name, g.spec, u.name as unit_name
+		$sql = "select b.id, b.sub_goods_count,g.id as goods_id,
+					g.code, g.name, g.spec, u.name as unit_name
 				from t_goods_bom b, t_goods g, t_goods_unit u
 				where b.goods_id = '%s' and b.sub_goods_id = g.id and g.unit_id = u.id
 				order by g.code";
 		$data = $db->query($sql, $id);
 		foreach ( $data as $i => $v ) {
 			$result[$i]["id"] = $v["id"];
+			$result[$i]["goodsId"] = $v["goods_id"];
 			$result[$i]["goodsCode"] = $v["code"];
 			$result[$i]["goodsName"] = $v["name"];
 			$result[$i]["goodsSpec"] = $v["spec"];
@@ -131,5 +133,51 @@ class GoodsBomDAO extends PSIBaseExDAO {
 	 */
 	public function updateGoodsBOM($params) {
 		return $this->todo();
+	}
+
+	public function getSubGoodsInfo($params) {
+		$goodsId = $params["goodsId"];
+		$subGoodsId = $params["subGoodsId"];
+		
+		$db = $this->db;
+		
+		$goodsDAO = new GoodsDAO($db);
+		$goods = $goodsDAO->getGoodsById($goodsId);
+		if (! $goods) {
+			// TODO 改用Exception更好
+			return $this->badParam("goodsId");
+		}
+		$subGoods = $goodsDAO->getGoodsById($subGoodsId);
+		if (! $subGoods) {
+			// TODO 改用Exception更好
+			return $this->badParam("subGoodsId: $subGoodsId ");
+		}
+		
+		$sql = "select sub_goods_count
+				from t_goods_bom
+				where goods_id = '%s' and sub_goods_id = '%s' ";
+		$data = $db->query($sql, $goodsId, $subGoodsId);
+		$subGoodsCount = 0;
+		if ($data) {
+			$subGoodsCount = $data[0]["sub_goods_count"];
+		}
+		
+		$sql = "select u.name
+				from t_goods g, t_goods_unit u
+				where g.unit_id = u.id and g.id = '%s' ";
+		$data = $db->query($sql, $subGoodsId);
+		$unitName = "";
+		if ($data) {
+			$unitName = $data[0]["name"];
+		}
+		
+		return array(
+				"success" => true,
+				"count" => $subGoodsCount,
+				"name" => $subGoods["name"],
+				"spec" => $subGoods["spec"],
+				"code" => $subGoods["code"],
+				"unitName" => $unitName
+		);
 	}
 }

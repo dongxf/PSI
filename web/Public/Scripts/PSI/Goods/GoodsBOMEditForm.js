@@ -55,7 +55,7 @@ Ext.define("PSI.Goods.GoodsBOMEditForm", {
 		buttons.push(btn);
 
 		Ext.apply(me, {
-			title : entity == null ? "新增商品构成" : "编辑商品构成",
+			title : entity == null ? "新增子商品" : "编辑子商品",
 			width : 520,
 			height : 370,
 			layout : "fit",
@@ -176,8 +176,6 @@ Ext.define("PSI.Goods.GoodsBOMEditForm", {
 				.getCmp("PSI_Goods_GoodsBOMEditForm_editSubGoodsCount");
 		me.editSubGoodsId = Ext
 				.getCmp("PSI_Goods_GoodsBOMEditForm_editSubGoodsId");
-		me.editSubGoodsCode = Ext
-				.getCmp("PSI_Goods_GoodsBOMEditForm_editSubGoodsCode");
 		me.editSubGoodsSpec = Ext
 				.getCmp("PSI_Goods_GoodsBOMEditForm_editSubGoodsSpec");
 		me.editSubGoodsUnitName = Ext
@@ -262,9 +260,46 @@ Ext.define("PSI.Goods.GoodsBOMEditForm", {
 
 	onWndShow : function() {
 		var me = this;
-		var editCode = me.editSubGoodsCode;
-		editCode.focus();
-		editCode.setValue(editCode.getValue());
+
+		var subGoods = me.getEntity();
+		if (!subGoods) {
+			// 新增子商品
+
+			var editCode = me.editSubGoodsCode;
+			editCode.focus();
+			editCode.setValue(editCode.getValue());
+
+			return;
+		}
+
+		// 编辑子商品
+		var r = {
+			url : me.URL("Home/Goods/getSubGoodsInfo"),
+			params : {
+				goodsId : me.getGoods().get("id"),
+				subGoodsId : subGoods.get("goodsId")
+			},
+			callback : function(options, success, response) {
+				if (success) {
+					var data = me.decodeJSON(response.responseText);
+					if (data.success) {
+						me.editSubGoodsCode.setValue(data.code);
+						me.editSubGoodsName.setValue(data.name);
+						me.editSubGoodsSpec.setValue(data.spec);
+						me.editSubGoodsUnitName.setValue(data.unitName);
+						me.editSubGoodsCount.setValue(data.count);
+
+						me.editSubGoodsCode.setReadOnly(true);
+						me.editSubGoodsCount.focus();
+					} else {
+						me.showInfo(data.msg);
+					}
+				} else {
+					me.showInfo("网络错误");
+				}
+			}
+		};
+		me.ajax(r);
 	},
 
 	__setGoodsInfo : function(goods) {
