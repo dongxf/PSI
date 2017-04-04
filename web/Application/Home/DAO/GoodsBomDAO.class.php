@@ -144,12 +144,10 @@ class GoodsBomDAO extends PSIBaseExDAO {
 		$goodsDAO = new GoodsDAO($db);
 		$goods = $goodsDAO->getGoodsById($goodsId);
 		if (! $goods) {
-			// TODO 改用Exception更好
 			return $this->badParam("goodsId");
 		}
 		$subGoods = $goodsDAO->getGoodsById($subGoodsId);
 		if (! $subGoods) {
-			// TODO 改用Exception更好
 			return $this->badParam("subGoodsId: $subGoodsId ");
 		}
 		
