@@ -67,7 +67,10 @@ INSERT INTO `t_fid` (`fid`, `name`) VALUES
 ('2028', '销售订单'),
 ('2028-01', '销售订单 - 审核/取消审核'),
 ('2028-02', '销售订单 - 生成销售出库单'),
-('2029', '商品品牌');
+('2029', '商品品牌'),
+('2030-01', '商品构成-新增子商品'),
+('2030-02', '商品构成-编辑子商品'),
+('2030-03', '商品构成-删除子商品');
 
 TRUNCATE TABLE `t_menu_item`;
 INSERT INTO `t_menu_item` (`id`, `caption`, `fid`, `parent_id`, `show_order`) VALUES
@@ -226,7 +229,10 @@ INSERT INTO `t_permission` (`id`, `fid`, `name`, `note`, `category`, `py`) VALUE
 ('2028', '2028', '销售订单', '销售订单', '销售订单', 'XSDD'),
 ('2028-01', '2028-01', '销售订单 - 审核/取消审核', '销售订单 - 审核/取消审核', '销售订单', 'XSDD _ SH_QXSH'),
 ('2028-02', '2028-02', '销售订单 - 生成销售出库单', '销售订单 - 生成销售出库单', '销售订单', 'XSDD _ SCXSCKD'),
-('2029', '2029', '商品品牌', '通过菜单进入基础数据商品品牌模块的权限', '商品', 'SPPP');
+('2029', '2029', '商品品牌', '通过菜单进入基础数据商品品牌模块的权限', '商品', 'SPPP'),
+('2030-01', '2030-01', '商品构成-新增子商品', '商品构成新增子商品按钮的操作权限', '商品', 'SPGC_XZZSP'),
+('2030-02', '2030-02', '商品构成-编辑子商品', '商品构成编辑子商品按钮的操作权限', '商品', 'SPGC_BJZSP'),
+('2030-03', '2030-03', '商品构成-删除子商品', '商品构成删除子商品按钮的操作权限', '商品', 'SPGC_SCZSP');
 
 TRUNCATE TABLE `t_role`;
 INSERT INTO `t_role` (`id`, `name`, `data_org`, `company_id`) VALUES
@@ -277,7 +283,10 @@ INSERT INTO `t_role_permission` (`role_id`, `permission_id`) VALUES
 ('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2027-01'),
 ('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2027-02'),
 ('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2028'),
-('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2029');
+('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2029'),
+('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2030-01'),
+('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2030-02'),
+('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2030-03');
 
 TRUNCATE TABLE `t_role_user`;
 INSERT INTO `t_role_user` (`role_id`, `user_id`) VALUES
@@ -313,7 +322,7 @@ update t_config set company_id = '4D74E1E4-A129-11E4-9B6A-782BCBD7746B' ;
 
 TRUNCATE TABLE `t_psi_db_version`;
 INSERT INTO `t_psi_db_version` (`db_version`, `update_dt`) VALUES
-('20160722-01', now());
+('20170405-01', now());
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

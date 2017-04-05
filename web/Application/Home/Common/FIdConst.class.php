@@ -478,4 +478,19 @@ class FIdConst {
 	 * 基础数据 - 商品品牌
 	 */
 	const GOODS_BRAND = "2029";
+	
+	/**
+	 * 商品构成 - 新增子商品
+	 */
+	const GOODS_BOM_ADD = "2030-01";
+	
+	/**
+	 * 商品构成 - 编辑子商品
+	 */
+	const GOODS_BOM_EDIT = "2030-02";
+	
+	/**
+	 * 商品构成 - 删除子商品
+	 */
+	const GOODS_BOM_DELETE = "2030-03";
 }

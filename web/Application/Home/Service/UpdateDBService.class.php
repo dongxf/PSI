@@ -99,6 +99,8 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20160620_01($db);
 		$this->update_20160722_01($db);
 		
+		$this->update_20170405_01($db);
+		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
 		$sql = "insert into t_psi_db_version (db_version, update_dt) 
@@ -109,6 +111,78 @@ class UpdateDBService extends PSIBaseService {
 		$bl->insertBizlog("升级数据库，数据库版本 = " . $this->CURRENT_DB_VERSION);
 		
 		return $this->ok();
+	}
+
+	private function update_20170405_01($db) {
+		// 本次更新：商品构成权限
+		$ps = new PinyinService();
+		$category = "商品";
+		
+		$fid = FIdConst::GOODS_BOM_ADD;
+		$name = "商品构成-新增子商品";
+		$note = "商品构成新增子商品按钮的操作权限";
+		$sql = "select count(*) as cnt from t_fid where fid = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_fid(fid, name) value('%s', '%s')";
+			$db->execute($sql, $fid, $name);
+		}
+		
+		$sql = "select count(*) as cnt from t_permission where id = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$py = $ps->toPY($name);
+			
+			$sql = "insert into t_permission (id, fid, name, note, category, py)
+				values ('%s', '%s', '%s', '%s', '%s', '%s') ";
+			$db->execute($sql, $fid, $fid, $name, $note, $category, $py);
+		}
+		
+		$fid = FIdConst::GOODS_BOM_EDIT;
+		$name = "商品构成-编辑子商品";
+		$note = "商品构成编辑子商品按钮的操作权限";
+		$sql = "select count(*) as cnt from t_fid where fid = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_fid(fid, name) value('%s', '%s')";
+			$db->execute($sql, $fid, $name);
+		}
+		
+		$sql = "select count(*) as cnt from t_permission where id = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$py = $ps->toPY($name);
+			
+			$sql = "insert into t_permission (id, fid, name, note, category, py)
+				values ('%s', '%s', '%s', '%s', '%s', '%s') ";
+			$db->execute($sql, $fid, $fid, $name, $note, $category, $py);
+		}
+		
+		$fid = FIdConst::GOODS_BOM_DELETE;
+		$name = "商品构成-删除子商品";
+		$note = "商品构成删除子商品按钮的操作权限";
+		$sql = "select count(*) as cnt from t_fid where fid = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_fid(fid, name) value('%s', '%s')";
+			$db->execute($sql, $fid, $name);
+		}
+		
+		$sql = "select count(*) as cnt from t_permission where id = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$py = $ps->toPY($name);
+			
+			$sql = "insert into t_permission (id, fid, name, note, category, py)
+				values ('%s', '%s', '%s', '%s', '%s', '%s') ";
+			$db->execute($sql, $fid, $fid, $name, $note, $category, $py);
+		}
 	}
 
 	private function update_20160722_01($db) {
