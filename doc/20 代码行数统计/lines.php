@@ -60,4 +60,5 @@ foreach ($pathList as $filePath) {
 	echo "[{$filePath}] lines = {$result} \n";  	
 }
 
-echo "total lines = {$totalLines} \n";
+echo "\n";
+echo "total lines = {$totalLines} \n\n";
