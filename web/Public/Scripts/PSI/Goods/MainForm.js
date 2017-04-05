@@ -14,7 +14,10 @@ Ext.define("PSI.Goods.MainForm", {
 		pEditGoods : null,
 		pDeleteGoods : null,
 		pImportGoods : null,
-		pGoodsSI : null
+		pGoodsSI : null,
+		pAddBOM : null,
+		pEditBOM : null,
+		pDeleteBOM : null
 	},
 
 	/**
@@ -1117,16 +1120,19 @@ Ext.define("PSI.Goods.MainForm", {
 								text : "新增子商品",
 								scope : me,
 								iconCls : "PSI-button-add",
+								disabled : me.getPAddBOM() == "0",
 								handler : me.onAddBOM
 							}, "-", {
 								text : "编辑子商品",
 								scope : me,
 								iconCls : "PSI-button-edit",
+								disabled : me.getPEditBOM() == "0",
 								handler : me.onEditBOM
 							}, "-", {
 								text : "删除子商品",
 								scope : me,
 								iconCls : "PSI-button-delete",
+								disabled : me.getPDeleteBOM() == "0",
 								handler : me.onDeleteBOM
 							}],
 					columnLines : true,

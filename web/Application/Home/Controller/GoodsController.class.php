@@ -38,6 +38,10 @@ class GoodsController extends PSIBaseController {
 			$this->assign("pImportGoods", $us->hasPermission(FIdConst::GOODS_IMPORT) ? 1 : 0);
 			$this->assign("pGoodsSI", $us->hasPermission(FIdConst::GOODS_SI) ? 1 : 0);
 			
+			$this->assign("pAddBOM", $us->hasPermission(FIdConst::GOODS_BOM_ADD) ? 1 : 0);
+			$this->assign("pEditBOM", $us->hasPermission(FIdConst::GOODS_BOM_EDIT) ? 1 : 0);
+			$this->assign("pDeleteBOM", $us->hasPermission(FIdConst::GOODS_BOM_DELETE) ? 1 : 0);
+			
 			$this->display();
 		} else {
 			$this->gotoLoginPage("/Home/Goods/index");
