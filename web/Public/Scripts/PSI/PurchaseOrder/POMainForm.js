@@ -4,7 +4,7 @@
  * @author 李静波
  */
 Ext.define("PSI.PurchaseOrder.POMainForm", {
-	extend : "Ext.panel.Panel",
+	extend : "PSI.AFX.BaseMainExForm",
 
 	config : {
 		permission : null
@@ -17,8 +17,6 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 		var me = this;
 
 		Ext.apply(me, {
-					border : 0,
-					layout : "border",
 					tbar : me.getToolbarCmp(),
 					items : [{
 								region : "north",
@@ -27,6 +25,7 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 								border : 0,
 								title : "查询条件",
 								collapsible : true,
+								collapseMode : "mini",
 								layout : {
 									type : "table",
 									columns : 4
@@ -266,7 +265,7 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 						actionMethods : {
 							read : "POST"
 						},
-						url : PSI.Const.BASE_URL + "Home/Purchase/pobillList",
+						url : me.URL("Home/Purchase/pobillList"),
 						reader : {
 							root : 'dataList',
 							totalProperty : 'totalCount'
@@ -636,14 +635,14 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 		var me = this;
 		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			PSI.MsgBox.showInfo("请选择要删除的采购订单");
+			me.showInfo("请选择要删除的采购订单");
 			return;
 		}
 
 		var bill = item[0];
 
 		if (bill.get("billStatus") > 0) {
-			PSI.MsgBox.showInfo("当前采购订单已经审核，不能删除");
+			me.showInfo("当前采购订单已经审核，不能删除");
 			return;
 		}
 
@@ -662,8 +661,7 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 			var el = Ext.getBody();
 			el.mask("正在删除中...");
 			var r = {
-				url : PSI.Const.BASE_URL + "Home/Purchase/deletePOBill",
-				method : "POST",
+				url : me.URL("Home/Purchase/deletePOBill"),
 				params : {
 					id : bill.get("id")
 				},
@@ -673,21 +671,21 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 					if (success) {
 						var data = Ext.JSON.decode(response.responseText);
 						if (data.success) {
-							PSI.MsgBox.showInfo("成功完成删除操作", function() {
+							me.showInfo("成功完成删除操作", function() {
 										me.refreshMainGrid(preIndex);
 									});
 						} else {
-							PSI.MsgBox.showInfo(data.msg);
+							me.showInfo(data.msg);
 						}
 					} else {
-						PSI.MsgBox.showInfo("网络错误");
+						me.showInfo("网络错误");
 					}
 				}
 			};
-			Ext.Ajax.request(r);
+			me.ajax(r);
 		};
 
-		PSI.MsgBox.confirm(info, funcConfirm);
+		me.confirm(info, funcConfirm);
 	},
 
 	onMainGridSelect : function() {
@@ -741,18 +739,17 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 		el.mask(PSI.Const.LOADING);
 
 		var r = {
-			url : PSI.Const.BASE_URL + "Home/Purchase/poBillDetailList",
+			url : me.URL("Home/Purchase/poBillDetailList"),
 			params : {
 				id : bill.get("id")
 			},
-			method : "POST",
 			callback : function(options, success, response) {
 				var store = grid.getStore();
 
 				store.removeAll();
 
 				if (success) {
-					var data = Ext.JSON.decode(response.responseText);
+					var data = me.decodeJSON(response.responseText);
 					store.add(data);
 
 					if (store.getCount() > 0) {
@@ -768,7 +765,7 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 				el.unmask();
 			}
 		};
-		Ext.Ajax.request(r);
+		me.ajax(r);
 	},
 
 	/**
@@ -778,19 +775,19 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 		var me = this;
 		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			PSI.MsgBox.showInfo("没有选择要审核的采购订单");
+			me.showInfo("没有选择要审核的采购订单");
 			return;
 		}
 		var bill = item[0];
 
 		if (bill.get("billStatus") > 0) {
-			PSI.MsgBox.showInfo("当前采购订单已经审核，不能再次审核");
+			me.showInfo("当前采购订单已经审核，不能再次审核");
 			return;
 		}
 
 		var detailCount = me.getDetailGrid().getStore().getCount();
 		if (detailCount == 0) {
-			PSI.MsgBox.showInfo("当前采购订单没有录入商品明细，不能审核");
+			me.showInfo("当前采购订单没有录入商品明细，不能审核");
 			return;
 		}
 
@@ -802,8 +799,7 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 			var el = Ext.getBody();
 			el.mask("正在提交中...");
 			var r = {
-				url : PSI.Const.BASE_URL + "Home/Purchase/commitPOBill",
-				method : "POST",
+				url : me.URL("Home/Purchase/commitPOBill"),
 				params : {
 					id : id
 				},
@@ -813,20 +809,20 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 					if (success) {
 						var data = Ext.JSON.decode(response.responseText);
 						if (data.success) {
-							PSI.MsgBox.showInfo("成功完成审核操作", function() {
+							me.showInfo("成功完成审核操作", function() {
 										me.refreshMainGrid(id);
 									});
 						} else {
-							PSI.MsgBox.showInfo(data.msg);
+							me.showInfo(data.msg);
 						}
 					} else {
-						PSI.MsgBox.showInfo("网络错误");
+						me.showInfo("网络错误");
 					}
 				}
 			};
-			Ext.Ajax.request(r);
+			me.ajax(r);
 		};
-		PSI.MsgBox.confirm(info, funcConfirm);
+		me.confirm(info, funcConfirm);
 	},
 
 	/**
@@ -836,13 +832,13 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 		var me = this;
 		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			PSI.MsgBox.showInfo("没有选择要取消审核的采购订单");
+			me.showInfo("没有选择要取消审核的采购订单");
 			return;
 		}
 		var bill = item[0];
 
 		if (bill.get("billStatus") == 0) {
-			PSI.MsgBox.showInfo("当前采购订单还没有审核，无法取消审核");
+			me.showInfo("当前采购订单还没有审核，无法取消审核");
 			return;
 		}
 
@@ -853,8 +849,7 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 			var el = Ext.getBody();
 			el.mask("正在提交中...");
 			var r = {
-				url : PSI.Const.BASE_URL + "Home/Purchase/cancelConfirmPOBill",
-				method : "POST",
+				url : me.URL("Home/Purchase/cancelConfirmPOBill"),
 				params : {
 					id : id
 				},
@@ -862,22 +857,22 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 					el.unmask();
 
 					if (success) {
-						var data = Ext.JSON.decode(response.responseText);
+						var data = me.decodeJSON(response.responseText);
 						if (data.success) {
-							PSI.MsgBox.showInfo("成功完成取消审核操作", function() {
+							me.showInfo("成功完成取消审核操作", function() {
 										me.refreshMainGrid(id);
 									});
 						} else {
-							PSI.MsgBox.showInfo(data.msg);
+							me.showInfo(data.msg);
 						}
 					} else {
-						PSI.MsgBox.showInfo("网络错误");
+						me.showInfo("网络错误");
 					}
 				}
 			};
-			Ext.Ajax.request(r);
+			me.ajax(r);
 		};
-		PSI.MsgBox.confirm(info, funcConfirm);
+		me.confirm(info, funcConfirm);
 	},
 
 	gotoMainGridRecord : function(id) {
@@ -960,13 +955,13 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 		var me = this;
 		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			PSI.MsgBox.showInfo("没有选择要生成入库单的采购订单");
+			me.showInfo("没有选择要生成入库单的采购订单");
 			return;
 		}
 		var bill = item[0];
 
 		if (bill.get("billStatus") != 1000) {
-			PSI.MsgBox.showInfo("当前采购订单还没有审核，无法生成采购入库单");
+			me.showInfo("当前采购订单还没有审核，无法生成采购入库单");
 			return;
 		}
 
@@ -976,17 +971,17 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 				});
 		form.show();
 	},
-	
-	onPDF: function(){
+
+	onPDF : function() {
 		var me = this;
 		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			PSI.MsgBox.showInfo("没有选择要生成pdf文件的采购订单");
+			me.showInfo("没有选择要生成pdf文件的采购订单");
 			return;
 		}
 		var bill = item[0];
 
-		var url = PSI.Const.BASE_URL + "Home/Purchase/poBillPdf?ref=" + bill.get("ref");
+		var url = me.URL("Home/Purchase/poBillPdf?ref=" + bill.get("ref"));
 		window.open(url);
 	}
 });
