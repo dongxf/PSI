@@ -307,6 +307,7 @@ CREATE TABLE IF NOT EXISTS `t_pw_bill` (
   `payment_type` int(11) NOT NULL DEFAULT 0,
   `data_org` varchar(255) DEFAULT NULL,
   `company_id` varchar(255) DEFAULT NULL,
+  `expand_by_bom` int(11) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
