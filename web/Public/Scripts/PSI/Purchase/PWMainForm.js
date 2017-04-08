@@ -2,14 +2,12 @@
  * 采购入库 - 主界面
  */
 Ext.define("PSI.Purchase.PWMainForm", {
-	extend : "Ext.panel.Panel",
+	extend : "PSI.AFX.BaseMainExForm",
 
 	initComponent : function() {
 		var me = this;
 
 		Ext.apply(me, {
-					border : 0,
-					layout : "border",
 					tbar : me.getToolbarCmp(),
 					items : [{
 								region : "north",
@@ -464,7 +462,9 @@ Ext.define("PSI.Purchase.PWMainForm", {
 		me.__lastId = id;
 	},
 
-	// 新增采购入库单
+	/**
+	 * 新增采购入库单
+	 */
 	onAddBill : function() {
 		var form = Ext.create("PSI.Purchase.PWEditForm", {
 					parentForm : this
@@ -472,12 +472,14 @@ Ext.define("PSI.Purchase.PWMainForm", {
 		form.show();
 	},
 
-	// 编辑采购入库单
+	/**
+	 * 编辑采购入库单
+	 */
 	onEditBill : function() {
 		var me = this;
 		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			PSI.MsgBox.showInfo("没有选择要编辑的采购入库单");
+			me.showInfo("没有选择要编辑的采购入库单");
 			return;
 		}
 		var bill = item[0];
@@ -489,19 +491,21 @@ Ext.define("PSI.Purchase.PWMainForm", {
 		form.show();
 	},
 
-	// 删除采购入库单
+	/**
+	 * 删除采购入库单
+	 */
 	onDeleteBill : function() {
 		var me = this;
 		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			PSI.MsgBox.showInfo("请选择要删除的采购入库单");
+			me.showInfo("请选择要删除的采购入库单");
 			return;
 		}
 
 		var bill = item[0];
 
 		if (bill.get("billStatus") == "已入库") {
-			PSI.MsgBox.showInfo("当前采购入库单已经提交入库，不能删除");
+			me.showInfo("当前采购入库单已经提交入库，不能删除");
 			return;
 		}
 
@@ -516,37 +520,35 @@ Ext.define("PSI.Purchase.PWMainForm", {
 
 		var info = "请确认是否删除采购入库单: <span style='color:red'>" + bill.get("ref")
 				+ "</span>";
-		var me = this;
-		PSI.MsgBox.confirm(info, function() {
+		var confirmFunc = function() {
 			var el = Ext.getBody();
 			el.mask("正在删除中...");
-			Ext.Ajax.request({
-						url : PSI.Const.BASE_URL + "Home/Purchase/deletePWBill",
-						method : "POST",
-						params : {
-							id : bill.get("id")
-						},
-						callback : function(options, success, response) {
-							el.unmask();
 
-							if (success) {
-								var data = Ext.JSON
-										.decode(response.responseText);
-								if (data.success) {
-									PSI.MsgBox.showInfo("成功完成删除操作", function() {
-												me.refreshMainGrid(preIndex);
-											});
-								} else {
-									PSI.MsgBox.showInfo(data.msg);
-								}
-							} else {
-								PSI.MsgBox.showInfo("网络错误", function() {
-											window.location.reload();
-										});
-							}
+			var r = {
+				url : me.URL("Home/Purchase/deletePWBill"),
+				params : {
+					id : bill.get("id")
+				},
+				callback : function(options, success, response) {
+					el.unmask();
+
+					if (success) {
+						var data = me.decodeJSON(response.responseText);
+						if (data.success) {
+							me.showInfo("成功完成删除操作", function() {
+										me.refreshMainGrid(preIndex);
+									});
+						} else {
+							me.showInfo(data.msg);
 						}
-					});
-		});
+					} else {
+						me.showInfo("网络错误");
+					}
+				}
+			};
+			me.ajax(r);
+		};
+		me.confirm(info, confirmFunc);
 	},
 
 	onMainGridSelect : function() {
