@@ -1,5 +1,7 @@
 /**
  * 登录界面
+ * 
+ * @author 李静波
  */
 Ext.define("PSI.User.LoginForm", {
 	extend : 'PSI.AFX.BaseDialogForm',
@@ -26,88 +28,87 @@ Ext.define("PSI.User.LoginForm", {
 		var me = this;
 
 		Ext.apply(me, {
-					height : me.getDemoInfo() == "" ? 140 : 200,
-					header : {
-						title : "<span style='font-size:120%'>登录 - "
-								+ me.getProductionName() + "</span>",
-						iconCls : "PSI-login",
-						height : 40
-					},
-					items : [{
-						id : "loginForm",
-						xtype : "form",
-						layout : {
-							type : "table",
-							columns : 1
-						},
-						height : "100%",
-						border : 0,
-						bodyPadding : 5,
-						defaultType : 'textfield',
-						fieldDefaults : {
-							labelWidth : 60,
-							labelAlign : "right",
-							labelSeparator : "",
-							msgTarget : 'side'
-						},
-						items : [{
-									xtype : "hidden",
-									name : "fromDevice",
-									value : "web"
-								}, {
-									id : "editLoginName",
-									width : 370,
-									fieldLabel : "登录名",
-									allowBlank : false,
-									blankText : "没有输入登录名",
-									beforeLabelTextTpl : PSI.Const.REQUIRED,
-									name : "loginName",
-									value : me.getLoginNameFromCookie(),
-									listeners : {
-										specialkey : me.onEditLoginNameSpecialKey,
-										scope : me
-									}
-								}, {
-									id : "editPassword",
-									fieldLabel : "密码",
-									allowBlank : false,
-									blankText : "没有输入密码",
-									beforeLabelTextTpl : PSI.Const.REQUIRED,
-									inputType : "password",
-									name : "password",
-									width : 370,
-									listeners : {
-										specialkey : me.onEditPasswordSpecialKey,
-										scope : me
-									}
-								}, {
-									xtype : "displayfield",
-									value : me.getDemoInfo()
-								}, {
-									xtype : "hidden",
-									name : "ip",
-									value : me.getIp()
-								}, {
-									xtype : "hidden",
-									name : "ipFrom",
-									value : me.getCname()
-								}],
-						buttons : [{
-									text : "登录",
-									formBind : true,
-									handler : me.onOK,
-									scope : me,
-									iconCls : "PSI-button-ok"
-								}, {
-									text : "帮助",
-									iconCls : "PSI-help",
-									handler : function() {
-										window.open(PSI.Const.BASE_URL
-												+ "/Home/Help/index?t=login");
-									}
-								}]
-					}]
-				});
+			height : me.getDemoInfo() == "" ? 140 : 200,
+			header : {
+				title : "<span style='font-size:120%'>登录 - "
+						+ me.getProductionName() + "</span>",
+				iconCls : "PSI-login",
+				height : 40
+			},
+			items : [{
+				id : "loginForm",
+				xtype : "form",
+				layout : {
+					type : "table",
+					columns : 1
+				},
+				height : "100%",
+				border : 0,
+				bodyPadding : 5,
+				defaultType : 'textfield',
+				fieldDefaults : {
+					labelWidth : 60,
+					labelAlign : "right",
+					labelSeparator : "",
+					msgTarget : 'side'
+				},
+				items : [{
+							xtype : "hidden",
+							name : "fromDevice",
+							value : "web"
+						}, {
+							id : "editLoginName",
+							width : 370,
+							fieldLabel : "登录名",
+							allowBlank : false,
+							blankText : "没有输入登录名",
+							beforeLabelTextTpl : PSI.Const.REQUIRED,
+							name : "loginName",
+							value : me.getLoginNameFromCookie(),
+							listeners : {
+								specialkey : me.onEditLoginNameSpecialKey,
+								scope : me
+							}
+						}, {
+							id : "editPassword",
+							fieldLabel : "密码",
+							allowBlank : false,
+							blankText : "没有输入密码",
+							beforeLabelTextTpl : PSI.Const.REQUIRED,
+							inputType : "password",
+							name : "password",
+							width : 370,
+							listeners : {
+								specialkey : me.onEditPasswordSpecialKey,
+								scope : me
+							}
+						}, {
+							xtype : "displayfield",
+							value : me.getDemoInfo()
+						}, {
+							xtype : "hidden",
+							name : "ip",
+							value : me.getIp()
+						}, {
+							xtype : "hidden",
+							name : "ipFrom",
+							value : me.getCname()
+						}],
+				buttons : [{
+							text : "登录",
+							formBind : true,
+							handler : me.onOK,
+							scope : me,
+							iconCls : "PSI-button-ok"
+						}, {
+							text : "帮助",
+							iconCls : "PSI-help",
+							handler : function() {
+								window.open(me.URL("/Home/Help/index?t=login"));
+							}
+						}]
+			}]
+		});
 
 		me.callParent(arguments);
 
