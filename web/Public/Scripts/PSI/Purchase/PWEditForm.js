@@ -60,13 +60,6 @@ Ext.define("PSI.Purchase.PWEditForm", {
 									});
 						},
 						scope : me
-					}, "-", {
-						text : "帮助",
-						iconCls : "PSI-help",
-						handler : function() {
-							window
-									.open("http://my.oschina.net/u/134395/blog/379622");
-						}
 					}],
 			items : [{
 						region : "center",
