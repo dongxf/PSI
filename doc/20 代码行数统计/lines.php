@@ -2,7 +2,7 @@
 
 function getFileLines($file) {
 	$line = 0 ; //初始化行数  
-	//打开文件  
+	//打开文件
 	$fp = fopen($file, 'r');  
 	if($fp){  
 		while(stream_get_line($fp, 8192, "\n")){  
@@ -43,7 +43,7 @@ function allFileLines($directory)
 
 $totalLines = 0;
 
-$baseDir = dirname(__FILE__) . "/../web";
+$baseDir = dirname(__FILE__) . "/../../web";
 
 $pathList = array(
 	$baseDir . "/Application/Home/DAO",
