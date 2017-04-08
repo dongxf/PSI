@@ -576,7 +576,7 @@ Ext.define("PSI.Purchase.PWMainForm", {
 		Ext.getCmp("buttonDelete").setDisabled(commited);
 		Ext.getCmp("buttonCommit").setDisabled(commited);
 
-		this.refreshDetailGrid();
+		me.refreshDetailGrid();
 	},
 
 	refreshDetailGrid : function(id) {
@@ -624,60 +624,60 @@ Ext.define("PSI.Purchase.PWMainForm", {
 				});
 	},
 
-	// 提交采购入库单
+	/**
+	 * 提交采购入库单
+	 */
 	onCommit : function() {
 		var me = this;
 		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			PSI.MsgBox.showInfo("没有选择要提交的采购入库单");
+			me.showInfo("没有选择要提交的采购入库单");
 			return;
 		}
 		var bill = item[0];
 
 		if (bill.get("billStatus") == "已入库") {
-			PSI.MsgBox.showInfo("当前采购入库单已经提交入库，不能再次提交");
+			me.showInfo("当前采购入库单已经提交入库，不能再次提交");
 			return;
 		}
 
 		var detailCount = me.getDetailGrid().getStore().getCount();
 		if (detailCount == 0) {
-			PSI.MsgBox.showInfo("当前采购入库单没有录入商品明细，不能提交");
+			me.showInfo("当前采购入库单没有录入商品明细，不能提交");
 			return;
 		}
 
 		var info = "请确认是否提交单号: <span style='color:red'>" + bill.get("ref")
 				+ "</span> 的采购入库单?";
 		var id = bill.get("id");
-		PSI.MsgBox.confirm(info, function() {
+		var confirmFunc = function() {
 			var el = Ext.getBody();
 			el.mask("正在提交中...");
-			Ext.Ajax.request({
-						url : PSI.Const.BASE_URL + "Home/Purchase/commitPWBill",
-						method : "POST",
-						params : {
-							id : id
-						},
-						callback : function(options, success, response) {
-							el.unmask();
+			var r = {
+				url : me.URL("Home/Purchase/commitPWBill"),
+				params : {
+					id : id
+				},
+				callback : function(options, success, response) {
+					el.unmask();
 
-							if (success) {
-								var data = Ext.JSON
-										.decode(response.responseText);
-								if (data.success) {
-									PSI.MsgBox.showInfo("成功完成提交操作", function() {
-												me.refreshMainGrid(id);
-											});
-								} else {
-									PSI.MsgBox.showInfo(data.msg);
-								}
-							} else {
-								PSI.MsgBox.showInfo("网络错误", function() {
-											window.location.reload();
-										});
-							}
+					if (success) {
+						var data = me.decodeJSON(response.responseText);
+						if (data.success) {
+							me.showInfo("成功完成提交操作", function() {
+										me.refreshMainGrid(id);
+									});
+						} else {
+							me.showInfo(data.msg);
 						}
-					});
-		});
+					} else {
+						me.showInfo("网络错误");
+					}
+				}
+			};
+			me.ajax(r);
+		};
+		me.confirm(info, confirmFunc);
 	},
 
 	gotoMainGridRecord : function(id) {
@@ -757,13 +757,12 @@ Ext.define("PSI.Purchase.PWMainForm", {
 		var me = this;
 		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			PSI.MsgBox.showInfo("没有选择要生成pdf文件的采购入库单");
+			me.showInfo("没有选择要生成pdf文件的采购入库单");
 			return;
 		}
 		var bill = item[0];
 
-		var url = PSI.Const.BASE_URL + "Home/Purchase/pwBillPdf?ref="
-				+ bill.get("ref");
+		var url = me.URL("Home/Purchase/pwBillPdf?ref=" + bill.get("ref"));
 		window.open(url);
 	}
 });
