@@ -527,6 +527,20 @@ class GoodsController extends PSIBaseController {
 	 */
 	public function editGoodsBOM() {
 		if (IS_POST) {
+			$us = new UserService();
+			if (I("post.id")) {
+				// 编辑
+				if (! $us->hasPermission(FIdConst::GOODS_BOM_EDIT)) {
+					$this->ajaxReturn($this->noPermission("编辑子商品"));
+					return;
+				}
+			} else {
+				if (! $us->hasPermission(FIdConst::GOODS_BOM_ADD)) {
+					$this->ajaxReturn($this->noPermission("新建子商品"));
+					return;
+				}
+			}
+			
 			$params = array(
 					"id" => I("post.id"),
 					"addBOM" => I("post.addBOM"),
@@ -574,6 +588,12 @@ class GoodsController extends PSIBaseController {
 	 */
 	public function deleteGoodsBOM() {
 		if (IS_POST) {
+			$us = new UserService();
+			if (! $us->hasPermission(FIdConst::GOODS_BOM_DELETE)) {
+				$this->ajaxReturn($this->noPermission("删除子商品"));
+				return;
+			}
+			
 			$params = array(
 					"id" => I("post.id")
 			);
