@@ -2,10 +2,8 @@
  * 采购入库单 - 新增或编辑界面
  */
 Ext.define("PSI.Purchase.PWEditForm", {
-	extend : "Ext.window.Window",
+	extend : "PSI.AFX.BaseDialogForm",
 	config : {
-		parentForm : null,
-		entity : null,
 		genBill : false,
 		pobillRef : null
 	},
@@ -14,7 +12,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 		var me = this;
 		me.__readOnly = false;
 		var entity = me.getEntity();
-		this.adding = entity == null;
+		me.adding = entity == null;
 
 		Ext.apply(me, {
 			title : entity == null ? "新建采购入库单" : "编辑采购入库单",
@@ -55,7 +53,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 								return;
 							}
 
-							PSI.MsgBox.confirm("请确认是否取消当前操作？", function() {
+							me.confirm("请确认是否取消当前操作？", function() {
 										me.close();
 									});
 						},
@@ -216,18 +214,17 @@ Ext.define("PSI.Purchase.PWEditForm", {
 
 		var el = me.getEl() || Ext.getBody();
 		el.mask(PSI.Const.LOADING);
-		Ext.Ajax.request({
-			url : PSI.Const.BASE_URL + "Home/Purchase/pwBillInfo",
+		me.ajax({
+			url : me.URL("Home/Purchase/pwBillInfo"),
 			params : {
 				id : Ext.getCmp("hiddenId").getValue(),
 				pobillRef : me.getPobillRef()
 			},
-			method : "POST",
 			callback : function(options, success, response) {
 				el.unmask();
 
 				if (success) {
-					var data = Ext.JSON.decode(response.responseText);
+					var data = me.decodeJSON(response.responseText);
 
 					if (me.getGenBill()) {
 						// 从采购订单生成采购入库单
@@ -312,48 +309,51 @@ Ext.define("PSI.Purchase.PWEditForm", {
 	onOK : function() {
 		var me = this;
 		Ext.getBody().mask("正在保存中...");
-		Ext.Ajax.request({
-					url : PSI.Const.BASE_URL + "Home/Purchase/editPWBill",
-					method : "POST",
-					params : {
-						jsonStr : me.getSaveData()
-					},
-					callback : function(options, success, response) {
-						Ext.getBody().unmask();
+		var r = {
+			url : me.URL("Home/Purchase/editPWBill"),
+			params : {
+				jsonStr : me.getSaveData()
+			},
+			callback : function(options, success, response) {
+				Ext.getBody().unmask();
 
-						if (success) {
-							var data = Ext.JSON.decode(response.responseText);
-							if (data.success) {
-								PSI.MsgBox.showInfo("成功保存数据", function() {
-											me.close();
-											var pf = me.getParentForm();
-											if (pf) {
-												pf.refreshMainGrid(data.id);
-											}
-										});
-							} else {
-								PSI.MsgBox.showInfo(data.msg);
-							}
-						}
+				if (success) {
+					var data = me.decodeJSON(response.responseText);
+					if (data.success) {
+						me.showInfo("成功保存数据", function() {
+									me.close();
+									var pf = me.getParentForm();
+									if (pf) {
+										pf.refreshMainGrid(data.id);
+									}
+								});
+					} else {
+						me.showInfo(data.msg);
 					}
-				});
-
+				}
+			}
+		};
+		me.ajax(r);
 	},
+
 	onEditBizDTSpecialKey : function(field, e) {
 		if (e.getKey() == e.ENTER) {
 			Ext.getCmp("editSupplier").focus();
 		}
 	},
+
 	onEditSupplierSpecialKey : function(field, e) {
 		if (e.getKey() == e.ENTER) {
 			Ext.getCmp("editWarehouse").focus();
 		}
 	},
+
 	onEditWarehouseSpecialKey : function(field, e) {
 		if (e.getKey() == e.ENTER) {
 			Ext.getCmp("editBizUser").focus();
 		}
 	},
+
 	onEditBizUserSpecialKey : function(field, e) {
 		if (this.__readonly) {
 			return;
@@ -411,102 +411,102 @@ Ext.define("PSI.Purchase.PWEditForm", {
 				});
 
 		me.__goodsGrid = Ext.create("Ext.grid.Panel", {
-					viewConfig : {
-						enableTextSelection : true
-					},
-					features : [{
-								ftype : "summary"
-							}],
-					plugins : [me.__cellEditing],
-					columnLines : true,
-					columns : [{
-								xtype : "rownumberer"
-							}, {
-								header : "商品编码",
-								dataIndex : "goodsCode",
-								menuDisabled : true,
-								sortable : false,
-								draggable : false,
-								id : "columnGoodsCode"
-							}, {
-								header : "商品名称",
-								dataIndex : "goodsName",
-								menuDisabled : true,
-								sortable : false,
-								draggable : false,
-								width : 200
-							}, {
-								header : "规格型号",
-								dataIndex : "goodsSpec",
-								menuDisabled : true,
-								sortable : false,
-								draggable : false,
-								width : 200
-							}, {
-								header : "采购数量",
-								dataIndex : "goodsCount",
-								menuDisabled : true,
-								sortable : false,
-								draggable : false,
-								align : "right",
-								width : 100,
-								editor : {
-									xtype : "numberfield",
-									allowDecimals : false,
-									hideTrigger : true
-								}
-							}, {
-								header : "单位",
-								dataIndex : "unitName",
-								menuDisabled : true,
-								sortable : false,
-								draggable : false,
-								width : 60
-							}, {
-								header : "采购单价",
-								dataIndex : "goodsPrice",
-								menuDisabled : true,
-								sortable : false,
-								draggable : false,
-								align : "right",
-								xtype : "numbercolumn",
-								width : 100,
-								id : "columnGoodsPrice",
-								summaryRenderer : function() {
-									return "采购金额合计";
-								}
-							}, {
-								header : "采购金额",
-								dataIndex : "goodsMoney",
-								menuDisabled : true,
-								sortable : false,
-								draggable : false,
-								align : "right",
-								xtype : "numbercolumn",
-								width : 120,
-								id : "columnGoodsMoney",
-								summaryType : "sum"
-							}, {
-								header : "备注",
-								dataIndex : "memo",
-								menuDisabled : true,
-								sortable : false,
-								draggable : false,
-								width : 200,
-								editor : {
-									xtype : "textfield"
-								}
-							}, {
-								header : "",
-								id : "columnActionDelete",
-								align : "center",
-								menuDisabled : true,
-								draggable : false,
-								width : 50,
-								xtype : "actioncolumn",
-								items : [{
-									icon : PSI.Const.BASE_URL
-											+ "Public/Images/icons/delete.png",
+			viewConfig : {
+				enableTextSelection : true
+			},
+			features : [{
+						ftype : "summary"
+					}],
+			plugins : [me.__cellEditing],
+			columnLines : true,
+			columns : [{
+						xtype : "rownumberer"
+					}, {
+						header : "商品编码",
+						dataIndex : "goodsCode",
+						menuDisabled : true,
+						sortable : false,
+						draggable : false,
+						id : "columnGoodsCode"
+					}, {
+						header : "商品名称",
+						dataIndex : "goodsName",
+						menuDisabled : true,
+						sortable : false,
+						draggable : false,
+						width : 200
+					}, {
+						header : "规格型号",
+						dataIndex : "goodsSpec",
+						menuDisabled : true,
+						sortable : false,
+						draggable : false,
+						width : 200
+					}, {
+						header : "采购数量",
+						dataIndex : "goodsCount",
+						menuDisabled : true,
+						sortable : false,
+						draggable : false,
+						align : "right",
+						width : 100,
+						editor : {
+							xtype : "numberfield",
+							allowDecimals : false,
+							hideTrigger : true
+						}
+					}, {
+						header : "单位",
+						dataIndex : "unitName",
+						menuDisabled : true,
+						sortable : false,
+						draggable : false,
+						width : 60
+					}, {
+						header : "采购单价",
+						dataIndex : "goodsPrice",
+						menuDisabled : true,
+						sortable : false,
+						draggable : false,
+						align : "right",
+						xtype : "numbercolumn",
+						width : 100,
+						id : "columnGoodsPrice",
+						summaryRenderer : function() {
+							return "采购金额合计";
+						}
+					}, {
+						header : "采购金额",
+						dataIndex : "goodsMoney",
+						menuDisabled : true,
+						sortable : false,
+						draggable : false,
+						align : "right",
+						xtype : "numbercolumn",
+						width : 120,
+						id : "columnGoodsMoney",
+						summaryType : "sum"
+					}, {
+						header : "备注",
+						dataIndex : "memo",
+						menuDisabled : true,
+						sortable : false,
+						draggable : false,
+						width : 200,
+						editor : {
+							xtype : "textfield"
+						}
+					}, {
+						header : "",
+						id : "columnActionDelete",
+						align : "center",
+						menuDisabled : true,
+						draggable : false,
+						width : 50,
+						xtype : "actioncolumn",
+						items : [{
+									icon : me
+											.URL("Public/Images/icons/delete.png"),
 									handler : function(grid, row) {
 										var store = grid.getStore();
 										store.remove(store.getAt(row));
@@ -516,51 +516,51 @@ Ext.define("PSI.Purchase.PWEditForm", {
 									},
 									scope : me
 								}]
-							}, {
-								header : "",
-								id : "columnActionAdd",
-								align : "center",
-								menuDisabled : true,
-								draggable : false,
-								width : 50,
-								xtype : "actioncolumn",
-								items : [{
-									icon : PSI.Const.BASE_URL
-											+ "Public/Images/icons/add.png",
+					}, {
+						header : "",
+						id : "columnActionAdd",
+						align : "center",
+						menuDisabled : true,
+						draggable : false,
+						width : 50,
+						xtype : "actioncolumn",
+						items : [{
+									icon : me
+											.URL("Public/Images/icons/add.png"),
 									handler : function(grid, row) {
 										var store = grid.getStore();
 										store.insert(row, [{}]);
 									},
 									scope : me
 								}]
-							}, {
-								header : "",
-								id : "columnActionAppend",
-								align : "center",
-								menuDisabled : true,
-								draggable : false,
-								width : 50,
-								xtype : "actioncolumn",
-								items : [{
-									icon : PSI.Const.BASE_URL
-											+ "Public/Images/icons/add_detail.png",
-									handler : function(grid, row) {
-										var store = grid.getStore();
-										store.insert(row + 1, [{}]);
-									},
-									scope : me
-								}]
-							}],
-					store : store,
-					listeners : {
-						cellclick : function() {
-							return !me.__readonly;
-						}
-					}
-				});
+					}, {
+						header : "",
+						id : "columnActionAppend",
+						align : "center",
+						menuDisabled : true,
+						draggable : false,
+						width : 50,
+						xtype : "actioncolumn",
+						items : [{
+							icon : me.URL("Public/Images/icons/add_detail.png"),
+							handler : function(grid, row) {
+								var store = grid.getStore();
+								store.insert(row + 1, [{}]);
+							},
+							scope : me
+						}]
+					}],
+			store : store,
+			listeners : {
+				cellclick : function() {
+					return !me.__readonly;
+				}
+			}
+		});
 
 		return me.__goodsGrid;
 	},
+
 	__setGoodsInfo : function(data) {
 		var me = this;
 		var item = me.getGoodsGrid().getSelectionModel().getSelection();
@@ -580,6 +580,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 
 		me.calcMoney(goods);
 	},
+
 	cellEditingAfterEdit : function(editor, e) {
 		var me = this;
 
@@ -633,6 +634,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 							/ goods.get("goodsCount"));
 		}
 	},
+
 	getSaveData : function() {
 		var me = this;
 
@@ -688,47 +690,45 @@ Ext.define("PSI.Purchase.PWEditForm", {
 
 			var el = Ext.getBody();
 			el.mask("查询中...");
-			Ext.Ajax.request({
-						url : PSI.Const.BASE_URL
-								+ "Home/Goods/queryGoodsInfoByBarcodeForPW",
-						method : "POST",
-						params : {
-							barcode : field.getValue()
-						},
-						callback : function(options, success, response) {
-							el.unmask();
+			var r = {
+				url : me.URL("Home/Goods/queryGoodsInfoByBarcodeForPW"),
+				params : {
+					barcode : field.getValue()
+				},
+				callback : function(options, success, response) {
+					el.unmask();
 
-							if (success) {
-								var data = Ext.JSON
-										.decode(response.responseText);
-								if (data.success) {
-									var goods = {
-										goodsId : data.id,
-										goodsCode : data.code,
-										goodsName : data.name,
-										goodsSpec : data.spec,
-										unitName : data.unitName,
-										goodsCount : 1,
-										goodsPrice : data.purchasePrice,
-										goodsMoney : data.purchasePrice
-									};
-									me.addGoodsByBarCode(goods);
-									var edit = Ext.getCmp("editBarcode");
-									edit.setValue(null);
-									edit.focus();
-								} else {
-									var edit = Ext.getCmp("editBarcode");
-									edit.setValue(null);
-									PSI.MsgBox.showInfo(data.msg, function() {
-												edit.focus();
-											});
-								}
-							} else {
-								PSI.MsgBox.showInfo("网络错误");
-							}
+					if (success) {
+						var data = Ext.JSON.decode(response.responseText);
+						if (data.success) {
+							var goods = {
+								goodsId : data.id,
+								goodsCode : data.code,
+								goodsName : data.name,
+								goodsSpec : data.spec,
+								unitName : data.unitName,
+								goodsCount : 1,
+								goodsPrice : data.purchasePrice,
+								goodsMoney : data.purchasePrice
+							};
+							me.addGoodsByBarCode(goods);
+							var edit = Ext.getCmp("editBarcode");
+							edit.setValue(null);
+							edit.focus();
+						} else {
+							var edit = Ext.getCmp("editBarcode");
+							edit.setValue(null);
+							me.showInfo(data.msg, function() {
+										edit.focus();
+									});
 						}
+					} else {
+						me.showInfo("网络错误");
+					}
+				}
 
-					});
+			};
+			me.ajax(r);
 		}
 	},
 
