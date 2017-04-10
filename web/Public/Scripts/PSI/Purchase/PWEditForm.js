@@ -352,7 +352,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 
 	onEditBizDTSpecialKey : function(field, e) {
 		var me = this;
-		
+
 		if (e.getKey() == e.ENTER) {
 			me.editSupplier.focus();
 		}
@@ -360,7 +360,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 
 	onEditSupplierSpecialKey : function(field, e) {
 		var me = this;
-		
+
 		if (e.getKey() == e.ENTER) {
 			me.editWarehouse.focus();
 		}
@@ -368,7 +368,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 
 	onEditWarehouseSpecialKey : function(field, e) {
 		var me = this;
-		
+
 		if (e.getKey() == e.ENTER) {
 			me.editBizUser.focus();
 		}
@@ -376,7 +376,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 
 	onEditBizUserSpecialKey : function(field, e) {
 		var me = this;
-		
+
 		if (me.__readonly) {
 			return;
 		}
@@ -662,18 +662,17 @@ Ext.define("PSI.Purchase.PWEditForm", {
 		var me = this;
 
 		var result = {
-			id : Ext.getCmp("hiddenId").getValue(),
-			bizDT : Ext.Date
-					.format(Ext.getCmp("editBizDT").getValue(), "Y-m-d"),
-			supplierId : Ext.getCmp("editSupplier").getIdValue(),
-			warehouseId : Ext.getCmp("editWarehouse").getIdValue(),
-			bizUserId : Ext.getCmp("editBizUser").getIdValue(),
-			paymentType : Ext.getCmp("editPaymentType").getValue(),
+			id : me.editHiddenId.getValue(),
+			bizDT : Ext.Date.format(me.editBizDT.getValue(), "Y-m-d"),
+			supplierId : me.editSupplier.getIdValue(),
+			warehouseId : me.editWarehouse.getIdValue(),
+			bizUserId : me.editBizUser.getIdValue(),
+			paymentType : me.editPaymentType.getValue(),
 			pobillRef : me.getPobillRef(),
 			items : []
 		};
 
-		var store = this.getGoodsGrid().getStore();
+		var store = me.getGoodsGrid().getStore();
 		for (var i = 0; i < store.getCount(); i++) {
 			var item = store.getAt(i);
 			result.items.push({
