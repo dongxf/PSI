@@ -215,6 +215,11 @@ Ext.define("PSI.Purchase.PWEditForm", {
 		me.columnGoodsCode = Ext.getCmp("columnGoodsCode");
 		me.columnGoodsPrice = Ext.getCmp("columnGoodsPrice");
 		me.columnGoodsMoney = Ext.getCmp("columnGoodsMoney");
+
+		me.buttonSave = Ext.getCmp("buttonSave");
+		me.buttonCancel = Ext.getCmp("buttonCancel");
+
+		me.displayFieldBarcode = Ext.getCmp("displayFieldBarcode");
 	},
 
 	onWindowBeforeUnload : function(e) {
@@ -692,18 +697,18 @@ Ext.define("PSI.Purchase.PWEditForm", {
 		var me = this;
 		me.__readonly = true;
 		me.setTitle("查看采购入库单");
-		Ext.getCmp("buttonSave").setDisabled(true);
-		Ext.getCmp("buttonCancel").setText("关闭");
-		Ext.getCmp("editBizDT").setReadOnly(true);
-		Ext.getCmp("editSupplier").setReadOnly(true);
-		Ext.getCmp("editWarehouse").setReadOnly(true);
-		Ext.getCmp("editBizUser").setReadOnly(true);
-		Ext.getCmp("editPaymentType").setReadOnly(true);
-		Ext.getCmp("columnActionDelete").hide();
-		Ext.getCmp("columnActionAdd").hide();
-		Ext.getCmp("columnActionAppend").hide();
-		Ext.getCmp("displayFieldBarcode").setDisabled(true);
-		Ext.getCmp("editBarcode").setDisabled(true);
+		me.buttonSave.setDisabled(true);
+		me.buttonCancel.setText("关闭");
+		me.editBizDT.setReadOnly(true);
+		me.editSupplier.setReadOnly(true);
+		me.editWarehouse.setReadOnly(true);
+		me.editBizUser.setReadOnly(true);
+		me.editPaymentType.setReadOnly(true);
+		me.columnActionDelete.hide();
+		me.columnActionAdd.hide();
+		me.columnActionAppend.hide();
+		me.displayFieldBarcode.setDisabled(true);
+		me.editBarcode.setDisabled(true);
 	},
 
 	onEditBarcodeKeydown : function(field, e) {
@@ -721,7 +726,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 					el.unmask();
 
 					if (success) {
-						var data = Ext.JSON.decode(response.responseText);
+						var data = me.decodeJSON(response.responseText);
 						if (data.success) {
 							var goods = {
 								goodsId : data.id,
@@ -734,11 +739,11 @@ Ext.define("PSI.Purchase.PWEditForm", {
 								goodsMoney : data.purchasePrice
 							};
 							me.addGoodsByBarCode(goods);
-							var edit = Ext.getCmp("editBarcode");
+							var edit = me.editBarcode;
 							edit.setValue(null);
 							edit.focus();
 						} else {
-							var edit = Ext.getCmp("editBarcode");
+							var edit = me.editBarcode;
 							edit.setValue(null);
 							me.showInfo(data.msg, function() {
 										edit.focus();
@@ -748,7 +753,6 @@ Ext.define("PSI.Purchase.PWEditForm", {
 						me.showInfo("网络错误");
 					}
 				}
-
 			};
 			me.ajax(r);
 		}
