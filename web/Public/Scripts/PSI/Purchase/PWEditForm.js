@@ -351,40 +351,49 @@ Ext.define("PSI.Purchase.PWEditForm", {
 	},
 
 	onEditBizDTSpecialKey : function(field, e) {
+		var me = this;
+		
 		if (e.getKey() == e.ENTER) {
-			Ext.getCmp("editSupplier").focus();
+			me.editSupplier.focus();
 		}
 	},
 
 	onEditSupplierSpecialKey : function(field, e) {
+		var me = this;
+		
 		if (e.getKey() == e.ENTER) {
-			Ext.getCmp("editWarehouse").focus();
+			me.editWarehouse.focus();
 		}
 	},
 
 	onEditWarehouseSpecialKey : function(field, e) {
+		var me = this;
+		
 		if (e.getKey() == e.ENTER) {
-			Ext.getCmp("editBizUser").focus();
+			me.editBizUser.focus();
 		}
 	},
 
 	onEditBizUserSpecialKey : function(field, e) {
-		if (this.__readonly) {
+		var me = this;
+		
+		if (me.__readonly) {
 			return;
 		}
 
 		if (e.getKey() == e.ENTER) {
-			Ext.getCmp("editPaymentType").focus();
+			me.editPaymentType.focus();
 		}
 	},
 
 	onEditPaymentTypeSpecialKey : function(field, e) {
-		if (this.__readonly) {
+		var me = this;
+
+		if (me.__readonly) {
 			return;
 		}
 
 		if (e.getKey() == e.ENTER) {
-			var me = this;
 			var store = me.getGoodsGrid().getStore();
 			if (store.getCount() == 0) {
 				store.add({});
