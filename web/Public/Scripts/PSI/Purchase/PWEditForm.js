@@ -197,6 +197,24 @@ Ext.define("PSI.Purchase.PWEditForm", {
 		});
 
 		me.callParent(arguments);
+
+		me.editRef = Ext.getCmp("editRef");
+		me.editBizDT = Ext.getCmp("editBizDT");
+		me.editSupplier = Ext.getCmp("editSupplier");
+		me.editWarehouse = Ext.getCmp("editWarehouse");
+		me.editBizUser = Ext.getCmp("editBizUser");
+		me.editPaymentType = Ext.getCmp("editPaymentType");
+
+		me.editHiddenId = Ext.getCmp("hiddenId");
+
+		me.columnActionDelete = Ext.getCmp("columnActionDelete");
+		me.columnActionAdd = Ext.getCmp("columnActionAdd");
+		me.columnActionAppend = Ext.getCmp("columnActionAppend");
+		me.editBarcode = Ext.getCmp("editBarcode");
+
+		me.columnGoodsCode = Ext.getCmp("columnGoodsCode");
+		me.columnGoodsPrice = Ext.getCmp("columnGoodsPrice");
+		me.columnGoodsMoney = Ext.getCmp("columnGoodsMoney");
 	},
 
 	onWindowBeforeUnload : function(e) {
@@ -217,7 +235,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 		me.ajax({
 			url : me.URL("Home/Purchase/pwBillInfo"),
 			params : {
-				id : Ext.getCmp("hiddenId").getValue(),
+				id : me.editHiddenId.getValue(),
 				pobillRef : me.getPobillRef()
 			},
 			callback : function(options, success, response) {
@@ -228,64 +246,60 @@ Ext.define("PSI.Purchase.PWEditForm", {
 
 					if (me.getGenBill()) {
 						// 从采购订单生成采购入库单
-						Ext.getCmp("editSupplier").setIdValue(data.supplierId);
-						Ext.getCmp("editSupplier").setValue(data.supplierName);
-						Ext.getCmp("editBizUser").setIdValue(data.bizUserId);
-						Ext.getCmp("editBizUser").setValue(data.bizUserName);
-						Ext.getCmp("editBizDT").setValue(data.dealDate);
-						Ext.getCmp("editPaymentType")
-								.setValue(data.paymentType);
+						me.editSupplier.setIdValue(data.supplierId);
+						me.editSupplier.setValue(data.supplierName);
+						me.editBizUser.setIdValue(data.bizUserId);
+						me.editBizUser.setValue(data.bizUserName);
+						me.editBizDT.setValue(data.dealDate);
+						me.editPaymentType.setValue(data.paymentType);
 						var store = me.getGoodsGrid().getStore();
 						store.removeAll();
 						store.add(data.items);
 
-						Ext.getCmp("editSupplier").setReadOnly(true);
-						Ext.getCmp("columnActionDelete").hide();
-						Ext.getCmp("columnActionAdd").hide();
-						Ext.getCmp("columnActionAppend").hide();
+						me.editSupplier.setReadOnly(true);
+						me.columnActionDelete.hide();
+						me.columnActionAdd.hide();
+						me.columnActionAppend.hide();
 
-						Ext.getCmp("editBarcode").setDisabled(true);
+						me.editBarcode.setDisabled(true);
 					} else {
 						if (!data.genBill) {
-							Ext.getCmp("columnGoodsCode").setEditor({
+							me.columnGoodsCode.setEditor({
 										xtype : "psi_goods_with_purchaseprice_field",
 										parentCmp : me
 									});
-							Ext.getCmp("columnGoodsPrice").setEditor({
+							me.columnGoodsPrice.setEditor({
 										xtype : "numberfield",
 										hideTrigger : true
 									});
-							Ext.getCmp("columnGoodsMoney").setEditor({
+							me.columnGoodsMoney.setEditor({
 										xtype : "numberfield",
 										hideTrigger : true
 									});
 						} else {
-							Ext.getCmp("editSupplier").setReadOnly(true);
-							Ext.getCmp("columnActionDelete").hide();
-							Ext.getCmp("columnActionAdd").hide();
-							Ext.getCmp("columnActionAppend").hide();
+							me.editSupplier.setReadOnly(true);
+							me.columnActionDelete.hide();
+							me.columnActionAdd.hide();
+							me.columnActionAppend.hide();
 						}
 
 						if (data.ref) {
-							Ext.getCmp("editRef").setValue(data.ref);
+							me.editRef.setValue(data.ref);
 						}
 
-						Ext.getCmp("editSupplier").setIdValue(data.supplierId);
-						Ext.getCmp("editSupplier").setValue(data.supplierName);
+						me.editSupplier.setIdValue(data.supplierId);
+						me.editSupplier.setValue(data.supplierName);
 
-						Ext.getCmp("editWarehouse")
-								.setIdValue(data.warehouseId);
-						Ext.getCmp("editWarehouse")
-								.setValue(data.warehouseName);
+						me.editWarehouse.setIdValue(data.warehouseId);
+						me.editWarehouse.setValue(data.warehouseName);
 
-						Ext.getCmp("editBizUser").setIdValue(data.bizUserId);
-						Ext.getCmp("editBizUser").setValue(data.bizUserName);
+						me.editBizUser.setIdValue(data.bizUserId);
+						me.editBizUser.setValue(data.bizUserName);
 						if (data.bizDT) {
-							Ext.getCmp("editBizDT").setValue(data.bizDT);
+							me.editBizDT.setValue(data.bizDT);
 						}
 						if (data.paymentType) {
-							Ext.getCmp("editPaymentType")
-									.setValue(data.paymentType);
+							me.editPaymentType.setValue(data.paymentType);
 						}
 
 						var store = me.getGoodsGrid().getStore();
