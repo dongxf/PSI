@@ -798,6 +798,41 @@ class POBillDAO extends PSIBaseExDAO {
 		// id: 采购订单id
 		$id = $params["id"];
 		
-		return $this->emptyResult();
+		$sql = "select p.id, p.bill_status, p.ref, p.biz_dt, u1.name as biz_user_name, u2.name as input_user_name,
+					p.goods_money, w.name as warehouse_name, s.name as supplier_name,
+					p.date_created, p.payment_type
+				from t_pw_bill p, t_warehouse w, t_supplier s, t_user u1, t_user u2,
+					t_po_pw popw
+				where (popw.po_id = '%s') and (popw.pw_id = p.id)
+				and (p.warehouse_id = w.id) and (p.supplier_id = s.id)
+				and (p.biz_user_id = u1.id) and (p.input_user_id = u2.id)
+				order by p.ref ";
+		$data = $db->query($sql, $id);
+		$result = array();
+		
+		foreach ( $data as $i => $v ) {
+			$result[$i]["id"] = $v["id"];
+			$result[$i]["ref"] = $v["ref"];
+			$result[$i]["bizDate"] = $this->toYMD($v["biz_dt"]);
+			$result[$i]["supplierName"] = $v["supplier_name"];
+			$result[$i]["warehouseName"] = $v["warehouse_name"];
+			$result[$i]["inputUserName"] = $v["input_user_name"];
+			$result[$i]["bizUserName"] = $v["biz_user_name"];
+			$billStatus = $v["bill_status"];
+			$bs = "";
+			if ($billStatus == 0) {
+				$bs = "待入库";
+			} else if ($billStatus == 1000) {
+				$bs = "已入库";
+			} else if ($billStatus == 9000) {
+				$bs = "作废";
+			}
+			$result[$i]["billStatus"] = $bs;
+			$result[$i]["amount"] = $v["goods_money"];
+			$result[$i]["dateCreated"] = $v["date_created"];
+			$result[$i]["paymentType"] = $v["payment_type"];
+		}
+		
+		return $result;
 	}
 }
