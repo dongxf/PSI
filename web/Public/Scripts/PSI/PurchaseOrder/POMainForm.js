@@ -17,39 +17,40 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 		var me = this;
 
 		Ext.apply(me, {
-					tbar : me.getToolbarCmp(),
-					items : [{
-								region : "north",
-								height : 90,
-								layout : "fit",
-								border : 0,
-								title : "查询条件",
-								collapsible : true,
-								collapseMode : "mini",
-								layout : {
-									type : "table",
-									columns : 4
-								},
-								items : me.getQueryCmp()
-							}, {
-								region : "center",
-								layout : "border",
-								border : 0,
-								items : [{
-											region : "north",
-											height : "40%",
-											split : true,
-											layout : "fit",
-											border : 0,
-											items : [me.getMainGrid()]
-										}, {
-											region : "center",
-											layout : "fit",
-											border : 0,
-											items : [me.getDetailGrid()]
-										}]
-							}]
-				});
+			tbar : me.getToolbarCmp(),
+			items : [{
+						region : "north",
+						height : 90,
+						layout : "fit",
+						border : 0,
+						title : "查询条件",
+						collapsible : true,
+						collapseMode : "mini",
+						layout : {
+							type : "table",
+							columns : 4
+						},
+						items : me.getQueryCmp()
+					}, {
+						region : "center",
+						layout : "border",
+						border : 0,
+						items : [{
+									region : "north",
+									height : "40%",
+									split : true,
+									layout : "fit",
+									border : 0,
+									items : [me.getMainGrid()]
+								}, {
+									region : "center",
+									layout : "fit",
+									border : 0,
+									xtype : "tabpanel",
+									items : [me.getDetailGrid(), me.getPWGrid()]
+								}]
+					}]
+		});
 
 		me.callParent(arguments);
 
@@ -717,7 +718,8 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 		Ext.getCmp("buttonCancelConfirm").setDisabled(!commited);
 		Ext.getCmp("buttonGenPWBill").setDisabled(!commited);
 
-		this.refreshDetailGrid();
+		me.refreshDetailGrid();
+		me.refreshPWGrid();
 	},
 
 	/**
@@ -983,5 +985,153 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 
 		var url = me.URL("Home/Purchase/poBillPdf?ref=" + bill.get("ref"));
 		window.open(url);
+	},
+
+	getPWGrid : function() {
+		var me = this;
+		if (me.__pwGrid) {
+			return me.__pwGrid;
+		}
+		var modelName = "PSIPOBill_PWBill";
+		Ext.define(modelName, {
+					extend : "Ext.data.Model",
+					fields : ["id", "ref", "bizDate", "supplierName",
+							"warehouseName", "inputUserName", "bizUserName",
+							"billStatus", "amount", "dateCreated",
+							"paymentType"]
+				});
+		var store = Ext.create("Ext.data.Store", {
+					autoLoad : false,
+					model : modelName,
+					data : []
+				});
+
+		me.__pwGrid = Ext.create("Ext.grid.Panel", {
+			title : "采购订单入库详情",
+			viewConfig : {
+				enableTextSelection : true
+			},
+			columnLines : true,
+			columns : [{
+						xtype : "rownumberer",
+						width : 50
+					}, {
+						header : "状态",
+						dataIndex : "billStatus",
+						menuDisabled : true,
+						sortable : false,
+						width : 60,
+						renderer : function(value) {
+							return value == "待入库" ? "<span style='color:red'>"
+									+ value + "</span>" : value;
+						}
+					}, {
+						header : "入库单号",
+						dataIndex : "ref",
+						width : 110,
+						menuDisabled : true,
+						sortable : false,
+						renderer : function(value, md, record) {
+							return "<a href='"
+									+ PSI.Const.BASE_URL
+									+ "Home/Bill/viewIndex?fid=2027&refType=采购入库&ref="
+									+ encodeURIComponent(record.get("ref"))
+									+ "' target='_blank'>" + value + "</a>";
+						}
+					}, {
+						header : "业务日期",
+						dataIndex : "bizDate",
+						menuDisabled : true,
+						sortable : false
+					}, {
+						header : "供应商",
+						dataIndex : "supplierName",
+						width : 300,
+						menuDisabled : true,
+						sortable : false
+					}, {
+						header : "采购金额",
+						dataIndex : "amount",
+						menuDisabled : true,
+						sortable : false,
+						align : "right",
+						xtype : "numbercolumn",
+						width : 150
+					}, {
+						header : "付款方式",
+						dataIndex : "paymentType",
+						menuDisabled : true,
+						sortable : false,
+						width : 100,
+						renderer : function(value) {
+							if (value == 0) {
+								return "记应付账款";
+							} else if (value == 1) {
+								return "现金付款";
+							} else if (value == 2) {
+								return "预付款";
+							} else {
+								return "";
+							}
+						}
+					}, {
+						header : "入库仓库",
+						dataIndex : "warehouseName",
+						menuDisabled : true,
+						sortable : false
+					}, {
+						header : "业务员",
+						dataIndex : "bizUserName",
+						menuDisabled : true,
+						sortable : false
+					}, {
+						header : "制单人",
+						dataIndex : "inputUserName",
+						menuDisabled : true,
+						sortable : false
+					}, {
+						header : "制单时间",
+						dataIndex : "dateCreated",
+						menuDisabled : true,
+						sortable : false,
+						width : 140
+					}],
+			store : store
+		});
+
+		return me.__pwGrid;
+	},
+
+	refreshPWGrid : function() {
+		var me = this;
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			return;
+		}
+		var bill = item[0];
+
+		var grid = me.getPWGrid();
+		var el = grid.getEl() || Ext.getBody();
+		el.mask(PSI.Const.LOADING);
+
+		var r = {
+			url : me.URL("Home/Purchase/poBillPWBillList"),
+			params : {
+				id : bill.get("id")
+			},
+			callback : function(options, success, response) {
+				var store = grid.getStore();
+
+				store.removeAll();
+
+				if (success) {
+					var data = me.decodeJSON(response.responseText);
+					store.add(data);
+				}
+
+				el.unmask();
+			}
+		};
+		me.ajax(r);
 	}
 });

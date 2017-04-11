@@ -3,6 +3,7 @@
 namespace Home\Service;
 
 use Home\DAO\PWBillDAO;
+use Home\DAO\POBillDAO;
 
 /**
  * 采购入库Service
@@ -282,5 +283,19 @@ class PWBillService extends PSIBaseExService {
 		$pdf->writeHTML($html, true, false, true, false, '');
 		
 		$pdf->Output("$ref.pdf", "I");
+	}
+
+	/**
+	 * 采购订单执行的采购入库单信息
+	 * 
+	 * @param array $params        	
+	 */
+	public function poBillPWBillList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$dao = new POBillDAO($this->db());
+		return $dao->poBillPWBillList($params);
 	}
 }

@@ -259,4 +259,18 @@ class PurchaseController extends PSIBaseController {
 		$ps = new PWBillService();
 		$ps->pdf($params);
 	}
+
+	/**
+	 * 采购订单执行的采购入库单信息
+	 */
+	public function poBillPWBillList() {
+		if (IS_POST) {
+			$params = array(
+					"id" => I("post.id")
+			);
+			
+			$ps = new PWBillService();
+			$this->ajaxReturn($ps->poBillPWBillList($params));
+		}
+	}
 }

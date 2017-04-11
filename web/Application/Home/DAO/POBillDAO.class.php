@@ -786,4 +786,18 @@ class POBillDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 采购订单执行的采购入库单信息
+	 *
+	 * @param array $params        	
+	 */
+	public function poBillPWBillList($params) {
+		$db = $this->db;
+		
+		// id: 采购订单id
+		$id = $params["id"];
+		
+		return $this->emptyResult();
+	}
 }
