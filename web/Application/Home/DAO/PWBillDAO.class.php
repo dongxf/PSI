@@ -747,6 +747,7 @@ class PWBillDAO extends PSIBaseExDAO {
 	public function commitPWBill(& $params) {
 		$db = $this->db;
 		
+		// id: 采购入库单id
 		$id = $params["id"];
 		
 		$loginUserId = $params["loginUserId"];
