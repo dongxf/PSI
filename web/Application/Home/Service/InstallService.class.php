@@ -510,22 +510,23 @@ class InstallService extends PSIBaseService {
 		
 		// t_ws_bill_detail
 		$sql = "CREATE TABLE IF NOT EXISTS `t_ws_bill_detail` (
-			  `id` varchar(255) NOT NULL,
-			  `date_created` datetime DEFAULT NULL,
-			  `goods_id` varchar(255) NOT NULL,
-			  `goods_count` int(11) NOT NULL,
-			  `goods_money` decimal(19,2) NOT NULL,
-			  `goods_price` decimal(19,2) NOT NULL,
-			  `inventory_money` decimal(19,2) DEFAULT NULL,
-			  `inventory_price` decimal(19,2) DEFAULT NULL,
-			  `show_order` int(11) NOT NULL,
-			  `wsbill_id` varchar(255) NOT NULL,
-			  `sn_note` varchar(255) DEFAULT NULL,
-			  `data_org` varchar(255) DEFAULT NULL,
-			  `memo` varchar(1000) DEFAULT NULL,
-			  `company_id` varchar(255) DEFAULT NULL,
-			  PRIMARY KEY (`id`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+				  `id` varchar(255) NOT NULL,
+				  `date_created` datetime DEFAULT NULL,
+				  `goods_id` varchar(255) NOT NULL,
+				  `goods_count` int(11) NOT NULL,
+				  `goods_money` decimal(19,2) NOT NULL,
+				  `goods_price` decimal(19,2) NOT NULL,
+				  `inventory_money` decimal(19,2) DEFAULT NULL,
+				  `inventory_price` decimal(19,2) DEFAULT NULL,
+				  `show_order` int(11) NOT NULL,
+				  `wsbill_id` varchar(255) NOT NULL,
+				  `sn_note` varchar(255) DEFAULT NULL,
+				  `data_org` varchar(255) DEFAULT NULL,
+				  `memo` varchar(1000) DEFAULT NULL,
+				  `company_id` varchar(255) DEFAULT NULL,
+				  `sobilldetail_id` varchar(255) DEFAULT NULL,
+				  PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
 		$db->execute($sql);
 		
