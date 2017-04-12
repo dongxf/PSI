@@ -324,6 +324,7 @@ CREATE TABLE IF NOT EXISTS `t_pw_bill_detail` (
   `data_org` varchar(255) DEFAULT NULL,
   `memo` varchar(1000) DEFAULT NULL,
   `company_id` varchar(255) DEFAULT NULL,
+  `pobilldetail_id` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
