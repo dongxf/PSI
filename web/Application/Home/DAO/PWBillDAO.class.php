@@ -13,6 +13,8 @@ class PWBillDAO extends PSIBaseExDAO {
 
 	/**
 	 * 生成新的采购入库单单号
+	 *
+	 * @param string $companyId        	
 	 */
 	private function genNewBillRef($companyId) {
 		$db = $this->db;
@@ -293,12 +295,15 @@ class PWBillDAO extends PSIBaseExDAO {
 			$goodsPrice = $item["goodsPrice"];
 			$goodsMoney = $item["goodsMoney"];
 			
+			$poBillDetailId = $item["poBillDetailId"];
+			
 			$sql = "insert into t_pw_bill_detail
-						(id, date_created, goods_id, goods_count, goods_price,
-						goods_money,  pwbill_id, show_order, data_org, memo, company_id)
-					values ('%s', now(), '%s', %d, %f, %f, '%s', %d, '%s', '%s', '%s')";
+					(id, date_created, goods_id, goods_count, goods_price,
+					goods_money,  pwbill_id, show_order, data_org, memo, company_id,
+					pobilldetail_id)
+					values ('%s', now(), '%s', %d, %f, %f, '%s', %d, '%s', '%s', '%s', '%s')";
 			$rc = $db->execute($sql, $this->newId(), $goodsId, $goodsCount, $goodsPrice, 
-					$goodsMoney, $id, $i, $dataOrg, $memo, $companyId);
+					$goodsMoney, $id, $i, $dataOrg, $memo, $companyId, $poBillDetailId);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
@@ -554,11 +559,17 @@ class PWBillDAO extends PSIBaseExDAO {
 
 	/**
 	 * 获得某个采购入库单的信息
+	 *
+	 * @param array $params        	
+	 *
+	 * @return array
 	 */
 	public function pwBillInfo($params) {
 		$db = $this->db;
 		
+		// id: 采购入库单id
 		$id = $params["id"];
+		// pobillRef: 采购订单单号，可以为空，为空表示直接录入采购入库单；不为空表示是从采购订单生成入库单
 		$pobillRef = $params["pobillRef"];
 		
 		$result = array(
@@ -655,6 +666,7 @@ class PWBillDAO extends PSIBaseExDAO {
 					$data = $db->query($sql, $pobillId);
 					foreach ( $data as $i => $v ) {
 						$items[$i]["id"] = $v["id"];
+						$items[$i]["poBillDetailId"] = $v["id"];
 						$items[$i]["goodsId"] = $v["goods_id"];
 						$items[$i]["goodsCode"] = $v["code"];
 						$items[$i]["goodsName"] = $v["name"];
