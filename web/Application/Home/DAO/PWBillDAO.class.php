@@ -15,6 +15,7 @@ class PWBillDAO extends PSIBaseExDAO {
 	 * 生成新的采购入库单单号
 	 *
 	 * @param string $companyId        	
+	 * @return string
 	 */
 	private function genNewBillRef($companyId) {
 		$db = $this->db;
@@ -38,6 +39,9 @@ class PWBillDAO extends PSIBaseExDAO {
 
 	/**
 	 * 获得采购入库单主表列表
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function pwbillList($params) {
 		$db = $this->db;
