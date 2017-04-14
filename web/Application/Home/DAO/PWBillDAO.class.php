@@ -178,6 +178,9 @@ class PWBillDAO extends PSIBaseExDAO {
 
 	/**
 	 * 获得采购入库单商品明细记录列表
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function pwBillDetailList($params) {
 		$pwbillId = $params["id"];
@@ -192,16 +195,20 @@ class PWBillDAO extends PSIBaseExDAO {
 		$data = $db->query($sql, $pwbillId);
 		$result = array();
 		
-		foreach ( $data as $i => $v ) {
-			$result[$i]["id"] = $v["id"];
-			$result[$i]["goodsCode"] = $v["code"];
-			$result[$i]["goodsName"] = $v["name"];
-			$result[$i]["goodsSpec"] = $v["spec"];
-			$result[$i]["unitName"] = $v["unit_name"];
-			$result[$i]["goodsCount"] = $v["goods_count"];
-			$result[$i]["goodsMoney"] = $v["goods_money"];
-			$result[$i]["goodsPrice"] = $v["goods_price"];
-			$result[$i]["memo"] = $v["memo"];
+		foreach ( $data as $v ) {
+			$item = array(
+					"id" => $v["id"],
+					"goodsCode" => $v["code"],
+					"goodsName" => $v["name"],
+					"goodsSpec" => $v["spec"],
+					"unitName" => $v["unit_name"],
+					"goodsCount" => $v["goods_count"],
+					"goodsMoney" => $v["goods_money"],
+					"goodsPrice" => $v["goods_price"],
+					"memo" => $v["memo"]
+			);
+			
+			$result[] = $item;
 		}
 		
 		return $result;
@@ -209,6 +216,9 @@ class PWBillDAO extends PSIBaseExDAO {
 
 	/**
 	 * 新建采购入库单
+	 *
+	 * @param array $bill        	
+	 * @return NULL|array
 	 */
 	public function addPWBill(& $bill) {
 		$db = $this->db;
@@ -362,6 +372,9 @@ class PWBillDAO extends PSIBaseExDAO {
 
 	/**
 	 * 编辑采购入库单
+	 *
+	 * @param array $bill        	
+	 * @return NULL|array
 	 */
 	public function updatePWBill(& $bill) {
 		$db = $this->db;
@@ -471,6 +484,13 @@ class PWBillDAO extends PSIBaseExDAO {
 		return null;
 	}
 
+	/**
+	 * 通过id查询采购入库单
+	 *
+	 * @param string $id
+	 *        	采购入库单id
+	 * @return NULL|array
+	 */
 	public function getPWBillById($id) {
 		$db = $this->db;
 		
@@ -492,6 +512,9 @@ class PWBillDAO extends PSIBaseExDAO {
 
 	/**
 	 * 同步在途库存
+	 *
+	 * @param array $bill        	
+	 * @return NULL|array
 	 */
 	public function updateAfloatInventoryByPWBill(& $bill) {
 		$db = $this->db;
@@ -694,6 +717,9 @@ class PWBillDAO extends PSIBaseExDAO {
 
 	/**
 	 * 删除采购入库单
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function deletePWBill(& $params) {
 		$db = $this->db;
@@ -759,6 +785,9 @@ class PWBillDAO extends PSIBaseExDAO {
 
 	/**
 	 * 提交采购入库单
+	 * 
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function commitPWBill(& $params) {
 		$db = $this->db;
