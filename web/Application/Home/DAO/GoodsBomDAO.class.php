@@ -11,6 +11,9 @@ class GoodsBomDAO extends PSIBaseExDAO {
 
 	/**
 	 * 获得某个商品的商品构成
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function goodsBOMList($params) {
 		$db = $this->db;
@@ -25,14 +28,19 @@ class GoodsBomDAO extends PSIBaseExDAO {
 				where b.goods_id = '%s' and b.sub_goods_id = g.id and g.unit_id = u.id
 				order by g.code";
 		$data = $db->query($sql, $id);
-		foreach ( $data as $i => $v ) {
-			$result[$i]["id"] = $v["id"];
-			$result[$i]["goodsId"] = $v["goods_id"];
-			$result[$i]["goodsCode"] = $v["code"];
-			$result[$i]["goodsName"] = $v["name"];
-			$result[$i]["goodsSpec"] = $v["spec"];
-			$result[$i]["unitName"] = $v["unit_name"];
-			$result[$i]["goodsCount"] = $v["sub_goods_count"];
+		foreach ( $data as $v ) {
+			$item = array(
+					"id" => $v["id"],
+					"goodsId" => $v["goods_id"],
+					"goodsCode" => $v["code"],
+					"goodsName" => $v["name"],
+					"goodsSpec" => $v["spec"],
+					"unitName" => $v["unit_name"],
+					"goodsCount" => $v["sub_goods_count"]
+			
+			);
+			
+			$result[] = $item;
 		}
 		
 		return $result;
@@ -182,6 +190,12 @@ class GoodsBomDAO extends PSIBaseExDAO {
 		return null;
 	}
 
+	/**
+	 * 查询子商品的信息
+	 *
+	 * @param array $params        	
+	 * @return array
+	 */
 	public function getSubGoodsInfo($params) {
 		$goodsId = $params["goodsId"];
 		$subGoodsId = $params["subGoodsId"];
