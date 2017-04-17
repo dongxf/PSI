@@ -13,6 +13,9 @@ class CustomerDAO extends PSIBaseExDAO {
 
 	/**
 	 * 客户分类列表
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function categoryList($params) {
 		$db = $this->db;
@@ -84,6 +87,9 @@ class CustomerDAO extends PSIBaseExDAO {
 
 	/**
 	 * 新增客户分类
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function addCustomerCategory(& $params) {
 		$db = $this->db;
@@ -126,6 +132,9 @@ class CustomerDAO extends PSIBaseExDAO {
 
 	/**
 	 * 编辑客户分类
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function updateCustomerCategory(& $params) {
 		$db = $this->db;
@@ -154,6 +163,13 @@ class CustomerDAO extends PSIBaseExDAO {
 		return null;
 	}
 
+	/**
+	 * 根据客户分类id查询客户分类
+	 *
+	 * @param string $id
+	 *        	客户分类id
+	 * @return array|NULL
+	 */
 	public function getCustomerCategoryById($id) {
 		$db = $this->db;
 		
@@ -171,6 +187,9 @@ class CustomerDAO extends PSIBaseExDAO {
 
 	/**
 	 * 删除客户分类
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function deleteCustomerCategory(& $params) {
 		$db = $this->db;
@@ -204,6 +223,9 @@ class CustomerDAO extends PSIBaseExDAO {
 
 	/**
 	 * 新增客户资料
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function addCustomer(& $params) {
 		$db = $this->db;
@@ -269,6 +291,9 @@ class CustomerDAO extends PSIBaseExDAO {
 
 	/**
 	 * 初始化应收账款
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function initReceivables(& $params) {
 		$db = $this->db;
@@ -386,6 +411,12 @@ class CustomerDAO extends PSIBaseExDAO {
 		return null;
 	}
 
+	/**
+	 * 编辑客户资料
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
+	 */
 	public function updateCustomer(& $params) {
 		$db = $this->db;
 		
@@ -441,6 +472,9 @@ class CustomerDAO extends PSIBaseExDAO {
 
 	/**
 	 * 删除客户资料
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function deleteCustomer(& $params) {
 		$db = $this->db;
@@ -506,6 +540,12 @@ class CustomerDAO extends PSIBaseExDAO {
 		return null;
 	}
 
+	/**
+	 * 通过客户id查询客户资料
+	 *
+	 * @param string $id        	
+	 * @return array|NULL
+	 */
 	public function getCustomerById($id) {
 		$db = $this->db;
 		
@@ -523,6 +563,9 @@ class CustomerDAO extends PSIBaseExDAO {
 
 	/**
 	 * 获得某个分类的客户列表
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function customerList($params) {
 		$db = $this->db;
@@ -681,6 +724,9 @@ class CustomerDAO extends PSIBaseExDAO {
 
 	/**
 	 * 客户字段，查询数据
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function queryData($params) {
 		$db = $this->db;
@@ -721,6 +767,9 @@ class CustomerDAO extends PSIBaseExDAO {
 
 	/**
 	 * 获得某个客户的详情
+	 * 
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function customerInfo($params) {
 		$db = $this->db;
