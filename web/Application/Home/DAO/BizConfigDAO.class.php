@@ -303,6 +303,10 @@ class BizConfigDAO extends PSIBaseExDAO {
 		$companyId = $params["companyId"];
 		$loginUserId = $params["loginUserId"];
 		
+		if ($this->loginUserIdNotExists($loginUserId)) {
+			return $this->emptyResult();
+		}
+		
 		$result = $this->getDefaultConfig();
 		
 		foreach ( $result as $i => $v ) {
@@ -549,6 +553,10 @@ class BizConfigDAO extends PSIBaseExDAO {
 
 	/**
 	 * 获得本产品名称，默认值是：PSI
+	 *
+	 * @param
+	 *        	array @param
+	 * @return string
 	 */
 	public function getProductionName($params) {
 		$defaultName = "PSI";
@@ -577,6 +585,9 @@ class BizConfigDAO extends PSIBaseExDAO {
 
 	/**
 	 * 获得采购订单单号前缀
+	 *
+	 * @param string $companyId        	
+	 * @return string
 	 */
 	public function getPOBillRefPre($companyId) {
 		$result = "PO";
@@ -600,6 +611,9 @@ class BizConfigDAO extends PSIBaseExDAO {
 
 	/**
 	 * 获得采购订单默认付款方式
+	 *
+	 * @param array $params        	
+	 * @return string
 	 */
 	public function getPOBillDefaultPayment($params) {
 		$result = "0";
@@ -624,6 +638,9 @@ class BizConfigDAO extends PSIBaseExDAO {
 
 	/**
 	 * 获得采购入库单单号前缀
+	 *
+	 * @param string $companyId        	
+	 * @return string
 	 */
 	public function getPWBillRefPre($companyId) {
 		$result = "PW";
@@ -647,6 +664,9 @@ class BizConfigDAO extends PSIBaseExDAO {
 
 	/**
 	 * 获得采购入库单默认付款方式
+	 *
+	 * @param string $companyId        	
+	 * @return string
 	 */
 	public function getPWBillDefaultPayment($companyId) {
 		$result = "0";
@@ -670,6 +690,9 @@ class BizConfigDAO extends PSIBaseExDAO {
 
 	/**
 	 * 获得采购入库单默认仓库
+	 *
+	 * @param string $companyId        	
+	 * @return array
 	 */
 	public function getPWBillDefaultWarehouse($companyId) {
 		$db = $this->db;
@@ -696,6 +719,9 @@ class BizConfigDAO extends PSIBaseExDAO {
 	 * 获得存货计价方法
 	 * 0： 移动平均法
 	 * 1：先进先出法
+	 *
+	 * @param string $companyId        	
+	 * @return int
 	 */
 	public function getInventoryMethod($companyId) {
 		// 2015-11-19 为发布稳定版本，临时取消先进先出法
@@ -706,6 +732,9 @@ class BizConfigDAO extends PSIBaseExDAO {
 
 	/**
 	 * 获得采购退货出库单单号前缀
+	 *
+	 * @param string $companyId        	
+	 * @return string
 	 */
 	public function getPRBillRefPre($companyId) {
 		$db = $this->db;
@@ -729,6 +758,9 @@ class BizConfigDAO extends PSIBaseExDAO {
 
 	/**
 	 * 获得销售订单单号前缀
+	 *
+	 * @param string $companyId        	
+	 * @return string
 	 */
 	public function getSOBillRefPre($companyId) {
 		$result = "PO";
@@ -778,6 +810,9 @@ class BizConfigDAO extends PSIBaseExDAO {
 
 	/**
 	 * 获得销售出库单单号前缀
+	 *
+	 * @param string $companyId        	
+	 * @return string
 	 */
 	public function getWSBillRefPre($companyId) {
 		$result = "WS";
@@ -801,6 +836,9 @@ class BizConfigDAO extends PSIBaseExDAO {
 
 	/**
 	 * 获得销售出库单默认收款方式
+	 *
+	 * @param string $companyId        	
+	 * @return string
 	 */
 	public function getWSBillDefaultReceving($companyId) {
 		$result = "0";
@@ -824,6 +862,9 @@ class BizConfigDAO extends PSIBaseExDAO {
 
 	/**
 	 * 获得销售退货入库单单号前缀
+	 *
+	 * @param string $companyId        	
+	 * @return string
 	 */
 	public function getSRBillRefPre($companyId) {
 		$result = "SR";
@@ -847,6 +888,9 @@ class BizConfigDAO extends PSIBaseExDAO {
 
 	/**
 	 * 获得调拨单单号前缀
+	 * 
+	 * @param string $companyId        	
+	 * @return string
 	 */
 	public function getITBillRefPre($companyId) {
 		$result = "IT";
@@ -870,7 +914,7 @@ class BizConfigDAO extends PSIBaseExDAO {
 
 	/**
 	 * 获得盘点单单号前缀
-	 * 
+	 *
 	 * @param string $companyId        	
 	 * @return string
 	 */
