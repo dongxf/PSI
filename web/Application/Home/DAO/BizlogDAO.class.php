@@ -13,6 +13,9 @@ class BizlogDAO extends PSIBaseExDAO {
 
 	/**
 	 * 返回日志列表
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function logList($params) {
 		$loginUserId = $params["loginUserId"];
@@ -77,6 +80,9 @@ class BizlogDAO extends PSIBaseExDAO {
 
 	/**
 	 * 记录业务日志
+	 * 
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function insertBizlog($params) {
 		$db = $this->db;
