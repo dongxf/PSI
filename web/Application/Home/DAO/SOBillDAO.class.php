@@ -358,6 +358,12 @@ class SOBillDAO extends PSIBaseExDAO {
 		return null;
 	}
 
+	/**
+	 * 通过销售订单id查询销售订单
+	 * 
+	 * @param string $id        	
+	 * @return array|NULL
+	 */
 	public function getSOBillById($id) {
 		$db = $this->db;
 		
@@ -758,7 +764,7 @@ class SOBillDAO extends PSIBaseExDAO {
 		$bill["warehouseName"] = $data[0]["warehouse_name"];
 		$bill["bizUserName"] = $data[0]["biz_user_name"];
 		$bill["saleMoney"] = $data[0]["goods_money"];
-		$bill["dealAddress"]=$data[0]["deal_address"];
+		$bill["dealAddress"] = $data[0]["deal_address"];
 		
 		// 明细表
 		$sql = "select s.id, g.code, g.name, g.spec, s.goods_count, s.goods_price, s.goods_money,
