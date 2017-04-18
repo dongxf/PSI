@@ -13,6 +13,9 @@ class POBillDAO extends PSIBaseExDAO {
 
 	/**
 	 * 生成新的采购订单号
+	 *
+	 * @param string $companyId        	
+	 * @return string
 	 */
 	private function genNewBillRef($companyId) {
 		$db = $this->db;
@@ -37,6 +40,9 @@ class POBillDAO extends PSIBaseExDAO {
 
 	/**
 	 * 获得采购订单主表信息列表
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function pobillList($params) {
 		$db = $this->db;
@@ -182,6 +188,9 @@ class POBillDAO extends PSIBaseExDAO {
 
 	/**
 	 * 采购订单的商品明细
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function poBillDetailList($params) {
 		$db = $this->db;
@@ -215,6 +224,9 @@ class POBillDAO extends PSIBaseExDAO {
 
 	/**
 	 * 新建采购订单
+	 *
+	 * @param array $bill        	
+	 * @return NULL|array
 	 */
 	public function addPOBill(& $bill) {
 		$db = $this->db;
@@ -354,6 +366,9 @@ class POBillDAO extends PSIBaseExDAO {
 
 	/**
 	 * 编辑采购订单
+	 *
+	 * @param array $bill        	
+	 * @return NULL|array
 	 */
 	public function updatePOBill(& $bill) {
 		$db = $this->db;
@@ -489,6 +504,12 @@ class POBillDAO extends PSIBaseExDAO {
 		return null;
 	}
 
+	/**
+	 * 根据采购订单id查询采购订单
+	 *
+	 * @param string $id        	
+	 * @return array|NULL
+	 */
 	public function getPOBillById($id) {
 		$db = $this->db;
 		
@@ -509,6 +530,9 @@ class POBillDAO extends PSIBaseExDAO {
 
 	/**
 	 * 删除采购订单
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function deletePOBill(& $params) {
 		$db = $this->db;
@@ -545,6 +569,9 @@ class POBillDAO extends PSIBaseExDAO {
 
 	/**
 	 * 获得采购订单的信息
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function poBillInfo($params) {
 		$db = $this->db;
@@ -640,6 +667,9 @@ class POBillDAO extends PSIBaseExDAO {
 
 	/**
 	 * 审核采购订单
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function commitPOBill(& $params) {
 		$db = $this->db;
@@ -678,6 +708,9 @@ class POBillDAO extends PSIBaseExDAO {
 
 	/**
 	 * 取消审核采购订单
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function cancelConfirmPOBill(& $params) {
 		$db = $this->db;
@@ -791,6 +824,7 @@ class POBillDAO extends PSIBaseExDAO {
 	 * 采购订单执行的采购入库单信息
 	 *
 	 * @param array $params        	
+	 * @return array
 	 */
 	public function poBillPWBillList($params) {
 		$db = $this->db;
