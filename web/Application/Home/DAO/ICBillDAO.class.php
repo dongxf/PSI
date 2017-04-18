@@ -41,6 +41,9 @@ class ICBillDAO extends PSIBaseExDAO {
 
 	/**
 	 * 盘点单列表
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function icbillList($params) {
 		$db = $this->db;
@@ -162,6 +165,9 @@ class ICBillDAO extends PSIBaseExDAO {
 
 	/**
 	 * 盘点单明细记录
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function icBillDetailList($params) {
 		$db = $this->db;
@@ -273,6 +279,12 @@ class ICBillDAO extends PSIBaseExDAO {
 		return null;
 	}
 
+	/**
+	 * 通过盘点单id查询盘点单
+	 *
+	 * @param string $id        	
+	 * @return array|NULL
+	 */
 	public function getICBillById($id) {
 		$db = $this->db;
 		$sql = "select ref, bill_status, data_org, company_id from t_ic_bill where id = '%s' ";
@@ -291,6 +303,9 @@ class ICBillDAO extends PSIBaseExDAO {
 
 	/**
 	 * 编辑盘点单
+	 *
+	 * @param array $bill        	
+	 * @return NULL|array
 	 */
 	public function updateICBill(& $bill) {
 		$db = $this->db;
@@ -381,6 +396,9 @@ class ICBillDAO extends PSIBaseExDAO {
 
 	/**
 	 * 获得某个盘点单的详情
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function icBillInfo($params) {
 		$db = $this->db;
@@ -440,6 +458,9 @@ class ICBillDAO extends PSIBaseExDAO {
 
 	/**
 	 * 删除盘点单
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function deleteICBill(& $params) {
 		$db = $this->db;
@@ -479,6 +500,9 @@ class ICBillDAO extends PSIBaseExDAO {
 
 	/**
 	 * 提交盘点单
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function commitICBill($params) {
 		$db = $this->db;
@@ -688,6 +712,9 @@ class ICBillDAO extends PSIBaseExDAO {
 
 	/**
 	 * 盘点单生成pdf文件
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function getDataForPDF($params) {
 		$ref = $params["ref"];
@@ -710,6 +737,8 @@ class ICBillDAO extends PSIBaseExDAO {
 		
 		$id = $data[0]["id"];
 		
+		$bill = array();
+		
 		$bill["bizDT"] = $this->toYMD($data[0]["bizdt"]);
 		$bill["warehouseName"] = $data[0]["warehouse_name"];
 		$bill["bizUserName"] = $data[0]["biz_user_name"];
@@ -721,13 +750,16 @@ class ICBillDAO extends PSIBaseExDAO {
 				order by t.show_order ";
 		$data = $db->query($sql, $id);
 		$items = array();
-		foreach ( $data as $i => $v ) {
-			$items[$i]["goodsCode"] = $v["code"];
-			$items[$i]["goodsName"] = $v["name"];
-			$items[$i]["goodsSpec"] = $v["spec"];
-			$items[$i]["unitName"] = $v["unit_name"];
-			$items[$i]["goodsCount"] = $v["goods_count"];
-			$items[$i]["goodsMoney"] = $v["goods_money"];
+		foreach ( $data as $v ) {
+			$item = array(
+					"goodsCode" => $v["code"],
+					"goodsName" => $v["name"],
+					"goodsSpec" => $v["spec"],
+					"unitName" => $v["unit_name"],
+					"goodsCount" => $v["goods_count"],
+					"goodsMoney" => $v["goods_money"]
+			);
+			$items[] = $item;
 		}
 		$bill["items"] = $items;
 		
