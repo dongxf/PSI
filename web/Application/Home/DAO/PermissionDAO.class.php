@@ -13,6 +13,9 @@ class PermissionDAO extends PSIBaseExDAO {
 
 	/**
 	 * 角色列表
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function roleList($params) {
 		$db = $this->db;
@@ -37,6 +40,9 @@ class PermissionDAO extends PSIBaseExDAO {
 
 	/**
 	 * 某个角色的权限列表
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function permissionList($params) {
 		$db = $this->db;
@@ -78,6 +84,9 @@ class PermissionDAO extends PSIBaseExDAO {
 
 	/**
 	 * 某个角色包含的用户
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function userList($params) {
 		$db = $this->db;
@@ -102,6 +111,12 @@ class PermissionDAO extends PSIBaseExDAO {
 		return $result;
 	}
 
+	/**
+	 * 某个权限的数据域列表
+	 *
+	 * @param array $params        	
+	 * @return array
+	 */
 	public function dataOrgList($params) {
 		$db = $this->db;
 		
@@ -148,6 +163,12 @@ class PermissionDAO extends PSIBaseExDAO {
 		return $result;
 	}
 
+	/**
+	 * 获得可以选择的数据域列表
+	 *
+	 * @param array $params        	
+	 * @return array
+	 */
 	public function selectDataOrg($params) {
 		$db = $this->db;
 		
@@ -203,6 +224,9 @@ class PermissionDAO extends PSIBaseExDAO {
 
 	/**
 	 * 按权限分类查询权限项
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function permissionByCategory($params) {
 		$db = $this->db;
@@ -234,6 +258,10 @@ class PermissionDAO extends PSIBaseExDAO {
 
 	/**
 	 * 通过id获得角色
+	 *
+	 * @param string $id
+	 *        	角色id
+	 * @return array
 	 */
 	public function getRoleById($id) {
 		$db = $this->db;
@@ -251,11 +279,20 @@ class PermissionDAO extends PSIBaseExDAO {
 
 	/**
 	 * 删除角色
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function deleteRole($params) {
 		$db = $this->db;
 		
+		// id: 角色id
 		$id = $params["id"];
+		
+		$role = $this->getRoleById($id);
+		if (! $role) {
+			return $this->bad("要删除的角色不存在");
+		}
 		
 		$sql = "delete from t_role_permission_dataorg where role_id = '%s' ";
 		$rc = $db->execute($sql, $id);
@@ -285,6 +322,12 @@ class PermissionDAO extends PSIBaseExDAO {
 		return null;
 	}
 
+	/**
+	 * 获得可以选择的权限列表
+	 *
+	 * @param array $params        	
+	 * @return array
+	 */
 	public function selectPermission($params) {
 		$db = $this->db;
 		
@@ -315,6 +358,12 @@ class PermissionDAO extends PSIBaseExDAO {
 		return $result;
 	}
 
+	/**
+	 * 获得可以选择的用户列表
+	 *
+	 * @param array $params        	
+	 * @return array
+	 */
 	public function selectUsers($params) {
 		$db = $this->db;
 		
@@ -359,6 +408,12 @@ class PermissionDAO extends PSIBaseExDAO {
 		return $result;
 	}
 
+	/**
+	 * 新增角色
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
+	 */
 	public function addRole($params) {
 		$db = $this->db;
 		
@@ -431,6 +486,12 @@ class PermissionDAO extends PSIBaseExDAO {
 		return null;
 	}
 
+	/**
+	 * 编辑角色
+	 * 
+	 * @param array $params        	
+	 * @return NULL|array
+	 */
 	public function modifyRole($params) {
 		$db = $this->db;
 		
