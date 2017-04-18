@@ -51,6 +51,9 @@ class GoodsBrandDAO extends PSIBaseExDAO {
 
 	/**
 	 * 获得所有的品牌
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function allBrands($params) {
 		$db = $this->db;
@@ -99,6 +102,9 @@ class GoodsBrandDAO extends PSIBaseExDAO {
 
 	/**
 	 * 新增商品品牌
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function addBrand(& $params) {
 		$db = $this->db;
@@ -151,6 +157,12 @@ class GoodsBrandDAO extends PSIBaseExDAO {
 		return null;
 	}
 
+	/**
+	 * 更新子品牌的FullName
+	 *
+	 * @param \Think\Model $db        	
+	 * @param string $parentId        	
+	 */
 	private function updateSubBrandsFullName($db, $parentId) {
 		$sql = "select full_name from t_goods_brand where id = '%s' ";
 		$data = $db->query($sql, $parentId);
@@ -178,6 +190,9 @@ class GoodsBrandDAO extends PSIBaseExDAO {
 
 	/**
 	 * 编辑商品品牌
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function updateGoodsBrand(& $params) {
 		$db = $this->db;
@@ -253,6 +268,12 @@ class GoodsBrandDAO extends PSIBaseExDAO {
 		return null;
 	}
 
+	/**
+	 * 通过品牌id查询品牌
+	 *
+	 * @param string $id        	
+	 * @return array|NULL
+	 */
 	public function getBrandById($id) {
 		$db = $this->db;
 		
@@ -272,6 +293,9 @@ class GoodsBrandDAO extends PSIBaseExDAO {
 
 	/**
 	 * 删除商品品牌
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function deleteBrand(& $params) {
 		$db = $this->db;
@@ -312,6 +336,9 @@ class GoodsBrandDAO extends PSIBaseExDAO {
 
 	/**
 	 * 获得某个品牌的上级品牌全称
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function brandParentName($params) {
 		$db = $this->db;
