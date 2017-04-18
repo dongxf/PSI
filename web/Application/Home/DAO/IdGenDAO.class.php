@@ -11,6 +11,8 @@ class IdGenDAO extends PSIBaseExDAO {
 
 	/**
 	 * 创建一个新的UUID
+	 * 
+	 * @return string
 	 */
 	public function newId() {
 		$db = $this->db;
