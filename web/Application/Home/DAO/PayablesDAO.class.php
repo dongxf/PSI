@@ -13,6 +13,9 @@ class PayablesDAO extends PSIBaseExDAO {
 
 	/**
 	 * 往来单位分类
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function payCategoryList($params) {
 		$db = $this->db;
@@ -64,6 +67,9 @@ class PayablesDAO extends PSIBaseExDAO {
 
 	/**
 	 * 应付账款列表
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function payList($params) {
 		$db = $this->db;
@@ -186,6 +192,9 @@ class PayablesDAO extends PSIBaseExDAO {
 
 	/**
 	 * 每笔应付账款的明细记录
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function payDetailList($params) {
 		$db = $this->db;
@@ -227,6 +236,9 @@ class PayablesDAO extends PSIBaseExDAO {
 
 	/**
 	 * 应付账款的付款记录
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function payRecordList($params) {
 		$db = $this->db;
@@ -268,7 +280,10 @@ class PayablesDAO extends PSIBaseExDAO {
 	}
 
 	/**
-	 * 付款记录
+	 * 新增付款记录
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function addPayment($params) {
 		$db = $this->db;
@@ -382,6 +397,12 @@ class PayablesDAO extends PSIBaseExDAO {
 		return null;
 	}
 
+	/**
+	 * 刷新付款信息 - 总账
+	 *
+	 * @param array $params        	
+	 * @return array
+	 */
 	public function refreshPayInfo($params) {
 		$db = $this->db;
 		
@@ -393,6 +414,12 @@ class PayablesDAO extends PSIBaseExDAO {
 		);
 	}
 
+	/**
+	 * 刷新付款信息 - 明细账
+	 * 
+	 * @param array $params        	
+	 * @return array
+	 */
 	public function refreshPayDetailInfo($params) {
 		$db = $this->db;
 		
