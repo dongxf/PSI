@@ -11,6 +11,9 @@ class PrePaymentDAO extends PSIBaseExDAO {
 
 	/**
 	 * 向供应商付预付款
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function addPrePayment(& $params) {
 		$db = $this->db;
@@ -114,6 +117,9 @@ class PrePaymentDAO extends PSIBaseExDAO {
 
 	/**
 	 * 供应商退回预收款
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function returnPrePayment(& $params) {
 		$db = $this->db;
@@ -202,6 +208,12 @@ class PrePaymentDAO extends PSIBaseExDAO {
 		return null;
 	}
 
+	/**
+	 * 预付款列表
+	 *
+	 * @param array $params        	
+	 * @return array
+	 */
 	public function prepaymentList($params) {
 		$db = $this->db;
 		
@@ -249,6 +261,12 @@ class PrePaymentDAO extends PSIBaseExDAO {
 		);
 	}
 
+	/**
+	 * 预付款详情列表
+	 * 
+	 * @param array $params        	
+	 * @return array
+	 */
 	public function prepaymentDetailList($params) {
 		$db = $this->db;
 		
