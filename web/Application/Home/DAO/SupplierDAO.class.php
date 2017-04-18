@@ -13,6 +13,9 @@ class SupplierDAO extends PSIBaseExDAO {
 
 	/**
 	 * 供应商分类列表
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function categoryList($params) {
 		$db = $this->db;
@@ -85,6 +88,9 @@ class SupplierDAO extends PSIBaseExDAO {
 
 	/**
 	 * 某个分类下的供应商档案列表
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function supplierList($params) {
 		$db = $this->db;
@@ -242,6 +248,9 @@ class SupplierDAO extends PSIBaseExDAO {
 
 	/**
 	 * 新增供应商分类
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function addSupplierCategory(& $params) {
 		$db = $this->db;
@@ -283,6 +292,9 @@ class SupplierDAO extends PSIBaseExDAO {
 
 	/**
 	 * 编辑供应商分类
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function updateSupplierCategory(& $params) {
 		$db = $this->db;
@@ -311,6 +323,12 @@ class SupplierDAO extends PSIBaseExDAO {
 		return null;
 	}
 
+	/**
+	 * 根据供应商分类id查询供应商分类
+	 *
+	 * @param string $id        	
+	 * @return array|NULL
+	 */
 	public function getSupplierCategoryById($id) {
 		$db = $this->db;
 		
@@ -328,6 +346,9 @@ class SupplierDAO extends PSIBaseExDAO {
 
 	/**
 	 * 删除供应商分类
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function deleteSupplierCategory(& $params) {
 		$db = $this->db;
@@ -364,6 +385,9 @@ class SupplierDAO extends PSIBaseExDAO {
 
 	/**
 	 * 新建供应商档案
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function addSupplier(& $params) {
 		$db = $this->db;
@@ -429,6 +453,9 @@ class SupplierDAO extends PSIBaseExDAO {
 
 	/**
 	 * 初始化应付账款
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function initPayables(& $params) {
 		$db = $this->db;
@@ -555,6 +582,9 @@ class SupplierDAO extends PSIBaseExDAO {
 
 	/**
 	 * 编辑供应商档案
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function updateSupplier(& $params) {
 		$db = $this->db;
@@ -610,6 +640,9 @@ class SupplierDAO extends PSIBaseExDAO {
 
 	/**
 	 * 删除供应商
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function deleteSupplier(& $params) {
 		$db = $this->db;
@@ -685,6 +718,13 @@ class SupplierDAO extends PSIBaseExDAO {
 		return null;
 	}
 
+	/**
+	 * 通过供应商id查询供应商
+	 *
+	 * @param string $id
+	 *        	供应商id
+	 * @return array|NULL
+	 */
 	public function getSupplierById($id) {
 		$db = $this->db;
 		
@@ -702,6 +742,9 @@ class SupplierDAO extends PSIBaseExDAO {
 
 	/**
 	 * 供应商字段， 查询数据
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function queryData($params) {
 		$db = $this->db;
@@ -740,6 +783,9 @@ class SupplierDAO extends PSIBaseExDAO {
 
 	/**
 	 * 获得某个供应商档案的详情
+	 * 
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function supplierInfo($params) {
 		$db = $this->db;
