@@ -13,6 +13,9 @@ class OrgDAO extends PSIBaseExDAO {
 
 	/**
 	 * 做类似这种增长 '0101' => '0102'，组织机构的数据域+1
+	 *
+	 * @param string $dataOrg        	
+	 * @return string
 	 */
 	private function incDataOrg($dataOrg) {
 		$pre = substr($dataOrg, 0, strlen($dataOrg) - 2);
@@ -23,6 +26,9 @@ class OrgDAO extends PSIBaseExDAO {
 
 	/**
 	 * 新增组织机构
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function addOrg($params) {
 		$db = $this->db;
@@ -91,6 +97,9 @@ class OrgDAO extends PSIBaseExDAO {
 
 	/**
 	 * 修改组织机构
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function updateOrg($params) {
 		$db = $this->db;
@@ -318,6 +327,9 @@ class OrgDAO extends PSIBaseExDAO {
 
 	/**
 	 * 删除组织机构
+	 *
+	 * @param string $id        	
+	 * @return NULL|array
 	 */
 	public function deleteOrg($id) {
 		$db = $this->db;
@@ -355,7 +367,10 @@ class OrgDAO extends PSIBaseExDAO {
 	}
 
 	/**
-	 * 根据id获得组织机构
+	 * 根据组织机构idc查询组织机构
+	 *
+	 * @param string $id        	
+	 * @return array|NULL
 	 */
 	public function getOrgById($id) {
 		$db = $this->db;
@@ -372,6 +387,12 @@ class OrgDAO extends PSIBaseExDAO {
 		);
 	}
 
+	/**
+	 * 所有组织机构
+	 * 
+	 * @param array $params        	
+	 * @return array
+	 */
 	public function allOrgs($params) {
 		$db = $this->db;
 		
@@ -436,6 +457,13 @@ class OrgDAO extends PSIBaseExDAO {
 		return $result;
 	}
 
+	/**
+	 * 查询上级组织机构信息
+	 * 
+	 * @param string $id
+	 *        	当前组织机构id
+	 * @return array 上级组织机构
+	 */
 	public function orgParentName($id) {
 		$db = $this->db;
 		
