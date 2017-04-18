@@ -115,6 +115,9 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 
 	/**
 	 * 返回所有的商品分类
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function allCategories($params) {
 		$db = $this->db;
@@ -168,6 +171,13 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 		return $result;
 	}
 
+	/**
+	 * 通过商品分类id查询商品分类
+	 *
+	 * @param string $id
+	 *        	商品分类id
+	 * @return array|NULL
+	 */
 	public function getGoodsCategoryById($id) {
 		$db = $this->db;
 		
@@ -185,6 +195,9 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 
 	/**
 	 * 新增商品分类
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function addGoodsCategory(& $params) {
 		$db = $this->db;
@@ -288,6 +301,9 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 
 	/**
 	 * 编辑商品分类
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function updateGoodsCategory(& $params) {
 		$db = $this->db;
@@ -374,6 +390,9 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 
 	/**
 	 * 删除商品分类
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function deleteCategory(& $params) {
 		$db = $this->db;
@@ -419,6 +438,9 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 
 	/**
 	 * 获得某个商品分类的详情
+	 * 
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function getCategoryInfo($params) {
 		$db = $this->db;
