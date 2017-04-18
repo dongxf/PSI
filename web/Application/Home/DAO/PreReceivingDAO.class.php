@@ -11,6 +11,9 @@ class PreReceivingDAO extends PSIBaseExDAO {
 
 	/**
 	 * 收预收款
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function addPreReceiving(& $params) {
 		$db = $this->db;
@@ -114,6 +117,9 @@ class PreReceivingDAO extends PSIBaseExDAO {
 
 	/**
 	 * 退还预收款
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function returnPreReceiving(& $params) {
 		$db = $this->db;
@@ -204,6 +210,12 @@ class PreReceivingDAO extends PSIBaseExDAO {
 		return null;
 	}
 
+	/**
+	 * 预收款列表
+	 *
+	 * @param array $params        	
+	 * @return array
+	 */
 	public function prereceivingList($params) {
 		$db = $this->db;
 		
@@ -251,6 +263,12 @@ class PreReceivingDAO extends PSIBaseExDAO {
 		);
 	}
 
+	/**
+	 * 预收款详情列表
+	 * 
+	 * @param array $params        	
+	 * @return array
+	 */
 	public function prereceivingDetailList($params) {
 		$db = $this->db;
 		
