@@ -13,6 +13,9 @@ class GoodsSiDAO extends PSIBaseExDAO {
 
 	/**
 	 * 获得某个商品的安全库存列表
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function goodsSafetyInventoryList($params) {
 		$db = $this->db;
@@ -83,6 +86,9 @@ class GoodsSiDAO extends PSIBaseExDAO {
 
 	/**
 	 * 获得某个商品安全库存的详情
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function siInfo($params) {
 		$db = $this->db;
@@ -137,6 +143,9 @@ class GoodsSiDAO extends PSIBaseExDAO {
 
 	/**
 	 * 设置商品的安全
+	 *
+	 * @param array $bill        	
+	 * @return NULL|array
 	 */
 	public function editSafetyInventory(& $bill) {
 		$db = $this->db;
@@ -150,8 +159,6 @@ class GoodsSiDAO extends PSIBaseExDAO {
 		if (! $goods) {
 			return $this->bad("商品不存在，无法设置商品安全库存");
 		}
-		
-		$idGen = new IdGenDAO($db);
 		
 		$sql = "delete from t_goods_si where goods_id = '%s' ";
 		$rc = $db->execute($sql, $id);
@@ -184,7 +191,7 @@ class GoodsSiDAO extends PSIBaseExDAO {
 			
 			$sql = "insert into t_goods_si(id, goods_id, warehouse_id, safety_inventory, inventory_upper)
 					values ('%s', '%s', '%s', %d, %d)";
-			$rc = $db->execute($sql, $idGen->newId(), $id, $warehouseId, $si, $upper);
+			$rc = $db->execute($sql, $this->newId(), $id, $warehouseId, $si, $upper);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
