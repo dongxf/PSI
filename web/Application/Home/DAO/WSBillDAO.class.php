@@ -40,6 +40,9 @@ class WSBillDAO extends PSIBaseExDAO {
 
 	/**
 	 * 获得销售出库单主表列表
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function wsbillList($params) {
 		$db = $this->db;
@@ -193,6 +196,9 @@ class WSBillDAO extends PSIBaseExDAO {
 
 	/**
 	 * 获得某个销售出库单的明细记录列表
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function wsBillDetailList($params) {
 		$db = $this->db;
@@ -360,6 +366,13 @@ class WSBillDAO extends PSIBaseExDAO {
 		return null;
 	}
 
+	/**
+	 * 通过销售出库单id查询销售出库单
+	 *
+	 * @param string $id
+	 *        	销售出库单id
+	 * @return array|NULL
+	 */
 	public function getWSBillById($id) {
 		$db = $this->db;
 		
@@ -492,6 +505,9 @@ class WSBillDAO extends PSIBaseExDAO {
 	/**
 	 * 判断是否可以编辑商品销售单价
 	 *
+	 * @param string $companyId        	
+	 * @param string $userId        	
+	 *
 	 * @return boolean true:可以编辑销售单价
 	 */
 	private function canEditGoodsPrice($companyId, $userId) {
@@ -516,6 +532,9 @@ class WSBillDAO extends PSIBaseExDAO {
 
 	/**
 	 * 新建或编辑的时候，获得销售出库单的详情
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function wsBillInfo($params) {
 		$db = $this->db;
@@ -655,6 +674,9 @@ class WSBillDAO extends PSIBaseExDAO {
 
 	/**
 	 * 删除销售出库单
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function deleteWSBill(& $params) {
 		$db = $this->db;
@@ -698,26 +720,31 @@ class WSBillDAO extends PSIBaseExDAO {
 	}
 
 	/**
-	 * 销售出库单生成pdf文件
+	 * 查询数据，用于销售出库单生成pdf文件
+	 *
+	 * @param array $params        	
+	 * @return array|null
 	 */
 	public function getDataForPDF($params) {
 		$ref = $params["ref"];
 		
 		$db = $this->db;
 		$sql = "select w.id, w.bizdt, c.name as customer_name,
-					  u.name as biz_user_name,
-					  h.name as warehouse_name,
-					  w.sale_money
-					from t_ws_bill w, t_customer c, t_user u, t_warehouse h
-					where w.customer_id = c.id and w.biz_user_id = u.id
-					  and w.warehouse_id = h.id
-					  and w.ref = '%s' ";
+				  u.name as biz_user_name,
+				  h.name as warehouse_name,
+				  w.sale_money
+				from t_ws_bill w, t_customer c, t_user u, t_warehouse h
+				where w.customer_id = c.id and w.biz_user_id = u.id
+				  and w.warehouse_id = h.id
+				  and w.ref = '%s' ";
 		$data = $db->query($sql, $ref);
 		if (! $data) {
 			return null;
 		}
 		
 		$id = $data[0]["id"];
+		
+		$bill = array();
 		
 		$bill["bizDT"] = date("Y-m-d", strtotime($data[0]["bizdt"]));
 		$bill["customerName"] = $data[0]["customer_name"];
@@ -750,6 +777,9 @@ class WSBillDAO extends PSIBaseExDAO {
 
 	/**
 	 * 提交销售出库单
+	 * 
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function commitWSBill(& $params) {
 		$db = $this->db;
