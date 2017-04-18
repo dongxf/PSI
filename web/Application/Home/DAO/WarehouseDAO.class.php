@@ -13,6 +13,9 @@ class WarehouseDAO extends PSIBaseExDAO {
 
 	/**
 	 * 获得所有的仓库列表
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function warehouseList($params) {
 		$db = $this->db;
@@ -52,6 +55,9 @@ class WarehouseDAO extends PSIBaseExDAO {
 
 	/**
 	 * 新增一个仓库
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function addWarehouse(& $params) {
 		$db = $this->db;
@@ -94,6 +100,9 @@ class WarehouseDAO extends PSIBaseExDAO {
 
 	/**
 	 * 修改仓库
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function updateWarehouse(& $params) {
 		$id = $params["id"];
@@ -130,6 +139,9 @@ class WarehouseDAO extends PSIBaseExDAO {
 
 	/**
 	 * 删除仓库
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function deleteWarehouse(& $params) {
 		$db = $this->db;
@@ -208,6 +220,12 @@ class WarehouseDAO extends PSIBaseExDAO {
 		return null;
 	}
 
+	/**
+	 * 通过仓库id查询仓库
+	 *
+	 * @param string $id        	
+	 * @return array|NULL
+	 */
 	public function getWarehouseById($id) {
 		$db = $this->db;
 		$sql = "select code, name, data_org, inited from t_warehouse where id = '%s' ";
@@ -227,6 +245,9 @@ class WarehouseDAO extends PSIBaseExDAO {
 
 	/**
 	 * 编辑仓库数据域
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function editDataOrg(& $params) {
 		$db = $this->db;
@@ -266,6 +287,12 @@ class WarehouseDAO extends PSIBaseExDAO {
 		return null;
 	}
 
+	/**
+	 * 查询数据，用于仓库自定义字段
+	 * 
+	 * @param array $params        	
+	 * @return array
+	 */
 	public function queryData($params) {
 		$db = $this->db;
 		
