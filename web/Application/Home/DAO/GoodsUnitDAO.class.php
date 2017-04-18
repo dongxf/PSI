@@ -11,6 +11,8 @@ class GoodsUnitDAO extends PSIBaseExDAO {
 
 	/**
 	 * 返回所有商品计量单位
+	 *
+	 * @return array
 	 */
 	public function allUnits() {
 		$db = $this->db;
@@ -24,6 +26,9 @@ class GoodsUnitDAO extends PSIBaseExDAO {
 
 	/**
 	 * 新增商品计量单位
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function addUnit(& $params) {
 		$db = $this->db;
@@ -63,6 +68,9 @@ class GoodsUnitDAO extends PSIBaseExDAO {
 
 	/**
 	 * 编辑商品计量单位
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function updateUnit(& $params) {
 		$db = $this->db;
@@ -90,6 +98,9 @@ class GoodsUnitDAO extends PSIBaseExDAO {
 
 	/**
 	 * 通过id查询商品计量单位
+	 *
+	 * @param string $id        	
+	 * @return array|NULL
 	 */
 	public function getGoodsUnitById($id) {
 		$db = $this->db;
@@ -107,6 +118,9 @@ class GoodsUnitDAO extends PSIBaseExDAO {
 
 	/**
 	 * 删除商品计量单位
+	 * 
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function deleteUnit(& $params) {
 		$db = $this->db;
