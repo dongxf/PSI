@@ -14,6 +14,8 @@ class SRBillDAO extends PSIBaseExDAO {
 	/**
 	 * 生成新的销售退货入库单单号
 	 *
+	 * @param string $companyId        	
+	 *
 	 * @return string
 	 */
 	private function genNewBillRef($companyId) {
@@ -39,6 +41,9 @@ class SRBillDAO extends PSIBaseExDAO {
 
 	/**
 	 * 销售退货入库单主表信息列表
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function srbillList($params) {
 		$db = $this->db;
@@ -193,6 +198,9 @@ class SRBillDAO extends PSIBaseExDAO {
 
 	/**
 	 * 销售退货入库单明细信息列表
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function srBillDetailList($params) {
 		$db = $this->db;
@@ -226,6 +234,9 @@ class SRBillDAO extends PSIBaseExDAO {
 
 	/**
 	 * 列出要选择的可以做退货入库的销售出库单
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function selectWSBillList($params) {
 		$db = $this->db;
@@ -360,6 +371,9 @@ class SRBillDAO extends PSIBaseExDAO {
 
 	/**
 	 * 获得销售出库单的信息
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function getWSBillInfoForSRBill($params) {
 		$db = $this->db;
@@ -544,6 +558,12 @@ class SRBillDAO extends PSIBaseExDAO {
 		return null;
 	}
 
+	/**
+	 * 根据销售退货入库单id查询销售退货入库单
+	 *
+	 * @param string $id        	
+	 * @return array|NULL
+	 */
 	public function getSRBillById($id) {
 		$db = $this->db;
 		$sql = "select bill_status, ref, data_org, company_id from t_sr_bill where id = '%s' ";
@@ -701,6 +721,9 @@ class SRBillDAO extends PSIBaseExDAO {
 
 	/**
 	 * 获得退货入库单单据数据
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function srBillInfo($params) {
 		$db = $this->db;
@@ -771,6 +794,9 @@ class SRBillDAO extends PSIBaseExDAO {
 
 	/**
 	 * 删除销售退货入库单
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function deleteSRBill(& $params) {
 		$db = $this->db;
@@ -808,6 +834,9 @@ class SRBillDAO extends PSIBaseExDAO {
 
 	/**
 	 * 提交销售退货入库单
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function commitSRBill(& $params) {
 		$db = $this->db;
@@ -1227,13 +1256,16 @@ class SRBillDAO extends PSIBaseExDAO {
 		// 操作成功
 		return null;
 	}
-	
+
 	/**
-	 * 销售退货入库单生成pdf文件
+	 * 查询数据，用于销售退货入库单生成pdf文件
+	 *
+	 * @param array $params        	
+	 * @return array|NULL
 	 */
 	public function getDataForPDF($params) {
 		$ref = $params["ref"];
-	
+		
 		$db = $this->db;
 		$sql = "select w.id, w.bizdt, c.name as customer_name, u.name as biz_user_name,
 				 	user.name as input_user_name, h.name as warehouse_name, w.rejection_sale_money,
@@ -1246,15 +1278,17 @@ class SRBillDAO extends PSIBaseExDAO {
 		if (! $data) {
 			return null;
 		}
-	
+		
 		$id = $data[0]["id"];
-	
+		
+		$bill = array();
+		
 		$bill["bizDT"] = $this->toYMD($data[0]["bizdt"]);
 		$bill["customerName"] = $data[0]["customer_name"];
 		$bill["warehouseName"] = $data[0]["warehouse_name"];
 		$bill["bizUserName"] = $data[0]["biz_user_name"];
 		$bill["rejMoney"] = $data[0]["rejection_sale_money"];
-	
+		
 		// 明细表
 		$sql = "select s.id, g.code, g.name, g.spec, u.name as unit_name,
 				   s.rejection_goods_count, s.rejection_goods_price, s.rejection_sale_money,
@@ -1276,8 +1310,7 @@ class SRBillDAO extends PSIBaseExDAO {
 			$items[$i]["sn"] = $v["sn_note"];
 		}
 		$bill["items"] = $items;
-	
+		
 		return $bill;
 	}
-	
 }
