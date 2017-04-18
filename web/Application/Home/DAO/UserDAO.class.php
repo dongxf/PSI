@@ -386,6 +386,12 @@ class UserDAO extends PSIBaseExDAO {
 		return null;
 	}
 
+	/**
+	 * 根据用户id查询用户
+	 *
+	 * @param string $id        	
+	 * @return array|NULL
+	 */
 	public function getUserById($id) {
 		$db = $this->db;
 		$sql = "select login_name, name from t_user where id = '%s' ";
@@ -402,6 +408,9 @@ class UserDAO extends PSIBaseExDAO {
 
 	/**
 	 * 删除用户
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function deleteUser($params) {
 		$db = $this->db;
@@ -502,6 +511,9 @@ class UserDAO extends PSIBaseExDAO {
 
 	/**
 	 * 修改用户登录密码
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function changePassword($params) {
 		$db = $this->db;
@@ -525,6 +537,12 @@ class UserDAO extends PSIBaseExDAO {
 		return null;
 	}
 
+	/**
+	 * 修改我的密码
+	 *
+	 * @param array $params        	
+	 * @return array|NULL
+	 */
 	public function changeMyPassword($params) {
 		$db = $this->db;
 		
@@ -554,6 +572,12 @@ class UserDAO extends PSIBaseExDAO {
 		return null;
 	}
 
+	/**
+	 * 查询数据，用于用户自定义字段
+	 *
+	 * @param array $params        	
+	 * @return array
+	 */
 	public function queryData($params) {
 		$db = $this->db;
 		
@@ -596,6 +620,9 @@ class UserDAO extends PSIBaseExDAO {
 
 	/**
 	 * 查询用户数据域列表
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function queryUserDataOrg($params) {
 		$db = $this->db;
@@ -637,6 +664,9 @@ class UserDAO extends PSIBaseExDAO {
 
 	/**
 	 * 获得当前登录用户所属公司的Id
+	 *
+	 * @param array $params        	
+	 * @return string|null
 	 */
 	public function getCompanyId($params) {
 		$db = $this->db;
@@ -677,6 +707,9 @@ class UserDAO extends PSIBaseExDAO {
 
 	/**
 	 * 获得登录用户的数据域
+	 *
+	 * @param array $params        	
+	 * @return string|NULL
 	 */
 	public function getLoginUserDataOrg($params) {
 		$loginUserId = $params["loginUserId"];
@@ -695,6 +728,9 @@ class UserDAO extends PSIBaseExDAO {
 
 	/**
 	 * 获得当前登录用户的某个功能的数据域
+	 * 
+	 * @param array $params        	
+	 * @return string
 	 */
 	public function getDataOrgForFId($params) {
 		$fid = $params["fid"];
