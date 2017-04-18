@@ -13,6 +13,9 @@ class GoodsDAO extends PSIBaseExDAO {
 
 	/**
 	 * 商品列表
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function goodsList($params) {
 		$db = $this->db;
@@ -135,6 +138,9 @@ class GoodsDAO extends PSIBaseExDAO {
 
 	/**
 	 * 新增商品
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function addGoods(& $params) {
 		$db = $this->db;
@@ -220,6 +226,9 @@ class GoodsDAO extends PSIBaseExDAO {
 
 	/**
 	 * 编辑商品
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function updateGoods(& $params) {
 		$db = $this->db;
@@ -301,6 +310,12 @@ class GoodsDAO extends PSIBaseExDAO {
 		return null;
 	}
 
+	/**
+	 * 通过商品id查询商品
+	 *
+	 * @param string $id        	
+	 * @return array|NULL
+	 */
 	public function getGoodsById($id) {
 		$db = $this->db;
 		
@@ -319,6 +334,9 @@ class GoodsDAO extends PSIBaseExDAO {
 
 	/**
 	 * 删除商品
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function deleteGoods(& $params) {
 		$db = $this->db;
@@ -378,6 +396,9 @@ class GoodsDAO extends PSIBaseExDAO {
 
 	/**
 	 * 商品字段，查询数据
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function queryData($params) {
 		$db = $this->db;
@@ -430,6 +451,9 @@ class GoodsDAO extends PSIBaseExDAO {
 
 	/**
 	 * 商品字段，查询数据
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function queryDataWithSalePrice($params) {
 		$db = $this->db;
@@ -485,6 +509,9 @@ class GoodsDAO extends PSIBaseExDAO {
 
 	/**
 	 * 商品字段，查询数据
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function queryDataWithPurchasePrice($params) {
 		$db = $this->db;
@@ -540,6 +567,9 @@ class GoodsDAO extends PSIBaseExDAO {
 
 	/**
 	 * 获得某个商品的详情
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function getGoodsInfo($params) {
 		$db = $this->db;
@@ -603,6 +633,9 @@ class GoodsDAO extends PSIBaseExDAO {
 
 	/**
 	 * 通过条形码查询商品信息, 销售出库单使用
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function queryGoodsInfoByBarcode($params) {
 		$db = $this->db;
@@ -634,6 +667,9 @@ class GoodsDAO extends PSIBaseExDAO {
 
 	/**
 	 * 通过条形码查询商品信息, 采购入库单使用
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function queryGoodsInfoByBarcodeForPW($params) {
 		$db = $this->db;
@@ -665,6 +701,9 @@ class GoodsDAO extends PSIBaseExDAO {
 
 	/**
 	 * 查询商品种类总数
+	 *
+	 * @param array $params        	
+	 * @return int
 	 */
 	public function getTotalGoodsCount($params) {
 		$db = $this->db;
@@ -712,6 +751,9 @@ class GoodsDAO extends PSIBaseExDAO {
 
 	/**
 	 * 子商品字段，查询数据
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function queryDataForSubGoods($params) {
 		$db = $this->db;
@@ -748,7 +790,7 @@ class GoodsDAO extends PSIBaseExDAO {
 		$queryParams[] = $parentGoodsId;
 		
 		$ds = new DataOrgDAO($db);
-		$rs = $ds->buildSQL(FIdConst::GOODS_BILL, "g", $loginUserId);
+		$rs = $ds->buildSQL(FIdConst::GOODS, "g", $loginUserId);
 		if ($rs) {
 			$sql .= " and " . $rs[0];
 			$queryParams = array_merge($queryParams, $rs[1]);
@@ -758,12 +800,16 @@ class GoodsDAO extends PSIBaseExDAO {
 				limit 20";
 		$data = $db->query($sql, $queryParams);
 		$result = array();
-		foreach ( $data as $i => $v ) {
-			$result[$i]["id"] = $v["id"];
-			$result[$i]["code"] = $v["code"];
-			$result[$i]["name"] = $v["name"];
-			$result[$i]["spec"] = $v["spec"];
-			$result[$i]["unitName"] = $v["unit_name"];
+		foreach ( $data as $v ) {
+			$item = array(
+					"id" => $v["id"],
+					"code" => $v["code"],
+					"name" => $v["name"],
+					"spec" => $v["spec"],
+					"unitName" => $v["unit_name"]
+			
+			);
+			$result[] = $item;
 		}
 		
 		return $result;
