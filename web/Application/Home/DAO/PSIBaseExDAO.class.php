@@ -15,16 +15,12 @@ class PSIBaseExDAO extends PSIBaseDAO {
 	protected $db;
 
 	function __construct($db) {
-		if ($db == null) {
-			$db = M();
-		}
-		
 		$this->db = $db;
 	}
 
 	/**
 	 * 生成全局唯一Id （UUID）
-	 * 
+	 *
 	 * @return string
 	 */
 	protected function newId() {
@@ -77,10 +73,22 @@ class PSIBaseExDAO extends PSIBaseDAO {
 		return date("Y-m-d", $dt) == $date;
 	}
 
+	/**
+	 * 空结果
+	 *
+	 * @return array
+	 */
 	protected function emptyResult() {
 		return array();
 	}
 
+	/**
+	 * 参数错误
+	 *
+	 * @param string $param
+	 *        	参数名称
+	 * @return array
+	 */
 	protected function badParam($param) {
 		return $this->bad("参数" . $param . "不正确");
 	}
