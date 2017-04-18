@@ -13,6 +13,9 @@ class ReceivablesDAO extends PSIBaseExDAO {
 
 	/**
 	 * 往来单位分类
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function rvCategoryList($params) {
 		$db = $this->db;
@@ -68,6 +71,9 @@ class ReceivablesDAO extends PSIBaseExDAO {
 
 	/**
 	 * 应收账款列表
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function rvList($params) {
 		$db = $this->db;
@@ -202,6 +208,9 @@ class ReceivablesDAO extends PSIBaseExDAO {
 
 	/**
 	 * 应收账款的明细记录
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function rvDetailList($params) {
 		$db = $this->db;
@@ -244,6 +253,9 @@ class ReceivablesDAO extends PSIBaseExDAO {
 
 	/**
 	 * 应收账款的收款记录
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function rvRecordList($params) {
 		$db = $this->db;
@@ -287,6 +299,9 @@ class ReceivablesDAO extends PSIBaseExDAO {
 
 	/**
 	 * 收款记录
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function addRvRecord($params) {
 		$db = $this->db;
@@ -399,6 +414,12 @@ class ReceivablesDAO extends PSIBaseExDAO {
 		return null;
 	}
 
+	/**
+	 * 刷新应收记录
+	 *
+	 * @param array $params        	
+	 * @return array
+	 */
 	public function refreshRvInfo($params) {
 		$db = $this->db;
 		
@@ -415,6 +436,12 @@ class ReceivablesDAO extends PSIBaseExDAO {
 		}
 	}
 
+	/**
+	 * 刷新应收记录详情
+	 * 
+	 * @param array $params        	
+	 * @return array
+	 */
 	public function refreshRvDetailInfo($params) {
 		$db = $this->db;
 		
