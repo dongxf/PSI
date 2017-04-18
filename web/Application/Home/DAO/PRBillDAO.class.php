@@ -14,6 +14,8 @@ class PRBillDAO extends PSIBaseExDAO {
 	/**
 	 * 生成新的采购退货出库单单号
 	 *
+	 * @param string $companyId        	
+	 *
 	 * @return string
 	 */
 	private function genNewBillRef($companyId) {
@@ -41,6 +43,7 @@ class PRBillDAO extends PSIBaseExDAO {
 	 * 新建采购退货出库单
 	 *
 	 * @param array $bill        	
+	 * @return NULL|array
 	 */
 	public function addPRBill(& $bill) {
 		$db = $this->db;
@@ -149,6 +152,12 @@ class PRBillDAO extends PSIBaseExDAO {
 		return null;
 	}
 
+	/**
+	 * 根据采购退货出库单id查询采购退货出库单
+	 *
+	 * @param string $id        	
+	 * @return array|NULL
+	 */
 	public function getPRBillById($id) {
 		$db = $this->db;
 		
@@ -286,6 +295,9 @@ class PRBillDAO extends PSIBaseExDAO {
 
 	/**
 	 * 选择可以退货的采购入库单
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function selectPWBillList($params) {
 		$db = $this->db;
@@ -407,6 +419,9 @@ class PRBillDAO extends PSIBaseExDAO {
 
 	/**
 	 * 根据采购入库单的id查询采购入库单的详细信息
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function getPWBillInfoForPRBill($params) {
 		$db = $this->db;
@@ -465,6 +480,9 @@ class PRBillDAO extends PSIBaseExDAO {
 
 	/**
 	 * 采购退货出库单列表
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function prbillList($params) {
 		$db = $this->db;
@@ -606,6 +624,9 @@ class PRBillDAO extends PSIBaseExDAO {
 
 	/**
 	 * 采购退货出库单明细列表
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function prBillDetailList($params) {
 		$db = $this->db;
@@ -635,6 +656,12 @@ class PRBillDAO extends PSIBaseExDAO {
 		return $result;
 	}
 
+	/**
+	 * 查询采购退货出库单详情
+	 *
+	 * @param array $params        	
+	 * @return array
+	 */
 	public function prBillInfo($params) {
 		$db = $this->db;
 		
@@ -710,6 +737,9 @@ class PRBillDAO extends PSIBaseExDAO {
 
 	/**
 	 * 删除采购退货出库单
+	 * 
+	 * @param array $params        	
+	 * @return NULL|array
 	 */
 	public function deletePRBill(& $params) {
 		$db = $this->db;
