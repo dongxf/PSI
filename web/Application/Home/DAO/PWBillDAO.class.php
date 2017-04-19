@@ -1260,7 +1260,7 @@ class PWBillDAO extends PSIBaseExDAO {
 				  and p.biz_user_id = u.id";
 		$data = $db->query($sql, $ref);
 		if (! $data) {
-			return null;
+			return NULL;
 		}
 		
 		$v = $data[0];

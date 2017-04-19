@@ -16,7 +16,7 @@ class BillViewService extends PSIBaseExService {
 	 *
 	 * @param string $ref
 	 *        	采购入库单单号
-	 * @return array|null
+	 * @return array|NULL
 	 */
 	public function pwBillInfo($ref) {
 		if ($this->isNotOnline()) {
