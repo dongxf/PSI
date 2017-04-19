@@ -777,7 +777,7 @@ class WSBillDAO extends PSIBaseExDAO {
 
 	/**
 	 * 提交销售出库单
-	 * 
+	 *
 	 * @param array $params        	
 	 * @return NULL|array
 	 */
@@ -1297,5 +1297,68 @@ class WSBillDAO extends PSIBaseExDAO {
 		
 		// 操作成功
 		return null;
+	}
+
+	/**
+	 * 通过销售出库单单号查询销售出库单完整数据，包括明细记录
+	 *
+	 * @param string $ref        	
+	 * @return array|NULL
+	 */
+	public function getFullBillDataByRef($ref) {
+		$db = $this->db;
+		
+		$sql = "select w.id, w.bizdt, c.name as customer_name,
+				  u.name as biz_user_name,
+				  h.name as warehouse_name, w.memo
+				from t_ws_bill w, t_customer c, t_user u, t_warehouse h
+				where w.customer_id = c.id and w.biz_user_id = u.id
+				  and w.warehouse_id = h.id
+				  and w.ref = '%s' ";
+		$data = $db->query($sql, $ref);
+		if (! $data) {
+			return NULL;
+		}
+		
+		$id = $data[0]["id"];
+		
+		$result = array(
+				"bizDT" => $this->toYMD($data[0]["bizdt"]),
+				"customerName" => $data[0]["customer_name"],
+				"warehouseName" => $data[0]["warehouse_name"],
+				"bizUserName" => $data[0]["biz_user_name"],
+				"memo" => $data[0]["memo"]
+		
+		);
+		
+		// 明细表
+		$sql = "select d.id, g.id as goods_id, g.code, g.name, g.spec, u.name as unit_name, d.goods_count,
+					d.goods_price, d.goods_money, d.sn_note, d.memo
+					from t_ws_bill_detail d, t_goods g, t_goods_unit u
+					where d.wsbill_id = '%s' and d.goods_id = g.id and g.unit_id = u.id
+					order by d.show_order";
+		$data = $db->query($sql, $id);
+		$items = array();
+		foreach ( $data as $v ) {
+			$item = array(
+					"id" => $v["id"],
+					"goodsId" => $v["goods_id"],
+					"goodsCode" => $v["code"],
+					"goodsName" => $v["name"],
+					"goodsSpec" => $v["spec"],
+					"unitName" => $v["unit_name"],
+					"goodsCount" => $v["goods_count"],
+					"goodsPrice" => $v["goods_price"],
+					"goodsMoney" => $v["goods_money"],
+					"sn" => $v["sn_note"],
+					"memo" => $v["memo"]
+			
+			);
+			$items[] = $item;
+		}
+		
+		$result["items"] = $items;
+		
+		return $result;
 	}
 }

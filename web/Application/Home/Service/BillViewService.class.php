@@ -4,6 +4,7 @@ namespace Home\Service;
 
 use Home\DAO\PWBillDAO;
 use Home\DAO\PRBillDAO;
+use Home\DAO\WSBillDAO;
 
 /**
  * 查看单据Service
@@ -31,62 +32,16 @@ class BillViewService extends PSIBaseExService {
 	/**
 	 * 由单号查询销售出库单信息
 	 *
-	 * @param array $params        	
-	 * @return array
+	 * @param string $ref        	
+	 * @return array|NULL
 	 */
-	public function wsBillInfo($params) {
+	public function wsBillInfo($ref) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
 		
-		$ref = $params["ref"];
-		
-		$result = array();
-		
-		$db = $this->db();
-		$sql = "select w.id, w.bizdt, c.name as customer_name,
-					  u.name as biz_user_name,
-					  h.name as warehouse_name, w.memo
-					from t_ws_bill w, t_customer c, t_user u, t_warehouse h
-					where w.customer_id = c.id and w.biz_user_id = u.id
-					  and w.warehouse_id = h.id
-					  and w.ref = '%s' ";
-		$data = $db->query($sql, $ref);
-		if ($data) {
-			$id = $data[0]["id"];
-			
-			$result["bizDT"] = date("Y-m-d", strtotime($data[0]["bizdt"]));
-			$result["customerName"] = $data[0]["customer_name"];
-			$result["warehouseName"] = $data[0]["warehouse_name"];
-			$result["bizUserName"] = $data[0]["biz_user_name"];
-			$result["memo"] = $data[0]["memo"];
-			
-			// 明细表
-			$sql = "select d.id, g.id as goods_id, g.code, g.name, g.spec, u.name as unit_name, d.goods_count,
-					d.goods_price, d.goods_money, d.sn_note, d.memo
-					from t_ws_bill_detail d, t_goods g, t_goods_unit u
-					where d.wsbill_id = '%s' and d.goods_id = g.id and g.unit_id = u.id
-					order by d.show_order";
-			$data = $db->query($sql, $id);
-			$items = array();
-			foreach ( $data as $i => $v ) {
-				$items[$i]["id"] = $v["id"];
-				$items[$i]["goodsId"] = $v["goods_id"];
-				$items[$i]["goodsCode"] = $v["code"];
-				$items[$i]["goodsName"] = $v["name"];
-				$items[$i]["goodsSpec"] = $v["spec"];
-				$items[$i]["unitName"] = $v["unit_name"];
-				$items[$i]["goodsCount"] = $v["goods_count"];
-				$items[$i]["goodsPrice"] = $v["goods_price"];
-				$items[$i]["goodsMoney"] = $v["goods_money"];
-				$items[$i]["sn"] = $v["sn_note"];
-				$items[$i]["memo"] = $v["memo"];
-			}
-			
-			$result["items"] = $items;
-		}
-		
-		return $result;
+		$dao = new WSBillDAO($this->db());
+		return $dao->getFullBillDataByRef($ref);
 	}
 
 	/**
