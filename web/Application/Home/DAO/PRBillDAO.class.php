@@ -737,7 +737,7 @@ class PRBillDAO extends PSIBaseExDAO {
 
 	/**
 	 * 删除采购退货出库单
-	 * 
+	 *
 	 * @param array $params        	
 	 * @return NULL|array
 	 */
@@ -1242,6 +1242,73 @@ class PRBillDAO extends PSIBaseExDAO {
 					"goodsMoney" => $v["rej_money"]
 			);
 			
+			$items[] = $item;
+		}
+		
+		$result["items"] = $items;
+		
+		return $result;
+	}
+
+	/**
+	 * 通过单号查询采购退货出库单完整信息，包括明细记录
+	 *
+	 * @param string $ref
+	 *        	采购退货出库单单号
+	 * @return array|NULL
+	 */
+	public function getFullBillDataByRef($ref) {
+		$db = $this->db;
+		$sql = "select p.id, w.name as warehouse_name,
+					u.name as biz_user_name, pw.ref as pwbill_ref,
+					s.name as supplier_name,
+					p.bizdt
+				from t_pr_bill p, t_warehouse w, t_user u, t_pw_bill pw, t_supplier s
+				where p.ref = '%s'
+					and p.warehouse_id = w.id
+					and p.biz_user_id = u.id
+					and p.pw_bill_id = pw.id
+					and p.supplier_id = s.id ";
+		$data = $db->query($sql, $ref);
+		if (! $data) {
+			return NULL;
+		}
+		
+		$id = $data[0]["id"];
+		$result = array(
+				"bizUserName" => $data[0]["biz_user_name"],
+				"warehouseName" => $data[0]["warehouse_name"],
+				"pwbillRef" => $data[0]["pwbill_ref"],
+				"supplierName" => $data[0]["supplier_name"],
+				"bizDT" => $this->toYMD($data[0]["bizdt"])
+		);
+		
+		$items = array();
+		$sql = "select p.pwbilldetail_id as id, p.goods_id, g.code as goods_code, g.name as goods_name,
+					g.spec as goods_spec, u.name as unit_name, p.goods_count,
+					p.goods_price, p.goods_money, p.rejection_goods_count as rej_count,
+					p.rejection_goods_price as rej_price, p.rejection_money as rej_money
+				from t_pr_bill_detail p, t_goods g, t_goods_unit u
+				where p.prbill_id = '%s'
+					and p.goods_id = g.id
+					and g.unit_id = u.id
+				order by p.show_order";
+		$data = $db->query($sql, $id);
+		foreach ( $data as $v ) {
+			$item = array(
+					"id" => $v["id"],
+					"goodsId" => $v["goods_id"],
+					"goodsCode" => $v["goods_code"],
+					"goodsName" => $v["goods_name"],
+					"goodsSpec" => $v["goods_spec"],
+					"unitName" => $v["unit_name"],
+					"goodsCount" => $v["goods_count"],
+					"goodsPrice" => $v["goods_price"],
+					"goodsMoney" => $v["goods_money"],
+					"rejCount" => $v["rej_count"],
+					"rejPrice" => $v["rej_price"],
+					"rejMoney" => $v["rej_money"]
+			);
 			$items[] = $item;
 		}
 		

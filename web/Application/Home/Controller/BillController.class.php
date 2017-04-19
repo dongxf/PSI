@@ -140,12 +140,10 @@ class BillController extends Controller {
 	 */
 	public function prBillInfo() {
 		if (IS_POST) {
-			$params = array(
-					"ref" => I("post.ref")
-			);
+			$ref = I("post.ref");
 			
 			$bs = new BillViewService();
-			$this->ajaxReturn($bs->prBillInfo($params));
+			$this->ajaxReturn($bs->prBillInfo($ref));
 		}
 	}
 
