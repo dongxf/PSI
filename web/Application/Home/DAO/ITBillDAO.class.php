@@ -833,7 +833,7 @@ class ITBillDAO extends PSIBaseExDAO {
 				order by t.show_order ";
 		
 		$data = $db->query($sql, $id);
-		foreach ( $data as $i => $v ) {
+		foreach ( $data as $v ) {
 			$item = array(
 					"id" => $v["id"],
 					"goodsId" => $v["goods_id"],
