@@ -794,4 +794,60 @@ class ITBillDAO extends PSIBaseExDAO {
 		
 		return $bill;
 	}
+
+	/**
+	 * 通过调拨单单号查询调拨单完整数据，包括明细记录
+	 *
+	 * @param string $ref
+	 *        	调拨单单号
+	 * @return array|NULL
+	 */
+	public function getFullBillDataByRef($ref) {
+		$db = $this->db;
+		$sql = "select t.id, t.bizdt, u.name as biz_user_name,
+					wf.name as from_warehouse_name,
+					wt.name as to_warehouse_name
+				from t_it_bill t, t_user u, t_warehouse wf, t_warehouse wt
+				where t.ref = '%s' and t.biz_user_id = u.id
+				      and t.from_warehouse_id = wf.id
+				      and t.to_warehouse_id = wt.id";
+		$data = $db->query($sql, $ref);
+		if (! $data) {
+			return NULL;
+		}
+		
+		$id = $data[0]["id"];
+		
+		$result = array(
+				"bizUserName" => $data[0]["biz_user_name"],
+				"bizDT" => $this->toYMD($data[0]["bizdt"]),
+				"fromWarehouseName" => $data[0]["from_warehouse_name"],
+				"toWarehouseName" => $data[0]["to_warehouse_name"]
+		
+		);
+		
+		$items = array();
+		$sql = "select t.id, g.id as goods_id, g.code, g.name, g.spec, u.name as unit_name, t.goods_count
+				from t_it_bill_detail t, t_goods g, t_goods_unit u
+				where t.itbill_id = '%s' and t.goods_id = g.id and g.unit_id = u.id
+				order by t.show_order ";
+		
+		$data = $db->query($sql, $id);
+		foreach ( $data as $i => $v ) {
+			$item = array(
+					"id" => $v["id"],
+					"goodsId" => $v["goods_id"],
+					"goodsCode" => $v["code"],
+					"goodsName" => $v["name"],
+					"goodsSpec" => $v["spec"],
+					"unitName" => $v["unit_name"],
+					"goodsCount" => $v["goods_count"]
+			);
+			$items[] = $item;
+		}
+		
+		$result["items"] = $items;
+		
+		return $result;
+	}
 }
