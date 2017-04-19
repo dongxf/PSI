@@ -785,7 +785,7 @@ class PWBillDAO extends PSIBaseExDAO {
 
 	/**
 	 * 提交采购入库单
-	 * 
+	 *
 	 * @param array $params        	
 	 * @return NULL|array
 	 */
@@ -1234,6 +1234,68 @@ class PWBillDAO extends PSIBaseExDAO {
 					"goodsMoney" => $v["goods_money"]
 			);
 			
+			$items[] = $item;
+		}
+		
+		$result["items"] = $items;
+		
+		return $result;
+	}
+
+	/**
+	 * 通过单号查询采购入库的完整信息，包括明细入库记录
+	 *
+	 * @param string $ref
+	 *        	采购入库单单号
+	 * @return array|NULL
+	 */
+	public function getFullBillDataByRef($ref) {
+		$db = $this->db;
+		
+		$sql = "select p.id, s.name as supplier_name,
+					w.name as  warehouse_name,
+					u.name as biz_user_name, p.biz_dt
+				from t_pw_bill p, t_supplier s, t_warehouse w, t_user u
+				where p.ref = '%s' and p.supplier_id = s.id and p.warehouse_id = w.id
+				  and p.biz_user_id = u.id";
+		$data = $db->query($sql, $ref);
+		if (! $data) {
+			return null;
+		}
+		
+		$v = $data[0];
+		$id = $v["id"];
+		
+		$result = array(
+				"supplierName" => $v["supplier_name"],
+				"warehouseName" => $v["warehouse_name"],
+				"bizUserName" => $v["biz_user_name"],
+				"bizDT" => $this->toYMD($v["biz_dt"])
+		
+		);
+		
+		// 明细记录
+		$items = array();
+		$sql = "select p.id, p.goods_id, g.code, g.name, g.spec, u.name as unit_name,
+					p.goods_count, p.goods_price, p.goods_money, p.memo
+					from t_pw_bill_detail p, t_goods g, t_goods_unit u
+					where p.goods_Id = g.id and g.unit_id = u.id and p.pwbill_id = '%s'
+					order by p.show_order";
+		$data = $db->query($sql, $id);
+		foreach ( $data as $v ) {
+			$item = array(
+					"id" => $v["id"],
+					"goodsId" => $v["goods_id"],
+					"goodsCode" => $v["code"],
+					"goodsName" => $v["name"],
+					"goodsSpec" => $v["spec"],
+					"unitName" => $v["unit_name"],
+					"goodsCount" => $v["goods_count"],
+					"goodsPrice" => $v["goods_price"],
+					"goodsMoney" => $v["goods_money"],
+					"memo" => $v["memo"]
+			
+			);
 			$items[] = $item;
 		}
 		

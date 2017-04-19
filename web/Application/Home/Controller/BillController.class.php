@@ -18,6 +18,9 @@ class BillController extends Controller {
 
 	/**
 	 * 判断当前用户对给定的fid是否有权限
+	 *
+	 * @param string $fid        	
+	 * @return bool true: 有权限
 	 */
 	private function hasPermission($fid) {
 		$pm = false;
@@ -101,12 +104,10 @@ class BillController extends Controller {
 	 */
 	public function pwBillInfo() {
 		if (IS_POST) {
-			$params = array(
-					"ref" => I("post.ref")
-			);
+			$ref = I("post.ref");
 			
 			$bs = new BillViewService();
-			$this->ajaxReturn($bs->pwBillInfo($params));
+			$this->ajaxReturn($bs->pwBillInfo($ref));
 		}
 	}
 

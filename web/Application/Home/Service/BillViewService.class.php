@@ -2,6 +2,8 @@
 
 namespace Home\Service;
 
+use Home\DAO\PWBillDAO;
+
 /**
  * 查看单据Service
  *
@@ -12,60 +14,17 @@ class BillViewService extends PSIBaseExService {
 	/**
 	 * 由单号查询采购入库单信息
 	 *
-	 * @param array $params        	
-	 * @return array
+	 * @param string $ref
+	 *        	采购入库单单号
+	 * @return array|null
 	 */
-	public function pwBillInfo($params) {
+	public function pwBillInfo($ref) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
 		
-		$ref = $params["ref"];
-		
-		$result = array();
-		
-		$db = $this->db();
-		$sql = "select p.id, s.name as supplier_name,
-				w.name as  warehouse_name,
-				u.name as biz_user_name, p.biz_dt
-				from t_pw_bill p, t_supplier s, t_warehouse w, t_user u
-				where p.ref = '%s' and p.supplier_id = s.id and p.warehouse_id = w.id
-				  and p.biz_user_id = u.id";
-		$data = $db->query($sql, $ref);
-		if ($data) {
-			$v = $data[0];
-			$id = $v["id"];
-			
-			$result["supplierName"] = $v["supplier_name"];
-			$result["warehouseName"] = $v["warehouse_name"];
-			$result["bizUserName"] = $v["biz_user_name"];
-			$result["bizDT"] = date("Y-m-d", strtotime($v["biz_dt"]));
-			
-			// 明细记录
-			$items = array();
-			$sql = "select p.id, p.goods_id, g.code, g.name, g.spec, u.name as unit_name,
-					p.goods_count, p.goods_price, p.goods_money, p.memo
-					from t_pw_bill_detail p, t_goods g, t_goods_unit u
-					where p.goods_Id = g.id and g.unit_id = u.id and p.pwbill_id = '%s'
-					order by p.show_order";
-			$data = $db->query($sql, $id);
-			foreach ( $data as $i => $v ) {
-				$items[$i]["id"] = $v["id"];
-				$items[$i]["goodsId"] = $v["goods_id"];
-				$items[$i]["goodsCode"] = $v["code"];
-				$items[$i]["goodsName"] = $v["name"];
-				$items[$i]["goodsSpec"] = $v["spec"];
-				$items[$i]["unitName"] = $v["unit_name"];
-				$items[$i]["goodsCount"] = $v["goods_count"];
-				$items[$i]["goodsPrice"] = $v["goods_price"];
-				$items[$i]["goodsMoney"] = $v["goods_money"];
-				$items[$i]["memo"] = $v["memo"];
-			}
-			
-			$result["items"] = $items;
-		}
-		
-		return $result;
+		$dao = new PWBillDAO($this->db());
+		return $dao->getFullBillDataByRef($ref);
 	}
 
 	/**
@@ -319,7 +278,7 @@ class BillViewService extends PSIBaseExService {
 
 	/**
 	 * 由单号查询盘点单信息
-	 * 
+	 *
 	 * @param array $params        	
 	 * @return array
 	 */
