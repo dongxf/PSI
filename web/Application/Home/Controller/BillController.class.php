@@ -212,12 +212,10 @@ class BillController extends Controller {
 	 */
 	public function srBillInfo() {
 		if (IS_POST) {
-			$params = array(
-					"ref" => I("post.ref")
-			);
+			$ref = I("post.ref");
 			
 			$bs = new BillViewService();
-			$this->ajaxReturn($bs->srBillInfo($params));
+			$this->ajaxReturn($bs->srBillInfo($ref));
 		}
 	}
 

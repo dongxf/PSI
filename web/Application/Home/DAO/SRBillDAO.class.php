@@ -1313,4 +1313,69 @@ class SRBillDAO extends PSIBaseExDAO {
 		
 		return $bill;
 	}
+
+	/**
+	 * 通过销售退货入库单单号查询销售退货入库单完整信息，包括明细记录
+	 *
+	 * @param string $ref
+	 *        	销售退货入库单单号
+	 * @return array|NULL
+	 */
+	public function getFullBillDataByRef($ref) {
+		$db = $this->db;
+		
+		$sql = "select w.id, w.bizdt, c.name as customer_name,
+					 u.name as biz_user_name,
+					 h.name as warehouse_name, wsBill.ref as ws_bill_ref
+				 from t_sr_bill w, t_customer c, t_user u, t_warehouse h, t_ws_bill wsBill
+				 where w.customer_id = c.id and w.biz_user_id = u.id
+					 and w.warehouse_id = h.id
+					 and w.ref = '%s' and wsBill.id = w.ws_bill_id";
+		$data = $db->query($sql, $ref);
+		if (! $data) {
+			return NULL;
+		}
+		
+		$id = $data[0]["id"];
+		
+		$result = array(
+				"bizDT" => $this->toYMD($data[0]["bizdt"]),
+				"customerName" => $data[0]["customer_name"],
+				"warehouseName" => $data[0]["warehouse_name"],
+				"bizUserName" => $data[0]["biz_user_name"],
+				"wsBillRef" => $data[0]["ws_bill_ref"]
+		);
+		
+		$sql = "select d.id, g.id as goods_id, g.code, g.name, g.spec, u.name as unit_name, d.goods_count,
+					d.goods_price, d.goods_money,
+					d.rejection_goods_count, d.rejection_goods_price, d.rejection_sale_money,
+					d.wsbilldetail_id, d.sn_note
+				from t_sr_bill_detail d, t_goods g, t_goods_unit u
+				where d.srbill_id = '%s' and d.goods_id = g.id and g.unit_id = u.id
+				order by d.show_order";
+		$data = $db->query($sql, $id);
+		$items = array();
+		foreach ( $data as $v ) {
+			$item = array(
+					"id" => $v["wsbilldetail_id"],
+					"goodsId" => $v["goods_id"],
+					"goodsCode" => $v["code"],
+					"goodsName" => $v["name"],
+					"goodsSpec" => $v["spec"],
+					"unitName" => $v["unit_name"],
+					"goodsCount" => $v["goods_count"],
+					"goodsPrice" => $v["goods_price"],
+					"goodsMoney" => $v["goods_money"],
+					"rejCount" => $v["rejection_goods_count"],
+					"rejPrice" => $v["rejection_goods_price"],
+					"rejMoney" => $v["rejection_sale_money"],
+					"sn" => $v["sn_note"]
+			);
+			$items[] = $item;
+		}
+		
+		$result["items"] = $items;
+		
+		return $result;
+	}
 }
