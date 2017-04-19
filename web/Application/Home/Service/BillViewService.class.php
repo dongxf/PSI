@@ -11,6 +11,9 @@ class BillViewService extends PSIBaseExService {
 
 	/**
 	 * 由单号查询采购入库单信息
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function pwBillInfo($params) {
 		if ($this->isNotOnline()) {
@@ -67,6 +70,9 @@ class BillViewService extends PSIBaseExService {
 
 	/**
 	 * 由单号查询销售出库单信息
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function wsBillInfo($params) {
 		if ($this->isNotOnline()) {
@@ -125,6 +131,9 @@ class BillViewService extends PSIBaseExService {
 
 	/**
 	 * 由单号查询采购退货出库单
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function prBillInfo($params) {
 		if ($this->isNotOnline()) {
@@ -137,15 +146,15 @@ class BillViewService extends PSIBaseExService {
 		
 		$db = $this->db();
 		$sql = "select p.id, w.name as warehouse_name,
-						u.name as biz_user_name, pw.ref as pwbill_ref,
-						s.name as supplier_name, 
-						p.bizdt
-					from t_pr_bill p, t_warehouse w, t_user u, t_pw_bill pw, t_supplier s
-					where p.ref = '%s'
-						and p.warehouse_id = w.id
-						and p.biz_user_id = u.id
-						and p.pw_bill_id = pw.id
-						and p.supplier_id = s.id ";
+					u.name as biz_user_name, pw.ref as pwbill_ref,
+					s.name as supplier_name, 
+					p.bizdt
+				from t_pr_bill p, t_warehouse w, t_user u, t_pw_bill pw, t_supplier s
+				where p.ref = '%s'
+					and p.warehouse_id = w.id
+					and p.biz_user_id = u.id
+					and p.pw_bill_id = pw.id
+					and p.supplier_id = s.id ";
 		$data = $db->query($sql, $ref);
 		if (! $data) {
 			return $result;
@@ -160,14 +169,14 @@ class BillViewService extends PSIBaseExService {
 		
 		$items = array();
 		$sql = "select p.pwbilldetail_id as id, p.goods_id, g.code as goods_code, g.name as goods_name,
-						g.spec as goods_spec, u.name as unit_name, p.goods_count,
-						p.goods_price, p.goods_money, p.rejection_goods_count as rej_count,
-						p.rejection_goods_price as rej_price, p.rejection_money as rej_money
-					from t_pr_bill_detail p, t_goods g, t_goods_unit u
-					where p.prbill_id = '%s'
-						and p.goods_id = g.id
-						and g.unit_id = u.id
-					order by p.show_order";
+					g.spec as goods_spec, u.name as unit_name, p.goods_count,
+					p.goods_price, p.goods_money, p.rejection_goods_count as rej_count,
+					p.rejection_goods_price as rej_price, p.rejection_money as rej_money
+				from t_pr_bill_detail p, t_goods g, t_goods_unit u
+				where p.prbill_id = '%s'
+					and p.goods_id = g.id
+					and g.unit_id = u.id
+				order by p.show_order";
 		$data = $db->query($sql, $id);
 		foreach ( $data as $i => $v ) {
 			$items[$i]["id"] = $v["id"];
@@ -191,6 +200,9 @@ class BillViewService extends PSIBaseExService {
 
 	/**
 	 * 由单号查询销售退货入库单信息
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function srBillInfo($params) {
 		if ($this->isNotOnline()) {
@@ -202,12 +214,12 @@ class BillViewService extends PSIBaseExService {
 		$db = $this->db();
 		$result = array();
 		$sql = "select w.id, w.bizdt, c.name as customer_name,
-					 u.name as biz_user_name,
-					 h.name as warehouse_name, wsBill.ref as ws_bill_ref
-					 from t_sr_bill w, t_customer c, t_user u, t_warehouse h, t_ws_bill wsBill
-					 where w.customer_id = c.id and w.biz_user_id = u.id
-					 and w.warehouse_id = h.id
-					 and w.ref = '%s' and wsBill.id = w.ws_bill_id";
+				 u.name as biz_user_name,
+				 h.name as warehouse_name, wsBill.ref as ws_bill_ref
+				 from t_sr_bill w, t_customer c, t_user u, t_warehouse h, t_ws_bill wsBill
+				 where w.customer_id = c.id and w.biz_user_id = u.id
+				 and w.warehouse_id = h.id
+				 and w.ref = '%s' and wsBill.id = w.ws_bill_id";
 		$data = $db->query($sql, $ref);
 		if ($data) {
 			$id = $data[0]["id"];
@@ -251,6 +263,9 @@ class BillViewService extends PSIBaseExService {
 
 	/**
 	 * 由单号查询调拨单信息
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function itBillInfo($params) {
 		if ($this->isNotOnline()) {
@@ -263,12 +278,12 @@ class BillViewService extends PSIBaseExService {
 		
 		$db = $this->db();
 		$sql = "select t.id, t.bizdt, u.name as biz_user_name,
-						wf.name as from_warehouse_name,
-						wt.name as to_warehouse_name
-					from t_it_bill t, t_user u, t_warehouse wf, t_warehouse wt
-					where t.ref = '%s' and t.biz_user_id = u.id
-					      and t.from_warehouse_id = wf.id
-					      and t.to_warehouse_id = wt.id";
+					wf.name as from_warehouse_name,
+					wt.name as to_warehouse_name
+				from t_it_bill t, t_user u, t_warehouse wf, t_warehouse wt
+				where t.ref = '%s' and t.biz_user_id = u.id
+				      and t.from_warehouse_id = wf.id
+				      and t.to_warehouse_id = wt.id";
 		$data = $db->query($sql, $ref);
 		if (! $data) {
 			return $result;
@@ -304,6 +319,9 @@ class BillViewService extends PSIBaseExService {
 
 	/**
 	 * 由单号查询盘点单信息
+	 * 
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function icBillInfo($params) {
 		if ($this->isNotOnline()) {
@@ -316,10 +334,10 @@ class BillViewService extends PSIBaseExService {
 		
 		$db = $this->db();
 		$sql = "select t.id, t.bizdt, u.name as biz_user_name,
-						w.name as warehouse_name
-					from t_ic_bill t, t_user u, t_warehouse w
-					where t.ref = '%s' and t.biz_user_id = u.id
-					      and t.warehouse_id = w.id";
+					w.name as warehouse_name
+				from t_ic_bill t, t_user u, t_warehouse w
+				where t.ref = '%s' and t.biz_user_id = u.id
+				      and t.warehouse_id = w.id";
 		$data = $db->query($sql, $ref);
 		if (! $data) {
 			return $result;
