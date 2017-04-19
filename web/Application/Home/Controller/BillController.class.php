@@ -284,12 +284,10 @@ class BillController extends Controller {
 	 */
 	public function icBillInfo() {
 		if (IS_POST) {
-			$params = array(
-					"ref" => I("post.ref")
-			);
+			$ref = I("post.ref");
 			
 			$bs = new BillViewService();
-			$this->ajaxReturn($bs->icBillInfo($params));
+			$this->ajaxReturn($bs->icBillInfo($ref));
 		}
 	}
 }

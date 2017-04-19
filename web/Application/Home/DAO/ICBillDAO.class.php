@@ -765,4 +765,57 @@ class ICBillDAO extends PSIBaseExDAO {
 		
 		return $bill;
 	}
+
+	/**
+	 * 根据盘点单单号查询盘点单的完整数据，包括明细记录
+	 *
+	 * @param string $ref
+	 *        	盘点单单号
+	 * @return array|NULL
+	 */
+	public function getFullBillDataByRef($ref) {
+		$db = $this->db;
+		$sql = "select t.id, t.bizdt, u.name as biz_user_name,
+					w.name as warehouse_name
+				from t_ic_bill t, t_user u, t_warehouse w
+				where t.ref = '%s' and t.biz_user_id = u.id
+				      and t.warehouse_id = w.id";
+		$data = $db->query($sql, $ref);
+		if (! $data) {
+			return NULL;
+		}
+		
+		$id = $data[0]["id"];
+		$result = array(
+				"bizUserName" => $data[0]["biz_user_name"],
+				"bizDT" => $this->toYMD($data[0]["bizdt"]),
+				"warehouseName" => $data[0]["warehouse_name"]
+		);
+		
+		$items = array();
+		$sql = "select t.id, g.id as goods_id, g.code, g.name, g.spec, u.name as unit_name,
+						t.goods_count, t.goods_money
+				from t_ic_bill_detail t, t_goods g, t_goods_unit u
+				where t.icbill_id = '%s' and t.goods_id = g.id and g.unit_id = u.id
+				order by t.show_order ";
+		
+		$data = $db->query($sql, $id);
+		foreach ( $data as $v ) {
+			$item = array(
+					"id" => $v["id"],
+					"goodsId" => $v["goods_id"],
+					"goodsCode" => $v["code"],
+					"goodsName" => $v["name"],
+					"goodsSpec" => $v["spec"],
+					"unitName" => $v["unit_name"],
+					"goodsCount" => $v["goods_count"],
+					"goodsMoney" => $v["goods_money"]
+			);
+			$items[] = $item;
+		}
+		
+		$result["items"] = $items;
+		
+		return $result;
+	}
 }
