@@ -645,6 +645,7 @@ Ext.define("PSI.SaleOrder.SOEditForm", {
 		goods.set("goodsName", data.name);
 		goods.set("unitName", data.unitName);
 		goods.set("goodsSpec", data.spec);
+		goods.set("goodsPrice", data.salePrice);
 
 		me.calcMoney(goods);
 	},
