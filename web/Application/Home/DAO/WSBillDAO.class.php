@@ -301,9 +301,9 @@ class WSBillDAO extends PSIBaseExDAO {
 		
 		// 明细表
 		$sql = "insert into t_ws_bill_detail (id, date_created, goods_id,
-				goods_count, goods_price, goods_money,
-				show_order, wsbill_id, sn_note, data_org, memo, company_id)
-				values ('%s', now(), '%s', %d, %f, %f, %d, '%s', '%s', '%s', '%s', '%s')";
+					goods_count, goods_price, goods_money,
+					show_order, wsbill_id, sn_note, data_org, memo, company_id, sobilldetail_id)
+				values ('%s', now(), '%s', %d, %f, %f, %d, '%s', '%s', '%s', '%s', '%s', '%s')";
 		foreach ( $items as $i => $v ) {
 			$goodsId = $v["goodsId"];
 			if ($goodsId) {
@@ -314,8 +314,10 @@ class WSBillDAO extends PSIBaseExDAO {
 				$sn = $v["sn"];
 				$memo = $v["memo"];
 				
+				$soBillDetailId = $v["soBillDetailId"];
+				
 				$rc = $db->execute($sql, $this->newId(), $goodsId, $goodsCount, $goodsPrice, 
-						$goodsMoney, $i, $id, $sn, $dataOrg, $memo, $companyId);
+						$goodsMoney, $i, $id, $sn, $dataOrg, $memo, $companyId, $soBillDetailId);
 				if ($rc === false) {
 					return $this->sqlError(__METHOD__, __LINE__);
 				}
@@ -459,9 +461,9 @@ class WSBillDAO extends PSIBaseExDAO {
 		}
 		
 		$sql = "insert into t_ws_bill_detail (id, date_created, goods_id,
-				goods_count, goods_price, goods_money,
-				show_order, wsbill_id, sn_note, data_org, memo, company_id)
-				values ('%s', now(), '%s', %d, %f, %f, %d, '%s', '%s', '%s', '%s', '%s')";
+					goods_count, goods_price, goods_money,
+					show_order, wsbill_id, sn_note, data_org, memo, company_id, sobilldetail_id)
+				values ('%s', now(), '%s', %d, %f, %f, %d, '%s', '%s', '%s', '%s', '%s', '%s')";
 		foreach ( $items as $i => $v ) {
 			$goodsId = $v["goodsId"];
 			if ($goodsId) {
@@ -472,8 +474,10 @@ class WSBillDAO extends PSIBaseExDAO {
 				$sn = $v["sn"];
 				$memo = $v["memo"];
 				
+				$soBillDetailId = $v["soBillDetailId"];
+				
 				$rc = $db->execute($sql, $this->newId(), $goodsId, $goodsCount, $goodsPrice, 
-						$goodsMoney, $i, $id, $sn, $dataOrg, $memo, $companyId);
+						$goodsMoney, $i, $id, $sn, $dataOrg, $memo, $companyId, $soBillDetailId);
 				if ($rc === false) {
 					return $this->sqlError(__METHOD__, __LINE__);
 				}
@@ -599,7 +603,7 @@ class WSBillDAO extends PSIBaseExDAO {
 							where s.sobill_id = '%s' and s.goods_id = g.id and g.unit_id = u.id
 							order by s.show_order ";
 					$data = $db->query($sql, $pobillId);
-					foreach ( $data as $i => $v ) {
+					foreach ( $data as $v ) {
 						$item = array(
 								"id" => $v["id"],
 								"goodsId" => $v["goods_id"],
@@ -651,24 +655,28 @@ class WSBillDAO extends PSIBaseExDAO {
 			}
 			
 			$sql = "select d.id, g.id as goods_id, g.code, g.name, g.spec, u.name as unit_name, d.goods_count,
-					d.goods_price, d.goods_money, d.sn_note, d.memo
+					d.goods_price, d.goods_money, d.sn_note, d.memo, d.sobilldetail_id
 					from t_ws_bill_detail d, t_goods g, t_goods_unit u
 					where d.wsbill_id = '%s' and d.goods_id = g.id and g.unit_id = u.id
 					order by d.show_order";
 			$data = $db->query($sql, $id);
 			$items = array();
-			foreach ( $data as $i => $v ) {
-				$items[$i]["id"] = $v["id"];
-				$items[$i]["goodsId"] = $v["goods_id"];
-				$items[$i]["goodsCode"] = $v["code"];
-				$items[$i]["goodsName"] = $v["name"];
-				$items[$i]["goodsSpec"] = $v["spec"];
-				$items[$i]["unitName"] = $v["unit_name"];
-				$items[$i]["goodsCount"] = $v["goods_count"];
-				$items[$i]["goodsPrice"] = $v["goods_price"];
-				$items[$i]["goodsMoney"] = $v["goods_money"];
-				$items[$i]["sn"] = $v["sn_note"];
-				$items[$i]["memo"] = $v["memo"];
+			foreach ( $data as $v ) {
+				$item = array(
+						"id" => $v["id"],
+						"goodsId" => $v["goods_id"],
+						"goodsCode" => $v["code"],
+						"goodsName" => $v["name"],
+						"goodsSpec" => $v["spec"],
+						"unitName" => $v["unit_name"],
+						"goodsCount" => $v["goods_count"],
+						"goodsPrice" => $v["goods_price"],
+						"goodsMoney" => $v["goods_money"],
+						"sn" => $v["sn_note"],
+						"memo" => $v["memo"],
+						"soBillDetailId" => $v["sobilldetail_id"]
+				);
+				$items[] = $item;
 			}
 			
 			$result["items"] = $items;
