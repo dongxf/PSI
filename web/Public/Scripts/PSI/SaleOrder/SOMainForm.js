@@ -151,88 +151,89 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 	getQueryCmp : function() {
 		var me = this;
 		return [{
-					id : "editQueryBillStatus",
-					xtype : "combo",
-					queryMode : "local",
-					editable : false,
-					valueField : "id",
-					labelWidth : 60,
-					labelAlign : "right",
-					labelSeparator : "",
-					fieldLabel : "状态",
-					margin : "5, 0, 0, 0",
-					store : Ext.create("Ext.data.ArrayStore", {
-								fields : ["id", "text"],
-								data : [[-1, "全部"], [0, "待审核"], [1000, "已审核"]]
-							}),
-					value : -1
-				}, {
-					id : "editQueryRef",
-					labelWidth : 60,
-					labelAlign : "right",
-					labelSeparator : "",
-					fieldLabel : "单号",
-					margin : "5, 0, 0, 0",
-					xtype : "textfield"
-				}, {
-					id : "editQueryFromDT",
-					xtype : "datefield",
-					margin : "5, 0, 0, 0",
-					format : "Y-m-d",
-					labelAlign : "right",
-					labelSeparator : "",
-					fieldLabel : "交货日期（起）"
-				}, {
-					id : "editQueryToDT",
-					xtype : "datefield",
-					margin : "5, 0, 0, 0",
-					format : "Y-m-d",
-					labelAlign : "right",
-					labelSeparator : "",
-					fieldLabel : "交货日期（止）"
-				}, {
-					id : "editQueryCustomer",
-					xtype : "psi_customerfield",
-					labelAlign : "right",
-					labelSeparator : "",
-					labelWidth : 60,
-					margin : "5, 0, 0, 0",
-					fieldLabel : "客户"
-				}, {
-					id : "editQueryReceivingType",
-					labelAlign : "right",
-					labelSeparator : "",
-					fieldLabel : "收款方式",
-					labelWidth : 60,
-					margin : "5, 0, 0, 0",
-					xtype : "combo",
-					queryMode : "local",
-					editable : false,
-					valueField : "id",
-					store : Ext.create("Ext.data.ArrayStore", {
-								fields : ["id", "text"],
-								data : [[-1, "全部"], [0, "记应收账款"], [1, "现金收款"]]
-							}),
-					value : -1
-				}, {
-					xtype : "container",
-					items : [{
-								xtype : "button",
-								text : "查询",
-								width : 100,
-								margin : "5 0 0 10",
-								iconCls : "PSI-button-refresh",
-								handler : me.onQuery,
-								scope : me
-							}, {
-								xtype : "button",
-								text : "清空查询条件",
-								width : 100,
-								margin : "5, 0, 0, 10",
-								handler : me.onClearQuery,
-								scope : me
-							}]
-				}];
+			id : "editQueryBillStatus",
+			xtype : "combo",
+			queryMode : "local",
+			editable : false,
+			valueField : "id",
+			labelWidth : 60,
+			labelAlign : "right",
+			labelSeparator : "",
+			fieldLabel : "状态",
+			margin : "5, 0, 0, 0",
+			store : Ext.create("Ext.data.ArrayStore", {
+						fields : ["id", "text"],
+						data : [[-1, "全部"], [0, "待审核"], [1000, "已审核"],
+								[2000, "部分出库"], [3000, "全部出库"]]
+					}),
+			value : -1
+		}, {
+			id : "editQueryRef",
+			labelWidth : 60,
+			labelAlign : "right",
+			labelSeparator : "",
+			fieldLabel : "单号",
+			margin : "5, 0, 0, 0",
+			xtype : "textfield"
+		}, {
+			id : "editQueryFromDT",
+			xtype : "datefield",
+			margin : "5, 0, 0, 0",
+			format : "Y-m-d",
+			labelAlign : "right",
+			labelSeparator : "",
+			fieldLabel : "交货日期（起）"
+		}, {
+			id : "editQueryToDT",
+			xtype : "datefield",
+			margin : "5, 0, 0, 0",
+			format : "Y-m-d",
+			labelAlign : "right",
+			labelSeparator : "",
+			fieldLabel : "交货日期（止）"
+		}, {
+			id : "editQueryCustomer",
+			xtype : "psi_customerfield",
+			labelAlign : "right",
+			labelSeparator : "",
+			labelWidth : 60,
+			margin : "5, 0, 0, 0",
+			fieldLabel : "客户"
+		}, {
+			id : "editQueryReceivingType",
+			labelAlign : "right",
+			labelSeparator : "",
+			fieldLabel : "收款方式",
+			labelWidth : 60,
+			margin : "5, 0, 0, 0",
+			xtype : "combo",
+			queryMode : "local",
+			editable : false,
+			valueField : "id",
+			store : Ext.create("Ext.data.ArrayStore", {
+						fields : ["id", "text"],
+						data : [[-1, "全部"], [0, "记应收账款"], [1, "现金收款"]]
+					}),
+			value : -1
+		}, {
+			xtype : "container",
+			items : [{
+						xtype : "button",
+						text : "查询",
+						width : 100,
+						margin : "5 0 0 10",
+						iconCls : "PSI-button-refresh",
+						handler : me.onQuery,
+						scope : me
+					}, {
+						xtype : "button",
+						text : "清空查询条件",
+						width : 100,
+						margin : "5, 0, 0, 10",
+						handler : me.onClearQuery,
+						scope : me
+					}]
+		}];
 	},
 
 	/**
@@ -294,12 +295,16 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 								dataIndex : "billStatus",
 								menuDisabled : true,
 								sortable : false,
-								width : 60,
+								width : 80,
 								renderer : function(value) {
 									if (value == 0) {
 										return "<span style='color:red'>待审核</span>";
 									} else if (value == 1000) {
 										return "已审核";
+									} else if (value == 2000) {
+										return "部分出库";
+									} else if (value == 3000) {
+										return "全部出库";
 									} else {
 										return "";
 									}
@@ -961,7 +966,7 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 		}
 		var bill = item[0];
 
-		if (bill.get("billStatus") != 1000) {
+		if (bill.get("billStatus") < 1000) {
 			PSI.MsgBox.showInfo("当前销售订单还没有审核，无法生成销售出库单");
 			return;
 		}
