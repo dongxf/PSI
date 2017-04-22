@@ -438,7 +438,7 @@ Ext.define("PSI.Sale.WSEditForm", {
 							"goodsSpec", "unitName", "goodsCount", {
 								name : "goodsMoney",
 								type : "float"
-							}, "goodsPrice", "sn", "memo"]
+							}, "goodsPrice", "sn", "memo", "soBillDetailId"]
 				});
 		var store = Ext.create("Ext.data.Store", {
 					autoLoad : false,
@@ -713,7 +713,8 @@ Ext.define("PSI.Sale.WSEditForm", {
 						goodsPrice : item.get("goodsPrice"),
 						goodsMoney : item.get("goodsMoney"),
 						sn : item.get("sn"),
-						memo : item.get("memo")
+						memo : item.get("memo"),
+						soBillDetailId : item.get("soBillDetailId")
 					});
 		}
 
