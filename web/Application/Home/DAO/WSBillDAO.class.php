@@ -598,7 +598,7 @@ class WSBillDAO extends PSIBaseExDAO {
 					// 销售订单的明细
 					$items = array();
 					$sql = "select s.id, s.goods_id, g.code, g.name, g.spec, u.name as unit_name,
-								s.goods_count, s.goods_price, s.goods_money
+								s.goods_count, s.goods_price, s.goods_money, s.left_count
 							from t_so_bill_detail s, t_goods g, t_goods_unit u
 							where s.sobill_id = '%s' and s.goods_id = g.id and g.unit_id = u.id
 							order by s.show_order ";
@@ -611,7 +611,7 @@ class WSBillDAO extends PSIBaseExDAO {
 								"goodsName" => $v["name"],
 								"goodsSpec" => $v["spec"],
 								"unitName" => $v["unit_name"],
-								"goodsCount" => $v["goods_count"],
+								"goodsCount" => $v["left_count"],
 								"goodsPrice" => $v["goods_price"],
 								"goodsMoney" => $v["goods_money"],
 								"soBillDetailId" => $v["id"]
@@ -865,7 +865,7 @@ class WSBillDAO extends PSIBaseExDAO {
 			return $this->bad("收款方式不正确，无法完成提交操作");
 		}
 		
-		$sql = "select id, goods_id, goods_count,  goods_price
+		$sql = "select id, goods_id, goods_count, goods_price, sobilldetail_id
 				from t_ws_bill_detail
 				where wsbill_id = '%s'
 				order by show_order ";
@@ -890,6 +890,8 @@ class WSBillDAO extends PSIBaseExDAO {
 			if ($goodsCount <= 0) {
 				return $this->bad("商品[{$goodsCode} {$goodsName}]的出库数量需要是正数");
 			}
+			
+			$soBillDetailId = $v["sobilldetail_id"];
 			
 			if ($fifo) {
 				// 先进先出法
@@ -1120,6 +1122,28 @@ class WSBillDAO extends PSIBaseExDAO {
 					return $this->sqlError(__METHOD__, __LINE__);
 				}
 			}
+			
+			// 同步销售订单中的出库量
+			$sql = "select goods_count, ws_count
+					from t_so_bill_detail
+					where id = '%s' ";
+			$soDetail = $db->query($sql, $soBillDetailId);
+			if (! $soDetail) {
+				// 不是由销售订单创建的出库单
+				continue;
+			}
+			
+			$totalGoodsCount = $soDetail[0]["goods_count"];
+			$totalWSCount = $soDetail[0]["ws_count"];
+			$totalWSCount += $goodsCount;
+			$totalLeftCount = $totalGoodsCount - $totalWSCount;
+			$sql = "update t_so_bill_detail
+					set ws_count = %d, left_count = %d
+					where id = '%s' ";
+			$rc = $db->execute($sql, $totalWSCount, $totalLeftCount, $soBillDetailId);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
 		}
 		
 		if ($receivingType == 0) {
@@ -1298,12 +1322,41 @@ class WSBillDAO extends PSIBaseExDAO {
 		
 		$profit = $saleMoney - $sumInventoryMoney;
 		
+		// 更新本单据的状态
 		$sql = "update t_ws_bill
 				set bill_status = 1000, inventory_money = %f, profit = %f
 				where id = '%s' ";
 		$rc = $db->execute($sql, $sumInventoryMoney, $profit, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 同步销售订单的状态
+		$sql = "select so_id
+				from t_so_ws
+				where ws_id = '%s' ";
+		$data = $db->query($sql, $id);
+		if ($data) {
+			$soBillId = $data[0]["so_id"];
+			$sql = "select count(*) as cnt
+					from t_so_bill_detail
+					where sobill_id = '%s' and  left_count > 0";
+			$data = $db->query($sql, $soBillId);
+			$cnt = $data[0]["cnt"];
+			$billStatus = 1000;
+			if ($cnt > 0) {
+				// 部分出库
+				$billStatus = 2000;
+			} else {
+				$billStatus = 3000;
+			}
+			$sql = "update t_so_bill
+					set bill_status = %d
+					where id = '%s' ";
+			$rc = $db->execute($sql, $billStatus, $soBillId);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
 		}
 		
 		$params["ref"] = $ref;
