@@ -1427,4 +1427,48 @@ class WSBillDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 根据销售订单id查询出库情况
+	 *
+	 * @param string $soBillId
+	 *        	销售订单
+	 * @return array
+	 */
+	public function soBillWSBillList($soBillId) {
+		$db = $this->db;
+		
+		$sql = "select w.id, w.ref, w.bizdt, c.name as customer_name, u.name as biz_user_name,
+					user.name as input_user_name, h.name as warehouse_name, w.sale_money,
+					w.bill_status, w.date_created, w.receiving_type, w.memo
+				from t_ws_bill w, t_customer c, t_user u, t_user user, t_warehouse h,
+					t_so_ws s
+				where (w.customer_id = c.id) and (w.biz_user_id = u.id)
+					and (w.input_user_id = user.id) and (w.warehouse_id = h.id) 
+					and (w.id = s.ws_id) and (s.so_id = '%s')";
+		
+		$data = $db->query($sql, $soBillId);
+		$result = array();
+		
+		foreach ( $data as $v ) {
+			$item = array(
+					"id" => $v["id"],
+					"ref" => $v["ref"],
+					"bizDate" => $this->toYMD($v["bizdt"]),
+					"customerName" => $v["customer_name"],
+					"warehouseName" => $v["warehouse_name"],
+					"inputUserName" => $v["input_user_name"],
+					"bizUserName" => $v["biz_user_name"],
+					"billStatus" => $v["bill_status"] == 0 ? "待出库" : "已出库",
+					"amount" => $v["sale_money"],
+					"dateCreated" => $v["date_created"],
+					"receivingType" => $v["receiving_type"],
+					"memo" => $v["memo"]
+			);
+			
+			$result[] = $item;
+		}
+		
+		return $result;
+	}
 }

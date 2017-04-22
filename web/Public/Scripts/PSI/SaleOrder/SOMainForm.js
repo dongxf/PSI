@@ -4,7 +4,7 @@
  * @author 李静波
  */
 Ext.define("PSI.SaleOrder.SOMainForm", {
-	extend : "Ext.panel.Panel",
+	extend : "PSI.AFX.BaseMainExForm",
 
 	config : {
 		permission : null
@@ -17,40 +17,39 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 		var me = this;
 
 		Ext.apply(me, {
-					border : 0,
-					layout : "border",
-					tbar : me.getToolbarCmp(),
-					items : [{
-								region : "north",
-								height : 90,
-								layout : "fit",
-								border : 0,
-								title : "查询条件",
-								collapsible : true,
-								layout : {
-									type : "table",
-									columns : 4
-								},
-								items : me.getQueryCmp()
-							}, {
-								region : "center",
-								layout : "border",
-								border : 0,
-								items : [{
-											region : "north",
-											height : "40%",
-											split : true,
-											layout : "fit",
-											border : 0,
-											items : [me.getMainGrid()]
-										}, {
-											region : "center",
-											layout : "fit",
-											border : 0,
-											items : [me.getDetailGrid()]
-										}]
-							}]
-				});
+			tbar : me.getToolbarCmp(),
+			items : [{
+						region : "north",
+						height : 90,
+						layout : "fit",
+						border : 0,
+						title : "查询条件",
+						collapsible : true,
+						layout : {
+							type : "table",
+							columns : 4
+						},
+						items : me.getQueryCmp()
+					}, {
+						region : "center",
+						layout : "border",
+						border : 0,
+						items : [{
+									region : "north",
+									height : "40%",
+									split : true,
+									layout : "fit",
+									border : 0,
+									items : [me.getMainGrid()]
+								}, {
+									region : "center",
+									layout : "fit",
+									xtype : "tabpanel",
+									border : 0,
+									items : [me.getDetailGrid(), me.getWSGrid()]
+								}]
+					}]
+		});
 
 		me.callParent(arguments);
 
@@ -721,6 +720,8 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 		Ext.getCmp("buttonGenWSBill").setDisabled(!commited);
 
 		me.refreshDetailGrid();
+
+		me.refreshWSGrid();
 	},
 
 	/**
@@ -990,5 +991,159 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 		var url = PSI.Const.BASE_URL + "Home/Sale/soBillPdf?ref="
 				+ bill.get("ref");
 		window.open(url);
+	},
+
+	getWSGrid : function() {
+		var me = this;
+		if (me.__wsGrid) {
+			return me.__wsGrid;
+		}
+		var modelName = "PSISOBill_WSBill";
+		Ext.define(modelName, {
+					extend : "Ext.data.Model",
+					fields : ["id", "ref", "bizDate", "customerName",
+							"warehouseName", "inputUserName", "bizUserName",
+							"billStatus", "amount", "dateCreated",
+							"receivingType", "memo"]
+				});
+		var store = Ext.create("Ext.data.Store", {
+					autoLoad : false,
+					model : modelName,
+					data : []
+				});
+
+		me.__wsGrid = Ext.create("Ext.grid.Panel", {
+			title : "销售订单出库详情",
+			viewConfig : {
+				enableTextSelection : true
+			},
+			columnLines : true,
+			columns : [{
+						xtype : "rownumberer",
+						width : 50
+					}, {
+						header : "状态",
+						dataIndex : "billStatus",
+						menuDisabled : true,
+						sortable : false,
+						width : 60,
+						renderer : function(value) {
+							return value == "待出库" ? "<span style='color:red'>"
+									+ value + "</span>" : value;
+						}
+					}, {
+						header : "单号",
+						dataIndex : "ref",
+						width : 110,
+						menuDisabled : true,
+						sortable : false,
+						renderer : function(value, md, record) {
+							return "<a href='"
+									+ PSI.Const.BASE_URL
+									+ "Home/Bill/viewIndex?fid=2028&refType=销售出库&ref="
+									+ encodeURIComponent(record.get("ref"))
+									+ "' target='_blank'>" + value + "</a>";
+						}
+					}, {
+						header : "业务日期",
+						dataIndex : "bizDate",
+						menuDisabled : true,
+						sortable : false
+					}, {
+						header : "客户",
+						dataIndex : "customerName",
+						width : 300,
+						menuDisabled : true,
+						sortable : false
+					}, {
+						header : "收款方式",
+						dataIndex : "receivingType",
+						menuDisabled : true,
+						sortable : false,
+						width : 100,
+						renderer : function(value) {
+							if (value == 0) {
+								return "记应收账款";
+							} else if (value == 1) {
+								return "现金收款";
+							} else if (value == 2) {
+								return "用预收款支付";
+							} else {
+								return "";
+							}
+						}
+					}, {
+						header : "销售金额",
+						dataIndex : "amount",
+						menuDisabled : true,
+						sortable : false,
+						align : "right",
+						xtype : "numbercolumn",
+						width : 150
+					}, {
+						header : "出库仓库",
+						dataIndex : "warehouseName",
+						menuDisabled : true,
+						sortable : false
+					}, {
+						header : "业务员",
+						dataIndex : "bizUserName",
+						menuDisabled : true,
+						sortable : false
+					}, {
+						header : "制单人",
+						dataIndex : "inputUserName",
+						menuDisabled : true,
+						sortable : false
+					}, {
+						header : "制单时间",
+						dataIndex : "dateCreated",
+						width : 140,
+						menuDisabled : true,
+						sortable : false
+					}, {
+						header : "备注",
+						dataIndex : "memo",
+						width : 200,
+						menuDisabled : true,
+						sortable : false
+					}],
+			store : store
+		});
+
+		return me.__wsGrid;
+	},
+
+	refreshWSGrid : function() {
+		var me = this;
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			return;
+		}
+		var bill = item[0];
+
+		var grid = me.getWSGrid();
+		var el = grid.getEl() || Ext.getBody();
+		el.mask(PSI.Const.LOADING);
+
+		var r = {
+			url : me.URL("Home/Sale/soBillWSBillList"),
+			params : {
+				id : bill.get("id")
+			},
+			callback : function(options, success, response) {
+				var store = grid.getStore();
+
+				store.removeAll();
+
+				if (success) {
+					var data = me.decodeJSON(response.responseText);
+					store.add(data);
+				}
+
+				el.unmask();
+			}
+		};
+		me.ajax(r);
 	}
 });

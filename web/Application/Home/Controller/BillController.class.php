@@ -31,7 +31,8 @@ class BillController extends Controller {
 				FIdConst::CASH_INDEX,
 				FIdConst::PRE_RECEIVING,
 				FIdConst::PRE_PAYMENT,
-				FIdConst::PURCHASE_ORDER
+				FIdConst::PURCHASE_ORDER,
+				FIdConst::SALE_ORDER
 		);
 		
 		if (in_array($fid, $idArray)) {

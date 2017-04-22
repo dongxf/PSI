@@ -433,4 +433,16 @@ class SaleController extends PSIBaseController {
 		$ws = new SRBillService();
 		$ws->pdf($params);
 	}
+	
+	/**
+	 * 查询销售订单出库情况
+	 */
+	public function soBillWSBillList() {
+		if (IS_POST){
+			$soBillId = I("post.id");
+			
+			$ws = new WSBillService();
+			$this->ajaxReturn($ws->soBillWSBillList($soBillId));
+		}
+	}
 }

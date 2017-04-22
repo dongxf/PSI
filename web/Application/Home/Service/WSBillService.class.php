@@ -267,4 +267,20 @@ class WSBillService extends PSIBaseExService {
 		
 		$pdf->Output("$ref.pdf", "I");
 	}
+
+	/**
+	 * 根据销售订单id查询出库情况
+	 *
+	 * @param string $soBillId
+	 *        	销售订单id
+	 * @return array
+	 */
+	public function soBillWSBillList($soBillId) {
+		if ($this->isNotOnline()){
+			return $this->emptyResult();
+		}
+		
+		$dao = new WSBillDAO($this->db());
+		return $dao->soBillWSBillList($soBillId);
+	}
 }
