@@ -488,7 +488,8 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 					extend : "Ext.data.Model",
 					fields : ["id", "goodsCode", "goodsName", "goodsSpec",
 							"unitName", "goodsCount", "goodsMoney",
-							"goodsPrice", "taxRate", "tax", "moneyWithTax"]
+							"goodsPrice", "taxRate", "tax", "moneyWithTax",
+							"wsCount", "leftCount"]
 				});
 		var store = Ext.create("Ext.data.Store", {
 					autoLoad : false,
@@ -529,6 +530,26 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 								menuDisabled : true,
 								sortable : false,
 								align : "right"
+							}, {
+								header : "出库数量",
+								dataIndex : "wsCount",
+								menuDisabled : true,
+								sortable : false,
+								align : "right"
+							}, {
+								header : "未出库数量",
+								dataIndex : "leftCount",
+								menuDisabled : true,
+								sortable : false,
+								align : "right",
+								renderer : function(value) {
+									if (value > 0) {
+										return "<span style='color:red'>"
+												+ value + "</span>";
+									} else {
+										return value;
+									}
+								}
 							}, {
 								header : "单位",
 								dataIndex : "unitName",
