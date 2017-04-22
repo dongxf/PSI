@@ -198,6 +198,7 @@ class POBillDAO extends PSIBaseExDAO {
 		$id = $params["id"];
 		
 		$sql = "select p.id, g.code, g.name, g.spec, p.goods_count, p.goods_price, p.goods_money,
+					p.pw_count, p.left_count,
 					p.tax_rate, p.tax, p.money_with_tax, u.name as unit_name
 				from t_po_bill_detail p, t_goods g, t_goods_unit u
 				where p.pobill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id
@@ -205,18 +206,23 @@ class POBillDAO extends PSIBaseExDAO {
 		$result = array();
 		$data = $db->query($sql, $id);
 		
-		foreach ( $data as $i => $v ) {
-			$result[$i]["id"] = $v["id"];
-			$result[$i]["goodsCode"] = $v["code"];
-			$result[$i]["goodsName"] = $v["name"];
-			$result[$i]["goodsSpec"] = $v["spec"];
-			$result[$i]["goodsCount"] = $v["goods_count"];
-			$result[$i]["goodsPrice"] = $v["goods_price"];
-			$result[$i]["goodsMoney"] = $v["goods_money"];
-			$result[$i]["taxRate"] = $v["tax_rate"];
-			$result[$i]["tax"] = $v["tax"];
-			$result[$i]["moneyWithTax"] = $v["money_with_tax"];
-			$result[$i]["unitName"] = $v["unit_name"];
+		foreach ( $data as $v ) {
+			$item = array(
+					"id" => $v["id"],
+					"goodsCode" => $v["code"],
+					"goodsName" => $v["name"],
+					"goodsSpec" => $v["spec"],
+					"goodsCount" => $v["goods_count"],
+					"goodsPrice" => $v["goods_price"],
+					"goodsMoney" => $v["goods_money"],
+					"taxRate" => $v["tax_rate"],
+					"tax" => $v["tax"],
+					"moneyWithTax" => $v["money_with_tax"],
+					"unitName" => $v["unit_name"],
+					"pwCount" => $v["pw_count"],
+					"leftCount" => $v["left_count"]
+			);
+			$result[] = $item;
 		}
 		
 		return $result;
