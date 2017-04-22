@@ -686,7 +686,7 @@ class PWBillDAO extends PSIBaseExDAO {
 					// 采购的明细
 					$items = array();
 					$sql = "select p.id, p.goods_id, g.code, g.name, g.spec, u.name as unit_name,
-								p.goods_count, p.goods_price, p.goods_money
+								p.goods_count, p.goods_price, p.goods_money, p.left_count
 							from t_po_bill_detail p, t_goods g, t_goods_unit u
 							where p.pobill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id
 							order by p.show_order ";
@@ -699,7 +699,7 @@ class PWBillDAO extends PSIBaseExDAO {
 						$items[$i]["goodsName"] = $v["name"];
 						$items[$i]["goodsSpec"] = $v["spec"];
 						$items[$i]["unitName"] = $v["unit_name"];
-						$items[$i]["goodsCount"] = $v["goods_count"];
+						$items[$i]["goodsCount"] = $v["left_count"];
 						$items[$i]["goodsPrice"] = $v["goods_price"];
 						$items[$i]["goodsMoney"] = $v["goods_money"];
 					}
@@ -854,7 +854,8 @@ class PWBillDAO extends PSIBaseExDAO {
 			return $this->bad("业务员不存在");
 		}
 		
-		$sql = "select goods_id, goods_count, goods_price, goods_money, id
+		$sql = "select goods_id, goods_count, goods_price, goods_money, id,
+					pobilldetail_id
 				from t_pw_bill_detail
 				where pwbill_id = '%s' order by show_order";
 		$items = $db->query($sql, $id);
@@ -892,6 +893,8 @@ class PWBillDAO extends PSIBaseExDAO {
 		
 		foreach ( $items as $v ) {
 			$pwbilldetailId = $v["id"];
+			
+			$pobillDetailId = $v["pobilldetail_id"];
 			
 			$goodsCount = intval($v["goods_count"]);
 			$goodsPrice = floatval($v["goods_price"]);
@@ -985,12 +988,65 @@ class PWBillDAO extends PSIBaseExDAO {
 					return $this->sqlError(__METHOD__, __LINE__);
 				}
 			}
+			
+			// 同步采购订单中的到货情况
+			$sql = "select goods_count, pw_count
+					from t_po_bill_detail
+					where id = '%s' ";
+			$poDetail = $db->query($sql, $pobillDetailId);
+			if (! $poDetail) {
+				// 当前采购入库单不是由采购订单创建的
+				continue;
+			}
+			
+			$totalGoodsCount = $poDetail[0]["goods_count"];
+			$totalPWCount = $poDetail[0]["pw_count"];
+			$totalPWCount += $goodsCount;
+			$totalLeftCount = $totalGoodsCount - $totalPWCount;
+			
+			$sql = "update t_po_bill_detail
+					set pw_count = %d, left_count = %d
+					where id = '%s' ";
+			$rc = $db->execute($sql, $totalPWCount, $totalLeftCount, $pobillDetailId);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
 		}
 		
+		// 修改本单据状态为已入库
 		$sql = "update t_pw_bill set bill_status = 1000 where id = '%s' ";
 		$rc = $db->execute($sql, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 同步采购订单的状态
+		$sql = "select po_id
+				from t_po_pw
+				where pw_id = '%s' ";
+		$data = $db->query($sql, $id);
+		if ($data) {
+			$poBillId = $data[0]["po_id"];
+			
+			$sql = "select count(*) as cnt from t_po_bill_detail
+					where pobill_id = '%s' and left_count > 0 ";
+			$data = $db->query($sql, $poBillId);
+			$cnt = $data[0]["cnt"];
+			$billStatus = 1000;
+			if ($cnt > 0) {
+				// 部分入库
+				$billStatus = 2000;
+			} else {
+				// 全部入库
+				$billStatus = 3000;
+			}
+			$sql = "update t_po_bill
+					set bill_status = %d
+					where id = '%s' ";
+			$rc = $db->execute($sql, $billStatus, $poBillId);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
 		}
 		
 		if ($paymentType == 0) {
