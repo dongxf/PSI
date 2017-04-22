@@ -453,11 +453,13 @@ class PWBillDAO extends PSIBaseExDAO {
 			$goodsPrice = $item["goodsPrice"];
 			$goodsMoney = $item["goodsMoney"];
 			
+			$poBillDetailId = $item["poBillDetailId"];
+			
 			$sql = "insert into t_pw_bill_detail (id, date_created, goods_id, goods_count, goods_price,
-									goods_money,  pwbill_id, show_order, data_org, memo, company_id)
-									values ('%s', now(), '%s', %d, %f, %f, '%s', %d, '%s', '%s', '%s')";
+						goods_money,  pwbill_id, show_order, data_org, memo, company_id, pobilldetail_id)
+					values ('%s', now(), '%s', %d, %f, %f, '%s', %d, '%s', '%s', '%s', '%s')";
 			$rc = $db->execute($sql, $this->newId(), $goodsId, $goodsCount, $goodsPrice, 
-					$goodsMoney, $id, $i, $dataOrg, $memo, $companyId);
+					$goodsMoney, $id, $i, $dataOrg, $memo, $companyId, $poBillDetailId);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
@@ -626,22 +628,27 @@ class PWBillDAO extends PSIBaseExDAO {
 			// 采购的商品明细
 			$items = array();
 			$sql = "select p.id, p.goods_id, g.code, g.name, g.spec, u.name as unit_name,
-					p.goods_count, p.goods_price, p.goods_money, p.memo
+						p.goods_count, p.goods_price, p.goods_money, p.memo,
+						p.pobilldetail_id
 					from t_pw_bill_detail p, t_goods g, t_goods_unit u
 					where p.goods_Id = g.id and g.unit_id = u.id and p.pwbill_id = '%s'
 					order by p.show_order";
 			$data = $db->query($sql, $id);
-			foreach ( $data as $i => $v ) {
-				$items[$i]["id"] = $v["id"];
-				$items[$i]["goodsId"] = $v["goods_id"];
-				$items[$i]["goodsCode"] = $v["code"];
-				$items[$i]["goodsName"] = $v["name"];
-				$items[$i]["goodsSpec"] = $v["spec"];
-				$items[$i]["unitName"] = $v["unit_name"];
-				$items[$i]["goodsCount"] = $v["goods_count"];
-				$items[$i]["goodsPrice"] = $v["goods_price"];
-				$items[$i]["goodsMoney"] = $v["goods_money"];
-				$items[$i]["memo"] = $v["memo"];
+			foreach ( $data as $v ) {
+				$item = array(
+						"id" => $v["id"],
+						"goodsId" => $v["goods_id"],
+						"goodsCode" => $v["code"],
+						"goodsName" => $v["name"],
+						"goodsSpec" => $v["spec"],
+						"unitName" => $v["unit_name"],
+						"goodsCount" => $v["goods_count"],
+						"goodsPrice" => $v["goods_price"],
+						"goodsMoney" => $v["goods_money"],
+						"memo" => $v["memo"],
+						"poBillDetailId" => $v["pobilldetail_id"]
+				);
+				$items[] = $item;
 			}
 			
 			$result["items"] = $items;
