@@ -4,7 +4,7 @@
  * @author 李静波
  */
 Ext.define("PSI.Customer.MainForm", {
-	extend : "Ext.panel.Panel",
+	extend : "PSI.AFX.BaseMainExForm",
 	border : 0,
 
 	config : {
@@ -348,7 +348,7 @@ Ext.define("PSI.Customer.MainForm", {
 						actionMethods : {
 							read : "POST"
 						},
-						url : PSI.Const.BASE_URL + "Home/Customer/customerList",
+						url : me.URL("Home/Customer/customerList"),
 						reader : {
 							root : 'customerList',
 							totalProperty : 'totalCount'
@@ -559,9 +559,9 @@ Ext.define("PSI.Customer.MainForm", {
 			return;
 		}
 
-		var item = this.categoryGrid.getSelectionModel().getSelection();
+		var item = me.getCategoryGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			PSI.MsgBox.showInfo("请选择要编辑的客户分类");
+			me.showInfo("请选择要编辑的客户分类");
 			return;
 		}
 
@@ -582,13 +582,13 @@ Ext.define("PSI.Customer.MainForm", {
 		var me = this;
 		var item = me.categoryGrid.getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			PSI.MsgBox.showInfo("请选择要删除的客户分类");
+			me.showInfo("请选择要删除的客户分类");
 			return;
 		}
 
 		var category = item[0];
 
-		var store = me.categoryGrid.getStore();
+		var store = me.getCategoryGrid().getStore();
 		var index = store.findExact("id", category.get("id"));
 		index--;
 		var preIndex = null;
@@ -605,8 +605,7 @@ Ext.define("PSI.Customer.MainForm", {
 			el.mask("正在删除中...");
 
 			var r = {
-				url : PSI.Const.BASE_URL + "Home/Customer/deleteCategory",
-				method : "POST",
+				url : me.URL("Home/Customer/deleteCategory"),
 				params : {
 					id : category.get("id")
 				},
@@ -614,23 +613,23 @@ Ext.define("PSI.Customer.MainForm", {
 					el.unmask();
 
 					if (success) {
-						var data = Ext.JSON.decode(response.responseText);
+						var data = me.decodeJSON(response.responseText);
 						if (data.success) {
-							PSI.MsgBox.tip("成功完成删除操作");
+							me.tip("成功完成删除操作");
 							me.freshCategoryGrid(preIndex);
 						} else {
-							PSI.MsgBox.showInfo(data.msg);
+							me.showInfo(data.msg);
 						}
 					} else {
-						PSI.MsgBox.showInfo("网络错误");
+						me.showInfo("网络错误");
 					}
 				}
 			};
 
-			Ext.Ajax.request(r);
+			me.ajax(r);
 		};
 
-		PSI.MsgBox.confirm(info, funcConfirm);
+		me.confirm(info, funcConfirm);
 	},
 
 	/**
@@ -638,12 +637,11 @@ Ext.define("PSI.Customer.MainForm", {
 	 */
 	freshCategoryGrid : function(id) {
 		var me = this;
-		var grid = me.categoryGrid;
+		var grid = me.getCategoryGrid();
 		var el = grid.getEl() || Ext.getBody();
 		el.mask(PSI.Const.LOADING);
-		Ext.Ajax.request({
-					url : PSI.Const.BASE_URL + "Home/Customer/categoryList",
-					method : "POST",
+		me.ajax({
+					url : me.URL("Home/Customer/categoryList"),
 					params : me.getQueryParam(),
 					callback : function(options, success, response) {
 						var store = grid.getStore();
@@ -651,7 +649,7 @@ Ext.define("PSI.Customer.MainForm", {
 						store.removeAll();
 
 						if (success) {
-							var data = Ext.JSON.decode(response.responseText);
+							var data = me.decodeJSON(response.responseText);
 							store.add(data);
 
 							if (store.getCount() > 0) {
@@ -675,19 +673,21 @@ Ext.define("PSI.Customer.MainForm", {
 	 * 刷新客户资料Grid
 	 */
 	freshCustomerGrid : function(id) {
-		var item = this.categoryGrid.getSelectionModel().getSelection();
+		var me = this;
+
+		var item = me.getCategoryGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			var grid = this.customerGrid;
+			var grid = me.getMainGrid();
 			grid.setTitle("客户列表");
 			return;
 		}
 
 		var category = item[0];
 
-		var grid = this.customerGrid;
+		var grid = me.getMainGrid();
 		grid.setTitle("属于分类 [" + category.get("name") + "] 的客户");
 
-		this.__lastId = id;
+		me.__lastId = id;
 		Ext.getCmp("pagingToolbar").doRefresh()
 	},
 
@@ -699,13 +699,15 @@ Ext.define("PSI.Customer.MainForm", {
 	 * 新增客户资料
 	 */
 	onAddCustomer : function() {
-		if (this.categoryGrid.getStore().getCount() == 0) {
-			PSI.MsgBox.showInfo("没有客户分类，请先新增客户分类");
+		var me = this;
+
+		if (me.getCategoryGrid().getStore().getCount() == 0) {
+			me.showInfo("没有客户分类，请先新增客户分类");
 			return;
 		}
 
 		var form = Ext.create("PSI.Customer.CustomerEditForm", {
-					parentForm : this
+					parentForm : me
 				});
 
 		form.show();
@@ -731,23 +733,23 @@ Ext.define("PSI.Customer.MainForm", {
 			return;
 		}
 
-		var item = this.categoryGrid.getSelectionModel().getSelection();
+		var item = me.getCategoryGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			PSI.MsgBox.showInfo("没有选择客户分类");
+			me.showInfo("没有选择客户分类");
 			return;
 		}
 		var category = item[0];
 
-		var item = this.customerGrid.getSelectionModel().getSelection();
+		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			PSI.MsgBox.showInfo("请选择要编辑的客户");
+			me.showInfo("请选择要编辑的客户");
 			return;
 		}
 
 		var customer = item[0];
 		customer.set("categoryId", category.get("id"));
 		var form = Ext.create("PSI.Customer.CustomerEditForm", {
-					parentForm : this,
+					parentForm : me,
 					entity : customer
 				});
 
@@ -759,15 +761,15 @@ Ext.define("PSI.Customer.MainForm", {
 	 */
 	onDeleteCustomer : function() {
 		var me = this;
-		var item = me.customerGrid.getSelectionModel().getSelection();
+		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			PSI.MsgBox.showInfo("请选择要删除的客户");
+			me.showInfo("请选择要删除的客户");
 			return;
 		}
 
 		var customer = item[0];
 
-		var store = me.customerGrid.getStore();
+		var store = me.getMainGrid().getStore();
 		var index = store.findExact("id", customer.get("id"));
 		index--;
 		var preIndex = null;
@@ -784,8 +786,7 @@ Ext.define("PSI.Customer.MainForm", {
 			el.mask("正在删除中...");
 
 			var r = {
-				url : PSI.Const.BASE_URL + "Home/Customer/deleteCustomer",
-				method : "POST",
+				url : me.URL("Home/Customer/deleteCustomer"),
 				params : {
 					id : customer.get("id")
 				},
@@ -793,27 +794,27 @@ Ext.define("PSI.Customer.MainForm", {
 					el.unmask();
 
 					if (success) {
-						var data = Ext.JSON.decode(response.responseText);
+						var data = me.decodeJSON(response.responseText);
 						if (data.success) {
-							PSI.MsgBox.tip("成功完成删除操作");
+							me.tip("成功完成删除操作");
 							me.freshCustomerGrid(preIndex);
 						} else {
-							PSI.MsgBox.showInfo(data.msg);
+							me.showInfo(data.msg);
 						}
 					}
 				}
 
 			};
 
-			Ext.Ajax.request(r);
+			me.ajax(r);
 		};
 
-		PSI.MsgBox.confirm(info, funcConfirm);
+		me.confirm(info, funcConfirm);
 	},
 
 	gotoCustomerGridRecord : function(id) {
 		var me = this;
-		var grid = me.customerGrid;
+		var grid = me.getMainGrid();
 		var store = grid.getStore();
 		if (id) {
 			var r = store.findExact("id", id);
@@ -829,14 +830,14 @@ Ext.define("PSI.Customer.MainForm", {
 
 	refreshCategoryCount : function() {
 		var me = this;
-		var item = me.categoryGrid.getSelectionModel().getSelection();
+		var item = me.getCategoryGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
 			return;
 		}
 
 		var category = item[0];
-		category.set("cnt", me.customerGrid.getStore().getTotalCount());
-		me.categoryGrid.getStore().commitChanges();
+		category.set("cnt", me.getMainGrid().getStore().getTotalCount());
+		me.getCategoryGrid().getStore().commitChanges();
 	},
 
 	onQueryEditSpecialKey : function(field, e) {
@@ -862,7 +863,7 @@ Ext.define("PSI.Customer.MainForm", {
 
 	getQueryParam : function() {
 		var me = this;
-		var item = me.categoryGrid.getSelectionModel().getSelection();
+		var item = me.getCategoryGrid().getSelectionModel().getSelection();
 		var categoryId;
 		if (item == null || item.length != 1) {
 			categoryId = null;
