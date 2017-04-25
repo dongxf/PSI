@@ -31,6 +31,7 @@ Ext.define("PSI.Customer.MainForm", {
 								height : 90,
 								border : 0,
 								collapsible : true,
+								collapseMode : "mini",
 								title : "查询条件",
 								layout : {
 									type : "table",
@@ -54,6 +55,8 @@ Ext.define("PSI.Customer.MainForm", {
 											minWidth : 200,
 											maxWidth : 350,
 											split : true,
+											collapsible : true,
+											header : false,
 											border : 0,
 											items : [me.getCategoryGrid()]
 										}]
