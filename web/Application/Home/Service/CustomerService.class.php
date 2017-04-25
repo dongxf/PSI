@@ -14,6 +14,9 @@ class CustomerService extends PSIBaseExService {
 
 	/**
 	 * 客户分类列表
+	 * 
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function categoryList($params) {
 		if ($this->isNotOnline()) {

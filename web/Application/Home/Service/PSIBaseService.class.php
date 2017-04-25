@@ -98,7 +98,8 @@ class PSIBaseService {
 
 	/**
 	 * 判断当前用户的session是否已经失效
-	 * true: 已经不在线
+	 *
+	 * @return boolean true: 已经不在线
 	 */
 	protected function isNotOnline() {
 		$userId = session("loginUserId");
@@ -118,6 +119,8 @@ class PSIBaseService {
 
 	/**
 	 * 当用户不在线的时候，返回的提示信息
+	 *
+	 * @return array
 	 */
 	protected function notOnlineError() {
 		return $this->bad("当前用户已经退出系统，请重新登录PSI");
@@ -125,6 +128,8 @@ class PSIBaseService {
 
 	/**
 	 * 返回空列表
+	 * 
+	 * @return array
 	 */
 	protected function emptyResult() {
 		return array();

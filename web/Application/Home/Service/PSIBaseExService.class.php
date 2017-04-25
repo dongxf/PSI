@@ -20,6 +20,8 @@ class PSIBaseExService extends PSIBaseService {
 
 	/**
 	 * 当前登录用户的id
+	 * 
+	 * @return string|NULL
 	 */
 	protected function getLoginUserId() {
 		$us = $this->us();
@@ -52,7 +54,7 @@ class PSIBaseExService extends PSIBaseService {
 
 	/**
 	 * 数据库操作类
-	 * 
+	 *
 	 * @return \Think\Model
 	 */
 	protected function db() {
