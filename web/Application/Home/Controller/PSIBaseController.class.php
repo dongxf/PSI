@@ -36,6 +36,7 @@ class PSIBaseController extends Controller {
 
 	/**
 	 * 跳转到登录页面
+	 * @param string $returnPage 登录后返回的URL
 	 */
 	protected function gotoLoginPage($returnPage = null) {
 		$url = __ROOT__ . "/Home/User/login";
