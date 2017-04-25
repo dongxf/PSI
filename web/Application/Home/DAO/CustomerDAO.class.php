@@ -767,14 +767,12 @@ class CustomerDAO extends PSIBaseExDAO {
 
 	/**
 	 * 获得某个客户的详情
-	 * 
-	 * @param array $params        	
+	 *
+	 * @param string $id 客户id        	
 	 * @return array
 	 */
-	public function customerInfo($params) {
+	public function customerInfo($id) {
 		$db = $this->db;
-		
-		$id = $params["id"];
 		
 		$result = array();
 		

@@ -241,7 +241,7 @@ class CustomerService extends PSIBaseExService {
 
 	/**
 	 * 客户字段，查询数据
-	 * 
+	 *
 	 * @param array $params        	
 	 * @return array
 	 */
@@ -258,14 +258,18 @@ class CustomerService extends PSIBaseExService {
 
 	/**
 	 * 获得某个客户的详情
+	 * 
+	 * @param string $id
+	 *        	客户资料id
+	 * @return array
 	 */
-	public function customerInfo($params) {
+	public function customerInfo($id) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
 		
 		$dao = new CustomerDAO($this->db());
-		return $dao->customerInfo($params);
+		return $dao->customerInfo($id);
 	}
 
 	/**
