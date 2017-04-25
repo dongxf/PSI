@@ -14,7 +14,7 @@ class CustomerService extends PSIBaseExService {
 
 	/**
 	 * 客户分类列表
-	 * 
+	 *
 	 * @param array $params        	
 	 * @return array
 	 */
@@ -85,6 +85,9 @@ class CustomerService extends PSIBaseExService {
 
 	/**
 	 * 删除客户分类
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function deleteCategory($params) {
 		if ($this->isNotOnline()) {
@@ -115,6 +118,9 @@ class CustomerService extends PSIBaseExService {
 
 	/**
 	 * 新建或编辑客户资料
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function editCustomer($params) {
 		if ($this->isNotOnline()) {
@@ -184,6 +190,9 @@ class CustomerService extends PSIBaseExService {
 
 	/**
 	 * 获得某个分类的客户列表
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function customerList($params) {
 		if ($this->isNotOnline()) {
@@ -198,6 +207,9 @@ class CustomerService extends PSIBaseExService {
 
 	/**
 	 * 删除客户资料
+	 *
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function deleteCustomer($params) {
 		if ($this->isNotOnline()) {
@@ -229,6 +241,9 @@ class CustomerService extends PSIBaseExService {
 
 	/**
 	 * 客户字段，查询数据
+	 * 
+	 * @param array $params        	
+	 * @return array
 	 */
 	public function queryData($params) {
 		if ($this->isNotOnline()) {
