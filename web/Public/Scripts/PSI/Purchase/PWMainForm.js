@@ -466,8 +466,10 @@ Ext.define("PSI.Purchase.PWMainForm", {
 	 * 新增采购入库单
 	 */
 	onAddBill : function() {
+		var me = this;
+
 		var form = Ext.create("PSI.Purchase.PWEditForm", {
-					parentForm : this
+					parentForm : me
 				});
 		form.show();
 	},
@@ -594,19 +596,18 @@ Ext.define("PSI.Purchase.PWMainForm", {
 				+ bill.get("warehouseName"));
 		var el = grid.getEl();
 		el.mask(PSI.Const.LOADING);
-		Ext.Ajax.request({
-					url : PSI.Const.BASE_URL + "Home/Purchase/pwBillDetailList",
+		me.ajax({
+					url : me.URL("Home/Purchase/pwBillDetailList"),
 					params : {
 						pwBillId : bill.get("id")
 					},
-					method : "POST",
 					callback : function(options, success, response) {
 						var store = grid.getStore();
 
 						store.removeAll();
 
 						if (success) {
-							var data = Ext.JSON.decode(response.responseText);
+							var data = me.decodeJSON(response.responseText);
 							store.add(data);
 
 							if (store.getCount() > 0) {
