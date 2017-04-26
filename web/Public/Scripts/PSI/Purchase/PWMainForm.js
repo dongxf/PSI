@@ -16,6 +16,7 @@ Ext.define("PSI.Purchase.PWMainForm", {
 								border : 0,
 								title : "查询条件",
 								collapsible : true,
+								collapseMode : "mini",
 								layout : {
 									type : "table",
 									columns : 4

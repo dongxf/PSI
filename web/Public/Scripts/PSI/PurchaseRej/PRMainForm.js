@@ -2,9 +2,8 @@
  * 采购退货出库 - 主界面
  */
 Ext.define("PSI.PurchaseRej.PRMainForm", {
-	extend : "Ext.panel.Panel",
-	border : 0,
-	layout : "border",
+	extend : "PSI.AFX.BaseMainExForm",
+
 	initComponent : function() {
 		var me = this;
 
@@ -14,9 +13,9 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
 								region : "north",
 								height : 90,
 								layout : "fit",
-								border : 0,
 								title : "查询条件",
 								collapsible : true,
+								collapseMode : "mini",
 								layout : {
 									type : "table",
 									columns : 4
@@ -195,7 +194,9 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
 		me.__lastId = id;
 	},
 
-	// 新增采购退货出库单
+	/**
+	 * 新增采购退货出库单
+	 */
 	onAddBill : function() {
 		var me = this;
 		var form = Ext.create("PSI.PurchaseRej.PREditForm", {
@@ -204,12 +205,14 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
 		form.show();
 	},
 
-	// 编辑采购退货出库单
+	/**
+	 * 编辑采购退货出库单
+	 */
 	onEditBill : function() {
 		var me = this;
 		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			PSI.MsgBox.showInfo("请选择要编辑的采购退货出库单");
+			me.showInfo("请选择要编辑的采购退货出库单");
 			return;
 		}
 		var bill = item[0];
@@ -220,105 +223,100 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
 		form.show();
 	},
 
-	// 删除采购退货出库单
+	/**
+	 * 删除采购退货出库单
+	 */
 	onDeleteBill : function() {
 		var me = this;
 		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			PSI.MsgBox.showInfo("请选择要删除的采购退货出库单");
+			me.showInfo("请选择要删除的采购退货出库单");
 			return;
 		}
 		var bill = item[0];
 
 		if (bill.get("billStatus") == "已出库") {
-			PSI.MsgBox.showInfo("当前采购退货出库单已经提交出库，不能删除");
+			me.showInfo("当前采购退货出库单已经提交出库，不能删除");
 			return;
 		}
 
 		var info = "请确认是否删除采购退货出库单: <span style='color:red'>" + bill.get("ref")
 				+ "</span>";
 
-		PSI.MsgBox.confirm(info, function() {
-					var el = Ext.getBody();
-					el.mask("正在删除中...");
-					Ext.Ajax.request({
-								url : PSI.Const.BASE_URL
-										+ "Home/PurchaseRej/deletePRBill",
-								method : "POST",
-								params : {
-									id : bill.get("id")
-								},
-								callback : function(options, success, response) {
-									el.unmask();
+		me.confirm(info, function() {
+			var el = Ext.getBody();
+			el.mask("正在删除中...");
+			me.ajax({
+						url : me.URL("Home/PurchaseRej/deletePRBill"),
+						params : {
+							id : bill.get("id")
+						},
+						callback : function(options, success, response) {
+							el.unmask();
 
-									if (success) {
-										var data = Ext.JSON
-												.decode(response.responseText);
-										if (data.success) {
-											PSI.MsgBox.showInfo("成功完成删除操作",
-													function() {
-														me.refreshMainGrid();
-													});
-										} else {
-											PSI.MsgBox.showInfo(data.msg);
-										}
-									} else {
-										PSI.MsgBox.showInfo("网络错误");
-									}
+							if (success) {
+								var data = me.decodeJSON(response.responseText);
+								if (data.success) {
+									me.showInfo("成功完成删除操作", function() {
+												me.refreshMainGrid();
+											});
+								} else {
+									me.showInfo(data.msg);
 								}
+							} else {
+								me.showInfo("网络错误");
+							}
+						}
 
-							});
-				});
+					});
+		});
 	},
 
-	// 提交采购退货出库单
+	/**
+	 * 提交采购退货出库单
+	 */
 	onCommit : function() {
 		var me = this;
 		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			PSI.MsgBox.showInfo("没有选择要提交的采购退货出库单");
+			me.showInfo("没有选择要提交的采购退货出库单");
 			return;
 		}
 		var bill = item[0];
 
 		if (bill.get("billStatus") == "已出库") {
-			PSI.MsgBox.showInfo("当前采购退货出库单已经提交出库，不能再次提交");
+			me.showInfo("当前采购退货出库单已经提交出库，不能再次提交");
 			return;
 		}
 
 		var info = "请确认是否提交单号: <span style='color:red'>" + bill.get("ref")
 				+ "</span> 的采购退货出库单?";
-		PSI.MsgBox.confirm(info, function() {
-					var el = Ext.getBody();
-					el.mask("正在提交中...");
-					Ext.Ajax.request({
-								url : PSI.Const.BASE_URL
-										+ "Home/PurchaseRej/commitPRBill",
-								method : "POST",
-								params : {
-									id : bill.get("id")
-								},
-								callback : function(options, success, response) {
-									el.unmask();
+		me.confirm(info, function() {
+			var el = Ext.getBody();
+			el.mask("正在提交中...");
+			me.ajax({
+						url : me.URL("Home/PurchaseRej/commitPRBill"),
+						params : {
+							id : bill.get("id")
+						},
+						callback : function(options, success, response) {
+							el.unmask();
 
-									if (success) {
-										var data = Ext.JSON
-												.decode(response.responseText);
-										if (data.success) {
-											PSI.MsgBox.showInfo("成功完成提交操作",
-													function() {
-														me
-																.refreshMainGrid(data.id);
-													});
-										} else {
-											PSI.MsgBox.showInfo(data.msg);
-										}
-									} else {
-										PSI.MsgBox.showInfo("网络错误");
-									}
+							if (success) {
+								var data = me.decodeJSON(response.responseText);
+								if (data.success) {
+									me.showInfo("成功完成提交操作", function() {
+												me.refreshMainGrid(data.id);
+											});
+								} else {
+									me.showInfo(data.msg);
 								}
-							});
-				});
+							} else {
+								me.showInfo("网络错误");
+							}
+						}
+					});
+		});
 	},
 
 	getMainGrid : function() {
@@ -345,8 +343,7 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
 						actionMethods : {
 							read : "POST"
 						},
-						url : PSI.Const.BASE_URL
-								+ "Home/PurchaseRej/prbillList",
+						url : me.URL("Home/PurchaseRej/prbillList"),
 						reader : {
 							root : 'dataList',
 							totalProperty : 'totalCount'
@@ -639,20 +636,18 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
 				+ bill.get("warehouseName"));
 		var el = grid.getEl();
 		el.mask(PSI.Const.LOADING);
-		Ext.Ajax.request({
-					url : PSI.Const.BASE_URL
-							+ "Home/PurchaseRej/prBillDetailList",
+		me.ajax({
+					url : me.URL("Home/PurchaseRej/prBillDetailList"),
 					params : {
 						id : bill.get("id")
 					},
-					method : "POST",
 					callback : function(options, success, response) {
 						var store = grid.getStore();
 
 						store.removeAll();
 
 						if (success) {
-							var data = Ext.JSON.decode(response.responseText);
+							var data = me.decodeJSON(response.responseText);
 							store.add(data);
 
 							if (store.getCount() > 0) {
@@ -747,7 +742,7 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
 		var me = this;
 		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			PSI.MsgBox.showInfo("没有选择要生成pdf文件的采购退货出库单");
+			me.showInfo("没有选择要生成pdf文件的采购退货出库单");
 			return;
 		}
 		var bill = item[0];
