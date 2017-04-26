@@ -630,8 +630,10 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 	 * 新增采购订单
 	 */
 	onAddBill : function() {
+		var me = this;
+
 		var form = Ext.create("PSI.PurchaseOrder.POEditForm", {
-					parentForm : this
+					parentForm : me
 				});
 		form.show();
 	},
@@ -643,7 +645,7 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 		var me = this;
 		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			PSI.MsgBox.showInfo("没有选择要编辑的采购订单");
+			me.showInfo("没有选择要编辑的采购订单");
 			return;
 		}
 		var bill = item[0];
@@ -696,7 +698,7 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 					el.unmask();
 
 					if (success) {
-						var data = Ext.JSON.decode(response.responseText);
+						var data = me.decodeJSON(response.responseText);
 						if (data.success) {
 							me.showInfo("成功完成删除操作", function() {
 										me.refreshMainGrid(preIndex);
@@ -835,7 +837,7 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 					el.unmask();
 
 					if (success) {
-						var data = Ext.JSON.decode(response.responseText);
+						var data = me.decodeJSON(response.responseText);
 						if (data.success) {
 							me.showInfo("成功完成审核操作", function() {
 										me.refreshMainGrid(id);
