@@ -583,7 +583,7 @@ class WSBillDAO extends PSIBaseExDAO {
 			if ($sobillRef) {
 				// 由销售订单生成销售出库单
 				$sql = "select s.id, s.customer_id, c.name as customer_name, s.deal_date,
-							s.receiving_type
+							s.receiving_type, s.bill_memo
 						from t_so_bill s, t_customer c
 						where s.ref = '%s' and s.customer_id = c.id ";
 				$data = $db->query($sql, $sobillRef);
@@ -593,12 +593,13 @@ class WSBillDAO extends PSIBaseExDAO {
 					$result["customerName"] = $v["customer_name"];
 					$result["dealDate"] = $this->toYMD($v["deal_date"]);
 					$result["receivingType"] = $v["receiving_type"];
+					$result["memo"] = $v["bill_memo"];
 					
 					$pobillId = $v["id"];
 					// 销售订单的明细
 					$items = array();
 					$sql = "select s.id, s.goods_id, g.code, g.name, g.spec, u.name as unit_name,
-								s.goods_count, s.goods_price, s.goods_money, s.left_count
+								s.goods_count, s.goods_price, s.goods_money, s.left_count, s.memo
 							from t_so_bill_detail s, t_goods g, t_goods_unit u
 							where s.sobill_id = '%s' and s.goods_id = g.id and g.unit_id = u.id
 							order by s.show_order ";
@@ -614,7 +615,8 @@ class WSBillDAO extends PSIBaseExDAO {
 								"goodsCount" => $v["left_count"],
 								"goodsPrice" => $v["goods_price"],
 								"goodsMoney" => $v["goods_money"],
-								"soBillDetailId" => $v["id"]
+								"soBillDetailId" => $v["id"],
+								"memo" => $v["memo"]
 						
 						);
 						$items[] = $item;

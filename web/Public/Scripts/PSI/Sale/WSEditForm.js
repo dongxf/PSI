@@ -283,6 +283,7 @@ Ext.define("PSI.Sale.WSEditForm", {
 								Ext.getCmp("editBizDT").setValue(data.dealDate);
 								Ext.getCmp("editReceivingType")
 										.setValue(data.receivingType);
+								Ext.getCmp("editBillMemo").setValue(data.memo);
 								var store = me.getGoodsGrid().getStore();
 								store.removeAll();
 								store.add(data.items);
@@ -639,6 +640,11 @@ Ext.define("PSI.Sale.WSEditForm", {
 				me.calcPrice(goods);
 			}
 		} else if (fieldName == "memo") {
+			if (me.getGenBill()) {
+				// 从销售订单生成入库单的时候不能新增明细记录
+				return;
+			}
+
 			var store = me.getGoodsGrid().getStore();
 			if (e.rowIdx == store.getCount() - 1) {
 				store.add({});
