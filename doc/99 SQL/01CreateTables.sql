@@ -875,6 +875,7 @@ CREATE TABLE IF NOT EXISTS `t_so_bill_detail` (
   `show_order` int(11) NOT NULL,
   `data_org` varchar(255) DEFAULT NULL,
   `company_id` varchar(255) DEFAULT NULL,
+  `memo` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
