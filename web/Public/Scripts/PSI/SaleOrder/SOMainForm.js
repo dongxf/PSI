@@ -489,7 +489,7 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 					fields : ["id", "goodsCode", "goodsName", "goodsSpec",
 							"unitName", "goodsCount", "goodsMoney",
 							"goodsPrice", "taxRate", "tax", "moneyWithTax",
-							"wsCount", "leftCount"]
+							"wsCount", "leftCount", "memo"]
 				});
 		var store = Ext.create("Ext.data.Store", {
 					autoLoad : false,
@@ -594,6 +594,12 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 								align : "right",
 								xtype : "numbercolumn",
 								width : 150
+							}, {
+								header : "备注",
+								dataIndex : "memo",
+								menuDisabled : true,
+								sortable : false,
+								width : 120
 							}],
 					store : store
 				});

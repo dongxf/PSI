@@ -275,7 +275,7 @@ Ext.define("PSI.SaleOrder.SOEditForm", {
 
 	onWndShow : function() {
 		Ext.get(window).on('beforeunload', this.onWindowBeforeUnload);
-		
+
 		var me = this;
 
 		var el = me.getEl() || Ext.getBody();
@@ -423,7 +423,7 @@ Ext.define("PSI.SaleOrder.SOEditForm", {
 							}, {
 								name : "moneyWithTax",
 								type : "float"
-							}]
+							}, "memo"]
 				});
 		var store = Ext.create("Ext.data.Store", {
 					autoLoad : false,
@@ -563,6 +563,15 @@ Ext.define("PSI.SaleOrder.SOEditForm", {
 								},
 								summaryType : "sum"
 							}, {
+								header : "备注",
+								dataIndex : "memo",
+								menuDisabled : true,
+								sortable : false,
+								draggable : false,
+								editor : {
+									xtype : "textfield"
+								}
+							}, {
 								header : "",
 								id : "columnActionDelete",
 								align : "center",
@@ -631,7 +640,7 @@ Ext.define("PSI.SaleOrder.SOEditForm", {
 
 		return me.__goodsGrid;
 	},
-	
+
 	__setGoodsInfo : function(data) {
 		var me = this;
 		var item = me.getGoodsGrid().getSelectionModel().getSelection();
@@ -660,10 +669,7 @@ Ext.define("PSI.SaleOrder.SOEditForm", {
 		var fieldName = e.field;
 		var goods = e.record;
 		var oldValue = e.originalValue;
-		if (fieldName == "moneyWithTax") {
-			if (goods.get(fieldName) != (new Number(oldValue)).toFixed(2)) {
-				me.calcTax(goods);
-			}
+		if (fieldName == "memo") {
 			var store = me.getGoodsGrid().getStore();
 			if (e.rowIdx == store.getCount() - 1) {
 				store.add({
@@ -673,6 +679,10 @@ Ext.define("PSI.SaleOrder.SOEditForm", {
 			e.rowIdx += 1;
 			me.getGoodsGrid().getSelectionModel().select(e.rowIdx);
 			me.__cellEditing.startEdit(e.rowIdx, 1);
+		} else if (fieldName == "moneyWithTax") {
+			if (goods.get(fieldName) != (new Number(oldValue)).toFixed(2)) {
+				me.calcTax(goods);
+			}
 		} else if (fieldName == "tax") {
 			if (goods.get(fieldName) != (new Number(oldValue)).toFixed(2)) {
 				me.calcMoneyWithTax(goods);
@@ -731,7 +741,7 @@ Ext.define("PSI.SaleOrder.SOEditForm", {
 							/ goods.get("goodsCount"));
 		}
 	},
-	
+
 	getSaveData : function() {
 		var result = {
 			id : Ext.getCmp("hiddenId").getValue(),
@@ -760,7 +770,8 @@ Ext.define("PSI.SaleOrder.SOEditForm", {
 						goodsMoney : item.get("goodsMoney"),
 						tax : item.get("tax"),
 						taxRate : item.get("taxRate"),
-						moneyWithTax : item.get("moneyWithTax")
+						moneyWithTax : item.get("moneyWithTax"),
+						memo : item.get("memo")
 					});
 		}
 

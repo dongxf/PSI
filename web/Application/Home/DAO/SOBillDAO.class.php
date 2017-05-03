@@ -200,7 +200,7 @@ class SOBillDAO extends PSIBaseExDAO {
 		
 		$sql = "select s.id, g.code, g.name, g.spec, s.goods_count, s.goods_price, s.goods_money,
 					s.tax_rate, s.tax, s.money_with_tax, u.name as unit_name,
-					s.ws_count, s.left_count
+					s.ws_count, s.left_count, s.memo
 				from t_so_bill_detail s, t_goods g, t_goods_unit u
 				where s.sobill_id = '%s' and s.goods_id = g.id and g.unit_id = u.id
 				order by s.show_order";
@@ -221,7 +221,8 @@ class SOBillDAO extends PSIBaseExDAO {
 					"moneyWithTax" => $v["money_with_tax"],
 					"unitName" => $v["unit_name"],
 					"wsCount" => $v["ws_count"],
-					"leftCount" => $v["left_count"]
+					"leftCount" => $v["left_count"],
+					"memo" => $v["memo"]
 			);
 			$result[] = $item;
 		}
@@ -317,15 +318,16 @@ class SOBillDAO extends PSIBaseExDAO {
 			$taxRate = $v["taxRate"];
 			$tax = $v["tax"];
 			$moneyWithTax = $v["moneyWithTax"];
+			$memo = $v["memo"];
 			
 			$sql = "insert into t_so_bill_detail(id, date_created, goods_id, goods_count, goods_money,
 						goods_price, sobill_id, tax_rate, tax, money_with_tax, ws_count, left_count,
-						show_order, data_org, company_id)
+						show_order, data_org, company_id, memo)
 					values ('%s', now(), '%s', %d, %f,
-						%f, '%s', %d, %f, %f, 0, %d, %d, '%s', '%s')";
+						%f, '%s', %d, %f, %f, 0, %d, %d, '%s', '%s', '%s')";
 			$rc = $db->execute($sql, $this->newId(), $goodsId, $goodsCount, $goodsMoney, 
 					$goodsPrice, $id, $taxRate, $tax, $moneyWithTax, $goodsCount, $i, $dataOrg, 
-					$companyId);
+					$companyId, $memo);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
@@ -468,15 +470,16 @@ class SOBillDAO extends PSIBaseExDAO {
 			$taxRate = $v["taxRate"];
 			$tax = $v["tax"];
 			$moneyWithTax = $v["moneyWithTax"];
+			$memo = $v["memo"];
 			
 			$sql = "insert into t_so_bill_detail(id, date_created, goods_id, goods_count, goods_money,
 						goods_price, sobill_id, tax_rate, tax, money_with_tax, ws_count, left_count,
-						show_order, data_org, company_id)
+						show_order, data_org, company_id, memo)
 					values ('%s', now(), '%s', %d, %f,
-						%f, '%s', %d, %f, %f, 0, %d, %d, '%s', '%s')";
+						%f, '%s', %d, %f, %f, 0, %d, %d, '%s', '%s', '%s')";
 			$rc = $db->execute($sql, $this->newId(), $goodsId, $goodsCount, $goodsMoney, 
 					$goodsPrice, $id, $taxRate, $tax, $moneyWithTax, $goodsCount, $i, $dataOrg, 
-					$companyId);
+					$companyId, $memo);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
@@ -611,25 +614,29 @@ class SOBillDAO extends PSIBaseExDAO {
 				
 				// 明细表
 				$sql = "select s.id, s.goods_id, g.code, g.name, g.spec, s.goods_count, s.goods_price, s.goods_money,
-					s.tax_rate, s.tax, s.money_with_tax, u.name as unit_name
+					s.tax_rate, s.tax, s.money_with_tax, u.name as unit_name, s.memo
 				from t_so_bill_detail s, t_goods g, t_goods_unit u
 				where s.sobill_id = '%s' and s.goods_id = g.id and g.unit_id = u.id
 				order by s.show_order";
 				$items = array();
 				$data = $db->query($sql, $id);
 				
-				foreach ( $data as $i => $v ) {
-					$items[$i]["goodsId"] = $v["goods_id"];
-					$items[$i]["goodsCode"] = $v["code"];
-					$items[$i]["goodsName"] = $v["name"];
-					$items[$i]["goodsSpec"] = $v["spec"];
-					$items[$i]["goodsCount"] = $v["goods_count"];
-					$items[$i]["goodsPrice"] = $v["goods_price"];
-					$items[$i]["goodsMoney"] = $v["goods_money"];
-					$items[$i]["taxRate"] = $v["tax_rate"];
-					$items[$i]["tax"] = $v["tax"];
-					$items[$i]["moneyWithTax"] = $v["money_with_tax"];
-					$items[$i]["unitName"] = $v["unit_name"];
+				foreach ( $data as $v ) {
+					$item = array(
+							"goodsId" => $v["goods_id"],
+							"goodsCode" => $v["code"],
+							"goodsName" => $v["name"],
+							"goodsSpec" => $v["spec"],
+							"goodsCount" => $v["goods_count"],
+							"goodsPrice" => $v["goods_price"],
+							"goodsMoney" => $v["goods_money"],
+							"taxRate" => $v["tax_rate"],
+							"tax" => $v["tax"],
+							"moneyWithTax" => $v["money_with_tax"],
+							"unitName" => $v["unit_name"],
+							"memo" => $v["memo"]
+					);
+					$items[] = $item;
 				}
 				
 				$result["items"] = $items;
