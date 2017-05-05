@@ -1069,7 +1069,7 @@ class PWBillDAO extends PSIBaseExDAO {
 			}
 			
 			// 应付总账
-			$sql = "select id, pay_money
+			$sql = "select id, pay_money, act_money
 					from t_payables
 					where ca_id = '%s' and ca_type = 'supplier' and company_id = '%s' ";
 			$data = $db->query($sql, $supplierId, $companyId);
@@ -1078,10 +1078,13 @@ class PWBillDAO extends PSIBaseExDAO {
 				$payMoney = floatval($data[0]["pay_money"]);
 				$payMoney += $billPayables;
 				
+				$actMoney = floatval($data[0]["act_money"]);
+				$balanMoney = $payMoney - $actMoney;
+				
 				$sql = "update t_payables
 						set pay_money = %f, balance_money = %f
 						where id = '%s' ";
-				$rc = $db->execute($sql, $payMoney, $payMoney, $pId);
+				$rc = $db->execute($sql, $payMoney, $balanMoney, $pId);
 				if ($rc === false) {
 					return $this->sqlError(__METHOD__, __LINE__);
 				}
