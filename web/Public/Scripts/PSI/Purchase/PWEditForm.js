@@ -5,7 +5,8 @@ Ext.define("PSI.Purchase.PWEditForm", {
 	extend : "PSI.AFX.BaseDialogForm",
 	config : {
 		genBill : false,
-		pobillRef : null
+		pobillRef : null,
+		showAddGoodsButton : "0"
 	},
 
 	initComponent : function() {
@@ -271,7 +272,8 @@ Ext.define("PSI.Purchase.PWEditForm", {
 						if (!data.genBill) {
 							me.columnGoodsCode.setEditor({
 										xtype : "psi_goods_with_purchaseprice_field",
-										parentCmp : me
+										parentCmp : me,
+										showAddButton : me.getShowAddGoodsButton() == "1"
 									});
 							me.columnGoodsPrice.setEditor({
 										xtype : "numberfield",

@@ -4,6 +4,10 @@
 Ext.define("PSI.Purchase.PWMainForm", {
 	extend : "PSI.AFX.BaseMainExForm",
 
+	config : {
+		permission : null
+	},
+
 	initComponent : function() {
 		var me = this;
 
@@ -470,7 +474,8 @@ Ext.define("PSI.Purchase.PWMainForm", {
 		var me = this;
 
 		var form = Ext.create("PSI.Purchase.PWEditForm", {
-					parentForm : me
+					parentForm : me,
+					showAddGoodsButton : me.getPermission().showAddGoodsButton
 				});
 		form.show();
 	},
@@ -489,7 +494,8 @@ Ext.define("PSI.Purchase.PWMainForm", {
 
 		var form = Ext.create("PSI.Purchase.PWEditForm", {
 					parentForm : me,
-					entity : bill
+					entity : bill,
+					showAddGoodsButton : me.getPermission().showAddGoodsButton
 				});
 		form.show();
 	},

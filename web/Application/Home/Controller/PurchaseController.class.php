@@ -27,6 +27,8 @@ class PurchaseController extends PSIBaseController {
 			
 			$this->assign("title", "采购入库");
 			
+			$this->assign("showAddGoodsButton", $us->hasPermission(FIdConst::GOODS_ADD) ? "1" : "0");
+			
 			$this->display();
 		} else {
 			$this->gotoLoginPage("/Home/Purchase/pwbillIndex");
