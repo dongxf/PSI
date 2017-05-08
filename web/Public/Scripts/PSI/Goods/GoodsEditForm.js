@@ -54,11 +54,19 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 					scope : me
 				});
 
-		var selectedCategory = me.getParentForm().getCategoryGrid()
-				.getSelectionModel().getSelection();
+		var selectedCategory = null;
 		var defaultCategoryId = null;
-		if (selectedCategory != null && selectedCategory.length > 0) {
-			defaultCategoryId = selectedCategory[0].get("id");
+
+		if (me.getParentForm()) {
+			var selectedCategory = me.getParentForm().getCategoryGrid()
+					.getSelectionModel().getSelection();
+			var defaultCategoryId = null;
+			if (selectedCategory != null && selectedCategory.length > 0) {
+				defaultCategoryId = selectedCategory[0].get("id");
+			}
+		} else {
+			// 当 me.getParentForm() == null的时候，本窗体是在其他地方被调用
+			// 例如：业务单据中选择商品的界面中，也可以新增商品
 		}
 
 		Ext.apply(me, {

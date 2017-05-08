@@ -6,18 +6,21 @@ Ext.define("PSI.Goods.GoodsWithPurchaseFieldField", {
 	alias : "widget.psi_goods_with_purchaseprice_field",
 
 	config : {
-		parentCmp : null
+		parentCmp : null,
+		showAddButton : false
 	},
 
 	/**
 	 * 初始化组件
 	 */
 	initComponent : function() {
-		this.enableKeyEvents = true;
+		var me = this;
 
-		this.callParent(arguments);
+		me.enableKeyEvents = true;
 
-		this.on("keydown", function(field, e) {
+		me.callParent(arguments);
+
+		me.on("keydown", function(field, e) {
 					if (e.getKey() == e.BACKSPACE) {
 						field.setValue(null);
 						e.preventDefault();
@@ -25,7 +28,7 @@ Ext.define("PSI.Goods.GoodsWithPurchaseFieldField", {
 					}
 
 					if (e.getKey() != e.ENTER && !e.isSpecialKey(e.getKey())) {
-						this.onTriggerClick(e);
+						me.onTriggerClick(e);
 					}
 				});
 	},
@@ -35,7 +38,7 @@ Ext.define("PSI.Goods.GoodsWithPurchaseFieldField", {
 	 */
 	onTriggerClick : function(e) {
 		var me = this;
-		var modelName = "PSIGoodsField";
+		var modelName = "PSI_Goods_GoodsWithPurchaseFieldField_PSIGoodsField";
 		Ext.define(modelName, {
 					extend : "Ext.data.Model",
 					fields : ["id", "code", "name", "spec", "unitName",
@@ -87,6 +90,26 @@ Ext.define("PSI.Goods.GoodsWithPurchaseFieldField", {
 		me.lookupGrid = lookupGrid;
 		me.lookupGrid.on("itemdblclick", me.onOK, me);
 
+		var buttons = [];
+		if (me.getShowAddButton()) {
+			buttons.push({
+						text : "新增商品",
+						handler : me.onAddGoods,
+						iconCls : "PSI-button-add",
+						scope : me
+					});
+		}
+		buttons.push({
+					text : "确定",
+					handler : me.onOK,
+					scope : me
+				}, {
+					text : "取消",
+					handler : function() {
+						wnd.close();
+					}
+				});
+
 		var wnd = Ext.create("Ext.window.Window", {
 					title : "选择 - 商品",
 					modal : true,
@@ -119,16 +142,7 @@ Ext.define("PSI.Goods.GoodsWithPurchaseFieldField", {
 													}]
 										}]
 							}],
-					buttons : [{
-								text : "确定",
-								handler : me.onOK,
-								scope : me
-							}, {
-								text : "取消",
-								handler : function() {
-									wnd.close();
-								}
-							}]
+					buttons : buttons
 				});
 
 		wnd.on("close", function() {
@@ -228,5 +242,9 @@ Ext.define("PSI.Goods.GoodsWithPurchaseFieldField", {
 		if (me.getParentCmp() && me.getParentCmp().__setGoodsInfo) {
 			me.getParentCmp().__setGoodsInfo(data)
 		}
+	},
+
+	onAddGoods : function() {
+		PSI.MsgBox.showInfo("TODO");
 	}
 });

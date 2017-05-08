@@ -633,7 +633,8 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 		var me = this;
 
 		var form = Ext.create("PSI.PurchaseOrder.POEditForm", {
-					parentForm : me
+					parentForm : me,
+					showAddGoodsButton : me.getPermission().showAddGoodsButton
 				});
 		form.show();
 	},
@@ -652,7 +653,8 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 
 		var form = Ext.create("PSI.PurchaseOrder.POEditForm", {
 					parentForm : me,
-					entity : bill
+					entity : bill,
+					showAddGoodsButton : me.getPermission().showAddGoodsButton
 				});
 		form.show();
 	},

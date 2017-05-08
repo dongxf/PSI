@@ -128,6 +128,7 @@ class PurchaseController extends PSIBaseController {
 					$us->hasPermission(FIdConst::PURCHASE_ORDER_CONFIRM) ? "1" : "0");
 			$this->assign("pGenPWBill", 
 					$us->hasPermission(FIdConst::PURCHASE_ORDER_GEN_PWBILL) ? "1" : "0");
+			$this->assign("showAddGoodsButton", $us->hasPermission(FIdConst::GOODS_ADD) ? "1" : "0");
 			
 			$this->display();
 		} else {

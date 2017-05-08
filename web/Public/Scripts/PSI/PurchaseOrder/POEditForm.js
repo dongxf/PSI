@@ -8,7 +8,8 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 
 	config : {
 		parentForm : null,
-		entity : null
+		entity : null,
+		showAddGoodsButton : "0"
 	},
 
 	/**
@@ -462,7 +463,8 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 								draggable : false,
 								editor : {
 									xtype : "psi_goods_with_purchaseprice_field",
-									parentCmp : me
+									parentCmp : me,
+									showAddButton : me.getShowAddGoodsButton() == "1"
 								}
 							}, {
 								header : "商品名称",
