@@ -245,6 +245,8 @@ Ext.define("PSI.Goods.GoodsWithPurchaseFieldField", {
 	},
 
 	onAddGoods : function() {
-		PSI.MsgBox.showInfo("TODO");
+		var form = Ext.create("PSI.Goods.GoodsEditForm");
+
+		form.show();
 	}
 });
