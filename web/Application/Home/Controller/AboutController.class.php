@@ -4,6 +4,7 @@ namespace Home\Controller;
 
 use Think\Controller;
 use Home\Service\UserService;
+use Home\Service\AboutService;
 
 /**
  * 关于Controller
@@ -22,8 +23,15 @@ class AboutController extends PSIBaseController {
 			$this->initVar();
 			
 			$this->assign("title", "关于");
-
-			$this->assign("phpVersion", phpversion());
+			
+			$as = new AboutService();
+			
+			$this->assign("phpVersion", $as->getPHPVersion());
+			$this->assign("mySQLVersion", $as->getMySQLVersion());
+			
+			$d = $as->getPSIDBVersion();
+			$this->assign("PSIDBVersion", $d["version"]);
+			$this->assign("PSIDBUpdateDT", $d["dt"]);
 			
 			$this->display();
 		} else {

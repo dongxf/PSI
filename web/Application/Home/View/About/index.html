@@ -6,7 +6,10 @@
 	Ext.onReady(function() {
 		var form = Ext.create("PSI.About.MainForm", {
 			productionName : "{$productionName}",
-			phpVersion : "{$phpVersion}"
+			phpVersion : "{$phpVersion}",
+			mySQLVersion : "{$mySQLVersion}",
+			PSIDBVersion : "{$PSIDBVersion}",
+			PSIDBUpdateDT : "{$PSIDBUpdateDT}"
 		});
 		form.show();
 	});
