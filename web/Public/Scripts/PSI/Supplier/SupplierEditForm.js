@@ -37,7 +37,10 @@ Ext.define("PSI.Supplier.SupplierEditForm", {
 					scope : me
 				});
 
-		var categoryStore = me.getParentForm().categoryGrid.getStore();
+		var categoryStore = null;
+		if (me.getParentForm()) {
+			categoryStore = me.getParentForm().categoryGrid.getStore();
+		}
 
 		Ext.apply(me, {
 			title : entity == null ? "新增供应商" : "编辑供应商",
@@ -76,7 +79,8 @@ Ext.define("PSI.Supplier.SupplierEditForm", {
 							store : categoryStore,
 							queryMode : "local",
 							editable : false,
-							value : categoryStore.getAt(0).get("id"),
+							value : categoryStore != null ? categoryStore
+									.getAt(0).get("id") : null,
 							name : "categoryId",
 							listeners : {
 								specialkey : {
@@ -384,13 +388,51 @@ Ext.define("PSI.Supplier.SupplierEditForm", {
 		var me = this;
 		if (me.adding) {
 			// 新建
-			var grid = me.getParentForm().categoryGrid;
-			var item = grid.getSelectionModel().getSelection();
-			if (item == null || item.length != 1) {
-				return;
-			}
+			if (me.getParentForm()) {
+				var grid = me.getParentForm().categoryGrid;
+				var item = grid.getSelectionModel().getSelection();
+				if (item == null || item.length != 1) {
+					return;
+				}
 
-			me.editCategory.setValue(item[0].get("id"));
+				me.editCategory.setValue(item[0].get("id"));
+			} else {
+				// 从其他界面调用本窗口
+				var modelName = "PSISupplierCategory_SupplierEditForm";
+				Ext.define(modelName, {
+							extend : "Ext.data.Model",
+							fields : ["id", "code", "name", {
+										name : "cnt",
+										type : "int"
+									}]
+						});
+				var store = Ext.create("Ext.data.Store", {
+							model : modelName,
+							autoLoad : false,
+							data : []
+						});
+				me.editCategory.bindStore(store);
+				var el = Ext.getBody();
+				el.mask(PSI.Const.LOADING);
+				var r = {
+					url : me.URL("/Home/Supplier/categoryList"),
+					callback : function(options, success, response) {
+						store.removeAll();
+
+						if (success) {
+							var data = me.decodeJSON(response.responseText);
+							store.add(data);
+							if (store.getCount() > 0) {
+								var id = store.getAt(0).get("id");
+								me.editCategory.setValue(id);
+							}
+						}
+
+						el.unmask();
+					}
+				};
+				me.ajax(r);
+			}
 		} else {
 			// 编辑
 			var el = me.getEl();

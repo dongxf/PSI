@@ -6,7 +6,8 @@ Ext.define("PSI.Supplier.SupplierField", {
 	alias : "widget.psi_supplierfield",
 
 	config : {
-		callbackFunc : null
+		callbackFunc : null,
+		showAddButton : false
 	},
 
 	initComponent : function() {
@@ -101,6 +102,12 @@ Ext.define("PSI.Supplier.SupplierField", {
 										}]
 							}],
 					buttons : [{
+								text : "新增供应商档案",
+								iconCls : "PSI-button-add",
+								hidden : !me.getShowAddButton(),
+								handler : me.onAdd,
+								scope : me
+							}, {
 								text : "确定",
 								handler : me.onOK,
 								scope : me
@@ -225,5 +232,10 @@ Ext.define("PSI.Supplier.SupplierField", {
 	clearIdValue : function() {
 		this.setValue(null);
 		this.__idValue = null;
+	},
+
+	onAdd : function() {
+		var form = Ext.create("PSI.Supplier.SupplierEditForm");
+		form.show();
 	}
 });

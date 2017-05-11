@@ -126,7 +126,8 @@ Ext.define("PSI.Purchase.PWEditForm", {
 											fn : me.onEditSupplierSpecialKey,
 											scope : me
 										}
-									}
+									},
+									showAddButton : true
 								}, {
 									id : "editWarehouse",
 									labelWidth : 60,
@@ -271,10 +272,10 @@ Ext.define("PSI.Purchase.PWEditForm", {
 					} else {
 						if (!data.genBill) {
 							me.columnGoodsCode.setEditor({
-										xtype : "psi_goods_with_purchaseprice_field",
-										parentCmp : me,
-										showAddButton : me.getShowAddGoodsButton() == "1"
-									});
+								xtype : "psi_goods_with_purchaseprice_field",
+								parentCmp : me,
+								showAddButton : me.getShowAddGoodsButton() == "1"
+							});
 							me.columnGoodsPrice.setEditor({
 										xtype : "numberfield",
 										hideTrigger : true
