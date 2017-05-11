@@ -118,6 +118,7 @@ Ext.define("PSI.SaleOrder.SOEditForm", {
 											scope : me
 										}
 									},
+									showAddButton : true,
 									callbackFunc : me.__setCustomerExtData
 								}, {
 									id : "editDealAddress",
