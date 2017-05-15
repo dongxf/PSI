@@ -39,7 +39,7 @@ Ext.define("PSI.Permission.MainForm", {
 												}, {
 													region : "east",
 													layout : "fit",
-													width : "50%",
+													width : "40%",
 													border : 0,
 													items : [me
 															.getDataOrgGrid()]
@@ -55,9 +55,7 @@ Ext.define("PSI.Permission.MainForm", {
 			}, {
 				region : "west",
 				layout : "fit",
-				width : 300,
-				minWidth : 200,
-				maxWidth : 350,
+				width : 250,
 				split : true,
 				border : 0,
 				items : [me.getRoleGrid()]
@@ -146,7 +144,7 @@ Ext.define("PSI.Permission.MainForm", {
 		var modelName = "PSIPermission";
 		Ext.define(modelName, {
 					extend : "Ext.data.Model",
-					fields : ["id", "name", "dataOrg"]
+					fields : ["id", "name", "dataOrg", "note"]
 				});
 
 		var permissionStore = Ext.create("Ext.data.Store", {
@@ -162,6 +160,11 @@ Ext.define("PSI.Permission.MainForm", {
 								header : "权限名称",
 								dataIndex : "name",
 								flex : 2,
+								menuDisabled : true
+							},{
+								header : "说明",
+								dataIndex : "note",
+								flex : 1,
 								menuDisabled : true
 							}, {
 								header : "数据域",
@@ -420,7 +423,7 @@ Ext.define("PSI.Permission.MainForm", {
 					columns : [{
 								header : "数据域",
 								dataIndex : "dataOrg",
-								flex : 1,
+								width: 120,
 								menuDisabled : true
 							}, {
 								header : "组织机构/人",

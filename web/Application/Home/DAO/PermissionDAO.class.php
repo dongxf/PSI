@@ -49,17 +49,20 @@ class PermissionDAO extends PSIBaseExDAO {
 		
 		$roleId = $params["roleId"];
 		
-		$sql = "select p.id, p.name
+		$sql = "select p.id, p.name, p.note
 				from t_role r, t_role_permission rp, t_permission p
 				where r.id = rp.role_id and r.id = '%s' and rp.permission_id = p.id
 				order by convert(p.name USING gbk) collate gbk_chinese_ci";
 		$data = $db->query($sql, $roleId);
 		
 		$result = array();
-		foreach ( $data as $i => $v ) {
+		foreach ( $data as $v ) {
 			$pid = $v["id"];
-			$result[$i]["id"] = $pid;
-			$result[$i]["name"] = $v["name"];
+			$item = array(
+					"id" => $pid,
+					"name" => $v["name"],
+					"note" => $v["note"]
+			);
 			
 			$sql = "select data_org
 					from t_role_permission_dataorg
@@ -67,16 +70,18 @@ class PermissionDAO extends PSIBaseExDAO {
 			$od = $db->query($sql, $roleId, $pid);
 			if ($od) {
 				$dataOrg = "";
-				foreach ( $od as $j => $item ) {
-					if ($j > 0) {
+				foreach ( $od as $i => $itemDataOrg ) {
+					if ($i > 0) {
 						$dataOrg .= ";";
 					}
-					$dataOrg .= $item["data_org"];
+					$dataOrg .= $itemDataOrg["data_org"];
 				}
-				$result[$i]["dataOrg"] = $dataOrg;
+				$item["dataOrg"] = $dataOrg;
 			} else {
-				$result[$i]["dataOrg"] = "*";
+				$item["dataOrg"] = "*";
 			}
+			
+			$result[] = $item;
 		}
 		
 		return $result;
@@ -488,7 +493,7 @@ class PermissionDAO extends PSIBaseExDAO {
 
 	/**
 	 * 编辑角色
-	 * 
+	 *
 	 * @param array $params        	
 	 * @return NULL|array
 	 */
