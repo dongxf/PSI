@@ -22,7 +22,7 @@ class PermissionDAO extends PSIBaseExDAO {
 		
 		$loginUserId = $params["loginUserId"];
 		
-		$sql = "select r.id, r.name from t_role r ";
+		$sql = "select r.id, r.name, r.code from t_role r ";
 		$queryParams = array();
 		
 		$ds = new DataOrgDAO($db);
@@ -32,7 +32,7 @@ class PermissionDAO extends PSIBaseExDAO {
 			$queryParams = $rs[1];
 		}
 		
-		$sql .= "	order by convert(name USING gbk) collate gbk_chinese_ci";
+		$sql .= "	order by r.code ";
 		$data = $db->query($sql, $queryParams);
 		
 		return $data;
@@ -424,6 +424,7 @@ class PermissionDAO extends PSIBaseExDAO {
 		
 		$id = $params["id"];
 		$name = $params["name"];
+		$code = $params["code"];
 		$permissionIdList = $params["permissionIdList"];
 		$dataOrgList = $params["dataOrgList"];
 		$userIdList = $params["userIdList"];
@@ -435,9 +436,9 @@ class PermissionDAO extends PSIBaseExDAO {
 		$doList = explode(",", $dataOrgList);
 		$uid = explode(",", $userIdList);
 		
-		$sql = "insert into t_role (id, name, data_org, company_id)
-					values ('%s', '%s', '%s', '%s') ";
-		$rc = $db->execute($sql, $id, $name, $loginUserDataOrg, $companyId);
+		$sql = "insert into t_role (id, name, data_org, company_id, code)
+				values ('%s', '%s', '%s', '%s', '%s') ";
+		$rc = $db->execute($sql, $id, $name, $loginUserDataOrg, $companyId, $code);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
@@ -445,7 +446,7 @@ class PermissionDAO extends PSIBaseExDAO {
 		if ($pid) {
 			foreach ( $pid as $i => $v ) {
 				$sql = "insert into t_role_permission (role_id, permission_id)
-								values ('%s', '%s')";
+						values ('%s', '%s')";
 				$rc = $db->execute($sql, $id, $v);
 				if ($rc === false) {
 					return $this->sqlError(__METHOD__, __LINE__);
@@ -453,7 +454,7 @@ class PermissionDAO extends PSIBaseExDAO {
 				
 				// 权限的数据域
 				$sql = "delete from t_role_permission_dataorg
-								where role_id = '%s' and permission_id = '%s' ";
+						where role_id = '%s' and permission_id = '%s' ";
 				$rc = $db->execute($sql, $id, $v);
 				if ($rc === false) {
 					return $this->sqlError(__METHOD__, __LINE__);
@@ -467,7 +468,7 @@ class PermissionDAO extends PSIBaseExDAO {
 					}
 					
 					$sql = "insert into t_role_permission_dataorg(role_id, permission_id, data_org)
-									values ('%s', '%s', '%s')";
+							values ('%s', '%s', '%s')";
 					$rc = $db->execute($sql, $id, $v, $item);
 					if ($rc === false) {
 						return $this->sqlError(__METHOD__, __LINE__);
@@ -479,7 +480,7 @@ class PermissionDAO extends PSIBaseExDAO {
 		if ($uid) {
 			foreach ( $uid as $v ) {
 				$sql = "insert into t_role_user (role_id, user_id)
-								values ('%s', '%s') ";
+						values ('%s', '%s') ";
 				$rc = $db->execute($sql, $id, $v);
 				if ($rc === false) {
 					return $this->sqlError(__METHOD__, __LINE__);
@@ -502,6 +503,7 @@ class PermissionDAO extends PSIBaseExDAO {
 		
 		$id = $params["id"];
 		$name = $params["name"];
+		$code = $params["code"];
 		$permissionIdList = $params["permissionIdList"];
 		$dataOrgList = $params["dataOrgList"];
 		$userIdList = $params["userIdList"];
@@ -510,8 +512,10 @@ class PermissionDAO extends PSIBaseExDAO {
 		$doList = explode(",", $dataOrgList);
 		$uid = explode(",", $userIdList);
 		
-		$sql = "update t_role set name = '%s' where id = '%s' ";
-		$rc = $db->execute($sql, $name, $id);
+		$sql = "update t_role 
+				set name = '%s', code = '%s' 
+				where id = '%s' ";
+		$rc = $db->execute($sql, $name, $code, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
@@ -531,7 +535,7 @@ class PermissionDAO extends PSIBaseExDAO {
 		if ($pid) {
 			foreach ( $pid as $i => $v ) {
 				$sql = "insert into t_role_permission (role_id, permission_id)
-								values ('%s', '%s')";
+						values ('%s', '%s')";
 				$rc = $db->execute($sql, $id, $v);
 				if ($rc === false) {
 					return $this->sqlError(__METHOD__, __LINE__);
@@ -539,7 +543,7 @@ class PermissionDAO extends PSIBaseExDAO {
 				
 				// 权限的数据域
 				$sql = "delete from t_role_permission_dataorg
-								where role_id = '%s' and permission_id = '%s' ";
+						where role_id = '%s' and permission_id = '%s' ";
 				$rc = $db->execute($sql, $id, $v);
 				if ($rc === false) {
 					return $this->sqlError(__METHOD__, __LINE__);
@@ -553,7 +557,7 @@ class PermissionDAO extends PSIBaseExDAO {
 					}
 					
 					$sql = "insert into t_role_permission_dataorg(role_id, permission_id, data_org)
-									values ('%s', '%s', '%s')";
+							values ('%s', '%s', '%s')";
 					$rc = $db->execute($sql, $id, $v, $item);
 					if ($rc === false) {
 						return $this->sqlError(__METHOD__, __LINE__);
@@ -565,7 +569,7 @@ class PermissionDAO extends PSIBaseExDAO {
 		if ($uid) {
 			foreach ( $uid as $v ) {
 				$sql = "insert into t_role_user (role_id, user_id)
-								values ('%s', '%s') ";
+						values ('%s', '%s') ";
 				$rc = $db->execute($sql, $id, $v);
 				if ($rc === false) {
 					return $this->sqlError(__METHOD__, __LINE__);

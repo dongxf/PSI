@@ -62,9 +62,6 @@ class PermissionService extends PSIBaseExService {
 		
 		$id = $params["id"];
 		$name = $params["name"];
-		$permissionIdList = $params["permissionIdList"];
-		$dataOrgList = $params["dataOrgList"];
-		$userIdList = $params["userIdList"];
 		
 		if ($this->isDemo() && $id == DemoConst::ADMIN_ROLE_ID) {
 			return $this->bad("在演示环境下，系统管理角色不希望被您修改，请见谅");

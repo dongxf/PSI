@@ -109,7 +109,7 @@ Ext.define("PSI.Permission.MainForm", {
 		var modelName = "PSIRole";
 		Ext.define(modelName, {
 					extend : "Ext.data.Model",
-					fields : ["id", "name"]
+					fields : ["id", "name", "code"]
 				});
 
 		var roleStore = Ext.create("Ext.data.Store", {
@@ -122,6 +122,11 @@ Ext.define("PSI.Permission.MainForm", {
 					title : "角色",
 					store : roleStore,
 					columns : [{
+								header : "编码",
+								dataIndex : "code",
+								width: 100,
+								menuDisabled : true
+							},{
 								header : "角色名称",
 								dataIndex : "name",
 								flex : 1,
@@ -164,7 +169,7 @@ Ext.define("PSI.Permission.MainForm", {
 							},{
 								header : "说明",
 								dataIndex : "note",
-								flex : 1,
+								flex : 2,
 								menuDisabled : true
 							}, {
 								header : "数据域",

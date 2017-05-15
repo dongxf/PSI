@@ -2,11 +2,8 @@
  * 权限 - 角色新增或编辑界面
  */
 Ext.define("PSI.Permission.EditForm", {
-	extend : "Ext.window.Window",
-	config : {
-		entity : null,
-		parentForm : null
-	},
+	extend : "PSI.AFX.BaseDialogForm",
+
 	initComponent : function() {
 		var me = this;
 		var entity = me.getEntity();
@@ -162,7 +159,7 @@ Ext.define("PSI.Permission.EditForm", {
 							xtype : "form",
 							layout : {
 								type : "table",
-								columns : 1
+								columns : 2
 							},
 							border : 0,
 							bodyPadding : 5,
@@ -191,6 +188,14 @@ Ext.define("PSI.Permission.EditForm", {
 										value : entity == null
 												? null
 												: entity.name
+									}, {
+										id : "editCode",
+										fieldLabel : "角色编码",
+										name : "code",
+										value : entity == null
+												? null
+												: entity.code,
+										width : 200
 									}, {
 										id : "editPermissionIdList",
 										xtype : "hidden",
@@ -231,7 +236,7 @@ Ext.define("PSI.Permission.EditForm", {
 						iconCls : "PSI-button-ok",
 						handler : function() {
 							var me = this;
-							PSI.MsgBox.confirm("请确认是否保存数据?", function() {
+							me.confirm("请确认是否保存数据?", function() {
 										me.onOK();
 									});
 						},
@@ -241,7 +246,7 @@ Ext.define("PSI.Permission.EditForm", {
 						iconCls : "PSI-button-cancel",
 						handler : function() {
 							var me = this;
-							PSI.MsgBox.confirm("请确认是否取消操作?", function() {
+							me.confirm("请确认是否取消操作?", function() {
 										me.close();
 									});
 						},
@@ -250,24 +255,25 @@ Ext.define("PSI.Permission.EditForm", {
 		});
 
 		if (entity) {
-			me.on("show", this.onWndShow, this);
+			me.on("show", me.onWndShow, this);
 		}
 
 		me.callParent(arguments);
 	},
 
 	onWndShow : function() {
-		var entity = this.getEntity();
-		var store = this.permissionGrid.getStore();
-		var el = this.getEl() || Ext.getBody();
+		var me = this;
+
+		var entity = me.getEntity();
+		var store = me.permissionGrid.getStore();
+		var el = me.getEl() || Ext.getBody();
 
 		el.mask("数据加载中...");
-		Ext.Ajax.request({
-					url : PSI.Const.BASE_URL + "Home/Permission/permissionList",
+		me.ajax({
+					url : me.URL("Home/Permission/permissionList"),
 					params : {
 						roleId : entity.id
 					},
-					method : "POST",
 					callback : function(options, success, response) {
 						store.removeAll();
 
@@ -280,17 +286,16 @@ Ext.define("PSI.Permission.EditForm", {
 					}
 				});
 
-		var userGrid = this.userGrid;
+		var userGrid = me.userGrid;
 		var userStore = userGrid.getStore();
 		var userEl = userGrid.getEl() || Ext.getBody();
 		userGrid.setTitle("属于角色 [" + entity.name + "] 的人员列表");
 		userEl.mask("数据加载中...");
-		Ext.Ajax.request({
-					url : PSI.Const.BASE_URL + "Home/Permission/userList",
+		me.ajax({
+					url : me.URL("Home/Permission/userList"),
 					params : {
 						roleId : entity.id
 					},
-					method : "POST",
 					callback : function(options, success, response) {
 						userStore.removeAll();
 
@@ -339,13 +344,13 @@ Ext.define("PSI.Permission.EditForm", {
 
 		var name = editName.getValue();
 		if (name == null || name == "") {
-			PSI.MsgBox.showInfo("没有输入角色名称", function() {
+			me.showInfo("没有输入角色名称", function() {
 						editName.focus();
 					});
 			return;
 		}
 
-		var store = this.permissionGrid.getStore();
+		var store = me.permissionGrid.getStore();
 		var data = store.data;
 		var idList = [];
 		var dataOrgList = [];
@@ -360,7 +365,7 @@ Ext.define("PSI.Permission.EditForm", {
 
 		Ext.getCmp("editDataOrgList").setValue(dataOrgList.join(","));
 
-		store = this.userGrid.getStore();
+		store = me.userGrid.getStore();
 		data = store.data;
 		idList = [];
 		for (var i = 0; i < data.getCount(); i++) {
@@ -376,11 +381,11 @@ Ext.define("PSI.Permission.EditForm", {
 		el.mask("数据保存中...");
 
 		editForm.submit({
-					url : PSI.Const.BASE_URL + "Home/Permission/editRole",
+					url : me.URL("Home/Permission/editRole"),
 					method : "POST",
 					success : function(form, action) {
 						el.unmask();
-						PSI.MsgBox.showInfo("数据保存成功", function() {
+						me.showInfo("数据保存成功", function() {
 									me.close();
 									me.getParentForm()
 											.refreshRoleGrid(action.result.id);
@@ -388,14 +393,17 @@ Ext.define("PSI.Permission.EditForm", {
 					},
 					failure : function(form, action) {
 						el.unmask();
-						PSI.MsgBox.showInfo(action.result.msg, function() {
+						me.showInfo(action.result.msg, function() {
 									editName.focus();
 								});
 					}
 				});
 	},
+
 	onAddPermission : function() {
-		var store = this.permissionGrid.getStore();
+		var me = this;
+
+		var store = me.permissionGrid.getStore();
 		var data = store.data;
 		var idList = [];
 		for (var i = 0; i < data.getCount(); i++) {
@@ -405,16 +413,19 @@ Ext.define("PSI.Permission.EditForm", {
 
 		var form = Ext.create("PSI.Permission.SelectPermissionForm", {
 					idList : idList,
-					parentForm : this
+					parentForm : me
 				});
 		form.show();
 	},
+
 	onRemovePermission : function() {
-		var grid = this.permissionGrid;
+		var me = this;
+
+		var grid = me.permissionGrid;
 
 		var items = grid.getSelectionModel().getSelection();
 		if (items == null || items.length == 0) {
-			PSI.MsgBox.showInfo("请选择要移除的权限");
+			me.showInfo("请选择要移除的权限");
 			return;
 		}
 
@@ -422,7 +433,9 @@ Ext.define("PSI.Permission.EditForm", {
 	},
 
 	onAddUser : function() {
-		var store = this.userGrid.getStore();
+		var me = this;
+
+		var store = me.userGrid.getStore();
 		var data = store.data;
 		var idList = [];
 		for (var i = 0; i < data.getCount(); i++) {
@@ -432,18 +445,20 @@ Ext.define("PSI.Permission.EditForm", {
 
 		var form = Ext.create("PSI.Permission.SelectUserForm", {
 					idList : idList,
-					parentForm : this
+					parentForm : me
 				});
 
 		form.show();
 	},
 
 	onRemoveUser : function() {
-		var grid = this.userGrid;
+		var me = this;
+
+		var grid = me.userGrid;
 
 		var items = grid.getSelectionModel().getSelection();
 		if (items == null || items.length == 0) {
-			PSI.MsgBox.showInfo("请选择要移除的人员");
+			me.showInfo("请选择要移除的人员");
 			return;
 		}
 
@@ -497,7 +512,7 @@ Ext.define("PSI.Permission.EditForm", {
 
 		var items = grid.getSelectionModel().getSelection();
 		if (items == null || items.length == 0) {
-			PSI.MsgBox.showInfo("请选择要编辑数据域的权限");
+			me.showInfo("请选择要编辑数据域的权限");
 			return;
 		}
 

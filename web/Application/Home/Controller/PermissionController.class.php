@@ -44,9 +44,7 @@ class PermissionController extends PSIBaseController {
 		if (IS_POST) {
 			$ps = new PermissionService();
 			
-			$data = $ps->roleList();
-			
-			$this->ajaxReturn($data);
+			$this->ajaxReturn($ps->roleList());
 		}
 	}
 
@@ -103,14 +101,13 @@ class PermissionController extends PSIBaseController {
 			$params = array(
 					"id" => I("post.id"),
 					"name" => I("post.name"),
+					"code" => I("post.code"),
 					"permissionIdList" => I("post.permissionIdList"),
 					"dataOrgList" => I("post.dataOrgList"),
 					"userIdList" => I("post.userIdList")
 			);
 			
-			$result = $ps->editRole($params);
-			
-			$this->ajaxReturn($result);
+			$this->ajaxReturn($ps->editRole($params));
 		}
 	}
 
