@@ -1304,9 +1304,9 @@ class InstallService extends PSIBaseService {
 		$db->execute($sql);
 		
 		// t_role
-		$sql = "INSERT INTO `t_role` (`id`, `name`, `data_org`, `company_id`) VALUES
-					('A83F617E-A153-11E4-A9B8-782BCBD7746B', '系统管理', '01010001', '4D74E1E4-A129-11E4-9B6A-782BCBD7746B');
-		";
+		$sql = "INSERT INTO `t_role` (`id`, `name`, `data_org`, `company_id`, `code`) VALUES
+				('A83F617E-A153-11E4-A9B8-782BCBD7746B', '系统管理', '01010001', '4D74E1E4-A129-11E4-9B6A-782BCBD7746B', '01');
+				";
 		$db->execute($sql);
 		
 		// t_role_permission

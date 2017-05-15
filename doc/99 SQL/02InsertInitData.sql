@@ -235,8 +235,8 @@ INSERT INTO `t_permission` (`id`, `fid`, `name`, `note`, `category`, `py`) VALUE
 ('2030-03', '2030-03', '商品构成-删除子商品', '商品构成删除子商品按钮的操作权限', '商品', 'SPGC_SCZSP');
 
 TRUNCATE TABLE `t_role`;
-INSERT INTO `t_role` (`id`, `name`, `data_org`, `company_id`) VALUES
-('A83F617E-A153-11E4-A9B8-782BCBD7746B', '系统管理', '01010001', '4D74E1E4-A129-11E4-9B6A-782BCBD7746B');
+INSERT INTO `t_role` (`id`, `name`, `data_org`, `company_id`, `code`) VALUES
+('A83F617E-A153-11E4-A9B8-782BCBD7746B', '系统管理', '01010001', '4D74E1E4-A129-11E4-9B6A-782BCBD7746B', '01');
 
 TRUNCATE TABLE `t_role_permission`;
 INSERT INTO `t_role_permission` (`role_id`, `permission_id`) VALUES
