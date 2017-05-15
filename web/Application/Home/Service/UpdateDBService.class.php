@@ -104,6 +104,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20170412_01($db);
 		$this->update_20170412_02($db);
 		$this->update_20170503_01($db);
+		$this->update_20170515_01($db);
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -115,6 +116,25 @@ class UpdateDBService extends PSIBaseService {
 		$bl->insertBizlog("升级数据库，数据库版本 = " . $this->CURRENT_DB_VERSION);
 		
 		return $this->ok();
+	}
+
+	// ============================================
+	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	// 注意：
+	// 如果修改了数据库结构，别忘记了在InstallService中修改相应的SQL语句
+	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	// ============================================
+	private function notForgot() {
+	}
+
+	private function update_20170515_01($db) {
+		// 本次更新：t_role表新增字段code
+		$tableName = "t_role";
+		$columnName = "code";
+		if (! $this->columnExists($db, $tableName, $columnName)) {
+			$sql = "alter table {$tableName} add {$columnName} varchar(255) DEFAULT NULL;";
+			$db->execute($sql);
+		}
 	}
 
 	private function update_20170503_01($db) {
