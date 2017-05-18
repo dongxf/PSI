@@ -301,7 +301,7 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 									} else if (value == 1000) {
 										return "已审核";
 									} else if (value == 2000) {
-										return "部分出库";
+										return "<span style='color:green'>部分出库</span>";
 									} else if (value == 3000) {
 										return "全部出库";
 									} else {
