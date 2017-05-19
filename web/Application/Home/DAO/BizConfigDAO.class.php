@@ -260,32 +260,39 @@ class BizConfigDAO extends PSIBaseExDAO {
 		$data = $db->query($sql, $companyId);
 		$result = array();
 		
-		foreach ( $data as $i => $v ) {
+		foreach ( $data as $v ) {
 			$id = $v["id"];
-			$result[$i]["id"] = $id;
-			$result[$i]["name"] = $v["name"];
-			$result[$i]["value"] = $v["value"];
 			
+			$displayValue = "";
 			if ($id == "1001-01") {
-				$result[$i]["displayValue"] = $v["value"] == 1 ? "使用不同计量单位" : "使用同一个计量单位";
+				$displayValue = $v["value"] == 1 ? "使用不同计量单位" : "使用同一个计量单位";
 			} else if ($id == "1003-02") {
-				$result[$i]["displayValue"] = $v["value"] == 0 ? "移动平均法" : "先进先出法";
+				$displayValue = $v["value"] == 0 ? "移动平均法" : "先进先出法";
 			} else if ($id == "2002-01") {
-				$result[$i]["displayValue"] = $v["value"] == 1 ? "允许编辑销售单价" : "不允许编辑销售单价";
+				$displayValue = $v["value"] == 1 ? "允许编辑销售单价" : "不允许编辑销售单价";
 			} else if ($id == "2001-01" || $id == "2002-02") {
-				$result[$i]["displayValue"] = $this->getWarehouseName($v["value"]);
+				$displayValue = $this->getWarehouseName($v["value"]);
 			} else if ($id == "2001-02") {
-				$result[$i]["displayValue"] = $this->getPOBillPaymentName($v["value"]);
+				$displayValue = $this->getPOBillPaymentName($v["value"]);
 			} else if ($id == "2001-03") {
-				$result[$i]["displayValue"] = $this->getPWBillPaymentName($v["value"]);
+				$displayValue = $this->getPWBillPaymentName($v["value"]);
 			} else if ($id == "2002-03") {
-				$result[$i]["displayValue"] = $this->getWSBillRecevingName($v["value"]);
+				$displayValue = $this->getWSBillRecevingName($v["value"]);
 			} else if ($id == "2002-04") {
-				$result[$i]["displayValue"] = $this->getSOBillRecevingName($v["value"]);
+				$displayValue = $this->getSOBillRecevingName($v["value"]);
 			} else {
-				$result[$i]["displayValue"] = $v["value"];
+				$displayValue = $v["value"];
 			}
-			$result[$i]["note"] = $v["note"];
+			
+			$item = array(
+					"id" => $id,
+					"name" => $v["name"],
+					"value" => $v["value"],
+					"displayValue" => $displayValue,
+					"note" => $v["note"]
+			);
+			
+			$result[] = $item;
 		}
 		
 		return $result;
@@ -888,7 +895,7 @@ class BizConfigDAO extends PSIBaseExDAO {
 
 	/**
 	 * 获得调拨单单号前缀
-	 * 
+	 *
 	 * @param string $companyId        	
 	 * @return string
 	 */
