@@ -720,7 +720,7 @@ class PWBillDAO extends PSIBaseExDAO {
 								"unitName" => $v["unit_name"],
 								"goodsCount" => $v["left_count"],
 								"goodsPrice" => $v["goods_price"],
-								"goodsMoney" => $v["goods_money"],
+								"goodsMoney" => $v["left_count"] * $v["goods_price"],
 								"memo" => $v["memo"]
 						);
 						
