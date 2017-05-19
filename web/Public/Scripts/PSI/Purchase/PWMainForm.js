@@ -200,7 +200,7 @@ Ext.define("PSI.Purchase.PWMainForm", {
 					fields : ["id", "ref", "bizDate", "supplierName",
 							"warehouseName", "inputUserName", "bizUserName",
 							"billStatus", "amount", "dateCreated",
-							"paymentType"]
+							"paymentType", "billMemo"]
 				});
 		var store = Ext.create("Ext.data.Store", {
 					autoLoad : false,
@@ -312,6 +312,12 @@ Ext.define("PSI.Purchase.PWMainForm", {
 								menuDisabled : true,
 								sortable : false,
 								width : 140
+							}, {
+								header : "备注",
+								dataIndex : "billMemo",
+								menuDisabled : true,
+								sortable : false,
+								width : 150
 							}],
 					store : store,
 					tbar : [{
