@@ -198,7 +198,7 @@ class POBillDAO extends PSIBaseExDAO {
 		$id = $params["id"];
 		
 		$sql = "select p.id, g.code, g.name, g.spec, p.goods_count, p.goods_price, p.goods_money,
-					p.pw_count, p.left_count,
+					p.pw_count, p.left_count, p.memo,
 					p.tax_rate, p.tax, p.money_with_tax, u.name as unit_name
 				from t_po_bill_detail p, t_goods g, t_goods_unit u
 				where p.pobill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id
@@ -220,7 +220,8 @@ class POBillDAO extends PSIBaseExDAO {
 					"moneyWithTax" => $v["money_with_tax"],
 					"unitName" => $v["unit_name"],
 					"pwCount" => $v["pw_count"],
-					"leftCount" => $v["left_count"]
+					"leftCount" => $v["left_count"],
+					"memo" => $v["memo"]
 			);
 			$result[] = $item;
 		}
