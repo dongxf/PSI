@@ -184,6 +184,19 @@ Ext.define("PSI.Purchase.PWEditForm", {
 											scope : me
 										}
 									}
+								}, {
+									id : "editBillMemo",
+									labelWidth : 60,
+									labelAlign : "right",
+									labelSeparator : "",
+									fieldLabel : "备注",
+									xtype : "textfield",
+									listeners : {
+										specialkey : {
+											fn : me.onEditBillMemoSpecialKey,
+											scope : me
+										}
+									}
 								}]
 					}],
 			listeners : {
@@ -206,6 +219,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 		me.editWarehouse = Ext.getCmp("editWarehouse");
 		me.editBizUser = Ext.getCmp("editBizUser");
 		me.editPaymentType = Ext.getCmp("editPaymentType");
+		me.editBillMemo = Ext.getCmp("editBillMemo");
 
 		me.editHiddenId = Ext.getCmp("hiddenId");
 
@@ -250,6 +264,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 
 				if (success) {
 					var data = me.decodeJSON(response.responseText);
+					me.editBillMemo.setValue(data.billMemo);
 
 					if (me.getGenBill()) {
 						// 从采购订单生成采购入库单
@@ -394,7 +409,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 		}
 	},
 
-	onEditPaymentTypeSpecialKey : function(field, e) {
+	onEditBillMemoSpecialKey : function(field, e) {
 		var me = this;
 
 		if (me.__readonly) {
@@ -408,6 +423,18 @@ Ext.define("PSI.Purchase.PWEditForm", {
 			}
 			me.getGoodsGrid().focus();
 			me.__cellEditing.startEdit(0, 1);
+		}
+	},
+
+	onEditPaymentTypeSpecialKey : function(field, e) {
+		var me = this;
+
+		if (me.__readonly) {
+			return;
+		}
+
+		if (e.getKey() == e.ENTER) {
+			me.editBillMemo.focus();
 		}
 	},
 
@@ -677,6 +704,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 			bizUserId : me.editBizUser.getIdValue(),
 			paymentType : me.editPaymentType.getValue(),
 			pobillRef : me.getPobillRef(),
+			billMemo : me.editBillMemo.getValue(),
 			items : []
 		};
 

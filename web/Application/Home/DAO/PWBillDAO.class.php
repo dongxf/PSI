@@ -233,6 +233,7 @@ class PWBillDAO extends PSIBaseExDAO {
 		$supplierId = $bill["supplierId"];
 		$bizUserId = $bill["bizUserId"];
 		$paymentType = $bill["paymentType"];
+		$billMemo = $bill["billMemo"];
 		
 		$pobillRef = $bill["pobillRef"];
 		
@@ -280,11 +281,11 @@ class PWBillDAO extends PSIBaseExDAO {
 		
 		$sql = "insert into t_pw_bill (id, ref, supplier_id, warehouse_id, biz_dt,
 				biz_user_id, bill_status, date_created, goods_money, input_user_id, payment_type,
-				data_org, company_id)
-				values ('%s', '%s', '%s', '%s', '%s', '%s', 0, now(), 0, '%s', %d, '%s', '%s')";
+				data_org, company_id, bill_memo)
+				values ('%s', '%s', '%s', '%s', '%s', '%s', 0, now(), 0, '%s', %d, '%s', '%s', '%s')";
 		
 		$rc = $db->execute($sql, $id, $ref, $supplierId, $warehouseId, $bizDT, $bizUserId, 
-				$loginUserId, $paymentType, $dataOrg, $companyId);
+				$loginUserId, $paymentType, $dataOrg, $companyId, $billMemo);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
@@ -390,6 +391,7 @@ class PWBillDAO extends PSIBaseExDAO {
 		$supplierId = $bill["supplierId"];
 		$bizUserId = $bill["bizUserId"];
 		$paymentType = $bill["paymentType"];
+		$billMemo = $bill["billMemo"];
 		
 		$warehouseDAO = new WarehouseDAO($db);
 		$warehouse = $warehouseDAO->getWarehouseById($warehouseId);
@@ -480,10 +482,11 @@ class PWBillDAO extends PSIBaseExDAO {
 		$sql = "update t_pw_bill
 				set goods_money = %f, warehouse_id = '%s',
 					supplier_id = '%s', biz_dt = '%s',
-					biz_user_id = '%s', payment_type = %d
+					biz_user_id = '%s', payment_type = %d,
+					bill_memo = '%s'
 				where id = '%s' ";
 		$rc = $db->execute($sql, $totalMoney, $warehouseId, $supplierId, $bizDT, $bizUserId, 
-				$paymentType, $id);
+				$paymentType, $billMemo, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
@@ -612,7 +615,8 @@ class PWBillDAO extends PSIBaseExDAO {
 		
 		$sql = "select p.ref, p.bill_status, p.supplier_id, s.name as supplier_name,
 				p.warehouse_id, w.name as  warehouse_name,
-				p.biz_user_id, u.name as biz_user_name, p.biz_dt, p.payment_type
+				p.biz_user_id, u.name as biz_user_name, p.biz_dt, p.payment_type,
+				p.bill_memo
 				from t_pw_bill p, t_supplier s, t_warehouse w, t_user u
 				where p.id = '%s' and p.supplier_id = s.id and p.warehouse_id = w.id
 				  and p.biz_user_id = u.id";
@@ -627,8 +631,9 @@ class PWBillDAO extends PSIBaseExDAO {
 			$result["warehouseName"] = $v["warehouse_name"];
 			$result["bizUserId"] = $v["biz_user_id"];
 			$result["bizUserName"] = $v["biz_user_name"];
-			$result["bizDT"] = date("Y-m-d", strtotime($v["biz_dt"]));
+			$result["bizDT"] = $this->toYMD($v["biz_dt"]);
 			$result["paymentType"] = $v["payment_type"];
+			$result["billMemo"] = $v["bill_memo"];
 			
 			// 采购的商品明细
 			$items = array();
@@ -683,7 +688,7 @@ class PWBillDAO extends PSIBaseExDAO {
 			if ($pobillRef) {
 				// 由采购订单生成采购入库单
 				$sql = "select p.id, p.supplier_id, s.name as supplier_name, p.deal_date,
-							p.payment_type
+							p.payment_type, p.bill_memo
 						from t_po_bill p, t_supplier s
 						where p.ref = '%s' and p.supplier_id = s.id ";
 				$data = $db->query($sql, $pobillRef);
@@ -693,27 +698,33 @@ class PWBillDAO extends PSIBaseExDAO {
 					$result["supplierName"] = $v["supplier_name"];
 					$result["dealDate"] = $this->toYMD($v["deal_date"]);
 					$result["paymentType"] = $v["payment_type"];
+					$result["billMemo"] = $v["bill_memo"];
 					
 					$pobillId = $v["id"];
 					// 采购的明细
 					$items = array();
 					$sql = "select p.id, p.goods_id, g.code, g.name, g.spec, u.name as unit_name,
-								p.goods_count, p.goods_price, p.goods_money, p.left_count
+								p.goods_count, p.goods_price, p.goods_money, p.left_count, p.memo
 							from t_po_bill_detail p, t_goods g, t_goods_unit u
 							where p.pobill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id
 							order by p.show_order ";
 					$data = $db->query($sql, $pobillId);
-					foreach ( $data as $i => $v ) {
-						$items[$i]["id"] = $v["id"];
-						$items[$i]["poBillDetailId"] = $v["id"];
-						$items[$i]["goodsId"] = $v["goods_id"];
-						$items[$i]["goodsCode"] = $v["code"];
-						$items[$i]["goodsName"] = $v["name"];
-						$items[$i]["goodsSpec"] = $v["spec"];
-						$items[$i]["unitName"] = $v["unit_name"];
-						$items[$i]["goodsCount"] = $v["left_count"];
-						$items[$i]["goodsPrice"] = $v["goods_price"];
-						$items[$i]["goodsMoney"] = $v["goods_money"];
+					foreach ( $data as $v ) {
+						$item = array(
+								"id" => $v["id"],
+								"poBillDetailId" => $v["id"],
+								"goodsId" => $v["goods_id"],
+								"goodsCode" => $v["code"],
+								"goodsName" => $v["name"],
+								"goodsSpec" => $v["spec"],
+								"unitName" => $v["unit_name"],
+								"goodsCount" => $v["left_count"],
+								"goodsPrice" => $v["goods_price"],
+								"goodsMoney" => $v["goods_money"],
+								"memo" => $v["memo"]
+						);
+						
+						$items[] = $item;
 					}
 					
 					$result["items"] = $items;
