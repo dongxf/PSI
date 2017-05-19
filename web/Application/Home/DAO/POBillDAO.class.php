@@ -323,15 +323,16 @@ class POBillDAO extends PSIBaseExDAO {
 			$taxRate = $v["taxRate"];
 			$tax = $v["tax"];
 			$moneyWithTax = $v["moneyWithTax"];
+			$memo = $v["memo"];
 			
 			$sql = "insert into t_po_bill_detail(id, date_created, goods_id, goods_count, goods_money,
 						goods_price, pobill_id, tax_rate, tax, money_with_tax, pw_count, left_count,
-						show_order, data_org, company_id)
+						show_order, data_org, company_id, memo)
 					values ('%s', now(), '%s', %d, %f,
-						%f, '%s', %d, %f, %f, 0, %d, %d, '%s', '%s')";
+						%f, '%s', %d, %f, %f, 0, %d, %d, '%s', '%s', '%s')";
 			$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsMoney, 
 					$goodsPrice, $id, $taxRate, $tax, $moneyWithTax, $goodsCount, $i, $dataOrg, 
-					$companyId);
+					$companyId, $memo);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
@@ -458,15 +459,16 @@ class POBillDAO extends PSIBaseExDAO {
 			$taxRate = $v["taxRate"];
 			$tax = $v["tax"];
 			$moneyWithTax = $v["moneyWithTax"];
+			$memo = $v["memo"];
 			
 			$sql = "insert into t_po_bill_detail(id, date_created, goods_id, goods_count, goods_money,
 						goods_price, pobill_id, tax_rate, tax, money_with_tax, pw_count, left_count,
-						show_order, data_org, company_id)
+						show_order, data_org, company_id, memo)
 					values ('%s', now(), '%s', %d, %f,
-						%f, '%s', %d, %f, %f, 0, %d, %d, '%s', '%s')";
+						%f, '%s', %d, %f, %f, 0, %d, %d, '%s', '%s', '%s')";
 			$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsMoney, 
 					$goodsPrice, $id, $taxRate, $tax, $moneyWithTax, $goodsCount, $i, $dataOrg, 
-					$companyId);
+					$companyId, $memo);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
@@ -626,25 +628,30 @@ class POBillDAO extends PSIBaseExDAO {
 				
 				// 明细表
 				$sql = "select p.id, p.goods_id, g.code, g.name, g.spec, p.goods_count, p.goods_price, p.goods_money,
-							p.tax_rate, p.tax, p.money_with_tax, u.name as unit_name
+							p.tax_rate, p.tax, p.money_with_tax, u.name as unit_name, p.memo
 						from t_po_bill_detail p, t_goods g, t_goods_unit u
 						where p.pobill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id
 						order by p.show_order";
 				$items = array();
 				$data = $db->query($sql, $id);
 				
-				foreach ( $data as $i => $v ) {
-					$items[$i]["goodsId"] = $v["goods_id"];
-					$items[$i]["goodsCode"] = $v["code"];
-					$items[$i]["goodsName"] = $v["name"];
-					$items[$i]["goodsSpec"] = $v["spec"];
-					$items[$i]["goodsCount"] = $v["goods_count"];
-					$items[$i]["goodsPrice"] = $v["goods_price"];
-					$items[$i]["goodsMoney"] = $v["goods_money"];
-					$items[$i]["taxRate"] = $v["tax_rate"];
-					$items[$i]["tax"] = $v["tax"];
-					$items[$i]["moneyWithTax"] = $v["money_with_tax"];
-					$items[$i]["unitName"] = $v["unit_name"];
+				foreach ( $data as $v ) {
+					$item = array(
+							"goodsId" => $v["goods_id"],
+							"goodsCode" => $v["code"],
+							"goodsName" => $v["name"],
+							"goodsSpec" => $v["spec"],
+							"goodsCount" => $v["goods_count"],
+							"goodsPrice" => $v["goods_price"],
+							"goodsMoney" => $v["goods_money"],
+							"taxRate" => $v["tax_rate"],
+							"tax" => $v["tax"],
+							"moneyWithTax" => $v["money_with_tax"],
+							"unitName" => $v["unit_name"],
+							"memo" => $v["memo"]
+					);
+					
+					$items[] = $item;
 				}
 				
 				$result["items"] = $items;

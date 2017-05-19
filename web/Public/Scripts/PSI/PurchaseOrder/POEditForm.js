@@ -427,7 +427,7 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 							}, {
 								name : "moneyWithTax",
 								type : "float"
-							}]
+							}, "memo"]
 				});
 		var store = Ext.create("Ext.data.Store", {
 					autoLoad : false,
@@ -568,6 +568,15 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 								},
 								summaryType : "sum"
 							}, {
+								header : "备注",
+								dataIndex : "memo",
+								menuDisabled : true,
+								sortable : false,
+								draggable : false,
+								editor : {
+									xtype : "textfield"
+								}
+							}, {
 								header : "",
 								id : "columnActionDelete",
 								align : "center",
@@ -665,10 +674,7 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 		var fieldName = e.field;
 		var goods = e.record;
 		var oldValue = e.originalValue;
-		if (fieldName == "moneyWithTax") {
-			if (goods.get(fieldName) != (new Number(oldValue)).toFixed(2)) {
-				me.calcTax(goods);
-			}
+		if (fieldName == "memo") {
 			var store = me.getGoodsGrid().getStore();
 			if (e.rowIdx == store.getCount() - 1) {
 				store.add({
@@ -678,6 +684,10 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 			e.rowIdx += 1;
 			me.getGoodsGrid().getSelectionModel().select(e.rowIdx);
 			me.__cellEditing.startEdit(e.rowIdx, 1);
+		} else if (fieldName == "moneyWithTax") {
+			if (goods.get(fieldName) != (new Number(oldValue)).toFixed(2)) {
+				me.calcTax(goods);
+			}
 		} else if (fieldName == "tax") {
 			if (goods.get(fieldName) != (new Number(oldValue)).toFixed(2)) {
 				me.calcMoneyWithTax(goods);
@@ -764,7 +774,8 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 						goodsMoney : item.get("goodsMoney"),
 						tax : item.get("tax"),
 						taxRate : item.get("taxRate"),
-						moneyWithTax : item.get("moneyWithTax")
+						moneyWithTax : item.get("moneyWithTax"),
+						memo : item.get("memo")
 					});
 		}
 
