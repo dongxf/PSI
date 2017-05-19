@@ -44,7 +44,7 @@ class BizlogDAO extends PSIBaseExDAO {
 		$data = $db->query($sql, $queryParams);
 		$result = array();
 		
-		foreach ( $data as $i => $v ) {
+		foreach ( $data as $v ) {
 			$item = array(
 					"id" => $v["id"],
 					"loginName" => $v["login_name"],
@@ -80,7 +80,7 @@ class BizlogDAO extends PSIBaseExDAO {
 
 	/**
 	 * 记录业务日志
-	 * 
+	 *
 	 * @param array $params        	
 	 * @return NULL|array
 	 */
