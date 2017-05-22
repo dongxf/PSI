@@ -610,7 +610,7 @@ class UserDAO extends PSIBaseExDAO {
 				limit 20";
 		$data = $db->query($sql, $queryParams);
 		$result = array();
-		foreach ( $data as $i => $v ) {
+		foreach ( $data as $v ) {
 			$result[] = array(
 					"id" => $v["id"],
 					"loginName" => $v["login_name"],
