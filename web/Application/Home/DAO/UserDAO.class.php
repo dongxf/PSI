@@ -165,19 +165,22 @@ class UserDAO extends PSIBaseExDAO {
 		
 		$result = array();
 		
-		foreach ( $data as $key => $value ) {
-			$result[$key]["id"] = $value["id"];
-			$result[$key]["loginName"] = $value["login_name"];
-			$result[$key]["name"] = $value["name"];
-			$result[$key]["enabled"] = $value["enabled"];
-			$result[$key]["orgCode"] = $value["org_code"];
-			$result[$key]["gender"] = $value["gender"];
-			$result[$key]["birthday"] = $value["birthday"];
-			$result[$key]["idCardNumber"] = $value["id_card_number"];
-			$result[$key]["tel"] = $value["tel"];
-			$result[$key]["tel02"] = $value["tel02"];
-			$result[$key]["address"] = $value["address"];
-			$result[$key]["dataOrg"] = $value["data_org"];
+		foreach ( $data as $v ) {
+			$item = array(
+					"id" => $v["id"],
+					"loginName" => $v["login_name"],
+					"name" => $v["name"],
+					"enabled" => $v["enabled"],
+					"orgCode" => $v["org_code"],
+					"gender" => $v["gender"],
+					"birthday" => $v["birthday"],
+					"idCardNumber" => $v["id_card_number"],
+					"tel" => $v["tel"],
+					"tel02" => $v["tel02"],
+					"address" => $v["address"],
+					"dataOrg" => $v["data_org"]
+			);
+			$result[] = $item;
 		}
 		
 		$sql = "select count(*) as cnt
@@ -728,7 +731,7 @@ class UserDAO extends PSIBaseExDAO {
 
 	/**
 	 * 获得当前登录用户的某个功能的数据域
-	 * 
+	 *
 	 * @param array $params        	
 	 * @return string
 	 */
