@@ -31,7 +31,7 @@ Ext.define("PSI.User.ChangeMyPasswordForm", {
 				layout : "absolute",
 				border : 0,
 				items : [{
-					id : "editForm",
+					id : "PSI_User_ChangeMyPasswordForm_editForm",
 					x : 200,
 					y : 50,
 					xtype : "form",
@@ -63,7 +63,7 @@ Ext.define("PSI.User.ChangeMyPasswordForm", {
 								xtype : "displayfield",
 								value : user.name
 							}, {
-								id : "editOldPassword",
+								id : "PSI_User_ChangeMyPasswordForm_editOldPassword",
 								fieldLabel : "旧密码",
 								allowBlank : false,
 								blankText : "没有输入旧密码",
@@ -77,7 +77,7 @@ Ext.define("PSI.User.ChangeMyPasswordForm", {
 									}
 								}
 							}, {
-								id : "editNewPassword",
+								id : "PSI_User_ChangeMyPasswordForm_editNewPassword",
 								fieldLabel : "新密码",
 								allowBlank : false,
 								blankText : "没有输入新密码",
@@ -91,7 +91,7 @@ Ext.define("PSI.User.ChangeMyPasswordForm", {
 									}
 								}
 							}, {
-								id : "editConfirmPassword",
+								id : "PSI_User_ChangeMyPasswordForm_editConfirmPassword",
 								fieldLabel : "确认密码",
 								allowBlank : false,
 								blankText : "没有输入确认密码",
@@ -105,7 +105,7 @@ Ext.define("PSI.User.ChangeMyPasswordForm", {
 								}
 							}],
 					buttons : [{
-								id : "buttonOK",
+								id : "PSI_User_ChangeMyPasswordForm_buttonOK",
 								text : "修改密码",
 								formBind : true,
 								handler : this.onOK,
@@ -122,6 +122,13 @@ Ext.define("PSI.User.ChangeMyPasswordForm", {
 		});
 
 		me.callParent(arguments);
+
+		me.editNewPassword = Ext
+				.getCmp("PSI_User_ChangeMyPasswordForm_editNewPassword");
+		me.editConfirmPassword = Ext
+				.getCmp("PSI_User_ChangeMyPasswordForm_editConfirmPassword");
+		me.editForm = Ext.getCmp("PSI_User_ChangeMyPasswordForm_editForm");
+		me.buttonOK = Ext.getCmp("PSI_User_ChangeMyPasswordForm_buttonOK");
 	},
 
 	/**
@@ -130,8 +137,8 @@ Ext.define("PSI.User.ChangeMyPasswordForm", {
 	onOK : function() {
 		var me = this;
 
-		var editNewPassword = Ext.getCmp("editNewPassword");
-		var editConfirmPassword = Ext.getCmp("editConfirmPassword");
+		var editNewPassword = me.editNewPassword;
+		var editConfirmPassword = me.editConfirmPassword;
 
 		var np = editNewPassword.getValue();
 		var cp = editConfirmPassword.getValue();
@@ -143,7 +150,7 @@ Ext.define("PSI.User.ChangeMyPasswordForm", {
 			return;
 		}
 
-		var form = Ext.getCmp("editForm");
+		var form = me.editForm;
 		var el = Ext.getBody();
 		form.submit({
 					url : PSI.Const.BASE_URL + "Home/User/changeMyPasswordPOST",
@@ -151,7 +158,7 @@ Ext.define("PSI.User.ChangeMyPasswordForm", {
 					success : function(form, action) {
 						el.unmask();
 						PSI.MsgBox.showInfo("成功修改登录密码", function() {
-									location.replace(PSI.Const.BASE_URL);
+									window.close();
 								});
 					},
 					failure : function(form, action) {
@@ -162,20 +169,26 @@ Ext.define("PSI.User.ChangeMyPasswordForm", {
 	},
 
 	onEditOldPasswordSpecialKey : function(field, e) {
+		var me = this;
+
 		if (e.getKey() == e.ENTER) {
-			Ext.getCmp("editNewPassword").focus();
+			me.editNewPassword.focus();
 		}
 	},
 
 	onEditNewPasswordSpecialKey : function(field, e) {
+		var me = this;
+
 		if (e.getKey() == e.ENTER) {
-			Ext.getCmp("editConfirmPassword").focus();
+			me.editConfirmPassword.focus();
 		}
 	},
 
 	onEditConfirmPasswordSpecialKey : function(field, e) {
+		var me = this;
+
 		if (e.getKey() == e.ENTER) {
-			Ext.getCmp("buttonOK").focus();
+			me.buttonOK.focus();
 		}
 	}
 });
