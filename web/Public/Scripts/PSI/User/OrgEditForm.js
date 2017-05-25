@@ -4,10 +4,6 @@
 Ext.define("PSI.User.OrgEditForm", {
 	extend : "PSI.AFX.BaseDialogForm",
 
-	getBaseURL : function() {
-		return PSI.Const.BASE_URL;
-	},
-
 	/**
 	 * 初始化组件
 	 */
@@ -20,9 +16,8 @@ Ext.define("PSI.User.OrgEditForm", {
 			width : 400,
 			height : 190,
 			layout : "fit",
-			defaultFocus : "editName",
 			items : [{
-				id : "editForm",
+				id : "PSI_User_OrgEditForm_editForm",
 				xtype : "form",
 				layout : {
 					type : "table",
@@ -42,7 +37,7 @@ Ext.define("PSI.User.OrgEditForm", {
 							name : "id",
 							value : entity === null ? null : entity.get("id")
 						}, {
-							id : "editName",
+							id : "PSI_User_OrgEditForm_editName",
 							fieldLabel : "名称",
 							allowBlank : false,
 							blankText : "没有输入名称",
@@ -57,7 +52,7 @@ Ext.define("PSI.User.OrgEditForm", {
 							},
 							width : 370
 						}, {
-							id : "editParentOrg",
+							id : "PSI_User_OrgEditForm_editParentOrg",
 							xtype : "PSI_parent_org_editor",
 							parentItem : me,
 							fieldLabel : "上级组织",
@@ -69,13 +64,13 @@ Ext.define("PSI.User.OrgEditForm", {
 							},
 							width : 370
 						}, {
-							id : "editParentOrgId",
+							id : "PSI_User_OrgEditForm_editParentOrgId",
 							xtype : "hidden",
 							name : "parentId",
 							value : entity === null ? null : entity
 									.get("parentId")
 						}, {
-							id : "editOrgCode",
+							id : "PSI_User_OrgEditForm_editOrgCode",
 							fieldLabel : "编码",
 							allowBlank : false,
 							blankText : "没有输入编码",
@@ -120,18 +115,20 @@ Ext.define("PSI.User.OrgEditForm", {
 
 		me.callParent(arguments);
 
-		me.editParentOrg = Ext.getCmp("editParentOrg");
-		me.editParentOrgId = Ext.getCmp("editParentOrgId");
-		me.editName = Ext.getCmp("editName");
-		me.editOrgCode = Ext.getCmp("editOrgCode");
+		me.editParentOrg = Ext.getCmp("PSI_User_OrgEditForm_editParentOrg");
+		me.editParentOrgId = Ext.getCmp("PSI_User_OrgEditForm_editParentOrgId");
+		me.editName = Ext.getCmp("PSI_User_OrgEditForm_editName");
+		me.editOrgCode = Ext.getCmp("PSI_User_OrgEditForm_editOrgCode");
 
-		me.editForm = Ext.getCmp("editForm");
+		me.editForm = Ext.getCmp("PSI_User_OrgEditForm_editForm");
 	},
 
 	onEditFormShow : function() {
 		var me = this;
+		
+		me.editName.focus();
 
-		var entity = this.getEntity();
+		var entity = me.getEntity();
 		if (entity === null) {
 			return;
 		}
@@ -163,7 +160,7 @@ Ext.define("PSI.User.OrgEditForm", {
 
 	onOK : function() {
 		var me = this;
-		var f = Ext.getCmp("editForm");
+		var f = me.editForm;
 		var el = f.getEl();
 		el.mask("数据保存中...");
 		f.submit({
