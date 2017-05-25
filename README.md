@@ -21,14 +21,6 @@ PSI的开源协议
 >在Apache License协议下，您可以闭源并私有化PSI的代码，作为您自己的商业产品来销售。
 
 
-PSI行业版
--------------
-> 食品行业版   http://git.oschina.net/crm8000/PSI_Food_Industry
->
-> 快递管理系统 
-> web端：http://git.oschina.net/crm8000/PSI_FMS
-> 微信端：http://git.oschina.net/crm8000/PSI_FMS_H5
-
 如需要技术支持，请联系
 -------------
 >1、 普通QQ群： <a target="_blank" href="http://shang.qq.com/wpa/qunwpa?idkey=64808ce24f2a3186ccb1f37aad9ed591bcc4fb257d09749753aca98c6c73e400">414474186</a>
