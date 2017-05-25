@@ -4,7 +4,7 @@
 Ext.define("PSI.About.MainForm", {
 	extend : 'Ext.window.Window',
 	config : {
-		productionName : "开源进销存PSI",
+		productionName : "PSI",
 		phpVersion : "",
 		mySQLVersion : "",
 		PSIDBVersion : "",
