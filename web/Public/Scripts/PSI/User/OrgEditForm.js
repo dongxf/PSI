@@ -2,11 +2,7 @@
  * 新增或编辑组织机构
  */
 Ext.define("PSI.User.OrgEditForm", {
-	extend : "Ext.window.Window",
-	config : {
-		parentForm : null,
-		entity : null
-	},
+	extend : "PSI.AFX.BaseDialogForm",
 
 	getBaseURL : function() {
 		return PSI.Const.BASE_URL;
@@ -21,9 +17,6 @@ Ext.define("PSI.User.OrgEditForm", {
 
 		Ext.apply(me, {
 			title : entity === null ? "新增组织机构" : "编辑组织机构",
-			modal : true,
-			resizable : false,
-			onEsc : Ext.emptyFn,
 			width : 400,
 			height : 190,
 			layout : "fit",
@@ -110,7 +103,7 @@ Ext.define("PSI.User.OrgEditForm", {
 						}, {
 							text : "取消",
 							handler : function() {
-								PSI.MsgBox.confirm("请确认是否取消操作?", function() {
+								me.confirm("请确认是否取消操作?", function() {
 											me.close();
 										});
 							},
@@ -126,6 +119,13 @@ Ext.define("PSI.User.OrgEditForm", {
 		});
 
 		me.callParent(arguments);
+
+		me.editParentOrg = Ext.getCmp("editParentOrg");
+		me.editParentOrgId = Ext.getCmp("editParentOrgId");
+		me.editName = Ext.getCmp("editName");
+		me.editOrgCode = Ext.getCmp("editOrgCode");
+
+		me.editForm = Ext.getCmp("editForm");
 	},
 
 	onEditFormShow : function() {
@@ -135,34 +135,30 @@ Ext.define("PSI.User.OrgEditForm", {
 		if (entity === null) {
 			return;
 		}
-		var form = this;
-		form.getEl().mask("数据加载中...");
-		Ext.Ajax.request({
-					url : me.getBaseURL() + "Home/User/orgParentName",
-					method : "POST",
+		var el = me.getEl() || Ext.getBody();
+		el.mask("数据加载中...");
+		me.ajax({
+					url : me.URL("Home/User/orgParentName"),
 					params : {
 						id : entity.get("id")
 					},
 					callback : function(options, success, response) {
-						form.getEl().unmask();
+						el.unmask();
 						if (success) {
 							var data = Ext.JSON.decode(response.responseText);
-							Ext.getCmp("editParentOrg")
-									.setValue(data.parentOrgName);
-							Ext.getCmp("editParentOrgId")
-									.setValue(data.parentOrgId);
-							Ext.getCmp("editName").setValue(data.name);
-							Ext.getCmp("editOrgCode").setValue(data.orgCode);
+							me.editParentOrg.setValue(data.parentOrgName);
+							me.editParentOrgId.setValue(data.parentOrgId);
+							me.editName.setValue(data.name);
+							me.editOrgCode.setValue(data.orgCode);
 						}
 					}
 				});
 	},
 
 	setParentOrg : function(data) {
-		var editParentOrg = Ext.getCmp("editParentOrg");
-		editParentOrg.setValue(data.fullName);
-		var editParentOrgId = Ext.getCmp("editParentOrgId");
-		editParentOrgId.setValue(data.id);
+		var me = this;
+		me.editParentOrg.setValue(data.fullName);
+		me.editParentOrgId.setValue(data.id);
 	},
 
 	onOK : function() {
@@ -171,7 +167,7 @@ Ext.define("PSI.User.OrgEditForm", {
 		var el = f.getEl();
 		el.mask("数据保存中...");
 		f.submit({
-					url : me.getBaseURL() + "Home/User/editOrg",
+					url : me.URL("Home/User/editOrg"),
 					method : "POST",
 					success : function(form, action) {
 						el.unmask();
@@ -180,30 +176,32 @@ Ext.define("PSI.User.OrgEditForm", {
 					},
 					failure : function(form, action) {
 						el.unmask();
-						PSI.MsgBox.showInfo(action.result.msg, function() {
-									Ext.getCmp("editName").focus();
+						me.showInfo(action.result.msg, function() {
+									me.editName.focus();
 								});
 					}
 				});
 	},
 
 	onEditNameSpecialKey : function(field, e) {
+		var me = this;
 		if (e.getKey() == e.ENTER) {
-			Ext.getCmp("editParentOrg").focus();
+			me.editParentOrg.focus();
 		}
 	},
 
 	onEditParentOrgSpecialKey : function(field, e) {
+		var me = this;
 		if (e.getKey() == e.ENTER) {
-			Ext.getCmp("editOrgCode").focus();
+			me.editOrgCode.focus();
 		}
 	},
 
 	onEditOrgCodeSpecialKey : function(field, e) {
+		var me = this;
 		if (e.getKey() == e.ENTER) {
-			var f = Ext.getCmp("editForm");
-			if (f.getForm().isValid()) {
-				this.onOK();
+			if (me.editForm.getForm().isValid()) {
+				me.onOK();
 			}
 		}
 	}
