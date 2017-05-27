@@ -17,18 +17,9 @@ PSI的开源协议
 -------------
 >PSI的开源协议为GPL v3
 
->如果您有Sencha Ext JS的商业许可（参见： http://www.sencha.com/legal/#Sencha_Ext_JS ），那么PSI的开源协议为Apache License v2。
->在Apache License协议下，您可以闭源并私有化PSI的代码，作为您自己的商业产品来销售。
-
-
 如需要技术支持，请联系
 -------------
 >1、 普通QQ群： <a target="_blank" href="http://shang.qq.com/wpa/qunwpa?idkey=64808ce24f2a3186ccb1f37aad9ed591bcc4fb257d09749753aca98c6c73e400">414474186</a>
->
-> 注意:
-> PSI部署环境是：https://www.mopaas.com/
->
-> 其他部署环境下的安装技术支持采用收费，标准是：200元/小时，先付2小时费用后提供安装技术支持。注意：这仅仅是指安装PSI的技术服务，不包括其他的技术支持服务。
 >
 >2、 PSI 免费VIP QQ群：108111233
 > 加入本群的要求：1、实名；2、认真地在应用PSI，并愿意分享实际应用案例。
