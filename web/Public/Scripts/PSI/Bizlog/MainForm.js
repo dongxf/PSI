@@ -6,13 +6,17 @@
 Ext.define("PSI.Bizlog.MainForm", {
 	extend : "PSI.AFX.BaseOneGridMainForm",
 
+	config : {
+		unitTest : "0"
+	},
+
 	/**
 	 * 重载父类方法
 	 */
 	afxGetToolbarCmp : function() {
 		var me = this;
 
-		return [{
+		var buttons = [{
 					text : "刷新",
 					handler : me.onRefresh,
 					scope : me,
@@ -29,6 +33,16 @@ Ext.define("PSI.Bizlog.MainForm", {
 					scope : me,
 					handler : me.onUpdateDatabase
 				}];
+
+		if (me.getUnitTest() == "1") {
+			buttons.push("-", {
+						text : "单元测试",
+						handler : me.onUnitTest,
+						scope : me
+					});
+		}
+
+		return buttons;
 	},
 
 	/**
@@ -203,5 +217,10 @@ Ext.define("PSI.Bizlog.MainForm", {
 						}
 					});
 		});
+	},
+
+	onUnitTest : function() {
+		var url = PSI.Const.BASE_URL + "UnitTest";
+		window.open(url);
 	}
 });

@@ -27,6 +27,8 @@ class BizlogController extends PSIBaseController {
 			
 			$this->assign("title", "业务日志");
 			
+			$this->assign("canUnitTest", $this->canUnitTest() ? 1 : 0);
+			
 			$this->display();
 		} else {
 			$this->gotoLoginPage("/Home/Bizlog/index");

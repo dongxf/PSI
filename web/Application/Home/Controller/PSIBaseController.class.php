@@ -5,6 +5,7 @@ namespace Home\Controller;
 use Think\Controller;
 use Home\Service\BizConfigService;
 use Home\Service\UserService;
+use Home\Service\UnitTestService;
 
 /**
  * PSI Base Controller
@@ -36,7 +37,9 @@ class PSIBaseController extends Controller {
 
 	/**
 	 * 跳转到登录页面
-	 * @param string $returnPage 登录后返回的URL
+	 * 
+	 * @param string $returnPage
+	 *        	登录后返回的URL
 	 */
 	protected function gotoLoginPage($returnPage = null) {
 		$url = __ROOT__ . "/Home/User/login";
@@ -47,7 +50,7 @@ class PSIBaseController extends Controller {
 		
 		redirect($url);
 	}
-	
+
 	/**
 	 * 没有权限
 	 */
@@ -56,5 +59,13 @@ class PSIBaseController extends Controller {
 				"success" => false,
 				"msg" => "您没有[$m]的操作权限"
 		);
+	}
+
+	/**
+	 * 通过环境变量来控制是否可以进行单元测试
+	 */
+	protected function canUnitTest() {
+		$us = new UnitTestService();
+		return $us->canUnitTest();
 	}
 }
