@@ -28,7 +28,7 @@ class BizlogDAO extends PSIBaseExDAO {
 					b.log_category, b.ip_from
 				from t_biz_log b, t_user u
 				where b.user_id = u.id ";
-		$queryParams = array();
+		$queryParams = [];
 		$ds = new DataOrgDAO($db);
 		$rs = $ds->buildSQL(FIdConst::BIZ_LOG, "b", $loginUserId);
 		if ($rs) {
@@ -42,10 +42,10 @@ class BizlogDAO extends PSIBaseExDAO {
 		$queryParams[] = $limit;
 		
 		$data = $db->query($sql, $queryParams);
-		$result = array();
+		$result = [];
 		
 		foreach ( $data as $v ) {
-			$item = array(
+			$result[] = [
 					"id" => $v["id"],
 					"loginName" => $v["login_name"],
 					"userName" => $v["name"],
@@ -54,14 +54,13 @@ class BizlogDAO extends PSIBaseExDAO {
 					"content" => $v["info"],
 					"dt" => $v["date_created"],
 					"logCategory" => $v["log_category"]
-			);
-			$result[] = $item;
+			];
 		}
 		
 		$sql = "select count(*) as cnt
 				from t_biz_log b, t_user u
 				where b.user_id = u.id";
-		$queryParams = array();
+		$queryParams = [];
 		$ds = new DataOrgDAO($db);
 		$rs = $ds->buildSQL(FIdConst::BIZ_LOG, "b", $loginUserId);
 		if ($rs) {
@@ -72,10 +71,10 @@ class BizlogDAO extends PSIBaseExDAO {
 		$data = $db->query($sql, $queryParams);
 		$cnt = $data[0]["cnt"];
 		
-		return array(
+		return [
 				"logs" => $result,
 				"totalCount" => $cnt
-		);
+		];
 	}
 
 	/**
