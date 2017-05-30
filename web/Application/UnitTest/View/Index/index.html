@@ -1,6 +1,6 @@
 <layout name="layout" />
 
-<script src="{$uri}Public/Scripts/PSI/Home/MainForm.js?dt={$dtFlag}"
+<script src="{$uri}Public/Scripts/PSI/UnitTest/MainForm.js?dt={$dtFlag}"
 	type="text/javascript"></script>
 <script>
 	Ext.onReady(function() {
@@ -9,6 +9,7 @@
 			productionName : "{$productionName}"
 		});
 
+		app.add(Ext.create("PSI.UnitTest.MainForm"));
 		app.setAppHeader({
 			title : "{$title}",
 			iconCls : "PSI-fid-9997"
