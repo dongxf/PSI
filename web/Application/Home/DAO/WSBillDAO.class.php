@@ -753,7 +753,7 @@ class WSBillDAO extends PSIBaseExDAO {
 		$sql = "select w.id, w.bizdt, c.name as customer_name,
 				  u.name as biz_user_name,
 				  h.name as warehouse_name,
-				  w.sale_money
+				  w.sale_money, w.memo, w.deal_address
 				from t_ws_bill w, t_customer c, t_user u, t_warehouse h
 				where w.customer_id = c.id and w.biz_user_id = u.id
 				  and w.warehouse_id = h.id
@@ -765,13 +765,15 @@ class WSBillDAO extends PSIBaseExDAO {
 		
 		$id = $data[0]["id"];
 		
-		$bill = array();
+		$bill = [];
 		
-		$bill["bizDT"] = date("Y-m-d", strtotime($data[0]["bizdt"]));
+		$bill["bizDT"] = $this->toYMD($data[0]["bizdt"]);
 		$bill["customerName"] = $data[0]["customer_name"];
 		$bill["warehouseName"] = $data[0]["warehouse_name"];
 		$bill["bizUserName"] = $data[0]["biz_user_name"];
 		$bill["saleMoney"] = $data[0]["sale_money"];
+		$bill["memo"] = $data[0]["memo"];
+		$bill["dealAddress"] = $data[0]["deal_address"];
 		
 		// 明细表
 		$sql = "select g.code, g.name, g.spec, u.name as unit_name, d.goods_count,

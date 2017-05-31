@@ -236,8 +236,9 @@ class WSBillService extends PSIBaseExService {
 					<tr><td colspan="2">单号：' . $ref . '</td></tr>
 					<tr><td colspan="2">客户：' . $bill["customerName"] . '</td></tr>
 					<tr><td>业务日期：' . $bill["bizDT"] . '</td><td>出库仓库:' . $bill["warehouseName"] . '</td></tr>
-					<tr><td>业务员：' . $bill["bizUserName"] . '</td><td></td></tr>
-					<tr><td colspan="2">销售金额:' . $bill["saleMoney"] . '</td></tr>
+					<tr><td>业务员：' . $bill["bizUserName"] . '</td><td>销售金额:' . $bill["saleMoney"] . '</td></tr>
+					<tr><td colspan="2">送货地址:' . $bill["dealAddress"] . '</td></tr>
+					<tr><td colspan="2">备注:' . $bill["memo"] . '</td></tr>
 				</table>
 				';
 		$pdf->writeHTML($html);
@@ -276,7 +277,7 @@ class WSBillService extends PSIBaseExService {
 	 * @return array
 	 */
 	public function soBillWSBillList($soBillId) {
-		if ($this->isNotOnline()){
+		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
 		
