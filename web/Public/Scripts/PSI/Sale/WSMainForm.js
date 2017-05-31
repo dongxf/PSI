@@ -205,7 +205,7 @@ Ext.define("PSI.Sale.WSMainForm", {
 					fields : ["id", "ref", "bizDate", "customerName",
 							"warehouseName", "inputUserName", "bizUserName",
 							"billStatus", "amount", "dateCreated",
-							"receivingType", "memo"]
+							"receivingType", "memo", "dealAddress"]
 				});
 		var store = Ext.create("Ext.data.Store", {
 					autoLoad : false,
@@ -269,6 +269,12 @@ Ext.define("PSI.Sale.WSMainForm", {
 								header : "客户",
 								dataIndex : "customerName",
 								width : 300,
+								menuDisabled : true,
+								sortable : false
+							}, {
+								header : "送货地址",
+								dataIndex : "dealAddress",
+								width : 150,
 								menuDisabled : true,
 								sortable : false
 							}, {

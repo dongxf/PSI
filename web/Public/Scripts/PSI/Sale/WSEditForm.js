@@ -26,7 +26,6 @@ Ext.define("PSI.Sale.WSEditForm", {
 			width : 1000,
 			height : 600,
 			layout : "border",
-			defaultFocus : "editCustomer",
 			tbar : [{
 						id : "buttonToolbox",
 						text : "工具",
@@ -86,7 +85,7 @@ Ext.define("PSI.Sale.WSEditForm", {
 						border : 0,
 						layout : {
 							type : "table",
-							columns : 2
+							columns : 3
 						},
 						height : 120,
 						bodyPadding : 10,
@@ -124,21 +123,18 @@ Ext.define("PSI.Sale.WSEditForm", {
 										}
 									}
 								}, {
-									id : "editCustomer",
-									xtype : "psi_customerfield",
-									fieldLabel : "客户",
-									showAddButton : true,
-									allowBlank : false,
+									id : "editBizUser",
+									fieldLabel : "业务员",
+									xtype : "psi_userfield",
 									labelWidth : 60,
 									labelAlign : "right",
 									labelSeparator : "",
-									colspan : 2,
-									width : 430,
-									blankText : "没有输入客户",
+									allowBlank : false,
+									blankText : "没有输入业务员",
 									beforeLabelTextTpl : PSI.Const.REQUIRED,
 									listeners : {
 										specialkey : {
-											fn : me.onEditCustomerSpecialKey,
+											fn : me.onEditBizUserSpecialKey,
 											scope : me
 										}
 									}
@@ -160,18 +156,21 @@ Ext.define("PSI.Sale.WSEditForm", {
 										}
 									}
 								}, {
-									id : "editBizUser",
-									fieldLabel : "业务员",
-									xtype : "psi_userfield",
+									id : "editCustomer",
+									xtype : "psi_customerfield",
+									fieldLabel : "客户",
+									showAddButton : true,
+									allowBlank : false,
 									labelWidth : 60,
 									labelAlign : "right",
 									labelSeparator : "",
-									allowBlank : false,
-									blankText : "没有输入业务员",
+									colspan : 2,
+									width : 430,
+									blankText : "没有输入客户",
 									beforeLabelTextTpl : PSI.Const.REQUIRED,
 									listeners : {
 										specialkey : {
-											fn : me.onEditBizUserSpecialKey,
+											fn : me.onEditCustomerSpecialKey,
 											scope : me
 										}
 									}
@@ -199,6 +198,21 @@ Ext.define("PSI.Sale.WSEditForm", {
 										}
 									}
 								}, {
+									id : "editDealAddress",
+									labelWidth : 60,
+									labelAlign : "right",
+									labelSeparator : "",
+									fieldLabel : "送货地址",
+									xtype : "textfield",
+									listeners : {
+										specialkey : {
+											fn : me.onEditDealAddressSpecialKey,
+											scope : me
+										}
+									},
+									colspan : 2,
+									width : 430
+								}, {
 									id : "editBillMemo",
 									labelWidth : 60,
 									labelAlign : "right",
@@ -210,7 +224,9 @@ Ext.define("PSI.Sale.WSEditForm", {
 											fn : me.onEditBillMemoSpecialKey,
 											scope : me
 										}
-									}
+									},
+									colspan : 3,
+									width : 645
 								}]
 					}],
 			listeners : {
@@ -226,6 +242,15 @@ Ext.define("PSI.Sale.WSEditForm", {
 		});
 
 		me.callParent(arguments);
+
+		me.editRef = Ext.getCmp("editRef");
+		me.editBizDT = Ext.getCmp("editBizDT");
+		me.editBizUser = Ext.getCmp("editBizUser");
+		me.editWarehouse = Ext.getCmp("editWarehouse");
+		me.editCustomer = Ext.getCmp("editCustomer");
+		me.editReceivingType = Ext.getCmp("editReceivingType");
+		me.editDealAddress = Ext.getCmp("editDealAddress");
+		me.editBillMemo = Ext.getCmp("editBillMemo");
 	},
 
 	onWindowBeforeUnload : function(e) {
@@ -240,6 +265,9 @@ Ext.define("PSI.Sale.WSEditForm", {
 		Ext.get(window).on('beforeunload', this.onWindowBeforeUnload);
 
 		var me = this;
+
+		me.editWarehouse.focus();
+
 		me.__canEditGoodsPrice = false;
 		var el = me.getEl() || Ext.getBody();
 		el.mask(PSI.Const.LOADING);
@@ -284,6 +312,9 @@ Ext.define("PSI.Sale.WSEditForm", {
 								Ext.getCmp("editReceivingType")
 										.setValue(data.receivingType);
 								Ext.getCmp("editBillMemo").setValue(data.memo);
+
+								me.editDealAddress.setValue(data.dealAddress);
+
 								var store = me.getGoodsGrid().getStore();
 								store.removeAll();
 								store.add(data.items);
@@ -330,6 +361,7 @@ Ext.define("PSI.Sale.WSEditForm", {
 									Ext.getCmp("editBillMemo")
 											.setValue(data.memo);
 								}
+								me.editDealAddress.setValue(data.dealAddress);
 
 								var store = me.getGoodsGrid().getStore();
 								store.removeAll();
@@ -377,38 +409,64 @@ Ext.define("PSI.Sale.WSEditForm", {
 			}
 		});
 	},
+
 	onEditBizDTSpecialKey : function(field, e) {
+		var me = this;
+
 		if (e.getKey() == e.ENTER) {
-			Ext.getCmp("editCustomer").focus();
+			me.editBizUser.focus();
 		}
 	},
+
 	onEditCustomerSpecialKey : function(field, e) {
+		var me = this;
+
 		if (e.getKey() == e.ENTER) {
-			Ext.getCmp("editWarehouse").focus();
+			me.editReceivingType.focus();
 		}
 	},
+
 	onEditWarehouseSpecialKey : function(field, e) {
+		var me = this;
+
 		if (e.getKey() == e.ENTER) {
-			Ext.getCmp("editBizUser").focus();
+			me.editCustomer.focus();
 		}
 	},
+
 	onEditBizUserSpecialKey : function(field, e) {
-		if (this.__readonly) {
+		var me = this;
+
+		if (me.__readonly) {
 			return;
 		}
 
 		if (e.getKey() == e.ENTER) {
-			Ext.getCmp("editReceivingType").focus();
+			me.editWarehouse.focus();
 		}
 	},
 
 	onEditReceivingTypeSpecialKey : function(field, e) {
-		if (this.__readonly) {
+		var me = this;
+
+		if (me.__readonly) {
 			return;
 		}
 
 		if (e.getKey() == e.ENTER) {
-			Ext.getCmp("editBillMemo").focus();
+			me.editDealAddress.focus();
+		}
+	},
+
+	onEditDealAddressSpecialKey : function(field, e) {
+		var me = this;
+
+		if (me.__readonly) {
+			return;
+		}
+
+		if (e.getKey() == e.ENTER) {
+			me.editBillMemo.focus();
 		}
 	},
 
@@ -706,6 +764,7 @@ Ext.define("PSI.Sale.WSEditForm", {
 			receivingType : Ext.getCmp("editReceivingType").getValue(),
 			billMemo : Ext.getCmp("editBillMemo").getValue(),
 			sobillRef : me.getSobillRef(),
+			dealAddress : me.editDealAddress.getValue(),
 			items : []
 		};
 
@@ -745,6 +804,8 @@ Ext.define("PSI.Sale.WSEditForm", {
 		Ext.getCmp("columnActionAppend").hide();
 		Ext.getCmp("editReceivingType").setReadOnly(true);
 		Ext.getCmp("editBillMemo").setReadOnly(true);
+
+		me.editDealAddress.setReadOnly(true);
 	},
 
 	onBarCode : function() {

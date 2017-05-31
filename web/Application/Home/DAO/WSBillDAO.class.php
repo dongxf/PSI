@@ -67,7 +67,7 @@ class WSBillDAO extends PSIBaseExDAO {
 		
 		$sql = "select w.id, w.ref, w.bizdt, c.name as customer_name, u.name as biz_user_name,
 					user.name as input_user_name, h.name as warehouse_name, w.sale_money,
-					w.bill_status, w.date_created, w.receiving_type, w.memo
+					w.bill_status, w.date_created, w.receiving_type, w.memo, w.deal_address
 				from t_ws_bill w, t_customer c, t_user u, t_user user, t_warehouse h
 				where (w.customer_id = c.id) and (w.biz_user_id = u.id)
 				  and (w.input_user_id = user.id) and (w.warehouse_id = h.id) ";
@@ -120,21 +120,24 @@ class WSBillDAO extends PSIBaseExDAO {
 		$queryParams[] = $start;
 		$queryParams[] = $limit;
 		$data = $db->query($sql, $queryParams);
-		$result = array();
+		$result = [];
 		
-		foreach ( $data as $i => $v ) {
-			$result[$i]["id"] = $v["id"];
-			$result[$i]["ref"] = $v["ref"];
-			$result[$i]["bizDate"] = date("Y-m-d", strtotime($v["bizdt"]));
-			$result[$i]["customerName"] = $v["customer_name"];
-			$result[$i]["warehouseName"] = $v["warehouse_name"];
-			$result[$i]["inputUserName"] = $v["input_user_name"];
-			$result[$i]["bizUserName"] = $v["biz_user_name"];
-			$result[$i]["billStatus"] = $v["bill_status"] == 0 ? "待出库" : "已出库";
-			$result[$i]["amount"] = $v["sale_money"];
-			$result[$i]["dateCreated"] = $v["date_created"];
-			$result[$i]["receivingType"] = $v["receiving_type"];
-			$result[$i]["memo"] = $v["memo"];
+		foreach ( $data as $v ) {
+			$result[] = [
+					"id" => $v["id"],
+					"ref" => $v["ref"],
+					"bizDate" => $this->toYMD($v["bizdt"]),
+					"customerName" => $v["customer_name"],
+					"warehouseName" => $v["warehouse_name"],
+					"inputUserName" => $v["input_user_name"],
+					"bizUserName" => $v["biz_user_name"],
+					"billStatus" => $v["bill_status"] == 0 ? "待出库" : "已出库",
+					"amount" => $v["sale_money"],
+					"dateCreated" => $v["date_created"],
+					"receivingType" => $v["receiving_type"],
+					"memo" => $v["memo"],
+					"dealAddress" => $v["deal_address"]
+			];
 		}
 		
 		$sql = "select count(*) as cnt
@@ -188,10 +191,10 @@ class WSBillDAO extends PSIBaseExDAO {
 		$data = $db->query($sql, $queryParams);
 		$cnt = $data[0]["cnt"];
 		
-		return array(
+		return [
 				"dataList" => $result,
 				"totalCount" => $cnt
-		);
+		];
 	}
 
 	/**
@@ -244,6 +247,7 @@ class WSBillDAO extends PSIBaseExDAO {
 		$receivingType = $bill["receivingType"];
 		$billMemo = $bill["billMemo"];
 		$items = $bill["items"];
+		$dealAddress = $bill["dealAddress"];
 		
 		$sobillRef = $bill["sobillRef"];
 		
@@ -290,11 +294,11 @@ class WSBillDAO extends PSIBaseExDAO {
 		$id = $this->newId();
 		$ref = $this->genNewBillRef($companyId);
 		$sql = "insert into t_ws_bill(id, bill_status, bizdt, biz_user_id, customer_id,  date_created,
-					input_user_id, ref, warehouse_id, receiving_type, data_org, company_id, memo)
-				values ('%s', 0, '%s', '%s', '%s', now(), '%s', '%s', '%s', %d, '%s', '%s', '%s')";
+					input_user_id, ref, warehouse_id, receiving_type, data_org, company_id, memo, deal_address)
+				values ('%s', 0, '%s', '%s', '%s', now(), '%s', '%s', '%s', %d, '%s', '%s', '%s', '%s')";
 		
 		$rc = $db->execute($sql, $id, $bizDT, $bizUserId, $customerId, $loginUserId, $ref, 
-				$warehouseId, $receivingType, $dataOrg, $companyId, $billMemo);
+				$warehouseId, $receivingType, $dataOrg, $companyId, $billMemo, $dealAddress);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
@@ -410,6 +414,7 @@ class WSBillDAO extends PSIBaseExDAO {
 		$receivingType = $bill["receivingType"];
 		$billMemo = $bill["billMemo"];
 		$items = $bill["items"];
+		$dealAddress = $bill["dealAddress"];
 		
 		// 检查客户
 		$customerDAO = new CustomerDAO($db);
@@ -493,10 +498,10 @@ class WSBillDAO extends PSIBaseExDAO {
 		$sql = "update t_ws_bill
 				set sale_money = %f, customer_id = '%s', warehouse_id = '%s',
 				biz_user_id = '%s', bizdt = '%s', receiving_type = %d,
-				memo = '%s'
+				memo = '%s', deal_address = '%s'
 				where id = '%s' ";
 		$rc = $db->execute($sql, $sumGoodsMoney, $customerId, $warehouseId, $bizUserId, $bizDT, 
-				$receivingType, $billMemo, $id);
+				$receivingType, $billMemo, $dealAddress, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
@@ -583,7 +588,7 @@ class WSBillDAO extends PSIBaseExDAO {
 			if ($sobillRef) {
 				// 由销售订单生成销售出库单
 				$sql = "select s.id, s.customer_id, c.name as customer_name, s.deal_date,
-							s.receiving_type, s.bill_memo
+							s.receiving_type, s.bill_memo, s.deal_address
 						from t_so_bill s, t_customer c
 						where s.ref = '%s' and s.customer_id = c.id ";
 				$data = $db->query($sql, $sobillRef);
@@ -594,6 +599,7 @@ class WSBillDAO extends PSIBaseExDAO {
 					$result["dealDate"] = $this->toYMD($v["deal_date"]);
 					$result["receivingType"] = $v["receiving_type"];
 					$result["memo"] = $v["bill_memo"];
+					$result["dealAddress"] = $v["deal_address"];
 					
 					$pobillId = $v["id"];
 					// 销售订单的明细
