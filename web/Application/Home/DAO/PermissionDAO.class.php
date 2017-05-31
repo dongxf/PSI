@@ -419,10 +419,10 @@ class PermissionDAO extends PSIBaseExDAO {
 	 * @param array $params        	
 	 * @return NULL|array
 	 */
-	public function addRole($params) {
+	public function addRole(& $params) {
 		$db = $this->db;
 		
-		$id = $params["id"];
+		$id = $this->newId();
 		$name = $params["name"];
 		$code = $params["code"];
 		$permissionIdList = $params["permissionIdList"];
@@ -487,6 +487,8 @@ class PermissionDAO extends PSIBaseExDAO {
 				}
 			}
 		}
+		
+		$params["id"] = $id;
 		
 		// 操作成功
 		return null;

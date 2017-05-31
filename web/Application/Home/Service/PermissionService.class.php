@@ -85,10 +85,6 @@ class PermissionService extends PSIBaseExService {
 		} else {
 			// 新增角色
 			
-			$idGen = new IdGenService();
-			$id = $idGen->newId($db);
-			
-			$params["id"] = $id;
 			$params["dataOrg"] = $this->getLoginUserDataOrg();
 			$params["companyId"] = $this->getCompanyId();
 			
@@ -97,6 +93,8 @@ class PermissionService extends PSIBaseExService {
 				$db->rollback();
 				return $rc;
 			}
+			
+			$id = $params["id"];
 			
 			$log = "新增角色[{$name}]";
 		}
