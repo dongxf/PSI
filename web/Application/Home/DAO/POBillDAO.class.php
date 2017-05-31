@@ -286,9 +286,7 @@ class POBillDAO extends PSIBaseExDAO {
 			return $this->bad("业务员不存在");
 		}
 		
-		$idGen = new IdGenDAO($db);
-		
-		$id = $idGen->newId();
+		$id = $this->newId();
 		$ref = $this->genNewBillRef($companyId);
 		
 		// 主表
@@ -330,7 +328,7 @@ class POBillDAO extends PSIBaseExDAO {
 						show_order, data_org, company_id, memo)
 					values ('%s', now(), '%s', %d, %f,
 						%f, '%s', %d, %f, %f, 0, %d, %d, '%s', '%s', '%s')";
-			$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsMoney, 
+			$rc = $db->execute($sql, $this->newId(), $goodsId, $goodsCount, $goodsMoney, 
 					$goodsPrice, $id, $taxRate, $tax, $moneyWithTax, $goodsCount, $i, $dataOrg, 
 					$companyId, $memo);
 			if ($rc === false) {
@@ -441,7 +439,6 @@ class POBillDAO extends PSIBaseExDAO {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
 		
-		$idGen = new IdGenDAO($db);
 		$goodsDAO = new GoodsDAO($db);
 		
 		foreach ( $items as $i => $v ) {
@@ -466,7 +463,7 @@ class POBillDAO extends PSIBaseExDAO {
 						show_order, data_org, company_id, memo)
 					values ('%s', now(), '%s', %d, %f,
 						%f, '%s', %d, %f, %f, 0, %d, %d, '%s', '%s', '%s')";
-			$rc = $db->execute($sql, $idGen->newId(), $goodsId, $goodsCount, $goodsMoney, 
+			$rc = $db->execute($sql, $this->newId(), $goodsId, $goodsCount, $goodsMoney, 
 					$goodsPrice, $id, $taxRate, $tax, $moneyWithTax, $goodsCount, $i, $dataOrg, 
 					$companyId, $memo);
 			if ($rc === false) {
