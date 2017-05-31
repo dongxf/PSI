@@ -209,10 +209,10 @@ class UserDAO extends PSIBaseExDAO {
 	/**
 	 * 新增用户
 	 */
-	public function addUser($params) {
+	public function addUser(& $params) {
 		$db = $this->db;
 		
-		$id = $params["id"];
+		$id = $this->newId();
 		$loginName = $params["loginName"];
 		$name = $params["name"];
 		$orgCode = $params["orgCode"];
@@ -282,6 +282,8 @@ class UserDAO extends PSIBaseExDAO {
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
+		
+		$params["id"] = $id;
 		
 		// 操作成功
 		return null;

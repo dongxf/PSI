@@ -30,11 +30,11 @@ class OrgDAO extends PSIBaseExDAO {
 	 * @param array $params        	
 	 * @return NULL|array
 	 */
-	public function addOrg($params) {
+	public function addOrg(& $params) {
 		$db = $this->db;
 		
 		$parentId = $params["parentId"];
-		$id = $params["id"];
+		$id = $this->newId();
 		$name = $params["name"];
 		$orgCode = $params["orgCode"];
 		
@@ -91,6 +91,8 @@ class OrgDAO extends PSIBaseExDAO {
 			}
 		}
 		
+		$params["id"] = $id;
+		
 		// 操作成功
 		return null;
 	}
@@ -101,7 +103,7 @@ class OrgDAO extends PSIBaseExDAO {
 	 * @param array $params        	
 	 * @return NULL|array
 	 */
-	public function updateOrg($params) {
+	public function updateOrg(& $params) {
 		$db = $this->db;
 		
 		$parentId = $params["parentId"];
@@ -389,7 +391,7 @@ class OrgDAO extends PSIBaseExDAO {
 
 	/**
 	 * 所有组织机构
-	 * 
+	 *
 	 * @param array $params        	
 	 * @return array
 	 */
@@ -459,7 +461,7 @@ class OrgDAO extends PSIBaseExDAO {
 
 	/**
 	 * 查询上级组织机构信息
-	 * 
+	 *
 	 * @param string $id
 	 *        	当前组织机构id
 	 * @return array 上级组织机构

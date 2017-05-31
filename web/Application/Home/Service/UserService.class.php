@@ -217,16 +217,13 @@ class UserService extends PSIBaseExService {
 			$log = "编辑组织机构：名称 = {$name} 编码 = {$orgCode}";
 		} else {
 			// 新增
-			$idGenService = new IdGenService();
-			$id = $idGenService->newId();
-			
-			$params["id"] = $id;
-			
 			$rc = $dao->addOrg($params);
 			if ($rc) {
 				$db->rollback();
 				return $rc;
 			}
+			
+			$id = $params["id"];
 			
 			$log = "新增组织机构：名称 = {$name} 编码 = {$orgCode}";
 		}
@@ -333,15 +330,13 @@ class UserService extends PSIBaseExService {
 		} else {
 			// 新建
 			
-			$idGen = new IdGenService($db);
-			$id = $idGen->newId();
-			$params["id"] = $id;
-			
 			$rc = $dao->addUser($params);
 			if ($rc) {
 				$db->rollback();
 				return $rc;
 			}
+			
+			$id = $params["id"];
 			
 			$log = "新建用户： 登录名 = {$loginName} 姓名 = {$name} 编码 = {$orgCode}";
 		}
