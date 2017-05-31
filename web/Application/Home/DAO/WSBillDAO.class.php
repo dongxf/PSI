@@ -1303,8 +1303,6 @@ class WSBillDAO extends PSIBaseExDAO {
 			$sql = "insert into t_pre_receiving_detail (id, customer_id, out_money, balance_money,
 						biz_date, date_created, ref_number, ref_type, biz_user_id, input_user_id, company_id)
 					values ('%s', '%s', %f, %f, '%s', now(), '%s', '销售出库', '%s', '%s', '%s')";
-			$idGen = new IdGenService();
-			$us = new UserService();
 			$rc = $db->execute($sql, $this->newId(), $customerId, $outMoney, $totalBalanceMoney, 
 					$bizDT, $ref, $bizUserId, $loginUserId, $companyId);
 			if ($rc === false) {
