@@ -173,7 +173,8 @@ Ext.define("PSI.Sale.WSEditForm", {
 											fn : me.onEditCustomerSpecialKey,
 											scope : me
 										}
-									}
+									},
+									callbackFunc : me.__setCustomerExtData
 								}, {
 									id : "editReceivingType",
 									labelWidth : 60,
@@ -956,5 +957,9 @@ Ext.define("PSI.Sale.WSEditForm", {
 
 			});
 		}
+	},
+
+	__setCustomerExtData : function(data) {
+		Ext.getCmp("editDealAddress").setValue(data.address_receipt);
 	}
 });
