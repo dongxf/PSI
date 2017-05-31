@@ -275,8 +275,7 @@ class SupplierDAO extends PSIBaseExDAO {
 			return $this->bad("编码为 [$code] 的分类已经存在");
 		}
 		
-		$idGen = new IdGenDAO($db);
-		$id = $idGen->newId();
+		$id = $this->newId();
 		$params["id"] = $id;
 		
 		$sql = "insert into t_supplier_category (id, code, name, data_org, company_id)
@@ -783,7 +782,7 @@ class SupplierDAO extends PSIBaseExDAO {
 
 	/**
 	 * 获得某个供应商档案的详情
-	 * 
+	 *
 	 * @param array $params        	
 	 * @return array
 	 */

@@ -115,8 +115,7 @@ class CustomerDAO extends PSIBaseExDAO {
 			return $this->bad("编码为 [{$code}] 的客户分类已经存在");
 		}
 		
-		$idGen = new IdGenDAO($db);
-		$id = $idGen->newId();
+		$id = $this->newId();
 		$params["id"] = $id;
 		
 		$sql = "insert into t_customer_category (id, code, name, data_org, company_id)
@@ -268,8 +267,7 @@ class CustomerDAO extends PSIBaseExDAO {
 			return $this->bad("编码为 [{$code}] 的客户已经存在");
 		}
 		
-		$idGen = new IdGenDAO($db);
-		$id = $idGen->newId();
+		$id = $this->newId();
 		$params["id"] = $id;
 		
 		$sql = "insert into t_customer (id, category_id, code, name, py, contact01,
@@ -297,8 +295,6 @@ class CustomerDAO extends PSIBaseExDAO {
 	 */
 	public function initReceivables(& $params) {
 		$db = $this->db;
-		
-		$idGen = new IdGenDAO($db);
 		
 		$id = $params["id"];
 		$initReceivables = $params["initReceivables"];
@@ -344,7 +340,7 @@ class CustomerDAO extends PSIBaseExDAO {
 					return $this->sqlError(__METHOD__, __LINE__);
 				}
 			} else {
-				$rvId = $idGen->newId();
+				$rvId = $this->newId();
 				$sql = "insert into t_receivables_detail (id, rv_money, act_money, balance_money,
 						biz_date, date_created, ca_id, ca_type, ref_number, ref_type, data_org, company_id)
 						values ('%s', %f, 0, %f, '%s', now(), '%s', 'customer', '%s', '应收账款期初建账', '%s', '%s') ";
@@ -370,7 +366,7 @@ class CustomerDAO extends PSIBaseExDAO {
 					return $this->sqlError(__METHOD__, __LINE__);
 				}
 			} else {
-				$rvId = $idGen->newId();
+				$rvId = $this->newId();
 				$sql = "insert into t_receivables (id, rv_money, act_money, balance_money,
 							ca_id, ca_type, data_org, company_id)
 						values ('%s', %f, 0, %f, '%s', 'customer', '%s', '%s')";
@@ -768,7 +764,8 @@ class CustomerDAO extends PSIBaseExDAO {
 	/**
 	 * 获得某个客户的详情
 	 *
-	 * @param string $id 客户id        	
+	 * @param string $id
+	 *        	客户id
 	 * @return array
 	 */
 	public function customerInfo($id) {

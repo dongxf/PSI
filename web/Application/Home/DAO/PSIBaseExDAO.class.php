@@ -23,9 +23,12 @@ class PSIBaseExDAO extends PSIBaseDAO {
 	 *
 	 * @return string
 	 */
-	protected function newId() {
-		$idGen = new IdGenDAO($this->db);
-		return $idGen->newId();
+	public function newId() {
+		$db = $this->db;
+		
+		$data = $db->query("select UUID() as uuid");
+		
+		return strtoupper($data[0]["uuid"]);
 	}
 
 	protected function loginUserIdNotExists($loginUserId) {
