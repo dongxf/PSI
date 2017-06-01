@@ -37,7 +37,7 @@ class CustomerDAO extends PSIBaseExDAO {
 				 from t_customer_category c
 				 left join t_customer u
 				 on (c.id = u.category_id) ";
-		$queryParam = array();
+		$queryParam = [];
 		if ($code) {
 			$sql .= " and (u.code like '%s') ";
 			$queryParam[] = "%{$code}%";
@@ -175,10 +175,10 @@ class CustomerDAO extends PSIBaseExDAO {
 		$sql = "select code, name from t_customer_category where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if ($data) {
-			return array(
+			return [
 					"code" => $data[0]["code"],
 					"name" => $data[0]["name"]
-			);
+			];
 		} else {
 			return null;
 		}
@@ -548,10 +548,10 @@ class CustomerDAO extends PSIBaseExDAO {
 		$sql = "select code, name from t_customer where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if ($data) {
-			return array(
+			return [
 					"code" => $data[0]["code"],
 					"name" => $data[0]["name"]
-			);
+			];
 		} else {
 			return null;
 		}
@@ -588,7 +588,7 @@ class CustomerDAO extends PSIBaseExDAO {
 				 contact02, qq02, tel02, mobile02, init_receivables, init_receivables_dt,
 					address_receipt, bank_name, bank_account, tax_number, fax, note, data_org
 				 from t_customer where (category_id = '%s') ";
-		$queryParam = array();
+		$queryParam = [];
 		$queryParam[] = $categoryId;
 		if ($code) {
 			$sql .= " and (code like '%s' ) ";
@@ -635,38 +635,39 @@ class CustomerDAO extends PSIBaseExDAO {
 		$sql .= " order by code limit %d, %d";
 		$queryParam[] = $start;
 		$queryParam[] = $limit;
-		$result = array();
+		$result = [];
 		$data = $db->query($sql, $queryParam);
-		foreach ( $data as $i => $v ) {
-			$result[$i]["id"] = $v["id"];
-			$result[$i]["categoryId"] = $v["category_id"];
-			$result[$i]["code"] = $v["code"];
-			$result[$i]["name"] = $v["name"];
-			$result[$i]["address"] = $v["address"];
-			$result[$i]["addressReceipt"] = $v["address_receipt"];
-			$result[$i]["contact01"] = $v["contact01"];
-			$result[$i]["qq01"] = $v["qq01"];
-			$result[$i]["tel01"] = $v["tel01"];
-			$result[$i]["mobile01"] = $v["mobile01"];
-			$result[$i]["contact02"] = $v["contact02"];
-			$result[$i]["qq02"] = $v["qq02"];
-			$result[$i]["tel02"] = $v["tel02"];
-			$result[$i]["mobile02"] = $v["mobile02"];
-			$result[$i]["initReceivables"] = $v["init_receivables"];
-			if ($v["init_receivables_dt"]) {
-				$result[$i]["initReceivablesDT"] = date("Y-m-d", 
-						strtotime($v["init_receivables_dt"]));
-			}
-			$result[$i]["bankName"] = $v["bank_name"];
-			$result[$i]["bankAccount"] = $v["bank_account"];
-			$result[$i]["tax"] = $v["tax_number"];
-			$result[$i]["fax"] = $v["fax"];
-			$result[$i]["note"] = $v["note"];
-			$result[$i]["dataOrg"] = $v["data_org"];
+		foreach ( $data as $v ) {
+			$initDT = $v["init_receivables_dt"] ? $this->toYMD($v["init_receivables_dt"]) : null;
+			
+			$result[] = [
+					"id" => $v["id"],
+					"categoryId" => $v["category_id"],
+					"code" => $v["code"],
+					"name" => $v["name"],
+					"address" => $v["address"],
+					"addressReceipt" => $v["address_receipt"],
+					"contact01" => $v["contact01"],
+					"qq01" => $v["qq01"],
+					"tel01" => $v["tel01"],
+					"mobile01" => $v["mobile01"],
+					"contact02" => $v["contact02"],
+					"qq02" => $v["qq02"],
+					"tel02" => $v["tel02"],
+					"mobile02" => $v["mobile02"],
+					"initReceivables" => $v["init_receivables"],
+					"initReceivablesDT" => $initDT,
+					"bankName" => $v["bank_name"],
+					"bankAccount" => $v["bank_account"],
+					"tax" => $v["tax_number"],
+					"fax" => $v["fax"],
+					"note" => $v["note"],
+					"dataOrg" => $v["data_org"]
+			];
 		}
 		
 		$sql = "select count(*) as cnt from t_customer where (category_id  = '%s') ";
-		$queryParam = array();
+		$queryParam = [];
 		$queryParam[] = $categoryId;
 		if ($code) {
 			$sql .= " and (code like '%s' ) ";
@@ -712,10 +713,10 @@ class CustomerDAO extends PSIBaseExDAO {
 		
 		$data = $db->query($sql, $queryParam);
 		
-		return array(
+		return [
 				"customerList" => $result,
 				"totalCount" => $data[0]["cnt"]
-		);
+		];
 	}
 
 	/**
