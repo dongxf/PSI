@@ -27,7 +27,7 @@ class WarehouseDAO extends PSIBaseExDAO {
 		
 		$sql = "select id, code, name, inited, data_org from t_warehouse ";
 		$ds = new DataOrgDAO($db);
-		$queryParams = array();
+		$queryParams = [];
 		$rs = $ds->buildSQL(FIdConst::WAREHOUSE, "t_warehouse", $loginUserId);
 		if ($rs) {
 			$sql .= " where " . $rs[0];
@@ -36,18 +36,16 @@ class WarehouseDAO extends PSIBaseExDAO {
 		
 		$sql .= " order by code";
 		
-		$result = array();
+		$result = [];
 		$data = $db->query($sql, $queryParams);
 		foreach ( $data as $v ) {
-			$item = array(
+			$result[] = [
 					"id" => $v["id"],
 					"code" => $v["code"],
 					"name" => $v["name"],
 					"inited" => $v["inited"],
 					"dataOrg" => $v["data_org"]
-			);
-			
-			$result[] = $item;
+			];
 		}
 		
 		return $result;
@@ -289,7 +287,7 @@ class WarehouseDAO extends PSIBaseExDAO {
 
 	/**
 	 * 查询数据，用于仓库自定义字段
-	 * 
+	 *
 	 * @param array $params        	
 	 * @return array
 	 */
@@ -309,7 +307,7 @@ class WarehouseDAO extends PSIBaseExDAO {
 		$sql = "select id, code, name from t_warehouse
 					where (code like '%s' or name like '%s' or py like '%s' ) ";
 		$key = "%{$queryKey}%";
-		$queryParams = array();
+		$queryParams = [];
 		$queryParams[] = $key;
 		$queryParams[] = $key;
 		$queryParams[] = $key;
