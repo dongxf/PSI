@@ -539,7 +539,7 @@ class GoodsDAO extends PSIBaseExDAO {
 				and (g.code like '%s' or g.name like '%s' or g.py like '%s'
 					or g.spec like '%s' or g.spec_py like '%s') ";
 		
-		$queryParams = array();
+		$queryParams = [];
 		$queryParams[] = $key;
 		$queryParams[] = $key;
 		$queryParams[] = $key;
@@ -556,15 +556,17 @@ class GoodsDAO extends PSIBaseExDAO {
 		$sql .= " order by g.code
 				limit 20";
 		$data = $db->query($sql, $queryParams);
-		$result = array();
-		foreach ( $data as $i => $v ) {
-			$result[$i]["id"] = $v["id"];
-			$result[$i]["code"] = $v["code"];
-			$result[$i]["name"] = $v["name"];
-			$result[$i]["spec"] = $v["spec"];
-			$result[$i]["unitName"] = $v["unit_name"];
-			$result[$i]["purchasePrice"] = $v["purchase_price"] == 0 ? null : $v["purchase_price"];
-			$result[$i]["memo"] = $v["memo"];
+		$result = [];
+		foreach ( $data as $v ) {
+			$result[] = [
+					"id" => $v["id"],
+					"code" => $v["code"],
+					"name" => $v["name"],
+					"spec" => $v["spec"],
+					"unitName" => $v["unit_name"],
+					"purchasePrice" => $v["purchase_price"] == 0 ? null : $v["purchase_price"],
+					"memo" => $v["memo"]
+			];
 		}
 		
 		return $result;
