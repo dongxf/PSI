@@ -788,7 +788,7 @@ class GoodsDAO extends PSIBaseExDAO {
 				and (g.code like '%s' or g.name like '%s' or g.py like '%s'
 					or g.spec like '%s' or g.spec_py like '%s') 
 				and (g.id <> '%s')";
-		$queryParams = array();
+		$queryParams = [];
 		$queryParams[] = $key;
 		$queryParams[] = $key;
 		$queryParams[] = $key;
@@ -806,17 +806,15 @@ class GoodsDAO extends PSIBaseExDAO {
 		$sql .= " order by g.code
 				limit 20";
 		$data = $db->query($sql, $queryParams);
-		$result = array();
+		$result = [];
 		foreach ( $data as $v ) {
-			$item = array(
+			$result[] = [
 					"id" => $v["id"],
 					"code" => $v["code"],
 					"name" => $v["name"],
 					"spec" => $v["spec"],
 					"unitName" => $v["unit_name"]
-			
-			);
-			$result[] = $item;
+			];
 		}
 		
 		return $result;
