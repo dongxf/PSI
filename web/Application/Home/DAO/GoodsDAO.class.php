@@ -34,12 +34,12 @@ class GoodsDAO extends PSIBaseExDAO {
 			return $this->emptyResult();
 		}
 		
-		$result = array();
+		$result = [];
 		$sql = "select g.id, g.code, g.name, g.sale_price, g.spec,  g.unit_id, u.name as unit_name,
 					g.purchase_price, g.bar_code, g.memo, g.data_org, g.brand_id
 				from t_goods g, t_goods_unit u
 				where (g.unit_id = u.id) and (g.category_id = '%s') ";
-		$queryParam = array();
+		$queryParam = [];
 		$queryParam[] = $categoryId;
 		$ds = new DataOrgDAO($db);
 		$rs = $ds->buildSQL(FIdConst::GOODS, "g", $loginUserId);
@@ -71,27 +71,28 @@ class GoodsDAO extends PSIBaseExDAO {
 		$queryParam[] = $limit;
 		$data = $db->query($sql, $queryParam);
 		
-		foreach ( $data as $i => $v ) {
-			$result[$i]["id"] = $v["id"];
-			$result[$i]["code"] = $v["code"];
-			$result[$i]["name"] = $v["name"];
-			$result[$i]["salePrice"] = $v["sale_price"];
-			$result[$i]["spec"] = $v["spec"];
-			$result[$i]["unitId"] = $v["unit_id"];
-			$result[$i]["unitName"] = $v["unit_name"];
-			$result[$i]["purchasePrice"] = $v["purchase_price"] == 0 ? null : $v["purchase_price"];
-			$result[$i]["barCode"] = $v["bar_code"];
-			$result[$i]["memo"] = $v["memo"];
-			$result[$i]["dataOrg"] = $v["data_org"];
-			
+		foreach ( $data as $v ) {
 			$brandId = $v["brand_id"];
-			if ($brandId) {
-				$result[$i]["brandFullName"] = $this->getBrandFullNameById($db, $brandId);
-			}
+			$brandFullName = $brandId ? $this->getBrandFullNameById($db, $brandId) : null;
+			
+			$result[] = [
+					"id" => $v["id"],
+					"code" => $v["code"],
+					"name" => $v["name"],
+					"salePrice" => $v["sale_price"],
+					"spec" => $v["spec"],
+					"unitId" => $v["unit_id"],
+					"unitName" => $v["unit_name"],
+					"purchasePrice" => $v["purchase_price"] == 0 ? null : $v["purchase_price"],
+					"barCode" => $v["bar_code"],
+					"memo" => $v["memo"],
+					"dataOrg" => $v["data_org"],
+					"brandFullName" => $brandFullName
+			];
 		}
 		
 		$sql = "select count(*) as cnt from t_goods g where (g.category_id = '%s') ";
-		$queryParam = array();
+		$queryParam = [];
 		$queryParam[] = $categoryId;
 		$ds = new DataOrgDAO($db);
 		$rs = $ds->buildSQL(FIdConst::GOODS, "g", $loginUserId);
@@ -120,10 +121,10 @@ class GoodsDAO extends PSIBaseExDAO {
 		$data = $db->query($sql, $queryParam);
 		$totalCount = $data[0]["cnt"];
 		
-		return array(
+		return [
 				"goodsList" => $result,
 				"totalCount" => $totalCount
-		);
+		];
 	}
 
 	private function getBrandFullNameById($db, $brandId) {
@@ -420,7 +421,7 @@ class GoodsDAO extends PSIBaseExDAO {
 				where (g.unit_id = u.id)
 				and (g.code like '%s' or g.name like '%s' or g.py like '%s'
 					or g.spec like '%s' or g.spec_py like '%s') ";
-		$queryParams = array();
+		$queryParams = [];
 		$queryParams[] = $key;
 		$queryParams[] = $key;
 		$queryParams[] = $key;
@@ -437,13 +438,15 @@ class GoodsDAO extends PSIBaseExDAO {
 		$sql .= " order by g.code
 				limit 20";
 		$data = $db->query($sql, $queryParams);
-		$result = array();
-		foreach ( $data as $i => $v ) {
-			$result[$i]["id"] = $v["id"];
-			$result[$i]["code"] = $v["code"];
-			$result[$i]["name"] = $v["name"];
-			$result[$i]["spec"] = $v["spec"];
-			$result[$i]["unitName"] = $v["unit_name"];
+		$result = [];
+		foreach ( $data as $v ) {
+			$result[] = [
+					"id" => $v["id"],
+					"code" => $v["code"],
+					"name" => $v["name"],
+					"spec" => $v["spec"],
+					"unitName" => $v["unit_name"]
+			];
 		}
 		
 		return $result;
