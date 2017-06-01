@@ -258,7 +258,7 @@ class BizConfigDAO extends PSIBaseExDAO {
 				where company_id = '%s'
 				order by show_order";
 		$data = $db->query($sql, $companyId);
-		$result = array();
+		$result = [];
 		
 		foreach ( $data as $v ) {
 			$id = $v["id"];
@@ -284,15 +284,13 @@ class BizConfigDAO extends PSIBaseExDAO {
 				$displayValue = $v["value"];
 			}
 			
-			$item = array(
+			$result[] = [
 					"id" => $id,
 					"name" => $v["name"],
 					"value" => $v["value"],
 					"displayValue" => $displayValue,
 					"note" => $v["note"]
-			);
-			
-			$result[] = $item;
+			];
 		}
 		
 		return $result;
