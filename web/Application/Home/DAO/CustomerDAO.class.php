@@ -742,7 +742,7 @@ class CustomerDAO extends PSIBaseExDAO {
 				from t_customer
 				where (code like '%s' or name like '%s' or py like '%s'
 					or mobile01 like '%s' or mobile02 like '%s' ) ";
-		$queryParams = array();
+		$queryParams = [];
 		$key = "%{$queryKey}%";
 		$queryParams[] = $key;
 		$queryParams[] = $key;
@@ -772,7 +772,7 @@ class CustomerDAO extends PSIBaseExDAO {
 	public function customerInfo($id) {
 		$db = $this->db;
 		
-		$result = array();
+		$result = [];
 		
 		$sql = "select category_id, code, name, contact01, qq01, mobile01, tel01,
 					contact02, qq02, mobile02, tel02, address, address_receipt,
