@@ -26,7 +26,7 @@ class DataOrgDAO extends PSIBaseExDAO {
 	private function getDataOrgForFId($fid, $loginUserId) {
 		$db = $this->db;
 		
-		$result = array();
+		$result = [];
 		
 		if ($loginUserId == DemoConst::ADMIN_USER_ID) {
 			// admin 是超级管理员
@@ -53,7 +53,7 @@ class DataOrgDAO extends PSIBaseExDAO {
 	 * 构建数据域的查询SQL语句
 	 */
 	public function buildSQL($fid, $tableName, $loginUserId) {
-		$queryParams = array();
+		$queryParams = [];
 		
 		$userDataOrg = $this->getLoginUserDataOrg($loginUserId);
 		
@@ -85,9 +85,9 @@ class DataOrgDAO extends PSIBaseExDAO {
 		
 		$result .= " ) ";
 		
-		return array(
+		return [
 				0 => $result,
 				1 => $queryParams
-		);
+		];
 	}
 }
