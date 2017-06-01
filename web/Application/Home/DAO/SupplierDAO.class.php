@@ -37,7 +37,7 @@ class SupplierDAO extends PSIBaseExDAO {
 				from t_supplier_category c
 				left join t_supplier s
 				on (c.id = s.category_id)";
-		$queryParam = array();
+		$queryParam = [];
 		if ($code) {
 			$sql .= " and (s.code like '%s') ";
 			$queryParam[] = "%{$code}%";
@@ -119,7 +119,7 @@ class SupplierDAO extends PSIBaseExDAO {
 				bank_name, bank_account, tax_number, fax, note, data_org
 				from t_supplier
 				where (category_id = '%s')";
-		$queryParam = array();
+		$queryParam = [];
 		$queryParam[] = $categoryId;
 		if ($code) {
 			$sql .= " and (code like '%s' ) ";
@@ -167,37 +167,39 @@ class SupplierDAO extends PSIBaseExDAO {
 		$queryParam[] = $limit;
 		$sql .= " order by code
 				limit %d, %d";
-		$result = array();
+		$result = [];
 		$data = $db->query($sql, $queryParam);
-		foreach ( $data as $i => $v ) {
-			$result[$i]["id"] = $v["id"];
-			$result[$i]["categoryId"] = $v["category_id"];
-			$result[$i]["code"] = $v["code"];
-			$result[$i]["name"] = $v["name"];
-			$result[$i]["address"] = $v["address"];
-			$result[$i]["addressShipping"] = $v["address_shipping"];
-			$result[$i]["contact01"] = $v["contact01"];
-			$result[$i]["qq01"] = $v["qq01"];
-			$result[$i]["tel01"] = $v["tel01"];
-			$result[$i]["mobile01"] = $v["mobile01"];
-			$result[$i]["contact02"] = $v["contact02"];
-			$result[$i]["qq02"] = $v["qq02"];
-			$result[$i]["tel02"] = $v["tel02"];
-			$result[$i]["mobile02"] = $v["mobile02"];
-			$result[$i]["initPayables"] = $v["init_payables"];
-			if ($v["init_payables_dt"]) {
-				$result[$i]["initPayablesDT"] = date("Y-m-d", strtotime($v["init_payables_dt"]));
-			}
-			$result[$i]["bankName"] = $v["bank_name"];
-			$result[$i]["bankAccount"] = $v["bank_account"];
-			$result[$i]["tax"] = $v["tax_number"];
-			$result[$i]["fax"] = $v["fax"];
-			$result[$i]["note"] = $v["note"];
-			$result[$i]["dataOrg"] = $v["data_org"];
+		foreach ( $data as $v ) {
+			$initDT = $v["init_payables_dt"] ? $this->toYMD($v["init_payables_dt"]) : null;
+			$result[] = [
+					"id" => $v["id"],
+					"categoryId" => $v["category_id"],
+					"code" => $v["code"],
+					"name" => $v["name"],
+					"address" => $v["address"],
+					"addressShipping" => $v["address_shipping"],
+					"contact01" => $v["contact01"],
+					"qq01" => $v["qq01"],
+					"tel01" => $v["tel01"],
+					"mobile01" => $v["mobile01"],
+					"contact02" => $v["contact02"],
+					"qq02" => $v["qq02"],
+					"tel02" => $v["tel02"],
+					"mobile02" => $v["mobile02"],
+					"initPayables" => $v["init_payables"],
+					"initPayablesDT" => $initDT,
+					"bankName" => $v["bank_name"],
+					"bankAccount" => $v["bank_account"],
+					"tax" => $v["tax_number"],
+					"fax" => $v["fax"],
+					"note" => $v["note"],
+					"dataOrg" => $v["data_org"]
+			
+			];
 		}
 		
 		$sql = "select count(*) as cnt from t_supplier where (category_id  = '%s') ";
-		$queryParam = array();
+		$queryParam = [];
 		$queryParam[] = $categoryId;
 		if ($code) {
 			$sql .= " and (code like '%s' ) ";
@@ -240,10 +242,10 @@ class SupplierDAO extends PSIBaseExDAO {
 		}
 		$data = $db->query($sql, $queryParam);
 		
-		return array(
+		return [
 				"supplierList" => $result,
 				"totalCount" => $data[0]["cnt"]
-		);
+		];
 	}
 
 	/**
