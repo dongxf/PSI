@@ -2,18 +2,16 @@
  * 选择权限
  */
 Ext.define("PSI.Permission.SelectPermissionForm", {
-	extend : "Ext.window.Window",
+	extend : "PSI.AFX.BaseDialogForm",
 
 	config : {
-		idList : null, // idList是数组
-		parentForm : null
+		// idList是数组
+		idList : []
 	},
 
 	title : "选择权限",
-	width : 700,
+	width : 800,
 	height : 600,
-	modal : true,
-	resizable : false,
 	layout : "border",
 
 	initComponent : function() {
@@ -82,8 +80,8 @@ Ext.define("PSI.Permission.SelectPermissionForm", {
 						text : "确定",
 						formBind : true,
 						iconCls : "PSI-button-ok",
-						handler : this.onOK,
-						scope : this
+						handler : me.onOK,
+						scope : me
 					}, {
 						text : "取消",
 						handler : function() {
@@ -107,13 +105,12 @@ Ext.define("PSI.Permission.SelectPermissionForm", {
 		var el = me.getEl() || Ext.getBody();
 		el.mask("数据加载中...");
 		var r = {
-			url : PSI.Const.BASE_URL + "Home/Permission/permissionCategory",
-			method : "POST",
+			url : me.URL("Home/Permission/permissionCategory"),
 			callback : function(options, success, response) {
 				store.removeAll();
 
 				if (success) {
-					var data = Ext.JSON.decode(response.responseText);
+					var data = me.decodeJSON(response.responseText);
 
 					store.add(data);
 
@@ -126,7 +123,7 @@ Ext.define("PSI.Permission.SelectPermissionForm", {
 			}
 		};
 
-		Ext.Ajax.request(r);
+		me.ajax(r);
 	},
 
 	onOK : function() {
@@ -188,7 +185,7 @@ Ext.define("PSI.Permission.SelectPermissionForm", {
 		var modelName = "PSIPermission_SelectPermissionForm";
 		Ext.define(modelName, {
 					extend : "Ext.data.Model",
-					fields : ["id", "name"]
+					fields : ["id", "name", "note"]
 				});
 
 		var store = Ext.create("Ext.data.Store", {
@@ -203,12 +200,12 @@ Ext.define("PSI.Permission.SelectPermissionForm", {
 								text : "全部添加",
 								handler : me.addAllPermission,
 								scope : me,
-								iconCls: "PSI-button-add-detail"
+								iconCls : "PSI-button-add-detail"
 							}],
 					columns : [{
 								header : "权限名称",
 								dataIndex : "name",
-								flex : 1,
+								width : 300,
 								menuDisabled : true
 							}, {
 								header : "",
@@ -223,6 +220,11 @@ Ext.define("PSI.Permission.SelectPermissionForm", {
 									handler : me.onAddPermission,
 									scope : me
 								}]
+							}, {
+								header : "权限说明",
+								dataIndex : "note",
+								width : 300,
+								menuDisabled : true
 							}]
 				});
 
@@ -348,18 +350,16 @@ Ext.define("PSI.Permission.SelectPermissionForm", {
 		var el = grid.getEl() || Ext.getBody();
 
 		el.mask("数据加载中...");
-		Ext.Ajax.request({
-					url : PSI.Const.BASE_URL
-							+ "Home/Permission/permissionByCategory",
+		me.ajax({
+					url : me.URL("Home/Permission/permissionByCategory"),
 					params : {
 						category : category
 					},
-					method : "POST",
 					callback : function(options, success, response) {
 						store.removeAll();
 
 						if (success) {
-							var data = Ext.JSON.decode(response.responseText);
+							var data = me.decodeJSON(response.responseText);
 							store.add(data);
 						}
 

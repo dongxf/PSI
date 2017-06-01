@@ -238,10 +238,10 @@ class PermissionDAO extends PSIBaseExDAO {
 		
 		$category = $params["category"];
 		
-		$sql = "select id, name
+		$sql = "select id, name, note
 				from t_permission ";
 		
-		$queryParams = array();
+		$queryParams = [];
 		if ($category != $this->ALL_CATEGORY) {
 			$queryParams[] = $category;
 			
@@ -251,11 +251,14 @@ class PermissionDAO extends PSIBaseExDAO {
 		$sql .= " order by convert(name USING gbk) collate gbk_chinese_ci";
 		$data = $db->query($sql, $queryParams);
 		
-		$result = array();
+		$result = [];
 		
-		foreach ( $data as $i => $v ) {
-			$result[$i]["id"] = $v["id"];
-			$result[$i]["name"] = $v["name"];
+		foreach ( $data as $v ) {
+			$result[] = [
+					"id" => $v["id"],
+					"name" => $v["name"],
+					"note" => $v["note"]
+			];
 		}
 		
 		return $result;
