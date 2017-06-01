@@ -15,12 +15,12 @@ class GoodsBrandDAO extends PSIBaseExDAO {
 	 * 用递归调用的方式查询所有品牌
 	 */
 	private function allBrandsInternal($db, $parentId, $rs) {
-		$result = array();
+		$result = [];
 		$sql = "select id, name, full_name
 				from t_goods_brand b
 				where (parent_id = '%s')
 				";
-		$queryParam = array();
+		$queryParam = [];
 		$queryParam[] = $parentId;
 		if ($rs) {
 			$sql .= " and " . $rs[0];
@@ -29,21 +29,23 @@ class GoodsBrandDAO extends PSIBaseExDAO {
 		
 		$sql .= " order by name";
 		$data = $db->query($sql, $queryParam);
-		foreach ( $data as $i => $v ) {
+		foreach ( $data as $v ) {
 			$id = $v["id"];
-			$result[$i]["id"] = $v["id"];
-			$result[$i]["text"] = $v["name"];
 			$fullName = $v["full_name"];
 			if (! $fullName) {
 				$fullName = $v["name"];
 			}
-			$result[$i]["fullName"] = $fullName;
 			
 			$children = $this->allBrandsInternal($db, $id, $rs); // 自身递归调用
 			
-			$result[$i]["children"] = $children;
-			$result[$i]["leaf"] = count($children) == 0;
-			$result[$i]["expanded"] = true;
+			$result[] = [
+					"id" => $id,
+					"text" => $v["name"],
+					"fullName" => $fullName,
+					"children" => $children,
+					"leaf" => count($children) == 0,
+					"expanded" => true
+			];
 		}
 		
 		return $result;
@@ -63,12 +65,12 @@ class GoodsBrandDAO extends PSIBaseExDAO {
 			return $this->emptyResult();
 		}
 		
-		$result = array();
+		$result = [];
 		$sql = "select id, name, full_name
 				from t_goods_brand b
 				where (parent_id is null)
 				";
-		$queryParam = array();
+		$queryParam = [];
 		$ds = new DataOrgDAO($db);
 		$rs = $ds->buildSQL(FIdConst::GOODS_BRAND, "b", $loginUserId);
 		if ($rs) {
@@ -79,22 +81,24 @@ class GoodsBrandDAO extends PSIBaseExDAO {
 		$sql .= " order by name";
 		
 		$data = $db->query($sql, $queryParam);
-		$result = array();
-		foreach ( $data as $i => $v ) {
+		$result = [];
+		foreach ( $data as $v ) {
 			$id = $v["id"];
-			$result[$i]["id"] = $id;
-			$result[$i]["text"] = $v["name"];
 			$fullName = $v["full_name"];
 			if (! $fullName) {
 				$fullName = $v["name"];
 			}
-			$result[$i]["fullName"] = $fullName;
 			
 			$children = $this->allBrandsInternal($db, $id, $rs);
 			
-			$result[$i]["children"] = $children;
-			$result[$i]["leaf"] = count($children) == 0;
-			$result[$i]["expanded"] = true;
+			$result[] = [
+					"id" => $id,
+					"text" => $v["name"],
+					"fullName" => $fullName,
+					"children" => $children,
+					"leaf" => count($children) == 0,
+					"expanded" => true
+			];
 		}
 		
 		return $result;
@@ -282,10 +286,10 @@ class GoodsBrandDAO extends PSIBaseExDAO {
 				where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if ($data) {
-			return array(
+			return [
 					"name" => $data[0]["name"],
 					"fullName" => $data[0]["full_name"]
-			);
+			];
 		} else {
 			return null;
 		}
@@ -343,7 +347,7 @@ class GoodsBrandDAO extends PSIBaseExDAO {
 	public function brandParentName($params) {
 		$db = $this->db;
 		
-		$result = array();
+		$result = [];
 		
 		$id = $params["id"];
 		
