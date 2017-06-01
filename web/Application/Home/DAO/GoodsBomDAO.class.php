@@ -20,7 +20,7 @@ class GoodsBomDAO extends PSIBaseExDAO {
 		
 		$id = $params["id"];
 		
-		$result = array();
+		$result = [];
 		
 		$sql = "select b.id, b.sub_goods_count,g.id as goods_id,
 					g.code, g.name, g.spec, u.name as unit_name
@@ -29,7 +29,7 @@ class GoodsBomDAO extends PSIBaseExDAO {
 				order by g.code";
 		$data = $db->query($sql, $id);
 		foreach ( $data as $v ) {
-			$item = array(
+			$result[] = [
 					"id" => $v["id"],
 					"goodsId" => $v["goods_id"],
 					"goodsCode" => $v["code"],
@@ -38,9 +38,7 @@ class GoodsBomDAO extends PSIBaseExDAO {
 					"unitName" => $v["unit_name"],
 					"goodsCount" => $v["sub_goods_count"]
 			
-			);
-			
-			$result[] = $item;
+			];
 		}
 		
 		return $result;
@@ -230,14 +228,14 @@ class GoodsBomDAO extends PSIBaseExDAO {
 			$unitName = $data[0]["name"];
 		}
 		
-		return array(
+		return [
 				"success" => true,
 				"count" => $subGoodsCount,
 				"name" => $subGoods["name"],
 				"spec" => $subGoods["spec"],
 				"code" => $subGoods["code"],
 				"unitName" => $unitName
-		);
+		];
 	}
 
 	/**
