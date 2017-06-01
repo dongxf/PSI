@@ -82,7 +82,7 @@ class PSIBaseExDAO extends PSIBaseDAO {
 	 * @return array
 	 */
 	protected function emptyResult() {
-		return array();
+		return [];
 	}
 
 	/**
