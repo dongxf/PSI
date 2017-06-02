@@ -695,7 +695,9 @@ Ext.define("PSI.Customer.MainForm", {
 	},
 
 	onCategoryGridSelect : function() {
-		this.freshCustomerGrid();
+		var me = this;
+		me.getMainGrid().getStore().currentPage = 1;
+		me.freshCustomerGrid();
 	},
 
 	/**
