@@ -854,16 +854,9 @@ class POBillDAO extends PSIBaseExDAO {
 				and (p.biz_user_id = u1.id) and (p.input_user_id = u2.id)
 				order by p.ref ";
 		$data = $db->query($sql, $id);
-		$result = array();
+		$result = [];
 		
-		foreach ( $data as $i => $v ) {
-			$result[$i]["id"] = $v["id"];
-			$result[$i]["ref"] = $v["ref"];
-			$result[$i]["bizDate"] = $this->toYMD($v["biz_dt"]);
-			$result[$i]["supplierName"] = $v["supplier_name"];
-			$result[$i]["warehouseName"] = $v["warehouse_name"];
-			$result[$i]["inputUserName"] = $v["input_user_name"];
-			$result[$i]["bizUserName"] = $v["biz_user_name"];
+		foreach ( $data as $v ) {
 			$billStatus = $v["bill_status"];
 			$bs = "";
 			if ($billStatus == 0) {
@@ -873,10 +866,20 @@ class POBillDAO extends PSIBaseExDAO {
 			} else if ($billStatus == 9000) {
 				$bs = "作废";
 			}
-			$result[$i]["billStatus"] = $bs;
-			$result[$i]["amount"] = $v["goods_money"];
-			$result[$i]["dateCreated"] = $v["date_created"];
-			$result[$i]["paymentType"] = $v["payment_type"];
+			
+			$result[] = [
+					"id" => $v["id"],
+					"ref" => $v["ref"],
+					"bizDate" => $this->toYMD($v["biz_dt"]),
+					"supplierName" => $v["supplier_name"],
+					"warehouseName" => $v["warehouse_name"],
+					"inputUserName" => $v["input_user_name"],
+					"bizUserName" => $v["biz_user_name"],
+					"billStatus" => $bs,
+					"amount" => $v["goods_money"],
+					"dateCreated" => $v["date_created"],
+					"paymentType" => $v["payment_type"]
+			];
 		}
 		
 		return $result;
