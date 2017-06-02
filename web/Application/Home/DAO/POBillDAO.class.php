@@ -528,12 +528,12 @@ class POBillDAO extends PSIBaseExDAO {
 				from t_po_bill where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if ($data) {
-			return array(
+			return [
 					"ref" => $data[0]["ref"],
 					"dataOrg" => $data[0]["data_org"],
 					"billStatus" => $data[0]["bill_status"],
 					"companyId" => $data[0]["company_id"]
-			);
+			];
 		} else {
 			return null;
 		}
@@ -594,7 +594,7 @@ class POBillDAO extends PSIBaseExDAO {
 		
 		$id = $params["id"];
 		
-		$result = array();
+		$result = [];
 		
 		$bcDAO = new BizConfigDAO($db);
 		$result["taxRate"] = $bcDAO->getTaxRate($companyId);
@@ -634,11 +634,11 @@ class POBillDAO extends PSIBaseExDAO {
 						from t_po_bill_detail p, t_goods g, t_goods_unit u
 						where p.pobill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id
 						order by p.show_order";
-				$items = array();
+				$items = [];
 				$data = $db->query($sql, $id);
 				
 				foreach ( $data as $v ) {
-					$item = array(
+					$items[] = [
 							"goodsId" => $v["goods_id"],
 							"goodsCode" => $v["code"],
 							"goodsName" => $v["name"],
@@ -651,9 +651,7 @@ class POBillDAO extends PSIBaseExDAO {
 							"moneyWithTax" => $v["money_with_tax"],
 							"unitName" => $v["unit_name"],
 							"memo" => $v["memo"]
-					);
-					
-					$items[] = $item;
+					];
 				}
 				
 				$result["items"] = $items;
@@ -798,7 +796,7 @@ class POBillDAO extends PSIBaseExDAO {
 		$v = $data[0];
 		$id = $v["id"];
 		
-		$result = array();
+		$result = [];
 		
 		$result["billStatus"] = $v["bill_status"];
 		$result["supplierName"] = $v["supplier_name"];
@@ -814,11 +812,11 @@ class POBillDAO extends PSIBaseExDAO {
 				from t_po_bill_detail p, t_goods g, t_goods_unit u
 				where p.pobill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id
 				order by p.show_order";
-		$items = array();
+		$items = [];
 		$data = $db->query($sql, $id);
 		
 		foreach ( $data as $v ) {
-			$item = array(
+			$items[] = [
 					"goodsCode" => $v["code"],
 					"goodsName" => $v["name"],
 					"goodsSpec" => $v["spec"],
@@ -826,9 +824,7 @@ class POBillDAO extends PSIBaseExDAO {
 					"unitName" => $v["unit_name"],
 					"goodsPrice" => $v["goods_price"],
 					"goodsMoney" => $v["goods_money"]
-			);
-			
-			$items[] = $item;
+			];
 		}
 		
 		$result["items"] = $items;
