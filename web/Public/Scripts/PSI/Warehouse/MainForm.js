@@ -101,7 +101,7 @@ Ext.define("PSI.Warehouse.MainForm", {
 								renderer : function(value) {
 									return value == 1
 											? "完毕"
-											: "<span style='color:red'>未完</span>";
+											: "<span style='color:red;font-weight:bold'>未完</span>";
 								}
 							}, {
 								header : "数据域",
