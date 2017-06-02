@@ -62,9 +62,9 @@ class POBillDAO extends PSIBaseExDAO {
 			return $this->emptyResult();
 		}
 		
-		$queryParams = array();
+		$queryParams = [];
 		
-		$result = array();
+		$result = [];
 		$sql = "select p.id, p.ref, p.bill_status, p.goods_money, p.tax, p.money_with_tax,
 					s.name as supplier_name, p.contact, p.tel, p.fax, p.deal_address,
 					p.deal_date, p.payment_type, p.bill_memo, p.date_created,
@@ -110,35 +110,41 @@ class POBillDAO extends PSIBaseExDAO {
 		$queryParams[] = $start;
 		$queryParams[] = $limit;
 		$data = $db->query($sql, $queryParams);
-		foreach ( $data as $i => $v ) {
-			$result[$i]["id"] = $v["id"];
-			$result[$i]["ref"] = $v["ref"];
-			$result[$i]["billStatus"] = $v["bill_status"];
-			$result[$i]["dealDate"] = $this->toYMD($v["deal_date"]);
-			$result[$i]["dealAddress"] = $v["deal_address"];
-			$result[$i]["supplierName"] = $v["supplier_name"];
-			$result[$i]["contact"] = $v["contact"];
-			$result[$i]["tel"] = $v["tel"];
-			$result[$i]["fax"] = $v["fax"];
-			$result[$i]["goodsMoney"] = $v["goods_money"];
-			$result[$i]["tax"] = $v["tax"];
-			$result[$i]["moneyWithTax"] = $v["money_with_tax"];
-			$result[$i]["paymentType"] = $v["payment_type"];
-			$result[$i]["billMemo"] = $v["bill_memo"];
-			$result[$i]["bizUserName"] = $v["biz_user_name"];
-			$result[$i]["orgName"] = $v["org_name"];
-			$result[$i]["inputUserName"] = $v["input_user_name"];
-			$result[$i]["dateCreated"] = $v["date_created"];
-			
+		foreach ( $data as $v ) {
+			$confirmUserName = null;
+			$confirmDate = null;
 			$confirmUserId = $v["confirm_user_id"];
 			if ($confirmUserId) {
 				$sql = "select name from t_user where id = '%s' ";
 				$d = $db->query($sql, $confirmUserId);
 				if ($d) {
-					$result[$i]["confirmUserName"] = $d[0]["name"];
-					$result[$i]["confirmDate"] = $v["confirm_date"];
+					$confirmUserName = $d[0]["name"];
+					$confirmDate = $v["confirm_date"];
 				}
 			}
+			
+			$result[] = [
+					"id" => $v["id"],
+					"ref" => $v["ref"],
+					"billStatus" => $v["bill_status"],
+					"dealDate" => $this->toYMD($v["deal_date"]),
+					"dealAddress" => $v["deal_address"],
+					"supplierName" => $v["supplier_name"],
+					"contact" => $v["contact"],
+					"tel" => $v["tel"],
+					"fax" => $v["fax"],
+					"goodsMoney" => $v["goods_money"],
+					"tax" => $v["tax"],
+					"moneyWithTax" => $v["money_with_tax"],
+					"paymentType" => $v["payment_type"],
+					"billMemo" => $v["bill_memo"],
+					"bizUserName" => $v["biz_user_name"],
+					"orgName" => $v["org_name"],
+					"inputUserName" => $v["input_user_name"],
+					"dateCreated" => $v["date_created"],
+					"confirmUserName" => $confirmUserName,
+					"confirmDate" => $confirmDate
+			];
 		}
 		
 		$sql = "select count(*) as cnt
@@ -146,7 +152,7 @@ class POBillDAO extends PSIBaseExDAO {
 				where (p.supplier_id = s.id) and (p.org_id = o.id)
 					and (p.biz_user_id = u1.id) and (p.input_user_id = u2.id)
 				";
-		$queryParams = array();
+		$queryParams = [];
 		$ds = new DataOrgDAO($db);
 		$rs = $ds->buildSQL(FIdConst::PURCHASE_ORDER, "p", $loginUserId);
 		if ($rs) {
@@ -180,10 +186,10 @@ class POBillDAO extends PSIBaseExDAO {
 		$data = $db->query($sql, $queryParams);
 		$cnt = $data[0]["cnt"];
 		
-		return array(
+		return [
 				"dataList" => $result,
 				"totalCount" => $cnt
-		);
+		];
 	}
 
 	/**
