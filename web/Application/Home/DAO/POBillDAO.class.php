@@ -209,11 +209,11 @@ class POBillDAO extends PSIBaseExDAO {
 				from t_po_bill_detail p, t_goods g, t_goods_unit u
 				where p.pobill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id
 				order by p.show_order";
-		$result = array();
+		$result = [];
 		$data = $db->query($sql, $id);
 		
 		foreach ( $data as $v ) {
-			$item = array(
+			$result[] = [
 					"id" => $v["id"],
 					"goodsCode" => $v["code"],
 					"goodsName" => $v["name"],
@@ -228,8 +228,7 @@ class POBillDAO extends PSIBaseExDAO {
 					"pwCount" => $v["pw_count"],
 					"leftCount" => $v["left_count"],
 					"memo" => $v["memo"]
-			);
-			$result[] = $item;
+			];
 		}
 		
 		return $result;
