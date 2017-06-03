@@ -562,7 +562,7 @@ class WSBillDAO extends PSIBaseExDAO {
 			return $this->emptyResult();
 		}
 		
-		$result = array();
+		$result = [];
 		
 		$userDAO = new UserDAO($db);
 		$result["canEditGoodsPrice"] = $this->canEditGoodsPrice($companyId, $loginUserId);
@@ -605,7 +605,7 @@ class WSBillDAO extends PSIBaseExDAO {
 					
 					$pobillId = $v["id"];
 					// 销售订单的明细
-					$items = array();
+					$items = [];
 					$sql = "select s.id, s.goods_id, g.code, g.name, g.spec, u.name as unit_name,
 								s.goods_count, s.goods_price, s.goods_money, s.left_count, s.memo
 							from t_so_bill_detail s, t_goods g, t_goods_unit u
@@ -613,7 +613,7 @@ class WSBillDAO extends PSIBaseExDAO {
 							order by s.show_order ";
 					$data = $db->query($sql, $pobillId);
 					foreach ( $data as $v ) {
-						$item = array(
+						$items[] = [
 								"id" => $v["id"],
 								"goodsId" => $v["goods_id"],
 								"goodsCode" => $v["code"],
@@ -626,8 +626,7 @@ class WSBillDAO extends PSIBaseExDAO {
 								"soBillDetailId" => $v["id"],
 								"memo" => $v["memo"]
 						
-						);
-						$items[] = $item;
+						];
 					}
 					
 					$result["items"] = $items;
@@ -670,9 +669,9 @@ class WSBillDAO extends PSIBaseExDAO {
 					where d.wsbill_id = '%s' and d.goods_id = g.id and g.unit_id = u.id
 					order by d.show_order";
 			$data = $db->query($sql, $id);
-			$items = array();
+			$items = [];
 			foreach ( $data as $v ) {
-				$item = array(
+				$items[] = [
 						"id" => $v["id"],
 						"goodsId" => $v["goods_id"],
 						"goodsCode" => $v["code"],
@@ -685,8 +684,7 @@ class WSBillDAO extends PSIBaseExDAO {
 						"sn" => $v["sn_note"],
 						"memo" => $v["memo"],
 						"soBillDetailId" => $v["sobilldetail_id"]
-				);
-				$items[] = $item;
+				];
 			}
 			
 			$result["items"] = $items;
