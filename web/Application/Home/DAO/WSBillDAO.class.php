@@ -213,19 +213,21 @@ class WSBillDAO extends PSIBaseExDAO {
 				where d.wsbill_id = '%s' and d.goods_id = g.id and g.unit_id = u.id
 				order by d.show_order";
 		$data = $db->query($sql, $billId);
-		$result = array();
+		$result = [];
 		
-		foreach ( $data as $i => $v ) {
-			$result[$i]["id"] = $v["id"];
-			$result[$i]["goodsCode"] = $v["code"];
-			$result[$i]["goodsName"] = $v["name"];
-			$result[$i]["goodsSpec"] = $v["spec"];
-			$result[$i]["unitName"] = $v["unit_name"];
-			$result[$i]["goodsCount"] = $v["goods_count"];
-			$result[$i]["goodsPrice"] = $v["goods_price"];
-			$result[$i]["goodsMoney"] = $v["goods_money"];
-			$result[$i]["sn"] = $v["sn_note"];
-			$result[$i]["memo"] = $v["memo"];
+		foreach ( $data as $v ) {
+			$result[] = [
+					"id" => $v["id"],
+					"goodsCode" => $v["code"],
+					"goodsName" => $v["name"],
+					"goodsSpec" => $v["spec"],
+					"unitName" => $v["unit_name"],
+					"goodsCount" => $v["goods_count"],
+					"goodsPrice" => $v["goods_price"],
+					"goodsMoney" => $v["goods_money"],
+					"sn" => $v["sn_note"],
+					"memo" => $v["memo"]
+			];
 		}
 		
 		return $result;
