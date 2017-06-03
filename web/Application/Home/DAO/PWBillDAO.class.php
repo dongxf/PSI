@@ -62,7 +62,7 @@ class PWBillDAO extends PSIBaseExDAO {
 			return $this->emptyResult();
 		}
 		
-		$queryParams = array();
+		$queryParams = [];
 		$sql = "select p.id, p.bill_status, p.ref, p.biz_dt, u1.name as biz_user_name, u2.name as input_user_name,
 					p.goods_money, w.name as warehouse_name, s.name as supplier_name,
 					p.date_created, p.payment_type, p.bill_memo
