@@ -71,7 +71,7 @@ class WSBillDAO extends PSIBaseExDAO {
 				from t_ws_bill w, t_customer c, t_user u, t_user user, t_warehouse h
 				where (w.customer_id = c.id) and (w.biz_user_id = u.id)
 				  and (w.input_user_id = user.id) and (w.warehouse_id = h.id) ";
-		$queryParams = array();
+		$queryParams = [];
 		
 		$ds = new DataOrgDAO($db);
 		$rs = $ds->buildSQL(FIdConst::WAREHOUSING_SALE, "w", $loginUserId);
@@ -144,7 +144,7 @@ class WSBillDAO extends PSIBaseExDAO {
 				from t_ws_bill w, t_customer c, t_user u, t_user user, t_warehouse h
 				where (w.customer_id = c.id) and (w.biz_user_id = u.id)
 				  and (w.input_user_id = user.id) and (w.warehouse_id = h.id) ";
-		$queryParams = array();
+		$queryParams = [];
 		
 		$ds = new DataOrgDAO($db);
 		$rs = $ds->buildSQL(FIdConst::WAREHOUSING_SALE, "w", $loginUserId);
