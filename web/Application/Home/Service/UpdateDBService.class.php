@@ -107,6 +107,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20170515_01($db);
 		$this->update_20170519_01($db);
 		$this->update_20170530_01($db);
+		$this->update_20170604_01($db);
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -127,6 +128,22 @@ class UpdateDBService extends PSIBaseService {
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	// ============================================
 	private function notForgot() {
+	}
+
+	private function update_20170604_01($db) {
+		// 本次更新：新增表think_session ，把session持久化到数据库中
+		$tableName = "think_session";
+		
+		if (! $this->tableExists($db, $tableName)) {
+			$sql = "CREATE TABLE `think_session` (
+					  `session_id` varchar(255) NOT NULL,
+					  `session_expire` int(11) NOT NULL,
+					  `session_data` blob,
+					  UNIQUE KEY `session_id` (`session_id`)
+					) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+					";
+			$db->execute($sql);
+		}
 	}
 
 	private function update_20170530_01($db) {

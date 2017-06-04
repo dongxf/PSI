@@ -31,6 +31,16 @@ class InstallService extends PSIBaseService {
 	private function createTables() {
 		$db = M();
 		
+		// think_session
+		$sql = "CREATE TABLE `think_session` (
+				  `session_id` varchar(255) NOT NULL,
+				  `session_expire` int(11) NOT NULL,
+				  `session_data` blob,
+				  UNIQUE KEY `session_id` (`session_id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		";
+		$db->execute($sql);
+		
 		// t_biz_log
 		$sql = "CREATE TABLE IF NOT EXISTS `t_biz_log` (
 				  `id` bigint(20) NOT NULL AUTO_INCREMENT,
