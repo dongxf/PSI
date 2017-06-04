@@ -73,9 +73,7 @@ $psiConfig = [
 ]; // 端口
 
 if (getenv("PSI_SESSION_IN_DB") == "1") {
-	$psiConfig["SESSION_OPTIONS"] = [
-			"type" => "Db_psi"
-	];
+	$psiConfig["SESSION_TYPE"] = "Database";
 }
 
 return $psiConfig;
