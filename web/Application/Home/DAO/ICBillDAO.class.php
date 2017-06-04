@@ -409,7 +409,7 @@ class ICBillDAO extends PSIBaseExDAO {
 		
 		$id = $params["id"];
 		
-		$result = array();
+		$result = [];
 		
 		if ($id) {
 			// 编辑
@@ -431,7 +431,7 @@ class ICBillDAO extends PSIBaseExDAO {
 			$result["warehouseId"] = $data[0]["warehouse_id"];
 			$result["warehouseName"] = $data[0]["warehouse_name"];
 			
-			$items = array();
+			$items = [];
 			$sql = "select t.id, g.id as goods_id, g.code, g.name, g.spec, u.name as unit_name,
 						t.goods_count, t.goods_money
 				from t_ic_bill_detail t, t_goods g, t_goods_unit u
@@ -439,15 +439,17 @@ class ICBillDAO extends PSIBaseExDAO {
 				order by t.show_order ";
 			
 			$data = $db->query($sql, $id);
-			foreach ( $data as $i => $v ) {
-				$items[$i]["id"] = $v["id"];
-				$items[$i]["goodsId"] = $v["goods_id"];
-				$items[$i]["goodsCode"] = $v["code"];
-				$items[$i]["goodsName"] = $v["name"];
-				$items[$i]["goodsSpec"] = $v["spec"];
-				$items[$i]["unitName"] = $v["unit_name"];
-				$items[$i]["goodsCount"] = $v["goods_count"];
-				$items[$i]["goodsMoney"] = $v["goods_money"];
+			foreach ( $data as $v ) {
+				$items[] = [
+						"id" => $v["id"],
+						"goodsId" => $v["goods_id"],
+						"goodsCode" => $v["code"],
+						"goodsName" => $v["name"],
+						"goodsSpec" => $v["spec"],
+						"unitName" => $v["unit_name"],
+						"goodsCount" => $v["goods_count"],
+						"goodsMoney" => $v["goods_money"]
+				];
 			}
 			
 			$result["items"] = $items;
