@@ -72,7 +72,7 @@ class ICBillDAO extends PSIBaseExDAO {
 				where (t.warehouse_id = w.id)
 				and (t.biz_user_id = u.id)
 				and (t.input_user_id = u1.id) ";
-		$queryParams = array();
+		$queryParams = [];
 		
 		$ds = new DataOrgDAO($db);
 		$rs = $ds->buildSQL(FIdConst::INVENTORY_CHECK, "t", $loginUserId);
@@ -107,16 +107,18 @@ class ICBillDAO extends PSIBaseExDAO {
 		$queryParams[] = $start;
 		$queryParams[] = $limit;
 		$data = $db->query($sql, $queryParams);
-		$result = array();
-		foreach ( $data as $i => $v ) {
-			$result[$i]["id"] = $v["id"];
-			$result[$i]["ref"] = $v["ref"];
-			$result[$i]["bizDate"] = date("Y-m-d", strtotime($v["bizdt"]));
-			$result[$i]["billStatus"] = $v["bill_status"] == 0 ? "待盘点" : "已盘点";
-			$result[$i]["warehouseName"] = $v["warehouse_name"];
-			$result[$i]["bizUserName"] = $v["biz_user_name"];
-			$result[$i]["inputUserName"] = $v["input_user_name"];
-			$result[$i]["dateCreated"] = $v["date_created"];
+		$result = [];
+		foreach ( $data as $v ) {
+			$result[] = [
+					"id" => $v["id"],
+					"ref" => $v["ref"],
+					"bizDate" => $this->toYMD($v["bizdt"]),
+					"billStatus" => $v["bill_status"] == 0 ? "待盘点" : "已盘点",
+					"warehouseName" => $v["warehouse_name"],
+					"bizUserName" => $v["biz_user_name"],
+					"inputUserName" => $v["input_user_name"],
+					"dateCreated" => $v["date_created"]
+			];
 		}
 		
 		$sql = "select count(*) as cnt
@@ -125,7 +127,7 @@ class ICBillDAO extends PSIBaseExDAO {
 				  and (t.biz_user_id = u.id)
 				  and (t.input_user_id = u1.id)
 				";
-		$queryParams = array();
+		$queryParams = [];
 		
 		$ds = new DataOrgDAO($db);
 		$rs = $ds->buildSQL(FIdConst::INVENTORY_CHECK, "t", $loginUserId);
@@ -157,10 +159,10 @@ class ICBillDAO extends PSIBaseExDAO {
 		$data = $db->query($sql, $queryParams);
 		$cnt = $data[0]["cnt"];
 		
-		return array(
+		return [
 				"dataList" => $result,
 				"totalCount" => $cnt
-		);
+		];
 	}
 
 	/**
@@ -174,7 +176,7 @@ class ICBillDAO extends PSIBaseExDAO {
 		
 		$id = $params["id"];
 		
-		$result = array();
+		$result = [];
 		
 		$sql = "select t.id, g.code, g.name, g.spec, u.name as unit_name, t.goods_count, t.goods_money
 				from t_ic_bill_detail t, t_goods g, t_goods_unit u
@@ -182,14 +184,16 @@ class ICBillDAO extends PSIBaseExDAO {
 				order by t.show_order ";
 		
 		$data = $db->query($sql, $id);
-		foreach ( $data as $i => $v ) {
-			$result[$i]["id"] = $v["id"];
-			$result[$i]["goodsCode"] = $v["code"];
-			$result[$i]["goodsName"] = $v["name"];
-			$result[$i]["goodsSpec"] = $v["spec"];
-			$result[$i]["unitName"] = $v["unit_name"];
-			$result[$i]["goodsCount"] = $v["goods_count"];
-			$result[$i]["goodsMoney"] = $v["goods_money"];
+		foreach ( $data as $v ) {
+			$result[] = [
+					"id" => $v["id"],
+					"goodsCode" => $v["code"],
+					"goodsName" => $v["name"],
+					"goodsSpec" => $v["spec"],
+					"unitName" => $v["unit_name"],
+					"goodsCount" => $v["goods_count"],
+					"goodsMoney" => $v["goods_money"]
+			];
 		}
 		
 		return $result;
