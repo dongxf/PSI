@@ -743,7 +743,7 @@ class ICBillDAO extends PSIBaseExDAO {
 		
 		$id = $data[0]["id"];
 		
-		$bill = array();
+		$bill = [];
 		
 		$bill["bizDT"] = $this->toYMD($data[0]["bizdt"]);
 		$bill["warehouseName"] = $data[0]["warehouse_name"];
@@ -757,15 +757,14 @@ class ICBillDAO extends PSIBaseExDAO {
 		$data = $db->query($sql, $id);
 		$items = array();
 		foreach ( $data as $v ) {
-			$item = array(
+			$items[] = [
 					"goodsCode" => $v["code"],
 					"goodsName" => $v["name"],
 					"goodsSpec" => $v["spec"],
 					"unitName" => $v["unit_name"],
 					"goodsCount" => $v["goods_count"],
 					"goodsMoney" => $v["goods_money"]
-			);
-			$items[] = $item;
+			];
 		}
 		$bill["items"] = $items;
 		
@@ -792,13 +791,13 @@ class ICBillDAO extends PSIBaseExDAO {
 		}
 		
 		$id = $data[0]["id"];
-		$result = array(
+		$result = [
 				"bizUserName" => $data[0]["biz_user_name"],
 				"bizDT" => $this->toYMD($data[0]["bizdt"]),
 				"warehouseName" => $data[0]["warehouse_name"]
-		);
+		];
 		
-		$items = array();
+		$items = [];
 		$sql = "select t.id, g.id as goods_id, g.code, g.name, g.spec, u.name as unit_name,
 						t.goods_count, t.goods_money
 				from t_ic_bill_detail t, t_goods g, t_goods_unit u
@@ -807,7 +806,7 @@ class ICBillDAO extends PSIBaseExDAO {
 		
 		$data = $db->query($sql, $id);
 		foreach ( $data as $v ) {
-			$item = array(
+			$items[] = [
 					"id" => $v["id"],
 					"goodsId" => $v["goods_id"],
 					"goodsCode" => $v["code"],
@@ -816,8 +815,7 @@ class ICBillDAO extends PSIBaseExDAO {
 					"unitName" => $v["unit_name"],
 					"goodsCount" => $v["goods_count"],
 					"goodsMoney" => $v["goods_money"]
-			);
-			$items[] = $item;
+			];
 		}
 		
 		$result["items"] = $items;

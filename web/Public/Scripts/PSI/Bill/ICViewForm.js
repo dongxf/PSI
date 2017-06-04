@@ -33,7 +33,7 @@ Ext.define("PSI.Bill.ICViewForm", {
 									type : "table",
 									columns : 2
 								},
-								height : 100,
+								height : 60,
 								bodyPadding : 10,
 								items : [{
 											id : "editRef",

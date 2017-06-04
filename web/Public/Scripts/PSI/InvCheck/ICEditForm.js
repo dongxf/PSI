@@ -59,7 +59,7 @@ Ext.define("PSI.InvCheck.ICEditForm", {
 							type : "table",
 							columns : 2
 						},
-						height : 100,
+						height : 60,
 						bodyPadding : 10,
 						items : [{
 									xtype : "hidden",
