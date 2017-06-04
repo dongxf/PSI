@@ -924,6 +924,14 @@ CREATE TABLE IF NOT EXISTS `t_subject` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `think_session`;
+CREATE TABLE `think_session` (
+  `session_id` varchar(255) NOT NULL,
+  `session_expire` int(11) NOT NULL,
+  `session_data` blob,
+  UNIQUE KEY `session_id` (`session_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
