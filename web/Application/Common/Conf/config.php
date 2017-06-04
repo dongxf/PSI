@@ -61,7 +61,7 @@ function PSI_getPort() {
 	return 3306;
 }
 
-return array(
+$psiConfig = [
 		'URL_CASE_INSENSITIVE' => false,
 		'SHOW_ERROR_MSG' => true,
 		'DB_TYPE' => 'mysql', // 数据库类型
@@ -70,8 +70,15 @@ return array(
 		'DB_USER' => PSI_getUser(), // 用户名
 		'DB_PWD' => PSI_getPassword(), // 密码
 		'DB_PORT' => PSI_getPort()
-); // 端口
+]; // 端口
 
+if (getenv("PSI_SESSION_IN_DB") == "1") {
+	$psiConfig["SESSION_OPTIONS"] = [
+			"type" => "Db_psi"
+	];
+}
+
+return $psiConfig;
 
 /*
 
