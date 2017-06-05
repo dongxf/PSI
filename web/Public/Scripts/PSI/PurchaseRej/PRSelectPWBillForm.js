@@ -12,8 +12,8 @@ Ext.define("PSI.PurchaseRej.PRSelectPWBillForm", {
 					title : "选择采购入库单",
 					modal : true,
 					onEsc : Ext.emptyFn,
-					width : 800,
-					height : 500,
+					width : 900,
+					height : 600,
 					layout : "border",
 					items : [{
 								region : "center",
