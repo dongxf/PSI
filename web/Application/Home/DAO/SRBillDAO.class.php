@@ -268,7 +268,7 @@ class SRBillDAO extends PSIBaseExDAO {
 				 where (w.customer_id = c.id) and (w.biz_user_id = u.id)
 				 and (w.input_user_id = user.id) and (w.warehouse_id = h.id)
 				 and (w.bill_status = 1000) ";
-		$queryParamas = array();
+		$queryParamas = [];
 		
 		$ds = new DataOrgDAO($db);
 		$rs = $ds->buildSQL(FIdConst::SALE_REJECTION, "w", $loginUserId);
@@ -310,17 +310,19 @@ class SRBillDAO extends PSIBaseExDAO {
 		$queryParamas[] = $start;
 		$queryParamas[] = $limit;
 		$data = $db->query($sql, $queryParamas);
-		$result = array();
+		$result = [];
 		
-		foreach ( $data as $i => $v ) {
-			$result[$i]["id"] = $v["id"];
-			$result[$i]["ref"] = $v["ref"];
-			$result[$i]["bizDate"] = date("Y-m-d", strtotime($v["bizdt"]));
-			$result[$i]["customerName"] = $v["customer_name"];
-			$result[$i]["warehouseName"] = $v["warehouse_name"];
-			$result[$i]["inputUserName"] = $v["input_user_name"];
-			$result[$i]["bizUserName"] = $v["biz_user_name"];
-			$result[$i]["amount"] = $v["sale_money"];
+		foreach ( $data as $v ) {
+			$result[] = [
+					"id" => $v["id"],
+					"ref" => $v["ref"],
+					"bizDate" => $this->toYMD($v["bizdt"]),
+					"customerName" => $v["customer_name"],
+					"warehouseName" => $v["warehouse_name"],
+					"inputUserName" => $v["input_user_name"],
+					"bizUserName" => $v["biz_user_name"],
+					"amount" => $v["sale_money"]
+			];
 		}
 		
 		$sql = "select count(*) as cnt
@@ -328,7 +330,7 @@ class SRBillDAO extends PSIBaseExDAO {
 				 where (w.customer_id = c.id) and (w.biz_user_id = u.id)
 				 and (w.input_user_id = user.id) and (w.warehouse_id = h.id)
 				 and (w.bill_status = 1000) ";
-		$queryParamas = array();
+		$queryParamas = [];
 		$ds = new DataOrgDAO($db);
 		$rs = $ds->buildSQL(FIdConst::SALE_REJECTION, "w", $loginUserId);
 		if ($rs) {
@@ -368,10 +370,10 @@ class SRBillDAO extends PSIBaseExDAO {
 		$data = $db->query($sql, $queryParamas);
 		$cnt = $data[0]["cnt"];
 		
-		return array(
+		return [
 				"dataList" => $result,
 				"totalCount" => $cnt
-		);
+		];
 	}
 
 	/**
@@ -383,7 +385,7 @@ class SRBillDAO extends PSIBaseExDAO {
 	public function getWSBillInfoForSRBill($params) {
 		$db = $this->db;
 		
-		$result = array();
+		$result = [];
 		
 		$id = $params["id"];
 		
@@ -408,20 +410,22 @@ class SRBillDAO extends PSIBaseExDAO {
 				where d.wsbill_id = '%s' and d.goods_id = g.id and g.unit_id = u.id
 				order by d.show_order";
 		$data = $db->query($sql, $id);
-		$items = array();
+		$items = [];
 		
-		foreach ( $data as $i => $v ) {
-			$items[$i]["id"] = $v["id"];
-			$items[$i]["goodsId"] = $v["goods_id"];
-			$items[$i]["goodsCode"] = $v["code"];
-			$items[$i]["goodsName"] = $v["name"];
-			$items[$i]["goodsSpec"] = $v["spec"];
-			$items[$i]["unitName"] = $v["unit_name"];
-			$items[$i]["goodsCount"] = $v["goods_count"];
-			$items[$i]["goodsPrice"] = $v["goods_price"];
-			$items[$i]["goodsMoney"] = $v["goods_money"];
-			$items[$i]["rejPrice"] = $v["goods_price"];
-			$items[$i]["sn"] = $v["sn_note"];
+		foreach ( $data as $v ) {
+			$items[] = [
+					"id" => $v["id"],
+					"goodsId" => $v["goods_id"],
+					"goodsCode" => $v["code"],
+					"goodsName" => $v["name"],
+					"goodsSpec" => $v["spec"],
+					"unitName" => $v["unit_name"],
+					"goodsCount" => $v["goods_count"],
+					"goodsPrice" => $v["goods_price"],
+					"goodsMoney" => $v["goods_money"],
+					"rejPrice" => $v["goods_price"],
+					"sn" => $v["sn_note"]
+			];
 		}
 		
 		$result["items"] = $items;
@@ -742,7 +746,7 @@ class SRBillDAO extends PSIBaseExDAO {
 			return $result;
 		} else {
 			// 编辑单据
-			$result = array();
+			$result = [];
 			$sql = "select w.id, w.ref, w.bill_status, w.bizdt, c.id as customer_id, c.name as customer_name,
 					 u.id as biz_user_id, u.name as biz_user_name,
 					 h.id as warehouse_id, h.name as warehouse_name, wsBill.ref as ws_bill_ref,
@@ -774,21 +778,23 @@ class SRBillDAO extends PSIBaseExDAO {
 					 where d.srbill_id = '%s' and d.goods_id = g.id and g.unit_id = u.id
 					 order by d.show_order";
 			$data = $db->query($sql, $id);
-			$items = array();
-			foreach ( $data as $i => $v ) {
-				$items[$i]["id"] = $v["wsbilldetail_id"];
-				$items[$i]["goodsId"] = $v["goods_id"];
-				$items[$i]["goodsCode"] = $v["code"];
-				$items[$i]["goodsName"] = $v["name"];
-				$items[$i]["goodsSpec"] = $v["spec"];
-				$items[$i]["unitName"] = $v["unit_name"];
-				$items[$i]["goodsCount"] = $v["goods_count"];
-				$items[$i]["goodsPrice"] = $v["goods_price"];
-				$items[$i]["goodsMoney"] = $v["goods_money"];
-				$items[$i]["rejCount"] = $v["rejection_goods_count"];
-				$items[$i]["rejPrice"] = $v["rejection_goods_price"];
-				$items[$i]["rejMoney"] = $v["rejection_sale_money"];
-				$items[$i]["sn"] = $v["sn_note"];
+			$items = [];
+			foreach ( $data as $v ) {
+				$items[] = [
+						"id" => $v["wsbilldetail_id"],
+						"goodsId" => $v["goods_id"],
+						"goodsCode" => $v["code"],
+						"goodsName" => $v["name"],
+						"goodsSpec" => $v["spec"],
+						"unitName" => $v["unit_name"],
+						"goodsCount" => $v["goods_count"],
+						"goodsPrice" => $v["goods_price"],
+						"goodsMoney" => $v["goods_money"],
+						"rejCount" => $v["rejection_goods_count"],
+						"rejPrice" => $v["rejection_goods_price"],
+						"rejMoney" => $v["rejection_sale_money"],
+						"sn" => $v["sn_note"]
+				];
 			}
 			
 			$result["items"] = $items;
@@ -1286,13 +1292,13 @@ class SRBillDAO extends PSIBaseExDAO {
 		
 		$id = $data[0]["id"];
 		
-		$bill = array();
-		
-		$bill["bizDT"] = $this->toYMD($data[0]["bizdt"]);
-		$bill["customerName"] = $data[0]["customer_name"];
-		$bill["warehouseName"] = $data[0]["warehouse_name"];
-		$bill["bizUserName"] = $data[0]["biz_user_name"];
-		$bill["rejMoney"] = $data[0]["rejection_sale_money"];
+		$bill = [
+				"bizDT" => $this->toYMD($data[0]["bizdt"]),
+				"customerName" => $data[0]["customer_name"],
+				"warehouseName" => $data[0]["warehouse_name"],
+				"bizUserName" => $data[0]["biz_user_name"],
+				"rejMoney" => $data[0]["rejection_sale_money"]
+		];
 		
 		// 明细表
 		$sql = "select s.id, g.code, g.name, g.spec, u.name as unit_name,
@@ -1303,16 +1309,18 @@ class SRBillDAO extends PSIBaseExDAO {
 					and s.rejection_goods_count > 0
 				order by s.show_order";
 		$data = $db->query($sql, $id);
-		$items = array();
-		foreach ( $data as $i => $v ) {
-			$items[$i]["goodsCode"] = $v["code"];
-			$items[$i]["goodsName"] = $v["name"];
-			$items[$i]["goodsSpec"] = $v["spec"];
-			$items[$i]["unitName"] = $v["unit_name"];
-			$items[$i]["goodsCount"] = $v["rejection_goods_count"];
-			$items[$i]["goodsPrice"] = $v["rejection_goods_price"];
-			$items[$i]["goodsMoney"] = $v["rejection_sale_money"];
-			$items[$i]["sn"] = $v["sn_note"];
+		$items = [];
+		foreach ( $data as $v ) {
+			$items[] = [
+					"goodsCode" => $v["code"],
+					"goodsName" => $v["name"],
+					"goodsSpec" => $v["spec"],
+					"unitName" => $v["unit_name"],
+					"goodsCount" => $v["rejection_goods_count"],
+					"goodsPrice" => $v["rejection_goods_price"],
+					"goodsMoney" => $v["rejection_sale_money"],
+					"sn" => $v["sn_note"]
+			];
 		}
 		$bill["items"] = $items;
 		
@@ -1343,13 +1351,13 @@ class SRBillDAO extends PSIBaseExDAO {
 		
 		$id = $data[0]["id"];
 		
-		$result = array(
+		$result = [
 				"bizDT" => $this->toYMD($data[0]["bizdt"]),
 				"customerName" => $data[0]["customer_name"],
 				"warehouseName" => $data[0]["warehouse_name"],
 				"bizUserName" => $data[0]["biz_user_name"],
 				"wsBillRef" => $data[0]["ws_bill_ref"]
-		);
+		];
 		
 		$sql = "select d.id, g.id as goods_id, g.code, g.name, g.spec, u.name as unit_name, d.goods_count,
 					d.goods_price, d.goods_money,
@@ -1359,9 +1367,9 @@ class SRBillDAO extends PSIBaseExDAO {
 				where d.srbill_id = '%s' and d.goods_id = g.id and g.unit_id = u.id
 				order by d.show_order";
 		$data = $db->query($sql, $id);
-		$items = array();
+		$items = [];
 		foreach ( $data as $v ) {
-			$item = array(
+			$items[] = [
 					"id" => $v["wsbilldetail_id"],
 					"goodsId" => $v["goods_id"],
 					"goodsCode" => $v["code"],
@@ -1375,8 +1383,7 @@ class SRBillDAO extends PSIBaseExDAO {
 					"rejPrice" => $v["rejection_goods_price"],
 					"rejMoney" => $v["rejection_sale_money"],
 					"sn" => $v["sn_note"]
-			);
-			$items[] = $item;
+			];
 		}
 		
 		$result["items"] = $items;
