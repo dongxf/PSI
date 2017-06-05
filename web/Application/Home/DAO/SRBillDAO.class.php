@@ -72,7 +72,7 @@ class SRBillDAO extends PSIBaseExDAO {
 				 from t_sr_bill w, t_customer c, t_user u, t_user user, t_warehouse h
 				 where (w.customer_id = c.id) and (w.biz_user_id = u.id)
 				 and (w.input_user_id = user.id) and (w.warehouse_id = h.id) ";
-		$queryParams = array();
+		$queryParams = [];
 		
 		$ds = new DataOrgDAO($db);
 		$rs = $ds->buildSQL(FIdConst::SALE_REJECTION, "w", $loginUserId);
@@ -122,27 +122,29 @@ class SRBillDAO extends PSIBaseExDAO {
 		$queryParams[] = $start;
 		$queryParams[] = $limit;
 		$data = $db->query($sql, $queryParams);
-		$result = array();
+		$result = [];
 		
-		foreach ( $data as $i => $v ) {
-			$result[$i]["id"] = $v["id"];
-			$result[$i]["ref"] = $v["ref"];
-			$result[$i]["bizDate"] = date("Y-m-d", strtotime($v["bizdt"]));
-			$result[$i]["customerName"] = $v["customer_name"];
-			$result[$i]["warehouseName"] = $v["warehouse_name"];
-			$result[$i]["inputUserName"] = $v["input_user_name"];
-			$result[$i]["bizUserName"] = $v["biz_user_name"];
-			$result[$i]["billStatus"] = $v["bill_status"] == 0 ? "待入库" : "已入库";
-			$result[$i]["amount"] = $v["rejection_sale_money"];
-			$result[$i]["dateCreated"] = $v["date_created"];
-			$result[$i]["paymentType"] = $v["payment_type"];
+		foreach ( $data as $v ) {
+			$result[] = [
+					"id" => $v["id"],
+					"ref" => $v["ref"],
+					"bizDate" => $this->toYMD($v["bizdt"]),
+					"customerName" => $v["customer_name"],
+					"warehouseName" => $v["warehouse_name"],
+					"inputUserName" => $v["input_user_name"],
+					"bizUserName" => $v["biz_user_name"],
+					"billStatus" => $v["bill_status"] == 0 ? "待入库" : "已入库",
+					"amount" => $v["rejection_sale_money"],
+					"dateCreated" => $v["date_created"],
+					"paymentType" => $v["payment_type"]
+			];
 		}
 		
 		$sql = "select count(*) as cnt
 				 from t_sr_bill w, t_customer c, t_user u, t_user user, t_warehouse h
 				 where (w.customer_id = c.id) and (w.biz_user_id = u.id)
 				 and (w.input_user_id = user.id) and (w.warehouse_id = h.id) ";
-		$queryParams = array();
+		$queryParams = [];
 		
 		$ds = new DataOrgDAO($db);
 		$rs = $ds->buildSQL(FIdConst::SALE_REJECTION, "w", $loginUserId);
@@ -190,10 +192,10 @@ class SRBillDAO extends PSIBaseExDAO {
 		$data = $db->query($sql, $queryParams);
 		$cnt = $data[0]["cnt"];
 		
-		return array(
+		return [
 				"dataList" => $result,
 				"totalCount" => $cnt
-		);
+		];
 	}
 
 	/**
@@ -205,6 +207,7 @@ class SRBillDAO extends PSIBaseExDAO {
 	public function srBillDetailList($params) {
 		$db = $this->db;
 		
+		// id: 销售退货入库单id
 		$id = $params["id"];
 		
 		$sql = "select s.id, g.code, g.name, g.spec, u.name as unit_name,
@@ -216,18 +219,20 @@ class SRBillDAO extends PSIBaseExDAO {
 				order by s.show_order";
 		$data = $db->query($sql, $id);
 		
-		$result = array();
+		$result = [];
 		
-		foreach ( $data as $i => $v ) {
-			$result[$i]["id"] = $v["id"];
-			$result[$i]["goodsCode"] = $v["code"];
-			$result[$i]["goodsName"] = $v["name"];
-			$result[$i]["goodsSpec"] = $v["spec"];
-			$result[$i]["unitName"] = $v["unit_name"];
-			$result[$i]["rejCount"] = $v["rejection_goods_count"];
-			$result[$i]["rejPrice"] = $v["rejection_goods_price"];
-			$result[$i]["rejSaleMoney"] = $v["rejection_sale_money"];
-			$result[$i]["sn"] = $v["sn_note"];
+		foreach ( $data as $v ) {
+			$result[] = [
+					"id" => $v["id"],
+					"goodsCode" => $v["code"],
+					"goodsName" => $v["name"],
+					"goodsSpec" => $v["spec"],
+					"unitName" => $v["unit_name"],
+					"rejCount" => $v["rejection_goods_count"],
+					"rejPrice" => $v["rejection_goods_price"],
+					"rejSaleMoney" => $v["rejection_sale_money"],
+					"sn" => $v["sn_note"]
+			];
 		}
 		return $result;
 	}
