@@ -510,7 +510,7 @@ class ICBillDAO extends PSIBaseExDAO {
 	 * @param array $params        	
 	 * @return NULL|array
 	 */
-	public function commitICBill($params) {
+	public function commitICBill(& $params) {
 		$db = $this->db;
 		
 		$id = $params["id"];
@@ -712,6 +712,7 @@ class ICBillDAO extends PSIBaseExDAO {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
 		
+		$params["ref"] = $ref;
 		// 操作成功
 		return null;
 	}

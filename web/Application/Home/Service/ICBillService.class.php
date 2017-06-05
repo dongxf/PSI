@@ -165,7 +165,7 @@ class ICBillService extends PSIBaseExService {
 		}
 		
 		// 记录业务日志
-		$bs = new BizlogService();
+		$bs = new BizlogService($db);
 		$ref = $params["ref"];
 		$log = "提交盘点单，单号：$ref";
 		$bs->insertBizlog($log, $this->LOG_CATEGORY);
