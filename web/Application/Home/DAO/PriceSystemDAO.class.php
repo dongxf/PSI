@@ -185,14 +185,6 @@ class PriceSystemDAO extends PSIBaseExDAO {
 			return $this->bad("价格[$name]在客户分类中使用了，不能删除");
 		}
 		
-		$sql = "select count(*) as cnt from t_customer
-				where ps_id = '%s' ";
-		$data = $db->query($sql, $id);
-		$cnt = $data[0]["cnt"];
-		if ($cnt > 0) {
-			return $this->bad("价格[$name]在客户中使用了，不能删除");
-		}
-		
 		$sql = "delete from t_price_system where id = '%s' ";
 		$rc = $db->execute($sql, $id);
 		if ($rc === false) {
