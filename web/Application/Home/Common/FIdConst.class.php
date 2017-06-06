@@ -493,4 +493,11 @@ class FIdConst {
 	 * 商品构成 - 删除子商品
 	 */
 	const GOODS_BOM_DELETE = "2030-03";
+	
+	/**
+	 * 价格体系
+	 * 
+	 * @var string
+	 */
+	const PRICE_SYSTEM = "2031";
 }
