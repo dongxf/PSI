@@ -8,7 +8,8 @@ Ext.define("PSI.Warehouse.MainForm", {
 		pAdd : null,
 		pEdit : null,
 		pDelete : null,
-		pEditDataOrg : null
+		pEditDataOrg : null,
+		pInitInv : null
 	},
 
 	/**
@@ -17,7 +18,7 @@ Ext.define("PSI.Warehouse.MainForm", {
 	afxGetToolbarCmp : function() {
 		var me = this;
 
-		return [{
+		var result = [{
 					text : "新增仓库",
 					disabled : me.getPAdd() == "0",
 					iconCls : "PSI-button-add",
@@ -41,13 +42,28 @@ Ext.define("PSI.Warehouse.MainForm", {
 					iconCls : "PSI-button-dataorg",
 					handler : me.onEditDataOrg,
 					scope : me
-				}, "-", {
+				}];
+
+		if (me.getPInitInv() == "1") {
+			result.push("-", {
+						text : "进入库存建账模块",
+						iconCls : "PSI-fid2000",
+						handler : function() {
+							location.replace(me
+									.URL("Home/MainMenu/navigateTo/fid/2000"));
+						}
+					});
+		}
+
+		result.push("-", {
 					text : "关闭",
 					iconCls : "PSI-button-exit",
 					handler : function() {
 						window.close();
 					}
-				}];
+				});
+
+		return result;
 	},
 
 	/**
@@ -73,54 +89,54 @@ Ext.define("PSI.Warehouse.MainForm", {
 				});
 
 		me.__mainGrid = Ext.create("Ext.grid.Panel", {
-					border : 0,
-					viewConfig : {
-						enableTextSelection : true
-					},
-					columnLines : true,
-					columns : [{
-								xtype : "rownumberer"
-							}, {
-								header : "仓库编码",
-								dataIndex : "code",
-								menuDisabled : true,
-								sortable : false,
-								width : 60
-							}, {
-								header : "仓库名称",
-								dataIndex : "name",
-								menuDisabled : true,
-								sortable : false,
-								width : 200
-							}, {
-								header : "建账完毕",
-								dataIndex : "inited",
-								menuDisabled : true,
-								sortable : false,
-								width : 70,
-								renderer : function(value) {
-									return value == 1
-											? "完毕"
-											: "<span style='color:red;font-weight:bold'>未完</span>";
-								}
-							}, {
-								header : "数据域",
-								dataIndex : "dataOrg",
-								menuDisabled : true,
-								sortable : false
-							}],
-					store : Ext.create("Ext.data.Store", {
-								model : modelName,
-								autoLoad : false,
-								data : []
-							}),
-					listeners : {
-						itemdblclick : {
-							fn : me.onEditWarehouse,
-							scope : me
+			border : 0,
+			viewConfig : {
+				enableTextSelection : true
+			},
+			columnLines : true,
+			columns : [{
+						xtype : "rownumberer"
+					}, {
+						header : "仓库编码",
+						dataIndex : "code",
+						menuDisabled : true,
+						sortable : false,
+						width : 60
+					}, {
+						header : "仓库名称",
+						dataIndex : "name",
+						menuDisabled : true,
+						sortable : false,
+						width : 200
+					}, {
+						header : "建账完毕",
+						dataIndex : "inited",
+						menuDisabled : true,
+						sortable : false,
+						width : 70,
+						renderer : function(value) {
+							return value == 1
+									? "完毕"
+									: "<span style='color:red;font-weight:bold'>未完</span>";
 						}
-					}
-				});
+					}, {
+						header : "数据域",
+						dataIndex : "dataOrg",
+						menuDisabled : true,
+						sortable : false
+					}],
+			store : Ext.create("Ext.data.Store", {
+						model : modelName,
+						autoLoad : false,
+						data : []
+					}),
+			listeners : {
+				itemdblclick : {
+					fn : me.onEditWarehouse,
+					scope : me
+				}
+			}
+		});
 
 		return me.__mainGrid;
 	},

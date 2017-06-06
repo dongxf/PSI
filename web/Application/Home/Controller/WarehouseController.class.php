@@ -31,6 +31,7 @@ class WarehouseController extends PSIBaseController {
 			$this->assign("pDelete", $us->hasPermission(FIdConst::WAREHOUSE_DELETE) ? 1 : 0);
 			$this->assign("pEditDataOrg", 
 					$us->hasPermission(FIdConst::WAREHOUSE_EDIT_DATAORG) ? 1 : 0);
+			$this->assign("pInitInv", $us->hasPermission(FIdConst::INVENTORY_INIT) ? 1 : 0);
 			
 			$this->display();
 		} else {
