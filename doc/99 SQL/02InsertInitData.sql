@@ -70,7 +70,8 @@ INSERT INTO `t_fid` (`fid`, `name`) VALUES
 ('2029', '商品品牌'),
 ('2030-01', '商品构成-新增子商品'),
 ('2030-02', '商品构成-编辑子商品'),
-('2030-03', '商品构成-删除子商品');
+('2030-03', '商品构成-删除子商品'),
+('2031', '价格体系');
 
 TRUNCATE TABLE `t_menu_item`;
 INSERT INTO `t_menu_item` (`id`, `caption`, `fid`, `parent_id`, `show_order`) VALUES
@@ -121,6 +122,7 @@ INSERT INTO `t_menu_item` (`id`, `caption`, `fid`, `parent_id`, `show_order`) VA
 ('080101', '商品', '1001', '0801', 1),
 ('080102', '商品计量单位', '1002', '0801', 2),
 ('080103', '商品品牌', '2029', '0801', 3),
+('080104', '价格体系', '2031', '0801', 4),
 ('0803', '仓库', '1003', '08', 3),
 ('0804', '供应商档案', '1004', '08', 4),
 ('09', '系统管理', NULL, NULL, 9),
@@ -232,7 +234,8 @@ INSERT INTO `t_permission` (`id`, `fid`, `name`, `note`, `category`, `py`) VALUE
 ('2029', '2029', '商品品牌', '通过菜单进入基础数据商品品牌模块的权限', '商品', 'SPPP'),
 ('2030-01', '2030-01', '商品构成-新增子商品', '商品构成新增子商品按钮的操作权限', '商品', 'SPGC_XZZSP'),
 ('2030-02', '2030-02', '商品构成-编辑子商品', '商品构成编辑子商品按钮的操作权限', '商品', 'SPGC_BJZSP'),
-('2030-03', '2030-03', '商品构成-删除子商品', '商品构成删除子商品按钮的操作权限', '商品', 'SPGC_SCZSP');
+('2030-03', '2030-03', '商品构成-删除子商品', '商品构成删除子商品按钮的操作权限', '商品', 'SPGC_SCZSP'),
+('2031', '2031', '价格体系', '通过菜单进入价格体系模块的权限', '商品', 'JGTX');
 
 TRUNCATE TABLE `t_role`;
 INSERT INTO `t_role` (`id`, `name`, `data_org`, `company_id`, `code`) VALUES
@@ -322,7 +325,7 @@ update t_config set company_id = '4D74E1E4-A129-11E4-9B6A-782BCBD7746B' ;
 
 TRUNCATE TABLE `t_psi_db_version`;
 INSERT INTO `t_psi_db_version` (`db_version`, `update_dt`) VALUES
-('20170606-01', now());
+('20170606-02', now());
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
