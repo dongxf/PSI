@@ -8,6 +8,7 @@ use Home\DAO\GoodsCategoryDAO;
 use Home\DAO\GoodsDAO;
 use Home\DAO\GoodsSiDAO;
 use Home\DAO\GoodsUnitDAO;
+use Home\DAO\PriceSystemDAO;
 
 /**
  * 商品Service
@@ -19,6 +20,7 @@ class GoodsService extends PSIBaseExService {
 	private $LOG_CATEGORY_UNIT = "基础数据-商品计量单位";
 	private $LOG_CATEGORY_BRAND = "基础数据-商品品牌";
 	private $LOG_CATEGORY_GOODS_BOM = "基础数据-商品构成";
+	private $LOG_CATEGORY_PRICE_SYSTEM = "基础数据-价格体系";
 
 	/**
 	 * 返回所有商品计量单位
@@ -721,6 +723,98 @@ class GoodsService extends PSIBaseExService {
 		$subGoodsInfo = "编码： " . $params["subGoodsCode"] . " 名称：" . $params["subGoodsName"] . " 规格：" . $params["subGoodsSpec"];
 		$log = "从商品[$goodsInfo]中删除子商品[$subGoodsInfo]";
 		$bs->insertBizlog($log, $this->LOG_CATEGORY_GOODS_BOM);
+		
+		$db->commit();
+		
+		return $this->ok();
+	}
+
+	/**
+	 * 新增或编辑价格体系中的价格
+	 */
+	public function editPriceSystem($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
+		$params["companyId"] = $this->getCompanyId();
+		$params["dataOrg"] = $this->getLoginUserDataOrg();
+		
+		$db = $this->db();
+		
+		$db->startTrans();
+		
+		$id = $params["id"];
+		$dao = new PriceSystemDAO($db);
+		$log = null;
+		if ($id) {
+			// 编辑
+			$rc = $dao->updatePriceSystem($params);
+			if ($rc) {
+				$db->rollback();
+				return $rc;
+			}
+			
+			$name = $params["name"];
+			$log = "编辑价格体系[$name]";
+		} else {
+			// 新增
+			$rc = $dao->addPriceSystem($params);
+			if ($rc) {
+				$db->rollback();
+				return $rc;
+			}
+			
+			$name = $params["name"];
+			$log = "新增价格体系[$name]";
+		}
+		
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY_PRICE_SYSTEM);
+		
+		$db->commit();
+		
+		return $this->ok($id);
+	}
+
+	/**
+	 * 价格体系-价格列表
+	 */
+	public function priceSystemList() {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$params = [
+				"loginUserId" => $this->getLoginUserId()
+		];
+		$dao = new PriceSystemDAO($this->db());
+		return $dao->priceSystemList($params);
+	}
+
+	/**
+	 * 删除价格体系中的价格
+	 */
+	public function deletePriceSystem($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
+		$db = $this->db();
+		$db->startTrans();
+		
+		$dao = new PriceSystemDAO($db);
+		
+		$rc = $dao->deletePriceSystem($params);
+		if ($rc) {
+			$db->rollback();
+			return $rc;
+		}
+		
+		$name = $params["name"];
+		$log = "删除价格体系中的价格[$name]";
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY_PRICE_SYSTEM);
 		
 		$db->commit();
 		

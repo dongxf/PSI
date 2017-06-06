@@ -602,4 +602,61 @@ class GoodsController extends PSIBaseController {
 			$this->ajaxReturn($gs->deleteGoodsBOM($params));
 		}
 	}
+
+	/**
+	 * 价格体系 - 主页面
+	 */
+	public function psIndex() {
+		$us = new UserService();
+		
+		if ($us->hasPermission(FIdConst::PRICE_SYSTEM)) {
+			$this->initVar();
+			
+			$this->assign("title", "价格体系");
+			
+			$this->display();
+		} else {
+			$this->gotoLoginPage("/Home/Goods/psIndex");
+		}
+	}
+
+	/**
+	 * 价格体系-价格列表
+	 */
+	public function priceSystemList() {
+		if (IS_POST) {
+			$gs = new GoodsService();
+			$this->ajaxReturn($gs->priceSystemList());
+		}
+	}
+
+	/**
+	 * 新增或编辑价格体系中的价格
+	 */
+	public function editPriceSystem() {
+		if (IS_POST) {
+			$params = array(
+					"id" => I("post.id"),
+					"name" => I("post.name"),
+					"factor" => I("post.factor")
+			);
+			$gs = new GoodsService();
+			
+			$this->ajaxReturn($gs->editPriceSystem($params));
+		}
+	}
+
+	/**
+	 * 删除价格体系中的价格
+	 */
+	public function deletePriceSystem() {
+		if (IS_POST) {
+			$params = array(
+					"id" => I("post.id")
+			);
+			$gs = new GoodsService();
+			
+			$this->ajaxReturn($gs->deletePriceSystem($params));
+		}
+	}
 }

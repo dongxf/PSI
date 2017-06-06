@@ -203,6 +203,10 @@ class MainMenuController extends Controller {
 				// 自定义表单
 				redirect(__ROOT__ . "/Home/Form/index");
 				break;
+			case FIdConst::PRICE_SYSTEM :
+				// 价格体系
+				redirect(__ROOT__ . "/Home/Goods/psIndex");
+				break;
 			default :
 				redirect(__ROOT__ . "/Home");
 		}
