@@ -18,34 +18,15 @@ class PriceSystemDAO extends PSIBaseExDAO {
 	public function priceSystemList($params) {
 		$db = $this->db;
 		
-		$loginUserId = $params["loginUserId"];
-		if ($this->loginUserIdNotExists($loginUserId)) {
-			return $this->emptyResult();
-		}
-		
-		$sql = "select o.org_code, o.name as org_name, p.id, p.name, p.factor 
-				from t_price_system p, t_org o
-				where ( p.company_id = o.id )
-				";
-		
-		$queryParam = [];
-		$queryParam[] = $categoryId;
-		$ds = new DataOrgDAO($db);
-		$rs = $ds->buildSQL(FIdConst::PRICE_SYSTEM, "p", $loginUserId);
-		if ($rs) {
-			$sql .= " and " . $rs[0];
-			$queryParam = array_merge($queryParam, $rs[1]);
-		}
-		
-		$sql .= " order by o.org_code, p.name";
+		$sql = "select id, name, factor 
+				from t_price_system
+				order by name";
 		
 		$result = [];
 		$data = $db->query($sql);
 		
 		foreach ( $data as $v ) {
 			$result[] = [
-					"orgCode" => $v["org_code"],
-					"orgName" => $v["org_name"],
 					"id" => $v["id"],
 					"name" => $v["name"],
 					"factor" => $v["factor"]
