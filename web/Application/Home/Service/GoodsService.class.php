@@ -765,6 +765,7 @@ class GoodsService extends PSIBaseExService {
 				return $rc;
 			}
 			
+			$id = $params["id"];
 			$name = $params["name"];
 			$log = "新增价格体系[$name]";
 		}

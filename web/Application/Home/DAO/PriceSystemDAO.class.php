@@ -37,7 +37,7 @@ class PriceSystemDAO extends PSIBaseExDAO {
 			$queryParam = array_merge($queryParam, $rs[1]);
 		}
 		
-		$sql .= " order by o.org_code";
+		$sql .= " order by o.org_code, p.name";
 		
 		$result = [];
 		$data = $db->query($sql);
@@ -100,6 +100,7 @@ class PriceSystemDAO extends PSIBaseExDAO {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
 		
+		$params["id"] = $id;
 		// 操作成功
 		return null;
 	}
