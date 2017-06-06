@@ -133,7 +133,7 @@ INSERT INTO `t_menu_item` (`id`, `caption`, `fid`, `parent_id`, `show_order`) VA
 ('10', '帮助', NULL, NULL, 10),
 ('1001', '使用帮助', '-9995', '10', 1),
 ('1002', '购买商业服务', '-9993', '10', 2),
-('1003', '关于PSI', '-9994', '10', 3);
+('1003', '关于', '-9994', '10', 3);
 
 TRUNCATE TABLE `t_org`;
 INSERT INTO `t_org` (`id`, `full_name`, `name`, `org_code`, `data_org`, `parent_id`) VALUES
@@ -289,7 +289,8 @@ INSERT INTO `t_role_permission` (`role_id`, `permission_id`) VALUES
 ('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2029'),
 ('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2030-01'),
 ('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2030-02'),
-('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2030-03');
+('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2030-03'),
+('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2031');
 
 TRUNCATE TABLE `t_role_user`;
 INSERT INTO `t_role_user` (`role_id`, `user_id`) VALUES

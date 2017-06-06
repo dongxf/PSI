@@ -119,6 +119,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20170604_01($db);
 		
 		$this->update_20170606_01();
+		$this->update_20170606_02();
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -139,6 +140,43 @@ class UpdateDBService extends PSIBaseService {
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	// ============================================
 	private function notForgot() {
+	}
+
+	private function update_20170606_02() {
+		// 本次更新：新增模块价格体系
+		$db = $this->db;
+		
+		// fid
+		$fid = FIdConst::PRICE_SYSTEM;
+		$name = "价格体系";
+		$sql = "select count(*) as cnt from t_fid where fid = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_fid(fid, name) value('%s', '%s')";
+			$db->execute($sql, $fid, $name);
+		}
+		
+		// 权限
+		$sql = "select count(*) as cnt from t_permission where id = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_permission(id, fid, name, note)
+					value('%s', '%s', '%s', '%s')";
+			$db->execute($sql, $fid, $fid, $name, $name);
+		}
+		
+		// 菜单
+		$sql = "select count(*) as cnt from t_menu_item
+				where id = '080104' ";
+		$data = $db->query($sql);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_menu_item(id, caption, fid, parent_id, show_order)
+					values ('080104', '%s', '%s', '0801', 4)";
+			$db->execute($sql, $name, $fid);
+		}
 	}
 
 	private function update_20170606_01() {
