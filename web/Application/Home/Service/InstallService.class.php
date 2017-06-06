@@ -1070,6 +1070,18 @@ class InstallService extends PSIBaseService {
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 				";
 		$db->execute($sql);
+		
+		// t_price_system
+		$sql = "CREATE TABLE IF NOT EXISTS `t_price_system` (
+				  `id` varchar(255) NOT NULL,
+				  `name` varchar(255) NOT NULL,
+				  `data_org` varchar(255) DEFAULT NULL,
+				  `company_id` varchar(255) DEFAULT NULL,
+				  `factor` decimal(19,2) DEFAULT NULL,
+				  PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+			";
+		$db->execute($sql);
 	}
 
 	/**

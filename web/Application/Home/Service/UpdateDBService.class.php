@@ -3,6 +3,7 @@
 namespace Home\Service;
 
 use Home\Common\FIdConst;
+use Think\Think;
 
 /**
  * 数据库升级Service
@@ -10,6 +11,12 @@ use Home\Common\FIdConst;
  * @author 李静波
  */
 class UpdateDBService extends PSIBaseService {
+	
+	/**
+	 *
+	 * @var \Think\Model
+	 */
+	private $db;
 
 	public function updateDatabase() {
 		if ($this->isNotOnline()) {
@@ -17,6 +24,8 @@ class UpdateDBService extends PSIBaseService {
 		}
 		
 		$db = M();
+		
+		$this->db = $db;
 		
 		// 检查t_psi_db_version是否存在
 		if (! $this->tableExists($db, "t_psi_db_version")) {
@@ -109,6 +118,8 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20170530_01($db);
 		$this->update_20170604_01($db);
 		
+		$this->update_20170606_01();
+		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
 		$sql = "insert into t_psi_db_version (db_version, update_dt) 
@@ -128,6 +139,25 @@ class UpdateDBService extends PSIBaseService {
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	// ============================================
 	private function notForgot() {
+	}
+
+	private function update_20170606_01() {
+		// 本次更新：新增表t_price_system
+		$db = $this->db;
+		$tableName = "t_price_system";
+		
+		if (! $this->tableExists($db, $tableName)) {
+			$sql = "CREATE TABLE IF NOT EXISTS `t_price_system` (
+					  `id` varchar(255) NOT NULL,
+					  `name` varchar(255) NOT NULL,
+					  `data_org` varchar(255) DEFAULT NULL,
+					  `company_id` varchar(255) DEFAULT NULL,
+					  `factor` decimal(19,2) DEFAULT NULL,
+					  PRIMARY KEY (`id`)
+					) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+			";
+			$db->execute($sql);
+		}
 	}
 
 	private function update_20170604_01($db) {
