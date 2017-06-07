@@ -204,4 +204,109 @@ class PriceSystemDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 查询某个商品的价格体系中所有价格的值
+	 */
+	public function goodsPriceSystemInfo($params) {
+		$db = $this->db;
+		
+		// id: 商品id
+		$id = $params["id"];
+		
+		$sql = "select p.id, p.name, p.factor, g.price
+				from t_price_system p
+				left join  t_goods_price g
+				on p.id = g.ps_id
+				and g.goods_id = '%s' ";
+		$data = $db->query($sql, $id);
+		
+		$result = [];
+		
+		foreach ( $data as $v ) {
+			$result[] = [
+					"id" => $v["id"],
+					"name" => $v["name"],
+					"factor" => $v["factor"],
+					"price" => $v["price"]
+			];
+		}
+		
+		$sql = "select sale_price from t_goods
+				where id = '%s' ";
+		$data = $db->query($sql, $id);
+		$baseSalePrice = $data[0]["sale_price"];
+		
+		return [
+				"priceList" => $result,
+				"baseSalePrice" => $baseSalePrice
+		];
+	}
+
+	/**
+	 * 设置商品价格体系中的价格
+	 */
+	public function editGoodsPriceSystem(& $bill) {
+		$db = $this->db;
+		
+		$dataOrg = $bill["dataOrg"];
+		if ($this->dataOrgNotExists($dataOrg)) {
+			return $this->badParam("dataOrg");
+		}
+		$companyId = $bill["companyId"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->badParam("companyId");
+		}
+		
+		$goodsId = $bill["id"];
+		$baseSalePrice = $bill["basePrice"];
+		
+		$sql = "select code, name, spec from t_goods
+				where id = '%s' ";
+		$data = $db->query($sql, $goodsId);
+		if (! $data) {
+			return $this->bad("商品不存在");
+		}
+		
+		$code = $data[0]["code"];
+		$name = $data[0]["name"];
+		$spec = $data[0]["spec"];
+		
+		$sql = "update t_goods
+				set sale_price = %f
+				where id = '%s' ";
+		$rc = $db->execute($sql, $baseSalePrice, $goodsId);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		$sql = "delete from t_goods_price where goods_id = '%s' ";
+		$rc = $db->execute($sql, $goodsId);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		$items = $bill["items"];
+		
+		foreach ( $items as $v ) {
+			$psId = $v["id"];
+			$price = $v["price"];
+			
+			$id = $this->newId($db);
+			
+			$sql = "insert into t_goods_price (id, goods_id, ps_id, price, data_org, company_id)
+					values ('%s', '%s', '%s', %f, '%s', '%s')";
+			$rc = $db->execute($sql, $id, $goodsId, $psId, $price, $dataOrg, $companyId);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+		}
+		
+		$bill["code"] = $code;
+		$bill["name"] = $name;
+		$bill["spec"] = $spec;
+		
+		// 操作成功
+		return null;
+	}
 }

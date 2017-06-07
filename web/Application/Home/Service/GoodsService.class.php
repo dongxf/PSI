@@ -833,4 +833,56 @@ class GoodsService extends PSIBaseExService {
 		$dao = new PriceSystemDAO($this->db());
 		return $dao->goodsPriceSystemList($params);
 	}
+
+	/**
+	 * 查询某个商品的价格体系中所有价格的值
+	 */
+	public function goodsPriceSystemInfo($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$dao = new PriceSystemDAO($this->db());
+		return $dao->goodsPriceSystemInfo($params);
+	}
+
+	/**
+	 * 设置商品价格体系中的价格
+	 */
+	public function editGoodsPriceSystem($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
+		$json = $params["jsonStr"];
+		$bill = json_decode(html_entity_decode($json), true);
+		if ($bill == null) {
+			return $this->bad("传入的参数错误，不是正确的JSON格式");
+		}
+		
+		$db = $this->db();
+		$db->startTrans();
+		
+		$bill["dataOrg"] = $this->getLoginUserDataOrg();
+		$bill["companyId"] = $this->getCompanyId();
+		
+		$dao = new PriceSystemDAO($db);
+		
+		$rc = $dao->editGoodsPriceSystem($bill);
+		if ($rc) {
+			$db->rollback();
+			return $rc;
+		}
+		
+		$code = $bill["code"];
+		$name = $bill["name"];
+		$spec = $bill["spec"];
+		$log = "设置商品[$code $name $spec]的价格体系";
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY_PRICE_SYSTEM);
+		
+		$db->commit();
+		
+		return $this->ok();
+	}
 }
