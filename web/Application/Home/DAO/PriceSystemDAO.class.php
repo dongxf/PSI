@@ -2,8 +2,6 @@
 
 namespace Home\DAO;
 
-use Home\Common\FIdConst;
-
 /**
  * 价格体系 DAO
  *
@@ -177,5 +175,33 @@ class PriceSystemDAO extends PSIBaseExDAO {
 		
 		// 删除成功
 		return null;
+	}
+
+	/**
+	 * 查询某个商品的所有价格体系里面的价格列表
+	 */
+	public function goodsPriceSystemList($params) {
+		$db = $this->db;
+		
+		// id: 商品id
+		$id = $params["id"];
+		
+		$sql = "select p.name, g.price
+				from t_price_system p
+				left join  t_goods_price g
+				on p.id = g.ps_id
+				and g.goods_id = '%s' ";
+		$data = $db->query($sql, $id);
+		
+		$result = [];
+		
+		foreach ( $data as $v ) {
+			$result[] = [
+					"name" => $v["name"],
+					"price" => $v["price"]
+			];
+		}
+		
+		return $result;
 	}
 }

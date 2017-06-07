@@ -63,7 +63,8 @@ Ext.define("PSI.Goods.MainForm", {
 												header : false,
 												xtype : "tabpanel",
 												items : [me.getSIGrid(),
-														me.getGoodsBOMGrid()]
+														me.getGoodsBOMGrid(),
+														me.getGoodsPriceGrid()]
 											}]
 								}, {
 									xtype : "panel",
@@ -860,6 +861,8 @@ Ext.define("PSI.Goods.MainForm", {
 		me.refreshGoodsSI();
 
 		me.refreshGoodsBOM();
+
+		me.refreshGoodsPriceSystem();
 	},
 
 	refreshGoodsSI : function() {
@@ -1284,5 +1287,84 @@ Ext.define("PSI.Goods.MainForm", {
 		};
 
 		me.confirm(info, confirmFunc);
+	},
+
+	/**
+	 * 价格体系Grid
+	 */
+	getGoodsPriceGrid : function() {
+		var me = this;
+		if (me.__priceGrid) {
+			return me.__priceGrid;
+		}
+
+		var modelName = "PSIGoodsPriceSystem";
+		Ext.define(modelName, {
+					extend : "Ext.data.Model",
+					fields : ["id", "name", "price"]
+				});
+
+		me.__priceGrid = Ext.create("Ext.grid.Panel", {
+					viewConfig : {
+						enableTextSelection : true
+					},
+					title : "价格体系",
+					columnLines : true,
+					columns : [{
+								header : "名称",
+								dataIndex : "name",
+								width : 150,
+								menuDisabled : true,
+								sortable : false
+							}, {
+								header : "价格",
+								dataIndex : "price",
+								width : 100,
+								menuDisabled : true,
+								sortable : false,
+								xtype : "numbercolumn",
+								align : "right"
+							}],
+					store : Ext.create("Ext.data.Store", {
+								model : modelName,
+								autoLoad : false,
+								data : []
+							})
+				});
+
+		return me.__priceGrid;
+	},
+
+	refreshGoodsPriceSystem : function() {
+		var me = this;
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			return;
+		}
+
+		var goods = item[0];
+
+		var grid = me.getGoodsPriceGrid();
+		var el = grid.getEl() || Ext.getBody();
+		el.mask(PSI.Const.LOADING);
+		me.ajax({
+					url : me.URL("Home/Goods/goodsPriceSystemList"),
+					method : "POST",
+					params : {
+						id : goods.get("id")
+					},
+					callback : function(options, success, response) {
+						var store = grid.getStore();
+
+						store.removeAll();
+
+						if (success) {
+							var data = me.decodeJSON(response.responseText);
+							store.add(data);
+						}
+
+						el.unmask();
+					}
+				});
 	}
 });

@@ -659,4 +659,18 @@ class GoodsController extends PSIBaseController {
 			$this->ajaxReturn($gs->deletePriceSystem($params));
 		}
 	}
+	
+	/**
+	 * 查询某个商品的所有价格体系里面的价格列表
+	 */
+	public function goodsPriceSystemList() {
+		if (IS_POST) {
+			$params = array(
+					"id" => I("post.id")
+			);
+			
+			$gs = new GoodsService();
+			$this->ajaxReturn($gs->goodsPriceSystemList($params));
+		}
+	}
 }

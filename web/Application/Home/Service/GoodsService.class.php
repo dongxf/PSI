@@ -821,4 +821,16 @@ class GoodsService extends PSIBaseExService {
 		
 		return $this->ok();
 	}
+
+	/**
+	 * 查询某个商品的所有价格体系里面的价格列表
+	 */
+	public function goodsPriceSystemList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$dao = new PriceSystemDAO($this->db());
+		return $dao->goodsPriceSystemList($params);
+	}
 }
