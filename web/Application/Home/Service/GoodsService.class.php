@@ -351,13 +351,14 @@ class GoodsService extends PSIBaseExService {
 	/**
 	 * 商品字段，查询数据
 	 */
-	public function queryDataWithSalePrice($queryKey) {
+	public function queryDataWithSalePrice($queryKey, $customerId) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
 		
 		$params = array(
 				"queryKey" => $queryKey,
+				"customerId" => $customerId,
 				"loginUserId" => $this->getLoginUserId()
 		);
 		

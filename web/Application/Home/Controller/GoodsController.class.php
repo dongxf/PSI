@@ -275,8 +275,9 @@ class GoodsController extends PSIBaseController {
 	public function queryDataWithSalePrice() {
 		if (IS_POST) {
 			$queryKey = I("post.queryKey");
+			$customerId = I("post.customerId");
 			$gs = new GoodsService();
-			$this->ajaxReturn($gs->queryDataWithSalePrice($queryKey));
+			$this->ajaxReturn($gs->queryDataWithSalePrice($queryKey, $customerId));
 		}
 	}
 

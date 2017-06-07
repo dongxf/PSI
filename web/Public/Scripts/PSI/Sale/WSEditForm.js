@@ -536,7 +536,8 @@ Ext.define("PSI.Sale.WSEditForm", {
 								draggable : false,
 								editor : {
 									xtype : "psi_goods_with_saleprice_field",
-									parentCmp : me
+									parentCmp : me,
+									editCustomerName : "editCustomer"
 								}
 							}, {
 								header : "商品名称",

@@ -6,7 +6,8 @@ Ext.define("PSI.Goods.GoodsWithSalePriceField", {
 	alias : "widget.psi_goods_with_saleprice_field",
 
 	config : {
-		parentCmp : null
+		parentCmp : null,
+		editCustomerName : null
 	},
 
 	/**
@@ -39,7 +40,7 @@ Ext.define("PSI.Goods.GoodsWithSalePriceField", {
 		Ext.define(modelName, {
 					extend : "Ext.data.Model",
 					fields : ["id", "code", "name", "spec", "unitName",
-							"salePrice", "memo"]
+							"salePrice", "memo", "priceSystem"]
 				});
 
 		var store = Ext.create("Ext.data.Store", {
@@ -77,6 +78,11 @@ Ext.define("PSI.Goods.GoodsWithSalePriceField", {
 								menuDisabled : true,
 								align : "right",
 								xtype : "numbercolumn"
+							}, {
+								header : "价格体系",
+								dataIndex : "priceSystem",
+								menuDisabled : true,
+								width : 80
 							}, {
 								header : "备注",
 								dataIndex : "memo",
@@ -131,6 +137,12 @@ Ext.define("PSI.Goods.GoodsWithSalePriceField", {
 							}]
 				});
 
+		var customerId = null;
+		var editCustomer = Ext.getCmp(me.getEditCustomerName());
+		if (editCustomer) {
+			customerId = editCustomer.getIdValue();
+		}
+
 		wnd.on("close", function() {
 					me.focus();
 				});
@@ -143,7 +155,8 @@ Ext.define("PSI.Goods.GoodsWithSalePriceField", {
 						url : PSI.Const.BASE_URL
 								+ "Home/Goods/queryDataWithSalePrice",
 						params : {
-							queryKey : editName.getValue()
+							queryKey : editName.getValue(),
+							customerId : customerId
 						},
 						method : "POST",
 						callback : function(opt, success, response) {

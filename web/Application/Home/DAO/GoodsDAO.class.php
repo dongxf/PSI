@@ -452,6 +452,20 @@ class GoodsDAO extends PSIBaseExDAO {
 		return $result;
 	}
 
+	private function getPsIdForCustomer($customerId) {
+		$result = null;
+		$db = $this->db;
+		$sql = "select c.ps_id
+				from t_customer_category c, t_customer u
+				where c.id = u.category_id and u.id = '%s' ";
+		$data = $db->query($sql, $customerId);
+		if ($data) {
+			$result = $data[0]["ps_id"];
+		}
+		
+		return $result;
+	}
+
 	/**
 	 * 商品字段，查询数据
 	 *
@@ -466,6 +480,9 @@ class GoodsDAO extends PSIBaseExDAO {
 		if ($this->loginUserIdNotExists($loginUserId)) {
 			return $this->emptyResult();
 		}
+		
+		$customerId = $params["customerId"];
+		$psId = $this->getPsIdForCustomer($customerId);
 		
 		if ($queryKey == null) {
 			$queryKey = "";
@@ -498,13 +515,32 @@ class GoodsDAO extends PSIBaseExDAO {
 		$data = $db->query($sql, $queryParams);
 		$result = [];
 		foreach ( $data as $v ) {
+			$priceSystem = "";
+			
+			$price = $v["sale_price"];
+			
+			if ($psId) {
+				// 取价格体系里面的价格
+				$goodsId = $v["id"];
+				$sql = "select g.price, p.name
+						from t_goods_price g, t_price_system p
+						where g.goods_id = '%s' and g.ps_id = '%s'
+							and g.ps_id = p.id";
+				$d = $db->query($sql, $goodsId, $psId);
+				if ($d) {
+					$priceSystem = $d[0]["name"];
+					$price = $d[0]["price"];
+				}
+			}
+			
 			$result[] = [
 					"id" => $v["id"],
 					"code" => $v["code"],
 					"name" => $v["name"],
 					"spec" => $v["spec"],
 					"unitName" => $v["unit_name"],
-					"salePrice" => $v["sale_price"],
+					"salePrice" => $price,
+					"priceSystem" => $priceSystem,
 					"memo" => $v["memo"]
 			];
 		}
