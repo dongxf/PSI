@@ -1329,7 +1329,13 @@ Ext.define("PSI.Goods.MainForm", {
 								model : modelName,
 								autoLoad : false,
 								data : []
-							})
+							}),
+					tbar : ["-", {
+								text : "设置商品价格体系",
+								iconCls : "PSI-button-commit",
+								handler : me.onGoodsPriceSystem,
+								scope : me
+							}, "-"]
 				});
 
 		return me.__priceGrid;
@@ -1366,5 +1372,27 @@ Ext.define("PSI.Goods.MainForm", {
 						el.unmask();
 					}
 				});
+	},
+
+	/**
+	 * 设置商品价格
+	 */
+	onGoodsPriceSystem : function() {
+		var me = this;
+
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			PSI.MsgBox.showInfo("请选择要设置价格的商品");
+			return;
+		}
+
+		var goods = item[0];
+
+		var form = Ext.create("PSI.Goods.GoodsPriceSystemEditForm", {
+					parentForm : me,
+					entity : goods
+				});
+
+		form.show();
 	}
 });
