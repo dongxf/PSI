@@ -121,6 +121,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20170606_01();
 		$this->update_20170606_02();
 		$this->update_20170606_03();
+		$this->update_20170607_01();
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -143,6 +144,26 @@ class UpdateDBService extends PSIBaseService {
 	private function notForgot() {
 	}
 
+	private function update_20170607_01() {
+		// 本次更新：新增表t_goods_price
+		$db = $this->db;
+		$tableName = "t_goods_price";
+		
+		if (! $this->tableExists($db, $tableName)) {
+			$sql = "CREATE TABLE IF NOT EXISTS `t_goods_price` (
+					  `id` varchar(255) NOT NULL,
+					  `goods_id` varchar(255) NOT NULL,
+					  `ps_id` varchar(255) NOT NULL,
+					  `price` decimal(19,2) NOT NULL,
+					  `data_org` varchar(255) DEFAULT NULL,
+					  `company_id` varchar(255) DEFAULT NULL,
+					  PRIMARY KEY (`id`)
+					) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+			";
+			$db->execute($sql);
+		}
+	}
+
 	private function update_20170606_03() {
 		// 本次更新：t_customer_category新增字段ps_id
 		$db = $this->db;
@@ -153,7 +174,6 @@ class UpdateDBService extends PSIBaseService {
 			$sql = "alter table {$tableName} add {$columnName} varchar(255) DEFAULT NULL;";
 			$db->execute($sql);
 		}
-		
 	}
 
 	private function update_20170606_02() {
