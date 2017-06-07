@@ -33,7 +33,7 @@ class CustomerDAO extends PSIBaseExDAO {
 			return $this->emptyResult();
 		}
 		
-		$sql = "select c.id, c.code, c.name, count(u.id) as cnt
+		$sql = "select c.id, c.code, c.name, count(u.id) as cnt, c.ps_id
 				 from t_customer_category c
 				 left join t_customer u
 				 on (c.id = u.category_id) ";
@@ -82,7 +82,27 @@ class CustomerDAO extends PSIBaseExDAO {
 		
 		$sql .= " group by c.id
 				 order by c.code";
-		return $db->query($sql, $queryParam);
+		$data = $db->query($sql, $queryParam);
+		$result = [];
+		foreach ( $data as $v ) {
+			$psId = $v["ps_id"];
+			$priceSystem = null;
+			if ($psId) {
+				$sql = "select name from t_price_system where id = '%s' ";
+				$d = $db->query($sql, $psId);
+				if ($d) {
+					$priceSystem = $d[0]["name"];
+				}
+			}
+			$result[] = [
+					"id" => $v["id"],
+					"code" => $v["code"],
+					"name" => $v["name"],
+					"cnt" => $v["cnt"],
+					"priceSystem" => $priceSystem
+			];
+		}
+		return $result;
 	}
 
 	/**
@@ -96,6 +116,8 @@ class CustomerDAO extends PSIBaseExDAO {
 		
 		$code = $params["code"];
 		$name = $params["name"];
+		
+		$psId = $params["psId"];
 		
 		$dataOrg = $params["dataOrg"];
 		$companyId = $params["companyId"];
@@ -118,9 +140,9 @@ class CustomerDAO extends PSIBaseExDAO {
 		$id = $this->newId();
 		$params["id"] = $id;
 		
-		$sql = "insert into t_customer_category (id, code, name, data_org, company_id)
-				values ('%s', '%s', '%s', '%s', '%s') ";
-		$rc = $db->execute($sql, $id, $code, $name, $dataOrg, $companyId);
+		$sql = "insert into t_customer_category (id, code, name, data_org, company_id, ps_id)
+				values ('%s', '%s', '%s', '%s', '%s', '%s') ";
+		$rc = $db->execute($sql, $id, $code, $name, $dataOrg, $companyId, $psId);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
@@ -141,6 +163,7 @@ class CustomerDAO extends PSIBaseExDAO {
 		$id = $params["id"];
 		$code = $params["code"];
 		$name = $params["name"];
+		$psId = $params["psId"];
 		
 		// 检查分类编码是否已经存在
 		$sql = "select count(*) as cnt from t_customer_category where code = '%s' and id <> '%s' ";
@@ -151,9 +174,9 @@ class CustomerDAO extends PSIBaseExDAO {
 		}
 		
 		$sql = "update t_customer_category
-				set code = '%s', name = '%s'
+				set code = '%s', name = '%s', ps_id = '%s'
 				where id = '%s' ";
-		$rc = $db->execute($sql, $code, $name, $id);
+		$rc = $db->execute($sql, $code, $name, $psId, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
@@ -808,5 +831,47 @@ class CustomerDAO extends PSIBaseExDAO {
 		}
 		
 		return $result;
+	}
+
+	/**
+	 * 获得所有的价格体系中的价格
+	 */
+	public function priceSystemList($params) {
+		$db = $this->db;
+		
+		// id: 客户分类id
+		$id = $params["id"];
+		
+		$sql = "select id, name 
+				from t_price_system
+				order by name";
+		$data = $db->query($sql);
+		
+		$result = [
+				[
+						"id" => "-1",
+						"name" => "[无]"
+				]
+		];
+		foreach ( $data as $v ) {
+			$result[] = [
+					"id" => $v["id"],
+					"name" => $v["name"]
+			];
+		}
+		
+		$psId = null;
+		if ($id) {
+			$sql = "select ps_id from t_customer_category where id = '%s' ";
+			$data = $db->query($sql, $id);
+			if ($data) {
+				$psId = $data[0]["ps_id"];
+			}
+		}
+		
+		return [
+				"psId" => $psId,
+				"priceList" => $result
+		];
 	}
 }

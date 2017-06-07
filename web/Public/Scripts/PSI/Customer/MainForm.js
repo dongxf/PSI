@@ -266,7 +266,7 @@ Ext.define("PSI.Customer.MainForm", {
 					fields : ["id", "code", "name", {
 								name : "cnt",
 								type : "int"
-							}]
+							}, "priceSystem"]
 				});
 
 		me.__categoryGrid = Ext.create("Ext.grid.Panel", {
@@ -294,6 +294,12 @@ Ext.define("PSI.Customer.MainForm", {
 								summaryRenderer : function() {
 									return "客户个数合计";
 								}
+							},{
+								header : "价格体系",
+								dataIndex : "priceSystem",
+								width : 80,
+								menuDisabled : true,
+								sortable : false
 							}, {
 								header : "客户个数",
 								dataIndex : "cnt",

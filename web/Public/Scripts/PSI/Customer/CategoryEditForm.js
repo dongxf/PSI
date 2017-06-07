@@ -37,10 +37,16 @@ Ext.define("PSI.Customer.CategoryEditForm", {
 					scope : me
 				});
 
+		var modelName = "PSIPriceSystem";
+		Ext.define(modelName, {
+					extend : "Ext.data.Model",
+					fields : ["id", "name"]
+				});
+
 		Ext.apply(me, {
 			title : entity == null ? "新增客户分类" : "编辑客户分类",
 			width : 400,
-			height : 140,
+			height : 170,
 			layout : "fit",
 			items : [{
 						id : "PSI_Customer_CategoryEditForm_editForm",
@@ -95,6 +101,29 @@ Ext.define("PSI.Customer.CategoryEditForm", {
 											scope : me
 										}
 									}
+								}, {
+									xtype : "combobox",
+									fieldLabel : "价格体系",
+									id : "PSI_Customer_CategoryEditForm_comboPrice",
+									queryMode : "local",
+									editable : false,
+									valueField : "id",
+									displayField : "name",
+									store : Ext.create("Ext.data.Store", {
+												model : modelName,
+												autoLoad : false,
+												data : []
+											}),
+									listeners : {
+										specialkey : {
+											fn : me.onComboPriceSpecialKey,
+											scope : me
+										}
+									}
+								}, {
+									xtype : "hidden",
+									name : "psId",
+									id : "PSI_Customer_CategoryEditForm_editPsId"
 								}],
 						buttons : buttons
 					}],
@@ -116,10 +145,16 @@ Ext.define("PSI.Customer.CategoryEditForm", {
 
 		me.editCode = Ext.getCmp("PSI_Customer_CategoryEditForm_editCode");
 		me.editName = Ext.getCmp("PSI_Customer_CategoryEditForm_editName");
+
+		me.comboPrice = Ext.getCmp("PSI_Customer_CategoryEditForm_comboPrice");
+		me.editPsId = Ext.getCmp("PSI_Customer_CategoryEditForm_editPsId");
 	},
 
 	onOK : function(thenAdd) {
 		var me = this;
+
+		me.editPsId.setValue(me.comboPrice.getValue());
+
 		var f = me.editForm;
 		var el = f.getEl();
 		el.mask(PSI.Const.SAVING);
@@ -166,6 +201,14 @@ Ext.define("PSI.Customer.CategoryEditForm", {
 		var me = this;
 
 		if (e.getKey() == e.ENTER) {
+			me.comboPrice.focus();
+		}
+	},
+
+	onComboPriceSpecialKey : function(field, e) {
+		var me = this;
+
+		if (e.getKey() == e.ENTER) {
 			if (me.editForm.getForm().isValid()) {
 				me.onOK(me.adding);
 			}
@@ -186,5 +229,33 @@ Ext.define("PSI.Customer.CategoryEditForm", {
 		var editCode = me.editCode;
 		editCode.focus();
 		editCode.setValue(editCode.getValue());
+
+		var id = me.adding ? null : me.getEntity().get("id");
+
+		var store = me.comboPrice.getStore();
+
+		var el = me.getEl();
+		el.mask(PSI.Const.LOADING);
+		var r = {
+			url : me.URL("Home/Customer/priceSystemList"),
+			params : {
+				id : id
+			},
+			callback : function(options, success, response) {
+				store.removeAll();
+
+				if (success) {
+					var data = me.decodeJSON(response.responseText);
+					store.add(data.priceList);
+					if (id && data.psId) {
+						me.comboPrice.setValue(data.psId);
+					}
+				}
+
+				el.unmask();
+			}
+		};
+
+		me.ajax(r);
 	}
 });

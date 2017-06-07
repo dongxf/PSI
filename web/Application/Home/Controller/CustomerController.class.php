@@ -87,7 +87,8 @@ class CustomerController extends PSIBaseController {
 			$params = array(
 					"id" => I("post.id"),
 					"code" => I("post.code"),
-					"name" => I("post.name")
+					"name" => I("post.name"),
+					"psId" => I("post.psId")
 			);
 			$cs = new CustomerService();
 			$this->ajaxReturn($cs->editCategory($params));
@@ -268,6 +269,20 @@ class CustomerController extends PSIBaseController {
 				$cs = new ImportService();
 				$this->ajaxReturn($cs->importCustomerFromExcelFile($params));
 			}
+		}
+	}
+
+	/**
+	 * 获得所有的价格体系中的价格
+	 */
+	public function priceSystemList() {
+		if (IS_POST) {
+			$params = array(
+					"id" => I("post.id")
+			);
+			$cs = new CustomerService();
+			
+			$this->ajaxReturn($cs->priceSystemList($params));
 		}
 	}
 }

@@ -258,7 +258,7 @@ class CustomerService extends PSIBaseExService {
 
 	/**
 	 * 获得某个客户的详情
-	 * 
+	 *
 	 * @param string $id
 	 *        	客户资料id
 	 * @return array
@@ -299,5 +299,17 @@ class CustomerService extends PSIBaseExService {
 		} else {
 			return "";
 		}
+	}
+
+	/**
+	 * 获得所有的价格体系中的价格
+	 */
+	public function priceSystemList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$dao = new CustomerDAO($this->db());
+		return $dao->priceSystemList($params);
 	}
 }
