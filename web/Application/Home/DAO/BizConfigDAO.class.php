@@ -971,4 +971,30 @@ class BizConfigDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 获得采购入库数量控制设置项
+	 *
+	 * @param string $companyId        	
+	 * @return string "1":不能超过采购订单未入库量; "0":不做限制
+	 */
+	public function getPWCountLimit($companyId) {
+		$db = $this->db;
+		
+		$result = "1";
+		
+		$id = "2001-04";
+		$sql = "select value from t_config
+				where id = '%s' and company_id = '%s' ";
+		$data = $db->query($sql, $id, $companyId);
+		if ($data) {
+			$result = $data[0]["value"];
+			
+			if ($result == null || $result == "") {
+				$result = "1";
+			}
+		}
+		
+		return $result;
+	}
 }
