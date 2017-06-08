@@ -18,169 +18,176 @@ class BizConfigDAO extends PSIBaseExDAO {
 	 * @return array
 	 */
 	private function getDefaultConfig() {
-		return array(
-				array(
+		return [
+				[
 						"id" => "9000-01",
 						"name" => "公司名称",
 						"value" => "",
 						"note" => "",
 						"showOrder" => 100
-				),
-				array(
+				],
+				[
 						"id" => "9000-02",
 						"name" => "公司地址",
 						"value" => "",
 						"note" => "",
 						"showOrder" => 101
-				),
-				array(
+				],
+				[
 						"id" => "9000-03",
 						"name" => "公司电话",
 						"value" => "",
 						"note" => "",
 						"showOrder" => 102
-				),
-				array(
+				],
+				[
 						"id" => "9000-04",
 						"name" => "公司传真",
 						"value" => "",
 						"note" => "",
 						"showOrder" => 103
-				),
-				array(
+				],
+				[
 						"id" => "9000-05",
 						"name" => "公司邮编",
 						"value" => "",
 						"note" => "",
 						"showOrder" => 104
-				),
-				array(
+				],
+				[
 						"id" => "2001-01",
 						"name" => "采购入库默认仓库",
 						"value" => "",
 						"note" => "",
 						"showOrder" => 200
-				),
-				array(
+				],
+				[
 						"id" => "2001-02",
 						"name" => "采购订单默认付款方式",
 						"value" => "0",
 						"note" => "",
 						"showOrder" => 201
-				),
-				array(
+				],
+				[
 						"id" => "2001-03",
 						"name" => "采购入库单默认付款方式",
 						"value" => "0",
 						"note" => "",
 						"showOrder" => 202
-				),
-				array(
+				],
+				[
+						"id" => "2001-04",
+						"name" => "采购入库数量控制",
+						"value" => "1",
+						"note" => "",
+						"showOrder" => 203
+				],
+				[
 						"id" => "2002-02",
 						"name" => "销售出库默认仓库",
 						"value" => "",
 						"note" => "",
 						"showOrder" => 300
-				),
-				array(
+				],
+				[
 						"id" => "2002-01",
 						"name" => "销售出库单允许编辑销售单价",
 						"value" => "0",
 						"note" => "当允许编辑的时候，还需要给用户赋予权限[销售出库单允许编辑销售单价]",
 						"showOrder" => 301
-				),
-				array(
+				],
+				[
 						"id" => "2002-03",
 						"name" => "销售出库单默认收款方式",
 						"value" => "0",
 						"note" => "",
 						"showOrder" => 302
-				),
-				array(
+				],
+				[
 						"id" => "2002-04",
 						"name" => "销售订单默认收款方式",
 						"value" => "0",
 						"note" => "",
 						"showOrder" => 303
-				),
-				array(
+				],
+				[
 						"id" => "1003-02",
 						"name" => "存货计价方法",
 						"value" => "0",
 						"note" => "",
 						"showOrder" => 401
-				),
-				array(
+				],
+				[
 						"id" => "9001-01",
 						"name" => "增值税税率",
 						"value" => "17",
 						"note" => "",
 						"showOrder" => 501
-				),
-				array(
+				],
+				[
 						"id" => "9002-01",
 						"name" => "产品名称",
 						"value" => "PSI",
 						"note" => "",
 						"showOrder" => 0
-				),
-				array(
+				],
+				[
 						"id" => "9003-01",
 						"name" => "采购订单单号前缀",
 						"value" => "PO",
 						"note" => "",
 						"showOrder" => 601
-				),
-				array(
+				],
+				[
 						"id" => "9003-02",
 						"name" => "采购入库单单号前缀",
 						"value" => "PW",
 						"note" => "",
 						"showOrder" => 602
-				),
-				array(
+				],
+				[
 						"id" => "9003-03",
 						"name" => "采购退货出库单单号前缀",
 						"value" => "PR",
 						"note" => "",
 						"showOrder" => 603
-				),
-				array(
+				],
+				[
 						"id" => "9003-04",
 						"name" => "销售出库单单号前缀",
 						"value" => "WS",
 						"note" => "",
 						"showOrder" => 604
-				),
-				array(
+				],
+				[
 						"id" => "9003-05",
 						"name" => "销售退货入库单单号前缀",
 						"value" => "SR",
 						"note" => "",
 						"showOrder" => 605
-				),
-				array(
+				],
+				[
 						"id" => "9003-06",
 						"name" => "调拨单单号前缀",
 						"value" => "IT",
 						"note" => "",
 						"showOrder" => 606
-				),
-				array(
+				],
+				[
 						"id" => "9003-07",
 						"name" => "盘点单单号前缀",
 						"value" => "IC",
 						"note" => "",
 						"showOrder" => 607
-				),
-				array(
+				],
+				[
 						"id" => "9003-08",
 						"name" => "销售订单单号前缀",
 						"value" => "SO",
 						"note" => "",
 						"showOrder" => 608
-				)
-		);
+				]
+		];
 	}
 
 	private function getWarehouseName($id) {
@@ -243,6 +250,23 @@ class BizConfigDAO extends PSIBaseExDAO {
 	}
 
 	/**
+	 * 采购入库数量控制的中文含义
+	 *
+	 * @param string $id        	
+	 * @return string
+	 */
+	private function getPWCountLimitName($id) {
+		switch ($id) {
+			case "0" :
+				return "不做限制";
+			case "1" :
+				return "不能超过采购订单未入库量";
+		}
+		
+		return "";
+	}
+
+	/**
 	 * 返回所有的配置项
 	 *
 	 * @param array $params        	
@@ -280,6 +304,8 @@ class BizConfigDAO extends PSIBaseExDAO {
 				$displayValue = $this->getWSBillRecevingName($v["value"]);
 			} else if ($id == "2002-04") {
 				$displayValue = $this->getSOBillRecevingName($v["value"]);
+			} else if ($id == "2001-04") {
+				$displayValue = $this->getPWCountLimitName($v["value"]);
 			} else {
 				$displayValue = $v["value"];
 			}
@@ -325,12 +351,12 @@ class BizConfigDAO extends PSIBaseExDAO {
 			}
 		}
 		
-		$extDataList = array();
+		$extDataList = [];
 		
 		$sql = "select id, name from t_warehouse ";
 		$ds = new DataOrgDAO($db);
 		$rs = $ds->buildSQL(FIdConst::BIZ_CONFIG, "t_warehouse", $loginUserId);
-		$queryParams = array();
+		$queryParams = [];
 		if ($rs) {
 			$sql .= " where " . $rs[0];
 			$queryParams = array_merge($queryParams, $rs[1]);
@@ -338,19 +364,19 @@ class BizConfigDAO extends PSIBaseExDAO {
 		
 		$sql .= " order by code ";
 		$data = $db->query($sql, $queryParams);
-		$warehouse = array(
-				array(
+		$warehouse = [
+				[
 						"id" => "",
 						"name" => "[没有设置]"
-				)
-		);
+				]
+		];
 		
 		$extDataList["warehouse"] = array_merge($warehouse, $data);
 		
-		return array(
+		return [
 				"dataList" => $result,
 				"extData" => $extDataList
-		);
+		];
 	}
 
 	/**
@@ -518,6 +544,9 @@ class BizConfigDAO extends PSIBaseExDAO {
 				$log = "把[{$itemName}]设置为[{$v}]";
 			} else if ($key == "2002-04") {
 				$v = $this->getSOBillRecevingName($value);
+				$log = "把[{$itemName}]设置为[{$v}]";
+			} else if ($key == "2001-04") {
+				$v = $this->getPWCountLimitName($value);
 				$log = "把[{$itemName}]设置为[{$v}]";
 			} else {
 				if ($itemName) {
