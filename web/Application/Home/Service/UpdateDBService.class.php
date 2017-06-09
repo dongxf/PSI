@@ -122,6 +122,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20170606_02();
 		$this->update_20170606_03();
 		$this->update_20170607_01();
+		$this->update_20170609_02();
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -142,6 +143,16 @@ class UpdateDBService extends PSIBaseService {
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	// ============================================
 	private function notForgot() {
+	}
+
+	private function update_20170609_02() {
+		// 本次更新：修正bug - 价格体系的权限项目没有分类
+		$db = $this->db;
+		
+		$sql = "update t_permission
+				set category = '商品', py = 'JGTX', note = '通过菜单进入价格体系模块的权限'
+				where id = '2031' ";
+		$db->execute($sql);
 	}
 
 	private function update_20170607_01() {
