@@ -112,5 +112,13 @@ Ext.define("PSI.AFX.BaseOneGridMainForm", {
 					}
 				};
 				Ext.Ajax.request(r);
+			},
+
+			closeWindow : function() {
+				if (window.opener) {
+					window.close();
+				} else {
+					window.location.replace(PSI.Const.BASE_URL);
+				}
 			}
 		});

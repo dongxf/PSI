@@ -33,5 +33,13 @@ Ext.define("PSI.AFX.BaseMainExForm", {
 					r.method = "POST";
 				}
 				Ext.Ajax.request(r);
+			},
+
+			closeWindow : function() {
+				if (window.opener) {
+					window.close();
+				} else {
+					window.location.replace(PSI.Const.BASE_URL);
+				}
 			}
 		});
