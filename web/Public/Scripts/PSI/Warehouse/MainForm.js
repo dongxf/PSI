@@ -120,7 +120,7 @@ Ext.define("PSI.Warehouse.MainForm", {
 									: "<span style='color:red;font-weight:bold'>未完</span>";
 						}
 					}, {
-						header : "数据域",
+						header : "创建人的数据域",
 						dataIndex : "dataOrg",
 						menuDisabled : true,
 						sortable : false
