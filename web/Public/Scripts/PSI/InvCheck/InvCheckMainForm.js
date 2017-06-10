@@ -2,9 +2,7 @@
  * 库存盘点 - 主界面
  */
 Ext.define("PSI.InvCheck.InvCheckMainForm", {
-	extend : "Ext.panel.Panel",
-	border : 0,
-	layout : "border",
+	extend : "PSI.AFX.BaseMainExForm",
 
 	/**
 	 * 初始化组件
@@ -86,7 +84,7 @@ Ext.define("PSI.InvCheck.InvCheckMainForm", {
 					text : "关闭",
 					iconCls : "PSI-button-exit",
 					handler : function() {
-						window.close();
+						me.closeWindow();
 					}
 				}];
 	},

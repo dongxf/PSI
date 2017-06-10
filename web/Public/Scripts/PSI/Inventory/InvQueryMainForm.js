@@ -2,10 +2,7 @@
  * 库存账查询 - 主界面
  */
 Ext.define("PSI.Inventory.InvQueryMainForm", {
-	extend : "Ext.panel.Panel",
-
-	border : 0,
-	layout : "border",
+	extend : "PSI.AFX.BaseMainExForm",
 
 	initComponent : function() {
 		var me = this;
@@ -83,7 +80,7 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 								text : "关闭",
 								iconCls : "PSI-button-exit",
 								handler : function() {
-									window.close();
+									me.closeWindow();
 								}
 							}],
 					items : [{

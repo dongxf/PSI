@@ -2,14 +2,12 @@
  * 库间调拨 - 主界面
  */
 Ext.define("PSI.InvTransfer.InvTransferMainForm", {
-	extend : "Ext.panel.Panel",
+	extend : "PSI.AFX.BaseMainExForm",
 
 	initComponent : function() {
 		var me = this;
 
 		Ext.apply(me, {
-					border : 0,
-					layout : "border",
 					tbar : me.getToolbarCmp(),
 					items : [{
 								region : "north",
@@ -83,7 +81,7 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
 					text : "关闭",
 					iconCls : "PSI-button-exit",
 					handler : function() {
-						window.close();
+						me.closeWindow();
 					}
 				}];
 	},

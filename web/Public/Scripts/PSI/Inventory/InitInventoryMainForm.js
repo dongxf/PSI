@@ -2,7 +2,7 @@
  * 库存建账 - 主界面
  */
 Ext.define("PSI.Inventory.InitInventoryMainForm", {
-	extend : "Ext.panel.Panel",
+	extend : "PSI.AFX.BaseMainExForm",
 	initComponent : function() {
 		var me = this;
 
@@ -201,8 +201,6 @@ Ext.define("PSI.Inventory.InitInventoryMainForm", {
 		me.gridWarehouse = gridWarehouse;
 
 		Ext.apply(me, {
-			border : 0,
-			layout : "border",
 			tbar : [{
 						text : "建账",
 						iconCls : "PSI-button-add",
@@ -229,7 +227,7 @@ Ext.define("PSI.Inventory.InitInventoryMainForm", {
 						text : "关闭",
 						iconCls : "PSI-button-exit",
 						handler : function() {
-							window.close();
+							me.closeWindow();
 						}
 					}],
 			items : [{
