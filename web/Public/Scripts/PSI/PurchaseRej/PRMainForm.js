@@ -81,7 +81,7 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
 					text : "关闭",
 					iconCls : "PSI-button-exit",
 					handler : function() {
-						window.close();
+						me.closeWindow();
 					}
 				}];
 	},

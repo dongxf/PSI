@@ -86,7 +86,7 @@ Ext.define("PSI.Purchase.PWMainForm", {
 					text : "关闭",
 					iconCls : "PSI-button-exit",
 					handler : function() {
-						window.close();
+						me.closeWindow();
 					}
 				}];
 	},
