@@ -22,7 +22,7 @@ class UserService extends PSIBaseExService {
 	 */
 	public function getDemoLoginInfo() {
 		if ($this->isDemo()) {
-			return "您当前处于演示环境，默认的登录名和密码均为 admin <br/>更多帮助请点击 [帮助] 按钮来查看 <br /><div style='color:red'>请勿在演示环境中保存正式数据，演示数据库通常每天在21:00后会清空一次</div>";
+			return "您当前处于演示环境，默认的登录名和密码均为 admin";
 		} else {
 			return "";
 		}
