@@ -2,10 +2,7 @@
  * 采购预付款管理 - 主界面
  */
 Ext.define("PSI.Funds.PrePaymentMainForm", {
-	extend : "Ext.panel.Panel",
-
-	border : 0,
-	layout : "border",
+	extend : "PSI.AFX.BaseMainExForm",
 
 	initComponent : function() {
 		var me = this;
@@ -51,7 +48,7 @@ Ext.define("PSI.Funds.PrePaymentMainForm", {
 								text : "关闭",
 								iconCls : "PSI-button-exit",
 								handler : function() {
-									window.close();
+									me.closeWindow();
 								}
 							}],
 					layout : "border",
