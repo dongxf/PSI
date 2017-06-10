@@ -49,8 +49,9 @@ Ext.define("PSI.Warehouse.MainForm", {
 						text : "进入库存建账模块",
 						iconCls : "PSI-fid2000",
 						handler : function() {
-							location.replace(me
-									.URL("Home/MainMenu/navigateTo/fid/2000"));
+							var url = me
+									.URL("Home/MainMenu/navigateTo/fid/2000");
+							location.assign(url);
 						}
 					});
 		}

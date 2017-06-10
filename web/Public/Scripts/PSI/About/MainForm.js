@@ -67,5 +67,9 @@ Ext.define("PSI.About.MainForm", {
 
 	onOK : function() {
 		window.close();
+
+		if (!window.closed) {
+			window.location.replace(PSI.Const.BASE_URL);
+		}
 	}
 });
