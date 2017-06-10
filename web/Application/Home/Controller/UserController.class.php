@@ -65,6 +65,8 @@ class UserController extends PSIBaseController {
 		
 		$this->assign("returnPage", I("get.returnPage"));
 		
+		$this->assign("year", date("Y"));
+		
 		$us = new UserService();
 		$this->assign("demoInfo", $us->getDemoLoginInfo());
 		
