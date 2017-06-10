@@ -110,7 +110,7 @@ Ext.define("PSI.Supplier.MainForm", {
 					text : "关闭",
 					iconCls : "PSI-button-exit",
 					handler : function() {
-						window.close();
+						me.closeWindow();
 					}
 				}];
 	},

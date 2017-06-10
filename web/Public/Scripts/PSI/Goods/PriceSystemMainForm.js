@@ -2,7 +2,7 @@
  * 价格体系 - 主界面
  */
 Ext.define("PSI.Goods.PriceSystemMainForm", {
-			extend : "Ext.panel.Panel",
+			extend : "PSI.AFX.BaseMainExForm",
 
 			/**
 			 * 初始化组件
@@ -32,7 +32,7 @@ Ext.define("PSI.Goods.PriceSystemMainForm", {
 										text : "关闭",
 										iconCls : "PSI-button-exit",
 										handler : function() {
-											window.close();
+											me.closeWindow();
 										}
 									}],
 							items : [{
