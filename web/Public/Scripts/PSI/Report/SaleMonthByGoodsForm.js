@@ -2,11 +2,7 @@
  * 销售月报表(按商品汇总)
  */
 Ext.define("PSI.Report.SaleMonthByGoodsForm", {
-	extend : "Ext.panel.Panel",
-
-	border : 0,
-
-	layout : "border",
+	extend : "PSI.AFX.BaseMainExForm",
 
 	initComponent : function() {
 		var me = this;
@@ -16,7 +12,7 @@ Ext.define("PSI.Report.SaleMonthByGoodsForm", {
 								text : "关闭",
 								iconCls : "PSI-button-exit",
 								handler : function() {
-									window.close();
+									me.closeWindow();
 								}
 							}],
 					items : [{

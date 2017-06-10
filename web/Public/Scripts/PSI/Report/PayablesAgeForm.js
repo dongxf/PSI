@@ -2,11 +2,7 @@
  * 应付账款账龄分析表
  */
 Ext.define("PSI.Report.PayablesAgeForm", {
-	extend : "Ext.panel.Panel",
-
-	border : 0,
-
-	layout : "border",
+	extend : "PSI.AFX.BaseMainExForm",
 
 	initComponent : function() {
 		var me = this;
@@ -21,7 +17,7 @@ Ext.define("PSI.Report.PayablesAgeForm", {
 								text : "关闭",
 								iconCls : "PSI-button-exit",
 								handler : function() {
-									window.close();
+									me.closeWindow();
 								}
 							}],
 					items : [{
