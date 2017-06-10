@@ -114,7 +114,12 @@ Ext.define("PSI.User.ChangeMyPasswordForm", {
 							}, {
 								text : "取消",
 								handler : function() {
-									window.close();
+									if (window.opener) {
+										window.close();
+									} else {
+										window.location
+												.replace(PSI.Const.BASE_URL);
+									}
 								}
 							}]
 				}]
