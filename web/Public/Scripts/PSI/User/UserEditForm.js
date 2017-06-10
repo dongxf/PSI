@@ -19,11 +19,11 @@ Ext.define("PSI.User.UserEditForm", {
 		var entity = me.getEntity();
 
 		Ext.apply(me, {
-			title : entity === null ? "新增用户" : "编辑用户",
+			title : entity == null ? "新增用户" : "编辑用户",
 			modal : true,
 			onEsc : Ext.emptyFn,
 			width : 470,
-			height : 260,
+			height : entity == null ? 300 : 260,
 			layout : "fit",
 			defaultFocus : "editLoginName",
 			items : [{
@@ -212,6 +212,11 @@ Ext.define("PSI.User.UserEditForm", {
 										: entity.enabled != 1
 							}],
 							width : 240
+						}, {
+							xtype : "displayfield",
+							fieldLabel : "说明",
+							colspan : 2,
+							value : "新用户的默认登录密码是 123456"
 						}],
 				buttons : [{
 							text : "确定",
