@@ -2,12 +2,7 @@
  * 商品安全库存设置界面
  */
 Ext.define("PSI.Goods.SafetyInventoryEditForm", {
-	extend : "Ext.window.Window",
-
-	config : {
-		parentForm : null,
-		entity : null
-	},
+	extend : "PSI.AFX.BaseDialogForm",
 
 	/**
 	 * 初始化组件
@@ -17,7 +12,11 @@ Ext.define("PSI.Goods.SafetyInventoryEditForm", {
 		var entity = me.getEntity();
 
 		Ext.apply(me, {
-					title : "设置商品安全库存",
+					header : {
+						title : me.formatTitle("设置商品安全库存"),
+						height : 40,
+						iconCls : "PSI-button-view"
+					},
 					modal : true,
 					onEsc : Ext.emptyFn,
 					width : 580,

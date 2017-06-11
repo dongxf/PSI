@@ -4,7 +4,7 @@
  * @author 张健
  */
 Ext.define("PSI.Goods.GoodsImportForm", {
-	extend : "Ext.window.Window",
+	extend : "PSI.AFX.BaseDialogForm",
 
 	config : {
 		parentForm : null
@@ -35,7 +35,11 @@ Ext.define("PSI.Goods.GoodsImportForm", {
 				});
 
 		Ext.apply(me, {
-			title : "导入商品",
+			header : {
+				title : me.formatTitle("导入商品"),
+				height : 40,
+				iconCls : "PSI-button-excelimport"
+			},
 			modal : true,
 			resizable : false,
 			onEsc : Ext.emptyFn,
@@ -69,7 +73,7 @@ Ext.define("PSI.Goods.GoodsImportForm", {
 					anchor : '100%',
 					buttonText : '选择商品文件'
 				}, {
-					html : "<a href=../Uploads/Goods/goodsModelFile.xls ><h4>商品导入模板下载</h4></a>",
+					html : "<a href=../Uploads/Goods/goodsModelFile.xls ><h4>下载商品导入模板</h4></a>",
 					border : 0
 				}],
 				buttons : buttons
