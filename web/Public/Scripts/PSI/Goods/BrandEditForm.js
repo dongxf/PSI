@@ -11,10 +11,18 @@ Ext.define("PSI.Goods.BrandEditForm", {
 		var me = this;
 		var entity = me.getEntity();
 
+		var title = entity == null ? "新增商品品牌" : "编辑商品品牌";
+		title = me.formatTitle(title);
+		var iconCls = entity === null ? "SI-button-add" : "SI-button-edit";
+
 		Ext.apply(me, {
-			title : entity === null ? "新增商品品牌" : "编辑商品品牌",
+			header : {
+				title : title,
+				height : 40,
+				iconCls : iconCls
+			},
 			width : 400,
-			height : 140,
+			height : 150,
 			layout : "fit",
 			items : [{
 				id : "PSI_Goods_BrandEditForm_editForm",
