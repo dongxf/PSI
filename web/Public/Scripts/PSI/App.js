@@ -71,16 +71,35 @@ Ext.define("PSI.App", {
 					}
 				}, me);
 
+		var year = new Date().getFullYear();
+
 		me.vp = Ext.create("Ext.container.Viewport", {
-			layout : "fit",
-			items : [{
+					layout : "fit",
+					items : [{
 						id : "__PSITopPanel",
 						xtype : "panel",
 						border : 0,
 						layout : "border",
-						bbar : ["当前用户：" + me.getUserName()],
+						header : {
+							height : 40,
+							tools : [{
+										xtype : "displayfield",
+										value : "<span style='color:#04408c;font-weight:bold'>当前用户：" + me.getUserName()
+												+ "&nbsp;</span>"
+									}]
+						},
+						bbar : [{
+							xtype : "panel",
+							width : "100%",
+							header : {
+								titleAlign : "center",
+								title : "Copyright &copy; 2015-" + year
+										+ " PSI Team, All Rights Reserved"
+							}
+						}],
 						items : [{
 									region : "center",
+									border : 0,
 									layout : "fit",
 									xtype : "panel",
 									items : [me.mainPanel]
@@ -94,6 +113,7 @@ Ext.define("PSI.App", {
 									collapseMode : "mini",
 									collapsed : me.getRecentFidPanelCollapsed(),
 									header : false,
+									border : 0,
 									layout : "fit",
 									items : [me.gridRecentFid],
 									listeners : {
@@ -108,7 +128,7 @@ Ext.define("PSI.App", {
 									}
 								}]
 					}]
-		});
+				});
 
 		var el = Ext.getBody();
 		el.mask("系统正在加载中...");
@@ -236,7 +256,9 @@ Ext.define("PSI.App", {
 			return;
 		}
 		var panel = Ext.getCmp("__PSITopPanel");
-		panel.setTitle(header.title + " - " + this.getProductionName());
+		var title = "<span style='font-size:160%'>" + header.title + " - "
+				+ this.getProductionName() + "</span>";
+		panel.setTitle(title);
 		panel.setIconCls(header.iconCls);
 	},
 
