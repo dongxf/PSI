@@ -69,10 +69,19 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 			// 例如：业务单据中选择商品的界面中，也可以新增商品
 		}
 
+		var title = entity == null ? "新增商品" : "编辑商品";
+		title = me.formatTitle(title);
+		var iconCls = entity == null
+				? "PSI-button-add-detail"
+				: "PSI-button-edit-detail";
 		Ext.apply(me, {
-					title : entity == null ? "新增商品" : "编辑商品",
+					header : {
+						title : title,
+						height : 40,
+						iconCls : iconCls
+					},
 					width : 460,
-					height : 260,
+					height : 280,
 					layout : "fit",
 					items : [{
 						id : "PSI_Goods_GoodsEditForm_editForm",
