@@ -2,7 +2,7 @@
  * 价格体系 - 新增或编辑界面
  */
 Ext.define("PSI.Goods.PriceSystemEditForm", {
-			extend : "Ext.window.Window",
+			extend : "PSI.AFX.BaseDialogForm",
 
 			config : {
 				parentForm : null,
@@ -45,13 +45,23 @@ Ext.define("PSI.Goods.PriceSystemEditForm", {
 							scope : me
 						});
 
+				var title = entity == null ? "新增价格" : "编辑价格";
+				title = me.formatTitle(title);
+				var iconCls = entity == null
+						? "PSI-button-add"
+						: "PSI-button-edit";
+
 				Ext.apply(me, {
-							title : entity == null ? "新增价格" : "编辑价格",
+							header : {
+								title : title,
+								height : 40,
+								iconCls : iconCls
+							},
 							modal : true,
 							resizable : false,
 							onEsc : Ext.emptyFn,
 							width : 400,
-							height : 140,
+							height : 160,
 							layout : "fit",
 							items : [{
 								id : "editForm",
