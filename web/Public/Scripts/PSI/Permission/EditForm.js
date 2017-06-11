@@ -138,11 +138,16 @@ Ext.define("PSI.Permission.EditForm", {
 
 		this.userGrid = userGrid;
 
+		var title = entity == null ? "新增角色" : "编辑角色";
+		title = me.formatTitle(title);
+		var iconCls = entity == null ? "PSI-button-add" : "PSI-button-edit";
+		
 		Ext.apply(me, {
-			title : entity == null ? "新增角色" : "编辑角色",
-			modal : true,
-			resizable : false,
-			onEsc : Ext.emptyFn,
+			header : {
+				title : title,
+				height : 40,
+				iconCls : iconCls
+			},
 			maximized : true,
 			width : 700,
 			height : 600,
