@@ -12,7 +12,11 @@ Ext.define("PSI.User.ChangeUserPasswordForm", {
 		var entity = me.getEntity();
 
 		Ext.apply(me, {
-			title : "修改密码",
+			header : {
+				title : me.formatTitle("修改用户登录密码"),
+				height : 40,
+				iconCls : "PSI-button-change-password"
+			},
 			width : 400,
 			height : 200,
 			layout : "fit",

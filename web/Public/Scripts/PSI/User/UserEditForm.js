@@ -2,7 +2,7 @@
  * 新增或编辑用户界面
  */
 Ext.define("PSI.User.UserEditForm", {
-	extend : "Ext.window.Window",
+	extend : "PSI.AFX.BaseDialogForm",
 
 	config : {
 		parentForm : null,
@@ -18,12 +18,22 @@ Ext.define("PSI.User.UserEditForm", {
 
 		var entity = me.getEntity();
 
+		var title = entity == null ? "新增用户" : "编辑用户";
+		title = me.formatTitle(title);
+
+		var iconCls = entity == null
+				? "PSI-button-add-user"
+				: "PSI-button-edit-user";
 		Ext.apply(me, {
-			title : entity == null ? "新增用户" : "编辑用户",
+			header : {
+				title : title,
+				height : 40,
+				iconCls : iconCls
+			},
 			modal : true,
 			onEsc : Ext.emptyFn,
 			width : 470,
-			height : entity == null ? 300 : 260,
+			height : entity == null ? 310 : 280,
 			layout : "fit",
 			defaultFocus : "editLoginName",
 			items : [{

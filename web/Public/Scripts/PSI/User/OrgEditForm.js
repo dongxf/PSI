@@ -11,10 +11,19 @@ Ext.define("PSI.User.OrgEditForm", {
 		var me = this;
 		var entity = me.getEntity();
 
+		var title = entity == null ? "新增组织机构" : "编辑组织机构";
+		title = me.formatTitle(title);
+
+		var iconCls = entity == null ? "PSI-button-add" : "PSI-button-edit";
+
 		Ext.apply(me, {
-			title : entity === null ? "新增组织机构" : "编辑组织机构",
+			header : {
+				title : title,
+				height : 40,
+				iconCls : iconCls
+			},
 			width : 400,
-			height : 190,
+			height : 200,
 			layout : "fit",
 			items : [{
 				id : "PSI_User_OrgEditForm_editForm",
@@ -125,7 +134,7 @@ Ext.define("PSI.User.OrgEditForm", {
 
 	onEditFormShow : function() {
 		var me = this;
-		
+
 		me.editName.focus();
 
 		var entity = me.getEntity();

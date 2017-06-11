@@ -38,5 +38,9 @@ Ext.define("PSI.AFX.BaseDialogForm", {
 					r.method = "POST";
 				}
 				Ext.Ajax.request(r);
+			},
+
+			formatTitle : function(title) {
+				return "<span style='font-size:160%'>" + title + "</span>";
 			}
 		});
