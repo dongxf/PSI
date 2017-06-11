@@ -38,10 +38,18 @@ Ext.define("PSI.Supplier.CategoryEditForm", {
 					scope : me
 				});
 
+		var title = entity == null ? "新增供应商分类" : "编辑供应商分类";
+		title = me.formatTitle(title);
+		var iconCls = entity == null ? "PSI-button-add" : "PSI-button-edit";
+
 		Ext.apply(me, {
-			title : entity == null ? "新增供应商分类" : "编辑供应商分类",
+			header : {
+				title : title,
+				height : 40,
+				iconCls : iconCls
+			},
 			width : 400,
-			height : 140,
+			height : 160,
 			layout : "fit",
 			items : [{
 						id : "PSI_Supplier_CategoryEditForm_editForm",

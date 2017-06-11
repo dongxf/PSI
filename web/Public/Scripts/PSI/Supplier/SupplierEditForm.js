@@ -42,10 +42,20 @@ Ext.define("PSI.Supplier.SupplierEditForm", {
 			categoryStore = me.getParentForm().categoryGrid.getStore();
 		}
 
+		var title = entity == null ? "新增供应商" : "编辑供应商";
+		title = me.formatTitle(title);
+		var iconCls = entity == null
+				? "PSI-button-add-detail"
+				: "PSI-button-edit-detail";
+
 		Ext.apply(me, {
-			title : entity == null ? "新增供应商" : "编辑供应商",
+			header : {
+				title : title,
+				height : 40,
+				iconCls : iconCls
+			},
 			width : 550,
-			height : 400,
+			height : 420,
 			layout : "fit",
 			items : [{
 				id : "PSI_Supplier_SupplierEditForm_editForm",
