@@ -54,10 +54,18 @@ Ext.define("PSI.Goods.GoodsBOMEditForm", {
 		};
 		buttons.push(btn);
 
+		var title = entity == null ? "新增子商品" : "编辑子商品";
+		title = me.formatTitle(title);
+		var iconCls = entity == null ? "PSI-button-add" : "PSI-button-edit";
+
 		Ext.apply(me, {
-			title : entity == null ? "新增子商品" : "编辑子商品",
+			header : {
+				title : title,
+				height : 40,
+				iconCls : iconCls
+			},
 			width : 520,
-			height : 370,
+			height : 390,
 			layout : "fit",
 			listeners : {
 				show : {
