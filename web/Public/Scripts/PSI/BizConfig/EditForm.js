@@ -51,9 +51,13 @@ Ext.define("PSI.BizConfig.EditForm", {
 		me.__storeWS = storeWS;
 
 		Ext.apply(me, {
-			title : "业务设置",
+			header : {
+				title : me.formatTitle("业务设置"),
+				height : 40,
+				iconCls : "PSI-button-edit"
+			},
 			width : 500,
-			height : 490,
+			height : 510,
 			layout : "fit",
 			items : [{
 				xtype : "tabpanel",
