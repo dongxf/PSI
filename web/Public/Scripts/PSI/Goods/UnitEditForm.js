@@ -40,10 +40,20 @@ Ext.define("PSI.Goods.UnitEditForm", {
 							scope : me
 						});
 
+				var title = entity == null ? "新增商品计量单位" : "编辑商品计量单位";
+				title = me.formatTitle(title);
+				var iconCls = entity == null
+						? "PSI-button-add"
+						: "PSI-button-edit";
+
 				Ext.apply(me, {
-							title : entity == null ? "新增商品计量单位" : "编辑商品计量单位",
+							header : {
+								title : title,
+								height : 40,
+								iconCls : iconCls
+							},
 							width : 400,
-							height : 110,
+							height : 130,
 							layout : "fit",
 							items : [{
 								id : "PSI_Goods_UnitEditForm_editForm",
