@@ -35,12 +35,16 @@ Ext.define("PSI.Warehouse.EditDataOrgForm", {
 		buttons.push(btn);
 
 		Ext.apply(me, {
-			title : "编辑数据域",
+			header : {
+				title : me.formatTitle("修改数据域"),
+				height : 40,
+				iconCls : "PSI-button-dataorg"
+			},
 			modal : true,
 			resizable : false,
 			onEsc : Ext.emptyFn,
 			width : 400,
-			height : 210,
+			height : 220,
 			layout : "fit",
 			listeners : {
 				show : {

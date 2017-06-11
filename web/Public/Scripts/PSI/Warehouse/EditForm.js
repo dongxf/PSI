@@ -48,10 +48,19 @@ Ext.define("PSI.Warehouse.EditForm", {
 				};
 				buttons.push(btn);
 
+				var title = entity == null ? "新增仓库" : "编辑仓库";
+				title = me.formatTitle(title);
+				var iconCls = entity == null
+						? "PSI-button-add"
+						: "PSI-button-edit";
 				Ext.apply(me, {
-							title : entity == null ? "新增仓库" : "编辑仓库",
+							header : {
+								title : title,
+								height : 40,
+								iconCls : iconCls
+							},
 							width : 400,
-							height : 140,
+							height : 160,
 							layout : "fit",
 							listeners : {
 								show : {
