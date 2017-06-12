@@ -47,6 +47,7 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 			$result[$i]["children"] = $children;
 			$result[$i]["leaf"] = count($children) == 0;
 			$result[$i]["expanded"] = true;
+			$result[$i]["iconCls"] = "PSI-GoodsCategory";
 			
 			$result[$i]["cnt"] = $this->getGoodsCountWithAllSub($db, $id, $params, $rs);
 		}
@@ -164,6 +165,7 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 			$result[$i]["children"] = $children;
 			$result[$i]["leaf"] = count($children) == 0;
 			$result[$i]["expanded"] = true;
+			$result[$i]["iconCls"] = "PSI-GoodsCategory";
 			
 			$result[$i]["cnt"] = $this->getGoodsCountWithAllSub($db, $id, $params, $rs);
 		}
@@ -438,7 +440,7 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 
 	/**
 	 * 获得某个商品分类的详情
-	 * 
+	 *
 	 * @param array $params        	
 	 * @return array
 	 */
