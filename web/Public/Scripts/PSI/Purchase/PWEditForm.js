@@ -15,10 +15,16 @@ Ext.define("PSI.Purchase.PWEditForm", {
 		var entity = me.getEntity();
 		me.adding = entity == null;
 
+		var title = entity == null ? "新建采购入库单" : "编辑采购入库单";
+		title = me.formatTitle(title);
+		var iconCls = entity == null ? "PSI-button-add" : "PSI-button-edit";
+
 		Ext.apply(me, {
-			title : entity == null ? "新建采购入库单" : "编辑采购入库单",
-			modal : true,
-			onEsc : Ext.emptyFn,
+			header : {
+				title : title,
+				height : 40,
+				iconCls : iconCls
+			},
 			maximized : true,
 			width : 1000,
 			height : 600,
@@ -47,7 +53,6 @@ Ext.define("PSI.Purchase.PWEditForm", {
 					}, "-", {
 						text : "取消",
 						id : "buttonCancel",
-						iconCls : "PSI-button-cancel",
 						handler : function() {
 							if (me.__readonly) {
 								me.close();
