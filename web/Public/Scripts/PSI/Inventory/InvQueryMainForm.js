@@ -73,7 +73,6 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 								scope : me
 							}, "-", {
 								text : "清空查询条件",
-								iconCls : "PSI-button-cancel",
 								handler : me.onClearQuery,
 								scope : me
 							}, "-", {
