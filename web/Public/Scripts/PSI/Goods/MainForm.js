@@ -206,7 +206,6 @@ Ext.define("PSI.Goods.MainForm", {
 								xtype : "button",
 								text : "查询",
 								width : 100,
-								iconCls : "PSI-button-refresh",
 								margin : "5, 0, 0, 20",
 								handler : me.onQuery,
 								scope : me
@@ -214,7 +213,6 @@ Ext.define("PSI.Goods.MainForm", {
 								xtype : "button",
 								text : "清空查询条件",
 								width : 100,
-								iconCls : "PSI-button-cancel",
 								margin : "5, 0, 0, 5",
 								handler : me.onClearQuery,
 								scope : me
