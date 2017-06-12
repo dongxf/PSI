@@ -201,52 +201,51 @@ Ext.define("PSI.Inventory.InitInventoryMainForm", {
 		me.gridWarehouse = gridWarehouse;
 
 		Ext.apply(me, {
-			tbar : [{
-						text : "建账",
-						iconCls : "PSI-button-add",
-						scope : me,
-						handler : me.onInitInv
-					}, "-", {
-						text : "刷新",
-						iconCls : "PSI-button-refresh",
-						scope : me,
-						handler : function() {
-							me.freshInvGrid();
-						}
-					}, "-", {
-						text : "标记建账完毕",
-						iconCls : "PSI-button-commit",
-						scope : me,
-						handler : me.onFinish
-					}, {
-						text : "取消建账完毕标记",
-						iconCls : "PSI-button-cancel",
-						scope : me,
-						handler : me.onCancel
-					}, "-", {
-						text : "关闭",
-						iconCls : "PSI-button-exit",
-						handler : function() {
-							me.closeWindow();
-						}
-					}],
-			items : [{
-						region : "west",
-						xtype : "panel",
-						layout : "fit",
-						border : 0,
-						width : 300,
-						minWidth : 200,
-						split : true,
-						items : [gridWarehouse]
-					}, {
-						region : "center",
-						xtype : "panel",
-						layout : "fit",
-						border : 0,
-						items : [gridInitInv]
-					}]
-		});
+					tbar : [{
+								text : "建账",
+								iconCls : "PSI-button-add",
+								scope : me,
+								handler : me.onInitInv
+							}, "-", {
+								text : "刷新",
+								iconCls : "PSI-button-refresh",
+								scope : me,
+								handler : function() {
+									me.freshInvGrid();
+								}
+							}, "-", {
+								text : "标记建账完毕",
+								iconCls : "PSI-button-commit",
+								scope : me,
+								handler : me.onFinish
+							}, "-", {
+								text : "取消建账完毕标记",
+								scope : me,
+								handler : me.onCancel
+							}, "-", {
+								text : "关闭",
+								iconCls : "PSI-button-exit",
+								handler : function() {
+									me.closeWindow();
+								}
+							}],
+					items : [{
+								region : "west",
+								xtype : "panel",
+								layout : "fit",
+								border : 0,
+								width : 300,
+								minWidth : 200,
+								split : true,
+								items : [gridWarehouse]
+							}, {
+								region : "center",
+								xtype : "panel",
+								layout : "fit",
+								border : 0,
+								items : [gridInitInv]
+							}]
+				});
 
 		me.callParent(arguments);
 

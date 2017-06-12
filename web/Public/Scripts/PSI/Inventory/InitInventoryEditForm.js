@@ -6,7 +6,7 @@ Ext.define("PSI.Inventory.InitInventoryEditForm", {
 	config : {
 		warehouse : null
 	},
-	
+
 	initComponent : function() {
 		var me = this;
 		var warehouse = me.getWarehouse();
