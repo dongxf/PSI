@@ -105,11 +105,11 @@ Ext.define("PSI.Customer.MainForm", {
 				}, {
 					text : "导入客户",
 					disabled : me.getPImportCustomer() == "0",
-					iconCls : "PSI-button-add",
+					iconCls : "PSI-button-excelimport",
 					handler : me.onImportCustomer,
 					scope : me
 				}, {
-					text : "修改客户",
+					text : "编辑客户",
 					disabled : me.getPEditCustomer() == "0",
 					iconCls : "PSI-button-edit-detail",
 					handler : me.onEditCustomer,

@@ -43,10 +43,18 @@ Ext.define("PSI.Customer.CategoryEditForm", {
 					fields : ["id", "name"]
 				});
 
+		var title = entity == null ? "新增客户分类" : "编辑客户分类";
+		title = me.formatTitle(title);
+		var iconCls = entity == null ? "PSI-button-add" : "PSI-button-edit";
+
 		Ext.apply(me, {
-			title : entity == null ? "新增客户分类" : "编辑客户分类",
+			header : {
+				title : title,
+				height : 40,
+				iconCls : iconCls
+			},
 			width : 400,
-			height : 170,
+			height : 190,
 			layout : "fit",
 			items : [{
 						id : "PSI_Customer_CategoryEditForm_editForm",

@@ -2,10 +2,7 @@
  * 客户导入
  */
 Ext.define("PSI.Customer.CustomerImportForm", {
-	extend : "Ext.window.Window",
-	config : {
-		parentForm : null
-	},
+	extend : "PSI.AFX.BaseDialogForm",
 
 	initComponent : function() {
 		var me = this;
@@ -30,11 +27,13 @@ Ext.define("PSI.Customer.CustomerImportForm", {
 
 		Ext.apply(me, {
 			title : "导入客户",
-			modal : true,
-			resizable : false,
-			onEsc : Ext.emptyFn,
+			header : {
+				title : me.formatTitle("导入客户"),
+				height : 40,
+				iconCls : "PSI-button-excelimport"
+			},
 			width : 512,
-			height : 150,
+			height : 170,
 			layout : "fit",
 			items : [{
 				id : "importForm",
@@ -45,7 +44,6 @@ Ext.define("PSI.Customer.CustomerImportForm", {
 				},
 				height : "100%",
 				bodyPadding : 5,
-				// defaultType: 'textfield',
 				fieldDefaults : {
 					labelWidth : 60,
 					labelAlign : "right",
@@ -59,14 +57,12 @@ Ext.define("PSI.Customer.CustomerImportForm", {
 					fieldLabel : '文件',
 					labelWidth : 50,
 					width : 480,
-					msgTarget : 'side', // 提示 文字的位置
-					// \title\under\none\side\[element id]
-
+					msgTarget : 'side',
 					allowBlank : false,
 					anchor : '100%',
 					buttonText : '选择客户文件'
 				}, {
-					html : "<a href=../Uploads/Customer/customerModelFile.xls ><h4>客户导入模板下载</h4></a>",
+					html : "<a href=../Uploads/Customer/customerModelFile.xls ><h4>下载客户导入模板</h4></a>",
 					border : 0
 				}],
 				buttons : buttons
