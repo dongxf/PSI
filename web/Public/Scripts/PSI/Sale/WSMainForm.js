@@ -177,7 +177,6 @@ Ext.define("PSI.Sale.WSMainForm", {
 								text : "查询",
 								width : 90,
 								margin : "5 0 0 10",
-								iconCls : "PSI-button-refresh",
 								handler : me.onQuery,
 								scope : me
 							}, {

@@ -242,8 +242,8 @@ Ext.define("PSI.Customer.MainForm", {
 							}, {
 								xtype : "button",
 								text : "清空查询条件",
-								width : 80,
-								margin : "5, 0, 0, 30",
+								width : 100,
+								margin : "5, 0, 0, 15",
 								handler : me.onClearQuery,
 								scope : me
 							}]
