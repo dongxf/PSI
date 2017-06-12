@@ -2,12 +2,7 @@
  * 销售退货入库单
  */
 Ext.define("PSI.Sale.SREditForm", {
-	extend : "Ext.window.Window",
-
-	config : {
-		parentForm : null,
-		entity : null
-	},
+	extend : "PSI.AFX.BaseDialogForm",
 
 	initComponent : function() {
 		var me = this;
@@ -15,10 +10,16 @@ Ext.define("PSI.Sale.SREditForm", {
 		var entity = me.getEntity();
 		this.adding = entity == null;
 
+		var title = entity == null ? "新建销售退货入库单" : "编辑销售退货入库单";
+		title = me.formatTitle(title);
+		var iconCls = entity == null ? "PSI-button-add" : "PSI-button-edit";
+
 		Ext.apply(me, {
-			title : entity == null ? "新建销售退货入库单" : "编辑销售退货入库单",
-			modal : true,
-			onEsc : Ext.emptyFn,
+			header : {
+				title : title,
+				height : 40,
+				iconCls : iconCls
+			},
 			maximized : true,
 			width : 900,
 			height : 600,
@@ -37,7 +38,6 @@ Ext.define("PSI.Sale.SREditForm", {
 						id : "buttonSave"
 					}, "-", {
 						text : "取消",
-						iconCls : "PSI-button-cancel",
 						handler : function() {
 							if (me.__readonly) {
 								me.close();
