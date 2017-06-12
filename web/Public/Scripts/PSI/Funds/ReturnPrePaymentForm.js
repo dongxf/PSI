@@ -2,21 +2,18 @@
  * 预付款管理 - 供应商退回采购预付款
  */
 Ext.define("PSI.Funds.ReturnPrePaymentForm", {
-	extend : "Ext.window.Window",
-
-	config : {
-		parentForm : null
-	},
+	extend : "PSI.AFX.BaseDialogForm",
 
 	initComponent : function() {
 		var me = this;
 		Ext.apply(me, {
-					title : "供应商退回采购预付款",
-					modal : true,
-					resizable : false,
-					onEsc : Ext.emptyFn,
+					header : {
+						title : me.formatTitle("供应商退回采购预付款"),
+						height : 40,
+						iconCls : "PSI-button-delete"
+					},
 					width : 400,
-					height : 200,
+					height : 220,
 					layout : "fit",
 					defaultFocus : "editSupplier",
 					listeners : {

@@ -2,21 +2,18 @@
  * 预付款管理 - 付供应商预付款
  */
 Ext.define("PSI.Funds.AddPrePaymentForm", {
-	extend : "Ext.window.Window",
-
-	config : {
-		parentForm : null
-	},
+	extend : "PSI.AFX.BaseDialogForm",
 
 	initComponent : function() {
 		var me = this;
 		Ext.apply(me, {
-					title : "预付供应商采购货款",
-					modal : true,
-					resizable : false,
-					onEsc : Ext.emptyFn,
+					header : {
+						title : me.formatTitle("预付供应商采购货款"),
+						height : 40,
+						iconCls : "PSI-button-add"
+					},
 					width : 400,
-					height : 200,
+					height : 220,
 					layout : "fit",
 					defaultFocus : "editSupplier",
 					listeners : {

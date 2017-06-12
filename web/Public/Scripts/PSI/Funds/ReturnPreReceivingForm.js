@@ -2,21 +2,18 @@
  * 预收款管理 - 退还预收款
  */
 Ext.define("PSI.Funds.ReturnPreReceivingForm", {
-	extend : "Ext.window.Window",
-
-	config : {
-		parentForm : null
-	},
+	extend : "PSI.AFX.BaseDialogForm",
 
 	initComponent : function() {
 		var me = this;
 		Ext.apply(me, {
-					title : "退还预收款",
-					modal : true,
-					resizable : false,
-					onEsc : Ext.emptyFn,
+					header : {
+						title : me.formatTitle("退还预收款"),
+						height : 40,
+						iconCls : "PSI-button-delete"
+					},
 					width : 400,
-					height : 200,
+					height : 220,
 					layout : "fit",
 					defaultFocus : "editCustomer",
 					listeners : {
