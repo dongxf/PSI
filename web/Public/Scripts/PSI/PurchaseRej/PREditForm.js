@@ -2,11 +2,7 @@
  * 采购退货出库单 - 新增或编辑界面
  */
 Ext.define("PSI.PurchaseRej.PREditForm", {
-	extend : "Ext.window.Window",
-	config : {
-		parentForm : null,
-		entity : null
-	},
+	extend : "PSI.AFX.BaseDialogForm",
 
 	initComponent : function() {
 		var me = this;
@@ -14,10 +10,16 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 		var entity = me.getEntity();
 		this.adding = entity == null;
 
+		var title = entity == null ? "新建采购退货出库单" : "编辑采购退货出库单";
+		title = me.formatTitle(title);
+		var iconCls = entity == null ? "PSI-button-add" : "PSI-button-edit";
+
 		Ext.apply(me, {
-			title : entity == null ? "新建采购退货出库单" : "编辑采购退货出库单",
-			modal : true,
-			onEsc : Ext.emptyFn,
+			header : {
+				title : title,
+				height : 40,
+				iconCls : iconCls
+			},
 			maximized : true,
 			width : 1200,
 			height : 600,
@@ -35,7 +37,6 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 						id : "buttonSave"
 					}, "-", {
 						text : "取消",
-						iconCls : "PSI-button-cancel",
 						handler : function() {
 							if (me.__readonly) {
 								me.close();
