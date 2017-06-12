@@ -4,12 +4,7 @@
  * @author 李静波
  */
 Ext.define("PSI.SaleOrder.SOEditForm", {
-	extend : "Ext.window.Window",
-
-	config : {
-		parentForm : null,
-		entity : null
-	},
+	extend : "PSI.AFX.BaseDialogForm",
 
 	/**
 	 * 初始化组件
@@ -20,10 +15,16 @@ Ext.define("PSI.SaleOrder.SOEditForm", {
 		var entity = me.getEntity();
 		this.adding = entity == null;
 
+		var title = entity == null ? "新建销售订单" : "编辑销售订单";
+		title = me.formatTitle(title);
+		var iconCls = entity == null ? "PSI-button-add" : "PSI-button-edit";
+
 		Ext.apply(me, {
-			title : entity == null ? "新建销售订单" : "编辑销售订单",
-			modal : true,
-			onEsc : Ext.emptyFn,
+			header : {
+				title : title,
+				height : 40,
+				iconCls : iconCls
+			},
 			defaultFocus : "editCustomer",
 			maximized : true,
 			width : 1000,
@@ -38,7 +39,6 @@ Ext.define("PSI.SaleOrder.SOEditForm", {
 					}, "-", {
 						text : "取消",
 						id : "buttonCancel",
-						iconCls : "PSI-button-cancel",
 						handler : function() {
 							if (me.__readonly) {
 								me.close();
@@ -462,7 +462,7 @@ Ext.define("PSI.SaleOrder.SOEditForm", {
 								editor : {
 									xtype : "psi_goods_with_saleprice_field",
 									parentCmp : me,
-									editCustomerName: "editCustomer"
+									editCustomerName : "editCustomer"
 								}
 							}, {
 								header : "商品名称",
