@@ -4,11 +4,9 @@
  * @author 李静波
  */
 Ext.define("PSI.PurchaseOrder.POEditForm", {
-	extend : "Ext.window.Window",
+	extend : "PSI.AFX.BaseDialogForm",
 
 	config : {
-		parentForm : null,
-		entity : null,
 		showAddGoodsButton : "0"
 	},
 
@@ -20,11 +18,17 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 		me.__readOnly = false;
 		var entity = me.getEntity();
 		this.adding = entity == null;
+		
+		var title = entity == null ? "新建采购订单" : "编辑采购订单";
+		title = me.formatTitle(title);
+		var iconCls = entity == null ? "PSI-button-add" : "PSI-button-edit";
 
 		Ext.apply(me, {
-			title : entity == null ? "新建采购订单" : "编辑采购订单",
-			modal : true,
-			onEsc : Ext.emptyFn,
+			header : {
+				title : title,
+				height : 40,
+				iconCls : iconCls
+			},
 			maximized : true,
 			width : 1000,
 			height : 600,
@@ -39,7 +43,6 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 					}, "-", {
 						text : "取消",
 						id : "buttonCancel",
-						iconCls : "PSI-button-cancel",
 						handler : function() {
 							if (me.__readonly) {
 								me.close();
