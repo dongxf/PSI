@@ -2,22 +2,22 @@
  * 应收账款 - 收款记录
  */
 Ext.define("PSI.Funds.RvRecordEditForm", {
-	extend : "Ext.window.Window",
+	extend : "PSI.AFX.BaseDialogForm",
 
 	config : {
-		parentForm : null,
 		rvDetail : null
 	},
 
 	initComponent : function() {
 		var me = this;
 		Ext.apply(me, {
-					title : "录入收款记录",
-					modal : true,
-					resizable : false,
-					onEsc : Ext.emptyFn,
+					header : {
+						title : me.formatTitle("录入收款记录"),
+						height : 40,
+						iconCls : "PSI-button-add"
+					},
 					width : 400,
-					height : 230,
+					height : 250,
 					layout : "fit",
 					defaultFocus : "editActMoney",
 					listeners : {
