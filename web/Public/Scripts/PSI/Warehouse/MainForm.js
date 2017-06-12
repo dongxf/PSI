@@ -46,10 +46,9 @@ Ext.define("PSI.Warehouse.MainForm", {
 
 		if (me.getPInitInv() == "1") {
 			result.push("-", {
-						text : "进入库存建账模块",
-						iconCls : "PSI-fid2000",
+						text : "打开库存建账模块",
 						handler : function() {
-							location.replace(me
+							window.open(me
 									.URL("Home/MainMenu/navigateTo/fid/2000"));
 						}
 					});
