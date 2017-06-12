@@ -44,7 +44,8 @@ class GoodsBrandDAO extends PSIBaseExDAO {
 					"fullName" => $fullName,
 					"children" => $children,
 					"leaf" => count($children) == 0,
-					"expanded" => true
+					"expanded" => true,
+					"iconCls" => "PSI-GoodsBrand"
 			];
 		}
 		
@@ -97,7 +98,8 @@ class GoodsBrandDAO extends PSIBaseExDAO {
 					"fullName" => $fullName,
 					"children" => $children,
 					"leaf" => count($children) == 0,
-					"expanded" => true
+					"expanded" => true,
+					"iconCls" => "PSI-GoodsBrand"
 			];
 		}
 		

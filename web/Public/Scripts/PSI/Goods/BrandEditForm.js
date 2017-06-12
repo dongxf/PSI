@@ -13,7 +13,7 @@ Ext.define("PSI.Goods.BrandEditForm", {
 
 		var title = entity == null ? "新增商品品牌" : "编辑商品品牌";
 		title = me.formatTitle(title);
-		var iconCls = entity === null ? "SI-button-add" : "SI-button-edit";
+		var iconCls = entity === null ? "PSI-button-add" : "PSI-button-edit";
 
 		Ext.apply(me, {
 			header : {
