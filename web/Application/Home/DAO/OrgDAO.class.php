@@ -430,6 +430,7 @@ class OrgDAO extends PSIBaseExDAO {
 			$result[$i]["children"] = $c2;
 			$result[$i]["leaf"] = count($c2) == 0;
 			$result[$i]["expanded"] = true;
+			$result[$i]["iconCls"] = "PSI-org";
 		}
 		
 		return $result;
@@ -454,6 +455,7 @@ class OrgDAO extends PSIBaseExDAO {
 			$result[$i]["children"] = $c2;
 			$result[$i]["leaf"] = count($c2) == 0;
 			$result[$i]["expanded"] = true;
+			$result[$i]["iconCls"] = "PSI-org2";
 		}
 		
 		return $result;
