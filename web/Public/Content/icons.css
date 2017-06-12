@@ -11,27 +11,27 @@
 }
 
 .PSI-button-add-detail {
-    background-image:url(../Images/icons/add_detail.png) !important;
+    background-image:url(../Images/icons/add.png) !important;
 }
 
 .PSI-button-edit-detail {
-    background-image:url(../Images/icons/edit_detail.png) !important;
+    background-image:url(../Images/icons/edit.png) !important;
 }
 
 .PSI-button-delete-detail {
-    background-image:url(../Images/icons/delete_detail.png) !important;
+    background-image:url(../Images/icons/delete.png) !important;
 }
 
 .PSI-button-add-user {
-    background-image:url(../Images/icons/user_add.png) !important;
+    background-image:url(../Images/icons/add.png) !important;
 }
 
 .PSI-button-edit-user {
-    background-image:url(../Images/icons/user_edit.png) !important;
+    background-image:url(../Images/icons/edit.png) !important;
 }
 
 .PSI-button-delete-user {
-    background-image:url(../Images/icons/user_delete.png) !important;
+    background-image:url(../Images/icons/delete.png) !important;
 }
 
 .PSI-button-ok {
@@ -91,11 +91,11 @@
 }
 
 .PSI-button-excelimport {
-    background-image:url(../Images/icons/excel_import.png) !important;
+    background-image:url(../Images/icons/excel.png) !important;
 }
 
 .PSI-button-excelexport {
-    background-image:url(../Images/icons/excel_export.png) !important;
+    background-image:url(../Images/icons/excel.png) !important;
 }
 
 .PSI-button-dataorg {

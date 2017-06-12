@@ -782,7 +782,7 @@ Ext.define("PSI.Goods.MainForm", {
 					tbar : ["-", {
 								text : "设置商品安全库存",
 								disabled : me.getPGoodsSI() == "0",
-								iconCls : "PSI-button-view",
+								iconCls : "PSI-button-commit",
 								handler : me.onSafetyInventory,
 								scope : me
 							}, "-"],
