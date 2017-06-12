@@ -146,7 +146,6 @@ Ext.define("PSI.InvCheck.InvCheckMainForm", {
 								text : "查询",
 								width : 100,
 								margin : "5 0 0 10",
-								iconCls : "PSI-button-refresh",
 								handler : me.onQuery,
 								scope : me
 							}, {
