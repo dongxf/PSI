@@ -2,12 +2,7 @@
  * 盘点单
  */
 Ext.define("PSI.InvCheck.ICEditForm", {
-	extend : "Ext.window.Window",
-
-	config : {
-		parentForm : null,
-		entity : null
-	},
+	extend : "PSI.AFX.BaseDialogForm",
 
 	initComponent : function() {
 		var me = this;
@@ -15,10 +10,16 @@ Ext.define("PSI.InvCheck.ICEditForm", {
 		var entity = me.getEntity();
 		me.adding = entity == null;
 
+		var title = entity == null ? "新建盘点单" : "编辑盘点单";
+		title = me.formatTitle(title);
+		var iconCls = entity == null ? "PSI-button-add" : "PSI-button-edit";
+
 		Ext.apply(me, {
-			title : entity == null ? "新建盘点单" : "编辑盘点单",
-			modal : true,
-			onEsc : Ext.emptyFn,
+			header : {
+				title : title,
+				height : 40,
+				iconCls : iconCls
+			},
 			maximized : true,
 			width : 1000,
 			height : 600,
@@ -32,7 +33,6 @@ Ext.define("PSI.InvCheck.ICEditForm", {
 						id : "buttonSave"
 					}, "-", {
 						text : "取消",
-						iconCls : "PSI-button-cancel",
 						handler : function() {
 							if (me.__readonly) {
 								me.close();
