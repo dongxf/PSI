@@ -248,7 +248,6 @@ Ext.define("PSI.Permission.EditForm", {
 						scope : this
 					}, "-", {
 						text : "取消",
-						iconCls : "PSI-button-cancel",
 						handler : function() {
 							var me = this;
 							me.confirm("请确认是否取消操作?", function() {
