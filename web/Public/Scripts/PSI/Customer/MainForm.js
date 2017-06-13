@@ -51,9 +51,7 @@ Ext.define("PSI.Customer.MainForm", {
 											xtype : "panel",
 											region : "west",
 											layout : "fit",
-											width : 300,
-											minWidth : 200,
-											maxWidth : 350,
+											width : 400,
 											split : true,
 											collapsible : true,
 											header : false,
@@ -275,7 +273,6 @@ Ext.define("PSI.Customer.MainForm", {
 					features : [{
 								ftype : "summary"
 							}],
-					forceFit : true,
 					columnLines : true,
 					columns : [{
 								header : "类别编码",
@@ -286,22 +283,22 @@ Ext.define("PSI.Customer.MainForm", {
 							}, {
 								header : "类别",
 								dataIndex : "name",
-								flex : 1,
+								width : 160,
 								menuDisabled : true,
 								sortable : false,
 								summaryRenderer : function() {
-									return "客户个数合计";
+									return "客户数合计";
 								}
-							},{
+							}, {
 								header : "价格体系",
 								dataIndex : "priceSystem",
 								width : 80,
 								menuDisabled : true,
 								sortable : false
 							}, {
-								header : "客户个数",
+								header : "客户数",
 								dataIndex : "cnt",
-								width : 80,
+								width : 60,
 								menuDisabled : true,
 								sortable : false,
 								summaryType : "sum",
