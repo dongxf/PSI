@@ -85,7 +85,7 @@ Ext.define("PSI.Goods.BrandMainForm", {
 											xtype : "treecolumn",
 											text : "品牌",
 											dataIndex : "text",
-											width : 500
+											flex : 1
 										}]
 							}
 						});
