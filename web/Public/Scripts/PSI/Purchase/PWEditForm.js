@@ -570,6 +570,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 						items : [{
 									icon : me
 											.URL("Public/Images/icons/delete.png"),
+									tooltip : "删除当前记录",
 									handler : function(grid, row) {
 										var store = grid.getStore();
 										store.remove(store.getAt(row));
@@ -589,7 +590,8 @@ Ext.define("PSI.Purchase.PWEditForm", {
 						xtype : "actioncolumn",
 						items : [{
 									icon : me
-											.URL("Public/Images/icons/add.png"),
+											.URL("Public/Images/icons/insert.png"),
+									tooltip : "在当前记录之前插入新记录",
 									handler : function(grid, row) {
 										var store = grid.getStore();
 										store.insert(row, [{}]);
@@ -605,13 +607,15 @@ Ext.define("PSI.Purchase.PWEditForm", {
 						width : 50,
 						xtype : "actioncolumn",
 						items : [{
-							icon : me.URL("Public/Images/icons/add_detail.png"),
-							handler : function(grid, row) {
-								var store = grid.getStore();
-								store.insert(row + 1, [{}]);
-							},
-							scope : me
-						}]
+									icon : me
+											.URL("Public/Images/icons/add.png"),
+									tooltip : "在当前记录之后新增记录",
+									handler : function(grid, row) {
+										var store = grid.getStore();
+										store.insert(row + 1, [{}]);
+									},
+									scope : me
+								}]
 					}],
 			store : store,
 			listeners : {
