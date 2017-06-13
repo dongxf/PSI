@@ -45,7 +45,7 @@ Ext.define("PSI.Supplier.MainForm", {
 											xtype : "panel",
 											region : "west",
 											layout : "fit",
-											width : 300,
+											width : 350,
 											split : true,
 											collapsible : true,
 											header : false,
@@ -259,7 +259,6 @@ Ext.define("PSI.Supplier.MainForm", {
 					features : [{
 								ftype : "summary"
 							}],
-					forceFit : true,
 					columnLines : true,
 					columns : [{
 								header : "分类编码",
@@ -270,7 +269,7 @@ Ext.define("PSI.Supplier.MainForm", {
 							}, {
 								header : "供应商分类",
 								dataIndex : "name",
-								flex : 1,
+								width: 160,
 								menuDisabled : true,
 								sortable : false,
 								summaryRenderer : function() {
