@@ -629,6 +629,7 @@ Ext.define("PSI.Sale.WSEditForm", {
 								items : [{
 									icon : PSI.Const.BASE_URL
 											+ "Public/Images/icons/delete.png",
+									tooltip : "删除当前记录",
 									handler : function(grid, row) {
 										var store = grid.getStore();
 										store.remove(store.getAt(row));
@@ -648,7 +649,8 @@ Ext.define("PSI.Sale.WSEditForm", {
 								xtype : "actioncolumn",
 								items : [{
 									icon : PSI.Const.BASE_URL
-											+ "Public/Images/icons/add.png",
+											+ "Public/Images/icons/insert.png",
+									tooltip : "在当前记录之前插入新记录",
 									handler : function(grid, row) {
 										var store = grid.getStore();
 										store.insert(row, [{}]);
@@ -665,7 +667,8 @@ Ext.define("PSI.Sale.WSEditForm", {
 								xtype : "actioncolumn",
 								items : [{
 									icon : PSI.Const.BASE_URL
-											+ "Public/Images/icons/add_detail.png",
+											+ "Public/Images/icons/add.png",
+									tooltip : "在当前记录之后新增记录",
 									handler : function(grid, row) {
 										var store = grid.getStore();
 										store.insert(row + 1, [{}]);
