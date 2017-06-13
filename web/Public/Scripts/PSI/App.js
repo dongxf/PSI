@@ -74,61 +74,62 @@ Ext.define("PSI.App", {
 		var year = new Date().getFullYear();
 
 		me.vp = Ext.create("Ext.container.Viewport", {
-					layout : "fit",
-					items : [{
-						id : "__PSITopPanel",
-						xtype : "panel",
-						border : 0,
-						layout : "border",
-						header : {
-							height : 40,
-							tools : [{
-										xtype : "displayfield",
-										value : "<span style='color:#04408c;font-weight:bold'>当前用户：" + me.getUserName()
-												+ "&nbsp;</span>"
-									}]
-						},
-						bbar : [{
+			layout : "fit",
+			items : [{
+				id : "__PSITopPanel",
+				xtype : "panel",
+				border : 0,
+				layout : "border",
+				header : {
+					height : 40,
+					tools : [{
+						xtype : "displayfield",
+						value : "<span style='color:#04408c;font-weight:bold'>当前用户："
+								+ me.getUserName() + "&nbsp;</span>"
+					}]
+				},
+				items : [{
+							region : "center",
+							border : 0,
+							layout : "fit",
 							xtype : "panel",
-							width : "100%",
+							items : [me.mainPanel]
+						}, {
+							xtype : "panel",
+							region : "east",
+							width : 250,
+							maxWidth : 250,
+							split : true,
+							collapsible : true,
+							collapseMode : "mini",
+							collapsed : me.getRecentFidPanelCollapsed(),
+							header : false,
+							border : 0,
+							layout : "fit",
+							items : [me.gridRecentFid],
+							listeners : {
+								collapse : {
+									fn : me.onRecentFidPanelCollapse,
+									scope : me
+								},
+								expand : {
+									fn : me.onRecentFidPanelExpand,
+									scope : me
+								}
+							}
+						}, {
+							xtype : "panel",
+							region : "south",
+							height : 25,
+							border : 0,
 							header : {
 								titleAlign : "center",
 								title : "Copyright &copy; 2015-" + year
 										+ " PSI Team, All Rights Reserved"
 							}
-						}],
-						items : [{
-									region : "center",
-									border : 0,
-									layout : "fit",
-									xtype : "panel",
-									items : [me.mainPanel]
-								}, {
-									xtype : "panel",
-									region : "east",
-									width : 250,
-									maxWidth : 250,
-									split : true,
-									collapsible : true,
-									collapseMode : "mini",
-									collapsed : me.getRecentFidPanelCollapsed(),
-									header : false,
-									border : 0,
-									layout : "fit",
-									items : [me.gridRecentFid],
-									listeners : {
-										collapse : {
-											fn : me.onRecentFidPanelCollapse,
-											scope : me
-										},
-										expand : {
-											fn : me.onRecentFidPanelExpand,
-											scope : me
-										}
-									}
-								}]
-					}]
-				});
+						}]
+			}]
+		});
 
 		var el = Ext.getBody();
 		el.mask("系统正在加载中...");
