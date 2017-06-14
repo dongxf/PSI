@@ -88,54 +88,54 @@ Ext.define("PSI.Warehouse.MainForm", {
 				});
 
 		me.__mainGrid = Ext.create("Ext.grid.Panel", {
-			border : 0,
-			viewConfig : {
-				enableTextSelection : true
-			},
-			columnLines : true,
-			columns : [{
-						xtype : "rownumberer"
-					}, {
-						header : "仓库编码",
-						dataIndex : "code",
-						menuDisabled : true,
-						sortable : false,
-						width : 60
-					}, {
-						header : "仓库名称",
-						dataIndex : "name",
-						menuDisabled : true,
-						sortable : false,
-						width : 200
-					}, {
-						header : "建账完毕",
-						dataIndex : "inited",
-						menuDisabled : true,
-						sortable : false,
-						width : 70,
-						renderer : function(value) {
-							return value == 1
-									? "完毕"
-									: "<span style='color:red;font-weight:bold'>未完</span>";
+					border : 0,
+					viewConfig : {
+						enableTextSelection : true
+					},
+					columnLines : true,
+					columns : [{
+								xtype : "rownumberer"
+							}, {
+								header : "仓库编码",
+								dataIndex : "code",
+								menuDisabled : true,
+								sortable : false,
+								width : 60
+							}, {
+								header : "仓库名称",
+								dataIndex : "name",
+								menuDisabled : true,
+								sortable : false,
+								width : 200
+							}, {
+								header : "库存建账",
+								dataIndex : "inited",
+								menuDisabled : true,
+								sortable : false,
+								width : 70,
+								renderer : function(value) {
+									return value == 1
+											? "建账完毕"
+											: "<span style='color:red'>待建账</span>";
+								}
+							}, {
+								header : "创建人的数据域",
+								dataIndex : "dataOrg",
+								menuDisabled : true,
+								sortable : false
+							}],
+					store : Ext.create("Ext.data.Store", {
+								model : modelName,
+								autoLoad : false,
+								data : []
+							}),
+					listeners : {
+						itemdblclick : {
+							fn : me.onEditWarehouse,
+							scope : me
 						}
-					}, {
-						header : "创建人的数据域",
-						dataIndex : "dataOrg",
-						menuDisabled : true,
-						sortable : false
-					}],
-			store : Ext.create("Ext.data.Store", {
-						model : modelName,
-						autoLoad : false,
-						data : []
-					}),
-			listeners : {
-				itemdblclick : {
-					fn : me.onEditWarehouse,
-					scope : me
-				}
-			}
-		});
+					}
+				});
 
 		return me.__mainGrid;
 	},
