@@ -38,7 +38,7 @@ Ext.define("PSI.Goods.GoodsImportForm", {
 			header : {
 				title : me.formatTitle("导入商品"),
 				height : 40,
-				iconCls : "PSI-button-excelimport"
+				iconCls : "PSI-button-import"
 			},
 			modal : true,
 			resizable : false,
