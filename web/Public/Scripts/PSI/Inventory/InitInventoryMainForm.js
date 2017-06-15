@@ -220,6 +220,7 @@ Ext.define("PSI.Inventory.InitInventoryMainForm", {
 								handler : me.onFinish
 							}, "-", {
 								text : "取消建账完毕标记",
+								iconCls : "PSI-button-cancel",
 								scope : me,
 								handler : me.onCancel
 							}, "-", {

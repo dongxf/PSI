@@ -35,7 +35,7 @@
 }
 
 .PSI-button-ok {
-    background-image:url(../Images/icons/ok.png?v=2017061301) !important;
+    background-image:url(../Images/icons/ok.png?v=2017061501) !important;
 }
 
 .PSI-button-cancel {
@@ -100,6 +100,10 @@
 
 .PSI-button-dataorg {
     background-image:url(../Images/icons/edit_dataorg.png?v=2017061301) !important;
+}
+
+.PSI-button-openmodule {
+    background-image:url(../Images/icons/open_module.png?v=2017061301) !important;
 }
 
 .PSI-fid-8993 {
