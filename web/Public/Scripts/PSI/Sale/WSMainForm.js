@@ -12,12 +12,14 @@ Ext.define("PSI.Sale.WSMainForm", {
 		Ext.apply(me, {
 					tbar : me.getToolbarCmp(),
 					items : [{
+								id : "panelQueryCmp",
 								region : "north",
 								height : 90,
 								layout : "fit",
 								border : 0,
 								title : "查询条件",
 								collapsible : true,
+								collapseMode : "mini",
 								layout : {
 									type : "table",
 									columns : 5
@@ -185,6 +187,18 @@ Ext.define("PSI.Sale.WSMainForm", {
 								width : 90,
 								margin : "5, 0, 0, 10",
 								handler : me.onClearQuery,
+								scope : me
+							}]
+				}, {
+					xtype : "container",
+					items : [{
+								xtype : "button",
+								text : "隐藏查询条件栏",
+								width : 100,
+								margin : "5 0 0 10",
+								handler : function() {
+									Ext.getCmp("panelQueryCmp").collapse();
+								},
 								scope : me
 							}]
 				}];
