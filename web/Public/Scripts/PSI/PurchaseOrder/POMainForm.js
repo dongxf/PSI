@@ -1159,8 +1159,10 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 		var bill = item[0];
 
 		var grid = me.getPWGrid();
-		var el = grid.getEl() || Ext.getBody();
-		el.mask(PSI.Const.LOADING);
+		var el = grid.getEl();
+		if (el) {
+			el.mask(PSI.Const.LOADING);
+		}
 
 		var r = {
 			url : me.URL("Home/Purchase/poBillPWBillList"),
@@ -1177,7 +1179,9 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 					store.add(data);
 				}
 
-				el.unmask();
+				if (el) {
+					el.unmask();
+				}
 			}
 		};
 		me.ajax(r);
