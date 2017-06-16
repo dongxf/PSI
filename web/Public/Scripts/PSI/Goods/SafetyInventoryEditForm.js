@@ -19,7 +19,7 @@ Ext.define("PSI.Goods.SafetyInventoryEditForm", {
 					},
 					modal : true,
 					onEsc : Ext.emptyFn,
-					width : 580,
+					width : 620,
 					height : 400,
 					layout : "border",
 					items : [{
