@@ -910,8 +910,11 @@ Ext.define("PSI.Goods.MainForm", {
 		var goods = item[0];
 
 		var gridBOM = me.getGoodsBOMGrid();
-		var elBOM = gridBOM.getEl() || Ext.getBody();
-		elBOM.mask(PSI.Const.LOADING);
+		var elBOM = gridBOM.getEl();
+		if (elBOM) {
+			elBOM.mask(PSI.Const.LOADING);
+		}
+
 		me.ajax({
 					url : me.URL("Home/Goods/goodsBOMList"),
 					method : "POST",
@@ -928,7 +931,9 @@ Ext.define("PSI.Goods.MainForm", {
 							store.add(data);
 						}
 
-						elBOM.unmask();
+						if (elBOM) {
+							elBOM.unmask();
+						}
 					}
 				});
 	},
@@ -1349,8 +1354,11 @@ Ext.define("PSI.Goods.MainForm", {
 		var goods = item[0];
 
 		var grid = me.getGoodsPriceGrid();
-		var el = grid.getEl() || Ext.getBody();
-		el.mask(PSI.Const.LOADING);
+		var el = grid.getEl();
+		if (el) {
+			el.mask(PSI.Const.LOADING);
+		}
+
 		me.ajax({
 					url : me.URL("Home/Goods/goodsPriceSystemList"),
 					method : "POST",
@@ -1367,7 +1375,9 @@ Ext.define("PSI.Goods.MainForm", {
 							store.add(data);
 						}
 
-						el.unmask();
+						if (el) {
+							el.unmask();
+						}
 					}
 				});
 	},
