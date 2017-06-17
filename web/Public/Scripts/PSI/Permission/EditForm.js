@@ -141,7 +141,7 @@ Ext.define("PSI.Permission.EditForm", {
 		var title = entity == null ? "新增角色" : "编辑角色";
 		title = me.formatTitle(title);
 		var iconCls = entity == null ? "PSI-button-add" : "PSI-button-edit";
-		
+
 		Ext.apply(me, {
 			header : {
 				title : title,
@@ -255,20 +255,42 @@ Ext.define("PSI.Permission.EditForm", {
 									});
 						},
 						scope : this
-					}]
+					}],
+			listeners : {
+				show : {
+					fn : me.onWndShow,
+					scope : me
+				},
+				close : {
+					fn : me.onWndClose,
+					scope : me
+				}
+			}
 		});
 
-		if (entity) {
-			me.on("show", me.onWndShow, this);
-		}
-
 		me.callParent(arguments);
+	},
+
+	onWindowBeforeUnload : function(e) {
+		return (window.event.returnValue = e.returnValue = '确认离开当前页面？');
+	},
+
+	onWndClose : function() {
+		var me = this;
+
+		Ext.get(window).un('beforeunload', me.onWindowBeforeUnload);
 	},
 
 	onWndShow : function() {
 		var me = this;
 
+		Ext.get(window).on('beforeunload', me.onWindowBeforeUnload);
+
 		var entity = me.getEntity();
+		if (!entity) {
+			return;
+		}
+
 		var store = me.permissionGrid.getStore();
 		var el = me.getEl() || Ext.getBody();
 
