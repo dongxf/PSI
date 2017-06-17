@@ -118,6 +118,10 @@ Ext.define("PSI.User.OrgEditForm", {
 				show : {
 					fn : me.onEditFormShow,
 					scope : me
+				},
+				close : {
+					fn : me.onWndClose,
+					scope : me
 				}
 			}
 		});
@@ -132,8 +136,20 @@ Ext.define("PSI.User.OrgEditForm", {
 		me.editForm = Ext.getCmp("PSI_User_OrgEditForm_editForm");
 	},
 
+	onWindowBeforeUnload : function(e) {
+		return (window.event.returnValue = e.returnValue = '确认离开当前页面？');
+	},
+
+	onWndClose : function() {
+		var me = this;
+
+		Ext.get(window).un('beforeunload', me.onWindowBeforeUnload);
+	},
+
 	onEditFormShow : function() {
 		var me = this;
+
+		Ext.get(window).on('beforeunload', me.onWindowBeforeUnload);
 
 		me.editName.focus();
 
