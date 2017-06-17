@@ -178,7 +178,17 @@ Ext.define("PSI.Inventory.InitInventoryEditForm", {
 						handler : function() {
 							me.close();
 						}
-					}]
+					}],
+			listeners : {
+				show : {
+					fn : me.onWndShow,
+					scope : me
+				},
+				close : {
+					fn : me.onWndClose,
+					scope : me
+				}
+			}
 		});
 		me.callParent(arguments);
 		Ext.getCmp("editGoodsCount").on("specialkey", function(field, e) {
@@ -193,6 +203,23 @@ Ext.define("PSI.Inventory.InitInventoryEditForm", {
 				});
 		me.getGoodsCategories();
 	},
+
+	onWindowBeforeUnload : function(e) {
+		return (window.event.returnValue = e.returnValue = '确认离开当前页面？');
+	},
+
+	onWndClose : function() {
+		var me = this;
+
+		Ext.get(window).un('beforeunload', me.onWindowBeforeUnload);
+	},
+
+	onWndShow : function() {
+		var me = this;
+
+		Ext.get(window).on('beforeunload', me.onWindowBeforeUnload);
+	},
+
 	getGoodsGrid : function() {
 		var me = this;
 		if (me.__gridGoods) {
