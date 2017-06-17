@@ -186,14 +186,25 @@ Ext.define("PSI.Goods.PriceSystemEditForm", {
 				}
 			},
 
+			onWindowBeforeUnload : function(e) {
+				return (window.event.returnValue = e.returnValue = '确认离开当前页面？');
+			},
+
 			onWndClose : function() {
 				var me = this;
+
+				Ext.get(window).un('beforeunload', me.onWindowBeforeUnload);
+
 				if (me.__lastId) {
 					me.getParentForm().freshGrid(me.__lastId);
 				}
 			},
 
 			onWndShow : function() {
+				var me = this;
+
+				Ext.get(window).on('beforeunload', me.onWindowBeforeUnload);
+
 				var editName = Ext.getCmp("editName");
 				editName.focus();
 				editName.setValue(editName.getValue());

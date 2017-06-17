@@ -259,8 +259,15 @@ Ext.define("PSI.Goods.GoodsBOMEditForm", {
 		}
 	},
 
+	onWindowBeforeUnload : function(e) {
+		return (window.event.returnValue = e.returnValue = '确认离开当前页面？');
+	},
+
 	onWndClose : function() {
 		var me = this;
+
+		Ext.get(window).un('beforeunload', me.onWindowBeforeUnload);
+
 		if (me.getParentForm()) {
 			me.getParentForm().refreshGoodsBOM();
 		}
@@ -268,6 +275,8 @@ Ext.define("PSI.Goods.GoodsBOMEditForm", {
 
 	onWndShow : function() {
 		var me = this;
+
+		Ext.get(window).on('beforeunload', me.onWindowBeforeUnload);
 
 		var subGoods = me.getEntity();
 		if (!subGoods) {

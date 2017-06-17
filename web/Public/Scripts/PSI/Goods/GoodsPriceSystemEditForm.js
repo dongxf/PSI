@@ -77,6 +77,10 @@ Ext.define("PSI.Goods.GoodsPriceSystemEditForm", {
 								show : {
 									fn : me.onWndShow,
 									scope : me
+								},
+								close : {
+									fn : me.onWndClose,
+									scope : me
 								}
 							}
 						});
@@ -84,8 +88,20 @@ Ext.define("PSI.Goods.GoodsPriceSystemEditForm", {
 				me.callParent(arguments);
 			},
 
+			onWindowBeforeUnload : function(e) {
+				return (window.event.returnValue = e.returnValue = '确认离开当前页面？');
+			},
+
+			onWndClose : function() {
+				var me = this;
+
+				Ext.get(window).un('beforeunload', me.onWindowBeforeUnload);
+			},
+
 			onWndShow : function() {
 				var me = this;
+
+				Ext.get(window).on('beforeunload', me.onWindowBeforeUnload);
 
 				var el = me.getEl() || Ext.getBody();
 				el.mask(PSI.Const.LOADING);
