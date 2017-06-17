@@ -164,8 +164,15 @@ Ext.define("PSI.Warehouse.EditDataOrgForm", {
 		Ext.Ajax.request(r);
 	},
 
+	onWindowBeforeUnload : function(e) {
+		return (window.event.returnValue = e.returnValue = '确认离开当前页面？');
+	},
+
 	onWndClose : function() {
 		var me = this;
+		
+		Ext.get(window).un('beforeunload', me.onWindowBeforeUnload);
+		
 		if (me.__lastId) {
 			if (me.getParentForm()) {
 				me.getParentForm().freshGrid(me.__lastId);
@@ -175,6 +182,9 @@ Ext.define("PSI.Warehouse.EditDataOrgForm", {
 
 	onWndShow : function() {
 		var me = this;
+		
+		Ext.get(window).on('beforeunload', me.onWindowBeforeUnload);
+		
 		me.editDataOrg.focus();
 	}
 });
