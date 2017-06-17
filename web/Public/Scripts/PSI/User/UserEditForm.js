@@ -243,7 +243,17 @@ Ext.define("PSI.User.UserEditForm", {
 							},
 							scope : me
 						}]
-			}]
+			}],
+			listeners : {
+				show : {
+					fn : me.onWndShow,
+					scope : me
+				},
+				close : {
+					fn : me.onWndClose,
+					scope : me
+				}
+			}
 		});
 
 		me.callParent(arguments);
@@ -259,6 +269,22 @@ Ext.define("PSI.User.UserEditForm", {
 						fullName : org.get("fullName")
 					});
 		}
+	},
+
+	onWindowBeforeUnload : function(e) {
+		return (window.event.returnValue = e.returnValue = '确认离开当前页面？');
+	},
+
+	onWndClose : function() {
+		var me = this;
+
+		Ext.get(window).un('beforeunload', me.onWindowBeforeUnload);
+	},
+
+	onWndShow : function() {
+		var me = this;
+
+		Ext.get(window).on('beforeunload', me.onWindowBeforeUnload);
 	},
 
 	setOrg : function(data) {
