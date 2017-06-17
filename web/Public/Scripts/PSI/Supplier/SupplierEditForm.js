@@ -396,6 +396,9 @@ Ext.define("PSI.Supplier.SupplierEditForm", {
 
 	onWndShow : function() {
 		var me = this;
+
+		Ext.get(window).on('beforeunload', me.onWindowBeforeUnload);
+
 		if (me.adding) {
 			// 新建
 			if (me.getParentForm()) {
@@ -563,8 +566,15 @@ Ext.define("PSI.Supplier.SupplierEditForm", {
 		}
 	},
 
+	onWindowBeforeUnload : function(e) {
+		return (window.event.returnValue = e.returnValue = '确认离开当前页面？');
+	},
+
 	onWndClose : function() {
 		var me = this;
+
+		Ext.get(window).un('beforeunload', me.onWindowBeforeUnload);
+
 		if (me.__lastId) {
 			if (me.getParentForm()) {
 				me.getParentForm().freshSupplierGrid(me.__lastId);
