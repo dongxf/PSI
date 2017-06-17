@@ -152,7 +152,6 @@ Ext.define("PSI.Permission.EditForm", {
 			width : 700,
 			height : 600,
 			layout : "border",
-			defaultFocus : "editName",
 			items : [{
 				xtype : "panel",
 				region : "north",
@@ -269,6 +268,8 @@ Ext.define("PSI.Permission.EditForm", {
 		});
 
 		me.callParent(arguments);
+
+		me.editName = Ext.getCmp("editName");
 	},
 
 	onWindowBeforeUnload : function(e) {
@@ -284,12 +285,16 @@ Ext.define("PSI.Permission.EditForm", {
 	onWndShow : function() {
 		var me = this;
 
+		me.editName.focus();
+
 		Ext.get(window).on('beforeunload', me.onWindowBeforeUnload);
 
 		var entity = me.getEntity();
 		if (!entity) {
 			return;
 		}
+
+		me.editName.setValue(me.editName.getValue());
 
 		var store = me.permissionGrid.getStore();
 		var el = me.getEl() || Ext.getBody();
