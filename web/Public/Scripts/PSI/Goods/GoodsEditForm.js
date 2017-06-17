@@ -296,8 +296,15 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 				me.editSalePrice, me.editPurchasePrice, me.editMemo];
 	},
 
+	onWindowBeforeUnload : function(e) {
+		return (window.event.returnValue = e.returnValue = '确认离开当前页面？');
+	},
+
 	onWndShow : function() {
 		var me = this;
+
+		Ext.get(window).on('beforeunload', me.onWindowBeforeUnload);
+
 		var editCode = me.editCode;
 		editCode.focus();
 		editCode.setValue(editCode.getValue());
@@ -445,6 +452,9 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 
 	onWndClose : function() {
 		var me = this;
+
+		Ext.get(window).un('beforeunload', me.onWindowBeforeUnload);
+
 		if (me.getParentForm()) {
 			me.getParentForm().__lastId = me.__lastId;
 			me.getParentForm().freshGoodsGrid();

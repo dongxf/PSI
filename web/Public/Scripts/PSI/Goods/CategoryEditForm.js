@@ -215,6 +215,8 @@ Ext.define("PSI.Goods.CategoryEditForm", {
 	onWndClose : function() {
 		var me = this;
 
+		Ext.get(window).un('beforeunload', me.onWindowBeforeUnload);
+
 		if (me.__lastId) {
 			if (me.getParentForm()) {
 				me.getParentForm().freshCategoryGrid();
@@ -222,11 +224,18 @@ Ext.define("PSI.Goods.CategoryEditForm", {
 		}
 	},
 
+	onWindowBeforeUnload : function(e) {
+		return (window.event.returnValue = e.returnValue = '确认离开当前页面？');
+	},
+
 	/**
 	 * 窗体显示的时候查询数据
 	 */
 	onWndShow : function() {
 		var me = this;
+
+		Ext.get(window).on('beforeunload', me.onWindowBeforeUnload);
+
 		var editCode = me.editCode;
 		editCode.focus();
 		editCode.setValue(editCode.getValue());
