@@ -203,7 +203,8 @@ Ext.define("PSI.Goods.PriceSystemMainForm", {
 										sortable : false,
 										width : 400
 									}, {
-										header : "基准价格的倍数",
+										header : "销售基准价的倍数",
+										width : 120,
 										dataIndex : "factor",
 										menuDisabled : true,
 										sortable : false,

@@ -217,7 +217,7 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 										}
 									}
 								}, {
-									fieldLabel : "销售价",
+									fieldLabel : "销售基准价",
 									xtype : "numberfield",
 									hideTrigger : true,
 									name : "salePrice",

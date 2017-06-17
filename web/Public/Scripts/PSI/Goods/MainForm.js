@@ -336,7 +336,7 @@ Ext.define("PSI.Goods.MainForm", {
 								menuDisabled : true,
 								sortable : false
 							}, {
-								header : "销售价",
+								header : "销售基准价",
 								dataIndex : "salePrice",
 								menuDisabled : true,
 								sortable : false,

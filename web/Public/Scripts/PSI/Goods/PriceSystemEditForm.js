@@ -74,7 +74,7 @@ Ext.define("PSI.Goods.PriceSystemEditForm", {
 								bodyPadding : 5,
 								defaultType : 'textfield',
 								fieldDefaults : {
-									labelWidth : 90,
+									labelWidth : 100,
 									labelAlign : "right",
 									labelSeparator : "",
 									msgTarget : 'side',
@@ -105,9 +105,9 @@ Ext.define("PSI.Goods.PriceSystemEditForm", {
 									id : "editFactor",
 									xtype : "numberfield",
 									hideTrigger : true,
-									fieldLabel : "基准价格倍数",
+									fieldLabel : "销售基准价倍数",
 									allowBlank : false,
-									blankText : "没有基准价格倍数",
+									blankText : "没有输入销售基准价倍数",
 									beforeLabelTextTpl : PSI.Const.REQUIRED,
 									name : "factor",
 									value : entity == null ? 1 : entity

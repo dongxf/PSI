@@ -180,15 +180,15 @@ Ext.define("PSI.Goods.GoodsPriceSystemEditForm", {
 							plugins : [me.__cellEditing],
 							columnLines : true,
 							tbar : [{
-										fieldLabel : "基准价格",
-										labelWidth : 60,
+										fieldLabel : "销售基准价",
+										labelWidth : 70,
 										labelAlign : "right",
 										id : "editBaseSalePrice",
 										xtype : "numberfield",
 										hideTrigger : true
 									}, "-", {
 										xtype : "button",
-										text : "根据基准价格自动计算其他价格",
+										text : "根据销售基准价自动计算其他价格",
 										iconCls : "PSI-button-ok",
 										handler : me.onCalPrice,
 										scope : me
@@ -200,7 +200,7 @@ Ext.define("PSI.Goods.GoodsPriceSystemEditForm", {
 										menuDisabled : true,
 										sortable : false
 									}, {
-										header : "基准价格倍数",
+										header : "销售基准价倍数",
 										dataIndex : "factor",
 										width : 120,
 										menuDisabled : true,
