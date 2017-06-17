@@ -98,6 +98,10 @@ Ext.define("PSI.Goods.BrandEditForm", {
 				show : {
 					fn : me.onEditFormShow,
 					scope : me
+				},
+				close : {
+					fn : me.onWndClose,
+					scope : me
 				}
 			}
 		});
@@ -113,8 +117,20 @@ Ext.define("PSI.Goods.BrandEditForm", {
 				.getCmp("PSI_Goods_BrandEditForm_editParentBrandId");
 	},
 
+	onWindowBeforeUnload : function(e) {
+		return (window.event.returnValue = e.returnValue = '确认离开当前页面？');
+	},
+
+	onWndClose : function() {
+		var me = this;
+
+		Ext.get(window).un('beforeunload', me.onWindowBeforeUnload);
+	},
+
 	onEditFormShow : function() {
 		var me = this;
+
+		Ext.get(window).on('beforeunload', me.onWindowBeforeUnload);
 
 		me.editName.focus();
 
