@@ -321,7 +321,15 @@ class POBillDAO extends PSIBaseExDAO {
 			}
 			
 			$goodsCount = $v["goodsCount"];
+			if ($goodsCount <= 0) {
+				return $this->bad("采购数量需要大于0");
+			}
+			
 			$goodsPrice = $v["goodsPrice"];
+			if ($goodsPrice < 0) {
+				return $this->bad("采购单价不能是负数");
+			}
+			
 			$goodsMoney = $v["goodsMoney"];
 			$taxRate = $v["taxRate"];
 			$tax = $v["tax"];
@@ -456,7 +464,13 @@ class POBillDAO extends PSIBaseExDAO {
 			}
 			
 			$goodsCount = $v["goodsCount"];
+			if ($goodsCount <= 0) {
+				return $this->bad("采购数量需要大于0");
+			}
 			$goodsPrice = $v["goodsPrice"];
+			if ($goodsPrice < 0) {
+				return $this->bad("采购单价不能是负数");
+			}
 			$goodsMoney = $v["goodsMoney"];
 			$taxRate = $v["taxRate"];
 			$tax = $v["tax"];
