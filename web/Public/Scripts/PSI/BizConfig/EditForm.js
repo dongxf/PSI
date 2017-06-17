@@ -406,8 +406,15 @@ Ext.define("PSI.BizConfig.EditForm", {
 				});
 	},
 
+	onWindowBeforeUnload : function(e) {
+		return (window.event.returnValue = e.returnValue = '确认离开当前页面？');
+	},
+
 	onWndClose : function() {
 		var me = this;
+
+		Ext.get(window).un('beforeunload', me.onWindowBeforeUnload);
+
 		if (me.__saved) {
 			me.getParentForm().refreshGrid();
 		}
@@ -416,6 +423,8 @@ Ext.define("PSI.BizConfig.EditForm", {
 	onWndShow : function() {
 		var me = this;
 		me.__saved = false;
+
+		Ext.get(window).on('beforeunload', me.onWindowBeforeUnload);
 
 		var el = me.getEl() || Ext.getBody();
 		el.mask(PSI.Const.LOADING);
