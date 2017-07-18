@@ -24,7 +24,7 @@ class HelpController extends PSIBaseController {
 				redirect($this->HELP_URL . "54868");
 				break;
 			default :
-				redirect($this->HELP_DEFAUT_URL);
+				redirect("/help");
 		}
 	}
 }
