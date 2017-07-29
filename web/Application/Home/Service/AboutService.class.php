@@ -46,10 +46,10 @@ class AboutService extends PSIBaseExService {
 		if (! $data) {
 			return "产品数据库结构版本号未知";
 		} else {
-			return array(
+			return [
 					"version" => $data[0]["db_version"],
 					"dt" => $data[0]["update_dt"]
-			);
+			];
 		}
 	}
 }
