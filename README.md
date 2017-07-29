@@ -9,7 +9,7 @@ PSI演示
 >
 >PSI运行环境
 >
->PHP 7+, MySQL 5.6+
+>PHP 7+, MySQL 5.5+
 
 
 PSI在魔泊云的部署指南
