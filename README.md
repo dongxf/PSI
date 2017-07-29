@@ -6,6 +6,10 @@
 PSI演示
 -------------
 >PSI的演示见：http://psi.butterfly.mopaasapp.com
+>
+>PSI运行环境
+>
+>PHP 7+, MySQL 5.6+
 
 
 PSI在魔泊云的部署指南
