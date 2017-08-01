@@ -4,6 +4,7 @@ namespace Home\Controller;
 
 use Think\Controller;
 use Home\Common\FIdConst;
+use Home\Service\UserService;
 
 /**
  * 自定义表单Controller
@@ -17,7 +18,7 @@ class FormController extends PSIBaseController {
 	 * 自定义表单 - 主页面
 	 */
 	public function index() {
-			$us = new UserService();
+		$us = new UserService();
 		
 		if ($us->hasPermission(FIdConst::FORM_SYSTEM)) {
 			$this->initVar();

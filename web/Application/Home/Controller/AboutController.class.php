@@ -2,9 +2,8 @@
 
 namespace Home\Controller;
 
-use Think\Controller;
-use Home\Service\UserService;
 use Home\Service\AboutService;
+use Home\Service\UserService;
 
 /**
  * 关于Controller
