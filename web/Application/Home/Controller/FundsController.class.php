@@ -2,14 +2,13 @@
 
 namespace Home\Controller;
 
-use Think\Controller;
-use Home\Service\UserService;
-use Home\Service\PayablesService;
-use Home\Service\ReceivablesService;
 use Home\Common\FIdConst;
 use Home\Service\CashService;
-use Home\Service\PreReceivingService;
+use Home\Service\PayablesService;
 use Home\Service\PrePaymentService;
+use Home\Service\PreReceivingService;
+use Home\Service\ReceivablesService;
+use Home\Service\UserService;
 
 /**
  * 资金Controller

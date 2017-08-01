@@ -2,11 +2,10 @@
 
 namespace Home\Controller;
 
-use Think\Controller;
-use Home\Service\UserService;
+use Home\Common\FIdConst;
 use Home\Service\GoodsService;
 use Home\Service\ImportService;
-use Home\Common\FIdConst;
+use Home\Service\UserService;
 
 /**
  * 商品Controller

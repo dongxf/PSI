@@ -2,11 +2,10 @@
 
 namespace Home\Controller;
 
-use Home\Service\ImportService;
-use Think\Controller;
-use Home\Service\UserService;
-use Home\Service\CustomerService;
 use Home\Common\FIdConst;
+use Home\Service\CustomerService;
+use Home\Service\ImportService;
+use Home\Service\UserService;
 
 /**
  * 客户资料Controller

@@ -2,10 +2,9 @@
 
 namespace Home\Controller;
 
-use Think\Controller;
-use Home\Service\UserService;
 use Home\Common\FIdConst;
 use Home\Service\InstallService;
+use Home\Service\UserService;
 
 /**
  * 用户管理Controller

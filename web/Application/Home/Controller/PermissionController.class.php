@@ -2,10 +2,9 @@
 
 namespace Home\Controller;
 
-use Think\Controller;
-use Home\Service\UserService;
-use Home\Service\PermissionService;
 use Home\Common\FIdConst;
+use Home\Service\PermissionService;
+use Home\Service\UserService;
 
 /**
  * 权限Controller

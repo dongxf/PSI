@@ -2,10 +2,9 @@
 
 namespace Home\Controller;
 
-use Think\Controller;
-use Home\Service\UserService;
-use Home\Service\BizConfigService;
 use Home\Common\FIdConst;
+use Home\Service\BizConfigService;
+use Home\Service\UserService;
 
 /**
  * 业务设置Controller

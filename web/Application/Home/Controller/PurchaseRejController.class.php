@@ -2,10 +2,9 @@
 
 namespace Home\Controller;
 
-use Think\Controller;
-use Home\Service\UserService;
 use Home\Common\FIdConst;
 use Home\Service\PRBillService;
+use Home\Service\UserService;
 
 /**
  * 采购退货出库Controller

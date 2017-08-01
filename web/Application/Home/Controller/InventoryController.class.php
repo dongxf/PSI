@@ -2,10 +2,9 @@
 
 namespace Home\Controller;
 
-use Think\Controller;
-use Home\Service\UserService;
-use Home\Service\InventoryService;
 use Home\Common\FIdConst;
+use Home\Service\InventoryService;
+use Home\Service\UserService;
 
 /**
  * 库存Controller

@@ -2,12 +2,11 @@
 
 namespace Home\Controller;
 
-use Think\Controller;
-use Home\Service\UserService;
 use Home\Common\FIdConst;
-use Home\Service\WSBillService;
-use Home\Service\SRBillService;
 use Home\Service\SOBillService;
+use Home\Service\SRBillService;
+use Home\Service\UserService;
+use Home\Service\WSBillService;
 
 /**
  * 销售Controller

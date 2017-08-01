@@ -2,11 +2,10 @@
 
 namespace Home\Controller;
 
-use Think\Controller;
-use Home\Service\UserService;
-use Home\Service\PWBillService;
 use Home\Common\FIdConst;
 use Home\Service\POBillService;
+use Home\Service\PWBillService;
+use Home\Service\UserService;
 
 /**
  * 采购Controller

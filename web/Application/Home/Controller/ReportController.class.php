@@ -2,13 +2,12 @@
 
 namespace Home\Controller;
 
-use Think\Controller;
-use Home\Service\UserService;
 use Home\Common\FIdConst;
-use Home\Service\SaleReportService;
 use Home\Service\InventoryReportService;
-use Home\Service\ReceivablesReportService;
 use Home\Service\PayablesReportService;
+use Home\Service\ReceivablesReportService;
+use Home\Service\SaleReportService;
+use Home\Service\UserService;
 
 /**
  * 报表Controller

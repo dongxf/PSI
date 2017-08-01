@@ -2,8 +2,6 @@
 
 namespace Home\Controller;
 
-use Think\Controller;
-
 /**
  * 帮助Controller
  *

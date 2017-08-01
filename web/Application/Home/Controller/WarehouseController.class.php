@@ -2,10 +2,9 @@
 
 namespace Home\Controller;
 
-use Think\Controller;
+use Home\Common\FIdConst;
 use Home\Service\UserService;
 use Home\Service\WarehouseService;
-use Home\Common\FIdConst;
 
 /**
  * 仓库Controller

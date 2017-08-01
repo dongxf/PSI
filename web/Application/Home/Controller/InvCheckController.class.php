@@ -2,10 +2,9 @@
 
 namespace Home\Controller;
 
-use Think\Controller;
-use Home\Service\UserService;
 use Home\Common\FIdConst;
 use Home\Service\ICBillService;
+use Home\Service\UserService;
 
 /**
  * 库存盘点Controller

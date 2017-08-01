@@ -2,10 +2,9 @@
 
 namespace Home\Controller;
 
-use Think\Controller;
-use Home\Service\UserService;
-use Home\Service\SupplierService;
 use Home\Common\FIdConst;
+use Home\Service\SupplierService;
+use Home\Service\UserService;
 
 /**
  * 供应商档案Controller

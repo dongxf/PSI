@@ -2,11 +2,10 @@
 
 namespace Home\Controller;
 
-use Think\Controller;
-use Home\Service\UserService;
-use Home\Service\BizlogService;
 use Home\Common\FIdConst;
+use Home\Service\BizlogService;
 use Home\Service\UpdateDBService;
+use Home\Service\UserService;
 
 /**
  * 业务日志Controller
