@@ -56,14 +56,15 @@ class UserService extends PSIBaseExService {
 		}
 		
 		// 修改我的密码，重新登录，首页，使用帮助，关于，购买商业服务，这六个功能对所有的在线用户均不需要特别的权限
-		$idList = array(
+		$idList = [
 				FIdConst::CHANGE_MY_PASSWORD,
 				FIdConst::RELOGIN,
 				FIdConst::HOME,
 				FIdConst::HELP,
 				FIdConst::ABOUT,
 				FIdConst::PSI_SERVICE
-		);
+		];
+		
 		if ($fid == null || in_array($fid, $idList)) {
 			return $result;
 		}
