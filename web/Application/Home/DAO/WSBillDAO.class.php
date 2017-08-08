@@ -643,7 +643,7 @@ class WSBillDAO extends PSIBaseExDAO {
 			$sql = "select w.id, w.ref, w.bill_status, w.bizdt, c.id as customer_id, c.name as customer_name,
 					  u.id as biz_user_id, u.name as biz_user_name,
 					  h.id as warehouse_id, h.name as warehouse_name,
-						w.receiving_type, w.memo
+						w.receiving_type, w.memo, w.deal_address
 					from t_ws_bill w, t_customer c, t_user u, t_warehouse h
 					where w.customer_id = c.id and w.biz_user_id = u.id
 					  and w.warehouse_id = h.id
@@ -661,6 +661,7 @@ class WSBillDAO extends PSIBaseExDAO {
 				$result["bizUserName"] = $data[0]["biz_user_name"];
 				$result["receivingType"] = $data[0]["receiving_type"];
 				$result["memo"] = $data[0]["memo"];
+				$result["dealAddress"] = $data[0]["deal_address"];
 			}
 			
 			$sql = "select d.id, g.id as goods_id, g.code, g.name, g.spec, u.name as unit_name, d.goods_count,
