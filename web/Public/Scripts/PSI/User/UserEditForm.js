@@ -5,8 +5,6 @@ Ext.define("PSI.User.UserEditForm", {
 	extend : "PSI.AFX.BaseDialogForm",
 
 	config : {
-		parentForm : null,
-		entity : null,
 		defaultOrg : null
 	},
 
@@ -35,7 +33,6 @@ Ext.define("PSI.User.UserEditForm", {
 			width : 470,
 			height : entity == null ? 310 : 280,
 			layout : "fit",
-			defaultFocus : "editLoginName",
 			items : [{
 				id : "editForm",
 				xtype : "form",
@@ -285,6 +282,10 @@ Ext.define("PSI.User.UserEditForm", {
 		var me = this;
 
 		Ext.get(window).on('beforeunload', me.onWindowBeforeUnload);
+
+		var editLoginName = Ext.getCmp("editLoginName");
+		editLoginName.focus();
+		editLoginName.setValue(editLoginName.getValue());
 	},
 
 	setOrg : function(data) {
