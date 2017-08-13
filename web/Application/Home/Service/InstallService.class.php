@@ -7,13 +7,19 @@ namespace Home\Service;
  *
  * @author 李静波
  */
-class InstallService extends PSIBaseService {
+class InstallService extends PSIBaseExService {
 
 	/**
 	 * 首次运行PSI的时候，自动初始化数据库(创建表和往表里面插入初始化数据)
+	 *
+	 * 只在MoPaaS下有效
 	 */
 	public function autoInstallWhenFirstRun() {
-		$db = M();
+		if (! $this->isMoPaaS()) {
+			return;
+		}
+		
+		$db = $this->db();
 		$tableName = "t_biz_log";
 		
 		// 用 t_biz_log 这个表是否存在 来判断是否已经初始化了数据库
@@ -29,7 +35,7 @@ class InstallService extends PSIBaseService {
 	 * 创建表
 	 */
 	private function createTables() {
-		$db = M();
+		$db = $this->db();
 		
 		// think_session
 		$sql = "CREATE TABLE `think_session` (
@@ -1102,7 +1108,8 @@ class InstallService extends PSIBaseService {
 	 * 插入初始化数据
 	 */
 	private function insertInitData() {
-		$db = M();
+		$db = $this->db();
+		
 		$db->startTrans();
 		
 		// t_fid
