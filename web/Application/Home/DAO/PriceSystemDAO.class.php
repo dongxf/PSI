@@ -156,6 +156,7 @@ class PriceSystemDAO extends PSIBaseExDAO {
 			return $this->bad("要删除的价格不存在");
 		}
 		
+		$name = $priceSystem["name"];
 		// 检查该价格是否已经被使用
 		$sql = "select count(*) as cnt from t_customer_category
 				where ps_id = '%s' ";
@@ -171,7 +172,7 @@ class PriceSystemDAO extends PSIBaseExDAO {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
 		
-		$params["name"] = $priceSystem["name"];
+		$params["name"] = $name;
 		
 		// 删除成功
 		return null;
