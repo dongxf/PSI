@@ -191,8 +191,11 @@ Ext.define("PSI.App", {
 
 						});
 			} else {
-				window.open(PSI.Const.BASE_URL
-						+ "Home/MainMenu/navigateTo/fid/" + fid);
+				me.vp.focus();
+				
+				var url = PSI.Const.BASE_URL + "Home/MainMenu/navigateTo/fid/"
+						+ fid;
+				window.open(url);
 			}
 		};
 
