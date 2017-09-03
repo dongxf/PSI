@@ -105,7 +105,14 @@ Ext.define("PSI.Bizlog.MainForm", {
 								dataIndex : "ip",
 								width : 120,
 								menuDisabled : true,
-								sortable : false
+								sortable : false,
+								renderer : function(value, md, record) {
+									return "<a href='http://www.baidu.com/s?wd="
+											+ encodeURIComponent(value)
+											+ "' target='_blank'>"
+											+ value
+											+ "</a>";
+								}
 							}, {
 								text : "IP所属地",
 								dataIndex : "ipFrom",
