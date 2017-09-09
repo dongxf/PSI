@@ -204,8 +204,8 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 	public function addGoodsCategory(& $params) {
 		$db = $this->db;
 		
-		$code = $params["code"];
-		$name = $params["name"];
+		$code = trim($params["code"]);
+		$name = trim($params["name"]);
 		$parentId = $params["parentId"];
 		
 		$dataOrg = $params["dataOrg"];
@@ -215,6 +215,14 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 		}
 		if ($this->companyIdNotExists($companyId)) {
 			return $this->badParam("companyId");
+		}
+		
+		if ($this->isEmptyStringAfterTrim($code)) {
+			return $this->bad("分类编码不能为空");
+		}
+		
+		if ($this->isEmptyStringAfterTrim($name)) {
+			return $this->bad("分类名称不能为空");
 		}
 		
 		if ($parentId) {
@@ -311,9 +319,17 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 		$db = $this->db;
 		
 		$id = $params["id"];
-		$code = $params["code"];
-		$name = $params["name"];
+		$code = trim($params["code"]);
+		$name = trim($params["name"]);
 		$parentId = $params["parentId"];
+		
+		if ($this->isEmptyStringAfterTrim($code)) {
+			return $this->bad("分类编码不能为空");
+		}
+		
+		if ($this->isEmptyStringAfterTrim($name)) {
+			return $this->bad("分类名称不能为空");
+		}
 		
 		$category = $this->getGoodsCategoryById($id);
 		if (! $category) {
