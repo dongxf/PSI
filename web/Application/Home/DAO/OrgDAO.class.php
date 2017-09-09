@@ -35,8 +35,16 @@ class OrgDAO extends PSIBaseExDAO {
 		
 		$parentId = $params["parentId"];
 		$id = $this->newId();
-		$name = $params["name"];
-		$orgCode = $params["orgCode"];
+		$name = trim($params["name"]);
+		$orgCode = trim($params["orgCode"]);
+		
+		if ($this->isEmptyStringAfterTrim($name)) {
+			return $this->bad("名称不能为空");
+		}
+		
+		if ($this->isEmptyStringAfterTrim($orgCode)) {
+			return $this->bad("编码不能为空");
+		}
 		
 		$sql = "select full_name from t_org where id = '%s' ";
 		$parentOrg = $db->query($sql, $parentId);
@@ -108,8 +116,16 @@ class OrgDAO extends PSIBaseExDAO {
 		
 		$parentId = $params["parentId"];
 		$id = $params["id"];
-		$name = $params["name"];
-		$orgCode = $params["orgCode"];
+		$name = trim($params["name"]);
+		$orgCode = trim($params["orgCode"]);
+		
+		if ($this->isEmptyStringAfterTrim($name)) {
+			return $this->bad("名称不能为空");
+		}
+		
+		if ($this->isEmptyStringAfterTrim($orgCode)) {
+			return $this->bad("编码不能为空");
+		}
 		
 		// 编辑
 		if ($parentId == $id) {
