@@ -95,4 +95,16 @@ class PSIBaseExDAO extends PSIBaseDAO {
 	protected function badParam($param) {
 		return $this->bad("参数" . $param . "不正确");
 	}
+
+	/**
+	 * 把输入字符串前后的空格去掉后，判断是否是空字符串
+	 * 
+	 * @param string $s        	
+	 *
+	 * @return true: 空字符串
+	 */
+	protected function isEmptyStringAfterTrim($s) {
+		$result = trim($s);
+		return $result == null || $result == "";
+	}
 }

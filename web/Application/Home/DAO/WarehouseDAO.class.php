@@ -60,8 +60,8 @@ class WarehouseDAO extends PSIBaseExDAO {
 	public function addWarehouse(& $params) {
 		$db = $this->db;
 		
-		$code = $params["code"];
-		$name = $params["name"];
+		$code = trim($params["code"]);
+		$name = trim($params["name"]);
 		$py = $params["py"];
 		$dataOrg = $params["dataOrg"];
 		$companyId = $params["companyId"];
@@ -72,6 +72,14 @@ class WarehouseDAO extends PSIBaseExDAO {
 		
 		if ($this->companyIdNotExists($companyId)) {
 			return $this->bad("参数companyId不正确");
+		}
+		
+		if ($this->isEmptyStringAfterTrim($code)) {
+			return $this->bad("仓库编码不能为空");
+		}
+		
+		if ($this->isEmptyStringAfterTrim($name)) {
+			return $this->bad("仓库名称不能为空");
 		}
 		
 		// 检查同编号的仓库是否存在
@@ -104,9 +112,17 @@ class WarehouseDAO extends PSIBaseExDAO {
 	 */
 	public function updateWarehouse(& $params) {
 		$id = $params["id"];
-		$code = $params["code"];
-		$name = $params["name"];
+		$code = trim($params["code"]);
+		$name = trim($params["name"]);
 		$py = $params["py"];
+		
+		if ($this->isEmptyStringAfterTrim($code)) {
+			return $this->bad("仓库编码不能为空");
+		}
+		
+		if ($this->isEmptyStringAfterTrim($name)) {
+			return $this->bad("仓库名称不能为空");
+		}
 		
 		$db = $this->db;
 		
