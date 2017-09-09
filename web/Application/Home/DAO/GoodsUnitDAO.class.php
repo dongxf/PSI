@@ -33,7 +33,11 @@ class GoodsUnitDAO extends PSIBaseExDAO {
 	public function addUnit(& $params) {
 		$db = $this->db;
 		
-		$name = $params["name"];
+		$name = trim($params["name"]);
+		
+		if ($this->isEmptyStringAfterTrim($name)) {
+			return $this->bad("计量单位不能为空");
+		}
 		
 		// 检查计量单位是否存在
 		$sql = "select count(*) as cnt from t_goods_unit where name = '%s' ";
@@ -76,7 +80,11 @@ class GoodsUnitDAO extends PSIBaseExDAO {
 		$db = $this->db;
 		
 		$id = $params["id"];
-		$name = $params["name"];
+		$name = trim($params["name"]);
+		
+		if ($this->isEmptyStringAfterTrim($name)) {
+			return $this->bad("计量单位不能为空");
+		}
 		
 		// 检查计量单位是否存在
 		$sql = "select count(*) as cnt from t_goods_unit where name = '%s' and id <> '%s' ";
@@ -118,7 +126,7 @@ class GoodsUnitDAO extends PSIBaseExDAO {
 
 	/**
 	 * 删除商品计量单位
-	 * 
+	 *
 	 * @param array $params        	
 	 * @return NULL|array
 	 */
