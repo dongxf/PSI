@@ -257,8 +257,8 @@ class SupplierDAO extends PSIBaseExDAO {
 	public function addSupplierCategory(& $params) {
 		$db = $this->db;
 		
-		$code = $params["code"];
-		$name = $params["name"];
+		$code = trim($params["code"]);
+		$name = trim($params["name"]);
 		
 		$dataOrg = $params["dataOrg"];
 		$companyId = $params["companyId"];
@@ -267,6 +267,13 @@ class SupplierDAO extends PSIBaseExDAO {
 		}
 		if ($this->companyIdNotExists($companyId)) {
 			return $this->badParam("companyId");
+		}
+		
+		if ($this->isEmptyStringAfterTrim($code)) {
+			return $this->bad("分类编码不能为空");
+		}
+		if ($this->isEmptyStringAfterTrim($name)) {
+			return $this->bad("分类名称不能为空");
 		}
 		
 		// 检查分类编码是否已经存在
@@ -301,8 +308,15 @@ class SupplierDAO extends PSIBaseExDAO {
 		$db = $this->db;
 		
 		$id = $params["id"];
-		$code = $params["code"];
-		$name = $params["name"];
+		$code = trim($params["code"]);
+		$name = trim($params["name"]);
+		
+		if ($this->isEmptyStringAfterTrim($code)) {
+			return $this->bad("分类编码不能为空");
+		}
+		if ($this->isEmptyStringAfterTrim($name)) {
+			return $this->bad("分类名称不能为空");
+		}
 		
 		// 检查分类编码是否已经存在
 		$sql = "select count(*) as cnt from t_supplier_category where code = '%s' and id <> '%s' ";
