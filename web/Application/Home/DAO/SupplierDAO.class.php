@@ -375,6 +375,7 @@ class SupplierDAO extends PSIBaseExDAO {
 			return $this->bad("要删除的分类不存在");
 		}
 		
+		$params["code"] = $category["code"];
 		$params["name"] = $category["name"];
 		$name = $params["name"];
 		
