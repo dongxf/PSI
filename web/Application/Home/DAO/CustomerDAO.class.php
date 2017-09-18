@@ -114,8 +114,8 @@ class CustomerDAO extends PSIBaseExDAO {
 	public function addCustomerCategory(& $params) {
 		$db = $this->db;
 		
-		$code = $params["code"];
-		$name = $params["name"];
+		$code = trim($params["code"]);
+		$name = trim($params["name"]);
 		
 		$psId = $params["psId"];
 		
@@ -127,6 +127,13 @@ class CustomerDAO extends PSIBaseExDAO {
 		}
 		if ($this->companyIdNotExists($companyId)) {
 			return $this->bad("参数companyId不正确");
+		}
+		
+		if ($this->isEmptyStringAfterTrim($code)) {
+			return $this->bad("分类编码不能为空");
+		}
+		if ($this->isEmptyStringAfterTrim($name)) {
+			return $this->bad("分类名称不能为空");
 		}
 		
 		// 检查分类编码是否已经存在
@@ -161,9 +168,16 @@ class CustomerDAO extends PSIBaseExDAO {
 		$db = $this->db;
 		
 		$id = $params["id"];
-		$code = $params["code"];
-		$name = $params["name"];
+		$code = trim($params["code"]);
+		$name = trim($params["name"]);
 		$psId = $params["psId"];
+		
+		if ($this->isEmptyStringAfterTrim($code)) {
+			return $this->bad("分类编码不能为空");
+		}
+		if ($this->isEmptyStringAfterTrim($name)) {
+			return $this->bad("分类名称不能为空");
+		}
 		
 		// 检查分类编码是否已经存在
 		$sql = "select count(*) as cnt from t_customer_category where code = '%s' and id <> '%s' ";
