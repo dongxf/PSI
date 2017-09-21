@@ -136,6 +136,13 @@ class CustomerDAO extends PSIBaseExDAO {
 			return $this->bad("分类名称不能为空");
 		}
 		
+		if ($this->stringBeyondLimit($code, 20)) {
+			return $this->bad("分类编码长度不能超过20位");
+		}
+		if ($this->stringBeyondLimit($name, 20)) {
+			return $this->bad("分类名称长度不能超过20位");
+		}
+		
 		// 检查分类编码是否已经存在
 		$sql = "select count(*) as cnt from t_customer_category where code = '%s' ";
 		$data = $db->query($sql, $code);
@@ -177,6 +184,13 @@ class CustomerDAO extends PSIBaseExDAO {
 		}
 		if ($this->isEmptyStringAfterTrim($name)) {
 			return $this->bad("分类名称不能为空");
+		}
+		
+		if ($this->stringBeyondLimit($code, 20)) {
+			return $this->bad("分类编码长度不能超过20位");
+		}
+		if ($this->stringBeyondLimit($name, 20)) {
+			return $this->bad("分类名称长度不能超过20位");
 		}
 		
 		// 检查分类编码是否已经存在

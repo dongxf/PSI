@@ -98,7 +98,7 @@ class PSIBaseExDAO extends PSIBaseDAO {
 
 	/**
 	 * 把输入字符串前后的空格去掉后，判断是否是空字符串
-	 * 
+	 *
 	 * @param string $s        	
 	 *
 	 * @return true: 空字符串
@@ -106,5 +106,17 @@ class PSIBaseExDAO extends PSIBaseDAO {
 	protected function isEmptyStringAfterTrim($s) {
 		$result = trim($s);
 		return $result == null || $result == "";
+	}
+
+	/**
+	 * 判断字符串长度是否超过限度
+	 *
+	 * @param string $s        	
+	 * @param int $length
+	 *        	默认长度不能超过255
+	 * @return bool true：超过了限度
+	 */
+	protected function stringBeyondLimit(string $s, int $length = 255): bool {
+		return strlen($s) > $length;
 	}
 }
