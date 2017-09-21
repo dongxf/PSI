@@ -139,8 +139,8 @@ class CustomerDAO extends PSIBaseExDAO {
 		if ($this->stringBeyondLimit($code, 20)) {
 			return $this->bad("分类编码长度不能超过20位");
 		}
-		if ($this->stringBeyondLimit($name, 20)) {
-			return $this->bad("分类名称长度不能超过20位");
+		if ($this->stringBeyondLimit($name, 40)) {
+			return $this->bad("分类名称长度不能超过40位");
 		}
 		
 		// 检查分类编码是否已经存在
@@ -189,8 +189,8 @@ class CustomerDAO extends PSIBaseExDAO {
 		if ($this->stringBeyondLimit($code, 20)) {
 			return $this->bad("分类编码长度不能超过20位");
 		}
-		if ($this->stringBeyondLimit($name, 20)) {
-			return $this->bad("分类名称长度不能超过20位");
+		if ($this->stringBeyondLimit($name, 40)) {
+			return $this->bad("分类名称长度不能超过40位");
 		}
 		
 		// 检查分类编码是否已经存在
