@@ -7,3 +7,8 @@ lnmp.zip 就是上面地址网页的离线包。
 在Nginx下还需要配置好PathInfo
 http://www.nginx.cn/426.html
 Nginx_PathInfo.zip是上述网页的离线包
+
+
+========================================================
+
+本地开发环境推荐用xampp: https://www.apachefriends.org/zh_cn/index.html
