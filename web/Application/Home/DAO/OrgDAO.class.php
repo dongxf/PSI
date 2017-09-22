@@ -46,6 +46,13 @@ class OrgDAO extends PSIBaseExDAO {
 			return $this->bad("编码不能为空");
 		}
 		
+		if ($this->stringBeyondLimit($name, 60)) {
+			return $this->bad("组织机构名称长度不能超过60");
+		}
+		if ($this->stringBeyondLimit($orgCode, 20)) {
+			return $this->bad("组织机构编码长度不能超过20");
+		}
+		
 		$sql = "select full_name from t_org where id = '%s' ";
 		$parentOrg = $db->query($sql, $parentId);
 		$fullName = "";
@@ -125,6 +132,13 @@ class OrgDAO extends PSIBaseExDAO {
 		
 		if ($this->isEmptyStringAfterTrim($orgCode)) {
 			return $this->bad("编码不能为空");
+		}
+		
+		if ($this->stringBeyondLimit($name, 60)) {
+			return $this->bad("组织机构名称长度不能超过60");
+		}
+		if ($this->stringBeyondLimit($orgCode, 20)) {
+			return $this->bad("组织机构编码长度不能超过20");
 		}
 		
 		// 编辑
