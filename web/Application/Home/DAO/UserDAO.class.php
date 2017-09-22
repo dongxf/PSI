@@ -213,19 +213,29 @@ class UserDAO extends PSIBaseExDAO {
 		$db = $this->db;
 		
 		$id = $this->newId();
-		$loginName = $params["loginName"];
-		$name = $params["name"];
-		$orgCode = $params["orgCode"];
+		$loginName = trim($params["loginName"]);
+		$name = trim($params["name"]);
+		$orgCode = trim($params["orgCode"]);
 		$orgId = $params["orgId"];
 		$enabled = $params["enabled"];
 		$gender = $params["gender"];
 		$birthday = $params["birthday"];
-		$idCardNumber = $params["idCardNumber"];
-		$tel = $params["tel"];
-		$tel02 = $params["tel02"];
-		$address = $params["address"];
+		$idCardNumber = trim($params["idCardNumber"]);
+		$tel = trim($params["tel"]);
+		$tel02 = trim($params["tel02"]);
+		$address = trim($params["address"]);
 		
 		$py = $params["py"];
+		
+		if ($this->isEmptyStringAfterTrim($loginName)) {
+			return $this->bad("登录名不能为空");
+		}
+		if ($this->isEmptyStringAfterTrim($name)) {
+			return $this->bad("姓名不能为空");
+		}
+		if ($this->isEmptyStringAfterTrim($orgCode)) {
+			return $this->bad("编码不能为空");
+		}
 		
 		// 检查登录名是否被使用
 		$sql = "select count(*) as cnt from t_user where login_name = '%s' ";
@@ -306,19 +316,29 @@ class UserDAO extends PSIBaseExDAO {
 		$db = $this->db;
 		
 		$id = $params["id"];
-		$loginName = $params["loginName"];
-		$name = $params["name"];
-		$orgCode = $params["orgCode"];
+		$loginName = trim($params["loginName"]);
+		$name = trim($params["name"]);
+		$orgCode = trim($params["orgCode"]);
 		$orgId = $params["orgId"];
 		$enabled = $params["enabled"];
 		$gender = $params["gender"];
 		$birthday = $params["birthday"];
-		$idCardNumber = $params["idCardNumber"];
-		$tel = $params["tel"];
-		$tel02 = $params["tel02"];
-		$address = $params["address"];
+		$idCardNumber = trim($params["idCardNumber"]);
+		$tel = trim($params["tel"]);
+		$tel02 = trim($params["tel02"]);
+		$address = trim($params["address"]);
 		
 		$py = $params["py"];
+		
+		if ($this->isEmptyStringAfterTrim($loginName)) {
+			return $this->bad("登录名不能为空");
+		}
+		if ($this->isEmptyStringAfterTrim($name)) {
+			return $this->bad("姓名不能为空");
+		}
+		if ($this->isEmptyStringAfterTrim($orgCode)) {
+			return $this->bad("编码不能为空");
+		}
 		
 		// 检查登录名是否被使用
 		$sql = "select count(*) as cnt from t_user where login_name = '%s' and id <> '%s' ";
