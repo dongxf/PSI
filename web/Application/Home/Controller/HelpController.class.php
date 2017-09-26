@@ -9,17 +9,15 @@ namespace Home\Controller;
  *        
  */
 class HelpController extends PSIBaseController {
-	private $HELP_DEFAUT_URL = "http://psi.mydoc.io/";
-	private $HELP_URL = "http://psi.mydoc.io/?t=";
 
 	public function index() {
 		$key = I("get.t");
 		switch ($key) {
 			case "login" :
-				redirect($this->HELP_URL . "50507");
+				redirect("/help/10.html");
 				break;
 			case "user" :
-				redirect($this->HELP_URL . "54868");
+				redirect("/help/02-01.html");
 				break;
 			default :
 				redirect("/help");
