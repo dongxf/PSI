@@ -207,6 +207,57 @@ class UserDAO extends PSIBaseExDAO {
 	}
 
 	/**
+	 * 检查数据是否正确
+	 *
+	 * @param array $params        	
+	 * @return NULL|array 没有错误返回null
+	 */
+	private function checkParams($params) {
+		$loginName = trim($params["loginName"]);
+		$name = trim($params["name"]);
+		$orgCode = trim($params["orgCode"]);
+		$orgId = $params["orgId"];
+		$enabled = $params["enabled"];
+		$gender = $params["gender"];
+		$birthday = $params["birthday"];
+		$idCardNumber = trim($params["idCardNumber"]);
+		$tel = trim($params["tel"]);
+		$tel02 = trim($params["tel02"]);
+		$address = trim($params["address"]);
+		
+		if ($this->isEmptyStringAfterTrim($loginName)) {
+			return $this->bad("登录名不能为空");
+		}
+		if ($this->isEmptyStringAfterTrim($name)) {
+			return $this->bad("姓名不能为空");
+		}
+		if ($this->isEmptyStringAfterTrim($orgCode)) {
+			return $this->bad("编码不能为空");
+		}
+		
+		if ($this->stringBeyondLimit($loginName, 20)) {
+			return $this->bad("登录名长度不能超过20位");
+		}
+		if ($this->stringBeyondLimit($name, 20)) {
+			return $this->bad("姓名长度不能超过20位");
+		}
+		if ($this->stringBeyondLimit($idCardNumber, 50)) {
+			return $this->bad("身份证号长度不能超过50位");
+		}
+		if ($this->stringBeyondLimit($tel, 50)) {
+			return $this->bad("联系电话长度不能超过50位");
+		}
+		if ($this->stringBeyondLimit($tel02, 50)) {
+			return $this->bad("备用电话长度不能超过50位");
+		}
+		if ($this->stringBeyondLimit($address, 100)) {
+			return $this->bad("家庭住址长度不能超过100位");
+		}
+		
+		return null;
+	}
+
+	/**
 	 * 新增用户
 	 */
 	public function addUser(& $params) {
@@ -227,14 +278,9 @@ class UserDAO extends PSIBaseExDAO {
 		
 		$py = $params["py"];
 		
-		if ($this->isEmptyStringAfterTrim($loginName)) {
-			return $this->bad("登录名不能为空");
-		}
-		if ($this->isEmptyStringAfterTrim($name)) {
-			return $this->bad("姓名不能为空");
-		}
-		if ($this->isEmptyStringAfterTrim($orgCode)) {
-			return $this->bad("编码不能为空");
+		$result = $this->checkParams($params);
+		if ($result) {
+			return $result;
 		}
 		
 		// 检查登录名是否被使用
@@ -330,14 +376,9 @@ class UserDAO extends PSIBaseExDAO {
 		
 		$py = $params["py"];
 		
-		if ($this->isEmptyStringAfterTrim($loginName)) {
-			return $this->bad("登录名不能为空");
-		}
-		if ($this->isEmptyStringAfterTrim($name)) {
-			return $this->bad("姓名不能为空");
-		}
-		if ($this->isEmptyStringAfterTrim($orgCode)) {
-			return $this->bad("编码不能为空");
+		$result = $this->checkParams($params);
+		if ($result) {
+			return $result;
 		}
 		
 		// 检查登录名是否被使用
