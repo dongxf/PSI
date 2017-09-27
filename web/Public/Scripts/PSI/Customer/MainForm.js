@@ -389,11 +389,13 @@ Ext.define("PSI.Customer.MainForm", {
 									}), {
 								header : "客户编码",
 								dataIndex : "code",
+								locked : true,
 								menuDisabled : true,
 								sortable : false
 							}, {
 								header : "客户名称",
 								dataIndex : "name",
+								locked : true,
 								menuDisabled : true,
 								sortable : false,
 								width : 300
