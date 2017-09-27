@@ -318,7 +318,7 @@ Ext.define("PSI.Supplier.MainForm", {
 							"mobile02", "qq02", "categoryId", "initPayables",
 							"initPayablesDT", "address", "addressShipping",
 							"bankName", "bankAccount", "tax", "fax", "note",
-							"dataOrg"]
+							"dataOrg", "taxRate"]
 				});
 
 		var store = Ext.create("Ext.data.Store", {
@@ -446,6 +446,11 @@ Ext.define("PSI.Supplier.MainForm", {
 							}, {
 								header : "传真",
 								dataIndex : "fax",
+								menuDisabled : true,
+								sortable : false
+							}, {
+								header : "税率",
+								dataIndex : "taxRate",
 								menuDisabled : true,
 								sortable : false
 							}, {
