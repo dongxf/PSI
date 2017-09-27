@@ -434,6 +434,16 @@ class SupplierDAO extends PSIBaseExDAO {
 		$fax = $params["fax"];
 		$note = $params["note"];
 		
+		$taxRate = $params["taxRate"];
+		if ($taxRate == "") {
+			$taxRate = - 1;
+		} else {
+			$taxRate = intval($taxRate);
+			if ($taxRate < 0 || $taxRate > 17) {
+				$taxRate = - 1;
+			}
+		}
+		
 		$dataOrg = $params["dataOrg"];
 		$companyId = $params["companyId"];
 		if ($this->dataOrgNotExists($dataOrg)) {
@@ -460,13 +470,13 @@ class SupplierDAO extends PSIBaseExDAO {
 		$sql = "insert into t_supplier (id, category_id, code, name, py, contact01,
 					qq01, tel01, mobile01, contact02, qq02,
 					tel02, mobile02, address, address_shipping,
-					bank_name, bank_account, tax_number, fax, note, data_org, company_id)
+					bank_name, bank_account, tax_number, fax, note, data_org, company_id, tax_rate)
 					values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
 							'%s', '%s', '%s', '%s',
-							'%s', '%s', '%s', '%s', '%s', '%s', '%s')  ";
+							'%s', '%s', '%s', '%s', '%s', '%s', '%s', %d)  ";
 		$rc = $db->execute($sql, $id, $categoryId, $code, $name, $py, $contact01, $qq01, $tel01, 
 				$mobile01, $contact02, $qq02, $tel02, $mobile02, $address, $addressShipping, 
-				$bankName, $bankAccount, $tax, $fax, $note, $dataOrg, $companyId);
+				$bankName, $bankAccount, $tax, $fax, $note, $dataOrg, $companyId, $taxRate);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
@@ -632,6 +642,16 @@ class SupplierDAO extends PSIBaseExDAO {
 		$fax = $params["fax"];
 		$note = $params["note"];
 		
+		$taxRate = $params["taxRate"];
+		if ($taxRate == "") {
+			$taxRate = - 1;
+		} else {
+			$taxRate = intval($taxRate);
+			if ($taxRate < 0 || $taxRate > 17) {
+				$taxRate = - 1;
+			}
+		}
+		
 		$categoryId = $params["categoryId"];
 		
 		// 检查编码是否已经存在
@@ -648,12 +668,12 @@ class SupplierDAO extends PSIBaseExDAO {
 				contact02 = '%s', qq02 = '%s', tel02 = '%s', mobile02 = '%s',
 				address = '%s', address_shipping = '%s',
 				bank_name = '%s', bank_account = '%s', tax_number = '%s',
-				fax = '%s', note = '%s'
+				fax = '%s', note = '%s', tax_rate = %d
 				where id = '%s'  ";
 		
 		$rc = $db->execute($sql, $code, $name, $categoryId, $py, $contact01, $qq01, $tel01, 
 				$mobile01, $contact02, $qq02, $tel02, $mobile02, $address, $addressShipping, 
-				$bankName, $bankAccount, $tax, $fax, $note, $id);
+				$bankName, $bankAccount, $tax, $fax, $note, $taxRate, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
@@ -821,7 +841,7 @@ class SupplierDAO extends PSIBaseExDAO {
 		$sql = "select category_id, code, name, contact01, qq01, mobile01, tel01,
 					contact02, qq02, mobile02, tel02, address, address_shipping,
 					init_payables, init_payables_dt,
-					bank_name, bank_account, tax_number, fax, note
+					bank_name, bank_account, tax_number, fax, note, tax_rate
 				from t_supplier
 				where id = '%s' ";
 		$data = $db->query($sql, $id);
@@ -849,6 +869,12 @@ class SupplierDAO extends PSIBaseExDAO {
 			$result["tax"] = $data[0]["tax_number"];
 			$result["fax"] = $data[0]["fax"];
 			$result["note"] = $data[0]["note"];
+			
+			$taxRate = $data[0]["tax_rate"];
+			if ($taxRate == -1) {
+				$taxRate = null;
+			}
+			$result["taxRate"] = $taxRate;
 		}
 		
 		return $result;

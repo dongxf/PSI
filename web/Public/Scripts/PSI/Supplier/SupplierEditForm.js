@@ -55,7 +55,7 @@ Ext.define("PSI.Supplier.SupplierEditForm", {
 				iconCls : iconCls
 			},
 			width : 550,
-			height : 420,
+			height : 440,
 			layout : "fit",
 			items : [{
 				id : "PSI_Supplier_SupplierEditForm_editForm",
@@ -295,6 +295,24 @@ Ext.define("PSI.Supplier.SupplierEditForm", {
 								}
 							}
 						}, {
+							id : "PSI_Supplier_SupplierEditForm_editTaxRate",
+							fieldLabel : "税率",
+							name : "taxRate",
+							xtype : "numberfield",
+							hideTrigger : true,
+							allowDecimals : false,
+							value : entity == null ? null : entity
+									.get("taxRate"),
+							listeners : {
+								specialkey : {
+									fn : me.onEditSpecialKey,
+									scope : me
+								}
+							}
+						}, {
+							xtype : "displayfield",
+							value : "%"
+						}, {
 							id : "PSI_Supplier_SupplierEditForm_editInitPayables",
 							fieldLabel : "应付期初余额",
 							name : "initPayables",
@@ -386,12 +404,16 @@ Ext.define("PSI.Supplier.SupplierEditForm", {
 				.getCmp("PSI_Supplier_SupplierEditForm_editInitPayablesDT");
 		me.editNote = Ext.getCmp("PSI_Supplier_SupplierEditForm_editNote");
 
+		me.editTaxRate = Ext
+				.getCmp("PSI_Supplier_SupplierEditForm_editTaxRate");
+
 		me.__editorList = [me.editCategory, me.editCode, me.editName,
 				me.editAddress, me.editContact01, me.editMobile01,
 				me.editTel01, me.editQQ01, me.editContact02, me.editMobile02,
 				me.editTel02, me.editQQ02, me.editAddressShipping,
 				me.editBankName, me.editBankAccount, me.editTax, me.editFax,
-				me.editInitPayables, me.editInitPayablesDT, me.editNote];
+				me.editTaxRate, me.editInitPayables, me.editInitPayablesDT,
+				me.editNote];
 	},
 
 	onWndShow : function() {
@@ -482,6 +504,7 @@ Ext.define("PSI.Supplier.SupplierEditForm", {
 								me.editTax.setValue(data.tax);
 								me.editFax.setValue(data.fax);
 								me.editNote.setValue(data.note);
+								me.editTaxRate.setValue(data.taxRate);
 							}
 
 							el.unmask();
@@ -495,6 +518,16 @@ Ext.define("PSI.Supplier.SupplierEditForm", {
 
 	onOK : function(thenAdd) {
 		var me = this;
+
+		var taxRate = me.editTaxRate.getValue();
+		if (taxRate) {
+			if (taxRate < 0 || taxRate > 17) {
+				PSI.MsgBox.showInfo("税率在0到17之间");
+				me.editTaxRate.focus();
+				return;
+			}
+		}
+
 		var f = me.editForm;
 		var el = f.getEl();
 		el.mask(PSI.Const.SAVING);
@@ -558,7 +591,7 @@ Ext.define("PSI.Supplier.SupplierEditForm", {
 				me.editTel01, me.editQQ01, me.editContact02, me.editMobile02,
 				me.editTel02, me.editQQ02, me.editInitPayables,
 				me.editInitPayablesDT, me.editBankName, me.editBankAccount,
-				me.editTax, me.editFax, me.editNote];
+				me.editTax, me.editTaxRate, me.editFax, me.editNote];
 		for (var i = 0; i < editors.length; i++) {
 			var edit = editors[i];
 			edit.setValue(null);

@@ -170,6 +170,7 @@ class SupplierController extends PSIBaseController {
 					"bankAccount" => I("post.bankAccount"),
 					"tax" => I("post.tax"),
 					"fax" => I("post.fax"),
+					"taxRate" => I("post.taxRate"),
 					"note" => I("post.note"),
 					"categoryId" => I("post.categoryId"),
 					"initPayables" => I("post.initPayables"),

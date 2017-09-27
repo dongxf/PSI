@@ -451,7 +451,8 @@ Ext.define("PSI.Supplier.MainForm", {
 								menuDisabled : true,
 								sortable : false
 							}, {
-								header : "税率",
+								header : "税率(%)",
+								align : "right",
 								dataIndex : "taxRate",
 								menuDisabled : true,
 								sortable : false
