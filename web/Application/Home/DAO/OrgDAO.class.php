@@ -25,16 +25,12 @@ class OrgDAO extends PSIBaseExDAO {
 	}
 
 	/**
-	 * 新增组织机构
+	 * 检查参数是否正确
 	 *
 	 * @param array $params        	
-	 * @return NULL|array
+	 * @return array|NULL null:没有错误
 	 */
-	public function addOrg(& $params) {
-		$db = $this->db;
-		
-		$parentId = $params["parentId"];
-		$id = $this->newId();
+	private function checkParams($params) {
 		$name = trim($params["name"]);
 		$orgCode = trim($params["orgCode"]);
 		
@@ -51,6 +47,28 @@ class OrgDAO extends PSIBaseExDAO {
 		}
 		if ($this->stringBeyondLimit($orgCode, 20)) {
 			return $this->bad("组织机构编码长度不能超过20");
+		}
+		
+		return null;
+	}
+
+	/**
+	 * 新增组织机构
+	 *
+	 * @param array $params        	
+	 * @return NULL|array null: 操作成功
+	 */
+	public function addOrg(& $params) {
+		$db = $this->db;
+		
+		$parentId = $params["parentId"];
+		$id = $this->newId();
+		$name = trim($params["name"]);
+		$orgCode = trim($params["orgCode"]);
+		
+		$result = $this->checkParams($params);
+		if ($result) {
+			return $result;
 		}
 		
 		$sql = "select full_name from t_org where id = '%s' ";
@@ -116,7 +134,7 @@ class OrgDAO extends PSIBaseExDAO {
 	 * 修改组织机构
 	 *
 	 * @param array $params        	
-	 * @return NULL|array
+	 * @return NULL|array null：操作成功
 	 */
 	public function updateOrg(& $params) {
 		$db = $this->db;
@@ -126,19 +144,9 @@ class OrgDAO extends PSIBaseExDAO {
 		$name = trim($params["name"]);
 		$orgCode = trim($params["orgCode"]);
 		
-		if ($this->isEmptyStringAfterTrim($name)) {
-			return $this->bad("名称不能为空");
-		}
-		
-		if ($this->isEmptyStringAfterTrim($orgCode)) {
-			return $this->bad("编码不能为空");
-		}
-		
-		if ($this->stringBeyondLimit($name, 60)) {
-			return $this->bad("组织机构名称长度不能超过60");
-		}
-		if ($this->stringBeyondLimit($orgCode, 20)) {
-			return $this->bad("组织机构编码长度不能超过20");
+		$result = $this->checkParams($params);
+		if ($result) {
+			return $result;
 		}
 		
 		// 编辑
