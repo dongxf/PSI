@@ -269,7 +269,7 @@ Ext.define("PSI.Supplier.MainForm", {
 							}, {
 								header : "供应商分类",
 								dataIndex : "name",
-								width: 160,
+								width : 160,
 								menuDisabled : true,
 								sortable : false,
 								summaryRenderer : function() {
@@ -367,11 +367,13 @@ Ext.define("PSI.Supplier.MainForm", {
 										width : 30
 									}), {
 								header : "供应商编码",
+								locked : true,
 								dataIndex : "code",
 								menuDisabled : true,
 								sortable : false
 							}, {
 								header : "供应商名称",
+								locked : true,
 								dataIndex : "name",
 								menuDisabled : true,
 								sortable : false,
