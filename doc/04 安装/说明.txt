@@ -1,3 +1,5 @@
+环境要求：PHP 7+, MySQL 5.5+
+
 Linux下Nginx的配置是最常遇到的问题，解决办法见：
 https://my.oschina.net/u/2525829/blog/532614
 
