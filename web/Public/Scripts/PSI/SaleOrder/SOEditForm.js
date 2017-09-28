@@ -418,7 +418,10 @@ Ext.define("PSI.SaleOrder.SOEditForm", {
 							"goodsSpec", "unitName", "goodsCount", {
 								name : "goodsMoney",
 								type : "float"
-							}, "goodsPrice", "taxRate", {
+							}, "goodsPrice", {
+								name : "taxRate",
+								type : "int"
+							}, {
 								name : "tax",
 								type : "float"
 							}, {

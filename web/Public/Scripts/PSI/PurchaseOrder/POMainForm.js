@@ -590,11 +590,13 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 								xtype : "numbercolumn",
 								width : 150
 							}, {
-								header : "税率",
+								header : "税率(%)",
 								dataIndex : "taxRate",
 								menuDisabled : true,
 								sortable : false,
-								align : "right"
+								align : "right",
+								xtype : "numbercolumn",
+								format : "0"
 							}, {
 								header : "税金",
 								dataIndex : "tax",

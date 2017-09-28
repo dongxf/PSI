@@ -7,6 +7,7 @@ Ext.define("PSI.Supplier.SupplierField", {
 
 	config : {
 		callbackFunc : null,
+		callbackScope: null,
 		showAddButton : false
 	},
 
@@ -43,7 +44,7 @@ Ext.define("PSI.Supplier.SupplierField", {
 		Ext.define(modelName, {
 					extend : "Ext.data.Model",
 					fields : ["id", "code", "name", "tel01", "fax",
-							"address_shipping", "contact01"]
+							"address_shipping", "contact01", "taxRate"]
 				});
 
 		var store = Ext.create("Ext.data.Store", {
@@ -217,7 +218,7 @@ Ext.define("PSI.Supplier.SupplierField", {
 
 		var func = me.getCallbackFunc();
 		if (func) {
-			func(data);
+			func(data, me.getCallbackScope());
 		}
 	},
 

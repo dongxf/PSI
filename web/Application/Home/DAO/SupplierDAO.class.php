@@ -804,7 +804,7 @@ class SupplierDAO extends PSIBaseExDAO {
 			$queryKey = "";
 		}
 		
-		$sql = "select id, code, name, tel01, fax, address_shipping, contact01
+		$sql = "select id, code, name, tel01, fax, address_shipping, contact01, tax_rate
 				from t_supplier
 				where (code like '%s' or name like '%s' or py like '%s') ";
 		$queryParams = array();
@@ -822,7 +822,29 @@ class SupplierDAO extends PSIBaseExDAO {
 		
 		$sql .= " order by code
 				limit 20";
-		return $db->query($sql, $queryParams);
+		$data = $db->query($sql, $queryParams);
+		
+		$result = [];
+		
+		foreach ( $data as $v ) {
+			$taxRate = $v["tax_rate"];
+			if ($taxRate == - 1) {
+				$taxRate = null;
+			}
+			
+			$result[] = [
+					"id" => $v["id"],
+					"code" => $v["code"],
+					"name" => $v["name"],
+					"tel01" => $v["tel01"],
+					"fax" => $v["fax"],
+					"address_shipping" => $v["address_shipping"],
+					"contact01" => $v["contact01"],
+					"taxRate" => $taxRate
+			];
+		}
+		
+		return $result;
 	}
 
 	/**
@@ -871,7 +893,7 @@ class SupplierDAO extends PSIBaseExDAO {
 			$result["note"] = $data[0]["note"];
 			
 			$taxRate = $data[0]["tax_rate"];
-			if ($taxRate == -1) {
+			if ($taxRate == - 1) {
 				$taxRate = null;
 			}
 			$result["taxRate"] = $taxRate;

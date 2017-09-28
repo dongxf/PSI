@@ -123,7 +123,8 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 										}
 									},
 									showAddButton : true,
-									callbackFunc : me.__setSupplierExtData
+									callbackFunc : me.__setSupplierExtData,
+									callbackScope : me
 								}, {
 									id : "editDealAddress",
 									labelWidth : 60,
@@ -339,7 +340,7 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 							}
 							if (store.getCount() == 0) {
 								store.add({
-											taxRate : me.__taxRate
+											taxRate : me.getTaxRate()
 										});
 							}
 
@@ -349,6 +350,16 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 						}
 					}
 				});
+	},
+
+	getTaxRate : function() {
+		var me = this;
+
+		if (me.__taxRateBySupplier) {
+			return me.__taxRateBySupplier;
+		}
+
+		return me.__taxRate;
 	},
 
 	onOK : function() {
@@ -404,7 +415,7 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 			var store = me.getGoodsGrid().getStore();
 			if (store.getCount() == 0) {
 				store.add({
-							taxRate : me.__taxRate
+							taxRate : me.getTaxRate()
 						});
 			}
 			me.getGoodsGrid().focus();
@@ -424,7 +435,10 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 							"goodsSpec", "unitName", "goodsCount", {
 								name : "goodsMoney",
 								type : "float"
-							}, "goodsPrice", "taxRate", {
+							}, "goodsPrice", {
+								name : "taxRate",
+								type : "int"
+							}, {
 								name : "tax",
 								type : "float"
 							}, {
@@ -541,6 +555,7 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 								sortable : false,
 								draggable : false,
 								align : "right",
+								format : "0",
 								width : 60
 							}, {
 								header : "税金",
@@ -595,7 +610,10 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 										var store = grid.getStore();
 										store.remove(store.getAt(row));
 										if (store.getCount() == 0) {
-											store.add({});
+											store.add({
+														taxRate : me
+																.getTaxRate()
+													});
 										}
 									},
 									scope : me
@@ -615,7 +633,8 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 									handler : function(grid, row) {
 										var store = grid.getStore();
 										store.insert(row, [{
-															taxRate : me.__taxRate
+															taxRate : me
+																	.getTaxRate()
 														}]);
 									},
 									scope : me
@@ -635,7 +654,8 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 									handler : function(grid, row) {
 										var store = grid.getStore();
 										store.insert(row + 1, [{
-															taxRate : me.__taxRate
+															taxRate : me
+																	.getTaxRate()
 														}]);
 									},
 									scope : me
@@ -651,6 +671,7 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 
 		return me.__goodsGrid;
 	},
+
 	__setGoodsInfo : function(data) {
 		var me = this;
 		var item = me.getGoodsGrid().getSelectionModel().getSelection();
@@ -670,6 +691,7 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 
 		me.calcMoney(goods);
 	},
+
 	cellEditingAfterEdit : function(editor, e) {
 		var me = this;
 
@@ -684,7 +706,7 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 			var store = me.getGoodsGrid().getStore();
 			if (e.rowIdx == store.getCount() - 1) {
 				store.add({
-							taxRate : me.__taxRate
+							taxRate : me.getTaxRate()
 						});
 			}
 			e.rowIdx += 1;
@@ -752,6 +774,7 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 							/ goods.get("goodsCount"));
 		}
 	},
+
 	getSaveData : function() {
 		var result = {
 			id : Ext.getCmp("hiddenId").getValue(),
@@ -810,10 +833,26 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 		Ext.getCmp("columnActionAppend").hide();
 	},
 
-	__setSupplierExtData : function(data) {
+	__setSupplierExtData : function(data, scope) {
+		var me = scope;
+
 		Ext.getCmp("editDealAddress").setValue(data.address_shipping);
 		Ext.getCmp("editTel").setValue(data.tel01);
 		Ext.getCmp("editFax").setValue(data.fax);
 		Ext.getCmp("editContact").setValue(data.contact01);
+
+		me.__taxRateBySupplier = data.taxRate;
+
+		// 更新明细记录里面的税率和税金
+		var store = me.getGoodsGrid().getStore();
+		for (var i = 0; i < store.getCount(); i++) {
+			var item = store.getAt(i);
+			item.set("taxRate", me.getTaxRate());
+
+			var tax = item.get("goodsMoney") * me.getTaxRate() / 100;
+
+			item.set("tax", tax);
+			item.set("moneyWithTax", item.get("goodsMoney") + tax);
+		}
 	}
 });
