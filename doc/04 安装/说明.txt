@@ -15,3 +15,7 @@ Nginx_PathInfo.zip是上述网页的离线包
 ========================================================
 
 本地开发环境推荐用xampp: https://www.apachefriends.org/zh_cn/index.html
+
+IDE: Eclipse
+
+ExtJS插件：http://www.spket.com/
