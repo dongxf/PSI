@@ -428,6 +428,30 @@ class PermissionDAO extends PSIBaseExDAO {
 	}
 
 	/**
+	 * 检查参数
+	 *
+	 * @param array $params        	
+	 * @return array|NULL null: 没有错误
+	 */
+	private function checkParams($params) {
+		$name = trim($params["name"]);
+		$code = trim($params["code"]);
+		
+		if ($this->isEmptyStringAfterTrim($name)) {
+			return $this->bad("角色名称不能为空");
+		}
+		
+		if ($this->stringBeyondLimit($name, 40)) {
+			return $this->bad("角色名称长度不能超过40位");
+		}
+		if ($this->stringBeyondLimit($code, 40)) {
+			return $this->bad("角色编码长度不能超过40位");
+		}
+		
+		return null;
+	}
+
+	/**
 	 * 新增角色
 	 *
 	 * @param array $params        	
@@ -437,14 +461,26 @@ class PermissionDAO extends PSIBaseExDAO {
 		$db = $this->db;
 		
 		$id = $this->newId();
-		$name = $params["name"];
-		$code = $params["code"];
+		$name = trim($params["name"]);
+		$code = trim($params["code"]);
 		$permissionIdList = $params["permissionIdList"];
 		$dataOrgList = $params["dataOrgList"];
 		$userIdList = $params["userIdList"];
 		
 		$loginUserDataOrg = $params["dataOrg"];
 		$companyId = $params["companyId"];
+		
+		if ($this->dataOrgNotExists($loginUserDataOrg)) {
+			return $this->badParam("loginUserDataOrg");
+		}
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->badParam("companyId");
+		}
+		
+		$result = $this->checkParams($params);
+		if ($result) {
+			return $result;
+		}
 		
 		$pid = explode(",", $permissionIdList);
 		$doList = explode(",", $dataOrgList);
@@ -518,11 +554,16 @@ class PermissionDAO extends PSIBaseExDAO {
 		$db = $this->db;
 		
 		$id = $params["id"];
-		$name = $params["name"];
-		$code = $params["code"];
+		$name = trim($params["name"]);
+		$code = trim($params["code"]);
 		$permissionIdList = $params["permissionIdList"];
 		$dataOrgList = $params["dataOrgList"];
 		$userIdList = $params["userIdList"];
+		
+		$result = $this->checkParams($params);
+		if ($result) {
+			return $result;
+		}
 		
 		$pid = explode(",", $permissionIdList);
 		$doList = explode(",", $dataOrgList);
