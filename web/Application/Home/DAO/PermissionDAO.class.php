@@ -35,7 +35,16 @@ class PermissionDAO extends PSIBaseExDAO {
 		$sql .= "	order by r.code ";
 		$data = $db->query($sql, $queryParams);
 		
-		return $data;
+		$result = [];
+		foreach ( $data as $v ) {
+			$result[] = [
+					"id" => $v["id"],
+					"name" => $v["name"],
+					"code" => $v["code"]
+			];
+		}
+		
+		return $result;
 	}
 
 	/**
@@ -58,11 +67,11 @@ class PermissionDAO extends PSIBaseExDAO {
 		$result = array();
 		foreach ( $data as $v ) {
 			$pid = $v["id"];
-			$item = array(
+			$item = [
 					"id" => $pid,
 					"name" => $v["name"],
 					"note" => $v["note"]
-			);
+			];
 			
 			$sql = "select data_org
 					from t_role_permission_dataorg
@@ -104,13 +113,15 @@ class PermissionDAO extends PSIBaseExDAO {
 		
 		$sql .= " order by convert(org.full_name USING gbk) collate gbk_chinese_ci";
 		$data = $db->query($sql, $roleId);
-		$result = array();
+		$result = [];
 		
-		foreach ( $data as $i => $v ) {
-			$result[$i]["id"] = $v["id"];
-			$result[$i]["name"] = $v["name"];
-			$result[$i]["orgFullName"] = $v["full_name"];
-			$result[$i]["loginName"] = $v["login_name"];
+		foreach ( $data as $v ) {
+			$result[] = [
+					"id" => $v["id"],
+					"name" => $v["name"],
+					"orgFullName" => $v["full_name"],
+					"loginName" => $v["login_name"]
+			];
 		}
 		
 		return $result;
@@ -132,7 +143,7 @@ class PermissionDAO extends PSIBaseExDAO {
 				from t_role_permission_dataorg
 				where role_id = '%s' and permission_id = '%s' ";
 		$data = $db->query($sql, $roleId, $permissionId);
-		$result = array();
+		$result = [];
 		if ($data) {
 			foreach ( $data as $i => $v ) {
 				$dataOrg = $v["data_org"];
