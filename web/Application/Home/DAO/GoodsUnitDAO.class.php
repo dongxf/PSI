@@ -25,6 +25,26 @@ class GoodsUnitDAO extends PSIBaseExDAO {
 	}
 
 	/**
+	 * 检查参数
+	 *
+	 * @param array $params        	
+	 * @return array|NULL null: 没有错误
+	 */
+	private function checkParams($params) {
+		$name = trim($params["name"]);
+		
+		if ($this->isEmptyStringAfterTrim($name)) {
+			return $this->bad("计量单位不能为空");
+		}
+		
+		if ($this->stringBeyondLimit($name, 10)) {
+			return $this->bad("计量单位不能超过10位");
+		}
+		
+		return null;
+	}
+
+	/**
 	 * 新增商品计量单位
 	 *
 	 * @param array $params        	
@@ -35,8 +55,9 @@ class GoodsUnitDAO extends PSIBaseExDAO {
 		
 		$name = trim($params["name"]);
 		
-		if ($this->isEmptyStringAfterTrim($name)) {
-			return $this->bad("计量单位不能为空");
+		$result = $this->checkParams($params);
+		if ($result) {
+			return $result;
 		}
 		
 		// 检查计量单位是否存在
@@ -82,8 +103,9 @@ class GoodsUnitDAO extends PSIBaseExDAO {
 		$id = $params["id"];
 		$name = trim($params["name"]);
 		
-		if ($this->isEmptyStringAfterTrim($name)) {
-			return $this->bad("计量单位不能为空");
+		$result = $this->checkParams($params);
+		if ($result) {
+			return $result;
 		}
 		
 		// 检查计量单位是否存在
