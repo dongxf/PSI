@@ -224,6 +224,8 @@ class PWBillService extends PSIBaseExService {
 			return;
 		}
 		
+		ob_start();
+		
 		$ps = new PDFService();
 		$pdf = $ps->getInstance();
 		$pdf->SetTitle("采购入库单，单号：{$ref}");
@@ -282,12 +284,14 @@ class PWBillService extends PSIBaseExService {
 		$html .= '</table>';
 		$pdf->writeHTML($html, true, false, true, false, '');
 		
+		ob_end_clean();
+		
 		$pdf->Output("$ref.pdf", "I");
 	}
 
 	/**
 	 * 采购订单执行的采购入库单信息
-	 * 
+	 *
 	 * @param array $params        	
 	 */
 	public function poBillPWBillList($params) {
