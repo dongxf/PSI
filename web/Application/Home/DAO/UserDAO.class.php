@@ -163,10 +163,10 @@ class UserDAO extends PSIBaseExDAO {
 		
 		$data = $db->query($sql, $orgId, $start, $limit);
 		
-		$result = array();
+		$result = [];
 		
 		foreach ( $data as $v ) {
-			$item = array(
+			$item = [
 					"id" => $v["id"],
 					"loginName" => $v["login_name"],
 					"name" => $v["name"],
@@ -179,7 +179,7 @@ class UserDAO extends PSIBaseExDAO {
 					"tel02" => $v["tel02"],
 					"address" => $v["address"],
 					"dataOrg" => $v["data_org"]
-			);
+			];
 			$result[] = $item;
 		}
 		
@@ -190,10 +190,10 @@ class UserDAO extends PSIBaseExDAO {
 		$data = $db->query($sql, $orgId);
 		$cnt = $data[0]["cnt"];
 		
-		return array(
+		return [
 				"dataList" => $result,
 				"totalCount" => $cnt
-		);
+		];
 	}
 
 	/**
