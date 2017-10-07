@@ -206,6 +206,8 @@ class WSBillService extends PSIBaseExService {
 			return;
 		}
 		
+		ob_start();
+		
 		$ps = new PDFService();
 		$pdf = $ps->getInstance();
 		$pdf->SetTitle("销售出库单，单号：{$ref}");
@@ -265,6 +267,8 @@ class WSBillService extends PSIBaseExService {
 		
 		$html .= '</table>';
 		$pdf->writeHTML($html, true, false, true, false, '');
+		
+		ob_end_clean();
 		
 		$pdf->Output("$ref.pdf", "I");
 	}
