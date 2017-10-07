@@ -23,7 +23,7 @@ class PermissionDAO extends PSIBaseExDAO {
 		$loginUserId = $params["loginUserId"];
 		
 		$sql = "select r.id, r.name, r.code from t_role r ";
-		$queryParams = array();
+		$queryParams = [];
 		
 		$ds = new DataOrgDAO($db);
 		$rs = $ds->buildSQL(FIdConst::PERMISSION_MANAGEMENT, "r", $loginUserId);
@@ -64,7 +64,7 @@ class PermissionDAO extends PSIBaseExDAO {
 				order by convert(p.name USING gbk) collate gbk_chinese_ci";
 		$data = $db->query($sql, $roleId);
 		
-		$result = array();
+		$result = [];
 		foreach ( $data as $v ) {
 			$pid = $v["id"];
 			$item = [
