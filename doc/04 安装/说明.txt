@@ -13,7 +13,7 @@ Nginx_PathInfo.zip是上述网页的离线包
 
 
 使用其他的环境，可以参考这个配置说明：
-http://www.thinkphp.cn/topic/9728.html
+http://www.thinkphp.cn/topic/9728.html (wamp集成环境开启rewrite伪静态支持)
 
 ========================================================
 
