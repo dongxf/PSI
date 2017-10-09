@@ -94,12 +94,16 @@ class BizConfigService extends PSIBaseExService {
 
 	/**
 	 * 模块打开方式
-	 * 
+	 *
 	 * @return string
 	 */
 	public function getModuleOpenType(): string {
 		$us = new UserService();
 		$companyId = $us->getCompanyId();
+		
+		if ($companyId == null) {
+			return "0";
+		}
 		
 		$dao = new BizConfigDAO($this->db());
 		
