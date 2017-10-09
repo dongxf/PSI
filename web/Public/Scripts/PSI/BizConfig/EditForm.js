@@ -328,6 +328,21 @@ Ext.define("PSI.BizConfig.EditForm", {
 									}, {
 										id : "editValue9002-01",
 										xtype : "textfield"
+									}, {
+										id : "editName9002-02",
+										xtype : "displayfield"
+									}, {
+										id : "editValue9002-02",
+										xtype : "combo",
+										queryMode : "local",
+										editable : false,
+										valueField : "id",
+										store : Ext.create(
+												"Ext.data.ArrayStore", {
+													fields : ["id", "text"],
+													data : [["0", "原窗口打开"],
+															["1", "新窗口打开"]]
+												})
 									}]
 						}],
 				buttons : buttons
@@ -368,6 +383,7 @@ Ext.define("PSI.BizConfig.EditForm", {
 			'value2002-04' : Ext.getCmp("editValue2002-04").getValue(),
 			'value9001-01' : Ext.getCmp("editValue9001-01").getValue(),
 			'value9002-01' : Ext.getCmp("editValue9002-01").getValue(),
+			'value9002-02' : Ext.getCmp("editValue9002-02").getValue(),
 			'value9003-01' : Ext.getCmp("editValue9003-01").getValue(),
 			'value9003-02' : Ext.getCmp("editValue9003-02").getValue(),
 			'value9003-03' : Ext.getCmp("editValue9003-03").getValue(),

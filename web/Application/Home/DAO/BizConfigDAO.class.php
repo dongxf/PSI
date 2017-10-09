@@ -132,6 +132,13 @@ class BizConfigDAO extends PSIBaseExDAO {
 						"showOrder" => 0
 				],
 				[
+						"id" => "9002-02",
+						"name" => "模块打开方式",
+						"value" => "0",
+						"note" => "",
+						"showOrder" => 1
+				],
+				[
 						"id" => "9003-01",
 						"name" => "采购订单单号前缀",
 						"value" => "PO",
@@ -267,6 +274,19 @@ class BizConfigDAO extends PSIBaseExDAO {
 	}
 
 	/**
+	 * 模块打开方式
+	 *
+	 * @param string $id        	
+	 * @return string
+	 */
+	private function getModuleOpenTypeName($id) {
+		if ($id == "0")
+			return "原窗口打开";
+		else
+			return "新窗口打开";
+	}
+
+	/**
 	 * 返回所有的配置项
 	 *
 	 * @param array $params        	
@@ -306,6 +326,8 @@ class BizConfigDAO extends PSIBaseExDAO {
 				$displayValue = $this->getSOBillRecevingName($v["value"]);
 			} else if ($id == "2001-04") {
 				$displayValue = $this->getPWCountLimitName($v["value"]);
+			} else if ($id == "9002-02") {
+				$displayValue = $this->getModuleOpenTypeName($v["value"]);
 			} else {
 				$displayValue = $v["value"];
 			}
@@ -547,6 +569,9 @@ class BizConfigDAO extends PSIBaseExDAO {
 				$log = "把[{$itemName}]设置为[{$v}]";
 			} else if ($key == "2001-04") {
 				$v = $this->getPWCountLimitName($value);
+				$log = "把[{$itemName}]设置为[{$v}]";
+			} else if ($key == "9002-02") {
+				$v = $this->getModuleOpenTypeName($value);
 				$log = "把[{$itemName}]设置为[{$v}]";
 			} else {
 				if ($itemName) {
@@ -992,6 +1017,32 @@ class BizConfigDAO extends PSIBaseExDAO {
 			
 			if ($result == null || $result == "") {
 				$result = "1";
+			}
+		}
+		
+		return $result;
+	}
+
+	/**
+	 * 模块打开方式
+	 *
+	 * @param string $companyId        	
+	 * @return string
+	 */
+	public function getModuleOpenType(string $companyId): string {
+		$db = $this->db;
+		
+		$result = "0";
+		
+		$id = "9002-02";
+		$sql = "select value from t_config
+				where id = '%s' and company_id = '%s' ";
+		$data = $db->query($sql, $id, $companyId);
+		if ($data) {
+			$result = $data[0]["value"];
+			
+			if ($result == null || $result == "") {
+				$result = "0";
 			}
 		}
 		
