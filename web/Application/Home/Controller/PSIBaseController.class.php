@@ -23,6 +23,9 @@ class PSIBaseController extends Controller {
 		$bcs = new BizConfigService();
 		$this->assign("productionName", $bcs->getProductionName());
 		
+		// 模块打开方式
+		$this->assign("mot", $bcs->getModuleOpenType());
+		
 		// JS调用的base uri
 		$this->assign("uri", __ROOT__ . "/");
 		
@@ -37,7 +40,7 @@ class PSIBaseController extends Controller {
 
 	/**
 	 * 跳转到登录页面
-	 * 
+	 *
 	 * @param string $returnPage
 	 *        	登录后返回的URL
 	 */

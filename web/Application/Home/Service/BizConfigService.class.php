@@ -93,6 +93,20 @@ class BizConfigService extends PSIBaseExService {
 	}
 
 	/**
+	 * 模块打开方式
+	 * 
+	 * @return string
+	 */
+	public function getModuleOpenType(): string {
+		$us = new UserService();
+		$companyId = $us->getCompanyId();
+		
+		$dao = new BizConfigDAO($this->db());
+		
+		return $dao->getModuleOpenType($companyId);
+	}
+
+	/**
 	 * 获得存货计价方法
 	 * 0： 移动平均法
 	 * 1：先进先出法

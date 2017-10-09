@@ -59,15 +59,20 @@ Ext.define("PSI.App", {
 		me.gridRecentFid.on("itemclick", function(v, r) {
 					var fid = r.get("fid");
 
+					var url = PSI.Const.BASE_URL
+							+ "Home/MainMenu/navigateTo/fid/" + fid;
+
 					if (fid === "-9999") {
 						PSI.MsgBox.confirm("请确认是否重新登录", function() {
-									location
-											.replace(PSI.Const.BASE_URL
-													+ "Home/MainMenu/navigateTo/fid/-9999");
+									location.replace(url);
 								});
 					} else {
-						window.open(PSI.Const.BASE_URL
-								+ "Home/MainMenu/navigateTo/fid/" + fid);
+						if (PSI.Const.MOT == "0") {
+							location.replace(url);
+
+						} else {
+							window.open(url);
+						}
 					}
 				}, me);
 
@@ -192,10 +197,15 @@ Ext.define("PSI.App", {
 						});
 			} else {
 				me.vp.focus();
-				
+
 				var url = PSI.Const.BASE_URL + "Home/MainMenu/navigateTo/fid/"
 						+ fid;
-				window.open(url);
+				if (PSI.Const.MOT == "0") {
+					location.replace(url);
+
+				} else {
+					window.open(url);
+				}
 			}
 		};
 

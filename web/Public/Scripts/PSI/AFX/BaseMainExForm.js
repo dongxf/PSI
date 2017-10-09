@@ -36,10 +36,15 @@ Ext.define("PSI.AFX.BaseMainExForm", {
 			},
 
 			closeWindow : function() {
-				window.close();
-
-				if (!window.closed) {
+				if (PSI.Const.MOT == "0") {
 					window.location.replace(PSI.Const.BASE_URL);
+
+				} else {
+					window.close();
+
+					if (!window.closed) {
+						window.location.replace(PSI.Const.BASE_URL);
+					}
 				}
 			}
 		});
