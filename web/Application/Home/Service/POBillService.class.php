@@ -3,6 +3,7 @@
 namespace Home\Service;
 
 use Home\DAO\POBillDAO;
+use Home\DAO\BizlogDAO;
 
 /**
  * 采购订单Service
@@ -233,6 +234,11 @@ class POBillService extends PSIBaseExService {
 		if (! $bill) {
 			return;
 		}
+		
+		// 记录业务日志
+		$log = "采购订单(单号：$ref)生成PDF文件";
+		$bs = new BizlogService($this->db());
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		
 		ob_start();
 		
