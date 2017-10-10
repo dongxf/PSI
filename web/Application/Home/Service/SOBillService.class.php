@@ -235,6 +235,11 @@ class SOBillService extends PSIBaseExService {
 			return;
 		}
 		
+		// 记录业务日志
+		$log = "销售订单(单号：$ref)生成PDF文件";
+		$bls = new BizlogService($this->db());
+		$bls->insertBizlog($log, $this->LOG_CATEGORY);
+		
 		ob_start();
 		
 		$ps = new PDFService();
