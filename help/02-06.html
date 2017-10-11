@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>安装 · PSI使用手册</title>
+        <title>库存建账 · PSI使用手册</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="GitBook 3.2.2">
@@ -49,10 +49,10 @@
     <link rel="shortcut icon" href="gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="02.html" />
+    <link rel="next" href="02-03.md" />
     
     
-    <link rel="prev" href="admin.html" />
+    <link rel="prev" href="02-05.md" />
     
 
     </head>
@@ -197,7 +197,7 @@
             <ul class="articles">
                 
     
-        <li class="chapter active" data-level="1.3.1" data-path="01.html">
+        <li class="chapter " data-level="1.3.1" data-path="01.html">
             
                 <a href="01.html">
             
@@ -347,7 +347,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.2.7" data-path="02-06.html">
+        <li class="chapter active" data-level="1.3.2.7" data-path="02-06.html">
             
                 <a href="02-06.html">
             
@@ -465,7 +465,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href="." >安装</a>
+        <a href="." >库存建账</a>
     </h1>
 </div>
 
@@ -477,26 +477,19 @@
                             
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="&#x5B89;&#x88C5;">&#x5B89;&#x88C5;</h1>
+                                <h1 id="&#x5E93;&#x5B58;&#x5EFA;&#x8D26;">&#x5E93;&#x5B58;&#x5EFA;&#x8D26;</h1>
 <hr>
-<p>&#x8FD0;&#x884C;&#x73AF;&#x5883;&#x8981;&#x6C42;&#xFF1A;PHP 7+ &#xFF0C;MySQL 5.5+</p>
-<p>&#x64CD;&#x4F5C;&#x7CFB;&#x7EDF;&#xFF1A;&#x751F;&#x4EA7;&#x73AF;&#x5883;&#x63A8;&#x8350;&#x4F7F;&#x7528;Linux</p>
-<p>Web&#x670D;&#x52A1;&#x5668;&#xFF1A;Apache&#x3001;Nginx</p>
-<p>PSI&#x5B98;&#x65B9;&#x63A8;&#x8350;&#x90E8;&#x7F72;&#x7684;PaaS&#x5E73;&#x53F0;&#xFF1A;<a href="https://www.mopaas.com/" target="_blank">&#x9B54;&#x6CCA;&#x4E91;</a></p>
-<h2 id="&#x5B89;&#x88C5;&#x6B65;&#x9AA4;&#x6982;&#x8FF0;">&#x5B89;&#x88C5;&#x6B65;&#x9AA4;&#x6982;&#x8FF0;</h2>
-<p>1&#x3001;&#x65B0;&#x5EFA;MySQL&#x6570;&#x636E;&#x5E93;&#xFF0C;&#x5E76;&#x5BFC;&#x5165; <a href="https://gitee.com/crm8000/PSI/tree/master/doc/99%20SQL" target="_blank">/doc/99 SQL</a> &#x4E2D;&#x7684;SQL&#x8BED;&#x53E5;
-<code>01CreateTables.sql</code> &#x548C; <code>02InsertInitData.sql</code>&#x3002;
-(<code>99psi_demo_data.sql</code>&#x662F;&#x521B;&#x5EFA;&#x6F14;&#x793A;&#x6570;&#x636E;&#xFF0C;&#x5728;&#x6B63;&#x5F0F;&#x4F7F;&#x7528;&#x7684;&#x65F6;&#x5019;&#x4E0D;&#x7528;&#x5BFC;&#x5165;)</p>
-<p>2&#x3001;&#x4FEE;&#x6539;&#x6570;&#x636E;&#x5E93;&#x8FDE;&#x63A5;&#x914D;&#x7F6E;&#xFF0C;&#x8FD9;&#x4E2A;&#x662F;&#x6807;&#x51C6;&#x7684;ThinkPHP&#x6570;&#x636E;&#x5E93;&#x8FDE;&#x63A5;&#x914D;&#x7F6E;&#x3002;&#x914D;&#x7F6E;&#x6587;&#x4EF6;&#x4F4D;&#x4E8E;&#xFF1A;
-<a href="https://gitee.com/crm8000/PSI/blob/master/web/Application/Common/Conf/config.php" target="_blank"> /web/Application/Common/Conf/config.php </a></p>
-<p>3&#x3001;&#x53D1;&#x5E03;PHP&#x6E90;&#x4EE3;&#x7801;</p>
-<p>&#x9ED8;&#x8BA4;&#x7684;&#x767B;&#x5F55;&#x7528;&#x6237;&#x540D;&#x662F;<code>admin</code> &#x767B;&#x5F55;&#x5BC6;&#x7801;&#x4E5F;&#x662F;<code>admin</code></p>
-<p>admin&#x7528;&#x6237;&#x662F;&#x7CFB;&#x7EDF;&#x7684;&#x8D85;&#x7EA7;&#x7BA1;&#x7406;&#x5458;&#xFF0C;&#x5177;&#x6709;&#x6240;&#x6709;&#x7684;&#x6743;&#x9650;&#x3002;&#x5728;&#x6B63;&#x5F0F;&#x4F7F;&#x7528;&#x4E2D;&#x5EFA;&#x8BAE;&#x4E0D;&#x8981;&#x76F4;&#x63A5;&#x4F7F;&#x7528;admin&#x6765;&#x64CD;&#x4F5C;&#x4E1A;&#x52A1;&#x3002;</p>
-<h2 id="&#x5E38;&#x89C1;&#x5B89;&#x88C5;&#x95EE;&#x9898;">&#x5E38;&#x89C1;&#x5B89;&#x88C5;&#x95EE;&#x9898;</h2>
-<p>1&#x3001;&#x6700;&#x5E38;&#x9047;&#x5230;&#x7684;&#x95EE;&#x9898;&#x662F;&#x5728;Nginx&#x4E0B;&#x56E0;&#x4E3A;&#x6CA1;&#x6709;&#x914D;&#x7F6E;&#x597D;URL Rewrite&#x5BFC;&#x81F4;&#x767B;&#x5F55;&#x9875;&#x9762;&#x90FD;&#x4E0D;&#x4F1A;&#x51FA;&#x73B0;&#x3002;</p>
-<p>&#x8BE6;&#x7EC6;&#x7684;&#x89E3;&#x51B3;&#x65B9;&#x6CD5;&#x89C1; <a href="https://gitee.com/crm8000/PSI/tree/master/doc/04%20%E5%AE%89%E8%A3%85" target="_blank">/doc/04&#x5B89;&#x88C5;&#x76EE;&#x5F55;&#x7684;&#x6587;&#x6863;</a>&#x3002;</p>
-<p>2&#x3001;&#x5728;&#x672C;&#x5730;&#x5F00;&#x53D1;&#x7684;&#x65F6;&#x5019;&#x4F7F;&#x7528;PhpStudy&#x4E5F;&#x5E38;&#x5E38;&#x4F1A;&#x9047;&#x5230;URL Rewrite&#x6CA1;&#x6709;&#x914D;&#x7F6E;&#x597D;&#x7684;&#x60C5;&#x51B5;&#x3002;</p>
-<p>&#x672C;&#x5730;&#x5F00;&#x53D1;&#x63A8;&#x8350;&#x4F7F;&#x7528; <a href="https://www.apachefriends.org/zh_cn/index.html" target="_blank">XAMPP</a></p>
+<h2 id="&#x5E93;&#x5B58;&#x5EFA;&#x8D26;&#x7684;&#x4E1A;&#x52A1;&#x7528;&#x9014;">&#x5E93;&#x5B58;&#x5EFA;&#x8D26;&#x7684;&#x4E1A;&#x52A1;&#x7528;&#x9014;</h2>
+<p>&#x5E93;&#x5B58;&#x5EFA;&#x8D26;&#x662F;&#x4ED3;&#x5E93;&#x521D;&#x59CB;&#x5316;&#x7684;&#x4E00;&#x4E2A;&#x6B65;&#x9AA4;&#xFF0C;&#x5F53;&#x521A;&#x5F00;&#x59CB;&#x542F;&#x7528;PSI&#x7684;&#x65F6;&#x5019;&#xFF0C;&#x5982;&#x679C;&#x5404;&#x4E2A;&#x4ED3;&#x5E93;&#x91CC;&#x9762;&#x5DF2;&#x7ECF;&#x6709;&#x4E86;&#x5B58;&#x8D27;&#xFF0C;&#x5C31;&#x9700;&#x8981;&#x901A;&#x8FC7;&#x5E93;&#x5B58;&#x5EFA;&#x8D26;&#x5F55;&#x5165;&#x521D;&#x59CB;&#x5E93;&#x5B58;&#x6570;&#x636E;&#xFF0C;&#x8FD9;&#x4E9B;&#x5E93;&#x5B58;&#x6570;&#x636E;&#x5305;&#x62EC;&#x5B58;&#x8D27;&#x5546;&#x54C1;&#x7684;&#x6570;&#x91CF;&#x548C;&#x8D27;&#x503C;&#x91D1;&#x989D;&#x3002;</p>
+<blockquote>
+<p>&#x8D27;&#x503C;&#x91D1;&#x989D;&#x662F;&#x6307;&#x5E93;&#x5B58;&#x7684;&#x6210;&#x672C;&#x4EF7;&#x503C;&#x3002;&#x5728;&#x624B;&#x5DE5;&#x8D26;&#x4E0D;&#x592A;&#x660E;&#x786E;&#x7684;&#x60C5;&#x51B5;&#x4E0B;&#xFF0C;&#x53EF;&#x4EE5;&#x7B80;&#x5355;&#x5730;&#x7528;&#x91C7;&#x8D2D;&#x4EF7;&#x683C;&#x6765;&#x4F30;&#x7B97;&#x3002;</p>
+</blockquote>
+<h2 id="&#x6807;&#x8BB0;&#x5EFA;&#x8D26;&#x5B8C;&#x6BD5;">&#x6807;&#x8BB0;&#x5EFA;&#x8D26;&#x5B8C;&#x6BD5;</h2>
+<p>&#x4E00;&#x4E2A;&#x4ED3;&#x5E93;&#x7684;&#x671F;&#x521D;&#x5EFA;&#x8D26;&#x6570;&#x636E;&#x5F55;&#x5165;&#x5B8C;&#x6BD5;&#xFF0C;&#x786E;&#x8BA4;&#x65E0;&#x8BEF;&#x540E;&#x5C31;&#x53EF;&#x4EE5;&#x6807;&#x8BB0;&#x5EFA;&#x8D26;&#x5B8C;&#x6BD5;&#x3002;</p>
+<p>&#x4ED3;&#x5E93;&#x53EA;&#x6709;&#x5728;&#x6807;&#x8BB0;&#x5EFA;&#x8D26;&#x5B8C;&#x6BD5;&#x4E4B;&#x540E;&#x624D;&#x80FD;&#x5728;&#x91C7;&#x8D2D;&#x9500;&#x552E;&#x4E1A;&#x52A1;&#x4E2D;&#x542F;&#x7528;&#x3002;&#x4F8B;&#x5982;&#xFF1A;&#x5982;&#x679C;&#x4E00;&#x4E2A;&#x4ED3;&#x5E93;&#x6CA1;&#x6709;&#x6807;&#x8BB0;&#x5EFA;&#x8D26;&#x5B8C;&#x6210;&#xFF0C;&#x867D;&#x7136;&#x80FD;&#x5F55;&#x5165;&#x91C7;&#x8D2D;&#x5165;&#x5E93;&#x5355;&#xFF0C;&#x4F46;&#x662F;&#x4E0D;&#x80FD;&#x63D0;&#x4EA4;&#x8BE5;&#x5355;&#x636E;&#x3002;</p>
+<p>&#x5982;&#x679C;&#x4E00;&#x4E2A;&#x4ED3;&#x5E93;&#x5728;&#x542F;&#x7528;&#x7684;&#x65F6;&#x5019;&#xFF0C;&#x91CC;&#x9762;&#x6CA1;&#x6709;&#x5B58;&#x8D27;&#xFF0C;&#x90A3;&#x4E48;&#x76F4;&#x63A5;&#x5355;&#x51FB; <code>&#x6807;&#x8BB0;&#x5EFA;&#x8D26;&#x5B8C;&#x6BD5;</code> &#x6309;&#x94AE;&#x5C31;&#x53EF;&#x4EE5;&#x5B8C;&#x6210;&#x5EFA;&#x8D26;&#x5DE5;&#x4F5C;&#x3002;</p>
+<h2 id="&#x53D6;&#x6D88;&#x5EFA;&#x8D26;&#x6807;&#x8BB0;">&#x53D6;&#x6D88;&#x5EFA;&#x8D26;&#x6807;&#x8BB0;</h2>
+<p>&#x4E00;&#x4E2A;&#x4ED3;&#x5E93;&#x6807;&#x8BB0;&#x4E86;&#x5EFA;&#x8D26;&#x5B8C;&#x6210;&#xFF0C;&#x4F46;&#x662F;&#x8FD8;&#x6CA1;&#x6709;&#x53D1;&#x751F;&#x91C7;&#x8D2D;&#x3001;&#x9500;&#x552E;&#x7B49;&#x4E1A;&#x52A1;&#x7684;&#x60C5;&#x5F62;&#x4E0B;&#xFF0C;&#x53EF;&#x4EE5;&#x53D6;&#x6D88;&#x5EFA;&#x8D26;&#x6807;&#x8BB0;&#x3002;&#x4E00;&#x65E6;&#x53D1;&#x751F;&#x4E86;&#x91C7;&#x8D2D;&#x9500;&#x552E;&#x7B49;&#x4E1A;&#x52A1;&#xFF0C;&#x5EFA;&#x8D26;&#x6807;&#x8BB0;&#x5C31;&#x4E0D;&#x80FD;&#x88AB;&#x53D6;&#x6D88;&#x3002;</p>
 
                                 
                                 </section>
@@ -508,12 +501,12 @@
 
             
                 
-                <a href="admin.html" class="navigation navigation-prev " aria-label="Previous page: 系统管理员使用手册">
+                <a href="02-05.md" class="navigation navigation-prev " aria-label="Previous page: 仓库">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
                 
-                <a href="02.html" class="navigation navigation-next " aria-label="Next page: 初始化">
+                <a href="02-03.md" class="navigation navigation-next " aria-label="Next page: 业务设置">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -524,7 +517,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"安装","level":"1.3.1","depth":2,"next":{"title":"初始化","level":"1.3.2","depth":2,"path":"02.md","ref":"02.md","articles":[{"title":"用户管理","level":"1.3.2.1","depth":3,"path":"02-01.md","ref":"02-01.md","articles":[]},{"title":"权限管理","level":"1.3.2.2","depth":3,"path":"02-02.md","ref":"02-02.md","articles":[]},{"title":"商品","level":"1.3.2.3","depth":3,"path":"02-04.md","ref":"02-04.md","articles":[{"title":"商品计量单位","level":"1.3.2.3.1","depth":4,"path":"02-04-01.md","ref":"02-04-01.md","articles":[]},{"title":"商品品牌","level":"1.3.2.3.2","depth":4,"path":"02-04-02.md","ref":"02-04-02.md","articles":[]},{"title":"价格体系","level":"1.3.2.3.3","depth":4,"path":"02-04-03.md","ref":"02-04-03.md","articles":[]}]},{"title":"供应商档案","level":"1.3.2.4","depth":3,"path":"02-07.md","ref":"02-07.md","articles":[]},{"title":"客户资料","level":"1.3.2.5","depth":3,"path":"02-08.md","ref":"02-08.md","articles":[]},{"title":"仓库","level":"1.3.2.6","depth":3,"path":"02-05.md","ref":"02-05.md","articles":[]},{"title":"库存建账","level":"1.3.2.7","depth":3,"path":"02-06.md","ref":"02-06.md","articles":[]},{"title":"业务设置","level":"1.3.2.8","depth":3,"path":"02-03.md","ref":"02-03.md","articles":[]}]},"previous":{"title":"系统管理员使用手册","level":"1.3","depth":1,"path":"admin.md","ref":"admin.md","articles":[{"title":"安装","level":"1.3.1","depth":2,"path":"01.md","ref":"01.md","articles":[]},{"title":"初始化","level":"1.3.2","depth":2,"path":"02.md","ref":"02.md","articles":[{"title":"用户管理","level":"1.3.2.1","depth":3,"path":"02-01.md","ref":"02-01.md","articles":[]},{"title":"权限管理","level":"1.3.2.2","depth":3,"path":"02-02.md","ref":"02-02.md","articles":[]},{"title":"商品","level":"1.3.2.3","depth":3,"path":"02-04.md","ref":"02-04.md","articles":[{"title":"商品计量单位","level":"1.3.2.3.1","depth":4,"path":"02-04-01.md","ref":"02-04-01.md","articles":[]},{"title":"商品品牌","level":"1.3.2.3.2","depth":4,"path":"02-04-02.md","ref":"02-04-02.md","articles":[]},{"title":"价格体系","level":"1.3.2.3.3","depth":4,"path":"02-04-03.md","ref":"02-04-03.md","articles":[]}]},{"title":"供应商档案","level":"1.3.2.4","depth":3,"path":"02-07.md","ref":"02-07.md","articles":[]},{"title":"客户资料","level":"1.3.2.5","depth":3,"path":"02-08.md","ref":"02-08.md","articles":[]},{"title":"仓库","level":"1.3.2.6","depth":3,"path":"02-05.md","ref":"02-05.md","articles":[]},{"title":"库存建账","level":"1.3.2.7","depth":3,"path":"02-06.md","ref":"02-06.md","articles":[]},{"title":"业务设置","level":"1.3.2.8","depth":3,"path":"02-03.md","ref":"02-03.md","articles":[]}]},{"title":"业务日志","level":"1.3.3","depth":2,"path":"03.md","ref":"03.md","articles":[]},{"title":"如何升级PSI","level":"1.3.4","depth":2,"path":"04.md","ref":"04.md","articles":[]},{"title":"数据域应用详解","level":"1.3.5","depth":2,"path":"05.md","ref":"05.md","articles":[]},{"title":"环境变量","level":"1.3.6","depth":2,"path":"06.md","ref":"06.md","articles":[]}]},"dir":"ltr"},"config":{"plugins":["splitter","-search"],"styles":{"website":"styles/website.css"},"pluginsConfig":{"fontsettings":{"theme":"white","family":"serif","size":2},"splitter":{},"highlight":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":false,"twitter":false,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":[]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","author":"李静波","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"PSI使用手册","language":"zh-hans","links":{"sidebar":{"PSI官网":"https://gitee.com/crm8000/PSI"},"gitbook":false,"sharing":{"google":false,"facebook":false,"twitter":false,"all":false}},"gitbook":"*"},"file":{"path":"01.md","mtime":"2017-10-11T01:25:57.241Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-10-11T01:26:21.899Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"库存建账","level":"1.3.2.7","depth":3,"next":{"title":"业务设置","level":"1.3.2.8","depth":3,"path":"02-03.md","ref":"02-03.md","articles":[]},"previous":{"title":"仓库","level":"1.3.2.6","depth":3,"path":"02-05.md","ref":"02-05.md","articles":[]},"dir":"ltr"},"config":{"plugins":["splitter","-search"],"styles":{"website":"styles/website.css"},"pluginsConfig":{"fontsettings":{"theme":"white","family":"serif","size":2},"splitter":{},"highlight":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":false,"twitter":false,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":[]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","author":"李静波","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"PSI使用手册","language":"zh-hans","links":{"sidebar":{"PSI官网":"https://gitee.com/crm8000/PSI"},"gitbook":false,"sharing":{"google":false,"facebook":false,"twitter":false,"all":false}},"gitbook":"*"},"file":{"path":"02-06.md","mtime":"2017-10-11T01:25:57.258Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-10-11T01:26:21.899Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>
