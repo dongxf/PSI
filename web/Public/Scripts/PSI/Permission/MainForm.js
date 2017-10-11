@@ -92,6 +92,12 @@ Ext.define("PSI.Permission.MainForm", {
 					disabled : me.getPDelete() == "0",
 					iconCls : "PSI-button-delete"
 				}, "-", {
+					text : "帮助",
+					iconCls : "PSI-help",
+					handler : function() {
+						window.open(me.URL("/Home/Help/index?t=permission"));
+					}
+				}, "-", {
 					text : "关闭",
 					iconCls : "PSI-button-exit",
 					handler : function() {
@@ -124,9 +130,9 @@ Ext.define("PSI.Permission.MainForm", {
 					columns : [{
 								header : "编码",
 								dataIndex : "code",
-								width: 100,
+								width : 100,
 								menuDisabled : true
-							},{
+							}, {
 								header : "角色名称",
 								dataIndex : "name",
 								flex : 1,
@@ -166,7 +172,7 @@ Ext.define("PSI.Permission.MainForm", {
 								dataIndex : "name",
 								flex : 2,
 								menuDisabled : true
-							},{
+							}, {
 								header : "说明",
 								dataIndex : "note",
 								flex : 2,
@@ -428,7 +434,7 @@ Ext.define("PSI.Permission.MainForm", {
 					columns : [{
 								header : "数据域",
 								dataIndex : "dataOrg",
-								width: 120,
+								width : 120,
 								menuDisabled : true
 							}, {
 								header : "组织机构/人",
