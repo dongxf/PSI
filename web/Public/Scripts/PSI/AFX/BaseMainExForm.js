@@ -38,7 +38,6 @@ Ext.define("PSI.AFX.BaseMainExForm", {
 			closeWindow : function() {
 				if (PSI.Const.MOT == "0") {
 					window.location.replace(PSI.Const.BASE_URL);
-
 				} else {
 					window.close();
 
