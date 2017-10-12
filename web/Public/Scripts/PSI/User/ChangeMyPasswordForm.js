@@ -108,18 +108,13 @@ Ext.define("PSI.User.ChangeMyPasswordForm", {
 								id : "PSI_User_ChangeMyPasswordForm_buttonOK",
 								text : "修改密码",
 								formBind : true,
-								handler : this.onOK,
-								scope : this,
+								handler : me.onOK,
+								scope : me,
 								iconCls : "PSI-button-ok"
 							}, {
 								text : "取消",
 								handler : function() {
-									if (window.opener) {
-										window.close();
-									} else {
-										window.location
-												.replace(PSI.Const.BASE_URL);
-									}
+									me.closeWindow();
 								}
 							}]
 				}]
@@ -163,7 +158,7 @@ Ext.define("PSI.User.ChangeMyPasswordForm", {
 					success : function(form, action) {
 						el.unmask();
 						PSI.MsgBox.showInfo("成功修改登录密码", function() {
-									window.close();
+									me.closeWindow();
 								});
 					},
 					failure : function(form, action) {
@@ -194,6 +189,18 @@ Ext.define("PSI.User.ChangeMyPasswordForm", {
 
 		if (e.getKey() == e.ENTER) {
 			me.buttonOK.focus();
+		}
+	},
+
+	closeWindow : function() {
+		if (PSI.Const.MOT == "0") {
+			window.location.replace(PSI.Const.BASE_URL);
+		} else {
+			window.close();
+
+			if (!window.closed) {
+				window.location.replace(PSI.Const.BASE_URL);
+			}
 		}
 	}
 });
