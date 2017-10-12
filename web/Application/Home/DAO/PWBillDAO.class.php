@@ -303,8 +303,8 @@ class PWBillDAO extends PSIBaseExDAO {
 			}
 			
 			$goodsCount = intval($item["goodsCount"]);
-			if ($goodsCount == 0) {
-				return $this->bad("入库数量不能为0");
+			if ($goodsCount < 0) {
+				return $this->bad("入库数量不能是负数");
 			}
 			
 			$memo = $item["memo"];
@@ -448,8 +448,8 @@ class PWBillDAO extends PSIBaseExDAO {
 			}
 			
 			$goodsCount = intval($item["goodsCount"]);
-			if ($goodsCount == 0) {
-				return $this->bad("入库数量不能为0");
+			if ($goodsCount < 0) {
+				return $this->bad("入库数量不能是负数");
 			}
 			
 			$memo = $item["memo"];
@@ -882,9 +882,9 @@ class PWBillDAO extends PSIBaseExDAO {
 		// 检查入库数量、单价、金额不能为负数
 		foreach ( $items as $v ) {
 			$goodsCount = intval($v["goods_count"]);
-			if ($goodsCount <= 0) {
+			if ($goodsCount < 0) {
 				$db->rollback();
-				return $this->bad("采购数量不能小于1");
+				return $this->bad("采购数量不能小于0");
 			}
 			$goodsPrice = floatval($v["goods_price"]);
 			if ($goodsPrice < 0) {
@@ -913,6 +913,10 @@ class PWBillDAO extends PSIBaseExDAO {
 			$pobillDetailId = $v["pobilldetail_id"];
 			
 			$goodsCount = intval($v["goods_count"]);
+			if ($goodsCount <= 0) {
+				// 忽略非正入库数量
+				continue;
+			}
 			$goodsPrice = floatval($v["goods_price"]);
 			$goodsMoney = floatval($v["goods_money"]);
 			if ($goodsCount != 0) {
