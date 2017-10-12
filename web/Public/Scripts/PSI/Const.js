@@ -5,6 +5,6 @@ Ext.define("PSI.Const", {
 		SAVING : "数据保存中...",
 		BASE_URL : "",
 		MOT: "0", // 模块打开方式
-		VERSION : "PSI 2017 - build201710111104"
+		VERSION : "PSI 2017 - build201710120941"
 	}
 });
