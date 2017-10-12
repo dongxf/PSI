@@ -450,6 +450,9 @@ class PWBillDAO extends PSIBaseExDAO {
 				return $this->bad("选择的商品不存在");
 			}
 			
+			// 关于入库数量为什么允许填写0：
+			// 当由采购订单生成采购入库单的时候，采购订单中有多种商品，但是是部分到货
+			// 那么就存在有些商品的数量是0的情形。
 			$goodsCount = intval($item["goodsCount"]);
 			if ($goodsCount < 0) {
 				return $this->bad("入库数量不能是负数");
