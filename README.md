@@ -18,6 +18,12 @@ PSI的开源协议
 >
 >允许任何人完全私有化PSI，详见：https://my.oschina.net/u/134395/blog/1543536
 
+PSI相关项目
+------------
+> PSI使用帮助：https://gitee.com/crm8000/PSI_Help
+>
+> 帮助手册采用Markdown格式编写，使用gitbook工具构建后集成到PSI代码里面
+
 如需要技术支持，请联系
 -------------
 >1、 普通QQ群： <a target="_blank" href="http://shang.qq.com/wpa/qunwpa?idkey=64808ce24f2a3186ccb1f37aad9ed591bcc4fb257d09749753aca98c6c73e400">414474186</a>
