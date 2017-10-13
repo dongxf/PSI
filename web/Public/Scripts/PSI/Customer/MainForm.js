@@ -120,6 +120,12 @@ Ext.define("PSI.Customer.MainForm", {
 					handler : me.onDeleteCustomer,
 					scope : me
 				}, "-", {
+					text : "帮助",
+					iconCls : "PSI-help",
+					handler : function() {
+						window.open(me.URL("/Home/Help/index?t=customer"));
+					}
+				}, "-", {
 					text : "关闭",
 					iconCls : "PSI-button-exit",
 					handler : function() {
