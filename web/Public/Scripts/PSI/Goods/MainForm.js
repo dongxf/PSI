@@ -29,6 +29,7 @@ Ext.define("PSI.Goods.MainForm", {
 		Ext.apply(me, {
 					tbar : me.getToolbarCmp(),
 					items : [{
+								id : "panelQueryCmp",
 								region : "north",
 								border : 0,
 								height : 60,
@@ -215,6 +216,15 @@ Ext.define("PSI.Goods.MainForm", {
 								width : 100,
 								margin : "5, 0, 0, 5",
 								handler : me.onClearQuery,
+								scope : me
+							}, {
+								xtype : "button",
+								text : "隐藏查询条件栏",
+								width : 100,
+								margin : "5 0 0 10",
+								handler : function() {
+									Ext.getCmp("panelQueryCmp").collapse();
+								},
 								scope : me
 							}]
 				}];
