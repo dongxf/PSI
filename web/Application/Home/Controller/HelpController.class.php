@@ -69,13 +69,17 @@ class HelpController extends PSIBaseController {
 				$bs->insertBizlog("访问帮助页面：业务设置", "帮助");
 				redirect("/help/02-03.html");
 				break;
-			case "sobill" :
+			case "pobill" :
 				$bs->insertBizlog("访问帮助页面：采购订单", "帮助");
 				redirect("/help/20-01.html");
 				break;
 			case "pwbill" :
 				$bs->insertBizlog("访问帮助页面：采购入库", "帮助");
 				redirect("/help/20-02.html");
+				break;
+			case "prbill" :
+				$bs->insertBizlog("访问帮助页面：采购退货出库", "帮助");
+				redirect("/help/20-03.html");
 				break;
 			default :
 				$bs->insertBizlog("通过主菜单进入帮助页面", "帮助");
