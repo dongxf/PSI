@@ -163,6 +163,64 @@ class InitInventoryService extends PSIBaseService {
 		);
 	}
 
+	private function deleteInitInventoryGoods($params) {
+		$warehouseId = $params["warehouseId"];
+		$goodsId = $params["goodsId"];
+		$goodsCount = intval($params["goodsCount"]);
+		$goodsMoney = floatval($params["goodsMoney"]);
+		
+		$db = M();
+		$db->startTrans();
+		
+		$sql = "select name, inited from t_warehouse where id = '%s' ";
+		$data = $db->query($sql, $warehouseId);
+		if (! $data) {
+			$db->rollback();
+			return $this->bad("仓库不存在");
+		}
+		if ($data[0]["inited"] != 0) {
+			$db->rollback();
+			return $this->bad("仓库 [{$data[0]["name"]}] 已经建账完成，不能再次建账");
+		}
+		
+		$sql = "select name from t_goods where id = '%s' ";
+		$data = $db->query($sql, $goodsId);
+		if (! $data) {
+			$db->rollback();
+			return $this->bad("商品不存在");
+		}
+		$sql = "select count(*) as cnt from t_inventory_detail
+				where warehouse_id = '%s' and goods_id = '%s' and ref_type <> '库存建账' ";
+		$data = $db->query($sql, $warehouseId, $goodsId);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			$db->rollback();
+			return $this->bad("当前商品已经有业务发生，不能再建账");
+		}
+		
+		// 清除明细账中记录
+		$sql = "delete from t_inventory_detail
+				where warehouse_id = '%s' and goods_id = '%s' ";
+		$rc = $db->execute($sql, $warehouseId, $goodsId);
+		if ($rc === false) {
+			$db->rollback();
+			return $this->sqlError(__LINE__);
+		}
+		
+		// 清除总账中记录
+		$sql = "delete from t_inventory
+				where warehouse_id = '%s' and goods_id = '%s' ";
+		$rc = $db->execute($sql, $warehouseId, $goodsId);
+		if ($rc === false) {
+			$db->rollback();
+			return $this->sqlError(__LINE__);
+		}
+		
+		$db->commit();
+		
+		return $this->ok();
+	}
+
 	/**
 	 * 提交建账信息
 	 */
@@ -176,12 +234,16 @@ class InitInventoryService extends PSIBaseService {
 		$goodsCount = intval($params["goodsCount"]);
 		$goodsMoney = floatval($params["goodsMoney"]);
 		
-		if ($goodsCount <= 0) {
-			return $this->bad("期初数量不能小于0");
+		if ($goodsCount < 0) {
+			return $this->bad("期初数量不能为负数");
 		}
 		
 		if ($goodsMoney < 0) {
 			return $this->bad("期初金额不能为负数");
+		}
+		
+		if ($goodsCount == 0) {
+			return $this->deleteInitInventoryGoods($params);
 		}
 		
 		$goodsPrice = $goodsMoney / $goodsCount;
