@@ -82,6 +82,12 @@ Ext.define("PSI.Sale.WSMainForm", {
 					scope : me,
 					handler : me.onPDF
 				}, "-", {
+					text : "帮助",
+					iconCls : "PSI-help",
+					handler : function() {
+						window.open(me.URL("/Home/Help/index?t=wsbill"));
+					}
+				}, "-", {
 					text : "关闭",
 					iconCls : "PSI-button-exit",
 					handler : function() {
