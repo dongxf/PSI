@@ -80,6 +80,12 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
 					scope : me,
 					handler : me.onPDF
 				}, "-", {
+					text : "帮助",
+					iconCls : "PSI-help",
+					handler : function() {
+						window.open(me.URL("/Home/Help/index?t=itbill"));
+					}
+				}, "-", {
 					text : "关闭",
 					iconCls : "PSI-button-exit",
 					handler : function() {
