@@ -21,7 +21,11 @@
 	Ext.onReady(function() {
 		var app = Ext.create("PSI.App", {
 			userName : "{$loginUserName}",
-			productionName : "{$productionName}"
+			productionName : "{$productionName}",
+			appHeaderInfo : {
+				title : "{$title}",
+				iconCls : "PSI-fid1003"
+			}
 		});
 
 		app.add(Ext.create("PSI.Warehouse.MainForm", {
@@ -31,10 +35,5 @@
 			pEditDataOrg : "{$pEditDataOrg}",
 			pInitInv : "{$pInitInv}"
 		}));
-
-		app.setAppHeader({
-			title : "{$title}",
-			iconCls : "PSI-fid1003"
-		});
 	});
 </script>

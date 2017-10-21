@@ -13,6 +13,10 @@ Ext.define("PSI.App", {
 		me.initConfig(config);
 
 		me.createMainUI();
+		
+		if (config.appHeaderInfo) {
+			me.setAppHeader(config.appHeaderInfo);
+		}
 	},
 
 	createMainUI : function() {
