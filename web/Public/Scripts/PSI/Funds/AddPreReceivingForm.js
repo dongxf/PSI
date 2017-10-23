@@ -1,5 +1,5 @@
 /**
- * 预付款管理 - 收预收款
+ * 预收款管理 - 收预收款
  */
 Ext.define("PSI.Funds.AddPreReceivingForm", {
 	extend : "PSI.AFX.BaseDialogForm",
