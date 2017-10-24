@@ -8,9 +8,12 @@ PSI演示
 -------------
 >PSI的演示见：<a target="_blank" href="http://psi.butterfly.mopaasapp.com">http://psi.butterfly.mopaasapp.com</a>
 >
->PSI运行环境
 >
->PHP 7+, MySQL 5.5+
+
+PSI运行环境
+-------------
+>
+>`PHP 7+`, `MySQL 5.5+`
 
 
 PSI的开源协议
