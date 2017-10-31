@@ -111,6 +111,13 @@ class BizConfigDAO extends PSIBaseExDAO {
 						"showOrder" => 303
 				],
 				[
+						"id" => "2002-05",
+						"name" => "销售出库数量控制",
+						"value" => "0",
+						"note" => "",
+						"showOrder" => 304
+				],
+				[
 						"id" => "1003-02",
 						"name" => "存货计价方法",
 						"value" => "0",
@@ -274,6 +281,23 @@ class BizConfigDAO extends PSIBaseExDAO {
 	}
 
 	/**
+	 * 销售出库数量控制的中文含义
+	 *
+	 * @param string $id        	
+	 * @return string
+	 */
+	private function getWSCountLimitName(string $id): string {
+		switch ($id) {
+			case "0" :
+				return "不做限制";
+			case "1" :
+				return "不能超过销售订单未出库量";
+		}
+		
+		return "";
+	}
+
+	/**
 	 * 模块打开方式
 	 *
 	 * @param string $id        	
@@ -328,6 +352,8 @@ class BizConfigDAO extends PSIBaseExDAO {
 				$displayValue = $this->getPWCountLimitName($v["value"]);
 			} else if ($id == "9002-02") {
 				$displayValue = $this->getModuleOpenTypeName($v["value"]);
+			} else if ($id == "2002-05") {
+				$displayValue = $this->getWSCountLimitName($v["value"]);
 			} else {
 				$displayValue = $v["value"];
 			}
@@ -572,6 +598,9 @@ class BizConfigDAO extends PSIBaseExDAO {
 				$log = "把[{$itemName}]设置为[{$v}]";
 			} else if ($key == "9002-02") {
 				$v = $this->getModuleOpenTypeName($value);
+				$log = "把[{$itemName}]设置为[{$v}]";
+			} else if ($key == "2002-05") {
+				$v = $this->getWSCountLimitName($value);
 				$log = "把[{$itemName}]设置为[{$v}]";
 			} else {
 				if ($itemName) {

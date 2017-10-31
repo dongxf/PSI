@@ -231,6 +231,24 @@ Ext.define("PSI.BizConfig.EditForm", {
 															["1", "现金收款"]]
 												}),
 										value : "0"
+									}, {
+										id : "editName2002-05",
+										xtype : "displayfield"
+									}, {
+										id : "editValue2002-05",
+										xtype : "combo",
+										queryMode : "local",
+										editable : false,
+										valueField : "id",
+										store : Ext.create(
+												"Ext.data.ArrayStore", {
+													fields : ["id", "text"],
+													data : [
+															["0", "不做限制"],
+															["1",
+																	"不能超过销售订单未出库量"]]
+												}),
+										value : "0"
 									}]
 						}, {
 							title : "存货",
@@ -381,6 +399,7 @@ Ext.define("PSI.BizConfig.EditForm", {
 			'value2002-02' : Ext.getCmp("editValue2002-02").getValue(),
 			'value2002-03' : Ext.getCmp("editValue2002-03").getValue(),
 			'value2002-04' : Ext.getCmp("editValue2002-04").getValue(),
+			'value2002-05' : Ext.getCmp("editValue2002-05").getValue(),
 			'value9001-01' : Ext.getCmp("editValue9001-01").getValue(),
 			'value9002-01' : Ext.getCmp("editValue9002-01").getValue(),
 			'value9002-02' : Ext.getCmp("editValue9002-02").getValue(),

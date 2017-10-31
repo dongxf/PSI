@@ -84,6 +84,7 @@ class BizConfigController extends PSIBaseController {
 					"2002-02" => I("post.value2002-02"),
 					"2002-03" => I("post.value2002-03"),
 					"2002-04" => I("post.value2002-04"),
+					"2002-05" => I("post.value2002-05"),
 					"9001-01" => I("post.value9001-01"),
 					"9002-01" => I("post.value9002-01"),
 					"9002-02" => I("post.value9002-02"),
