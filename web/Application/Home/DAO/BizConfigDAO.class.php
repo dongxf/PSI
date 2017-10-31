@@ -1003,7 +1003,7 @@ class BizConfigDAO extends PSIBaseExDAO {
 	 * @param string $companyId        	
 	 * @return string "1":不能超过采购订单未入库量; "0":不做限制
 	 */
-	public function getPWCountLimit($companyId) {
+	public function getPWCountLimit($companyId): string {
 		$db = $this->db;
 		
 		$result = "1";

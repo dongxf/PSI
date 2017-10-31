@@ -821,6 +821,10 @@ class PWBillDAO extends PSIBaseExDAO {
 		if ($this->loginUserIdNotExists($loginUserId)) {
 			return $this->badParam("loginUserId");
 		}
+		$companyId = $params["companyId"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->badParam("companyId");
+		}
 		
 		$sql = "select ref, warehouse_id, bill_status, biz_dt, biz_user_id,  goods_money, supplier_id,
 					payment_type, company_id
@@ -885,8 +889,20 @@ class PWBillDAO extends PSIBaseExDAO {
 			return $this->bad("采购入库单没有采购明细记录，不能入库");
 		}
 		
+		$bizConfigDAO = new BizConfigDAO($db);
+		// $countLimit: true - 入库数量不能超过采购订单上未入库数量
+		$countLimit = $bizConfigDAO->getPWCountLimit($companyId) == "1";
+		$poId = null;
+		$sql = "select po_id
+				from t_po_pw
+				where pw_id = '%s' ";
+		$data = $db->query($sql, $id);
+		if ($data) {
+			$poId = $data[0]["po_id"];
+		}
+		
 		// 检查入库数量、单价、金额不能为负数
-		foreach ( $items as $v ) {
+		foreach ( $items as $i => $v ) {
 			$goodsCount = intval($v["goods_count"]);
 			if ($goodsCount < 0) {
 				$db->rollback();
@@ -901,6 +917,33 @@ class PWBillDAO extends PSIBaseExDAO {
 			if ($goodsMoney < 0) {
 				$db->rollback();
 				return $this->bad("采购金额不能为负数");
+			}
+			
+			if (! $countLimit) {
+				continue;
+			}
+			
+			if (! $poId) {
+				// 没有采购订单
+				continue;
+			}
+			
+			// 检查采购入库数量是否超过采购订单上未入库数量
+			$pobillDetailId = $v["pobilldetail_id"];
+			$sql = "select left_count
+					from t_po_bill_detail
+					where id = '%s' ";
+			$data = $db->query($sql, $pobillDetailId);
+			if (! $data) {
+				continue;
+			}
+			
+			$leftCount = $data[0]["left_count"];
+			if ($goodsCount > $leftCount) {
+				$index = $i + 1;
+				$info = "第{$index}条入库记录中采购入库数量超过采购订单上未入库数量<br/><br/>";
+				$info .= "入库数量是: {$goodsCount}<br/>采购订单中未入库数量是: {$leftCount}";
+				return $this->bad($info);
 			}
 		}
 		

@@ -179,10 +179,11 @@ class PWBillService extends PSIBaseExService {
 		$db = $this->db();
 		$db->startTrans();
 		
-		$params = array(
+		$params = [
 				"id" => $id,
-				"loginUserId" => $this->getLoginUserId()
-		);
+				"loginUserId" => $this->getLoginUserId(),
+				"companyId" => $this->getCompanyId()
+		];
 		
 		$dao = new PWBillDAO($db);
 		
