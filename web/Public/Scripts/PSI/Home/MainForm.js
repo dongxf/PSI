@@ -76,8 +76,6 @@ Ext.define("PSI.Home.MainForm", {
 
 				me.callParent(arguments);
 
-				Ext.get(window).on('beforeunload', this.onWindowBeforeUnload);
-
 				me.querySaleData();
 				me.queryInventoryData();
 				me.queryPurchaseData();
@@ -500,10 +498,5 @@ Ext.define("PSI.Home.MainForm", {
 					border : 0,
 					html : "<h1>欢迎使用" + me.getProductionName() + "</h1>"
 				}
-			},
-
-			onWindowBeforeUnload : function(e) {
-				return true;
-				//return (window.event.returnValue = e.returnValue = '确认离开当前页面？');
 			}
 		});
