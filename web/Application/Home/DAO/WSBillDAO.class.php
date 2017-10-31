@@ -888,6 +888,46 @@ class WSBillDAO extends PSIBaseExDAO {
 			return $this->bad("销售出库单没有出库商品明细记录，无法出库");
 		}
 		
+		$bizConfigDAO = new BizConfigDAO($db);
+		// 销售出库数量控制，true - 出库数量不能超过销售订单未出库数量
+		$countLimit = $bizConfigDAO->getWSCountLimit($companyId) == "1";
+		
+		$sql = "select so_id
+				from t_so_ws
+				where ws_id = '%s' ";
+		$data = $db->query($sql, $id);
+		$soId = null;
+		if ($data) {
+			$soId = $data[0]["so_id"];
+		}
+		
+		// 检查销售出库数量控制
+		foreach ( $items as $i => $v ) {
+			if (! $countLimit) {
+				continue;
+			}
+			if (! $soId) {
+				continue;
+			}
+			
+			$goodsCount = $v["goods_count"];
+			$soBillDetailId = $v["sobilldetail_id"];
+			$sql = "select left_count
+					from t_so_bill_detail
+					where id = '%s' ";
+			$data = $db->query($sql, $soBillDetailId);
+			if (! $data) {
+				continue;
+			}
+			$leftCount = $data[0]["left_count"];
+			if ($goodsCount > $leftCount) {
+				$index = $i + 1;
+				$info = "第{$index}条出库记录中销售出库数量超过销售订单上未出库数量<br/><br/>";
+				$info .= "出库数量是: {$goodsCount}<br/>销售订单中未出库数量是: {$leftCount}";
+				return $this->bad($info);
+			}
+		}
+		
 		foreach ( $items as $v ) {
 			$itemId = $v["id"];
 			$goodsId = $v["goods_id"];
