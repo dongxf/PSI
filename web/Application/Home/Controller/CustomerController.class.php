@@ -133,7 +133,7 @@ class CustomerController extends PSIBaseController {
 				}
 			}
 			
-			$params = array(
+			$params = [
 					"id" => I("post.id"),
 					"code" => I("post.code"),
 					"name" => I("post.name"),
@@ -154,8 +154,9 @@ class CustomerController extends PSIBaseController {
 					"note" => I("post.note"),
 					"categoryId" => I("post.categoryId"),
 					"initReceivables" => I("post.initReceivables"),
-					"initReceivablesDT" => I("post.initReceivablesDT")
-			);
+					"initReceivablesDT" => I("post.initReceivablesDT"),
+					"warehouseId" => I("post.warehouseId")
+			];
 			$cs = new CustomerService();
 			$this->ajaxReturn($cs->editCustomer($params));
 		}

@@ -355,7 +355,7 @@ Ext.define("PSI.Customer.MainForm", {
 							"mobile02", "qq02", "categoryId",
 							"initReceivables", "initReceivablesDT", "address",
 							"addressReceipt", "bankName", "bankAccount", "tax",
-							"fax", "note", "dataOrg"]
+							"fax", "note", "dataOrg", "warehouseName"]
 				});
 
 		var store = Ext.create("Ext.data.Store", {
@@ -499,6 +499,12 @@ Ext.define("PSI.Customer.MainForm", {
 								dataIndex : "initReceivablesDT",
 								menuDisabled : true,
 								sortable : false
+							}, {
+								header : "销售出库仓库",
+								dataIndex : "warehouseName",
+								menuDisabled : true,
+								sortable : false,
+								width : 200
 							}, {
 								header : "备注",
 								dataIndex : "note",

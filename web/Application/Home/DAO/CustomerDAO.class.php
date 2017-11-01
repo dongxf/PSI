@@ -298,6 +298,15 @@ class CustomerDAO extends PSIBaseExDAO {
 		$fax = $params["fax"];
 		$note = $params["note"];
 		
+		// 销售出库仓库
+		$warehouseId = $params["warehouseId"];
+		$warehouseDAO = new WarehouseDAO($db);
+		$warehouse = $warehouseDAO->getWarehouseById($warehouseId);
+		if (! $warehouse) {
+			// 没有选择销售出库仓库
+			$warehouseId = "";
+		}
+		
 		$py = $params["py"];
 		$categoryId = $params["categoryId"];
 		
@@ -323,13 +332,13 @@ class CustomerDAO extends PSIBaseExDAO {
 		
 		$sql = "insert into t_customer (id, category_id, code, name, py, contact01,
 				qq01, tel01, mobile01, contact02, qq02, tel02, mobile02, address, address_receipt,
-				bank_name, bank_account, tax_number, fax, note, data_org, company_id)
+				bank_name, bank_account, tax_number, fax, note, data_org, company_id, sales_warehouse_id)
 				values ('%s', '%s', '%s', '%s', '%s', '%s',
 						'%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
-						'%s', '%s', '%s', '%s', '%s', '%s', '%s')  ";
+						'%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')  ";
 		$rc = $db->execute($sql, $id, $categoryId, $code, $name, $py, $contact01, $qq01, $tel01, 
 				$mobile01, $contact02, $qq02, $tel02, $mobile02, $address, $addressReceipt, 
-				$bankName, $bankAccount, $tax, $fax, $note, $dataOrg, $companyId);
+				$bankName, $bankAccount, $tax, $fax, $note, $dataOrg, $companyId, $warehouseId);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
@@ -486,6 +495,15 @@ class CustomerDAO extends PSIBaseExDAO {
 		$fax = $params["fax"];
 		$note = $params["note"];
 		
+		// 销售出库仓库
+		$warehouseId = $params["warehouseId"];
+		$warehouseDAO = new WarehouseDAO($db);
+		$warehouse = $warehouseDAO->getWarehouseById($warehouseId);
+		if (! $warehouse) {
+			// 没有选择销售出库仓库
+			$warehouseId = "";
+		}
+		
 		$py = $params["py"];
 		$categoryId = $params["categoryId"];
 		
@@ -503,12 +521,12 @@ class CustomerDAO extends PSIBaseExDAO {
 				contact02 = '%s', qq02 = '%s', tel02 = '%s', mobile02 = '%s',
 				address = '%s', address_receipt = '%s',
 				bank_name = '%s', bank_account = '%s', tax_number = '%s',
-				fax = '%s', note = '%s'
+				fax = '%s', note = '%s', sales_warehouse_id = '%s'
 				where id = '%s'  ";
 		
 		$rc = $db->execute($sql, $code, $name, $categoryId, $py, $contact01, $qq01, $tel01, 
 				$mobile01, $contact02, $qq02, $tel02, $mobile02, $address, $addressReceipt, 
-				$bankName, $bankAccount, $tax, $fax, $note, $id);
+				$bankName, $bankAccount, $tax, $fax, $note, $warehouseId, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
@@ -636,8 +654,9 @@ class CustomerDAO extends PSIBaseExDAO {
 		}
 		
 		$sql = "select id, category_id, code, name, address, contact01, qq01, tel01, mobile01,
-				 contact02, qq02, tel02, mobile02, init_receivables, init_receivables_dt,
-					address_receipt, bank_name, bank_account, tax_number, fax, note, data_org
+				 	contact02, qq02, tel02, mobile02, init_receivables, init_receivables_dt,
+					address_receipt, bank_name, bank_account, tax_number, fax, note, data_org,
+					sales_warehouse_id
 				 from t_customer where (category_id = '%s') ";
 		$queryParam = [];
 		$queryParam[] = $categoryId;
@@ -688,8 +707,16 @@ class CustomerDAO extends PSIBaseExDAO {
 		$queryParam[] = $limit;
 		$result = [];
 		$data = $db->query($sql, $queryParam);
+		$warehouseDAO = new WarehouseDAO($db);
 		foreach ( $data as $v ) {
 			$initDT = $v["init_receivables_dt"] ? $this->toYMD($v["init_receivables_dt"]) : null;
+			
+			$warehouseId = $v["sales_warehouse_id"];
+			$warehouseName = "";
+			if ($warehouseId) {
+				$warehouse = $warehouseDAO->getWarehouseById($warehouseId);
+				$warehouseName = $warehouse["name"];
+			}
 			
 			$result[] = [
 					"id" => $v["id"],
@@ -713,7 +740,8 @@ class CustomerDAO extends PSIBaseExDAO {
 					"tax" => $v["tax_number"],
 					"fax" => $v["fax"],
 					"note" => $v["note"],
-					"dataOrg" => $v["data_org"]
+					"dataOrg" => $v["data_org"],
+					"warehouseName" => $warehouseName
 			];
 		}
 		
@@ -828,7 +856,7 @@ class CustomerDAO extends PSIBaseExDAO {
 		$sql = "select category_id, code, name, contact01, qq01, mobile01, tel01,
 					contact02, qq02, mobile02, tel02, address, address_receipt,
 					init_receivables, init_receivables_dt,
-					bank_name, bank_account, tax_number, fax, note
+					bank_name, bank_account, tax_number, fax, note, sales_warehouse_id
 				from t_customer
 				where id = '%s' ";
 		$data = $db->query($sql, $id);
@@ -856,6 +884,18 @@ class CustomerDAO extends PSIBaseExDAO {
 			$result["tax"] = $data[0]["tax_number"];
 			$result["fax"] = $data[0]["fax"];
 			$result["note"] = $data[0]["note"];
+			
+			$result["warehouseId"] = null;
+			$result["warehouseName"] = null;
+			$warehouseId = $data[0]["sales_warehouse_id"];
+			if ($warehouseId) {
+				$warehouseDAO = new WarehouseDAO($db);
+				$warehouse = $warehouseDAO->getWarehouseById($warehouseId);
+				if ($warehouse) {
+					$result["warehouseId"] = $warehouseId;
+					$result["warehouseName"] = $warehouse["name"];
+				}
+			}
 		}
 		
 		return $result;

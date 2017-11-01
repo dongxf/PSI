@@ -54,7 +54,7 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 				iconCls : iconCls
 			},
 			width : 550,
-			height : 420,
+			height : 440,
 			layout : "fit",
 			items : [{
 				id : "PSI_Customer_CustomerEditForm_editForm",
@@ -322,6 +322,23 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 								}
 							}
 						}, {
+							id : "PSI_Customer_CustomerEditForm_editWarehouse",
+							xtype : "psi_warehousefield",
+							fieldLabel : "销售出库仓库",
+							value : null,
+							listeners : {
+								specialkey : {
+									fn : me.onEditSpecialKey,
+									scope : me
+								}
+							},
+							width : 490,
+							colspan : 2
+						}, {
+							id : "PSI_Customer_CustomerEditForm_editWarehouseId",
+							xtype : "hiddenfield",
+							name : "warehouseId"
+						}, {
 							id : "PSI_Customer_CustomerEditForm_editNote",
 							fieldLabel : "备注",
 							name : "note",
@@ -382,6 +399,10 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 				.getCmp("PSI_Customer_CustomerEditForm_editInitReceivables");
 		me.editInitReceivablesDT = Ext
 				.getCmp("PSI_Customer_CustomerEditForm_editInitReceivablesDT");
+		me.editWarehouse = Ext
+				.getCmp("PSI_Customer_CustomerEditForm_editWarehouse");
+		me.editWarehouseId = Ext
+				.getCmp("PSI_Customer_CustomerEditForm_editWarehouseId");
 		me.editNote = Ext.getCmp("PSI_Customer_CustomerEditForm_editNote");
 
 		me.__editorList = [me.editCategory, me.editCode, me.editName,
@@ -389,8 +410,8 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 				me.editTel01, me.editQQ01, me.editContact02, me.editMobile02,
 				me.editTel02, me.editQQ02, me.editAddressReceipt,
 				me.editBankName, me.editBankAccount, me.editTax, me.editFax,
-				me.editInitReceivables, me.editInitReceivablesDT, me.editNote];
-
+				me.editInitReceivables, me.editInitReceivablesDT,
+				me.editWarehouse, me.editNote];
 	},
 
 	onWindowBeforeUnload : function(e) {
@@ -439,6 +460,13 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 								me.editTax.setValue(data.tax);
 								me.editFax.setValue(data.fax);
 								me.editNote.setValue(data.note);
+
+								if (data.warehouseId) {
+									me.editWarehouse
+											.setIdValue(data.warehouseId);
+									me.editWarehouse
+											.setValue(data.warehouseName);
+								}
 							}
 
 							el.unmask();
@@ -513,6 +541,9 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 
 	onOK : function(thenAdd) {
 		var me = this;
+
+		me.editWarehouseId.setValue(me.editWarehouse.getIdValue());
+
 		var f = me.editForm;
 		var el = f.getEl();
 		el.mask(PSI.Const.SAVING);
