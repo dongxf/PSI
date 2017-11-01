@@ -972,4 +972,34 @@ class CustomerDAO extends PSIBaseExDAO {
 				"priceList" => $result
 		];
 	}
+
+	/**
+	 * 获得客户的销售出库仓库
+	 *
+	 * @param string $id
+	 *        	客户id
+	 * @return array 仓库, 如果没有设置销售出库仓库则返回null
+	 */
+	public function getSalesWarehouse(string $id) {
+		$db = $this->db;
+		
+		$sql = "select sales_warehouse_id from t_customer where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if (! $data) {
+			return null;
+		}
+		
+		$warehouseId = $data[0]["sales_warehouse_id"];
+		
+		$sql = "select id, name from t_warehouse where id = '%s' ";
+		$data = $db->query($sql, $warehouseId);
+		if (! $data) {
+			return null;
+		} else {
+			return [
+					"id" => $data[0]["id"],
+					"name" => $data[0]["name"]
+			];
+		}
+	}
 }

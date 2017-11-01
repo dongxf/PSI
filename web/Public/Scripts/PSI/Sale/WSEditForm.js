@@ -330,6 +330,13 @@ Ext.define("PSI.Sale.WSEditForm", {
 
 								Ext.getCmp("buttonToolbox").setDisabled(true);
 								Ext.getCmp("editBarcode").setDisabled(true);
+
+								if (data.warehouseId) {
+									var editWarehouse = Ext
+											.getCmp("editWarehouse");
+									editWarehouse.setIdValue(data.warehouseId);
+									editWarehouse.setValue(data.warehouseName);
+								}
 							} else {
 
 								if (data.ref) {

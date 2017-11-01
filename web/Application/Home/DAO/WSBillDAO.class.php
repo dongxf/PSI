@@ -603,6 +603,13 @@ class WSBillDAO extends PSIBaseExDAO {
 					$result["memo"] = $v["bill_memo"];
 					$result["dealAddress"] = $v["deal_address"];
 					
+					$customerDAO = new CustomerDAO($db);
+					$warehosue = $customerDAO->getSalesWarehouse($v["customer_id"]);
+					if ($warehosue) {
+						$result["warehouseId"] = $warehosue["id"];
+						$result["warehouseName"] = $warehosue["name"];
+					}
+					
 					$pobillId = $v["id"];
 					// 销售订单的明细
 					$items = [];
