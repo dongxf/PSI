@@ -968,5 +968,11 @@ Ext.define("PSI.Sale.WSEditForm", {
 
 	__setCustomerExtData : function(data) {
 		Ext.getCmp("editDealAddress").setValue(data.address_receipt);
+
+		var editWarehouse = Ext.getCmp("editWarehouse");
+		if (data.warehouseId) {
+			editWarehouse.setIdValue(data.warehouseId);
+			editWarehouse.setValue(data.warehouseName);
+		}
 	}
 });

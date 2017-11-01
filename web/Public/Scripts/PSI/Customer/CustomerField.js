@@ -42,7 +42,8 @@ Ext.define("PSI.Customer.CustomerField", {
 		Ext.define(modelName, {
 					extend : "Ext.data.Model",
 					fields : ["id", "code", "name", "mobile01", "tel01", "fax",
-							"address_receipt", "contact01"]
+							"address_receipt", "contact01", "warehouseName",
+							"warehouseId"]
 				});
 
 		var store = Ext.create("Ext.data.Store", {
@@ -68,6 +69,11 @@ Ext.define("PSI.Customer.CustomerField", {
 								dataIndex : "mobile01",
 								menuDisabled : true,
 								width : 120
+							}, {
+								header : "销售出库仓库",
+								dataIndex : "warehouseName",
+								menuDisabled : true,
+								width : 200
 							}]
 				});
 		me.lookupGrid = lookupGrid;
@@ -76,7 +82,7 @@ Ext.define("PSI.Customer.CustomerField", {
 		var wnd = Ext.create("Ext.window.Window", {
 					title : "选择 - 客户",
 					modal : true,
-					width : 500,
+					width : 700,
 					height : 300,
 					layout : "border",
 					defaultFocus : "__editCustomer",

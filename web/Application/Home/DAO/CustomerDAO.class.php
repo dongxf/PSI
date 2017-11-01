@@ -817,7 +817,8 @@ class CustomerDAO extends PSIBaseExDAO {
 			$queryKey = "";
 		}
 		
-		$sql = "select id, code, name, mobile01, tel01, fax, address_receipt, contact01
+		$sql = "select id, code, name, mobile01, tel01, fax, address_receipt, contact01,
+					sales_warehouse_id
 				from t_customer
 				where (code like '%s' or name like '%s' or py like '%s'
 					or mobile01 like '%s' or mobile02 like '%s' ) ";
@@ -838,7 +839,36 @@ class CustomerDAO extends PSIBaseExDAO {
 		
 		$sql .= " order by code limit 20";
 		
-		return $db->query($sql, $queryParams);
+		$data = $db->query($sql, $queryParams);
+		
+		$result = [];
+		
+		$warehouseDAO = new WarehouseDAO($db);
+		
+		foreach ( $data as $v ) {
+			$warehouseId = $v["sales_warehouse_id"];
+			$warehouseName = null;
+			if ($warehouseId) {
+				$warehouse = $warehouseDAO->getWarehouseById($warehouseId);
+				if ($warehouse) {
+					$warehouseName = $warehouse["name"];
+				}
+			}
+			$result[] = [
+					"id" => $v["id"],
+					"code" => $v["code"],
+					"name" => $v["name"],
+					"mobile01" => $v["mobile01"],
+					"tel01" => $v["tel01"],
+					"fax" => $v["fax"],
+					"address_receipt" => $v["address_receipt"],
+					"contact01" => $v["contact01"],
+					"warehouseId" => $warehouseId,
+					"warehouseName" => $warehouseName
+			];
+		}
+		
+		return $result;
 	}
 
 	/**
