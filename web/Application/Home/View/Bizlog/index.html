@@ -10,15 +10,15 @@
 	Ext.onReady(function() {
 		var app = Ext.create("PSI.App", {
 			userName : "{$loginUserName}",
-			productionName : "{$productionName}"
+			productionName : "{$productionName}",
+			appHeaderInfo : {
+				title : "{$title}",
+				iconCls : "PSI-fid-8997"
+			}
 		});
 
 		app.add(Ext.create("PSI.Bizlog.MainForm", {
 			unitTest : "{$canUnitTest}"
 		}));
-		app.setAppHeader({
-			title : "{$title}",
-			iconCls : "PSI-fid-8997"
-		});
 	});
 </script>
