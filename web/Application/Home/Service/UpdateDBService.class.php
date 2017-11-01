@@ -124,6 +124,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20170607_01();
 		$this->update_20170609_02();
 		$this->update_20170927_01();
+		$this->update_20171101_01();
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -144,6 +145,18 @@ class UpdateDBService extends PSIBaseService {
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	// ============================================
 	private function notForgot() {
+	}
+
+	private function update_20171101_01() {
+		// 本次更新：t_customer新增sales_warehouse_id
+		$db = $this->db;
+		
+		$tableName = "t_customer";
+		$columnName = "sales_warehouse_id";
+		if (! $this->columnExists($db, $tableName, $columnName)) {
+			$sql = "alter table {$tableName} add {$columnName} varchar(255) DEFAULT NULL;";
+			$db->execute($sql);
+		}
 	}
 
 	private function update_20170927_01() {
