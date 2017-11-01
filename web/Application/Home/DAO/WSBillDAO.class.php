@@ -870,6 +870,18 @@ class WSBillDAO extends PSIBaseExDAO {
 			return $this->bad("仓库 [{$warehouseName}]还没有建账，不能进行出库操作");
 		}
 		
+		// 检查销售出库仓库是否正确
+		$salesWarehouse = $customerDAO->getSalesWarehouse($customerId);
+		if ($salesWarehouse) {
+			$salesWarehouseId = $salesWarehouse["id"];
+			if ($salesWarehouseId != $warehouseId) {
+				$salesWarehouseName = $salesWarehouse["name"];
+				$info = "当前客户的销售出库仓库只能是：{$salesWarehouseName}<br/><br/>";
+				$info .= "请重新编辑出库单，选择正确的销售出库仓库";
+				return $this->bad($info);
+			}
+		}
+		
 		$userDAO = new UserDAO($db);
 		$user = $userDAO->getUserById($bizUserId);
 		if (! $user) {
