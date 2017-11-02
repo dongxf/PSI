@@ -259,7 +259,13 @@ class PermissionDAO extends PSIBaseExDAO {
 			$sql .= " where category = '%s' ";
 		}
 		
-		$sql .= " order by convert(name USING gbk) collate gbk_chinese_ci";
+		if ($category == $this->ALL_CATEGORY) {
+			// using gbk : 为了按拼音排序
+			$sql .= " order by convert(category USING gbk) collate gbk_chinese_ci ";
+		} else {
+			$sql .= " order by show_order";
+		}
+		
 		$data = $db->query($sql, $queryParams);
 		
 		$result = [];
