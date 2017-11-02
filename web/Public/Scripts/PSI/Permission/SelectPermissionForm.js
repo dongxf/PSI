@@ -10,7 +10,7 @@ Ext.define("PSI.Permission.SelectPermissionForm", {
 	},
 
 	title : "选择权限",
-	width : 900,
+	width : 1200,
 	height : 600,
 	layout : "border",
 
@@ -223,7 +223,7 @@ Ext.define("PSI.Permission.SelectPermissionForm", {
 							}, {
 								header : "权限说明",
 								dataIndex : "note",
-								width : 300,
+								width : 400,
 								menuDisabled : true
 							}]
 				});

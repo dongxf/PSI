@@ -126,6 +126,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20170927_01();
 		$this->update_20171101_01();
 		$this->update_20171102_01();
+		$this->update_20171102_02();
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -146,6 +147,38 @@ class UpdateDBService extends PSIBaseService {
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	// ============================================
 	private function notForgot() {
+	}
+
+	private function modifyPermission($fid, $showOrder, $note) {
+		$db = $this->db;
+		
+		$sql = "update t_permission
+				set show_order = %d, note = '%s'
+				where fid = '%s' ";
+		$db->execute($sql, $showOrder, $note, $fid);
+	}
+
+	private function update_20171102_02() {
+		// 本次更新： 调整 t_permission的备注和排序
+		
+		// 仓库
+		$this->modifyPermission("1003", 100, "模块权限：通过菜单进入仓库的权限");
+		$this->modifyPermission("1003-02", 201, "按钮权限：仓库模块[新增仓库]按钮权限");
+		$this->modifyPermission("1003-03", 202, "按钮权限：仓库模块[编辑仓库]按钮权限");
+		$this->modifyPermission("1003-04", 203, "按钮权限：仓库模块[删除仓库]按钮权限");
+		$this->modifyPermission("1003-05", 204, "按钮权限：仓库模块[修改数据域]按钮权限");
+		$this->modifyPermission("1003-01", 300, "数据域权限：仓库在业务单据中的使用权限");
+		
+		// 供应商
+		$this->modifyPermission("1004", 100, "模块权限：通过菜单进入供应商档案的权限");
+		$this->modifyPermission("1004-03", 201, "按钮权限：供应商档案模块[新增供应商分类]按钮权限");
+		$this->modifyPermission("1004-04", 202, "按钮权限：供应商档案模块[编辑供应商分类]按钮权限");
+		$this->modifyPermission("1004-05", 203, "按钮权限：供应商档案模块[删除供应商分类]按钮权限");
+		$this->modifyPermission("1004-06", 204, "按钮权限：供应商档案模块[新增供应商]按钮权限");
+		$this->modifyPermission("1004-07", 205, "按钮权限：供应商档案模块[编辑供应商]按钮权限");
+		$this->modifyPermission("1004-08", 206, "按钮权限：供应商档案模块[删除供应商]按钮权限");
+		$this->modifyPermission("1004-02", 300, "数据域权限：供应商档案模块中供应商分类的数据权限");
+		$this->modifyPermission("1004-01", 301, "数据域权限：供应商档案在业务单据中的使用权限");
 	}
 
 	private function update_20171102_01() {
