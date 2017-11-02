@@ -213,12 +213,14 @@ Ext.define("PSI.User.MainForm", {
 								header : "登录名",
 								dataIndex : "loginName",
 								menuDisabled : true,
-								sortable : false
+								sortable : false,
+								locked : true
 							}, {
 								header : "姓名",
 								dataIndex : "name",
 								menuDisabled : true,
-								sortable : false
+								sortable : false,
+								locked : true
 							}, {
 								header : "编码",
 								dataIndex : "orgCode",
