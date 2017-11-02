@@ -166,6 +166,21 @@ class UserDAO extends PSIBaseExDAO {
 		$result = [];
 		
 		foreach ( $data as $v ) {
+			// 查询用户的权限角色
+			$userId = $v["id"];
+			$sql = "select r.name
+					from t_role r, t_role_user u
+					where r.id = u.role_id and u.user_id = '%s' 
+					order by r.code";
+			$d = $db->query($sql, $userId);
+			$roleName = "";
+			foreach ( $d as $index => $r ) {
+				if ($index > 0) {
+					$roleName .= ", ";
+				}
+				$roleName .= $r["name"];
+			}
+			
 			$item = [
 					"id" => $v["id"],
 					"loginName" => $v["login_name"],
@@ -178,7 +193,8 @@ class UserDAO extends PSIBaseExDAO {
 					"tel" => $v["tel"],
 					"tel02" => $v["tel02"],
 					"address" => $v["address"],
-					"dataOrg" => $v["data_org"]
+					"dataOrg" => $v["data_org"],
+					"roleName" => $roleName
 			];
 			$result[] = $item;
 		}

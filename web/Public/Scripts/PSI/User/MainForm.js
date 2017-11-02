@@ -179,7 +179,7 @@ Ext.define("PSI.User.MainForm", {
 					extend : "Ext.data.Model",
 					fields : ["id", "loginName", "name", "enabled", "orgCode",
 							"gender", "birthday", "idCardNumber", "tel",
-							"tel02", "address", "dataOrg"]
+							"tel02", "address", "dataOrg", "roleName"]
 				});
 		var storeGrid = Ext.create("Ext.data.Store", {
 					autoLoad : false,
@@ -223,6 +223,12 @@ Ext.define("PSI.User.MainForm", {
 								menuDisabled : true,
 								sortable : false,
 								locked : true
+							}, {
+								header : "权限角色",
+								dataIndex : "roleName",
+								menuDisabled : true,
+								sortable : false,
+								width : 200
 							}, {
 								header : "编码",
 								dataIndex : "orgCode",
