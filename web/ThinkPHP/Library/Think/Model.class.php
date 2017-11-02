@@ -1474,6 +1474,10 @@ class Model {
      */
     public function startTrans() {
         $this->commit();
+        // PSI
+        // 把数据库隔离级别设置到最高
+        $this->execute("SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE");
+        // end of PSI
         $this->db->startTrans();
         return ;
     }
