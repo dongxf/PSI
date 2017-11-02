@@ -1481,6 +1481,12 @@ class Model {
         $this->db->startTrans();
         return ;
     }
+    
+    // PSI
+    private function setTransIsolationToRepeatableRead() {
+    	$this->execute("SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ");
+    }
+    // end of PSI
 
     /**
      * 提交事务
@@ -1488,6 +1494,9 @@ class Model {
      * @return boolean
      */
     public function commit() {
+    	// PSI
+    	$this->setTransIsolationToRepeatableRead();
+    	// end of PSI
         return $this->db->commit();
     }
 
@@ -1497,6 +1506,9 @@ class Model {
      * @return boolean
      */
     public function rollback() {
+    	// PSI
+    	$this->setTransIsolationToRepeatableRead();
+    	// end of PSI
         return $this->db->rollback();
     }
 
