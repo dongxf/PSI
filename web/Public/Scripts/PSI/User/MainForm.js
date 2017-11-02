@@ -89,6 +89,8 @@ Ext.define("PSI.User.MainForm", {
 								layout : "fit",
 								width : 440,
 								split : true,
+								collapsible : true,
+								header : false,
 								border : 0,
 								items : [me.getOrgGrid()]
 							}]
