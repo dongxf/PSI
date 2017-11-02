@@ -125,6 +125,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20170609_02();
 		$this->update_20170927_01();
 		$this->update_20171101_01();
+		$this->update_20171102_01();
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -145,6 +146,18 @@ class UpdateDBService extends PSIBaseService {
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	// ============================================
 	private function notForgot() {
+	}
+
+	private function update_20171102_01() {
+		// 本次更新：t_permission新增字段show_order
+		$db = $this->db;
+		
+		$tableName = "t_permission";
+		$columnName = "show_order";
+		if (! $this->columnExists($db, $tableName, $columnName)) {
+			$sql = "alter table {$tableName} add {$columnName} int(11) DEFAULT NULL;";
+			$db->execute($sql);
+		}
 	}
 
 	private function update_20171101_01() {
