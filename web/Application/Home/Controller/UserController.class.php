@@ -5,6 +5,7 @@ namespace Home\Controller;
 use Home\Common\FIdConst;
 use Home\Service\InstallService;
 use Home\Service\UserService;
+use Home\Service\BizConfigService;
 
 /**
  * 用户管理Controller
@@ -59,6 +60,15 @@ class UserController extends PSIBaseController {
 		$installService->autoInstallWhenFirstRun();
 		
 		$this->initVar();
+		
+		$bcs = new BizConfigService();
+		$productionName = $bcs->getProductionName();
+		
+		if ($productionName == "PSI") {
+			$productionName .= " - 开源ERP";
+		}
+		
+		$this->assign("productionName", $productionName);
 		
 		$this->assign("title", "登录");
 		
