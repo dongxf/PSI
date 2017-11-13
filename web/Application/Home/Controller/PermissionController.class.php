@@ -131,10 +131,7 @@ class PermissionController extends PSIBaseController {
 		if (IS_POST) {
 			$idList = I("post.idList");
 			
-			$ps = new PermissionService();
-			$data = $ps->selectUsers($idList);
-			
-			$this->ajaxReturn($data);
+			$this->ajaxReturn((new PermissionService())->selectUsers($idList));
 		}
 	}
 
