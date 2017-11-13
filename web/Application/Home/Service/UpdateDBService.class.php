@@ -127,6 +127,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20171101_01();
 		$this->update_20171102_01();
 		$this->update_20171102_02();
+		$this->update_20171113_01();
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -156,6 +157,34 @@ class UpdateDBService extends PSIBaseService {
 				set show_order = %d, note = '%s'
 				where fid = '%s' ";
 		$db->execute($sql, $showOrder, $note, $fid);
+	}
+
+	private function update_20171113_01() {
+		// 本次更新：调整t_permission的备注和排序
+		
+		// 商品
+		$this->modifyPermission("1001", 100, "模块权限：通过菜单进入商品模块的权限");
+		
+		$this->modifyPermission("1001-03", 201, "按钮权限：商品模块[新增商品分类]按钮权限");
+		$this->modifyPermission("1001-04", 201, "按钮权限：商品模块[编辑商品分类]按钮权限");
+		$this->modifyPermission("1001-05", 201, "按钮权限：商品模块[删除商品分类]按钮权限");
+		
+		$this->modifyPermission("1001-06", 201, "按钮权限：商品模块[新增商品]按钮权限");
+		$this->modifyPermission("1001-07", 201, "按钮权限：商品模块[编辑商品]按钮权限");
+		$this->modifyPermission("1001-08", 201, "按钮权限：商品模块[删除商品]按钮权限");
+		$this->modifyPermission("1001-09", 201, "按钮权限：商品模块[导入商品]按钮权限");
+		$this->modifyPermission("1001-10", 201, "按钮权限：商品模块[设置安全库存]按钮权限");
+		
+		$this->modifyPermission("2030-01", 201, "按钮权限：商品模块[新增子商品]按钮权限");
+		$this->modifyPermission("2030-02", 201, "按钮权限：商品模块[编辑子商品]按钮权限");
+		$this->modifyPermission("2030-03", 201, "按钮权限：商品模块[删除子商品]按钮权限");
+		
+		$this->modifyPermission("1001-01", 300, "数据域权限：商品在业务单据中的使用权限");
+		$this->modifyPermission("1001-02", 301, "数据域权限：商品模块中商品分类的数据权限");
+
+		$this->modifyPermission("1002", 500, "模块权限：通过菜单进入商品计量单位模块的权限");
+		$this->modifyPermission("2029", 600, "模块权限：通过菜单进入商品品牌模块的权限");
+		$this->modifyPermission("2031", 700, "模块权限：通过菜单进入价格体系模块的权限");
 	}
 
 	private function update_20171102_02() {
