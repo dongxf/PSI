@@ -405,7 +405,7 @@ class PermissionDAO extends PSIBaseExDAO {
 		
 		$sql = "select u.id, u.name, u.login_name, o.full_name
 				from t_user u, t_org o
-				where u.org_id = o.id ";
+				where (u.org_id = o.id) ";
 		$queryParams = [];
 		$ds = new DataOrgDAO($db);
 		$rs = $ds->buildSQL(FIdConst::PERMISSION_MANAGEMENT, "u", $loginUserId);
@@ -414,18 +414,29 @@ class PermissionDAO extends PSIBaseExDAO {
 			$queryParams = $rs[1];
 		}
 		
+		if (count($list) > 0) {
+			$sql .= " and (";
+			foreach ( $list as $listIndex => $listItem ) {
+				if ($listIndex > 0) {
+					$sql .= " and ";
+				}
+				$sql .= " u.id <> '%s' ";
+				$queryParams[] = $listItem;
+			}
+			
+			$sql .= ") ";
+		}
+		
 		$sql .= " order by convert(u.name USING gbk) collate gbk_chinese_ci";
 		$data = $db->query($sql, $queryParams);
 		
 		foreach ( $data as $v ) {
-			if (! in_array($v["id"], $list)) {
-				$result[] = [
-						"id" => $v["id"],
-						"name" => $v["name"],
-						"loginName" => $v["login_name"],
-						"orgFullName" => $v["full_name"]
-				];
-			}
+			$result[] = [
+					"id" => $v["id"],
+					"name" => $v["name"],
+					"loginName" => $v["login_name"],
+					"orgFullName" => $v["full_name"]
+			];
 		}
 		
 		return $result;
