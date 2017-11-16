@@ -47,7 +47,14 @@ class FIdService {
 		$us = new UserService();
 		$userId = $us->getLoginUserId();
 		
-		$sql = " select distinct f.fid, f.name 
+		//
+		// 这里的SQL里面之所以和 t_permission、t_role_permission有关联
+		// 是为了处理：某个模块权限原来有，但是现在没有了，这样在常用功能里面就不应该出现该模块
+		//
+		// SQL的select部分有一个不需要返回给前端的 r.click_count，是因为在MySQL 5.7+因为SQL_MODE的原因
+		// 不加上r.click_count就会出错。
+		//
+		$sql = " select distinct f.fid, f.name, r.click_count 
 				from t_recent_fid r,  t_fid f, t_permission p, t_role_permission rp, t_role_user ru
 				where r.fid = f.fid and r.user_id = '%s' and r.fid = p.fid 
 				and p.id = rp.permission_id and rp.role_id = ru.role_id 
@@ -57,7 +64,15 @@ class FIdService {
 		
 		$data = M()->query($sql, $userId, $userId);
 		
-		return $data;
+		$result = [];
+		foreach ( $data as $v ) {
+			$result[] = [
+					"fid" => $v["fid"],
+					"name" => $v["name"]
+			];
+		}
+		
+		return $result;
 	}
 
 	public function getFIdName($fid) {
