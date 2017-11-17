@@ -4,6 +4,14 @@
 >
 >为什么说PSI是一款基于SaaS的企业管理软件？详见：https://my.oschina.net/u/134395/blog/1551258
 
+PSI 代码库分支说明
+-------------
+>目前有两个分支：master 和 NewUI
+>
+>master分支：当前稳定版本，完全可以投入生产环境使用
+>
+>NewUI分支：PSI下一个版本的开发环境，参考：https://my.oschina.net/u/134395/blog/1575027
+
 PSI演示
 -------------
 >PSI的演示见：<a target="_blank" href="http://psi.butterfly.mopaasapp.com">http://psi.butterfly.mopaasapp.com</a>
