@@ -33,58 +33,72 @@ class CustomerDAO extends PSIBaseExDAO {
 			return $this->emptyResult();
 		}
 		
-		$sql = "select c.id, c.code, c.name, count(u.id) as cnt, c.ps_id
-				 from t_customer_category c
-				 left join t_customer u
-				 on (c.id = u.category_id) ";
-		$queryParam = [];
-		if ($code) {
-			$sql .= " and (u.code like '%s') ";
-			$queryParam[] = "%{$code}%";
-		}
-		if ($name) {
-			$sql .= " and (u.name like '%s' or u.py like '%s' ) ";
-			$queryParam[] = "%{$name}%";
-			$queryParam[] = "%{$name}%";
-		}
-		if ($address) {
-			$sql .= " and (u.address like '%s' or u.address_receipt like '%s') ";
-			$queryParam[] = "%{$address}%";
-			$queryParam[] = "%{$address}%";
-		}
-		if ($contact) {
-			$sql .= " and (u.contact01 like '%s' or u.contact02 like '%s' ) ";
-			$queryParam[] = "%{$contact}%";
-			$queryParam[] = "%{$contact}%";
-		}
-		if ($mobile) {
-			$sql .= " and (u.mobile01 like '%s' or u.mobile02 like '%s' ) ";
-			$queryParam[] = "%{$mobile}%";
-			$queryParam[] = "%{$mobile}";
-		}
-		if ($tel) {
-			$sql .= " and (u.tel01 like '%s' or u.tel02 like '%s' ) ";
-			$queryParam[] = "%{$tel}%";
-			$queryParam[] = "%{$tel}";
-		}
-		if ($qq) {
-			$sql .= " and (u.qq01 like '%s' or u.qq02 like '%s' ) ";
-			$queryParam[] = "%{$qq}%";
-			$queryParam[] = "%{$qq}";
-		}
-		
 		$ds = new DataOrgDAO($db);
+		$queryParam = [];
+		
+		$sql = "select c.id, c.code, c.name, c.ps_id
+				from t_customer_category c ";
 		$rs = $ds->buildSQL(FIdConst::CUSTOMER_CATEGORY, "c", $loginUserId);
 		if ($rs) {
 			$sql .= " where " . $rs[0];
 			$queryParam = array_merge($queryParam, $rs[1]);
 		}
+		$sql .= " order by c.code ";
 		
-		$sql .= " group by c.id
-				 order by c.code";
 		$data = $db->query($sql, $queryParam);
+		
 		$result = [];
 		foreach ( $data as $v ) {
+			// 分类中的客户数量
+			$id = $v["id"];
+			$queryParam = [];
+			$sql = "select count(u.id) as cnt
+					from t_customer u 
+					where (u.category_id = '%s') ";
+			$queryParam[] = $id;
+			if ($code) {
+				$sql .= " and (u.code like '%s') ";
+				$queryParam[] = "%{$code}%";
+			}
+			if ($name) {
+				$sql .= " and (u.name like '%s' or u.py like '%s' ) ";
+				$queryParam[] = "%{$name}%";
+				$queryParam[] = "%{$name}%";
+			}
+			if ($address) {
+				$sql .= " and (u.address like '%s' or u.address_receipt like '%s') ";
+				$queryParam[] = "%{$address}%";
+				$queryParam[] = "%{$address}%";
+			}
+			if ($contact) {
+				$sql .= " and (u.contact01 like '%s' or u.contact02 like '%s' ) ";
+				$queryParam[] = "%{$contact}%";
+				$queryParam[] = "%{$contact}%";
+			}
+			if ($mobile) {
+				$sql .= " and (u.mobile01 like '%s' or u.mobile02 like '%s' ) ";
+				$queryParam[] = "%{$mobile}%";
+				$queryParam[] = "%{$mobile}";
+			}
+			if ($tel) {
+				$sql .= " and (u.tel01 like '%s' or u.tel02 like '%s' ) ";
+				$queryParam[] = "%{$tel}%";
+				$queryParam[] = "%{$tel}";
+			}
+			if ($qq) {
+				$sql .= " and (u.qq01 like '%s' or u.qq02 like '%s' ) ";
+				$queryParam[] = "%{$qq}%";
+				$queryParam[] = "%{$qq}";
+			}
+			$rs = $ds->buildSQL(FIdConst::CUSTOMER, "u", $loginUserId);
+			if ($rs) {
+				$sql .= " and " . $rs[0];
+				$queryParam = array_merge($queryParam, $rs[1]);
+			}
+			$d = $db->query($sql, $queryParam);
+			$customerCount = $d[0]["cnt"];
+			
+			// 价格体系
 			$psId = $v["ps_id"];
 			$priceSystem = null;
 			if ($psId) {
@@ -98,7 +112,7 @@ class CustomerDAO extends PSIBaseExDAO {
 					"id" => $v["id"],
 					"code" => $v["code"],
 					"name" => $v["name"],
-					"cnt" => $v["cnt"],
+					"cnt" => $customerCount,
 					"priceSystem" => $priceSystem
 			];
 		}
