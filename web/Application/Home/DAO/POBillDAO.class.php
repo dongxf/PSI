@@ -990,6 +990,50 @@ class POBillDAO extends PSIBaseExDAO {
 	 * @return null|array
 	 */
 	public function cancelClosedPOBill(&$params) {
-		return $this->todo("取消关闭采购订单");
+		$db = $this->db;
+		
+		$id = $params["id"];
+		
+		$sql = "select ref, bill_status
+				from t_po_bill
+				where id = '%s' ";
+		$data = $db->query($sql, $id);
+		
+		if (! $data) {
+			return $this->bad("要关闭的采购订单不存在");
+		}
+		
+		$ref = $data[0]["ref"];
+		$billStatus = $data[0]["bill_status"];
+		
+		if ($billStatus < 4000) {
+			return $this->bad("采购订单没有被关闭，无需取消");
+		}
+		
+		$newBillStatus = - 1;
+		if ($billStatus == 4000) {
+			$newBillStatus = 1000;
+		} else if ($billStatus == 4001) {
+			$newBillStatus = 2000;
+		} else if ($billStatus == 4002) {
+			$newBillStatus = 3000;
+		}
+		
+		if ($newBillStatus == - 1) {
+			return $this->bad("当前采购订单的订单状态是不能识别的状态码：{$billStatus}");
+		}
+		
+		$sql = "update t_po_bill
+				set bill_status = %d
+				where id = '%s' ";
+		$rc = $db->execute($sql, $newBillStatus, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		$params["ref"] = $ref;
+		
+		// 操作成功
+		return null;
 	}
 }
