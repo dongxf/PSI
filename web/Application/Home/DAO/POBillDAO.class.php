@@ -898,4 +898,24 @@ class POBillDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 关闭采购订单
+	 *
+	 * @param array $params        	
+	 * @return null|array
+	 */
+	public function closePOBill(&$params) {
+		return $this->todo("关闭采购订单");
+	}
+
+	/**
+	 * 取消关闭采购订单
+	 *
+	 * @param array $params        	
+	 * @return null|array
+	 */
+	public function cancelClosedPOBill(&$params) {
+		return $this->todo("取消关闭采购订单");
+	}
 }

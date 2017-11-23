@@ -132,6 +132,19 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 					handler : me.onGenPWBill,
 					id : "buttonGenPWBill"
 				}, "-", {
+					text : "关闭订单",
+					menu : [{
+								text : "关闭采购订单",
+								iconCls : "PSI-button-commit",
+								scope : me,
+								handler : me.onClosePO
+							}, "-", {
+								text : "取消采购订单关闭状态",
+								iconCls : "PSI-button-cancelconfirm",
+								scope : me,
+								handler : me.onCancelClosedPO
+							}]
+				}, "-", {
 					text : "单据生成pdf",
 					id : "buttonPDF",
 					iconCls : "PSI-button-pdf",
@@ -1193,5 +1206,101 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 			}
 		};
 		me.ajax(r);
+	},
+
+	onClosePO : function() {
+		var me = this;
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			me.showInfo("没有选择要关闭的采购订单");
+			return;
+		}
+		var bill = item[0];
+
+		// if (bill.get("billStatus") > 0) {
+		// me.showInfo("当前采购订单已经审核，不能再次审核");
+		// return;
+		// }
+
+		var info = "请确认是否关闭单号: <span style='color:red'>" + bill.get("ref")
+				+ "</span> 的采购订单?";
+		var id = bill.get("id");
+
+		var funcConfirm = function() {
+			var el = Ext.getBody();
+			el.mask("正在提交中...");
+			var r = {
+				url : me.URL("Home/Purchase/closePOBill"),
+				params : {
+					id : id
+				},
+				callback : function(options, success, response) {
+					el.unmask();
+
+					if (success) {
+						var data = me.decodeJSON(response.responseText);
+						if (data.success) {
+							me.showInfo("成功关闭采购订单", function() {
+										me.refreshMainGrid(id);
+									});
+						} else {
+							me.showInfo(data.msg);
+						}
+					} else {
+						me.showInfo("网络错误");
+					}
+				}
+			};
+			me.ajax(r);
+		};
+		me.confirm(info, funcConfirm);
+	},
+
+	onCancelClosedPO : function() {
+		var me = this;
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			me.showInfo("没有选择要取消关闭状态的采购订单");
+			return;
+		}
+		var bill = item[0];
+
+		// if (bill.get("billStatus") > 0) {
+		// me.showInfo("当前采购订单已经审核，不能再次审核");
+		// return;
+		// }
+
+		var info = "请确认是否取消单号: <span style='color:red'>" + bill.get("ref")
+				+ "</span> 采购订单的关闭状态?";
+		var id = bill.get("id");
+
+		var funcConfirm = function() {
+			var el = Ext.getBody();
+			el.mask("正在提交中...");
+			var r = {
+				url : me.URL("Home/Purchase/cancelClosedPOBill"),
+				params : {
+					id : id
+				},
+				callback : function(options, success, response) {
+					el.unmask();
+
+					if (success) {
+						var data = me.decodeJSON(response.responseText);
+						if (data.success) {
+							me.showInfo("成功取消采购订单关闭状态", function() {
+										me.refreshMainGrid(id);
+									});
+						} else {
+							me.showInfo(data.msg);
+						}
+					} else {
+						me.showInfo("网络错误");
+					}
+				}
+			};
+			me.ajax(r);
+		};
+		me.confirm(info, funcConfirm);
 	}
 });

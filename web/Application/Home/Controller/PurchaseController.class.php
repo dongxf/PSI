@@ -275,4 +275,32 @@ class PurchaseController extends PSIBaseController {
 			$this->ajaxReturn($ps->poBillPWBillList($params));
 		}
 	}
+
+	/**
+	 * 关闭采购订单
+	 */
+	public function closePOBill() {
+		if (IS_POST) {
+			$params = array(
+					"id" => I("post.id")
+			);
+			
+			$ps = new POBillService();
+			$this->ajaxReturn($ps->closePOBill($params));
+		}
+	}
+
+	/**
+	 * 取消关闭采购订单
+	 */
+	public function cancelClosedPOBill() {
+		if (IS_POST) {
+			$params = array(
+					"id" => I("post.id")
+			);
+			
+			$ps = new POBillService();
+			$this->ajaxReturn($ps->cancelClosedPOBill($params));
+		}
+	}
 }

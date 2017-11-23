@@ -303,4 +303,72 @@ class POBillService extends PSIBaseExService {
 		
 		$pdf->Output("$ref.pdf", "I");
 	}
+
+	/**
+	 * 关闭采购订单
+	 *
+	 * @param array $params        	
+	 * @return array
+	 */
+	public function closePOBill($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
+		$id = $params["id"];
+		
+		$db = $this->db();
+		$db->startTrans();
+		$dao = new POBillDAO($this->db());
+		$rc = $dao->closePOBill($params);
+		if ($rc) {
+			$db->rollback();
+			return $rc;
+		}
+		
+		$ref = $params["ref"];
+		
+		// 记录业务日志
+		$log = "关闭采购订单，单号：{$ref}";
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$db->commit();
+		
+		return $this->ok($id);
+	}
+
+	/**
+	 * 取消关闭采购订单
+	 * 
+	 * @param array $params        	
+	 * @return array
+	 */
+	public function cancelClosedPOBill($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
+		$id = $params["id"];
+		
+		$db = $this->db();
+		$db->startTrans();
+		$dao = new POBillDAO($this->db());
+		$rc = $dao->cancelClosedPOBill($params);
+		if ($rc) {
+			$db->rollback();
+			return $rc;
+		}
+		
+		$ref = $params["ref"];
+		
+		// 记录业务日志
+		$log = "取消关闭采购订单，单号：{$ref}";
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$db->commit();
+		
+		return $this->ok($id);
+	}
 }
