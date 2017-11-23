@@ -184,7 +184,7 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 			store : Ext.create("Ext.data.ArrayStore", {
 						fields : ["id", "text"],
 						data : [[-1, "全部"], [0, "待审核"], [1000, "已审核"],
-								[2000, "部分入库"], [3000, "全部入库"]]
+								[2000, "部分入库"], [3000, "全部入库"], [4000, "订单关闭"]]
 					}),
 			value : -1
 		}, {
