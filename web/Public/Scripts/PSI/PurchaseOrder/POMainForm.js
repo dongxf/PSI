@@ -328,7 +328,7 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 								dataIndex : "billStatus",
 								menuDisabled : true,
 								sortable : false,
-								width : 80,
+								width : 100,
 								renderer : function(value) {
 									if (value == 0) {
 										return "<span style='color:red'>待审核</span>";
@@ -338,6 +338,12 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 										return "<span style='color:green'>部分入库</span>";
 									} else if (value == 3000) {
 										return "全部入库";
+									} else if (value == 4000) {
+										return "关闭(未入库)";
+									} else if (value == 4001) {
+										return "关闭(部分入库)";
+									} else if (value == 4002) {
+										return "关闭(全部入库)";
 									} else {
 										return "";
 									}
@@ -1033,6 +1039,11 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 
 		if (bill.get("billStatus") < 1000) {
 			me.showInfo("当前采购订单还没有审核，无法生成采购入库单");
+			return;
+		}
+
+		if (bill.get("billStatus") >= 4000) {
+			me.showInfo("当前采购订单已经关闭，不能再生成采购入库单");
 			return;
 		}
 
