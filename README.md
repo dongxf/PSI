@@ -30,6 +30,8 @@
 
 >
 >`PHP 7+`, `MySQL 5.5+`
+>
+>如果在寻找Java编写的ERP，请访问：https://gitee.com/crm8000/ABS
 
 
 # PSI的开源协议
