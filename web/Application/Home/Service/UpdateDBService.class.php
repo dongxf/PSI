@@ -128,6 +128,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20171102_01();
 		$this->update_20171102_02();
 		$this->update_20171113_01();
+		$this->update_20171208_01();
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -148,6 +149,25 @@ class UpdateDBService extends PSIBaseService {
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	// ============================================
 	private function notForgot() {
+	}
+
+	private function update_20171208_01() {
+		// 本次更新：t_ic_bill新增字段bill_memo，t_ic_bill_detail新增字段memo
+		$db = $this->db;
+		
+		$tableName = "t_ic_bill";
+		$columnName = "bill_memo";
+		if (! $this->columnExists($db, $tableName, $columnName)) {
+			$sql = "alter table {$tableName} add {$columnName} varchar(255) DEFAULT NULL;";
+			$db->execute($sql);
+		}
+		
+		$tableName = "t_ic_bill_detail";
+		$columnName = "memo";
+		if (! $this->columnExists($db, $tableName, $columnName)) {
+			$sql = "alter table {$tableName} add {$columnName} varchar(255) DEFAULT NULL;";
+			$db->execute($sql);
+		}
 	}
 
 	private function modifyPermission($fid, $showOrder, $note) {
@@ -181,7 +201,7 @@ class UpdateDBService extends PSIBaseService {
 		
 		$this->modifyPermission("1001-01", 300, "数据域权限：商品在业务单据中的使用权限");
 		$this->modifyPermission("1001-02", 301, "数据域权限：商品模块中商品分类的数据权限");
-
+		
 		$this->modifyPermission("1002", 500, "模块权限：通过菜单进入商品计量单位模块的权限");
 		$this->modifyPermission("2029", 600, "模块权限：通过菜单进入商品品牌模块的权限");
 		$this->modifyPermission("2031", 700, "模块权限：通过菜单进入价格体系模块的权限");
