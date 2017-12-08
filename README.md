@@ -21,6 +21,8 @@
 >
 >`PHP 7+`, `MySQL 5.5+`
 >
+>`安装文档`见：http://psi.butterfly.mopaasapp.com/help/01.html
+>
 >如果在寻找Java编写的ERP，请访问：https://gitee.com/crm8000/ABS
 
 
