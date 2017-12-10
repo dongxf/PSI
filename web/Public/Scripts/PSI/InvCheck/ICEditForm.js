@@ -59,7 +59,7 @@ Ext.define("PSI.InvCheck.ICEditForm", {
 							type : "table",
 							columns : 2
 						},
-						height : 60,
+						height : 90,
 						bodyPadding : 10,
 						items : [{
 									xtype : "hidden",
@@ -127,6 +127,21 @@ Ext.define("PSI.InvCheck.ICEditForm", {
 											scope : me
 										}
 									}
+								}, {
+									id : "editBillMemo",
+									fieldLabel : "备注",
+									labelWidth : 60,
+									labelAlign : "right",
+									labelSeparator : "",
+									colspan : 2,
+									width : 430,
+									xtype : "textfield",
+									listeners : {
+										specialkey : {
+											fn : me.onEditBillMemoSpecialKey,
+											scope : me
+										}
+									}
 								}]
 					}],
 			listeners : {
@@ -189,6 +204,8 @@ Ext.define("PSI.InvCheck.ICEditForm", {
 										.setValue(data.warehouseName);
 							}
 
+							Ext.getCmp("editBillMemo").setValue(data.billMemo);
+
 							var store = me.getGoodsGrid().getStore();
 							store.removeAll();
 							if (data.items) {
@@ -248,6 +265,12 @@ Ext.define("PSI.InvCheck.ICEditForm", {
 	},
 
 	onEditBizUserSpecialKey : function(field, e) {
+		if (e.getKey() == e.ENTER) {
+			Ext.getCmp("editBillMemo").focus();
+		}
+	},
+
+	onEditBillMemoSpecialKey : function(field, e) {
 		if (this.__readonly) {
 			return;
 		}
@@ -272,7 +295,8 @@ Ext.define("PSI.InvCheck.ICEditForm", {
 		Ext.define(modelName, {
 					extend : "Ext.data.Model",
 					fields : ["id", "goodsId", "goodsCode", "goodsName",
-							"goodsSpec", "unitName", "goodsCount", "goodsMoney"]
+							"goodsSpec", "unitName", "goodsCount",
+							"goodsMoney", "memo"]
 				});
 		var store = Ext.create("Ext.data.Store", {
 					autoLoad : false,
@@ -357,6 +381,16 @@ Ext.define("PSI.InvCheck.ICEditForm", {
 									hideTrigger : true
 								}
 							}, {
+								header : "备注",
+								dataIndex : "memo",
+								menuDisabled : true,
+								sortable : false,
+								draggable : false,
+								width : 200,
+								editor : {
+									xtype : "textfield"
+								}
+							}, {
 								header : "",
 								align : "center",
 								menuDisabled : true,
@@ -427,7 +461,7 @@ Ext.define("PSI.InvCheck.ICEditForm", {
 
 	cellEditingAfterEdit : function(editor, e) {
 		var me = this;
-		if (e.colIdx == 6) {
+		if (e.colIdx == 7) {
 			if (!me.__canEditGoodsPrice) {
 				var store = me.getGoodsGrid().getStore();
 				if (e.rowIdx == store.getCount() - 1) {
@@ -462,6 +496,7 @@ Ext.define("PSI.InvCheck.ICEditForm", {
 					.format(Ext.getCmp("editBizDT").getValue(), "Y-m-d"),
 			warehouseId : Ext.getCmp("editWarehouse").getIdValue(),
 			bizUserId : Ext.getCmp("editBizUser").getIdValue(),
+			billMemo : Ext.getCmp("editBillMemo").getValue(),
 			items : []
 		};
 
@@ -472,7 +507,8 @@ Ext.define("PSI.InvCheck.ICEditForm", {
 						id : item.get("id"),
 						goodsId : item.get("goodsId"),
 						goodsCount : item.get("goodsCount"),
-						goodsMoney : item.get("goodsMoney")
+						goodsMoney : item.get("goodsMoney"),
+						memo : item.get("memo")
 					});
 		}
 
@@ -488,6 +524,7 @@ Ext.define("PSI.InvCheck.ICEditForm", {
 		Ext.getCmp("editBizDT").setReadOnly(true);
 		Ext.getCmp("editWarehouse").setReadOnly(true);
 		Ext.getCmp("editBizUser").setReadOnly(true);
+		Ext.getCmp("editBillMemo").setReadOnly(true);
 		Ext.getCmp("columnActionDelete").hide();
 		Ext.getCmp("columnActionAdd").hide();
 		Ext.getCmp("columnActionAppend").hide();

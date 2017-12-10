@@ -232,6 +232,8 @@ class ICBillDAO extends PSIBaseExDAO {
 			return $this->bad("业务日期不正确");
 		}
 		
+		$billMemo = $bill["billMemo"];
+		
 		$items = $bill["items"];
 		
 		$dataOrg = $bill["dataOrg"];
@@ -252,18 +254,18 @@ class ICBillDAO extends PSIBaseExDAO {
 		
 		// 主表
 		$sql = "insert into t_ic_bill(id, bill_status, bizdt, biz_user_id, date_created,
-					input_user_id, ref, warehouse_id, data_org, company_id)
-				values ('%s', 0, '%s', '%s', now(), '%s', '%s', '%s', '%s', '%s')";
+					input_user_id, ref, warehouse_id, data_org, company_id, bill_memo)
+				values ('%s', 0, '%s', '%s', now(), '%s', '%s', '%s', '%s', '%s', '%s')";
 		$rc = $db->execute($sql, $id, $bizDT, $bizUserId, $loginUserId, $ref, $warehouseId, 
-				$dataOrg, $companyId);
+				$dataOrg, $companyId, $billMemo);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
 		
 		// 明细表
 		$sql = "insert into t_ic_bill_detail(id, date_created, goods_id, goods_count, goods_money,
-					show_order, icbill_id, data_org, company_id)
-				values ('%s', now(), '%s', %d, %f, %d, '%s', '%s', '%s')";
+					show_order, icbill_id, data_org, company_id, memo)
+				values ('%s', now(), '%s', %d, %f, %d, '%s', '%s', '%s', '%s')";
 		foreach ( $items as $i => $v ) {
 			$goodsId = $v["goodsId"];
 			if (! $goodsId) {
@@ -271,9 +273,10 @@ class ICBillDAO extends PSIBaseExDAO {
 			}
 			$goodsCount = $v["goodsCount"];
 			$goodsMoney = $v["goodsMoney"];
+			$memo = $v["memo"];
 			
 			$rc = $db->execute($sql, $this->newId(), $goodsId, $goodsCount, $goodsMoney, $i, $id, 
-					$dataOrg, $companyId);
+					$dataOrg, $companyId, $memo);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
@@ -340,6 +343,8 @@ class ICBillDAO extends PSIBaseExDAO {
 			return $this->bad("业务日期不正确");
 		}
 		
+		$billMemo = $bill["billMemo"];
+		
 		$items = $bill["items"];
 		
 		$loginUserId = $bill["loginUserId"];
@@ -363,9 +368,9 @@ class ICBillDAO extends PSIBaseExDAO {
 		// 主表
 		$sql = "update t_ic_bill
 				set bizdt = '%s', biz_user_id = '%s', date_created = now(),
-					input_user_id = '%s', warehouse_id = '%s'
+					input_user_id = '%s', warehouse_id = '%s', bill_memo = '%s'
 				where id = '%s' ";
-		$rc = $db->execute($sql, $bizDT, $bizUserId, $loginUserId, $warehouseId, $id);
+		$rc = $db->execute($sql, $bizDT, $bizUserId, $loginUserId, $warehouseId, $billMemo, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
@@ -378,8 +383,8 @@ class ICBillDAO extends PSIBaseExDAO {
 		}
 		
 		$sql = "insert into t_ic_bill_detail(id, date_created, goods_id, goods_count, goods_money,
-					show_order, icbill_id, data_org, company_id)
-				values ('%s', now(), '%s', %d, %f, %d, '%s', '%s', '%s')";
+					show_order, icbill_id, data_org, company_id, memo)
+				values ('%s', now(), '%s', %d, %f, %d, '%s', '%s', '%s', '%s')";
 		foreach ( $items as $i => $v ) {
 			$goodsId = $v["goodsId"];
 			if (! $goodsId) {
@@ -387,9 +392,10 @@ class ICBillDAO extends PSIBaseExDAO {
 			}
 			$goodsCount = $v["goodsCount"];
 			$goodsMoney = $v["goodsMoney"];
+			$memo = $v["memo"];
 			
 			$rc = $db->execute($sql, $this->newId(), $goodsId, $goodsCount, $goodsMoney, $i, $id, 
-					$dataOrg, $companyId);
+					$dataOrg, $companyId, $memo);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
@@ -417,7 +423,7 @@ class ICBillDAO extends PSIBaseExDAO {
 		if ($id) {
 			// 编辑
 			$sql = "select t.ref, t.bill_status, t.bizdt, t.biz_user_id, u.name as biz_user_name,
-						w.id as warehouse_id, w.name as warehouse_name
+						w.id as warehouse_id, w.name as warehouse_name, t.bill_memo
 					from t_ic_bill t, t_user u, t_warehouse w
 					where t.id = '%s' and t.biz_user_id = u.id
 					      and t.warehouse_id = w.id";
@@ -433,10 +439,11 @@ class ICBillDAO extends PSIBaseExDAO {
 			$result["bizDT"] = date("Y-m-d", strtotime($data[0]["bizdt"]));
 			$result["warehouseId"] = $data[0]["warehouse_id"];
 			$result["warehouseName"] = $data[0]["warehouse_name"];
+			$result["billMemo"] = $data[0]["bill_memo"];
 			
 			$items = [];
 			$sql = "select t.id, g.id as goods_id, g.code, g.name, g.spec, u.name as unit_name,
-						t.goods_count, t.goods_money
+						t.goods_count, t.goods_money, t.memo
 				from t_ic_bill_detail t, t_goods g, t_goods_unit u
 				where t.icbill_id = '%s' and t.goods_id = g.id and g.unit_id = u.id
 				order by t.show_order ";
@@ -451,7 +458,8 @@ class ICBillDAO extends PSIBaseExDAO {
 						"goodsSpec" => $v["spec"],
 						"unitName" => $v["unit_name"],
 						"goodsCount" => $v["goods_count"],
-						"goodsMoney" => $v["goods_money"]
+						"goodsMoney" => $v["goods_money"],
+						"memo" => $v["memo"]
 				];
 			}
 			
