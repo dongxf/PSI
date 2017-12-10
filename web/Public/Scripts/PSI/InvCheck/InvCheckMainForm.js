@@ -331,7 +331,7 @@ Ext.define("PSI.InvCheck.InvCheckMainForm", {
 					extend : "Ext.data.Model",
 					fields : ["id", "ref", "bizDate", "warehouseName",
 							"inputUserName", "bizUserName", "billStatus",
-							"dateCreated"]
+							"dateCreated", "billMemo"]
 				});
 		var store = Ext.create("Ext.data.Store", {
 					autoLoad : false,
@@ -413,6 +413,12 @@ Ext.define("PSI.InvCheck.InvCheckMainForm", {
 								width : 140,
 								menuDisabled : true,
 								sortable : false
+							}, {
+								header : "备注",
+								dataIndex : "billMemo",
+								width : 200,
+								menuDisabled : true,
+								sortable : false
 							}],
 					listeners : {
 						select : {
@@ -479,7 +485,7 @@ Ext.define("PSI.InvCheck.InvCheckMainForm", {
 		Ext.define(modelName, {
 					extend : "Ext.data.Model",
 					fields : ["id", "goodsCode", "goodsName", "goodsSpec",
-							"unitName", "goodsCount", "goodsMoney"]
+							"unitName", "goodsCount", "goodsMoney", "memo"]
 				});
 		var store = Ext.create("Ext.data.Store", {
 					autoLoad : false,
@@ -535,6 +541,12 @@ Ext.define("PSI.InvCheck.InvCheckMainForm", {
 								align : "right",
 								xtype : "numbercolumn",
 								width : 150
+							}, {
+								header : "备注",
+								dataIndex : "memo",
+								menuDisabled : true,
+								sortable : false,
+								width : 200
 							}],
 					store : store
 				});
