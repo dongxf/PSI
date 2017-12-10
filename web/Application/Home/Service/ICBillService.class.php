@@ -233,13 +233,14 @@ class ICBillService extends PSIBaseExService {
 					<tr><td colspan="2">单号：' . $ref . '</td></tr>
 					<tr><td>盘点仓库：' . $bill["warehouseName"] . '</td><td></td></tr>
 					<tr><td>业务员：' . $bill["bizUserName"] . '</td><td>业务日期：' . $bill["bizDT"] . '</td></tr>
+					<tr><td colspan="2">备注：' . $bill["billMemo"] . '</td></tr>
 				</table>
 				';
 		$pdf->writeHTML($html);
 		
 		$html = '<table border="1" cellpadding="1">
 					<tr><td>商品编号</td><td>商品名称</td><td>规格型号</td><td>盘点后库存数量</td><td>单位</td>
-						<td>盘点后库存金额</td>
+						<td>盘点后库存金额</td><td>备注</td>
 					</tr>
 				';
 		foreach ( $bill["items"] as $v ) {
@@ -250,6 +251,7 @@ class ICBillService extends PSIBaseExService {
 			$html .= '<td align="right">' . $v["goodsCount"] . '</td>';
 			$html .= '<td>' . $v["unitName"] . '</td>';
 			$html .= '<td align="right">' . $v["goodsMoney"] . '</td>';
+			$html .= '<td>' . $v["memo"] . '</td>';
 			$html .= '</tr>';
 		}
 		

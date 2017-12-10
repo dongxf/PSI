@@ -742,7 +742,7 @@ class ICBillDAO extends PSIBaseExDAO {
 				w.name as warehouse_name,
 				u.name as biz_user_name,
 				u1.name as input_user_name,
-				t.date_created
+				t.date_created, t.bill_memo
 				from t_ic_bill t, t_warehouse w, t_user u, t_user u1
 				where (t.warehouse_id = w.id)
 				and (t.biz_user_id = u.id)
@@ -760,9 +760,11 @@ class ICBillDAO extends PSIBaseExDAO {
 		$bill["bizDT"] = $this->toYMD($data[0]["bizdt"]);
 		$bill["warehouseName"] = $data[0]["warehouse_name"];
 		$bill["bizUserName"] = $data[0]["biz_user_name"];
+		$bill["billMemo"] = $data[0]["bill_memo"];
 		
 		// 明细表
-		$sql = "select t.id, g.code, g.name, g.spec, u.name as unit_name, t.goods_count, t.goods_money
+		$sql = "select t.id, g.code, g.name, g.spec, u.name as unit_name, t.goods_count, t.goods_money,
+					t.memo
 				from t_ic_bill_detail t, t_goods g, t_goods_unit u
 				where t.icbill_id = '%s' and t.goods_id = g.id and g.unit_id = u.id
 				order by t.show_order ";
@@ -775,7 +777,8 @@ class ICBillDAO extends PSIBaseExDAO {
 					"goodsSpec" => $v["spec"],
 					"unitName" => $v["unit_name"],
 					"goodsCount" => $v["goods_count"],
-					"goodsMoney" => $v["goods_money"]
+					"goodsMoney" => $v["goods_money"],
+					"memo" => $v["memo"]
 			];
 		}
 		$bill["items"] = $items;
