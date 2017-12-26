@@ -35,7 +35,8 @@ Ext.define("PSI.Goods.BrandMainForm", {
 							text : "帮助",
 							iconCls : "PSI-help",
 							handler : function() {
-								window.open(me.URL("/Home/Help/index?t=goodsBrand"));
+								window.open(me
+										.URL("/Home/Help/index?t=goodsBrand"));
 							}
 						}, "-", {
 							text : "关闭",
@@ -92,6 +93,10 @@ Ext.define("PSI.Goods.BrandMainForm", {
 											text : "品牌",
 											dataIndex : "text",
 											flex : 1
+										}, {
+											text : "全名",
+											dataIndex : "fullName",
+											flex : 2
 										}]
 							}
 						});
