@@ -130,6 +130,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20171113_01();
 		$this->update_20171208_01();
 		$this->update_20171214_01();
+		$this->update_20171226_01();
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -150,6 +151,24 @@ class UpdateDBService extends PSIBaseService {
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	// ============================================
 	private function notForgot() {
+	}
+
+	private function update_20171226_01() {
+		// 本次更新：调整 t_permission的备注和排序
+		
+		// 客户
+		$this->modifyPermission("1007", 100, "模块权限：通过菜单进入客户资料模块的权限");
+		
+		$this->modifyPermission("1007-03", 201, "按钮权限：客户资料模块[新增客户分类]按钮权限");
+		$this->modifyPermission("1007-04", 202, "按钮权限：客户资料模块[编辑客户分类]按钮权限");
+		$this->modifyPermission("1007-05", 203, "按钮权限：客户资料模块[删除客户分类]按钮权限");
+		$this->modifyPermission("1007-06", 204, "按钮权限：客户资料模块[新增客户]按钮权限");
+		$this->modifyPermission("1007-07", 205, "按钮权限：客户资料模块[编辑客户]按钮权限");
+		$this->modifyPermission("1007-08", 206, "按钮权限：客户资料模块[删除客户]按钮权限");
+		$this->modifyPermission("1007-09", 207, "按钮权限：客户资料模块[导入客户]按钮权限");
+		
+		$this->modifyPermission("1007-01", 300, "数据域权限：客户资料在业务单据中的使用权限");
+		$this->modifyPermission("1007-02", 301, "数据域权限：客户档案模块中客户分类的数据权限");
 	}
 
 	private function update_20171214_01() {
