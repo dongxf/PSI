@@ -131,6 +131,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20171208_01();
 		$this->update_20171214_01();
 		$this->update_20171226_01();
+		$this->update_20171227_01();
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -151,6 +152,17 @@ class UpdateDBService extends PSIBaseService {
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	// ============================================
 	private function notForgot() {
+	}
+
+	private function update_20171227_01() {
+		// 本次更新：调整 t_permission的备注和排序
+		
+		// 权限管理
+		$this->modifyPermission("-8996", 100, "模块权限：通过菜单进入权限管理模块的权限");
+		
+		$this->modifyPermission("-8996-01", 201, "按钮权限：权限管理模块[新增角色]按钮权限");
+		$this->modifyPermission("-8996-02", 202, "按钮权限：权限管理模块[编辑角色]按钮权限");
+		$this->modifyPermission("-8996-03", 203, "按钮权限：权限管理模块[删除角色]按钮权限");
 	}
 
 	private function update_20171226_01() {
