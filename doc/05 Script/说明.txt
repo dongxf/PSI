@@ -3,5 +3,3 @@
 build_help.sh 生成帮助文档
 
 clone_PSI.sh 从gitee网站clone PSI的代码
-
-zip_for_mapaas.cmd 生成可以用于魔泊云(www.mopaas.com)部署的zip文件
