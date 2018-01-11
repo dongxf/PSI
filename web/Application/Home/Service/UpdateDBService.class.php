@@ -135,6 +135,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20171229_01();
 		
 		$this->update_20180101_01();
+		$this->update_20180111_01();
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -155,6 +156,16 @@ class UpdateDBService extends PSIBaseService {
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	// ============================================
 	private function notForgot() {
+	}
+
+	private function update_20180111_01() {
+		// 本次更新：调整 t_permission的备注和排序
+		
+		// 采购入库
+		$this->modifyPermission("2001", 100, "模块权限：通过菜单进入采购入库模块的权限");
+		
+		// 采购退货出库
+		$this->modifyPermission("2007", 100, "模块权限：通过菜单进入采购退货出库模块的权限");
 	}
 
 	private function update_20180101_01() {
