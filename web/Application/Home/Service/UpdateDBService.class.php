@@ -138,6 +138,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20180111_01();
 		$this->update_20180115_01();
 		$this->update_20180117_01();
+		$this->update_20180117_02();
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -158,6 +159,25 @@ class UpdateDBService extends PSIBaseService {
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	// ============================================
 	private function notForgot() {
+	}
+
+	private function update_20180117_02() {
+		// 本次更新：调整 t_permission的备注和排序
+		
+		// 应收账款管理
+		$this->modifyPermission("2004", 100, "模块权限：通过菜单进入应收账款管理模块的权限");
+		
+		// 应付账款管理
+		$this->modifyPermission("2005", 100, "模块权限：通过菜单进入应付账款管理模块的权限");
+		
+		// 现金收支查询
+		$this->modifyPermission("2024", 100, "模块权限：通过菜单进入现金收支查询模块的权限");
+		
+		// 预收款管理
+		$this->modifyPermission("2025", 100, "模块权限：通过菜单进入预收款管理模块的权限");
+		
+		// 预付款管理
+		$this->modifyPermission("2026", 100, "模块权限：通过菜单进入预付款管理模块的权限");
 	}
 
 	private function update_20180117_01() {
