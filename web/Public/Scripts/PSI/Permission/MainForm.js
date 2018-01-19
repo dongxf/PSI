@@ -170,17 +170,17 @@ Ext.define("PSI.Permission.MainForm", {
 					columns : [{
 								header : "权限名称",
 								dataIndex : "name",
-								flex : 2,
+								width: 200,
 								menuDisabled : true
 							}, {
 								header : "说明",
 								dataIndex : "note",
-								flex : 2,
+								flex : 1,
 								menuDisabled : true
 							}, {
 								header : "数据域",
 								dataIndex : "dataOrg",
-								flex : 1,
+								width : 100,
 								menuDisabled : true
 							}],
 					listeners : {
