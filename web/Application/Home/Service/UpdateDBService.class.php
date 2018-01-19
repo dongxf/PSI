@@ -139,6 +139,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20180115_01();
 		$this->update_20180117_01();
 		$this->update_20180117_02();
+		$this->update_20180119_01();
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -159,6 +160,58 @@ class UpdateDBService extends PSIBaseService {
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	// ============================================
 	private function notForgot() {
+	}
+
+	private function update_20180119_01() {
+		// 本次更新：调整 t_permission的备注和排序
+		
+		// 销售日报表（按商品汇总）
+		$this->modifyPermission("2012", 100, "模块权限：通过菜单进入销售日报表(按商品汇总)模块的权限");
+		
+		// 销售日报表(按客户汇总)
+		$this->modifyPermission("2013", 100, "模块权限：通过菜单进入销售日报表(按客户汇总)模块的权限");
+		
+		// 销售日报表(按仓库汇总)
+		$this->modifyPermission("2014", 100, "模块权限：通过菜单进入销售日报表(按仓库汇总)模块的权限");
+		
+		// 销售日报表(按业务员汇总)
+		$this->modifyPermission("2015", 100, "模块权限：通过菜单进入销售日报表(按业务员汇总)模块的权限");
+		
+		// 销售月报表(按商品汇总)
+		$this->modifyPermission("2016", 100, "模块权限：通过菜单进入销售月报表(按商品汇总)模块的权限");
+		
+		// 销售月报表(按客户汇总)
+		$this->modifyPermission("2017", 100, "模块权限：通过菜单进入销售月报表(按客户汇总)模块的权限");
+		
+		// 销售月报表(按仓库汇总)
+		$this->modifyPermission("2018", 100, "模块权限：通过菜单进入销售月报表(按仓库汇总)模块的权限");
+		
+		// 销售月报表(按业务员汇总)
+		$this->modifyPermission("2019", 100, "模块权限：通过菜单进入销售月报表(按业务员汇总)模块的权限");
+		
+		// 安全库存明细表
+		$this->modifyPermission("2020", 100, "模块权限：通过菜单进入安全库存明细表模块的权限");
+		
+		// 应收账款账龄分析表
+		$this->modifyPermission("2021", 100, "模块权限：通过菜单进入应收账款账龄分析表模块的权限");
+		
+		// 应付账款账龄分析表
+		$this->modifyPermission("2022", 100, "模块权限：通过菜单进入应付账款账龄分析表模块的权限");
+		
+		// 库存超上限明细表
+		$this->modifyPermission("2023", 100, "模块权限：通过菜单进入库存超上限明细表模块的权限");
+		
+		// 首页-销售看板
+		$this->modifyPermission("2011-01", 100, "功能权限：在首页显示销售看板");
+		
+		// 首页-库存看板
+		$this->modifyPermission("2011-02", 100, "功能权限：在首页显示库存看板");
+		
+		// 首页-采购看板
+		$this->modifyPermission("2011-03", 100, "功能权限：在首页显示采购看板");
+		
+		// 首页-资金看板
+		$this->modifyPermission("2011-04", 100, "功能权限：在首页显示资金看板");
 	}
 
 	private function update_20180117_02() {
