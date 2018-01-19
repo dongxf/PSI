@@ -460,6 +460,31 @@ class FIdConst {
 	const PURCHASE_ORDER_GEN_PWBILL = "2027-02";
 	
 	/**
+	 * 采购订单 - 新建采购订单
+	 */
+	const PURCHASE_ORDER_ADD = "2027-03";
+	
+	/**
+	 * 采购订单 - 编辑采购订单
+	 */
+	const PURCHASE_ORDER_EDIT = "2027-04";
+	
+	/**
+	 * 采购订单 - 删除采购订单
+	 */
+	const PURCHASE_ORDER_DELETE = "2027-05";
+	
+	/**
+	 * 采购订单 - 关闭采购订单 / 取消采购订单关闭状态
+	 */
+	const PURCHASE_ORDER_CLOSE = "2027-06";
+	
+	/**
+	 * 采购订单 - 单据生成PDF
+	 */
+	const PURCHASE_ORDER_PDF = "2027-07";
+	
+	/**
 	 * 销售订单
 	 */
 	const SALE_ORDER = "2028";
@@ -496,7 +521,7 @@ class FIdConst {
 	
 	/**
 	 * 价格体系
-	 * 
+	 *
 	 * @var string
 	 */
 	const PRICE_SYSTEM = "2031";
