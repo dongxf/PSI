@@ -55,6 +55,21 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 
 		me.callParent(arguments);
 
+		var bAdd = me.getPermission().add == "1";
+		Ext.getCmp("buttonAdd").setVisible(bAdd);
+
+		var bEdit = me.getPermission().edit == "1";
+		Ext.getCmp("buttonEdit").setVisible(bEdit);
+
+		var bDelete = me.getPermission().del == "1";
+		Ext.getCmp("buttonDelete").setVisible(bDelete);
+
+		var bCloseBill = me.getPermission().closeBill == "1";
+		Ext.getCmp("buttonCloseBill").setVisible(bCloseBill);
+
+		var bGenPDF = me.getPermission().genPDF == "1";
+		Ext.getCmp("buttonPDF").setVisible(bGenPDF);
+
 		var bConfirm = me.getPermission().confirm == "1";
 		var tb1 = Ext.getCmp("tbseparator1");
 		if (tb1) {
@@ -94,7 +109,8 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 					text : "新建采购订单",
 					iconCls : "PSI-button-add",
 					scope : me,
-					handler : me.onAddBill
+					handler : me.onAddBill,
+					id : "buttonAdd"
 				}, "-", {
 					text : "编辑采购订单",
 					iconCls : "PSI-button-edit",
@@ -133,6 +149,7 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 					id : "buttonGenPWBill"
 				}, "-", {
 					text : "关闭订单",
+					id : "buttonCloseBill",
 					menu : [{
 								text : "关闭采购订单",
 								iconCls : "PSI-button-commit",
