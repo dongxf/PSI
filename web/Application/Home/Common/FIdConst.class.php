@@ -305,6 +305,31 @@ class FIdConst {
 	const PURCHASE_WAREHOUSE = "2001";
 	
 	/**
+	 * 采购入库 - 新建采购入库单
+	 */
+	const PURCHASE_WAREHOUSE_ADD = "2001-01";
+	
+	/**
+	 * 采购入库 - 编辑采购入库单
+	 */
+	const PURCHASE_WAREHOUSE_EDIT = "2001-02";
+	
+	/**
+	 * 采购入库 - 删除采购入库单
+	 */
+	const PURCHASE_WAREHOUSE_DELETE = "2001-03";
+	
+	/**
+	 * 采购入库 - 提交入库
+	 */
+	const PURCHASE_WAREHOUSE_COMMIT = "2001-04";
+	
+	/**
+	 * 采购入库 - 单据生成PDF
+	 */
+	const PURCHASE_WAREHOUSE_PDF = "2001-05";
+	
+	/**
 	 * 库存账查询
 	 */
 	const INVENTORY_QUERY = "2003";
