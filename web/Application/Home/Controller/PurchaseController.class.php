@@ -26,6 +26,16 @@ class PurchaseController extends PSIBaseController {
 			
 			$this->assign("title", "采购入库");
 			
+			$this->assign("pAdd", $us->hasPermission(FIdConst::PURCHASE_WAREHOUSE_ADD) ? "1" : "0");
+			$this->assign("pEdit", 
+					$us->hasPermission(FIdConst::PURCHASE_WAREHOUSE_EDIT) ? "1" : "0");
+			$this->assign("pDelete", 
+					$us->hasPermission(FIdConst::PURCHASE_WAREHOUSE_DELETE) ? "1" : "0");
+			$this->assign("pCommit", 
+					$us->hasPermission(FIdConst::PURCHASE_WAREHOUSE_COMMIT) ? "1" : "0");
+			$this->assign("pGenPDF", 
+					$us->hasPermission(FIdConst::PURCHASE_WAREHOUSE_PDF) ? "1" : "0");
+			
 			$this->assign("showAddGoodsButton", $us->hasPermission(FIdConst::GOODS_ADD) ? "1" : "0");
 			
 			$this->display();
