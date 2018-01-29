@@ -61,7 +61,7 @@ Ext.define("PSI.Purchase.PWMainForm", {
 		var bCommit = me.getPermission().commit == "1";
 		Ext.getCmp("buttonCommit").setVisible(bCommit);
 
-		var bPDF = me.getPermission().pdf == "1";
+		var bPDF = me.getPermission().genPDF == "1";
 		Ext.getCmp("buttonPDF").setVisible(bPDF);
 
 		me.refreshMainGrid();
