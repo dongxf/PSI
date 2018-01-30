@@ -375,6 +375,31 @@ class FIdConst {
 	const PURCHASE_REJECTION = "2007";
 	
 	/**
+	 * 采购退货出库 - 新建采购退货出库单
+	 */
+	const PURCHASE_REJECTION_ADD = "2007-01";
+	
+	/**
+	 * 采购退货出库 - 编辑采购退货出库单
+	 */
+	const PURCHASE_REJECTION_EDIT = "2007-02";
+	
+	/**
+	 * 采购退货出库 - 删除采购退货出库单
+	 */
+	const PURCHASE_REJECTION_DELETE = "2007-03";
+	
+	/**
+	 * 采购退货出库 - 提交采购退货出库单
+	 */
+	const PURCHASE_REJECTION_COMMIT = "2007-04";
+	
+	/**
+	 * 采购退货出库 - 单据生成PDF
+	 */
+	const PURCHASE_REJECTION_PDF = "2007-05";
+	
+	/**
 	 * 首页-销售看板
 	 */
 	const PORTAL_SALE = "2011-01";

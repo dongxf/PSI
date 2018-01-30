@@ -142,6 +142,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20180119_01();
 		$this->update_20180119_02();
 		$this->update_20180125_01();
+		$this->update_20180130_01();
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -162,6 +163,135 @@ class UpdateDBService extends PSIBaseService {
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	// ============================================
 	private function notForgot() {
+	}
+
+	private function update_20180130_01() {
+		// 本次更新：采购退货出库权限细化到按钮
+		$db = $this->db;
+		
+		$ps = new PinyinService();
+		
+		$category = "采购退货出库";
+		
+		// 新建采购退货出库单
+		$fid = FIdConst::PURCHASE_REJECTION_ADD;
+		$name = "采购退货出库 - 新建采购退货出库单";
+		$note = "按钮权限：采购退货出库模块[新建采购退货出库单]按钮权限";
+		$showOrder = 201;
+		$sql = "select count(*) as cnt from t_fid where fid = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_fid(fid, name) value('%s', '%s')";
+			$db->execute($sql, $fid, $name);
+		}
+		
+		$sql = "select count(*) as cnt from t_permission where id = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$py = $ps->toPY($name);
+			
+			$sql = "insert into t_permission (id, fid, name, note, category, py, show_order)
+				values ('%s', '%s', '%s', '%s', '%s', '%s', %d) ";
+			$db->execute($sql, $fid, $fid, $name, $note, $category, $py, $showOrder);
+		}
+		
+		// 编辑采购退货出库单
+		$fid = FIdConst::PURCHASE_REJECTION_EDIT;
+		$name = "采购退货出库 - 编辑采购退货出库单";
+		$note = "按钮权限：采购退货出库模块[编辑采购退货出库单]按钮权限";
+		$showOrder = 202;
+		$sql = "select count(*) as cnt from t_fid where fid = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_fid(fid, name) value('%s', '%s')";
+			$db->execute($sql, $fid, $name);
+		}
+		
+		$sql = "select count(*) as cnt from t_permission where id = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$py = $ps->toPY($name);
+			
+			$sql = "insert into t_permission (id, fid, name, note, category, py, show_order)
+				values ('%s', '%s', '%s', '%s', '%s', '%s', %d) ";
+			$db->execute($sql, $fid, $fid, $name, $note, $category, $py, $showOrder);
+		}
+		
+		// 删除采购退货出库单
+		$fid = FIdConst::PURCHASE_REJECTION_DELETE;
+		$name = "采购退货出库 - 删除采购退货出库单";
+		$note = "按钮权限：采购退货出库模块[删除采购退货出库单]按钮权限";
+		$showOrder = 203;
+		$sql = "select count(*) as cnt from t_fid where fid = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_fid(fid, name) value('%s', '%s')";
+			$db->execute($sql, $fid, $name);
+		}
+		
+		$sql = "select count(*) as cnt from t_permission where id = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$py = $ps->toPY($name);
+			
+			$sql = "insert into t_permission (id, fid, name, note, category, py, show_order)
+				values ('%s', '%s', '%s', '%s', '%s', '%s', %d) ";
+			$db->execute($sql, $fid, $fid, $name, $note, $category, $py, $showOrder);
+		}
+		
+		// 提交采购退货出库单
+		$fid = FIdConst::PURCHASE_REJECTION_COMMIT;
+		$name = "采购退货出库 - 提交采购退货出库单";
+		$note = "按钮权限：采购退货出库模块[提交采购退货出库单]按钮权限";
+		$showOrder = 204;
+		$sql = "select count(*) as cnt from t_fid where fid = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_fid(fid, name) value('%s', '%s')";
+			$db->execute($sql, $fid, $name);
+		}
+		
+		$sql = "select count(*) as cnt from t_permission where id = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$py = $ps->toPY($name);
+			
+			$sql = "insert into t_permission (id, fid, name, note, category, py, show_order)
+				values ('%s', '%s', '%s', '%s', '%s', '%s', %d) ";
+			$db->execute($sql, $fid, $fid, $name, $note, $category, $py, $showOrder);
+		}
+		
+		// 单据生成PDF
+		$fid = FIdConst::PURCHASE_REJECTION_PDF;
+		$name = "采购退货出库 - 单据生成PDF";
+		$note = "按钮权限：采购退货出库模块[单据生成PDF]按钮权限";
+		$showOrder = 205;
+		$sql = "select count(*) as cnt from t_fid where fid = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_fid(fid, name) value('%s', '%s')";
+			$db->execute($sql, $fid, $name);
+		}
+		
+		$sql = "select count(*) as cnt from t_permission where id = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$py = $ps->toPY($name);
+			
+			$sql = "insert into t_permission (id, fid, name, note, category, py, show_order)
+				values ('%s', '%s', '%s', '%s', '%s', '%s', %d) ";
+			$db->execute($sql, $fid, $fid, $name, $note, $category, $py, $showOrder);
+		}
 	}
 
 	private function update_20180125_01() {
