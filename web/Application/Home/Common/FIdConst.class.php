@@ -550,6 +550,26 @@ class FIdConst {
 	const SALE_ORDER_GEN_WSBILL = "2028-02";
 	
 	/**
+	 * 销售订单 - 新建销售订单
+	 */
+	const SALE_ORDER_ADD = "2028-03";
+	
+	/**
+	 * 销售订单 - 编辑销售订单
+	 */
+	const SALE_ORDER_EDIT = "2028-04";
+	
+	/**
+	 * 销售订单 - 删除销售订单
+	 */
+	const SALE_ORDER_DELETE = "2028-05";
+	
+	/**
+	 * 销售订单 - 单据生成PDF
+	 */
+	const SALE_ORDER_PDF = "2028-06";
+	
+	/**
 	 * 基础数据 - 商品品牌
 	 */
 	const GOODS_BRAND = "2029";

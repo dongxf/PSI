@@ -128,7 +128,7 @@ class PSIBaseService {
 
 	/**
 	 * 返回空列表
-	 * 
+	 *
 	 * @return array
 	 */
 	protected function emptyResult() {
@@ -176,5 +176,5 @@ class PSIBaseService {
 	/**
 	 * 当前数据库版本
 	 */
-	protected $CURRENT_DB_VERSION = "20180130-01";
+	protected $CURRENT_DB_VERSION = "20180201-01";
 }
