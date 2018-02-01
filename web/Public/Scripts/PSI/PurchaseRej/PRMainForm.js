@@ -4,6 +4,10 @@
 Ext.define("PSI.PurchaseRej.PRMainForm", {
 	extend : "PSI.AFX.BaseMainExForm",
 
+	config : {
+		permission : null
+	},
+
 	initComponent : function() {
 		var me = this;
 
@@ -44,6 +48,21 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
 
 		me.callParent(arguments);
 
+		var bAdd = me.getPermission().add == "1";
+		Ext.getCmp("buttonAdd").setVisible(bAdd);
+
+		var bEdit = me.getPermission().edit == "1";
+		Ext.getCmp("buttonEdit").setVisible(bEdit);
+
+		var bDel = me.getPermission().del == "1";
+		Ext.getCmp("buttonDelete").setVisible(bDel);
+
+		var bCommit = me.getPermission().commit == "1";
+		Ext.getCmp("buttonCommit").setVisible(bCommit);
+
+		var bPDF = me.getPermission().genPDF == "1";
+		Ext.getCmp("buttonPDF").setVisible(bPDF);
+
 		me.refreshMainGrid();
 	},
 
@@ -51,6 +70,7 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
 		var me = this;
 		return [{
 					text : "新建采购退货出库单",
+					id : "buttonAdd",
 					iconCls : "PSI-button-add",
 					scope : me,
 					handler : me.onAddBill
