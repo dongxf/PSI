@@ -31,6 +31,11 @@ class SaleController extends PSIBaseController {
 			$this->assign("pGenWSBill", 
 					$us->hasPermission(FIdConst::SALE_ORDER_GEN_WSBILL) ? "1" : "0");
 			
+			$this->assign("pAdd", $us->hasPermission(FIdConst::SALE_ORDER_ADD) ? "1" : "0");
+			$this->assign("pEdit", $us->hasPermission(FIdConst::SALE_ORDER_EDIT) ? "1" : "0");
+			$this->assign("pDelete", $us->hasPermission(FIdConst::SALE_ORDER_DELETE) ? "1" : "0");
+			$this->assign("pGenPDF", $us->hasPermission(FIdConst::SALE_ORDER_PDF) ? "1" : "0");
+			
 			$this->display();
 		} else {
 			$this->gotoLoginPage("/Home/Sale/soIndex");
@@ -432,12 +437,12 @@ class SaleController extends PSIBaseController {
 		$ws = new SRBillService();
 		$ws->pdf($params);
 	}
-	
+
 	/**
 	 * 查询销售订单出库情况
 	 */
 	public function soBillWSBillList() {
-		if (IS_POST){
+		if (IS_POST) {
 			$soBillId = I("post.id");
 			
 			$ws = new WSBillService();

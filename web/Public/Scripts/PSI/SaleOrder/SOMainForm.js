@@ -26,6 +26,7 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 						title : "查询条件",
 						collapsible : true,
 						collapseMode : "mini",
+						border : 0,
 						layout : {
 							type : "table",
 							columns : 4
@@ -53,6 +54,18 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 		});
 
 		me.callParent(arguments);
+
+		var bAdd = me.getPermission().add == "1";
+		Ext.getCmp("buttonAdd").setVisible(bAdd);
+
+		var bEdit = me.getPermission().edit == "1";
+		Ext.getCmp("buttonEdit").setVisible(bEdit);
+
+		var bDel = me.getPermission().del == "1";
+		Ext.getCmp("buttonDelete").setVisible(bDel);
+
+		var bPDF = me.getPermission().genPDF == "1";
+		Ext.getCmp("buttonPDF").setVisible(bPDF);
 
 		var bConfirm = me.getPermission().confirm == "1";
 		var tb1 = Ext.getCmp("tbseparator1");
@@ -91,6 +104,7 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 		var me = this;
 		return [{
 					text : "新建销售订单",
+					id : "buttonAdd",
 					iconCls : "PSI-button-add",
 					scope : me,
 					handler : me.onAddBill
