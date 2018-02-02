@@ -350,6 +350,31 @@ class FIdConst {
 	const WAREHOUSING_SALE = "2002";
 	
 	/**
+	 * 销售出库 - 新建销售出库单
+	 */
+	const WAREHOUSING_SALE_ADD = "2002-02";
+	
+	/**
+	 * 销售出库 - 编辑销售出库单
+	 */
+	const WAREHOUSING_SALE_EDIT = "2002-03";
+	
+	/**
+	 * 销售出库 - 删除销售出库单
+	 */
+	const WAREHOUSING_SALE_DELETE = "2002-04";
+	
+	/**
+	 * 销售出库 - 提交出库
+	 */
+	const WAREHOUSING_SALE_COMMIT = "2002-05";
+	
+	/**
+	 * 销售出库 - 单据生成PDF
+	 */
+	const WAREHOUSING_SALE_PDF = "2002-06";
+	
+	/**
 	 * 销售退货入库
 	 */
 	const SALE_REJECTION = "2006";
