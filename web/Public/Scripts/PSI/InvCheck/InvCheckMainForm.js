@@ -4,6 +4,10 @@
 Ext.define("PSI.InvCheck.InvCheckMainForm", {
 	extend : "PSI.AFX.BaseMainExForm",
 
+	config : {
+		permission : null
+	},
+
 	/**
 	 * 初始化组件
 	 */
@@ -48,6 +52,21 @@ Ext.define("PSI.InvCheck.InvCheckMainForm", {
 
 		me.callParent(arguments);
 
+		var bAdd = me.getPermission().add == "1";
+		Ext.getCmp("buttonAdd").setVisible(bAdd);
+
+		var bEdit = me.getPermission().edit == "1";
+		Ext.getCmp("buttonEdit").setVisible(bEdit);
+
+		var bDel = me.getPermission().del == "1";
+		Ext.getCmp("buttonDelete").setVisible(bDel);
+
+		var bCommit = me.getPermission().commit == "1";
+		Ext.getCmp("buttonCommit").setVisible(bCommit);
+
+		var bPDF = me.getPermission().genPDF == "1";
+		Ext.getCmp("buttonPDF").setVisible(bPDF);
+
 		me.refreshMainGrid();
 	},
 
@@ -55,6 +74,7 @@ Ext.define("PSI.InvCheck.InvCheckMainForm", {
 		var me = this;
 		return [{
 					text : "新建盘点单",
+					id : "buttonAdd",
 					iconCls : "PSI-button-add",
 					scope : me,
 					handler : me.onAddBill
