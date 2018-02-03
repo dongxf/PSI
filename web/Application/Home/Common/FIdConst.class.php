@@ -445,6 +445,31 @@ class FIdConst {
 	const INVENTORY_CHECK = "2010";
 	
 	/**
+	 * 库存盘点 - 新建盘点单
+	 */
+	const INVENTORY_CHECK_ADD = "2010-01";
+	
+	/**
+	 * 库存盘点 - 编辑盘点单
+	 */
+	const INVENTORY_CHECK_EDIT = "2010-02";
+	
+	/**
+	 * 库存盘点 - 删除盘点单
+	 */
+	const INVENTORY_CHECK_DELETE = "2010-03";
+	
+	/**
+	 * 库存盘点 - 提交盘点单
+	 */
+	const INVENTORY_CHECK_COMMIT = "2010-04";
+	
+	/**
+	 * 库存盘点 - 单据生成PDF
+	 */
+	const INVENTORY_CHECK_PDF = "2010-05";
+	
+	/**
 	 * 采购退货出库
 	 */
 	const PURCHASE_REJECTION = "2007";
