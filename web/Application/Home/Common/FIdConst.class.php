@@ -415,6 +415,31 @@ class FIdConst {
 	const INVENTORY_TRANSFER = "2009";
 	
 	/**
+	 * 库间调拨 - 新建调拨单
+	 */
+	const INVENTORY_TRANSFER_ADD = "2009-01";
+	
+	/**
+	 * 库间调拨 - 编辑调拨单
+	 */
+	const INVENTORY_TRANSFER_EDIT = "2009-02";
+	
+	/**
+	 * 库间调拨 - 删除调拨单
+	 */
+	const INVENTORY_TRANSFER_DELETE = "2009-03";
+	
+	/**
+	 * 库间调拨 - 提交调拨单
+	 */
+	const INVENTORY_TRANSFER_COMMIT = "2009-04";
+	
+	/**
+	 * 库间调拨 - 单据生成PDF
+	 */
+	const INVENTORY_TRANSFER_PDF = "2009-05";
+	
+	/**
 	 * 库存盘点
 	 */
 	const INVENTORY_CHECK = "2010";
