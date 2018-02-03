@@ -380,6 +380,31 @@ class FIdConst {
 	const SALE_REJECTION = "2006";
 	
 	/**
+	 * 销售退货入库 - 新建销售退货入库单
+	 */
+	const SALE_REJECTION_ADD = "2006-01";
+	
+	/**
+	 * 销售退货入库 - 编辑销售退货入库单
+	 */
+	const SALE_REJECTION_EDIT = "2006-02";
+	
+	/**
+	 * 销售退货入库 - 删除销售退货入库单
+	 */
+	const SALE_REJECTION_DELETE = "2006-03";
+	
+	/**
+	 * 销售退货入库 - 提交入库
+	 */
+	const SALE_REJECTION_COMMIT = "2006-04";
+	
+	/**
+	 * 销售退货入库 - 单据生成PDF
+	 */
+	const SALE_REJECTION_PDF = "2006-05";
+	
+	/**
 	 * 业务设置
 	 */
 	const BIZ_CONFIG = "2008";
