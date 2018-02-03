@@ -25,6 +25,16 @@ class InvTransferController extends PSIBaseController {
 			
 			$this->assign("title", "库间调拨");
 			
+			$this->assign("pAdd", $us->hasPermission(FIdConst::INVENTORY_TRANSFER_ADD) ? "1" : "0");
+			$this->assign("pEdit", 
+					$us->hasPermission(FIdConst::INVENTORY_TRANSFER_EDIT) ? "1" : "0");
+			$this->assign("pDelete", 
+					$us->hasPermission(FIdConst::INVENTORY_TRANSFER_DELETE) ? "1" : "0");
+			$this->assign("pCommit", 
+					$us->hasPermission(FIdConst::INVENTORY_TRANSFER_COMMIT) ? "1" : "0");
+			$this->assign("pGenPDF", 
+					$us->hasPermission(FIdConst::INVENTORY_TRANSFER_PDF) ? "1" : "0");
+			
 			$this->display();
 		} else {
 			$this->gotoLoginPage("/Home/InvTransfer/index");
