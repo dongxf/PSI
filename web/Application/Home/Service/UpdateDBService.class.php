@@ -170,6 +170,61 @@ class UpdateDBService extends PSIBaseService {
 	private function notForgot() {
 	}
 
+	/**
+	 * 判断表的字段是否需要修改成decimal(19,8)
+	 *
+	 * @param string $tableName        	
+	 * @param string $fieldName        	
+	 * @return bool
+	 */
+	private function fieldNeedChangeToDec(string $tableName, string $fieldName): bool {
+		$db = $this->db;
+		
+		$dbName = C('DB_NAME');
+		
+		$sql = "select DATA_TYPE as dtype, NUMERIC_PRECISION as dpre, NUMERIC_SCALE as dscale  
+				from information_schema.`COLUMNS` c 
+				where c.TABLE_SCHEMA = '%s' and c.TABLE_NAME = '%s' and c.COLUMN_NAME = '%S'";
+		$data = $db->query($sql, $dbName, $tableName, $fieldName);
+		if (! $data) {
+			return false;
+		}
+		
+		$dataType = strtolower($data[0]["dtype"]);
+		$dataPrecision = $data[0]["dpre"];
+		$dataScale = $data[0]["dscale"];
+		
+		if ($dataType == "int") {
+			return true;
+		}
+		
+		if ($dataType == "decimal") {
+			if ($dataScale < 8) {
+				return true;
+			}
+		}
+		
+		// int和decimal之外的均不能修改
+		return false;
+	}
+
+	/**
+	 * 把表字段类型修改成decimal(19, 8)
+	 *
+	 * @param string $talbeName        	
+	 * @param string $fieldName        	
+	 */
+	private function changeFieldTypeToDeciaml(string $talbeName, string $fieldName): void {
+		if (! $this->fieldNeedChangeToDec($tableName, $fieldName)) {
+			return;
+		}
+		
+		$db = $this->db;
+		
+		$sql = "alter table " . $talbeName . " modify column " . $fieldName . " decimal(19, 8)";
+		$db->execute($sql);
+	}
+
 	private function update_20180203_03() {
 		// 本次更新：库存盘点权限细化到按钮
 		$db = $this->db;
