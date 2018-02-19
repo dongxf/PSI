@@ -148,6 +148,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20180203_01();
 		$this->update_20180203_02();
 		$this->update_20180203_03();
+		$this->update_20180219_01();
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -170,6 +171,20 @@ class UpdateDBService extends PSIBaseService {
 	private function notForgot() {
 	}
 
+	private function update_20180219_01() {
+		// 本次更新：修改t_so_bill_detail的字段goods_count、ws_count、left_count类型为decimal(19, 8)
+		$tableName = "t_so_bill_detail";
+		
+		$fieldName = "goods_count";
+		$this->changeFieldTypeToDeciaml($tableName, $fieldName);
+
+		$fieldName = "ws_count";
+		$this->changeFieldTypeToDeciaml($tableName, $fieldName);
+	
+		$fieldName = "left_count";
+		$this->changeFieldTypeToDeciaml($tableName, $fieldName);
+	}
+
 	/**
 	 * 判断表的字段是否需要修改成decimal(19,8)
 	 *
@@ -184,7 +199,7 @@ class UpdateDBService extends PSIBaseService {
 		
 		$sql = "select DATA_TYPE as dtype, NUMERIC_PRECISION as dpre, NUMERIC_SCALE as dscale  
 				from information_schema.`COLUMNS` c 
-				where c.TABLE_SCHEMA = '%s' and c.TABLE_NAME = '%s' and c.COLUMN_NAME = '%S'";
+				where c.TABLE_SCHEMA = '%s' and c.TABLE_NAME = '%s' and c.COLUMN_NAME = '%s'";
 		$data = $db->query($sql, $dbName, $tableName, $fieldName);
 		if (! $data) {
 			return false;
@@ -214,14 +229,14 @@ class UpdateDBService extends PSIBaseService {
 	 * @param string $talbeName        	
 	 * @param string $fieldName        	
 	 */
-	private function changeFieldTypeToDeciaml(string $talbeName, string $fieldName): void {
+	private function changeFieldTypeToDeciaml(string $tableName, string $fieldName): void {
 		if (! $this->fieldNeedChangeToDec($tableName, $fieldName)) {
 			return;
 		}
 		
 		$db = $this->db;
 		
-		$sql = "alter table " . $talbeName . " modify column " . $fieldName . " decimal(19, 8)";
+		$sql = "alter table " . $tableName . " modify column " . $fieldName . " decimal(19, 8)";
 		$db->execute($sql);
 	}
 
