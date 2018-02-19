@@ -117,6 +117,8 @@ class SOBillService extends PSIBaseExService {
 			return $this->emptyResult();
 		}
 		
+		$params["companyId"] = $this->getCompanyId();
+		
 		$dao = new SOBillDAO($this->db());
 		return $dao->soBillDetailList($params);
 	}

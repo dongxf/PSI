@@ -195,12 +195,20 @@ class SOBillDAO extends PSIBaseExDAO {
 	public function soBillDetailList($params) {
 		$db = $this->db;
 		
+		$companyId = $params["companyId"];
+		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
 		// id:销售订单id
 		$id = $params["id"];
 		
-		$sql = "select s.id, g.code, g.name, g.spec, s.goods_count, s.goods_price, s.goods_money,
+		$sql = "select s.id, g.code, g.name, g.spec, convert(s.goods_count, " . $fmt . ") as goods_count,
+					s.goods_price, s.goods_money,
 					s.tax_rate, s.tax, s.money_with_tax, u.name as unit_name,
-					s.ws_count, s.left_count, s.memo
+					convert(s.ws_count, " . $fmt . ") as ws_count,
+					convert(s.left_count, " . $fmt . ") as left_count, s.memo
 				from t_so_bill_detail s, t_goods g, t_goods_unit u
 				where s.sobill_id = '%s' and s.goods_id = g.id and g.unit_id = u.id
 				order by s.show_order";
