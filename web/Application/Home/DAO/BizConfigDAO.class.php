@@ -146,6 +146,13 @@ class BizConfigDAO extends PSIBaseExDAO {
 						"showOrder" => 1
 				],
 				[
+						"id" => "9002-03",
+						"name" => "商品数量小数位数",
+						"value" => "0",
+						"note" => "",
+						"showOrder" => 2
+				],
+				[
 						"id" => "9003-01",
 						"name" => "采购订单单号前缀",
 						"value" => "PO",
@@ -1102,5 +1109,41 @@ class BizConfigDAO extends PSIBaseExDAO {
 		}
 		
 		return $result;
+	}
+
+	/**
+	 * 获得商品数量小数位数
+	 *
+	 * @param string $companyId        	
+	 * @return int
+	 */
+	public function getGoodsCountDecNumber(string $companyId): int {
+		$db = $this->db;
+		
+		$result = "0";
+		
+		$id = "9002-03";
+		$sql = "select value from t_config
+				where id = '%s' and company_id = '%s' ";
+		$data = $db->query($sql, $id, $companyId);
+		if ($data) {
+			$result = $data[0]["value"];
+			
+			if ($result == null || $result == "") {
+				$result = "1";
+			}
+		}
+		
+		$r = (int)$result;
+		
+		// 商品数量小数位数范围：0~8位
+		if ($r < 0) {
+			$r = 0;
+		}
+		if ($r > 8) {
+			$r = 8;
+		}
+		
+		return $r;
 	}
 }
