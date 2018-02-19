@@ -196,6 +196,9 @@ class SOBillDAO extends PSIBaseExDAO {
 		$db = $this->db;
 		
 		$companyId = $params["companyId"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->emptyResult();
+		}
 		
 		$bcDAO = new BizConfigDAO($db);
 		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
@@ -586,10 +589,13 @@ class SOBillDAO extends PSIBaseExDAO {
 			return $this->emptyResult();
 		}
 		
-		$result = array();
+		$result = [];
 		
 		$cs = new BizConfigDAO($db);
 		$result["taxRate"] = $cs->getTaxRate($companyId);
+		
+		$dataScale = $cs->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
 		
 		if ($id) {
 			// 编辑销售订单
@@ -621,7 +627,8 @@ class SOBillDAO extends PSIBaseExDAO {
 				$result["billStatus"] = $v["bill_status"];
 				
 				// 明细表
-				$sql = "select s.id, s.goods_id, g.code, g.name, g.spec, s.goods_count, s.goods_price, s.goods_money,
+				$sql = "select s.id, s.goods_id, g.code, g.name, g.spec, 
+							convert(s.goods_count, " . $fmt . ") as goods_count, s.goods_price, s.goods_money,
 					s.tax_rate, s.tax, s.money_with_tax, u.name as unit_name, s.memo
 				from t_so_bill_detail s, t_goods g, t_goods_unit u
 				where s.sobill_id = '%s' and s.goods_id = g.id and g.unit_id = u.id

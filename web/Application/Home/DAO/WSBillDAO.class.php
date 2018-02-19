@@ -562,6 +562,10 @@ class WSBillDAO extends PSIBaseExDAO {
 			return $this->emptyResult();
 		}
 		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
 		$result = [];
 		
 		$userDAO = new UserDAO($db);
@@ -614,7 +618,9 @@ class WSBillDAO extends PSIBaseExDAO {
 					// 销售订单的明细
 					$items = [];
 					$sql = "select s.id, s.goods_id, g.code, g.name, g.spec, u.name as unit_name,
-								s.goods_count, s.goods_price, s.goods_money, s.left_count, s.memo
+								convert(s.goods_count, " . $fmt . ") as goods_count, 
+								s.goods_price, s.goods_money, 
+								convert(s.left_count, " . $fmt . ") as left_count, s.memo
 							from t_so_bill_detail s, t_goods g, t_goods_unit u
 							where s.sobill_id = '%s' and s.goods_id = g.id and g.unit_id = u.id
 							order by s.show_order ";
@@ -632,7 +638,6 @@ class WSBillDAO extends PSIBaseExDAO {
 								"goodsMoney" => $v["left_count"] * $v["goods_price"],
 								"soBillDetailId" => $v["id"],
 								"memo" => $v["memo"]
-						
 						];
 					}
 					
