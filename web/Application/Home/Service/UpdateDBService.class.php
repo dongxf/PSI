@@ -177,10 +177,10 @@ class UpdateDBService extends PSIBaseService {
 		
 		$fieldName = "goods_count";
 		$this->changeFieldTypeToDeciaml($tableName, $fieldName);
-
+		
 		$fieldName = "ws_count";
 		$this->changeFieldTypeToDeciaml($tableName, $fieldName);
-	
+		
 		$fieldName = "left_count";
 		$this->changeFieldTypeToDeciaml($tableName, $fieldName);
 	}
@@ -229,7 +229,7 @@ class UpdateDBService extends PSIBaseService {
 	 * @param string $talbeName        	
 	 * @param string $fieldName        	
 	 */
-	private function changeFieldTypeToDeciaml(string $tableName, string $fieldName): void {
+	private function changeFieldTypeToDeciaml(string $tableName, string $fieldName) {
 		if (! $this->fieldNeedChangeToDec($tableName, $fieldName)) {
 			return;
 		}
