@@ -26,6 +26,9 @@ class PSIBaseController extends Controller {
 		// 模块打开方式
 		$this->assign("mot", $bcs->getModuleOpenType());
 		
+		// 商品数量小数位数
+		$this->assign("goodsCountDecNumber", $bcs->getGoodsCountDecNumber());
+		
 		// JS调用的base uri
 		$this->assign("uri", __ROOT__ . "/");
 		
