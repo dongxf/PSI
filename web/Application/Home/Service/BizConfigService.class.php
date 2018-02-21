@@ -451,12 +451,16 @@ class BizConfigService extends PSIBaseExService {
 
 	/**
 	 * 获得商品数量小数位数
-	 * 
+	 *
 	 * @return int
 	 */
 	public function getGoodsCountDecNumber(): int {
 		$us = new UserService();
 		$companyId = $us->getCompanyId();
+		
+		if (! $companyId) {
+			return 0;
+		}
 		
 		$dao = new BizConfigDAO($this->db());
 		
