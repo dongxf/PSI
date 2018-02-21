@@ -976,7 +976,7 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 		Ext.getCmp("editQueryFromDT").setValue(null);
 		Ext.getCmp("editQueryToDT").setValue(null);
 		Ext.getCmp("editQueryCustomer").clearIdValue();
-		Ext.getCmp("editQueryPaymentType").setValue(-1);
+		Ext.getCmp("editQueryReceivingType").setValue(-1);
 
 		me.onQuery();
 	},
