@@ -515,6 +515,14 @@ class BizConfigDAO extends PSIBaseExDAO {
 					return $this->bad("单号前缀不能为空");
 				}
 			}
+			
+			// 商品数量小数位数
+			if ($key == "9002-03") {
+				$v = intval($value);
+				if ($v < 0 || $v > 8) {
+					return $this->bad("商品数量小数位数需要在0到8之间(当前选择的位数是 {$v}位)");
+				}
+			}
 		}
 		
 		foreach ( $params as $key => $value ) {

@@ -361,6 +361,28 @@ Ext.define("PSI.BizConfig.EditForm", {
 													data : [["0", "原窗口打开"],
 															["1", "新窗口打开"]]
 												})
+									}, {
+										id : "editName9002-03",
+										xtype : "displayfield"
+									}, {
+										id : "editValue9002-03",
+										xtype : "combo",
+										queryMode : "local",
+										editable : false,
+										valueField : "id",
+										store : Ext.create(
+												"Ext.data.ArrayStore", {
+													fields : ["id", "text"],
+													data : [["0", "整数"],
+															["1", "1位小数"],
+															["2", "2位小数"],
+															["3", "3位小数"],
+															["4", "4位小数"],
+															["5", "5位小数"],
+															["6", "6位小数"],
+															["7", "7位小数"],
+															["8", "8位小数"]]
+												})
 									}]
 						}],
 				buttons : buttons
@@ -403,6 +425,7 @@ Ext.define("PSI.BizConfig.EditForm", {
 			'value9001-01' : Ext.getCmp("editValue9001-01").getValue(),
 			'value9002-01' : Ext.getCmp("editValue9002-01").getValue(),
 			'value9002-02' : Ext.getCmp("editValue9002-02").getValue(),
+			'value9002-03' : Ext.getCmp("editValue9002-03").getValue(),
 			'value9003-01' : Ext.getCmp("editValue9003-01").getValue(),
 			'value9003-02' : Ext.getCmp("editValue9003-02").getValue(),
 			'value9003-03' : Ext.getCmp("editValue9003-03").getValue(),
