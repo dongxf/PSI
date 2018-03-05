@@ -310,11 +310,25 @@ class BizConfigDAO extends PSIBaseExDAO {
 	 * @param string $id        	
 	 * @return string
 	 */
-	private function getModuleOpenTypeName($id) {
+	private function getModuleOpenTypeName(string $id): string {
 		if ($id == "0")
 			return "原窗口打开";
 		else
 			return "新窗口打开";
+	}
+
+	/**
+	 * 商品数量小数位数
+	 *
+	 * @param string $id        	
+	 * @return string
+	 */
+	private function getGoodsCountDecNumberName(string $id): string {
+		if ($id == "0") {
+			return "整数";
+		} else {
+			return $id . "位小数";
+		}
 	}
 
 	/**
@@ -361,6 +375,8 @@ class BizConfigDAO extends PSIBaseExDAO {
 				$displayValue = $this->getModuleOpenTypeName($v["value"]);
 			} else if ($id == "2002-05") {
 				$displayValue = $this->getWSCountLimitName($v["value"]);
+			} else if ($id == "9002-03") {
+				$displayValue = $this->getGoodsCountDecNumberName($v["value"]);
 			} else {
 				$displayValue = $v["value"];
 			}
