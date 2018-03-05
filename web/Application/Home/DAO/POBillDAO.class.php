@@ -211,10 +211,22 @@ class POBillDAO extends PSIBaseExDAO {
 	public function poBillDetailList($params) {
 		$db = $this->db;
 		
+		$companyId = $params["companyId"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->emptyResult();
+		}
+		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
+		// id: 采购订单id
 		$id = $params["id"];
 		
-		$sql = "select p.id, g.code, g.name, g.spec, p.goods_count, p.goods_price, p.goods_money,
-					p.pw_count, p.left_count, p.memo,
+		$sql = "select p.id, g.code, g.name, g.spec, convert(p.goods_count, " . $fmt . ") as goods_count, 
+					p.goods_price, p.goods_money,
+					convert(p.pw_count, " . $fmt . ") as pw_count, 
+					convert(p.left_count, " . $fmt . ") as left_count, p.memo,
 					p.tax_rate, p.tax, p.money_with_tax, u.name as unit_name
 				from t_po_bill_detail p, t_goods g, t_goods_unit u
 				where p.pobill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id
@@ -623,6 +635,9 @@ class POBillDAO extends PSIBaseExDAO {
 		$bcDAO = new BizConfigDAO($db);
 		$result["taxRate"] = $bcDAO->getTaxRate($companyId);
 		
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
 		if ($id) {
 			// 编辑采购订单
 			$sql = "select p.ref, p.deal_date, p.deal_address, p.supplier_id,
@@ -653,7 +668,9 @@ class POBillDAO extends PSIBaseExDAO {
 				$result["billStatus"] = $v["bill_status"];
 				
 				// 明细表
-				$sql = "select p.id, p.goods_id, g.code, g.name, g.spec, p.goods_count, p.goods_price, p.goods_money,
+				$sql = "select p.id, p.goods_id, g.code, g.name, g.spec, 
+							convert(p.goods_count, " . $fmt . ") as goods_count, 
+							p.goods_price, p.goods_money,
 							p.tax_rate, p.tax, p.money_with_tax, u.name as unit_name, p.memo
 						from t_po_bill_detail p, t_goods g, t_goods_unit u
 						where p.pobill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id

@@ -204,9 +204,13 @@ class PurchaseController extends PSIBaseController {
 	 */
 	public function poBillDetailList() {
 		if (IS_POST) {
-			$params = array(
-					"id" => I("post.id")
-			);
+			$us = new UserService();
+			$companyId = $us->getCompanyId();
+			
+			$params = [
+					"id" => I("post.id"),
+					"companyId" => $companyId
+			];
 			
 			$ps = new POBillService();
 			$this->ajaxReturn($ps->poBillDetailList($params));
