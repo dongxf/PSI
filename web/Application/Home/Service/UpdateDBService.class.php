@@ -149,6 +149,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20180203_02();
 		$this->update_20180203_03();
 		$this->update_20180219_01();
+		$this->update_20180305_01();
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -169,6 +170,20 @@ class UpdateDBService extends PSIBaseService {
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	// ============================================
 	private function notForgot() {
+	}
+
+	private function update_20180305_01() {
+		// 本次更新：修改t_po_bill_detail的字段goods_count、pw_count、left_count类型为decimal(19, 8)
+		$tableName = "t_po_bill_detail";
+		
+		$fieldName = "goods_count";
+		$this->changeFieldTypeToDeciaml($tableName, $fieldName);
+		
+		$fieldName = "pw_count";
+		$this->changeFieldTypeToDeciaml($tableName, $fieldName);
+		
+		$fieldName = "left_count";
+		$this->changeFieldTypeToDeciaml($tableName, $fieldName);
 	}
 
 	private function update_20180219_01() {
