@@ -163,7 +163,8 @@ class InventoryService extends PSIBaseService {
 					and v.goods_id = g.id and g.unit_id = u.id 
 					and v.biz_user_id = user.id 
 					and (v.biz_date between '%s' and '%s' ) 
-				order by v.id " . " limit %d, %d";
+				order by v.id 
+				limit %d, %d";
 		$data = $db->query($sql, $warehouseId, $goodsId, $dtFrom, $dtTo, $start, $limit);
 		
 		$result = [];
