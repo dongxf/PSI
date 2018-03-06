@@ -315,7 +315,7 @@ class PWBillDAO extends PSIBaseExDAO {
 			// 关于入库数量为什么允许填写0：
 			// 当由采购订单生成采购入库单的时候，采购订单中有多种商品，但是是部分到货
 			// 那么就存在有些商品的数量是0的情形。
-			$goodsCount = intval($item["goodsCount"]);
+			$goodsCount = $item["goodsCount"];
 			if ($goodsCount < 0) {
 				return $this->bad("入库数量不能是负数");
 			}
@@ -463,7 +463,7 @@ class PWBillDAO extends PSIBaseExDAO {
 			// 关于入库数量为什么允许填写0：
 			// 当由采购订单生成采购入库单的时候，采购订单中有多种商品，但是是部分到货
 			// 那么就存在有些商品的数量是0的情形。
-			$goodsCount = intval($item["goodsCount"]);
+			$goodsCount = $item["goodsCount"];
 			if ($goodsCount < 0) {
 				return $this->bad("入库数量不能是负数");
 			}
@@ -921,7 +921,7 @@ class PWBillDAO extends PSIBaseExDAO {
 		
 		// 检查入库数量、单价、金额不能为负数
 		foreach ( $items as $i => $v ) {
-			$goodsCount = intval($v["goods_count"]);
+			$goodsCount = $v["goods_count"];
 			if ($goodsCount < 0) {
 				$db->rollback();
 				return $this->bad("采购数量不能小于0");
@@ -979,7 +979,7 @@ class PWBillDAO extends PSIBaseExDAO {
 			
 			$pobillDetailId = $v["pobilldetail_id"];
 			
-			$goodsCount = intval($v["goods_count"]);
+			$goodsCount = $v["goods_count"];
 			if ($goodsCount <= 0) {
 				// 忽略非正入库数量
 				continue;
@@ -1001,9 +1001,9 @@ class PWBillDAO extends PSIBaseExDAO {
 					where warehouse_id = '%s' and goods_id = '%s' ";
 			$data = $db->query($sql, $warehouseId, $goodsId);
 			if ($data) {
-				$inCount = intval($data[0]["in_count"]);
+				$inCount = $data[0]["in_count"];
 				$inMoney = floatval($data[0]["in_money"]);
-				$balanceCount = intval($data[0]["balance_count"]);
+				$balanceCount = $data[0]["balance_count"];
 				$balanceMoney = floatval($data[0]["balance_money"]);
 				
 				$inCount += $goodsCount;

@@ -37,7 +37,7 @@ class PWBillService extends PSIBaseExService {
 		
 		$params = [
 				"id" => $pwbillId,
-				"companyId" => (new UserService())->getCompanyId()
+				"companyId" => $this->getCompanyId()
 		];
 		
 		$dao = new PWBillDAO($this->db());
