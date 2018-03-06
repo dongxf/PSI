@@ -450,6 +450,7 @@ Ext.define("PSI.Purchase.PWMainForm", {
 								width : 200
 							}, {
 								header : "入库数量",
+								width : 120,
 								dataIndex : "goodsCount",
 								menuDisabled : true,
 								sortable : false,

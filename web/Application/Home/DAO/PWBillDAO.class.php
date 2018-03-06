@@ -186,11 +186,21 @@ class PWBillDAO extends PSIBaseExDAO {
 	 * @return array
 	 */
 	public function pwBillDetailList($params) {
-		$pwbillId = $params["id"];
+		$companyId = $params["companyId"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->emptyResult();
+		}
 		
 		$db = $this->db;
 		
-		$sql = "select p.id, g.code, g.name, g.spec, u.name as unit_name, p.goods_count, p.goods_price,
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
+		$pwbillId = $params["id"];
+		
+		$sql = "select p.id, g.code, g.name, g.spec, u.name as unit_name, 
+					convert(p.goods_count, $fmt) as goods_count, p.goods_price,
 					p.goods_money, p.memo
 				from t_pw_bill_detail p, t_goods g, t_goods_unit u
 				where p.pwbill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id
@@ -606,6 +616,12 @@ class PWBillDAO extends PSIBaseExDAO {
 	public function pwBillInfo($params) {
 		$db = $this->db;
 		
+		$companyId = $params["companyId"];
+		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
 		// id: 采购入库单id
 		$id = $params["id"];
 		// pobillRef: 采购订单单号，可以为空，为空表示直接录入采购入库单；不为空表示是从采购订单生成入库单
@@ -640,7 +656,7 @@ class PWBillDAO extends PSIBaseExDAO {
 			// 采购的商品明细
 			$items = [];
 			$sql = "select p.id, p.goods_id, g.code, g.name, g.spec, u.name as unit_name,
-						p.goods_count, p.goods_price, p.goods_money, p.memo,
+						convert(p.goods_count, $fmt) as goods_count, p.goods_price, p.goods_money, p.memo,
 						p.pobilldetail_id
 					from t_pw_bill_detail p, t_goods g, t_goods_unit u
 					where p.goods_Id = g.id and g.unit_id = u.id and p.pwbill_id = '%s'
@@ -705,7 +721,9 @@ class PWBillDAO extends PSIBaseExDAO {
 					// 采购的明细
 					$items = [];
 					$sql = "select p.id, p.goods_id, g.code, g.name, g.spec, u.name as unit_name,
-								p.goods_count, p.goods_price, p.goods_money, p.left_count, p.memo
+								convert(p.goods_count, $fmt) as goods_count, 
+								p.goods_price, p.goods_money, 
+								convert(p.left_count, $fmt) as left_count, p.memo
 							from t_po_bill_detail p, t_goods g, t_goods_unit u
 							where p.pobill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id
 							order by p.show_order ";
