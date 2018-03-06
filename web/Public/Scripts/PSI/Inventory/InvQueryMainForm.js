@@ -245,9 +245,7 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 								align : "right",
 								dataIndex : "afloatCount",
 								menuDisabled : true,
-								sortable : false,
-								xtype : "numbercolumn",
-								format : "0"
+								sortable : false
 							}, {
 								header : "在途单价",
 								align : "right",
@@ -267,9 +265,7 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 								align : "right",
 								dataIndex : "inCount",
 								menuDisabled : true,
-								sortable : false,
-								xtype : "numbercolumn",
-								format : "0"
+								sortable : false
 							}, {
 								header : "平均入库单价",
 								align : "right",
@@ -289,9 +285,7 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 								align : "right",
 								dataIndex : "outCount",
 								menuDisabled : true,
-								sortable : false,
-								xtype : "numbercolumn",
-								format : "0"
+								sortable : false
 							}, {
 								header : "平均出库单价",
 								align : "right",
@@ -311,9 +305,7 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 								align : "right",
 								dataIndex : "balanceCount",
 								menuDisabled : true,
-								sortable : false,
-								xtype : "numbercolumn",
-								format : "0"
+								sortable : false
 							}, {
 								header : "余额平均单价",
 								align : "right",
@@ -456,9 +448,7 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 								dataIndex : "inCount",
 								align : "right",
 								menuDisabled : true,
-								sortable : false,
-								xtype : "numbercolumn",
-								format : "0"
+								sortable : false
 							}, {
 								header : "入库单价",
 								dataIndex : "inPrice",
@@ -478,9 +468,7 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 								dataIndex : "outCount",
 								align : "right",
 								menuDisabled : true,
-								sortable : false,
-								xtype : "numbercolumn",
-								format : "0"
+								sortable : false
 							}, {
 								header : "出库单价",
 								dataIndex : "outPrice",
@@ -500,9 +488,7 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 								dataIndex : "balanceCount",
 								align : "right",
 								menuDisabled : true,
-								sortable : false,
-								xtype : "numbercolumn",
-								format : "0"
+								sortable : false
 							}, {
 								header : "余额单价",
 								dataIndex : "balancePrice",

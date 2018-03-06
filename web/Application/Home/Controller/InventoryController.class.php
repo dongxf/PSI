@@ -63,7 +63,7 @@ class InventoryController extends PSIBaseController {
 	 */
 	public function inventoryList() {
 		if (IS_POST) {
-			$params = array(
+			$params = [
 					"warehouseId" => I("post.warehouseId"),
 					"code" => I("post.code"),
 					"name" => I("post.name"),
@@ -71,9 +71,8 @@ class InventoryController extends PSIBaseController {
 					"page" => I("post.page"),
 					"start" => I("post.start"),
 					"limit" => I("post.limit")
-			);
-			$is = new InventoryService();
-			$this->ajaxReturn($is->inventoryList($params));
+			];
+			$this->ajaxReturn((new InventoryService())->inventoryList($params));
 		}
 	}
 

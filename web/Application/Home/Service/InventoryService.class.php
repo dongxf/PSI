@@ -3,6 +3,8 @@
 namespace Home\Service;
 
 use Home\Common\FIdConst;
+use Home\DAO\BizConfigDAO;
+
 /**
  * 库存 Service
  *
@@ -35,6 +37,13 @@ class InventoryService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
+		$db = M();
+		
+		$companyId = (new UserService())->getCompanyId();
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
 		$warehouseId = $params["warehouseId"];
 		$code = $params["code"];
 		$name = $params["name"];
@@ -43,13 +52,14 @@ class InventoryService extends PSIBaseService {
 		$start = $params["start"];
 		$limit = $params["limit"];
 		
-		$db = M();
-		$queryParams = array();
+		$queryParams = [];
 		$queryParams[] = $warehouseId;
 		
 		$sql = "select g.id, g.code, g.name, g.spec, u.name as unit_name,
-				 v.in_count, v.in_price, v.in_money, v.out_count, v.out_price, v.out_money,
-				 v.balance_count, v.balance_price, v.balance_money, v.afloat_count,
+				 	convert(v.in_count, $fmt) as in_count, 
+					v.in_price, v.in_money, convert(v.out_count, $fmt) as out_count, v.out_price, v.out_money,
+				 	convert(v.balance_count, $fmt) as balance_count, v.balance_price, v.balance_money, 
+					convert(v.afloat_count, $fmt) as afloat_count,
 					v.afloat_money, v.afloat_price
 				from t_inventory v, t_goods g, t_goods_unit u
 				where (v.warehouse_id = '%s') and (v.goods_id = g.id) and (g.unit_id = u.id) ";
@@ -73,7 +83,7 @@ class InventoryService extends PSIBaseService {
 		
 		$data = $db->query($sql, $queryParams);
 		
-		$result = array();
+		$result = [];
 		
 		foreach ( $data as $i => $v ) {
 			$result[$i]["goodsId"] = $v["id"];
@@ -95,7 +105,7 @@ class InventoryService extends PSIBaseService {
 			$result[$i]["afloatMoney"] = $v["afloat_money"];
 		}
 		
-		$queryParams = array();
+		$queryParams = [];
 		$queryParams[] = $warehouseId;
 		$sql = "select count(*) as cnt 
 				from t_inventory v, t_goods g, t_goods_unit u
@@ -128,6 +138,13 @@ class InventoryService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
+		$db = M();
+		
+		$companyId = (new UserService())->getCompanyId();
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
 		$warehouseId = $params["warehouseId"];
 		$goodsId = $params["goodsId"];
 		$dtFrom = $params["dtFrom"];
@@ -136,11 +153,20 @@ class InventoryService extends PSIBaseService {
 		$start = $params["start"];
 		$limit = $params["limit"];
 		
-		$db = M();
-		$sql = "select g.id, g.code, g.name, g.spec, u.name as unit_name," . " v.in_count, v.in_price, v.in_money, v.out_count, v.out_price, v.out_money," . "v.balance_count, v.balance_price, v.balance_money," . " v.biz_date,  user.name as biz_user_name, v.ref_number, v.ref_type " . " from t_inventory_detail v, t_goods g, t_goods_unit u, t_user user" . " where v.warehouse_id = '%s' and v.goods_id = '%s' " . "	and v.goods_id = g.id and g.unit_id = u.id and v.biz_user_id = user.id " . "   and (v.biz_date between '%s' and '%s' ) " . " order by v.id " . " limit " . $start . ", " . $limit;
-		$data = $db->query($sql, $warehouseId, $goodsId, $dtFrom, $dtTo);
+		$sql = "select g.id, g.code, g.name, g.spec, u.name as unit_name,
+					convert(v.in_count, $fmt) as in_count, v.in_price, v.in_money, 
+					convert(v.out_count, $fmt) as out_count, v.out_price, v.out_money,
+					convert(v.balance_count, $fmt) as balance_count, v.balance_price, v.balance_money,
+					v.biz_date,  user.name as biz_user_name, v.ref_number, v.ref_type 
+				from t_inventory_detail v, t_goods g, t_goods_unit u, t_user user
+				where v.warehouse_id = '%s' and v.goods_id = '%s' 
+					and v.goods_id = g.id and g.unit_id = u.id 
+					and v.biz_user_id = user.id 
+					and (v.biz_date between '%s' and '%s' ) 
+				order by v.id " . " limit %d, %d";
+		$data = $db->query($sql, $warehouseId, $goodsId, $dtFrom, $dtTo, $start, $limit);
 		
-		$result = array();
+		$result = [];
 		
 		foreach ( $data as $i => $v ) {
 			$result[$i]["goodsId"] = $v["id"];
