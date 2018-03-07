@@ -152,6 +152,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20180305_01();
 		$this->update_20180306_01();
 		$this->update_20180306_02();
+		$this->update_20180307_01();
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -172,6 +173,16 @@ class UpdateDBService extends PSIBaseService {
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	// ============================================
 	private function notForgot() {
+	}
+
+	private function update_20180307_01() {
+		// 本次更新：t_pr_bill_detail商品数量字段改为decimal(19,8)
+		$tableName = "t_pr_bill_detail";
+		
+		$fieldName = "goods_count";
+		$this->changeFieldTypeToDeciaml($tableName, $fieldName);
+		$fieldName = "rejection_goods_count";
+		$this->changeFieldTypeToDeciaml($tableName, $fieldName);
 	}
 
 	private function update_20180306_02() {
