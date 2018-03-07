@@ -508,7 +508,9 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 								width : 100,
 								editor : {
 									xtype : "numberfield",
-									allowDecimals : false,
+									allowDecimals : PSI.Const.GC_DEC_NUMBER > 0,
+									decimalPrecision : PSI.Const.GC_DEC_NUMBER,
+									minValue : 0,
 									hideTrigger : true
 								}
 							}, {

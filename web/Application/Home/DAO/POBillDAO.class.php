@@ -291,6 +291,10 @@ class POBillDAO extends PSIBaseExDAO {
 			return $this->badParam("companyId");
 		}
 		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
 		if (! $this->dateIsValid($dealDate)) {
 			return $this->bad("交货日期不正确");
 		}
@@ -361,8 +365,8 @@ class POBillDAO extends PSIBaseExDAO {
 			$sql = "insert into t_po_bill_detail(id, date_created, goods_id, goods_count, goods_money,
 						goods_price, pobill_id, tax_rate, tax, money_with_tax, pw_count, left_count,
 						show_order, data_org, company_id, memo)
-					values ('%s', now(), '%s', %d, %f,
-						%f, '%s', %d, %f, %f, 0, %d, %d, '%s', '%s', '%s')";
+					values ('%s', now(), '%s', convert(%f, $fmt), %f,
+						%f, '%s', %d, %f, %f, 0, convert(%f, $fmt), %d, '%s', '%s', '%s')";
 			$rc = $db->execute($sql, $this->newId(), $goodsId, $goodsCount, $goodsMoney, 
 					$goodsPrice, $id, $taxRate, $tax, $moneyWithTax, $goodsCount, $i, $dataOrg, 
 					$companyId, $memo);
@@ -427,6 +431,13 @@ class POBillDAO extends PSIBaseExDAO {
 		if ($billStatus != 0) {
 			return $this->bad("当前采购订单已经审核，不能再编辑");
 		}
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->badParam("companyId");
+		}
+		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
 		
 		$dealDate = $bill["dealDate"];
 		$supplierId = $bill["supplierId"];
@@ -502,8 +513,8 @@ class POBillDAO extends PSIBaseExDAO {
 			$sql = "insert into t_po_bill_detail(id, date_created, goods_id, goods_count, goods_money,
 						goods_price, pobill_id, tax_rate, tax, money_with_tax, pw_count, left_count,
 						show_order, data_org, company_id, memo)
-					values ('%s', now(), '%s', %d, %f,
-						%f, '%s', %d, %f, %f, 0, %d, %d, '%s', '%s', '%s')";
+					values ('%s', now(), '%s', convert(%f, $fmt), %f,
+						%f, '%s', %d, %f, %f, 0, convert(%f, $fmt), %d, '%s', '%s', '%s')";
 			$rc = $db->execute($sql, $this->newId(), $goodsId, $goodsCount, $goodsMoney, 
 					$goodsPrice, $id, $taxRate, $tax, $moneyWithTax, $goodsCount, $i, $dataOrg, 
 					$companyId, $memo);
