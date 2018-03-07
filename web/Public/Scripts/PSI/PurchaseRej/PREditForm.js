@@ -382,7 +382,7 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 								width : 100,
 								editor : {
 									xtype : "numberfield",
-									allowDecimals : false,
+									allowDecimals : true,
 									hideTrigger : true
 								}
 							}, {
@@ -429,9 +429,7 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 								sortable : false,
 								draggable : false,
 								align : "right",
-								xtype : "numbercolumn",
-								width : 120,
-								format : "0"
+								width : 120
 							}, {
 								header : "原采购单价",
 								dataIndex : "goodsPrice",

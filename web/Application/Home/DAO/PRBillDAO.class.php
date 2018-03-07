@@ -428,6 +428,15 @@ class PRBillDAO extends PSIBaseExDAO {
 	public function getPWBillInfoForPRBill($params) {
 		$db = $this->db;
 		
+		$companyId = $params["companyId"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->emptyResult();
+		}
+		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
 		// 采购入库单id
 		$id = $params["id"];
 		
@@ -455,7 +464,7 @@ class PRBillDAO extends PSIBaseExDAO {
 		
 		$sql = "select p.id, g.id as goods_id, g.code as goods_code, g.name as goods_name,
 					g.spec as goods_spec, u.name as unit_name,
-					p.goods_count, p.goods_price, p.goods_money
+					convert(p.goods_count, $fmt) as goods_count, p.goods_price, p.goods_money
 				from t_pw_bill_detail p, t_goods g, t_goods_unit u
 				where p.goods_id = g.id
 					and g.unit_id = u.id
@@ -637,11 +646,20 @@ class PRBillDAO extends PSIBaseExDAO {
 	public function prBillDetailList($params) {
 		$db = $this->db;
 		
+		$companyId = $params["companyId"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->emptyResult();
+		}
+		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
 		// id：采购退货出库单id
 		$id = $params["id"];
 		
 		$sql = "select g.code, g.name, g.spec, u.name as unit_name,
-					p.rejection_goods_count as rej_count, p.rejection_goods_price as rej_price,
+					convert(p.rejection_goods_count, $fmt) as rej_count, p.rejection_goods_price as rej_price,
 					p.rejection_money as rej_money
 				from t_pr_bill_detail p, t_goods g, t_goods_unit u
 				where p.goods_id = g.id and g.unit_id = u.id and p.prbill_id = '%s'
@@ -673,6 +691,16 @@ class PRBillDAO extends PSIBaseExDAO {
 	public function prBillInfo($params) {
 		$db = $this->db;
 		
+		$companyId = $params["companyId"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->emptyResult();
+		}
+		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
+		// id:采购退货出库单id
 		$id = $params["id"];
 		
 		$result = [];
@@ -710,7 +738,7 @@ class PRBillDAO extends PSIBaseExDAO {
 			$items = [];
 			$sql = "select p.pwbilldetail_id as id, p.goods_id, g.code as goods_code, g.name as goods_name,
 						g.spec as goods_spec, u.name as unit_name, p.goods_count,
-						p.goods_price, p.goods_money, p.rejection_goods_count as rej_count,
+						p.goods_price, p.goods_money, convert(p.rejection_goods_count, $fmt) as rej_count,
 						p.rejection_goods_price as rej_price, p.rejection_money as rej_money
 					from t_pr_bill_detail p, t_goods g, t_goods_unit u
 					where p.prbill_id = '%s'

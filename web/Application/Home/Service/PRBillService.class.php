@@ -19,6 +19,7 @@ class PRBillService extends PSIBaseExService {
 		
 		$params["loginUserId"] = $this->getLoginUserId();
 		$params["loginUserName"] = $this->getLoginUserName();
+		$params["companyId"] = $this->getCompanyId();
 		
 		$dao = new PRBillDAO($this->db());
 		return $dao->prBillInfo($params);
@@ -107,6 +108,8 @@ class PRBillService extends PSIBaseExService {
 			return $this->emptyResult();
 		}
 		
+		$params["companyId"] = $this->getCompanyId();
+		
 		$dao = new PRBillDAO($this->db());
 		return $dao->getPWBillInfoForPRBill($params);
 	}
@@ -132,6 +135,8 @@ class PRBillService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
+		
+		$params["companyId"] = $this->getCompanyId();
 		
 		$dao = new PRBillDAO($this->db());
 		return $dao->prBillDetailList($params);
