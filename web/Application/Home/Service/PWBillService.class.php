@@ -67,6 +67,8 @@ class PWBillService extends PSIBaseExService {
 		
 		$log = null;
 		
+		$bill["companyId"] = $this->getCompanyId();
+		
 		if ($id) {
 			// 编辑采购入库单
 			
@@ -82,7 +84,6 @@ class PWBillService extends PSIBaseExService {
 		} else {
 			// 新建采购入库单
 			
-			$bill["companyId"] = $this->getCompanyId();
 			$bill["loginUserId"] = $this->getLoginUserId();
 			$bill["dataOrg"] = $this->getLoginUserDataOrg();
 			
