@@ -246,7 +246,6 @@ class PRBillDAO extends PSIBaseExDAO {
 		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
 		$fmt = "decimal(19, " . $dataScale . ")";
 		
-		
 		// 明细表
 		$sql = "delete from t_pr_bill_detail where prbill_id = '%s' ";
 		$rc = $db->execute($sql, $id);
@@ -861,6 +860,9 @@ class PRBillDAO extends PSIBaseExDAO {
 		$bs = new BizConfigDAO($db);
 		$fifo = $bs->getInventoryMethod($companyId) == 1;
 		
+		$dataScale = $bs->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
 		$warehouseDAO = new WarehouseDAO($db);
 		$warehouse = $warehouseDAO->getWarehouseById($warehouseId);
 		if (! $warehouse) {
@@ -892,9 +894,9 @@ class PRBillDAO extends PSIBaseExDAO {
 			return $this->bad("收款方式不正确，无法完成提交操作");
 		}
 		
-		$sql = "select goods_id, rejection_goods_count as rej_count,
+		$sql = "select goods_id, convert(rejection_goods_count, $fmt) as rej_count,
 					rejection_money as rej_money,
-					goods_count, goods_price, pwbilldetail_id
+					convert(goods_count, $fmt) as goods_count, goods_price, pwbilldetail_id
 				from t_pr_bill_detail
 				where prbill_id = '%s'
 				order by show_order";
@@ -1042,8 +1044,8 @@ class PRBillDAO extends PSIBaseExDAO {
 				// 移动平均法
 				
 				// 库存总账
-				$sql = "select balance_count, balance_price, balance_money,
-							out_count, out_money
+				$sql = "select convert(balance_count, $fmt) as balance_count, balance_price, balance_money,
+							convert(out_count, $fmt) as out_count, out_money
 						from t_inventory
 						where warehouse_id = '%s' and goods_id = '%s' ";
 				$data = $db->query($sql, $warehouseId, $goodsId);
@@ -1078,8 +1080,8 @@ class PRBillDAO extends PSIBaseExDAO {
 				}
 				
 				$sql = "update t_inventory
-						set out_count = %d, out_price = %f, out_money = %f,
-							balance_count = %d, balance_price = %f, balance_money = %f
+						set out_count = convert(%f, $fmt), out_price = %f, out_money = %f,
+							balance_count = convert(%f, $fmt), balance_price = %f, balance_money = %f
 						where warehouse_id = '%s' and goods_id = '%s' ";
 				$rc = $db->execute($sql, $totalOutCount, $totalOutPrice, $totalOutMoney, 
 						$balanceCount, $balancePrice, $balanceMoney, $warehouseId, $goodsId);
@@ -1091,7 +1093,7 @@ class PRBillDAO extends PSIBaseExDAO {
 				$sql = "insert into t_inventory_detail(out_count, out_price, out_money, balance_count,
 							balance_price, balance_money, warehouse_id, goods_id, biz_date, biz_user_id,
 							date_created, ref_number, ref_type)
-						values (%d, %f, %f, %d, %f, %f, '%s', '%s', '%s', '%s', now(), '%s', '采购退货出库')";
+						values (convert(%f, $fmt), %f, %f, convert(%f, $fmt), %f, %f, '%s', '%s', '%s', '%s', now(), '%s', '采购退货出库')";
 				$rc = $db->execute($sql, $outCount, $outPrice, $outMoney, $balanceCount, 
 						$balancePrice, $balanceMoney, $warehouseId, $goodsId, $bizDT, $bizUserId, 
 						$ref);
