@@ -95,6 +95,10 @@ class PRBillDAO extends PSIBaseExDAO {
 			return $this->badParam("loginUserId");
 		}
 		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
 		// 新增采购退货出库单
 		$ref = $this->genNewBillRef($companyId);
 		
@@ -112,7 +116,8 @@ class PRBillDAO extends PSIBaseExDAO {
 		$sql = "insert into t_pr_bill_detail(id, date_created, goods_id, goods_count, goods_price,
 				goods_money, rejection_goods_count, rejection_goods_price, rejection_money, show_order,
 				prbill_id, pwbilldetail_id, data_org, company_id, inventory_price, inventory_money)
-				values ('%s', now(), '%s', %d, %f, %f, %d, %f, %f, %d, '%s', '%s', '%s', '%s', 0, 0)";
+				values ('%s', now(), '%s', convert(%f, $fmt), %f, %f, convert(%f, $fmt),
+						%f, %f, %d, '%s', '%s', '%s', '%s', 0, 0)";
 		foreach ( $items as $i => $v ) {
 			$pwbillDetailId = $v["id"];
 			$goodsId = $v["goodsId"];
@@ -237,6 +242,11 @@ class PRBillDAO extends PSIBaseExDAO {
 		}
 		$dataOrg = $oldBill["data_org"];
 		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
+		
 		// 明细表
 		$sql = "delete from t_pr_bill_detail where prbill_id = '%s' ";
 		$rc = $db->execute($sql, $id);
@@ -247,7 +257,8 @@ class PRBillDAO extends PSIBaseExDAO {
 		$sql = "insert into t_pr_bill_detail(id, date_created, goods_id, goods_count, goods_price,
 				goods_money, rejection_goods_count, rejection_goods_price, rejection_money, show_order,
 				prbill_id, pwbilldetail_id, data_org, company_id, inventory_price, inventory_money)
-				values ('%s', now(), '%s', %d, %f, %f, %d, %f, %f, %d, '%s', '%s', '%s', '%s', 0, 0)";
+				values ('%s', now(), '%s', convert(%f, $fmt), %f, %f, 
+						convert(%f, $fmt), %f, %f, %d, '%s', '%s', '%s', '%s', 0, 0)";
 		foreach ( $items as $i => $v ) {
 			$pwbillDetailId = $v["id"];
 			$goodsId = $v["goodsId"];
@@ -737,7 +748,7 @@ class PRBillDAO extends PSIBaseExDAO {
 			
 			$items = [];
 			$sql = "select p.pwbilldetail_id as id, p.goods_id, g.code as goods_code, g.name as goods_name,
-						g.spec as goods_spec, u.name as unit_name, p.goods_count,
+						g.spec as goods_spec, u.name as unit_name, convert(p.goods_count, $fmt) as goods_count,
 						p.goods_price, p.goods_money, convert(p.rejection_goods_count, $fmt) as rej_count,
 						p.rejection_goods_price as rej_price, p.rejection_money as rej_money
 					from t_pr_bill_detail p, t_goods g, t_goods_unit u

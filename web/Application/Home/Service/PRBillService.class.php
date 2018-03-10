@@ -48,6 +48,8 @@ class PRBillService extends PSIBaseExService {
 		
 		$log = null;
 		
+		$bill["companyId"] = $this->getCompanyId();
+		
 		if ($id) {
 			// 编辑采购退货出库单
 			$bill["loginUserId"] = $this->getLoginUserId();
@@ -62,7 +64,6 @@ class PRBillService extends PSIBaseExService {
 			$log = "编辑采购退货出库单，单号：$ref";
 		} else {
 			$bill["dataOrg"] = $this->getLoginUserDataOrg();
-			$bill["companyId"] = $this->getCompanyId();
 			$bill["loginUserId"] = $this->getLoginUserId();
 			
 			$rc = $dao->addPRBill($bill);
