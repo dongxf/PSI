@@ -3,13 +3,14 @@
 namespace Home\Service;
 
 use Home\Common\FIdConst;
+use Home\DAO\BizConfigDAO;
 
 /**
  * 库存建账Service
  *
  * @author 李静波
  */
-class InitInventoryService extends PSIBaseService {
+class InitInventoryService extends PSIBaseExService {
 	private $LOG_CATEGORY = "库存建账";
 
 	/**
@@ -49,7 +50,13 @@ class InitInventoryService extends PSIBaseService {
 		$limit = $params["limit"];
 		
 		$db = M();
-		$sql = "select v.id, g.code, g.name, g.spec, v.balance_count, v.balance_price, 
+		
+		$companyId = $this->getCompanyId();
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
+		$sql = "select v.id, g.code, g.name, g.spec, convert(v.balance_count, $fmt) as balance_count, v.balance_price, 
 				v.balance_money, u.name as unit_name, v.biz_date 
 				from t_inventory_detail v, t_goods g, t_goods_unit u 
 				where v.goods_id = g.id and g.unit_id = u.id and v.warehouse_id = '%s' 
@@ -57,7 +64,7 @@ class InitInventoryService extends PSIBaseService {
 				order by g.code 
 				limit " . $start . ", " . $limit;
 		$data = $db->query($sql, $warehouseId);
-		$result = array();
+		$result = [];
 		foreach ( $data as $i => $v ) {
 			$result[$i]["id"] = $v["id"];
 			$result[$i]["goodsCode"] = $v["code"];
@@ -131,7 +138,14 @@ class InitInventoryService extends PSIBaseService {
 		$limit = $params["limit"];
 		
 		$db = M();
-		$sql = "select g.id, g.code, g.name, g.spec, v.balance_count, v.balance_price, 
+		
+		$companyId = $this->getCompanyId();
+		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
+		$sql = "select g.id, g.code, g.name, g.spec, convert(v.balance_count, $fmt) as balance_count, v.balance_price, 
 				v.balance_money, u.name as unit_name, v.biz_date 
 				from t_goods g inner join t_goods_unit u 
 				on g.unit_id = u.id and g.category_id = '%s' 
@@ -141,7 +155,7 @@ class InitInventoryService extends PSIBaseService {
 				order by g.code 
 				limit " . $start . ", " . $limit;
 		$data = $db->query($sql, $categoryId, $warehouseId);
-		$result = array();
+		$result = [];
 		foreach ( $data as $i => $v ) {
 			$result[$i]["id"] = $v["id"];
 			$result[$i]["goodsCode"] = $v["code"];

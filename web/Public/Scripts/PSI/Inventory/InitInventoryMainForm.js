@@ -83,9 +83,7 @@ Ext.define("PSI.Inventory.InitInventoryMainForm", {
 								dataIndex : "goodsCount",
 								menuDisabled : true,
 								sortable : false,
-								align : "right",
-								xtype : "numbercolumn",
-								format : "0"
+								align : "right"
 							}, {
 								header : "单位",
 								dataIndex : "goodsUnit",
