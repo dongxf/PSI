@@ -115,7 +115,9 @@ Ext.define("PSI.Inventory.InitInventoryEditForm", {
 												fieldLabel : "期初数量",
 												beforeLabelTextTpl : PSI.Const.REQUIRED,
 												xtype : "numberfield",
-												allowDecimals : false,
+												allowDecimals : PSI.Const.GC_DEC_NUMBER > 0,
+												decimalPrecision : PSI.Const.GC_DEC_NUMBER,
+												minValue : 0,
 												hideTrigger : true
 											}, {
 												id : "editUnit",

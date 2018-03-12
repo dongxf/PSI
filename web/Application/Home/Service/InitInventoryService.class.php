@@ -180,7 +180,7 @@ class InitInventoryService extends PSIBaseExService {
 	private function deleteInitInventoryGoods($params) {
 		$warehouseId = $params["warehouseId"];
 		$goodsId = $params["goodsId"];
-		$goodsCount = intval($params["goodsCount"]);
+		$goodsCount = $params["goodsCount"];
 		$goodsMoney = floatval($params["goodsMoney"]);
 		
 		$db = M();
@@ -245,7 +245,7 @@ class InitInventoryService extends PSIBaseExService {
 		
 		$warehouseId = $params["warehouseId"];
 		$goodsId = $params["goodsId"];
-		$goodsCount = intval($params["goodsCount"]);
+		$goodsCount = floatval($params["goodsCount"]);
 		$goodsMoney = floatval($params["goodsMoney"]);
 		
 		if ($goodsCount < 0) {
@@ -256,7 +256,7 @@ class InitInventoryService extends PSIBaseExService {
 			return $this->bad("期初金额不能为负数");
 		}
 		
-		if ($goodsCount == 0) {
+		if (abs($goodsCount) <= 0.000000001) {
 			return $this->deleteInitInventoryGoods($params);
 		}
 		
@@ -294,13 +294,19 @@ class InitInventoryService extends PSIBaseExService {
 		$us = new UserService();
 		$dataOrg = $us->getLoginUserDataOrg();
 		
+		$companyId = $this->getCompanyId();
+		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
 		// 总账
 		$sql = "select id from t_inventory where warehouse_id = '%s' and goods_id = '%s' ";
 		$data = $db->query($sql, $warehouseId, $goodsId);
 		if (! $data) {
 			$sql = "insert into t_inventory (warehouse_id, goods_id, in_count, in_price, 
 						in_money, balance_count, balance_price, balance_money, data_org) 
-						values ('%s', '%s', %d, %f, %f, %d, %f, %f, '%s') ";
+						values ('%s', '%s', convert(%f, $fmt), %f, %f, convert(%f, $fmt), %f, %f, '%s') ";
 			$rc = $db->execute($sql, $warehouseId, $goodsId, $goodsCount, $goodsPrice, $goodsMoney, 
 					$goodsCount, $goodsPrice, $goodsMoney, $dataOrg);
 			if ($rc === false) {
@@ -310,8 +316,8 @@ class InitInventoryService extends PSIBaseExService {
 		} else {
 			$id = $data[0]["id"];
 			$sql = "update t_inventory  
-						set in_count = %d, in_price = %f, in_money = %f, 
-						balance_count = %d, balance_price = %f, balance_money = %f 
+						set in_count = convert(%f, $fmt), in_price = %f, in_money = %f, 
+						balance_count = convert(%f, $fmt), balance_price = %f, balance_money = %f 
 						where id = %d ";
 			$rc = $db->execute($sql, $goodsCount, $goodsPrice, $goodsMoney, $goodsCount, 
 					$goodsPrice, $goodsMoney, $id);
@@ -329,7 +335,8 @@ class InitInventoryService extends PSIBaseExService {
 			$sql = "insert into t_inventory_detail (warehouse_id, goods_id,  in_count, in_price,
 						in_money, balance_count, balance_price, balance_money,
 						biz_date, biz_user_id, date_created,  ref_number, ref_type, data_org)
-						values ('%s', '%s', %d, %f, %f, %d, %f, %f, curdate(), '%s', now(), '', '库存建账', '%s')";
+						values ('%s', '%s', convert(%f, $fmt), %f, %f, convert(%f, $fmt), 
+								%f, %f, curdate(), '%s', now(), '', '库存建账', '%s')";
 			$rc = $db->execute($sql, $warehouseId, $goodsId, $goodsCount, $goodsPrice, $goodsMoney, 
 					$goodsCount, $goodsPrice, $goodsMoney, $us->getLoginUserId(), $dataOrg);
 			if ($rc === false) {
@@ -339,8 +346,8 @@ class InitInventoryService extends PSIBaseExService {
 		} else {
 			$id = $data[0]["id"];
 			$sql = "update t_inventory_detail 
-						set in_count = %d, in_price = %f, in_money = %f,
-						balance_count = %d, balance_price = %f, balance_money = %f,
+						set in_count = convert(%f, $fmt), in_price = %f, in_money = %f,
+						balance_count = convert(%f, $fmt), balance_price = %f, balance_money = %f,
 						biz_date = curdate()  
 						where id = %d ";
 			$rc = $db->execute($sql, $goodsCount, $goodsPrice, $goodsMoney, $goodsCount, 
