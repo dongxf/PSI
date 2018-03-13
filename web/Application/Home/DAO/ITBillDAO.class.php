@@ -190,12 +190,21 @@ class ITBillDAO extends PSIBaseExDAO {
 	public function itBillDetailList($params) {
 		$db = $this->db;
 		
+		$companyId = $params["companyId"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->emptyResult();
+		}
+		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
 		// id: 调拨单id
 		$id = $params["id"];
 		
 		$result = [];
 		
-		$sql = "select t.id, g.code, g.name, g.spec, u.name as unit_name, t.goods_count
+		$sql = "select t.id, g.code, g.name, g.spec, u.name as unit_name, convert(t.goods_count, $fmt) as goods_count
 				from t_it_bill_detail t, t_goods g, t_goods_unit u
 				where t.itbill_id = '%s' and t.goods_id = g.id and g.unit_id = u.id
 				order by t.show_order ";
@@ -692,6 +701,15 @@ class ITBillDAO extends PSIBaseExDAO {
 	public function itBillInfo($params) {
 		$db = $this->db;
 		
+		$companyId = $params["companyId"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->emptyResult();
+		}
+		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
 		$id = $params["id"];
 		
 		$result = [];
@@ -721,10 +739,11 @@ class ITBillDAO extends PSIBaseExDAO {
 			$result["toWarehouseName"] = $data[0]["to_warehouse_name"];
 			
 			$items = [];
-			$sql = "select t.id, g.id as goods_id, g.code, g.name, g.spec, u.name as unit_name, t.goods_count
-				from t_it_bill_detail t, t_goods g, t_goods_unit u
-				where t.itbill_id = '%s' and t.goods_id = g.id and g.unit_id = u.id
-				order by t.show_order ";
+			$sql = "select t.id, g.id as goods_id, g.code, g.name, g.spec, u.name as unit_name, 
+						convert(t.goods_count, $fmt) as goods_count
+					from t_it_bill_detail t, t_goods g, t_goods_unit u
+					where t.itbill_id = '%s' and t.goods_id = g.id and g.unit_id = u.id
+					order by t.show_order ";
 			
 			$data = $db->query($sql, $id);
 			foreach ( $data as $v ) {

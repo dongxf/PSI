@@ -98,6 +98,7 @@ class ITBillService extends PSIBaseExService {
 		
 		$params["loginUserId"] = $this->getLoginUserId();
 		$params["loginUserName"] = $this->getLoginUserName();
+		$params["companyId"] = $this->getCompanyId();
 		
 		$dao = new ITBillDAO($this->db());
 		return $dao->itBillInfo($params);
@@ -110,6 +111,8 @@ class ITBillService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
+		
+		$params["companyId"] = $this->getCompanyId();
 		
 		$dao = new ITBillDAO($this->db());
 		return $dao->itBillDetailList($params);

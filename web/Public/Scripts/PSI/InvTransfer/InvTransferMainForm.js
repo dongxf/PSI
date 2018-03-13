@@ -543,6 +543,7 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
 								dataIndex : "goodsCount",
 								menuDisabled : true,
 								sortable : false,
+								width : 120,
 								align : "right"
 							}, {
 								header : "单位",
