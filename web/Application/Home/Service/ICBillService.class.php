@@ -111,6 +111,8 @@ class ICBillService extends PSIBaseExService {
 			return $this->emptyResult();
 		}
 		
+		$params["companyId"] = $this->getCompanyId();
+		
 		$dao = new ICBillDAO($this->db());
 		return $dao->icBillDetailList($params);
 	}

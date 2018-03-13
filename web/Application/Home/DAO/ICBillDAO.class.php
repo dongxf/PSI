@@ -175,12 +175,22 @@ class ICBillDAO extends PSIBaseExDAO {
 	public function icBillDetailList($params) {
 		$db = $this->db;
 		
+		$companyId = $params["companyId"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->emptyResult();
+		}
+		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
+		// id:盘点单id
 		$id = $params["id"];
 		
 		$result = [];
 		
 		$sql = "select t.id, g.code, g.name, g.spec, u.name as unit_name, 
-					t.goods_count, t.goods_money, t.memo
+					convert(t.goods_count, $fmt) as goods_count, t.goods_money, t.memo
 				from t_ic_bill_detail t, t_goods g, t_goods_unit u
 				where t.icbill_id = '%s' and t.goods_id = g.id and g.unit_id = u.id
 				order by t.show_order ";
