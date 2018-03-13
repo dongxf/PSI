@@ -161,6 +161,8 @@ class ICBillService extends PSIBaseExService {
 		$db = $this->db();
 		$db->startTrans();
 		
+		$params["companyId"] = $this->getCompanyId();
+		
 		$dao = new ICBillDAO($db);
 		$rc = $dao->commitICBill($params);
 		if ($rc) {

@@ -553,6 +553,15 @@ class ICBillDAO extends PSIBaseExDAO {
 	public function commitICBill(& $params) {
 		$db = $this->db;
 		
+		$companyId = $params["companyId"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->badParam("companyId");
+		}
+		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
 		$id = $params["id"];
 		
 		$sql = "select ref, bill_status, warehouse_id, bizdt, biz_user_id
@@ -588,7 +597,7 @@ class ICBillDAO extends PSIBaseExDAO {
 			return $this->bad("业务人员不存在，无法完成提交");
 		}
 		
-		$sql = "select goods_id, goods_count, goods_money
+		$sql = "select goods_id, convert(goods_count, $fmt) as goods_count, goods_money
 				from t_ic_bill_detail
 				where icbill_id = '%s'
 				order by show_order ";
@@ -625,7 +634,9 @@ class ICBillDAO extends PSIBaseExDAO {
 				}
 			}
 			
-			$sql = "select balance_count, balance_money, in_count, in_money, out_count, out_money
+			$sql = "select convert(balance_count, $fmt) as balance_count, balance_money, 
+						convert(in_count, $fmt) as in_count, in_money, 
+						convert(out_count, $fmt) as out_count, out_money
 					from t_inventory
 					where warehouse_id = '%s' and goods_id = '%s' ";
 			$data = $db->query($sql, $warehouseId, $goodsId);
@@ -641,7 +652,7 @@ class ICBillDAO extends PSIBaseExDAO {
 				// 库存总账
 				$sql = "insert into t_inventory(in_count, in_price, in_money, balance_count, balance_price,
 						balance_money, warehouse_id, goods_id)
-						values (%d, %f, %f, %d, %f, %f, '%s', '%s')";
+						values (convert(%f, $fmt), %f, %f, convert(%f, $fmt), %f, %f, '%s', '%s')";
 				$rc = $db->execute($sql, $inCount, $inPrice, $inMoney, $inCount, $inPrice, $inMoney, 
 						$warehouseId, $goodsId);
 				if ($rc === false) {
@@ -652,7 +663,7 @@ class ICBillDAO extends PSIBaseExDAO {
 				$sql = "insert into t_inventory_detail(in_count, in_price, in_money, balance_count, balance_price,
 						balance_money, warehouse_id, goods_id, biz_date, biz_user_id, date_created, ref_number,
 						ref_type)
-						values (%d, %f, %f, %d, %f, %f, '%s', '%s', '%s', '%s', now(), '%s', '库存盘点-盘盈入库')";
+						values (convert(%f, $fmt), %f, %f, convert(%f, $fmt), %f, %f, '%s', '%s', '%s', '%s', now(), '%s', '库存盘点-盘盈入库')";
 				$rc = $db->execute($sql, $inCount, $inPrice, $inMoney, $inCount, $inPrice, $inMoney, 
 						$warehouseId, $goodsId, $bizDT, $bizUserId, $ref);
 				if ($rc === false) {
@@ -676,8 +687,8 @@ class ICBillDAO extends PSIBaseExDAO {
 					
 					// 库存总账
 					$sql = "update t_inventory
-							set in_count = %d, in_price = %f, in_money = %f,
-							    balance_count = %d, balance_price = %f,
+							set in_count = convert(%f, $fmt), in_price = %f, in_money = %f,
+							    balance_count = convert(%f, $fmt), balance_price = %f,
 						        balance_money = %f
 							where warehouse_id = '%s' and goods_id = '%s' ";
 					$rc = $db->execute($sql, $totalInCount, $totalInPrice, $totalInMoney, 
@@ -690,7 +701,7 @@ class ICBillDAO extends PSIBaseExDAO {
 					$sql = "insert into t_inventory_detail(in_count, in_price, in_money, balance_count, balance_price,
 							balance_money, warehouse_id, goods_id, biz_date, biz_user_id, date_created, ref_number,
 							ref_type)
-							values (%d, %f, %f, %d, %f, %f, '%s', '%s', '%s', '%s', now(), '%s', '库存盘点-盘盈入库')";
+							values (convert(%f, $fmt), %f, %f, convert(%f, $fmt), %f, %f, '%s', '%s', '%s', '%s', now(), '%s', '库存盘点-盘盈入库')";
 					$rc = $db->execute($sql, $inCount, $inPrice, $inMoney, $balanceCount, 
 							$balancePrice, $balanceMoney, $warehouseId, $goodsId, $bizDT, $bizUserId, 
 							$ref);
@@ -718,8 +729,8 @@ class ICBillDAO extends PSIBaseExDAO {
 					
 					// 库存总账
 					$sql = "update t_inventory
-							set out_count = %d, out_price = %f, out_money = %f,
-							    balance_count = %d, balance_price = %f,
+							set out_count = convert(%f, $fmt), out_price = %f, out_money = %f,
+							    balance_count = convert(%f, $fmt), balance_price = %f,
 						        balance_money = %f
 							where warehouse_id = '%s' and goods_id = '%s' ";
 					$rc = $db->execute($sql, $totalOutCount, $totalOutPrice, $totalOutMoney, 
@@ -732,7 +743,7 @@ class ICBillDAO extends PSIBaseExDAO {
 					$sql = "insert into t_inventory_detail(out_count, out_price, out_money, balance_count, balance_price,
 							balance_money, warehouse_id, goods_id, biz_date, biz_user_id, date_created, ref_number,
 							ref_type)
-							values (%d, %f, %f, %d, %f, %f, '%s', '%s', '%s', '%s', now(), '%s', '库存盘点-盘亏出库')";
+							values (convert(%f, $fmt), %f, %f, convert(%f, $fmt), %f, %f, '%s', '%s', '%s', '%s', now(), '%s', '库存盘点-盘亏出库')";
 					$rc = $db->execute($sql, $outCount, $outPrice, $outMoney, $balanceCount, 
 							$balancePrice, $balanceMoney, $warehouseId, $goodsId, $bizDT, $bizUserId, 
 							$ref);
@@ -768,10 +779,10 @@ class ICBillDAO extends PSIBaseExDAO {
 		
 		$db = $this->db;
 		$sql = "select t.id, t.bizdt, t.bill_status,
-				w.name as warehouse_name,
-				u.name as biz_user_name,
-				u1.name as input_user_name,
-				t.date_created, t.bill_memo
+					w.name as warehouse_name,
+					u.name as biz_user_name,
+					u1.name as input_user_name,
+					t.date_created, t.bill_memo, t.company_id
 				from t_ic_bill t, t_warehouse w, t_user u, t_user u1
 				where (t.warehouse_id = w.id)
 				and (t.biz_user_id = u.id)
@@ -784,6 +795,11 @@ class ICBillDAO extends PSIBaseExDAO {
 		
 		$id = $data[0]["id"];
 		
+		$companyId = $data[0]["company_id"];
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
 		$bill = [];
 		
 		$bill["bizDT"] = $this->toYMD($data[0]["bizdt"]);
@@ -792,7 +808,8 @@ class ICBillDAO extends PSIBaseExDAO {
 		$bill["billMemo"] = $data[0]["bill_memo"];
 		
 		// 明细表
-		$sql = "select t.id, g.code, g.name, g.spec, u.name as unit_name, t.goods_count, t.goods_money,
+		$sql = "select t.id, g.code, g.name, g.spec, u.name as unit_name, 
+					convert(t.goods_count, $fmt) as goods_count, t.goods_money,
 					t.memo
 				from t_ic_bill_detail t, t_goods g, t_goods_unit u
 				where t.icbill_id = '%s' and t.goods_id = g.id and g.unit_id = u.id
