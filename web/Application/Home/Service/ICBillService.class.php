@@ -22,6 +22,7 @@ class ICBillService extends PSIBaseExService {
 		
 		$params["loginUserId"] = $this->getLoginUserId();
 		$params["loginUserName"] = $this->getLoginUserName();
+		$params["companyId"] = $this->getCompanyId();
 		
 		$dao = new ICBillDAO($this->db());
 		
