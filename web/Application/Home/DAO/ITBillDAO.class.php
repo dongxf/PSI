@@ -496,6 +496,14 @@ class ITBillDAO extends PSIBaseExDAO {
 	public function commitITBill(& $params) {
 		$db = $this->db;
 		
+		$companyId = $params["companyId"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->badParam("companyId");
+		}
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
 		$id = $params["id"];
 		
 		$sql = "select ref, bill_status, from_warehouse_id, to_warehouse_id,
@@ -544,7 +552,7 @@ class ITBillDAO extends PSIBaseExDAO {
 			return $this->bad("调出仓库和调入仓库不能是同一个仓库");
 		}
 		
-		$sql = "select goods_id, goods_count
+		$sql = "select goods_id, convert(goods_count, $fmt) as goods_count
 				from t_it_bill_detail
 				where itbill_id = '%s'
 				order by show_order";
@@ -570,7 +578,8 @@ class ITBillDAO extends PSIBaseExDAO {
 			}
 			
 			// 检查调出库存是否足够
-			$sql = "select balance_count, balance_price, balance_money, out_count, out_money
+			$sql = "select convert(balance_count, $fmt) as balance_count, balance_price, balance_money, 
+						convert(out_count, $fmt) as out_count, out_money
 					from t_inventory
 					where warehouse_id = '%s' and goods_id = '%s' ";
 			$data = $db->query($sql, $fromWarehouseId, $goodsId);
@@ -605,7 +614,7 @@ class ITBillDAO extends PSIBaseExDAO {
 			$sql = "insert into t_inventory_detail(out_count, out_price, out_money, balance_count,
 					balance_price, balance_money, warehouse_id, goods_id, biz_date, biz_user_id, date_created,
 					ref_number, ref_type)
-					values (%d, %f, %f, %d, %f, %f, '%s', '%s', '%s', '%s', now(),
+					values (convert(%f, $fmt), %f, %f, convert(%f, $fmt), %f, %f, '%s', '%s', '%s', '%s', now(),
 					'%s', '调拨出库')";
 			$rc = $db->execute($sql, $outCount, $outPrice, $outMoney, $balanceCount, $balancePrice, 
 					$balanceMoney, $fromWarehouseId, $goodsId, $bizDT, $bizUserId, $ref);
@@ -615,8 +624,8 @@ class ITBillDAO extends PSIBaseExDAO {
 			
 			// 调出库 - 总账
 			$sql = "update t_inventory
-					set out_count = %d, out_price = %f, out_money = %f,
-						balance_count = %d, balance_price = %f, balance_money = %f
+					set out_count = convert(%f, $fmt), out_price = %f, out_money = %f,
+						balance_count = convert(%f, $fmt), balance_price = %f, balance_money = %f
 					where warehouse_id = '%s' and goods_id = '%s'";
 			$rc = $db->execute($sql, $totalOutCount, $totalOutPrice, $totalOutMoney, $balanceCount, 
 					$balancePrice, $balanceMoney, $fromWarehouseId, $goodsId);
@@ -631,8 +640,9 @@ class ITBillDAO extends PSIBaseExDAO {
 			$balanceCount = 0;
 			$balanceMoney = 0;
 			$balancePrice = 0;
-			$sql = "select balance_count, balance_money, in_count, in_money from
-					t_inventory
+			$sql = "select convert(balance_count, $fmt) as balance_count, balance_money, 
+						convert(in_count, $fmt) as in_count, in_money 
+					from t_inventory
 					where warehouse_id = '%s' and goods_id = '%s' ";
 			$data = $db->query($sql, $toWarehouseId, $goodsId);
 			if (! $data) {
@@ -643,7 +653,7 @@ class ITBillDAO extends PSIBaseExDAO {
 				
 				$sql = "insert into t_inventory(in_count, in_price, in_money, balance_count,
 						balance_price, balance_money, warehouse_id, goods_id)
-						values (%d, %f, %f, %d, %f, %f, '%s', '%s')";
+						values (convert(%f, $fmt), %f, %f, convert(%f, $fmt), %f, %f, '%s', '%s')";
 				$rc = $db->execute($sql, $inCount, $inPrice, $inMoney, $balanceCount, $balancePrice, 
 						$balanceMoney, $toWarehouseId, $goodsId);
 				if ($rc === false) {
@@ -663,8 +673,8 @@ class ITBillDAO extends PSIBaseExDAO {
 				$totalInPrice = $totalInMoney / $totalInCount;
 				
 				$sql = "update t_inventory
-						set in_count = %d, in_price = %f, in_money = %f,
-						    balance_count = %d, balance_price = %f, balance_money = %f
+						set in_count = convert(%f, $fmt), in_price = %f, in_money = %f,
+						    balance_count = convert(%f, $fmt), balance_price = %f, balance_money = %f
 						where warehouse_id = '%s' and goods_id = '%s' ";
 				$rc = $db->execute($sql, $totalInCount, $totalInPrice, $totalInMoney, $balanceCount, 
 						$balancePrice, $balanceMoney, $toWarehouseId, $goodsId);
@@ -677,7 +687,7 @@ class ITBillDAO extends PSIBaseExDAO {
 			$sql = "insert into t_inventory_detail(in_count, in_price, in_money, balance_count,
 					balance_price, balance_money, warehouse_id, goods_id, ref_number, ref_type,
 					biz_date, biz_user_id, date_created)
-					values (%d, %f, %f, %d, %f, %f, '%s', '%s', '%s', '调拨入库', '%s', '%s', now())";
+					values (convert(%f, $fmt), %f, %f, convert(%f, $fmt), %f, %f, '%s', '%s', '%s', '调拨入库', '%s', '%s', now())";
 			$rc = $db->execute($sql, $inCount, $inPrice, $inMoney, $balanceCount, $balancePrice, 
 					$balanceMoney, $toWarehouseId, $goodsId, $ref, $bizDT, $bizUserId);
 			if ($rc === false) {

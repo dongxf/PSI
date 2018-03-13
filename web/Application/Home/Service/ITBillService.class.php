@@ -163,6 +163,8 @@ class ITBillService extends PSIBaseExService {
 		$db = $this->db();
 		$db->startTrans();
 		
+		$params["companyId"] = $this->getCompanyId();
+		
 		$dao = new ITBillDAO($db);
 		$rc = $dao->commitITBill($params);
 		if ($rc) {
