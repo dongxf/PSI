@@ -775,7 +775,7 @@ class SOBillDAO extends PSIBaseExDAO {
 					c.name as customer_name, s.contact, s.tel, s.fax, s.deal_address,
 					s.deal_date, s.receiving_type, s.bill_memo, s.date_created,
 					o.full_name as org_name, u1.name as biz_user_name, u2.name as input_user_name,
-					s.confirm_user_id, s.confirm_date
+					s.confirm_user_id, s.confirm_date, s.company_id
 				from t_so_bill s, t_customer c, t_org o, t_user u1, t_user u2
 				where (s.customer_id = c.id) and (s.org_id = o.id)
 					and (s.biz_user_id = u1.id) and (s.input_user_id = u2.id) 
@@ -787,6 +787,11 @@ class SOBillDAO extends PSIBaseExDAO {
 		
 		$id = $data[0]["id"];
 		
+		$companyId = $data[0]["company_id"];
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
 		$bill["bizDT"] = $this->toYMD($data[0]["bizdt"]);
 		$bill["customerName"] = $data[0]["customer_name"];
 		$bill["warehouseName"] = $data[0]["warehouse_name"];
@@ -795,7 +800,8 @@ class SOBillDAO extends PSIBaseExDAO {
 		$bill["dealAddress"] = $data[0]["deal_address"];
 		
 		// 明细表
-		$sql = "select s.id, g.code, g.name, g.spec, s.goods_count, s.goods_price, s.goods_money,
+		$sql = "select s.id, g.code, g.name, g.spec, convert(s.goods_count, $fmt) as goods_count, 
+					s.goods_price, s.goods_money,
 					s.tax_rate, s.tax, s.money_with_tax, u.name as unit_name
 				from t_so_bill_detail s, t_goods g, t_goods_unit u
 				where s.sobill_id = '%s' and s.goods_id = g.id and g.unit_id = u.id
