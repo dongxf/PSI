@@ -259,6 +259,10 @@ class ICBillDAO extends PSIBaseExDAO {
 			return $this->badParam("companyId");
 		}
 		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
 		$id = $this->newId();
 		$ref = $this->genNewBillRef($companyId);
 		
@@ -275,7 +279,7 @@ class ICBillDAO extends PSIBaseExDAO {
 		// 明细表
 		$sql = "insert into t_ic_bill_detail(id, date_created, goods_id, goods_count, goods_money,
 					show_order, icbill_id, data_org, company_id, memo)
-				values ('%s', now(), '%s', %d, %f, %d, '%s', '%s', '%s', '%s')";
+				values ('%s', now(), '%s', convert(%f, $fmt), %f, %d, '%s', '%s', '%s', '%s')";
 		foreach ( $items as $i => $v ) {
 			$goodsId = $v["goodsId"];
 			if (! $goodsId) {
@@ -362,6 +366,11 @@ class ICBillDAO extends PSIBaseExDAO {
 			return $this->badParam("loginUserId");
 		}
 		
+		$companyId = $bill["companyId"];
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
 		$oldBill = $this->getICBillById($id);
 		if (! $oldBill) {
 			return $this->bad("要编辑的盘点单不存在，无法保存");
@@ -394,7 +403,7 @@ class ICBillDAO extends PSIBaseExDAO {
 		
 		$sql = "insert into t_ic_bill_detail(id, date_created, goods_id, goods_count, goods_money,
 					show_order, icbill_id, data_org, company_id, memo)
-				values ('%s', now(), '%s', %d, %f, %d, '%s', '%s', '%s', '%s')";
+				values ('%s', now(), '%s', convert(%f, $fmt), %f, %d, '%s', '%s', '%s', '%s')";
 		foreach ( $items as $i => $v ) {
 			$goodsId = $v["goodsId"];
 			if (! $goodsId) {
@@ -434,7 +443,7 @@ class ICBillDAO extends PSIBaseExDAO {
 		$bcDAO = new BizConfigDAO($db);
 		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
 		$fmt = "decimal(19, " . $dataScale . ")";
-	
+		
 		// id:盘点单id
 		$id = $params["id"];
 		

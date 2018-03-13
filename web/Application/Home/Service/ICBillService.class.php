@@ -52,6 +52,8 @@ class ICBillService extends PSIBaseExService {
 		
 		$log = null;
 		
+		$bill["companyId"] = $this->getCompanyId();
+		
 		if ($id) {
 			// 编辑单据
 			
@@ -68,7 +70,6 @@ class ICBillService extends PSIBaseExService {
 			// 新建单据
 			
 			$bill["dataOrg"] = $this->getLoginUserDataOrg();
-			$bill["companyId"] = $this->getCompanyId();
 			$bill["loginUserId"] = $this->getLoginUserId();
 			
 			$rc = $dao->addICBill($bill);
