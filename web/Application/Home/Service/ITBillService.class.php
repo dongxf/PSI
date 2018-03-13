@@ -50,6 +50,7 @@ class ITBillService extends PSIBaseExService {
 		$log = null;
 		
 		$bill["loginUserId"] = $this->getLoginUserId();
+		$bill["companyId"] = $this->getCompanyId();
 		
 		if ($id) {
 			// 编辑
@@ -67,7 +68,6 @@ class ITBillService extends PSIBaseExService {
 			// 新建调拨单
 			
 			$bill["dataOrg"] = $this->getLoginUserDataOrg();
-			$bill["companyId"] = $this->getCompanyId();
 			
 			$rc = $dao->addITBill($bill);
 			if ($rc) {

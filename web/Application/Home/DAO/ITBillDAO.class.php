@@ -279,6 +279,10 @@ class ITBillDAO extends PSIBaseExDAO {
 			return $this->badParam("loginUserId");
 		}
 		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
 		// 新增
 		$sql = "insert into t_it_bill(id, bill_status, bizdt, biz_user_id,
 					date_created, input_user_id, ref, from_warehouse_id,
@@ -295,7 +299,7 @@ class ITBillDAO extends PSIBaseExDAO {
 		
 		$sql = "insert into t_it_bill_detail(id, date_created, goods_id, goods_count,
 					show_order, itbill_id, data_org, company_id)
-				values ('%s', now(), '%s', %d, %d, '%s', '%s', '%s')";
+				values ('%s', now(), '%s', convert(%f, $fmt), %d, '%s', '%s', '%s')";
 		foreach ( $items as $i => $v ) {
 			$goodsId = $v["goodsId"];
 			if (! $goodsId) {
@@ -358,6 +362,10 @@ class ITBillDAO extends PSIBaseExDAO {
 			return $this->bad("调拨单(单号：$ref)已经提交，不能被编辑");
 		}
 		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
 		$bizDT = $bill["bizDT"];
 		$fromWarehouseId = $bill["fromWarehouseId"];
 		
@@ -416,7 +424,7 @@ class ITBillDAO extends PSIBaseExDAO {
 		
 		$sql = "insert into t_it_bill_detail(id, date_created, goods_id, goods_count,
 					show_order, itbill_id, data_org, company_id)
-				values ('%s', now(), '%s', %d, %d, '%s', '%s', '%s')";
+				values ('%s', now(), '%s', convert(%f, $fmt), %d, '%s', '%s', '%s')";
 		foreach ( $items as $i => $v ) {
 			$goodsId = $v["goodsId"];
 			if (! $goodsId) {
