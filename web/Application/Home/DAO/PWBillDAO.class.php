@@ -1363,7 +1363,7 @@ class PWBillDAO extends PSIBaseExDAO {
 		
 		$sql = "select p.id, p.bill_status, p.ref, p.biz_dt, u1.name as biz_user_name, u2.name as input_user_name,
 					p.goods_money, w.name as warehouse_name, s.name as supplier_name,
-					p.date_created, p.payment_type
+					p.date_created, p.payment_type, p.company_id
 				from t_pw_bill p, t_warehouse w, t_supplier s, t_user u1, t_user u2
 				where (p.warehouse_id = w.id) and (p.supplier_id = s.id)
 				and (p.biz_user_id = u1.id) and (p.input_user_id = u2.id) 
@@ -1376,6 +1376,11 @@ class PWBillDAO extends PSIBaseExDAO {
 		
 		$v = $data[0];
 		$id = $v["id"];
+		$companyId = $v["company_id"];
+		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
 		
 		$result = [];
 		
@@ -1386,7 +1391,8 @@ class PWBillDAO extends PSIBaseExDAO {
 		$result["warehouseName"] = $v["warehouse_name"];
 		$result["bizUserName"] = $v["biz_user_name"];
 		
-		$sql = "select g.code, g.name, g.spec, u.name as unit_name, p.goods_count, p.goods_price,
+		$sql = "select g.code, g.name, g.spec, u.name as unit_name, 
+					convert(p.goods_count, $fmt) as goods_count, p.goods_price,
 					p.goods_money
 				from t_pw_bill_detail p, t_goods g, t_goods_unit u
 				where p.pwbill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id
