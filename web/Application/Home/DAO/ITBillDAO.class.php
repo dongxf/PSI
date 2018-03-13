@@ -798,7 +798,7 @@ class ITBillDAO extends PSIBaseExDAO {
 					tw.name as to_warehouse_name,
 					u.name as biz_user_name,
 					u1.name as input_user_name,
-					t.date_created
+					t.date_created, t.company_id
 				from t_it_bill t, t_warehouse fw, t_warehouse tw,
 				   t_user u, t_user u1
 				where (t.from_warehouse_id = fw.id)
@@ -813,6 +813,12 @@ class ITBillDAO extends PSIBaseExDAO {
 		
 		$id = $data[0]["id"];
 		
+		$companyId = $data[0]["company_id"];
+		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
 		$bill = [
 				"bizDT" => $this->toYMD($data[0]["bizdt"]),
 				"fromWarehouseName" => $data[0]["from_warehouse_name"],
@@ -822,7 +828,8 @@ class ITBillDAO extends PSIBaseExDAO {
 		];
 		
 		// 明细表
-		$sql = "select t.id, g.code, g.name, g.spec, u.name as unit_name, t.goods_count
+		$sql = "select t.id, g.code, g.name, g.spec, u.name as unit_name, 
+						convert(t.goods_count, $fmt) as goods_count
 				from t_it_bill_detail t, t_goods g, t_goods_unit u
 				where t.itbill_id = '%s' and t.goods_id = g.id and g.unit_id = u.id
 				order by t.show_order ";
