@@ -675,7 +675,7 @@ class InstallService extends PSIBaseExService {
 				  `id` varchar(255) NOT NULL,
 				  `date_created` datetime DEFAULT NULL,
 				  `goods_id` varchar(255) NOT NULL,
-				  `goods_count` int(11) NOT NULL,
+				  `goods_count` decimal(19,8) NOT NULL,
 				  `goods_money` decimal(19,2) NOT NULL,
 				  `show_order` int(11) NOT NULL,
 				  `icbill_id` varchar(255) NOT NULL,
