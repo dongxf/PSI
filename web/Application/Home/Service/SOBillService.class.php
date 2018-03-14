@@ -67,6 +67,8 @@ class SOBillService extends PSIBaseExService {
 		
 		$log = null;
 		
+		$bill["companyId"] = $this->getCompanyId();
+		
 		if ($id) {
 			// 编辑
 			
@@ -86,7 +88,6 @@ class SOBillService extends PSIBaseExService {
 			
 			$bill["loginUserId"] = $this->getLoginUserId();
 			$bill["dataOrg"] = $this->getLoginUserDataOrg();
-			$bill["companyId"] = $this->getCompanyId();
 			
 			$rc = $dao->addSOBill($bill);
 			if ($rc) {

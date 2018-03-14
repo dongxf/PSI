@@ -300,6 +300,10 @@ class SOBillDAO extends PSIBaseExDAO {
 			return $this->badParam("loginUserId");
 		}
 		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
 		$id = $this->newId();
 		$ref = $this->genNewBillRef($companyId);
 		
@@ -334,8 +338,8 @@ class SOBillDAO extends PSIBaseExDAO {
 			$sql = "insert into t_so_bill_detail(id, date_created, goods_id, goods_count, goods_money,
 						goods_price, sobill_id, tax_rate, tax, money_with_tax, ws_count, left_count,
 						show_order, data_org, company_id, memo)
-					values ('%s', now(), '%s', %d, %f,
-						%f, '%s', %d, %f, %f, 0, %d, %d, '%s', '%s', '%s')";
+					values ('%s', now(), '%s', convert(%f, $fmt), %f,
+						%f, '%s', %d, %f, %f, 0, convert(%f, $fmt), %d, '%s', '%s', '%s')";
 			$rc = $db->execute($sql, $this->newId(), $goodsId, $goodsCount, $goodsMoney, 
 					$goodsPrice, $id, $taxRate, $tax, $moneyWithTax, $goodsCount, $i, $dataOrg, 
 					$companyId, $memo);
@@ -464,6 +468,10 @@ class SOBillDAO extends PSIBaseExDAO {
 			return $this->bad("当前销售订单已经审核，不能再编辑");
 		}
 		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
 		$sql = "delete from t_so_bill_detail where sobill_id = '%s' ";
 		$rc = $db->execute($sql, $id);
 		if ($rc === false) {
@@ -486,8 +494,8 @@ class SOBillDAO extends PSIBaseExDAO {
 			$sql = "insert into t_so_bill_detail(id, date_created, goods_id, goods_count, goods_money,
 						goods_price, sobill_id, tax_rate, tax, money_with_tax, ws_count, left_count,
 						show_order, data_org, company_id, memo)
-					values ('%s', now(), '%s', %d, %f,
-						%f, '%s', %d, %f, %f, 0, %d, %d, '%s', '%s', '%s')";
+					values ('%s', now(), '%s', convert(%f, $fmt), %f,
+						%f, '%s', %d, %f, %f, 0, convert(%f, $fmt), %d, '%s', '%s', '%s')";
 			$rc = $db->execute($sql, $this->newId(), $goodsId, $goodsCount, $goodsMoney, 
 					$goodsPrice, $id, $taxRate, $tax, $moneyWithTax, $goodsCount, $i, $dataOrg, 
 					$companyId, $memo);
