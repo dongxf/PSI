@@ -34,6 +34,8 @@ class SRBillService extends PSIBaseExService {
 			return $this->emptyResult();
 		}
 		
+		$params["companyId"] = $this->getCompanyId();
+		
 		$dao = new SRBillDAO($this->db());
 		return $dao->srBillDetailList($params);
 	}
