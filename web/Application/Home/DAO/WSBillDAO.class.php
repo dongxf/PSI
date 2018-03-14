@@ -861,6 +861,9 @@ class WSBillDAO extends PSIBaseExDAO {
 		// true: 先进先出
 		$fifo = $bs->getInventoryMethod($companyId) == 1;
 		
+		$dataScale = $bs->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
 		$id = $params["id"];
 		
 		$sql = "select ref, bill_status, customer_id, warehouse_id, biz_user_id, bizdt, sale_money,
@@ -928,7 +931,7 @@ class WSBillDAO extends PSIBaseExDAO {
 			return $this->bad("收款方式不正确，无法完成提交操作");
 		}
 		
-		$sql = "select id, goods_id, goods_count, goods_price, sobilldetail_id
+		$sql = "select id, goods_id, convert(goods_count, $fmt) as goods_count, goods_price, sobilldetail_id
 				from t_ws_bill_detail
 				where wsbill_id = '%s'
 				order by show_order ";
@@ -961,7 +964,7 @@ class WSBillDAO extends PSIBaseExDAO {
 			
 			$goodsCount = $v["goods_count"];
 			$soBillDetailId = $v["sobilldetail_id"];
-			$sql = "select left_count
+			$sql = "select convert(left_count, $fmt) as left_count
 					from t_so_bill_detail
 					where id = '%s' ";
 			$data = $db->query($sql, $soBillDetailId);
@@ -980,7 +983,7 @@ class WSBillDAO extends PSIBaseExDAO {
 		foreach ( $items as $v ) {
 			$itemId = $v["id"];
 			$goodsId = $v["goods_id"];
-			$goodsCount = intval($v["goods_count"]);
+			$goodsCount = $v["goods_count"];
 			$goodsPrice = floatval($v["goods_price"]);
 			
 			$sql = "select code, name from t_goods where id = '%s' ";
@@ -1161,7 +1164,8 @@ class WSBillDAO extends PSIBaseExDAO {
 				// 移动平均法
 				
 				// 库存总账
-				$sql = "select out_count, out_money, balance_count, balance_price,
+				$sql = "select convert(out_count, $fmt) as out_count, out_money, 
+							convert(balance_count, $fmt) as balance_count, balance_price,
 						balance_money from t_inventory
 						where warehouse_id = '%s' and goods_id = '%s' ";
 				$data = $db->query($sql, $warehouseId, $goodsId);
@@ -1195,8 +1199,8 @@ class WSBillDAO extends PSIBaseExDAO {
 				$outPrice = $outMoney / $outCount;
 				
 				$sql = "update t_inventory
-						set out_count = %d, out_price = %f, out_money = %f,
-						    balance_count = %d, balance_money = %f
+						set out_count = convert(%f, $fmt), out_price = %f, out_money = %f,
+						    balance_count = convert(%f, $fmt), balance_money = %f
 						where warehouse_id = '%s' and goods_id = '%s' ";
 				$rc = $db->execute($sql, $outCount, $outPrice, $outMoney, $balanceCount, 
 						$balanceMoney, $warehouseId, $goodsId);
@@ -1208,7 +1212,7 @@ class WSBillDAO extends PSIBaseExDAO {
 				$sql = "insert into t_inventory_detail(out_count, out_price, out_money,
 						balance_count, balance_price, balance_money, warehouse_id,
 						goods_id, biz_date, biz_user_id, date_created, ref_number, ref_type)
-						values(%d, %f, %f, %d, %f, %f, '%s', '%s', '%s', '%s', now(), '%s', '销售出库')";
+						values(convert(%f, $fmt), %f, %f, convert(%f, $fmt), %f, %f, '%s', '%s', '%s', '%s', now(), '%s', '销售出库')";
 				$rc = $db->execute($sql, $goodsCount, $outPriceDetail, $outMoneyDetail, 
 						$balanceCount, $balancePrice, $balanceMoney, $warehouseId, $goodsId, $bizDT, 
 						$bizUserId, $ref);
@@ -1227,7 +1231,8 @@ class WSBillDAO extends PSIBaseExDAO {
 			}
 			
 			// 同步销售订单中的出库量
-			$sql = "select goods_count, ws_count
+			$sql = "select convert(goods_count, $fmt) as goods_count, 
+							convert(ws_count, $fmt) as ws_count
 					from t_so_bill_detail
 					where id = '%s' ";
 			$soDetail = $db->query($sql, $soBillDetailId);
@@ -1241,7 +1246,7 @@ class WSBillDAO extends PSIBaseExDAO {
 			$totalWSCount += $goodsCount;
 			$totalLeftCount = $totalGoodsCount - $totalWSCount;
 			$sql = "update t_so_bill_detail
-					set ws_count = %d, left_count = %d
+					set ws_count = convert(%f, $fmt), left_count = convert(%f, $fmt)
 					where id = '%s' ";
 			$rc = $db->execute($sql, $totalWSCount, $totalLeftCount, $soBillDetailId);
 			if ($rc === false) {
