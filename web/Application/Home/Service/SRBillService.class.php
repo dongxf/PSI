@@ -50,6 +50,7 @@ class SRBillService extends PSIBaseExService {
 		
 		$params["loginUserId"] = $this->getLoginUserId();
 		$params["loginUserName"] = $this->getLoginUserName();
+		$params["companyId"] = $this->getCompanyId();
 		
 		$dao = new SRBillDAO($this->db());
 		return $dao->srBillInfo($params);
@@ -140,6 +141,8 @@ class SRBillService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
+		
+		$params["companyId"] = $this->getCompanyId();
 		
 		$dao = new SRBillDAO($this->db());
 		return $dao->getWSBillInfoForSRBill($params);

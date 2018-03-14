@@ -395,12 +395,21 @@ class SRBillDAO extends PSIBaseExDAO {
 	public function getWSBillInfoForSRBill($params) {
 		$db = $this->db;
 		
+		$companyId = $params["companyId"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->emptyResult();
+		}
+		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
 		$result = [];
 		
 		$id = $params["id"];
 		
 		$sql = "select c.name as customer_name, w.ref, h.id as warehouse_id,
-				  h.name as warehouse_name, c.id as customer_id
+					h.name as warehouse_name, c.id as customer_id
 				from t_ws_bill w, t_customer c, t_warehouse h
 				where w.id = '%s' and w.customer_id = c.id and w.warehouse_id = h.id ";
 		$data = $db->query($sql, $id);
@@ -414,7 +423,8 @@ class SRBillDAO extends PSIBaseExDAO {
 		$result["warehouseName"] = $data[0]["warehouse_name"];
 		$result["customerId"] = $data[0]["customer_id"];
 		
-		$sql = "select d.id, g.id as goods_id, g.code, g.name, g.spec, u.name as unit_name, d.goods_count,
+		$sql = "select d.id, g.id as goods_id, g.code, g.name, g.spec, u.name as unit_name, 
+					convert(d.goods_count, $fmt) as goods_count,
 					d.goods_price, d.goods_money, d.sn_note
 				from t_ws_bill_detail d, t_goods g, t_goods_unit u
 				where d.wsbill_id = '%s' and d.goods_id = g.id and g.unit_id = u.id
@@ -747,6 +757,14 @@ class SRBillDAO extends PSIBaseExDAO {
 	public function srBillInfo($params) {
 		$db = $this->db;
 		
+		$companyId = $params["companyId"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->emptyResult();
+		}
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
 		$id = $params["id"];
 		
 		if (! $id) {
@@ -780,10 +798,12 @@ class SRBillDAO extends PSIBaseExDAO {
 				$result["paymentType"] = $data[0]["payment_type"];
 			}
 			
-			$sql = "select d.id, g.id as goods_id, g.code, g.name, g.spec, u.name as unit_name, d.goods_count,
-					d.goods_price, d.goods_money,
-					d.rejection_goods_count, d.rejection_goods_price, d.rejection_sale_money,
-					d.wsbilldetail_id, d.sn_note
+			$sql = "select d.id, g.id as goods_id, g.code, g.name, g.spec, u.name as unit_name, 
+						convert(d.goods_count, $fmt) as goods_count,
+						d.goods_price, d.goods_money,
+						convert(d.rejection_goods_count, $fmt) as rejection_goods_count, 
+						d.rejection_goods_price, d.rejection_sale_money,
+						d.wsbilldetail_id, d.sn_note
 					 from t_sr_bill_detail d, t_goods g, t_goods_unit u
 					 where d.srbill_id = '%s' and d.goods_id = g.id and g.unit_id = u.id
 					 order by d.show_order";
