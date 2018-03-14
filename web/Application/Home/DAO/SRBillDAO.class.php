@@ -921,6 +921,8 @@ class SRBillDAO extends PSIBaseExDAO {
 		
 		$bs = new BizConfigDAO($db);
 		$fifo = $bs->getInventoryMethod($companyId) == 1; // true: 先进先出
+		$dataScale = $bs->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
 		
 		$warehouseDAO = new WarehouseDAO($db);
 		$warehouse = $warehouseDAO->getWarehouseById($warehouseId);
@@ -957,7 +959,7 @@ class SRBillDAO extends PSIBaseExDAO {
 		// 检查退货数量
 		// 1、不能为负数
 		// 2、累计退货数量不能超过销售的数量
-		$sql = "select wsbilldetail_id, rejection_goods_count, goods_id
+		$sql = "select wsbilldetail_id, convert(rejection_goods_count, $fmt) as rejection_goods_count, goods_id
 				from t_sr_bill_detail
 				where srbill_id = '%s'
 				order by show_order";
@@ -986,14 +988,14 @@ class SRBillDAO extends PSIBaseExDAO {
 			}
 			
 			// 累计退货数量不能超过销售数量
-			$sql = "select goods_count from t_ws_bill_detail where id = '%s' ";
+			$sql = "select convert(goods_count, $fmt) as goods_count from t_ws_bill_detail where id = '%s' ";
 			$data = $db->query($sql, $wsbillDetailId);
 			$saleGoodsCount = 0;
 			if ($data) {
 				$saleGoodsCount = $data[0]["goods_count"];
 			}
 			
-			$sql = "select sum(d.rejection_goods_count) as rej_count
+			$sql = "select sum(convert(d.rejection_goods_count, $fmt)) as rej_count
 					from t_sr_bill s, t_sr_bill_detail d
 					where s.id = d.srbill_id and s.bill_status <> 0
 					  and d.wsbilldetail_id = '%s' ";
@@ -1013,7 +1015,7 @@ class SRBillDAO extends PSIBaseExDAO {
 			}
 		}
 		
-		$sql = "select goods_id, rejection_goods_count, inventory_money
+		$sql = "select goods_id, convert(rejection_goods_count, $fmt) as rejection_goods_count, inventory_money
 				from t_sr_bill_detail
 				where srbill_id = '%s'
 				order by show_order";
@@ -1031,7 +1033,8 @@ class SRBillDAO extends PSIBaseExDAO {
 				// TODO 先进先出
 			} else {
 				// 移动平均
-				$sql = "select in_count, in_money, balance_count, balance_money
+				$sql = "select convert(in_count, $fmt) as in_count, in_money, 
+							convert(balance_count, $fmt) as balance_count, balance_money
 						from t_inventory
 						where warehouse_id = '%s' and goods_id = '%s' ";
 				$data = $db->query($sql, $warehouseId, $goodsId);
@@ -1052,8 +1055,8 @@ class SRBillDAO extends PSIBaseExDAO {
 					$sql = "insert into t_inventory_detail(in_count, in_price, in_money,
 						balance_count, balance_price, balance_money, ref_number, ref_type,
 						biz_date, biz_user_id, date_created, goods_id, warehouse_id)
-						values (%d, %f, %f,
-						%d, %f, %f, '%s', '销售退货入库',
+						values (convert(%f, $fmt), %f, %f,
+						convert(%f, $fmt), %f, %f, '%s', '销售退货入库',
 						'%s', '%s', now(), '%s', '%s')";
 					$rc = $db->execute($sql, $rejCount, $rejPrice, $rejMoney, $totalBalanceCount, 
 							$totalBalancePrice, $totalBalanceMoney, $ref, $bizDT, $bizUserId, 
@@ -1066,8 +1069,8 @@ class SRBillDAO extends PSIBaseExDAO {
 					$sql = "insert into t_inventory(in_count, in_price, in_money,
 						balance_count, balance_price, balance_money,
 						goods_id, warehouse_id)
-						values (%d, %f, %f,
-						%d, %f, %f, '%s', '%s')";
+						values (convert(%f, $fmt), %f, %f,
+						convert(%f, $fmt), %f, %f, '%s', '%s')";
 					$rc = $db->execute($sql, $totalInCount, $totalInPrice, $totalInMoney, 
 							$totalBalanceCount, $totalBalancePrice, $totalBalanceMoney, $goodsId, 
 							$warehouseId);
@@ -1091,8 +1094,8 @@ class SRBillDAO extends PSIBaseExDAO {
 					$sql = "insert into t_inventory_detail(in_count, in_price, in_money,
 							balance_count, balance_price, balance_money, ref_number, ref_type,
 							biz_date, biz_user_id, date_created, goods_id, warehouse_id)
-							values (%d, %f, %f,
-							%d, %f, %f, '%s', '销售退货入库',
+							values (convert(%f, $fmt), %f, %f,
+							convert(%f, $fmt), %f, %f, '%s', '销售退货入库',
 							'%s', '%s', now(), '%s', '%s')";
 					$rc = $db->execute($sql, $rejCount, $rejPrice, $rejMoney, $totalBalanceCount, 
 							$totalBalancePrice, $totalBalanceMoney, $ref, $bizDT, $bizUserId, 
@@ -1103,8 +1106,8 @@ class SRBillDAO extends PSIBaseExDAO {
 					
 					// 库存总账
 					$sql = "update t_inventory
-							set in_count = %d, in_price = %f, in_money = %f,
-							  balance_count = %d, balance_price = %f, balance_money = %f
+							set in_count = convert(%f, $fmt), in_price = %f, in_money = %f,
+							  balance_count = convert(%f, $fmt), balance_price = %f, balance_money = %f
 							where goods_id = '%s' and warehouse_id = '%s' ";
 					$rc = $db->execute($sql, $totalInCount, $totalInPrice, $totalInMoney, 
 							$totalBalanceCount, $totalBalancePrice, $totalBalanceMoney, $goodsId, 
