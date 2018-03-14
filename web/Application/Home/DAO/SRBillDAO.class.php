@@ -1386,7 +1386,7 @@ class SRBillDAO extends PSIBaseExDAO {
 		
 		$sql = "select w.id, w.bizdt, c.name as customer_name,
 					 u.name as biz_user_name,
-					 h.name as warehouse_name, wsBill.ref as ws_bill_ref
+					 h.name as warehouse_name, wsBill.ref as ws_bill_ref, w.company_id
 				 from t_sr_bill w, t_customer c, t_user u, t_warehouse h, t_ws_bill wsBill
 				 where w.customer_id = c.id and w.biz_user_id = u.id
 					 and w.warehouse_id = h.id
@@ -1397,6 +1397,11 @@ class SRBillDAO extends PSIBaseExDAO {
 		}
 		
 		$id = $data[0]["id"];
+		$companyId = $data[0]["company_id"];
+		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
 		
 		$result = [
 				"bizDT" => $this->toYMD($data[0]["bizdt"]),
@@ -1406,9 +1411,11 @@ class SRBillDAO extends PSIBaseExDAO {
 				"wsBillRef" => $data[0]["ws_bill_ref"]
 		];
 		
-		$sql = "select d.id, g.id as goods_id, g.code, g.name, g.spec, u.name as unit_name, d.goods_count,
+		$sql = "select d.id, g.id as goods_id, g.code, g.name, g.spec, u.name as unit_name, 
+					convert(d.goods_count, $fmt) as goods_count,
 					d.goods_price, d.goods_money,
-					d.rejection_goods_count, d.rejection_goods_price, d.rejection_sale_money,
+					convert(d.rejection_goods_count, $fmt) as rejection_goods_count, 
+					d.rejection_goods_price, d.rejection_sale_money,
 					d.wsbilldetail_id, d.sn_note
 				from t_sr_bill_detail d, t_goods g, t_goods_unit u
 				where d.srbill_id = '%s' and d.goods_id = g.id and g.unit_id = u.id

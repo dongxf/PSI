@@ -1316,7 +1316,7 @@ class PRBillDAO extends PSIBaseExDAO {
 		$sql = "select p.id, w.name as warehouse_name,
 					u.name as biz_user_name, pw.ref as pwbill_ref,
 					s.name as supplier_name,
-					p.bizdt
+					p.bizdt, p.company_id
 				from t_pr_bill p, t_warehouse w, t_user u, t_pw_bill pw, t_supplier s
 				where p.ref = '%s'
 					and p.warehouse_id = w.id
@@ -1329,6 +1329,12 @@ class PRBillDAO extends PSIBaseExDAO {
 		}
 		
 		$id = $data[0]["id"];
+		$companyId = $data[0]["company_id"];
+		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
 		$result = [
 				"bizUserName" => $data[0]["biz_user_name"],
 				"warehouseName" => $data[0]["warehouse_name"],
@@ -1340,7 +1346,7 @@ class PRBillDAO extends PSIBaseExDAO {
 		$items = [];
 		$sql = "select p.pwbilldetail_id as id, p.goods_id, g.code as goods_code, g.name as goods_name,
 					g.spec as goods_spec, u.name as unit_name, p.goods_count,
-					p.goods_price, p.goods_money, p.rejection_goods_count as rej_count,
+					p.goods_price, p.goods_money, convert(p.rejection_goods_count, $fmt) as rej_count,
 					p.rejection_goods_price as rej_price, p.rejection_money as rej_money
 				from t_pr_bill_detail p, t_goods g, t_goods_unit u
 				where p.prbill_id = '%s'

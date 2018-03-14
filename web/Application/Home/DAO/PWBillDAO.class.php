@@ -1429,7 +1429,7 @@ class PWBillDAO extends PSIBaseExDAO {
 		
 		$sql = "select p.id, s.name as supplier_name,
 					w.name as  warehouse_name,
-					u.name as biz_user_name, p.biz_dt
+					u.name as biz_user_name, p.biz_dt, p.company_id
 				from t_pw_bill p, t_supplier s, t_warehouse w, t_user u
 				where p.ref = '%s' and p.supplier_id = s.id and p.warehouse_id = w.id
 				  and p.biz_user_id = u.id";
@@ -1440,6 +1440,11 @@ class PWBillDAO extends PSIBaseExDAO {
 		
 		$v = $data[0];
 		$id = $v["id"];
+		$companyId = $v["company_id"];
+		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
 		
 		$result = [
 				"supplierName" => $v["supplier_name"],
@@ -1452,7 +1457,7 @@ class PWBillDAO extends PSIBaseExDAO {
 		// 明细记录
 		$items = [];
 		$sql = "select p.id, p.goods_id, g.code, g.name, g.spec, u.name as unit_name,
-					p.goods_count, p.goods_price, p.goods_money, p.memo
+					convert(p.goods_count, $fmt) as goods_count, p.goods_price, p.goods_money, p.memo
 				from t_pw_bill_detail p, t_goods g, t_goods_unit u
 				where p.goods_Id = g.id and g.unit_id = u.id and p.pwbill_id = '%s'
 				order by p.show_order";

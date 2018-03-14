@@ -842,7 +842,7 @@ class ICBillDAO extends PSIBaseExDAO {
 	public function getFullBillDataByRef($ref) {
 		$db = $this->db;
 		$sql = "select t.id, t.bizdt, u.name as biz_user_name,
-					w.name as warehouse_name
+					w.name as warehouse_name, t.company_id
 				from t_ic_bill t, t_user u, t_warehouse w
 				where t.ref = '%s' and t.biz_user_id = u.id
 				      and t.warehouse_id = w.id";
@@ -852,6 +852,12 @@ class ICBillDAO extends PSIBaseExDAO {
 		}
 		
 		$id = $data[0]["id"];
+		$companyId = $data[0]["company_id"];
+		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
 		$result = [
 				"bizUserName" => $data[0]["biz_user_name"],
 				"bizDT" => $this->toYMD($data[0]["bizdt"]),
@@ -860,7 +866,7 @@ class ICBillDAO extends PSIBaseExDAO {
 		
 		$items = [];
 		$sql = "select t.id, g.id as goods_id, g.code, g.name, g.spec, u.name as unit_name,
-						t.goods_count, t.goods_money
+					convert(t.goods_count, $fmt) as goods_count, t.goods_money
 				from t_ic_bill_detail t, t_goods g, t_goods_unit u
 				where t.icbill_id = '%s' and t.goods_id = g.id and g.unit_id = u.id
 				order by t.show_order ";

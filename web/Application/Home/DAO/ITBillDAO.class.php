@@ -860,7 +860,7 @@ class ITBillDAO extends PSIBaseExDAO {
 		$db = $this->db;
 		$sql = "select t.id, t.bizdt, u.name as biz_user_name,
 					wf.name as from_warehouse_name,
-					wt.name as to_warehouse_name
+					wt.name as to_warehouse_name, t.company_id
 				from t_it_bill t, t_user u, t_warehouse wf, t_warehouse wt
 				where t.ref = '%s' and t.biz_user_id = u.id
 				      and t.from_warehouse_id = wf.id
@@ -871,6 +871,11 @@ class ITBillDAO extends PSIBaseExDAO {
 		}
 		
 		$id = $data[0]["id"];
+		$companyId = $data[0]["company_id"];
+		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
 		
 		$result = [
 				"bizUserName" => $data[0]["biz_user_name"],
@@ -880,7 +885,8 @@ class ITBillDAO extends PSIBaseExDAO {
 		];
 		
 		$items = [];
-		$sql = "select t.id, g.id as goods_id, g.code, g.name, g.spec, u.name as unit_name, t.goods_count
+		$sql = "select t.id, g.id as goods_id, g.code, g.name, g.spec, u.name as unit_name, 
+					convert(t.goods_count, $fmt) as goods_count
 				from t_it_bill_detail t, t_goods g, t_goods_unit u
 				where t.itbill_id = '%s' and t.goods_id = g.id and g.unit_id = u.id
 				order by t.show_order ";
