@@ -53,6 +53,8 @@ class WSBillService extends PSIBaseExService {
 		
 		$log = null;
 		
+		$bill["companyId"] = $this->getCompanyId();
+		
 		if ($id) {
 			// 编辑
 			
@@ -70,7 +72,6 @@ class WSBillService extends PSIBaseExService {
 			// 新建销售出库单
 			
 			$bill["dataOrg"] = $this->getLoginUserDataOrg();
-			$bill["companyId"] = $this->getCompanyId();
 			$bill["loginUserId"] = $this->getLoginUserId();
 			
 			$rc = $dao->addWSBill($bill);

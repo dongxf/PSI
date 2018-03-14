@@ -302,6 +302,10 @@ class WSBillDAO extends PSIBaseExDAO {
 			return $this->badParam("loginUserId");
 		}
 		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
 		// 主表
 		$id = $this->newId();
 		$ref = $this->genNewBillRef($companyId);
@@ -319,11 +323,11 @@ class WSBillDAO extends PSIBaseExDAO {
 		$sql = "insert into t_ws_bill_detail (id, date_created, goods_id,
 					goods_count, goods_price, goods_money,
 					show_order, wsbill_id, sn_note, data_org, memo, company_id, sobilldetail_id)
-				values ('%s', now(), '%s', %d, %f, %f, %d, '%s', '%s', '%s', '%s', '%s', '%s')";
+				values ('%s', now(), '%s', convert(%f, $fmt), %f, %f, %d, '%s', '%s', '%s', '%s', '%s', '%s')";
 		foreach ( $items as $i => $v ) {
 			$goodsId = $v["goodsId"];
 			if ($goodsId) {
-				$goodsCount = intval($v["goodsCount"]);
+				$goodsCount = $v["goodsCount"];
 				$goodsPrice = floatval($v["goodsPrice"]);
 				$goodsMoney = floatval($v["goodsMoney"]);
 				
@@ -471,6 +475,10 @@ class WSBillDAO extends PSIBaseExDAO {
 		$dataOrg = $oldBill["dataOrg"];
 		$companyId = $oldBill["companyId"];
 		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
 		$sql = "delete from t_ws_bill_detail where wsbill_id = '%s' ";
 		$rc = $db->execute($sql, $id);
 		if ($rc === false) {
@@ -480,11 +488,11 @@ class WSBillDAO extends PSIBaseExDAO {
 		$sql = "insert into t_ws_bill_detail (id, date_created, goods_id,
 					goods_count, goods_price, goods_money,
 					show_order, wsbill_id, sn_note, data_org, memo, company_id, sobilldetail_id)
-				values ('%s', now(), '%s', %d, %f, %f, %d, '%s', '%s', '%s', '%s', '%s', '%s')";
+				values ('%s', now(), '%s', convert(%f, $fmt), %f, %f, %d, '%s', '%s', '%s', '%s', '%s', '%s')";
 		foreach ( $items as $i => $v ) {
 			$goodsId = $v["goodsId"];
 			if ($goodsId) {
-				$goodsCount = intval($v["goodsCount"]);
+				$goodsCount = $v["goodsCount"];
 				$goodsPrice = floatval($v["goodsPrice"]);
 				$goodsMoney = floatval($v["goodsMoney"]);
 				
