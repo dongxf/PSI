@@ -121,6 +121,8 @@ class WSBillService extends PSIBaseExService {
 			return $this->emptyResult();
 		}
 		
+		$params["companyId"] = $this->getCompanyId();
+		
 		$dao = new WSBillDAO($this->db());
 		return $dao->wsBillDetailList($params);
 	}

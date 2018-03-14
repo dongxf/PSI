@@ -206,9 +206,19 @@ class WSBillDAO extends PSIBaseExDAO {
 	public function wsBillDetailList($params) {
 		$db = $this->db;
 		
+		$companyId = $params["companyId"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->emptyResult();
+		}
+		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
 		$billId = $params["billId"];
-		$sql = "select d.id, g.code, g.name, g.spec, u.name as unit_name, d.goods_count,
-				d.goods_price, d.goods_money, d.sn_note, d.memo
+		$sql = "select d.id, g.code, g.name, g.spec, u.name as unit_name, 
+					convert(d.goods_count, $fmt) as goods_count,
+					d.goods_price, d.goods_money, d.sn_note, d.memo
 				from t_ws_bill_detail d, t_goods g, t_goods_unit u
 				where d.wsbill_id = '%s' and d.goods_id = g.id and g.unit_id = u.id
 				order by d.show_order";
@@ -676,8 +686,9 @@ class WSBillDAO extends PSIBaseExDAO {
 				$result["dealAddress"] = $data[0]["deal_address"];
 			}
 			
-			$sql = "select d.id, g.id as goods_id, g.code, g.name, g.spec, u.name as unit_name, d.goods_count,
-					d.goods_price, d.goods_money, d.sn_note, d.memo, d.sobilldetail_id
+			$sql = "select d.id, g.id as goods_id, g.code, g.name, g.spec, u.name as unit_name, 
+						convert(d.goods_count, $fmt) as goods_count,
+						d.goods_price, d.goods_money, d.sn_note, d.memo, d.sobilldetail_id
 					from t_ws_bill_detail d, t_goods g, t_goods_unit u
 					where d.wsbill_id = '%s' and d.goods_id = g.id and g.unit_id = u.id
 					order by d.show_order";
