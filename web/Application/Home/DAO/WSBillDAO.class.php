@@ -785,7 +785,7 @@ class WSBillDAO extends PSIBaseExDAO {
 		$sql = "select w.id, w.bizdt, c.name as customer_name,
 				  u.name as biz_user_name,
 				  h.name as warehouse_name,
-				  w.sale_money, w.memo, w.deal_address
+				  w.sale_money, w.memo, w.deal_address, w.company_id
 				from t_ws_bill w, t_customer c, t_user u, t_warehouse h
 				where w.customer_id = c.id and w.biz_user_id = u.id
 				  and w.warehouse_id = h.id
@@ -796,6 +796,11 @@ class WSBillDAO extends PSIBaseExDAO {
 		}
 		
 		$id = $data[0]["id"];
+		$companyId = $data[0]["company_id"];
+		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
 		
 		$bill = [];
 		
@@ -808,8 +813,9 @@ class WSBillDAO extends PSIBaseExDAO {
 		$bill["dealAddress"] = $data[0]["deal_address"];
 		
 		// 明细表
-		$sql = "select g.code, g.name, g.spec, u.name as unit_name, d.goods_count,
-				d.goods_price, d.goods_money, d.sn_note
+		$sql = "select g.code, g.name, g.spec, u.name as unit_name, 
+					convert(d.goods_count, $fmt) as goods_count,
+					d.goods_price, d.goods_money, d.sn_note
 				from t_ws_bill_detail d, t_goods g, t_goods_unit u
 				where d.wsbill_id = '%s' and d.goods_id = g.id and g.unit_id = u.id
 				order by d.show_order";
