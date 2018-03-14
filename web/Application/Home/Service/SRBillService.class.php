@@ -93,6 +93,8 @@ class SRBillService extends PSIBaseExService {
 		
 		$log = null;
 		
+		$bill["companyId"] = $this->getCompanyId();
+		
 		if ($id) {
 			// 编辑
 			
@@ -110,7 +112,6 @@ class SRBillService extends PSIBaseExService {
 			// 新增
 			
 			$bill["dataOrg"] = $this->getLoginUserDataOrg();
-			$bill["companyId"] = $this->getCompanyId();
 			$bill["loginUserId"] = $this->getLoginUserId();
 			
 			$rc = $dao->addSRBill($bill);

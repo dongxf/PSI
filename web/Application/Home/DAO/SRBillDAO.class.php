@@ -512,6 +512,10 @@ class SRBillDAO extends PSIBaseExDAO {
 			return $this->badParam("loginUserId");
 		}
 		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
 		$id = $this->newId();
 		$ref = $this->genNewBillRef($companyId);
 		$sql = "insert into t_sr_bill(id, bill_status, bizdt, biz_user_id, customer_id,
@@ -528,7 +532,7 @@ class SRBillDAO extends PSIBaseExDAO {
 		
 		foreach ( $items as $i => $v ) {
 			$wsBillDetailId = $v["id"];
-			$sql = "select inventory_price, goods_count, goods_price, goods_money
+			$sql = "select inventory_price, convert(goods_count, $fmt) as goods_count, goods_price, goods_money
 					from t_ws_bill_detail
 					where id = '%s' ";
 			$data = $db->query($sql, $wsBillDetailId);
@@ -553,7 +557,7 @@ class SRBillDAO extends PSIBaseExDAO {
 					goods_price, inventory_money, inventory_price, rejection_goods_count,
 					rejection_goods_price, rejection_sale_money, show_order, srbill_id, wsbilldetail_id,
 						sn_note, data_org, company_id)
-					values('%s', now(), '%s', %d, %f, %f, %f, %f, %d,
+					values('%s', now(), '%s', convert(%f, $fmt), %f, %f, %f, %f, convert(%f, $fmt),
 					%f, %f, %d, '%s', '%s', '%s', '%s', '%s') ";
 			$rc = $db->execute($sql, $this->newId(), $goodsId, $goodsCount, $goodsMoney, 
 					$goodsPrice, $inventoryMoney, $inventoryPrice, $rejCount, $rejPrice, 
@@ -667,6 +671,10 @@ class SRBillDAO extends PSIBaseExDAO {
 			return $this->badParam("loginUserId");
 		}
 		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
 		// 主表
 		$sql = "update t_sr_bill
 				set bizdt = '%s', biz_user_id = '%s', date_created = now(),
@@ -684,7 +692,7 @@ class SRBillDAO extends PSIBaseExDAO {
 		
 		foreach ( $items as $i => $v ) {
 			$wsBillDetailId = $v["id"];
-			$sql = "select inventory_price, goods_count, goods_price, goods_money
+			$sql = "select inventory_price, convert(goods_count, $fmt) as goods_count, goods_price, goods_money
 					from t_ws_bill_detail
 					where id = '%s' ";
 			$data = $db->query($sql, $wsBillDetailId);
@@ -709,7 +717,7 @@ class SRBillDAO extends PSIBaseExDAO {
 					goods_price, inventory_money, inventory_price, rejection_goods_count,
 					rejection_goods_price, rejection_sale_money, show_order, srbill_id, wsbilldetail_id,
 						sn_note, data_org, company_id)
-					values('%s', now(), '%s', %d, %f, %f, %f, %f, %d,
+					values('%s', now(), '%s', convert(%f, $fmt), %f, %f, %f, %f, convert(%f, $fmt),
 						%f, %f, %d, '%s', '%s', '%s', '%s', '%s') ";
 			$rc = $db->execute($sql, $this->newId(), $goodsId, $goodsCount, $goodsMoney, 
 					$goodsPrice, $inventoryMoney, $inventoryPrice, $rejCount, $rejPrice, 
