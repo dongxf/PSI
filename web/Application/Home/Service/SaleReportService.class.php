@@ -2,12 +2,14 @@
 
 namespace Home\Service;
 
+use Home\DAO\BizConfigDAO;
+
 /**
  * 销售报表Service
  *
  * @author 李静波
  */
-class SaleReportService extends PSIBaseService {
+class SaleReportService extends PSIBaseExService {
 
 	/**
 	 * 销售日报表(按商品汇总) - 查询数据
@@ -29,6 +31,11 @@ class SaleReportService extends PSIBaseService {
 		$companyId = $us->getCompanyId();
 		
 		$db = M();
+		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
 		$sql = "select g.id, g.code, g.name, g.spec, u.name as unit_name
 				from t_goods g, t_goods_unit u
 				where g.unit_id = u.id and g.id in(
@@ -54,7 +61,7 @@ class SaleReportService extends PSIBaseService {
 			
 			$goodsId = $v["id"];
 			$sql = "select sum(d.goods_money) as goods_money, sum(d.inventory_money) as inventory_money,
-						sum(d.goods_count) as goods_count
+						sum(convert(d.goods_count, $fmt)) as goods_count
 					from t_ws_bill w, t_ws_bill_detail d
 					where w.id = d.wsbill_id and w.bizdt = '%s' and d.goods_id = '%s' 
 						and w.bill_status = 1000 and w.company_id = '%s' ";
@@ -74,7 +81,7 @@ class SaleReportService extends PSIBaseService {
 			$result[$i]["saleMoney"] = $saleMoney;
 			$result[$i]["saleCount"] = $saleCount;
 			
-			$sql = "select sum(d.rejection_goods_count) as rej_count, 
+			$sql = "select sum(convert(d.rejection_goods_count, $fmt)) as rej_count, 
 						sum(d.rejection_sale_money) as rej_money,
 						sum(d.inventory_money) as rej_inventory_money
 					from t_sr_bill s, t_sr_bill_detail d
@@ -99,7 +106,7 @@ class SaleReportService extends PSIBaseService {
 			
 			$c = $saleCount - $rejCount;
 			$m = $saleMoney - $rejSaleMoney;
-			$result[$i]["c"] = $c;
+			$result[$i]["c"] = number_format($c, $dataScale, ".", "");
 			$result[$i]["m"] = $m;
 			$profit = $saleMoney - $rejSaleMoney - $saleInventoryMoney + $rejInventoryMoney;
 			$result[$i]["profit"] = $profit;
@@ -564,6 +571,11 @@ class SaleReportService extends PSIBaseService {
 		$companyId = $us->getCompanyId();
 		
 		$db = M();
+		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
 		$sql = "select g.id, g.code, g.name, g.spec, u.name as unit_name
 				from t_goods g, t_goods_unit u
 				where g.unit_id = u.id and g.id in(
@@ -597,7 +609,7 @@ class SaleReportService extends PSIBaseService {
 			
 			$goodsId = $v["id"];
 			$sql = "select sum(d.goods_money) as goods_money, sum(d.inventory_money) as inventory_money,
-						sum(d.goods_count) as goods_count
+						sum(convert(d.goods_count, $fmt)) as goods_count
 					from t_ws_bill w, t_ws_bill_detail d
 					where w.id = d.wsbill_id and year(w.bizdt) = %d and month(w.bizdt) = %d 
 						and d.goods_id = '%s'
@@ -618,7 +630,7 @@ class SaleReportService extends PSIBaseService {
 			$result[$i]["saleMoney"] = $saleMoney;
 			$result[$i]["saleCount"] = $saleCount;
 			
-			$sql = "select sum(d.rejection_goods_count) as rej_count,
+			$sql = "select sum(convert(d.rejection_goods_count, $fmt)) as rej_count,
 						sum(d.rejection_sale_money) as rej_money,
 						sum(d.inventory_money) as rej_inventory_money
 					from t_sr_bill s, t_sr_bill_detail d
@@ -644,7 +656,7 @@ class SaleReportService extends PSIBaseService {
 			
 			$c = $saleCount - $rejCount;
 			$m = $saleMoney - $rejSaleMoney;
-			$result[$i]["c"] = $c;
+			$result[$i]["c"] = number_format($c, $dataScale, ".", "");
 			$result[$i]["m"] = $m;
 			$profit = $saleMoney - $rejSaleMoney - $saleInventoryMoney + $rejInventoryMoney;
 			$result[$i]["profit"] = $profit;

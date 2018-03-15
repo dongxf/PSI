@@ -145,9 +145,7 @@ Ext.define("PSI.Report.SaleDayByGoodsForm", {
 								dataIndex : "saleCount",
 								menuDisabled : true,
 								sortable : false,
-								align : "right",
-								xtype : "numbercolumn",
-								format : "0"
+								align : "right"
 							}, {
 								header : "计量单位",
 								dataIndex : "unitName",
@@ -166,9 +164,7 @@ Ext.define("PSI.Report.SaleDayByGoodsForm", {
 								dataIndex : "rejCount",
 								menuDisabled : true,
 								sortable : false,
-								align : "right",
-								xtype : "numbercolumn",
-								format : "0"
+								align : "right"
 							}, {
 								header : "退货入库金额",
 								dataIndex : "rejMoney",
@@ -181,9 +177,7 @@ Ext.define("PSI.Report.SaleDayByGoodsForm", {
 								dataIndex : "c",
 								menuDisabled : true,
 								sortable : false,
-								align : "right",
-								xtype : "numbercolumn",
-								format : "0"
+								align : "right"
 							}, {
 								header : "净销售金额",
 								dataIndex : "m",
