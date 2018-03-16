@@ -146,7 +146,9 @@ Ext.define("PSI.Goods.GoodsBOMEditForm", {
 							id : "PSI_Goods_GoodsBOMEditForm_editSubGoodsCount",
 							xtype : "numberfield",
 							fieldLabel : "子商品数量",
-							allowDecimals : false,
+							allowDecimals : PSI.Const.GC_DEC_NUMBER > 0,
+							decimalPrecision : PSI.Const.GC_DEC_NUMBER,
+							minValue : 0,
 							hideTrigger : true,
 							name : "subGoodsCount",
 							listeners : {

@@ -623,6 +623,8 @@ class GoodsService extends PSIBaseExService {
 			return $this->emptyResult();
 		}
 		
+		$params["companyId"] = $this->getCompanyId();
+		
 		$dao = new GoodsBomDAO($this->db());
 		return $dao->goodsBOMList($params);
 	}
@@ -639,6 +641,8 @@ class GoodsService extends PSIBaseExService {
 		
 		$db = $this->db();
 		$db->startTrans();
+		
+		$params["companyId"] = $this->getCompanyId();
 		
 		$dao = new GoodsBomDAO($db);
 		

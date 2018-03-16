@@ -1181,9 +1181,7 @@ Ext.define("PSI.Goods.MainForm", {
 								width : 120,
 								menuDisabled : true,
 								sortable : false,
-								align : "right",
-								xtype : "numbercolumn",
-								format : "0"
+								align : "right"
 							}, {
 								header : "子商品计量单位",
 								dataIndex : "unitName",

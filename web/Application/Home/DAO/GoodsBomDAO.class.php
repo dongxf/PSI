@@ -18,11 +18,20 @@ class GoodsBomDAO extends PSIBaseExDAO {
 	public function goodsBOMList($params) {
 		$db = $this->db;
 		
+		$companyId = $params["companyId"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->emptyResult();
+		}
+		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
 		$id = $params["id"];
 		
 		$result = [];
 		
-		$sql = "select b.id, b.sub_goods_count,g.id as goods_id,
+		$sql = "select b.id, convert(b.sub_goods_count, $fmt) as sub_goods_count,g.id as goods_id,
 					g.code, g.name, g.spec, u.name as unit_name
 				from t_goods_bom b, t_goods g, t_goods_unit u
 				where b.goods_id = '%s' and b.sub_goods_id = g.id and g.unit_id = u.id
@@ -84,13 +93,22 @@ class GoodsBomDAO extends PSIBaseExDAO {
 	 * @return NULL|array
 	 */
 	public function addGoodsBOM(& $params) {
+		$db = $this->db;
+		
+		$companyId = $params["companyId"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->badParam("companyId");
+		}
+		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
 		// id: 商品id
 		$id = $params["id"];
 		
 		$subGoodsId = $params["subGoodsId"];
-		$subGoodsCount = intval($params["subGoodsCount"]);
-		
-		$db = $this->db;
+		$subGoodsCount = $params["subGoodsCount"];
 		
 		$goodsDAO = new GoodsDAO($db);
 		$goods = $goodsDAO->getGoodsById($id);
@@ -122,7 +140,7 @@ class GoodsBomDAO extends PSIBaseExDAO {
 		}
 		
 		$sql = "insert into t_goods_bom(id, goods_id, sub_goods_id, sub_goods_count, parent_id)
-				values ('%s', '%s', '%s', %d, null)";
+				values ('%s', '%s', '%s', convert(%f, $fmt), null)";
 		$rc = $db->execute($sql, $this->newId(), $id, $subGoodsId, $subGoodsCount);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
@@ -145,13 +163,22 @@ class GoodsBomDAO extends PSIBaseExDAO {
 	 * @return NULL|array
 	 */
 	public function updateGoodsBOM(& $params) {
+		$db = $this->db;
+		
+		$companyId = $params["companyId"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->badParam("companyId");
+		}
+		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
 		// id: 商品id
 		$id = $params["id"];
 		
 		$subGoodsId = $params["subGoodsId"];
-		$subGoodsCount = intval($params["subGoodsCount"]);
-		
-		$db = $this->db;
+		$subGoodsCount = $params["subGoodsCount"];
 		
 		$goodsDAO = new GoodsDAO($db);
 		$goods = $goodsDAO->getGoodsById($id);
@@ -169,7 +196,7 @@ class GoodsBomDAO extends PSIBaseExDAO {
 		}
 		
 		$sql = "update t_goods_bom
-				set sub_goods_count = %d
+				set sub_goods_count = convert(%f, $fmt)
 				where goods_id = '%s' and sub_goods_id = '%s' ";
 		
 		$rc = $db->execute($sql, $subGoodsCount, $id, $subGoodsId);
