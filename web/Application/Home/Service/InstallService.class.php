@@ -1062,7 +1062,7 @@ class InstallService extends PSIBaseExService {
 				  `goods_id` varchar(255) NOT NULL,
 				  `sub_goods_id` varchar(255) NOT NULL,
 				  `parent_id` varchar(255) DEFAULT NULL,
-				  `sub_goods_count` decimal(19,2) NOT NULL,
+				  `sub_goods_count` decimal(19,8) NOT NULL,
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 				";
