@@ -189,9 +189,6 @@ Ext.define("PSI.App", {
 
 			if (fid == "-9995") {
 				window.open(PSI.Const.BASE_URL + "/Home/Help/index");
-			} else if (fid == "-9993") {
-				var url = "https://zb.oschina.net/service/10565810c1d93056";
-				window.open(url);
 			} else if (fid === "-9999") {
 				// 重新登录
 				PSI.MsgBox.confirm("请确认是否重新登录", function() {

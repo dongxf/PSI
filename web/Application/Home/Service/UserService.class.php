@@ -36,6 +36,11 @@ class UserService extends PSIBaseExService {
 	 * @return boolean true：有对应的权限
 	 */
 	public function hasPermission($fid = null) {
+		if ($fid == FIdConst::PSI_SERVICE) {
+			// 停用 购买商业服务 这个菜单功能
+			return false;
+		}
+		
 		$result = session("loginUserId") != null;
 		if (! $result) {
 			return false;
@@ -55,14 +60,13 @@ class UserService extends PSIBaseExService {
 			return false;
 		}
 		
-		// 修改我的密码，重新登录，首页，使用帮助，关于，购买商业服务，这六个功能对所有的在线用户均不需要特别的权限
+		// 修改我的密码，重新登录，首页，使用帮助，关于 这五个功能对所有的在线用户均不需要特别的权限
 		$idList = [
 				FIdConst::CHANGE_MY_PASSWORD,
 				FIdConst::RELOGIN,
 				FIdConst::HOME,
 				FIdConst::HELP,
-				FIdConst::ABOUT,
-				FIdConst::PSI_SERVICE
+				FIdConst::ABOUT
 		];
 		
 		if ($fid == null || in_array($fid, $idList)) {
