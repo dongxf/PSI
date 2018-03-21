@@ -13,7 +13,7 @@ Ext.define("PSI.App", {
 		me.initConfig(config);
 
 		me.createMainUI();
-		
+
 		if (config.appHeaderInfo) {
 			me.setAppHeader(config.appHeaderInfo);
 		}
@@ -203,7 +203,6 @@ Ext.define("PSI.App", {
 						+ fid;
 				if (PSI.Const.MOT == "0") {
 					location.replace(url);
-
 				} else {
 					window.open(url);
 				}
