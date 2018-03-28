@@ -151,7 +151,8 @@ class PWBillService extends PSIBaseExService {
 		
 		$dao = new PWBillDAO($db);
 		$params = array(
-				"id" => $id
+				"id" => $id,
+				"companyId" => $this->getCompanyId()
 		);
 		$rc = $dao->deletePWBill($params);
 		if ($rc) {

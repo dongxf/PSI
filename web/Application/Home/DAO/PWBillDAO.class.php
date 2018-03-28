@@ -785,6 +785,11 @@ class PWBillDAO extends PSIBaseExDAO {
 		
 		$id = $params["id"];
 		
+		$companyId = $params["companyId"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->badParam("companyId");
+		}
+		
 		$bill = $this->getPWBillById($id);
 		if (! $bill) {
 			return $this->bad("要删除的采购入库单不存在");
@@ -826,11 +831,15 @@ class PWBillDAO extends PSIBaseExDAO {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
 		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
 		// 同步库存账中的在途库存
 		foreach ( $goodsIdList as $v ) {
 			$goodsId = $v;
 			
-			$rc = $this->updateAfloatInventory($db, $warehouseId, $goodsId);
+			$rc = $this->updateAfloatInventory($db, $warehouseId, $goodsId, $fmt);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
