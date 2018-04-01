@@ -32,13 +32,13 @@ Ext.define("PSI.Goods.MainForm", {
 								id : "panelQueryCmp",
 								region : "north",
 								border : 0,
-								height : 60,
+								height : 90,
 								title : "查询条件",
 								collapsible : true,
 								collapseMode : "mini",
 								layout : {
 									type : "table",
-									columns : 5
+									columns : 4
 								},
 								items : me.getQueryCmp()
 							}, {
@@ -194,20 +194,6 @@ Ext.define("PSI.Goods.MainForm", {
 						}
 					}
 				}, {
-					id : "editQueryBarCode",
-					labelWidth : 60,
-					labelAlign : "right",
-					labelSeparator : "",
-					fieldLabel : "条形码",
-					margin : "5, 0, 0, 0",
-					xtype : "textfield",
-					listeners : {
-						specialkey : {
-							fn : me.onLastQueryEditSpecialKey,
-							scope : me
-						}
-					}
-				}, {
 					xtype : "container",
 					items : [{
 								xtype : "button",
@@ -233,6 +219,20 @@ Ext.define("PSI.Goods.MainForm", {
 								},
 								scope : me
 							}]
+				}, {
+					id : "editQueryBarCode",
+					labelWidth : 60,
+					labelAlign : "right",
+					labelSeparator : "",
+					fieldLabel : "条形码",
+					margin : "5, 0, 0, 0",
+					xtype : "textfield",
+					listeners : {
+						specialkey : {
+							fn : me.onLastQueryEditSpecialKey,
+							scope : me
+						}
+					}
 				}];
 	},
 
