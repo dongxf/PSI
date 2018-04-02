@@ -52,7 +52,7 @@ Ext.define("PSI.Goods.UnitMainForm", {
 				var modelName = "PSI_Goods_UnitMainForm_PSIGoodsUnit";
 				Ext.define(modelName, {
 							extend : "Ext.data.Model",
-							fields : ["id", "name"]
+							fields : ["id", "name", "goodsCount"]
 						});
 
 				me.__mainGrid = Ext.create("Ext.grid.Panel", {
@@ -65,6 +65,13 @@ Ext.define("PSI.Goods.UnitMainForm", {
 										menuDisabled : true,
 										sortable : false,
 										width : 200
+									}, {
+										header : "使用该计量单位的商品数",
+										dataIndex : "goodsCount",
+										menuDisabled : true,
+										sortable : false,
+										align : "right",
+										width : 150
 									}],
 							store : Ext.create("Ext.data.Store", {
 										model : modelName,

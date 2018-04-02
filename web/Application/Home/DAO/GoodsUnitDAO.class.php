@@ -21,7 +21,25 @@ class GoodsUnitDAO extends PSIBaseExDAO {
 				from t_goods_unit
 				order by convert(name USING gbk) collate gbk_chinese_ci";
 		
-		return $db->query($sql);
+		$data = $db->query($sql);
+		
+		$result = [];
+		
+		foreach ( $data as $v ) {
+			$sql = "select count(*) as cnt 
+					from t_goods
+					where unit_id = '%s' ";
+			$d = $db->query($sql, $v["id"]);
+			$goodsCount = $d[0]["cnt"];
+			
+			$result[] = [
+					"id" => $v["id"],
+					"name" => $v["name"],
+					"goodsCount" => $goodsCount
+			];
+		}
+		
+		return $result;
 	}
 
 	/**
