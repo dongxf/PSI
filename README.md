@@ -59,10 +59,6 @@
 >
 >3、 付费技术支持QQ群：498771245
 >
->PSI的技术难度在哪里？参见：https://my.oschina.net/u/134395/blog/1554724
->
->PSI二次开发中必须掌握ExtJS技术，`ExtJS知识点`参见：https://my.oschina.net/u/134395/blog?catalog=3420148&temp=1513571513683
->
 
 # 致谢
 
@@ -83,5 +79,3 @@
 >6、PHPExcel (https://github.com/PHPOffice/PHPExcel)
 >
 >7、TCPDF (http://www.tcpdf.org/)
->
->8、MUI (http://dev.dcloud.net.cn/mui/)
