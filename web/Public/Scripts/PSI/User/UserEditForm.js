@@ -300,6 +300,7 @@ Ext.define("PSI.User.UserEditForm", {
 		Ext.get(window).on('beforeunload', me.onWindowBeforeUnload);
 
 		if (me.adding) {
+			me.editLoginName.focus();
 			return;
 		}
 
