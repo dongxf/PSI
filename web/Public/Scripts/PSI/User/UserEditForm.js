@@ -15,6 +15,7 @@ Ext.define("PSI.User.UserEditForm", {
 		var me = this;
 
 		var entity = me.getEntity();
+		me.adding = entity == null;
 
 		var title = entity == null ? "新增用户" : "编辑用户";
 		title = me.formatTitle(title);
@@ -182,6 +183,7 @@ Ext.define("PSI.User.UserEditForm", {
 						}, {
 							xtype : "radiogroup",
 							fieldLabel : "性别",
+							id : "editGender",
 							columns : 2,
 							items : [{
 								boxLabel : "男 ",
@@ -202,6 +204,7 @@ Ext.define("PSI.User.UserEditForm", {
 						}, {
 							xtype : "radiogroup",
 							fieldLabel : "能否登录",
+							id : "editEnabled",
 							columns : 2,
 							items : [{
 								boxLabel : "允许登录",
@@ -266,6 +269,19 @@ Ext.define("PSI.User.UserEditForm", {
 						fullName : org.get("fullName")
 					});
 		}
+
+		me.editLoginName = Ext.getCmp("editLoginName");
+		me.editName = Ext.getCmp("editName");
+		me.editOrgCode = Ext.getCmp("editOrgCode");
+		me.editOrgId = Ext.getCmp("editOrgId");
+		me.editOrgName = Ext.getCmp("editOrgName");
+		me.editBirthday = Ext.getCmp("editBirthday");
+		me.editIdCardNumber = Ext.getCmp("editIdCardNumber");
+		me.editTel = Ext.getCmp("editTel");
+		me.editTel02 = Ext.getCmp("editTel02");
+		me.editAddress = Ext.getCmp("editAddress");
+		me.editGender = Ext.getCmp("editGender");
+		me.editEnabled = Ext.getCmp("editEnabled");
 	},
 
 	onWindowBeforeUnload : function(e) {
@@ -283,9 +299,48 @@ Ext.define("PSI.User.UserEditForm", {
 
 		Ext.get(window).on('beforeunload', me.onWindowBeforeUnload);
 
-		var editLoginName = Ext.getCmp("editLoginName");
-		editLoginName.focus();
-		editLoginName.setValue(editLoginName.getValue());
+		if (me.adding) {
+			return;
+		}
+
+		// 下面的是编辑
+
+		var el = me.getEl();
+		el.mask(PSI.Const.LOADING);
+		Ext.Ajax.request({
+					url : me.URL("/Home/User/userInfo"),
+					params : {
+						id : me.getEntity().id
+					},
+					method : "POST",
+					callback : function(options, success, response) {
+						if (success) {
+							var data = Ext.JSON.decode(response.responseText);
+
+							me.editLoginName.setValue(data.loginName);
+							me.editName.setValue(data.name);
+							me.editOrgCode.setValue(data.orgCode);
+							me.editBirthday.setValue(data.birthday);
+							me.editIdCardNumber.setValue(data.idCardNumber);
+							me.editTel.setValue(data.tel);
+							me.editTel02.setValue(data.tel02);
+							me.editAddress.setValue(data.address);
+							me.editGender.setValue({
+										gender : data.gender
+									});
+							me.editEnabled.setValue({
+										enabled : data.enabled == 1
+									});
+							me.editOrgId.setValue(data.orgId);
+							me.editOrgName.setValue(data.orgFullName);
+						}
+
+						el.unmask();
+					}
+				});
+
+		me.editLoginName.focus();
+		me.editLoginName.setValue(me.editLoginName.getValue());
 	},
 
 	setOrg : function(data) {

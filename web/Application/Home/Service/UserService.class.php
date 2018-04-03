@@ -575,4 +575,14 @@ class UserService extends PSIBaseExService {
 		
 		return $dao->queryUserDataOrg($params);
 	}
+
+	public function userInfo($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$dao = new UserDAO($this->db());
+		
+		return $dao->userInfo($params);
+	}
 }

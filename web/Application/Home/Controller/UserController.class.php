@@ -347,4 +347,17 @@ class UserController extends PSIBaseController {
 			$this->ajaxReturn($us->queryUserDataOrg($queryKey));
 		}
 	}
+
+	/**
+	 * 获得某个用户的完整信息
+	 */
+	public function userInfo() {
+		if (IS_POST) {
+			$params = [
+					"id" => I("post.id")
+			];
+			$us = new UserService();
+			$this->ajaxReturn($us->userInfo($params));
+		}
+	}
 }

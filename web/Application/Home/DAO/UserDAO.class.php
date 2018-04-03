@@ -845,4 +845,42 @@ class UserDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	public function userInfo($params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		
+		$sql = "select login_name, name, org_code, org_id,
+					birthday, id_card_number, tel, tel02,
+					address, gender, enabled 
+				from t_user 
+				where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if (! $data) {
+			return $this->emptyResult();
+		} else {
+			$v = $data[0];
+			
+			$sql = "select full_name 
+					from t_org
+					where id = '%s' ";
+			$data = $db->query($sql, $v["org_id"]);
+			$orgFullName = $data[0]["full_name"];
+			return [
+					"loginName" => $v["login_name"],
+					"name" => $v["name"],
+					"orgCode" => $v["org_code"],
+					"orgId" => $v["org_id"],
+					"orgFullName" => $orgFullName,
+					"birthday" => $v["birthday"],
+					"idCardNumber" => $v["id_card_number"],
+					"tel" => $v["tel"],
+					"tel02" => $v["tel02"],
+					"address" => $v["address"],
+					"gender" => $v["gender"],
+					"enabled" => $v["enabled"]
+			];
+		}
+	}
 }
