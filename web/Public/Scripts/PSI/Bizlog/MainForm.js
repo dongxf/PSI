@@ -195,6 +195,7 @@ Ext.define("PSI.Bizlog.MainForm", {
 	 */
 	onRefresh : function() {
 		Ext.getCmp("pagingToobar").doRefresh();
+		this.focus();
 	},
 
 	/**
