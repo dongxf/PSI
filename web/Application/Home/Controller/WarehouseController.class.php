@@ -25,11 +25,20 @@ class WarehouseController extends PSIBaseController {
 			
 			$this->assign("title", "仓库");
 			
+			// 按钮权限： 新增仓库
 			$this->assign("pAdd", $us->hasPermission(FIdConst::WAREHOUSE_ADD) ? 1 : 0);
+			
+			// 按钮权限：编辑仓库
 			$this->assign("pEdit", $us->hasPermission(FIdConst::WAREHOUSE_EDIT) ? 1 : 0);
+			
+			// 按钮权限：删除仓库
 			$this->assign("pDelete", $us->hasPermission(FIdConst::WAREHOUSE_DELETE) ? 1 : 0);
+			
+			// 按钮权限：编辑仓库数据域
 			$this->assign("pEditDataOrg", 
 					$us->hasPermission(FIdConst::WAREHOUSE_EDIT_DATAORG) ? 1 : 0);
+			
+			// 按钮权限：打开库存建账模块
 			$this->assign("pInitInv", $us->hasPermission(FIdConst::INVENTORY_INIT) ? 1 : 0);
 			
 			$this->display();
