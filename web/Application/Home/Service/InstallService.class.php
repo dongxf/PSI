@@ -1107,6 +1107,20 @@ class InstallService extends PSIBaseExService {
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 			";
 		$db->execute($sql);
+		
+		// t_bank_account
+		$sql = "CREATE TABLE IF NOT EXISTS `t_bank_account` (
+				  `id` varchar(255) NOT NULL,
+				  `bank_name` varchar(255) NOT NULL,
+				  `bank_number` varchar(255) NOT NULL,
+				  `memo` varchar(255) NOT NULL,
+				  `date_created` datetime DEFAULT NULL,
+				  `data_org` varchar(255) NOT NULL,
+				  `company_id` varchar(255) NOT NULL,
+				  PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+			";
+		$db->execute($sql);
 	}
 
 	/**
