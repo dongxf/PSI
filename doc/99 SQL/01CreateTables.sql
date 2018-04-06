@@ -959,6 +959,18 @@ CREATE TABLE IF NOT EXISTS `t_goods_price` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `t_bank_account`;
+CREATE TABLE IF NOT EXISTS `t_bank_account` (
+  `id` varchar(255) NOT NULL,
+  `bank_name` varchar(255) NOT NULL,
+  `bank_number` varchar(255) NOT NULL,
+  `memo` varchar(255) NOT NULL,
+  `date_created` datetime DEFAULT NULL,
+  `data_org` varchar(255) NOT NULL,
+  `company_id` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
