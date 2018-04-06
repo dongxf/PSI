@@ -53,6 +53,7 @@
 ---
 
 >1、 普通QQ群： <a target="_blank" href="http://shang.qq.com/wpa/qunwpa?idkey=64808ce24f2a3186ccb1f37aad9ed591bcc4fb257d09749753aca98c6c73e400">414474186</a>
+>    `普通群潜水超过一个月不发言就会被清理出群`
 >
 >2、 PSI 免费VIP QQ群：108111233
 > 加入本群的要求：1、实名；2、认真地在应用PSI，并愿意分享实际应用案例。
