@@ -26,17 +26,32 @@ class PurchaseController extends PSIBaseController {
 			
 			$this->assign("title", "采购入库");
 			
+			// 按钮权限：新建采购入库单
 			$this->assign("pAdd", $us->hasPermission(FIdConst::PURCHASE_WAREHOUSE_ADD) ? "1" : "0");
+			
+			// 按钮权限：编辑采购入库单
 			$this->assign("pEdit", 
 					$us->hasPermission(FIdConst::PURCHASE_WAREHOUSE_EDIT) ? "1" : "0");
+			
+			// 按钮权限：删除采购入库单
 			$this->assign("pDelete", 
 					$us->hasPermission(FIdConst::PURCHASE_WAREHOUSE_DELETE) ? "1" : "0");
+			
+			// 按钮权限：提交入库
 			$this->assign("pCommit", 
 					$us->hasPermission(FIdConst::PURCHASE_WAREHOUSE_COMMIT) ? "1" : "0");
+			
+			// 按钮权限：单据生成PDF
 			$this->assign("pGenPDF", 
 					$us->hasPermission(FIdConst::PURCHASE_WAREHOUSE_PDF) ? "1" : "0");
 			
+			// 按钮权限：新增商品
+			// 在单据编辑界面中，明细表里面的商品弹出选择框中的新增商品按钮
 			$this->assign("showAddGoodsButton", $us->hasPermission(FIdConst::GOODS_ADD) ? "1" : "0");
+			
+			// 字段权限：单价可见
+			$this->assign("pViewPrice", 
+					$us->hasPermission(FIdConst::PURCHASE_WAREHOUSE_CAN_VIEW_PRICE) ? "1" : "0");
 			
 			$this->display();
 		} else {

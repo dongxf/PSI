@@ -304,7 +304,8 @@ Ext.define("PSI.Purchase.PWMainForm", {
 								sortable : false,
 								align : "right",
 								xtype : "numbercolumn",
-								width : 150
+								width : 150,
+								hidden: me.getPermission().viewPrice == "0"
 							}, {
 								header : "付款方式",
 								dataIndex : "paymentType",
@@ -468,7 +469,8 @@ Ext.define("PSI.Purchase.PWMainForm", {
 								sortable : false,
 								align : "right",
 								xtype : "numbercolumn",
-								width : 150
+								width : 150,
+								hidden: me.getPermission().viewPrice == "0"
 							}, {
 								header : "采购金额",
 								dataIndex : "goodsMoney",
@@ -476,7 +478,8 @@ Ext.define("PSI.Purchase.PWMainForm", {
 								sortable : false,
 								align : "right",
 								xtype : "numbercolumn",
-								width : 150
+								width : 150,
+								hidden: me.getPermission().viewPrice == "0"
 							}, {
 								header : "备注",
 								dataIndex : "memo",
@@ -510,6 +513,13 @@ Ext.define("PSI.Purchase.PWMainForm", {
 	 */
 	onAddBill : function() {
 		var me = this;
+		
+		if (me.getPermission().viewPrice == "0"){
+			// 没有查看单价个权限，这个时候就不能新建采购入库单
+			var info = "没有赋权[采购入库-采购单价和金额可见]，所以不能新建采购入库单";
+			PSI.MsgBox.showInfo(info);
+			return;
+		}
 
 		var form = Ext.create("PSI.Purchase.PWEditForm", {
 					parentForm : me,
