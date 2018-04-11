@@ -141,6 +141,12 @@ class PWBillService extends PSIBaseExService {
 			return $this->emptyResult();
 		}
 		
+		$us = new UserService();
+		// 字段权限：金额和单价是否可见
+		$canViewPrice = $us->hasPermission(FIdConst::PURCHASE_WAREHOUSE_CAN_VIEW_PRICE);
+		
+		$params["canViewPrice"] = $canViewPrice;
+		
 		$params["loginUserId"] = $this->getLoginUserId();
 		$params["loginUserName"] = $this->getLoginUserName();
 		$params["companyId"] = $this->getCompanyId();

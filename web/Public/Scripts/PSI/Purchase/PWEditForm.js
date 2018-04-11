@@ -6,7 +6,8 @@ Ext.define("PSI.Purchase.PWEditForm", {
 	config : {
 		genBill : false,
 		pobillRef : null,
-		showAddGoodsButton : "0"
+		showAddGoodsButton : "0",
+		viewPrice : true
 	},
 
 	initComponent : function() {
@@ -296,14 +297,16 @@ Ext.define("PSI.Purchase.PWEditForm", {
 								parentCmp : me,
 								showAddButton : me.getShowAddGoodsButton() == "1"
 							});
-							me.columnGoodsPrice.setEditor({
-										xtype : "numberfield",
-										hideTrigger : true
-									});
-							me.columnGoodsMoney.setEditor({
-										xtype : "numberfield",
-										hideTrigger : true
-									});
+							if (me.getViewPrice()) {
+								me.columnGoodsPrice.setEditor({
+											xtype : "numberfield",
+											hideTrigger : true
+										});
+								me.columnGoodsMoney.setEditor({
+											xtype : "numberfield",
+											hideTrigger : true
+										});
+							}
 						} else {
 							me.editSupplier.setReadOnly(true);
 							me.columnActionDelete.hide();
@@ -539,7 +542,8 @@ Ext.define("PSI.Purchase.PWEditForm", {
 						id : "columnGoodsPrice",
 						summaryRenderer : function() {
 							return "采购金额合计";
-						}
+						},
+						hidden : !me.getViewPrice()
 					}, {
 						header : "采购金额",
 						dataIndex : "goodsMoney",
@@ -550,7 +554,8 @@ Ext.define("PSI.Purchase.PWEditForm", {
 						xtype : "numbercolumn",
 						width : 120,
 						id : "columnGoodsMoney",
-						summaryType : "sum"
+						summaryType : "sum",
+						hidden : !me.getViewPrice()
 					}, {
 						header : "备注",
 						dataIndex : "memo",

@@ -639,6 +639,8 @@ class PWBillDAO extends PSIBaseExDAO {
 	public function pwBillInfo($params) {
 		$db = $this->db;
 		
+		$canViewPrice = $params["canViewPrice"];
+		
 		$companyId = $params["companyId"];
 		
 		$bcDAO = new BizConfigDAO($db);
@@ -694,8 +696,8 @@ class PWBillDAO extends PSIBaseExDAO {
 						"goodsSpec" => $v["spec"],
 						"unitName" => $v["unit_name"],
 						"goodsCount" => $v["goods_count"],
-						"goodsPrice" => $v["goods_price"],
-						"goodsMoney" => $v["goods_money"],
+						"goodsPrice" => $canViewPrice ? $v["goods_price"] : null,
+						"goodsMoney" => $canViewPrice ? $v["goods_money"] : null,
 						"memo" => $v["memo"],
 						"poBillDetailId" => $v["pobilldetail_id"]
 				];
