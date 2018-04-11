@@ -238,6 +238,11 @@ class PWBillDAO extends PSIBaseExDAO {
 	public function addPWBill(& $bill) {
 		$db = $this->db;
 		
+		$viewPrice = $bill["viewPrice"];
+		if ($viewPrice == "0") {
+			return $this->bad("没有赋权[采购入库-采购单价和金额可见]，不能新建采购入库单");
+		}
+		
 		$bizDT = $bill["bizDT"];
 		$warehouseId = $bill["warehouseId"];
 		$supplierId = $bill["supplierId"];
@@ -394,6 +399,107 @@ class PWBillDAO extends PSIBaseExDAO {
 	}
 
 	/**
+	 * 当不能查看采购金额和单价的时候，编辑采购入库单就只能修改数量
+	 */
+	private function updatePWBillForNotViewPrice(&$bill, $fmt) {
+		$db = $this->db;
+		
+		$id = $bill["id"];
+		$bizDT = $bill["bizDT"];
+		$warehouseId = $bill["warehouseId"];
+		$supplierId = $bill["supplierId"];
+		$bizUserId = $bill["bizUserId"];
+		$paymentType = $bill["paymentType"];
+		$billMemo = $bill["billMemo"];
+		
+		$goodsDAO = new GoodsDAO($db);
+		
+		// 明细记录
+		$items = $bill["items"];
+		
+		$detailIdArray = [];
+		foreach ( $items as $i => $item ) {
+			
+			$detailId = $item["id"];
+			$goodsId = $item["goodsId"];
+			
+			if ($goodsId == null) {
+				continue;
+			}
+			
+			$goods = $goodsDAO->getGoodsById($goodsId);
+			if (! $goods) {
+				return $this->bad("选择的商品不存在");
+			}
+			
+			// 关于入库数量为什么允许填写0：
+			// 当由采购订单生成采购入库单的时候，采购订单中有多种商品，但是是部分到货
+			// 那么就存在有些商品的数量是0的情形。
+			$goodsCount = $item["goodsCount"];
+			if ($goodsCount < 0) {
+				return $this->bad("入库数量不能是负数");
+			}
+			
+			$memo = $item["memo"];
+			
+			$sql = "update t_pw_bill_detail
+					set goods_count = convert(%f, $fmt), memo = '%s' 
+					where id = '%s' ";
+			$rc = $db->execute($sql, $goodsCount, $memo, $detailId);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+			
+			// 修改了数量，同步一下金额
+			$sql = "update t_pw_bill_detail set goods_money = goods_count * goods_price
+					where id = '%s' ";
+			$rc = $db->execute($sql, $detailId);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+			
+			$detailIdArray[] = $detailId;
+		}
+		
+		// 编辑的时候，被用户删除掉的记录，在后台表中同样需要删除
+		// TODO: 这样拼接SQL有没有安全漏洞？
+		$sql = "delete from t_pw_bill_detail
+				where (pwbill_id = '%s') and id not in (";
+		foreach ( $detailIdArray as $i => $detailId ) {
+			if ($i > 0) {
+				$sql .= ",";
+			}
+			$sql .= " '" . $detailId . "'";
+		}
+		$sql .= ")";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		$sql = "select sum(goods_money) as goods_money from t_pw_bill_detail
+				where pwbill_id = '%s' ";
+		$data = $db->query($sql, $id);
+		$totalMoney = $data[0]["goods_money"];
+		if (! $totalMoney) {
+			$totalMoney = 0;
+		}
+		$sql = "update t_pw_bill
+				set goods_money = %f, warehouse_id = '%s',
+					supplier_id = '%s', biz_dt = '%s',
+					biz_user_id = '%s', payment_type = %d,
+					bill_memo = '%s'
+				where id = '%s' ";
+		$rc = $db->execute($sql, $totalMoney, $warehouseId, $supplierId, $bizDT, $bizUserId, 
+				$paymentType, $billMemo, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		return null;
+	}
+
+	/**
 	 * 编辑采购入库单
 	 *
 	 * @param array $bill        	
@@ -453,6 +559,11 @@ class PWBillDAO extends PSIBaseExDAO {
 			return $this->bad("当前采购入库单已经提交入库，不能再编辑");
 		}
 		$bill["ref"] = $ref;
+		
+		$viewPrice = $bill["viewPrice"] == "1";
+		if (! $viewPrice) {
+			return $this->updatePWBillForNotViewPrice($bill, $fmt);
+		}
 		
 		$sql = "delete from t_pw_bill_detail where pwbill_id = '%s' ";
 		$rc = $db->execute($sql, $id);

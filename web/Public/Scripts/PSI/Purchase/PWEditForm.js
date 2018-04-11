@@ -721,6 +721,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 			paymentType : me.editPaymentType.getValue(),
 			pobillRef : me.getPobillRef(),
 			billMemo : me.editBillMemo.getValue(),
+			viewPrice : me.getViewPrice() ? "1" : "0",
 			items : []
 		};
 
