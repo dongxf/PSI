@@ -4,6 +4,7 @@ namespace Home\Service;
 
 use Home\DAO\PWBillDAO;
 use Home\DAO\POBillDAO;
+use Home\Common\FIdConst;
 
 /**
  * 采购入库Service
@@ -21,7 +22,12 @@ class PWBillService extends PSIBaseExService {
 			return $this->emptyResult();
 		}
 		
+		$us = new UserService();
+		// 字段权限：金额和单价是否可见
+		$canViewPrice = $us->hasPermission(FIdConst::PURCHASE_WAREHOUSE_CAN_VIEW_PRICE);
+		
 		$params["loginUserId"] = $this->getLoginUserId();
+		$params["canViewPrice"] = $canViewPrice;
 		
 		$dao = new PWBillDAO($this->db());
 		return $dao->pwbillList($params);
@@ -35,9 +41,14 @@ class PWBillService extends PSIBaseExService {
 			return $this->emptyResult();
 		}
 		
+		$us = new UserService();
+		// 字段权限：金额和单价是否可见
+		$canViewPrice = $us->hasPermission(FIdConst::PURCHASE_WAREHOUSE_CAN_VIEW_PRICE);
+		
 		$params = [
 				"id" => $pwbillId,
-				"companyId" => $this->getCompanyId()
+				"companyId" => $this->getCompanyId(),
+				"canViewPrice" => $canViewPrice
 		];
 		
 		$dao = new PWBillDAO($this->db());
@@ -216,6 +227,10 @@ class PWBillService extends PSIBaseExService {
 			return;
 		}
 		
+		$us = new UserService();
+		// 字段权限：金额和单价是否可见
+		$canViewPrice = $us->hasPermission(FIdConst::PURCHASE_WAREHOUSE_CAN_VIEW_PRICE);
+		
 		$bs = new BizConfigService();
 		$productionName = $bs->getProductionName();
 		
@@ -265,17 +280,20 @@ class PWBillService extends PSIBaseExService {
 					<tr><td colspan="2">单号：' . $ref . '</td></tr>
 					<tr><td colspan="2">供应商：' . $bill["supplierName"] . '</td></tr>
 					<tr><td>业务日期：' . $bill["bizDT"] . '</td><td>入库仓库:' . $bill["warehouseName"] . '</td></tr>
-					<tr><td>业务员：' . $bill["bizUserName"] . '</td><td></td></tr>
-					<tr><td colspan="2">采购货款:' . $bill["goodsMoney"] . '</td></tr>
-				</table>
-				';
+					<tr><td>业务员：' . $bill["bizUserName"] . '</td><td></td></tr>';
+		if ($canViewPrice) {
+			$html .= '<tr><td colspan="2">采购货款:' . $bill["goodsMoney"] . '</td></tr>';
+		}
+		$html .= '</table>';
+		
 		$pdf->writeHTML($html);
 		
 		$html = '<table border="1" cellpadding="1">
-					<tr><td>商品编号</td><td>商品名称</td><td>规格型号</td><td>数量</td><td>单位</td>
-						<td>采购单价</td><td>采购金额</td>
-					</tr>
-				';
+					<tr><td>商品编号</td><td>商品名称</td><td>规格型号</td><td>数量</td><td>单位</td>';
+		if ($canViewPrice) {
+			$html .= '<td>采购单价</td><td>采购金额</td>';
+		}
+		$html .= '</tr>';
 		foreach ( $bill["items"] as $v ) {
 			$html .= '<tr>';
 			$html .= '<td>' . $v["goodsCode"] . '</td>';
@@ -283,12 +301,12 @@ class PWBillService extends PSIBaseExService {
 			$html .= '<td>' . $v["goodsSpec"] . '</td>';
 			$html .= '<td align="right">' . $v["goodsCount"] . '</td>';
 			$html .= '<td>' . $v["unitName"] . '</td>';
-			$html .= '<td align="right">' . $v["goodsPrice"] . '</td>';
-			$html .= '<td align="right">' . $v["goodsMoney"] . '</td>';
+			if ($canViewPrice) {
+				$html .= '<td align="right">' . $v["goodsPrice"] . '</td>';
+				$html .= '<td align="right">' . $v["goodsMoney"] . '</td>';
+			}
 			$html .= '</tr>';
 		}
-		
-		$html .= "";
 		
 		$html .= '</table>';
 		$pdf->writeHTML($html, true, false, true, false, '');

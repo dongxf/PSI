@@ -62,6 +62,8 @@ class PWBillDAO extends PSIBaseExDAO {
 			return $this->emptyResult();
 		}
 		
+		$canViewPrice = $params["canViewPrice"];
+		
 		$queryParams = [];
 		$sql = "select p.id, p.bill_status, p.ref, p.biz_dt, u1.name as biz_user_name, u2.name as input_user_name,
 					p.goods_money, w.name as warehouse_name, s.name as supplier_name,
@@ -123,7 +125,7 @@ class PWBillDAO extends PSIBaseExDAO {
 					"inputUserName" => $v["input_user_name"],
 					"bizUserName" => $v["biz_user_name"],
 					"billStatus" => $v["bill_status"] == 0 ? "待入库" : "已入库",
-					"amount" => $v["goods_money"],
+					"amount" => $canViewPrice ? $v["goods_money"] : null,
 					"dateCreated" => $v["date_created"],
 					"paymentType" => $v["payment_type"],
 					"billMemo" => $v["bill_memo"]
@@ -191,6 +193,8 @@ class PWBillDAO extends PSIBaseExDAO {
 			return $this->emptyResult();
 		}
 		
+		$canViewPrice = $params["canViewPrice"];
+		
 		$db = $this->db;
 		
 		$bcDAO = new BizConfigDAO($db);
@@ -216,8 +220,8 @@ class PWBillDAO extends PSIBaseExDAO {
 					"goodsSpec" => $v["spec"],
 					"unitName" => $v["unit_name"],
 					"goodsCount" => $v["goods_count"],
-					"goodsMoney" => $v["goods_money"],
-					"goodsPrice" => $v["goods_price"],
+					"goodsMoney" => $canViewPrice ? $v["goods_money"] : null,
+					"goodsPrice" => $canViewPrice ? $v["goods_price"] : null,
 					"memo" => $v["memo"]
 			];
 		}
