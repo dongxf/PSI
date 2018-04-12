@@ -718,7 +718,10 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
 	},
 
 	onQuery : function() {
-		this.refreshMainGrid();
+		var me = this;
+
+		me.getMainGrid().getStore().currentPage = 1;
+		me.refreshMainGrid();
 	},
 
 	onClearQuery : function() {
