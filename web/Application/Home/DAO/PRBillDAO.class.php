@@ -836,7 +836,7 @@ class PRBillDAO extends PSIBaseExDAO {
 		$id = $params["id"];
 		
 		$sql = "select ref, bill_status, warehouse_id, bizdt, biz_user_id, rejection_money,
-					supplier_id, receiving_type, company_id
+					supplier_id, receiving_type, company_id, pw_bill_id
 				from t_pr_bill
 				where id = '%s' ";
 		$data = $db->query($sql, $id);
@@ -852,6 +852,7 @@ class PRBillDAO extends PSIBaseExDAO {
 		$supplierId = $data[0]["supplier_id"];
 		$receivingType = $data[0]["receiving_type"];
 		$companyId = $data[0]["company_id"];
+		$pwBillId = $data[0]["pw_bill_id"];
 		
 		if ($billStatus != 0) {
 			return $this->bad("采购退货出库单(单号：$ref)已经提交，不能再次提交");
@@ -1224,6 +1225,15 @@ class PRBillDAO extends PSIBaseExDAO {
 				set bill_status = 1000
 				where id = '%s' ";
 		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 修改对应的采购入库单的状态位：已退货
+		$sql = "update t_pw_bill
+				set bill_status = 2000
+				where id = '%s' ";
+		$rc = $db->execute($sql, $pwBillId);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
