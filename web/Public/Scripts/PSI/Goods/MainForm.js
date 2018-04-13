@@ -32,8 +32,8 @@ Ext.define("PSI.Goods.MainForm", {
 								id : "panelQueryCmp",
 								region : "north",
 								border : 0,
-								height : 90,
-								title : "查询条件",
+								height : 60,
+								header : false,
 								collapsible : true,
 								collapseMode : "mini",
 								layout : {

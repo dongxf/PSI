@@ -21,11 +21,11 @@ Ext.define("PSI.Supplier.MainForm", {
 					items : [{
 								id : "panelQueryCmp",
 								region : "north",
-								height : 90,
+								height : 60,
 								border : 0,
 								collapsible : true,
 								collapseMode : "mini",
-								title : "查询条件",
+								header : false,
 								layout : {
 									type : "table",
 									columns : 4

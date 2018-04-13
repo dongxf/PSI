@@ -16,10 +16,10 @@ Ext.define("PSI.Purchase.PWMainForm", {
 					items : [{
 								id : "panelQueryCmp",
 								region : "north",
-								height : 90,
+								height : 60,
 								layout : "fit",
 								border : 0,
-								title : "查询条件",
+								header : false,
 								collapsible : true,
 								collapseMode : "mini",
 								layout : {

@@ -19,10 +19,10 @@ Ext.define("PSI.InvCheck.InvCheckMainForm", {
 					items : [{
 								id : "panelQueryCmp",
 								region : "north",
-								height : 90,
+								height : 60,
 								layout : "fit",
-								border : 1,
-								title : "查询条件",
+								border : 0,
+								header : false,
 								collapsible : true,
 								collapseMode : "mini",
 								layout : {
