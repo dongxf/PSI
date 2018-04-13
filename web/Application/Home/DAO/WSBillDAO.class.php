@@ -38,6 +38,19 @@ class WSBillDAO extends PSIBaseExDAO {
 		return $pre . $mid . $suf;
 	}
 
+	private function billStatusCodeToName($code) {
+		switch ($code) {
+			case 0 :
+				return "待出库";
+			case 1000 :
+				return "已出库";
+			case 2000 :
+				return "已退货";
+			default :
+				return "";
+		}
+	}
+
 	/**
 	 * 获得销售出库单主表列表
 	 *
@@ -131,7 +144,7 @@ class WSBillDAO extends PSIBaseExDAO {
 					"warehouseName" => $v["warehouse_name"],
 					"inputUserName" => $v["input_user_name"],
 					"bizUserName" => $v["biz_user_name"],
-					"billStatus" => $v["bill_status"] == 0 ? "待出库" : "已出库",
+					"billStatus" => $this->billStatusCodeToName($v["bill_status"]),
 					"amount" => $v["sale_money"],
 					"dateCreated" => $v["date_created"],
 					"receivingType" => $v["receiving_type"],

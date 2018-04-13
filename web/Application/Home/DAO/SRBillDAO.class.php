@@ -899,7 +899,7 @@ class SRBillDAO extends PSIBaseExDAO {
 		
 		$sql = "select ref, bill_status, warehouse_id, customer_id, bizdt,
 					biz_user_id, rejection_sale_money, payment_type,
-					company_id
+					company_id, ws_bill_id
 				from t_sr_bill where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if (! $data) {
@@ -918,6 +918,7 @@ class SRBillDAO extends PSIBaseExDAO {
 		$bizUserId = $data[0]["biz_user_id"];
 		$rejectionSaleMoney = $data[0]["rejection_sale_money"];
 		$companyId = $data[0]["company_id"];
+		$wsBillId = $data[0]["ws_bill_id"];
 		
 		$bs = new BizConfigDAO($db);
 		$fifo = $bs->getInventoryMethod($companyId) == 1; // true: 先进先出
@@ -1299,6 +1300,15 @@ class SRBillDAO extends PSIBaseExDAO {
 				set bill_status = 1000
 				where id = '%s' ";
 		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 把对应的销售出库单的状态改为：已退货
+		$sql = "update t_ws_bill
+				set bill_status = 2000
+				where id = '%s' ";
+		$rc = $db->execute($sql, $wsBillId);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}

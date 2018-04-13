@@ -119,115 +119,116 @@ Ext.define("PSI.Sale.WSMainForm", {
 	getQueryCmp : function() {
 		var me = this;
 		return [{
-					id : "editQueryBillStatus",
-					xtype : "combo",
-					queryMode : "local",
-					editable : false,
-					valueField : "id",
-					labelWidth : 60,
-					labelAlign : "right",
-					labelSeparator : "",
-					fieldLabel : "状态",
-					margin : "5, 0, 0, 0",
-					store : Ext.create("Ext.data.ArrayStore", {
-								fields : ["id", "text"],
-								data : [[-1, "全部"], [0, "待出库"], [1000, "已出库"]]
-							}),
-					value : -1
-				}, {
-					id : "editQueryRef",
-					labelWidth : 60,
-					labelAlign : "right",
-					labelSeparator : "",
-					fieldLabel : "单号",
-					margin : "5, 0, 0, 0",
-					xtype : "textfield"
-				}, {
-					id : "editQueryFromDT",
-					xtype : "datefield",
-					margin : "5, 0, 0, 0",
-					format : "Y-m-d",
-					labelAlign : "right",
-					labelSeparator : "",
-					fieldLabel : "业务日期（起）"
-				}, {
-					id : "editQueryToDT",
-					xtype : "datefield",
-					margin : "5, 0, 0, 0",
-					format : "Y-m-d",
-					labelAlign : "right",
-					labelSeparator : "",
-					fieldLabel : "业务日期（止）"
-				}, {
-					id : "editQueryCustomer",
-					xtype : "psi_customerfield",
-					labelAlign : "right",
-					labelSeparator : "",
-					labelWidth : 60,
-					margin : "5, 0, 0, 0",
-					fieldLabel : "客户"
-				}, {
-					id : "editQueryWarehouse",
-					xtype : "psi_warehousefield",
-					labelAlign : "right",
-					labelSeparator : "",
-					labelWidth : 60,
-					margin : "5, 0, 0, 0",
-					fieldLabel : "仓库"
-				}, {
-					id : "editQuerySN",
-					labelAlign : "right",
-					labelSeparator : "",
-					fieldLabel : "序列号",
-					margin : "5, 0, 0, 0",
-					labelWidth : 60,
-					xtype : "textfield"
-				}, {
-					id : "editQueryReceivingType",
-					margin : "5, 0, 0, 0",
-					labelAlign : "right",
-					labelSeparator : "",
-					fieldLabel : "收款方式",
-					xtype : "combo",
-					queryMode : "local",
-					editable : false,
-					valueField : "id",
-					store : Ext.create("Ext.data.ArrayStore", {
-								fields : ["id", "text"],
-								data : [[-1, "全部"], [0, "记应收账款"], [1, "现金收款"],
-										[2, "用预收款支付"]]
-							}),
-					value : -1
-				}, {
-					xtype : "container",
-					items : [{
-								xtype : "button",
-								text : "查询",
-								width : 90,
-								margin : "5 0 0 10",
-								handler : me.onQuery,
-								scope : me
-							}, {
-								xtype : "button",
-								text : "清空查询条件",
-								width : 90,
-								margin : "5, 0, 0, 10",
-								handler : me.onClearQuery,
-								scope : me
-							}]
-				}, {
-					xtype : "container",
-					items : [{
-								xtype : "button",
-								text : "隐藏查询条件栏",
-								width : 100,
-								margin : "5 0 0 10",
-								handler : function() {
-									Ext.getCmp("panelQueryCmp").collapse();
-								},
-								scope : me
-							}]
-				}];
+			id : "editQueryBillStatus",
+			xtype : "combo",
+			queryMode : "local",
+			editable : false,
+			valueField : "id",
+			labelWidth : 60,
+			labelAlign : "right",
+			labelSeparator : "",
+			fieldLabel : "状态",
+			margin : "5, 0, 0, 0",
+			store : Ext.create("Ext.data.ArrayStore", {
+						fields : ["id", "text"],
+						data : [[-1, "全部"], [0, "待出库"], [1000, "已出库"],
+								[2000, "已退货"]]
+					}),
+			value : -1
+		}, {
+			id : "editQueryRef",
+			labelWidth : 60,
+			labelAlign : "right",
+			labelSeparator : "",
+			fieldLabel : "单号",
+			margin : "5, 0, 0, 0",
+			xtype : "textfield"
+		}, {
+			id : "editQueryFromDT",
+			xtype : "datefield",
+			margin : "5, 0, 0, 0",
+			format : "Y-m-d",
+			labelAlign : "right",
+			labelSeparator : "",
+			fieldLabel : "业务日期（起）"
+		}, {
+			id : "editQueryToDT",
+			xtype : "datefield",
+			margin : "5, 0, 0, 0",
+			format : "Y-m-d",
+			labelAlign : "right",
+			labelSeparator : "",
+			fieldLabel : "业务日期（止）"
+		}, {
+			id : "editQueryCustomer",
+			xtype : "psi_customerfield",
+			labelAlign : "right",
+			labelSeparator : "",
+			labelWidth : 60,
+			margin : "5, 0, 0, 0",
+			fieldLabel : "客户"
+		}, {
+			id : "editQueryWarehouse",
+			xtype : "psi_warehousefield",
+			labelAlign : "right",
+			labelSeparator : "",
+			labelWidth : 60,
+			margin : "5, 0, 0, 0",
+			fieldLabel : "仓库"
+		}, {
+			id : "editQuerySN",
+			labelAlign : "right",
+			labelSeparator : "",
+			fieldLabel : "序列号",
+			margin : "5, 0, 0, 0",
+			labelWidth : 60,
+			xtype : "textfield"
+		}, {
+			id : "editQueryReceivingType",
+			margin : "5, 0, 0, 0",
+			labelAlign : "right",
+			labelSeparator : "",
+			fieldLabel : "收款方式",
+			xtype : "combo",
+			queryMode : "local",
+			editable : false,
+			valueField : "id",
+			store : Ext.create("Ext.data.ArrayStore", {
+						fields : ["id", "text"],
+						data : [[-1, "全部"], [0, "记应收账款"], [1, "现金收款"],
+								[2, "用预收款支付"]]
+					}),
+			value : -1
+		}, {
+			xtype : "container",
+			items : [{
+						xtype : "button",
+						text : "查询",
+						width : 90,
+						margin : "5 0 0 10",
+						handler : me.onQuery,
+						scope : me
+					}, {
+						xtype : "button",
+						text : "清空查询条件",
+						width : 90,
+						margin : "5, 0, 0, 10",
+						handler : me.onClearQuery,
+						scope : me
+					}]
+		}, {
+			xtype : "container",
+			items : [{
+						xtype : "button",
+						text : "隐藏查询条件栏",
+						width : 100,
+						margin : "5 0 0 10",
+						handler : function() {
+							Ext.getCmp("panelQueryCmp").collapse();
+						},
+						scope : me
+					}]
+		}];
 	},
 
 	getMainGrid : function() {
@@ -286,10 +287,15 @@ Ext.define("PSI.Sale.WSMainForm", {
 								sortable : false,
 								width : 60,
 								renderer : function(value) {
-									return value == "待出库"
-											? "<span style='color:red'>"
-													+ value + "</span>"
-											: value;
+									if (value == "待出库") {
+										return "<span style='color:red'>"
+												+ value + "</span>";
+									} else if (value == "已退货") {
+										return "<span style='color:blue'>"
+												+ value + "</span>";
+									} else {
+										return value;
+									}
 								}
 							}, {
 								header : "单号",
