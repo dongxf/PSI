@@ -4,7 +4,8 @@
 Ext.define("PSI.App", {
 	config : {
 		userName : "",
-		productionName : "PSI"
+		productionName : "PSI",
+		showCopyright : false
 	},
 
 	constructor : function(config) {
@@ -125,6 +126,7 @@ Ext.define("PSI.App", {
 								}, {
 									xtype : "panel",
 									region : "south",
+									hidden : !me.getShowCopyright(),
 									height : 25,
 									border : 0,
 									header : {

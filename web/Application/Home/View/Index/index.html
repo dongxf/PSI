@@ -6,7 +6,8 @@
 	Ext.onReady(function() {
 		var app = Ext.create("PSI.App", {
 			userName : "{$loginUserName}",
-			productionName : "{$productionName}"
+			productionName : "{$productionName}",
+			showCopyright : true
 		});
 
 		app.add(Ext.create("PSI.Home.MainForm", {
