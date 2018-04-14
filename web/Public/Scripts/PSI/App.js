@@ -281,7 +281,7 @@ Ext.define("PSI.App", {
 		theCmp.addTool(spacers);
 		theCmp.addTool({
 					xtype : "tbtext",
-					text : "<span style='color:#04408c;font-weight:bold'>当前用户："
+					text : "<span style='color:#708090;font-weight:bold'>当前用户："
 							+ me.getUserName() + "&nbsp;</span>"
 				});
 	},
