@@ -83,62 +83,59 @@ Ext.define("PSI.App", {
 		var year = new Date().getFullYear();
 
 		me.vp = Ext.create("Ext.container.Viewport", {
-			layout : "fit",
-			items : [{
-				id : "__PSITopPanel",
-				xtype : "panel",
-				border : 0,
-				layout : "border",
-				header : {
-					height : 40,
-					tools : [{
-						xtype : "displayfield",
-						value : "<span style='color:#04408c;font-weight:bold'>当前用户："
-								+ me.getUserName() + "&nbsp;</span>"
+					layout : "fit",
+					items : [{
+						id : "__PSITopPanel",
+						xtype : "panel",
+						border : 0,
+						layout : "border",
+						header : {
+							height : 40,
+							tools : []
+						},
+						items : [{
+									region : "center",
+									border : 0,
+									layout : "fit",
+									xtype : "panel",
+									items : [me.mainPanel]
+								}, {
+									xtype : "panel",
+									region : "east",
+									width : 250,
+									maxWidth : 250,
+									split : true,
+									collapsible : true,
+									collapseMode : "mini",
+									collapsed : me.getRecentFidPanelCollapsed(),
+									header : false,
+									border : 0,
+									layout : "fit",
+									items : [me.gridRecentFid],
+									listeners : {
+										collapse : {
+											fn : me.onRecentFidPanelCollapse,
+											scope : me
+										},
+										expand : {
+											fn : me.onRecentFidPanelExpand,
+											scope : me
+										}
+									}
+								}, {
+									xtype : "panel",
+									region : "south",
+									height : 25,
+									border : 0,
+									header : {
+										titleAlign : "center",
+										title : "Copyright &copy; 2015-"
+												+ year
+												+ " PSI Team, All Rights Reserved"
+									}
+								}]
 					}]
-				},
-				items : [{
-							region : "center",
-							border : 0,
-							layout : "fit",
-							xtype : "panel",
-							items : [me.mainPanel]
-						}, {
-							xtype : "panel",
-							region : "east",
-							width : 250,
-							maxWidth : 250,
-							split : true,
-							collapsible : true,
-							collapseMode : "mini",
-							collapsed : me.getRecentFidPanelCollapsed(),
-							header : false,
-							border : 0,
-							layout : "fit",
-							items : [me.gridRecentFid],
-							listeners : {
-								collapse : {
-									fn : me.onRecentFidPanelCollapse,
-									scope : me
-								},
-								expand : {
-									fn : me.onRecentFidPanelExpand,
-									scope : me
-								}
-							}
-						}, {
-							xtype : "panel",
-							region : "south",
-							height : 25,
-							border : 0,
-							header : {
-								titleAlign : "center",
-								title : "Copyright &copy; 2015-" + year
-										+ " PSI Team, All Rights Reserved"
-							}
-						}]
-			}]
-		});
+				});
 
 		var el = Ext.getBody();
 		el.mask("系统正在加载中...");
@@ -257,11 +254,25 @@ Ext.define("PSI.App", {
 		}
 
 		var mainToolbar = Ext.create("Ext.toolbar.Toolbar", {
+					border : 0,
 					dock : "top"
 				});
 		mainToolbar.add(mainMenu);
 
-		me.vp.getComponent(0).addDocked(mainToolbar);
+		var theCmp = me.vp.getComponent(0);
+		theCmp.addTool(mainToolbar);
+		var spacers = [];
+		for (var i = 0; i < 10; i++) {
+			spacers.push({
+						xtype : "tbspacer"
+					});
+		}
+		theCmp.addTool(spacers);
+		theCmp.addTool({
+					xtype : "tbtext",
+					text : "<span style='color:#04408c;font-weight:bold'>当前用户："
+							+ me.getUserName() + "&nbsp;</span>"
+				});
 	},
 
 	// 设置模块的标题
