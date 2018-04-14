@@ -43,6 +43,14 @@ Ext.define("PSI.App", {
 					title : "常用功能",
 					forceFit : true,
 					hideHeaders : true,
+					tools : [{
+								type : "close",
+								handler : function() {
+									Ext.getCmp("PSI_Main_RecentPanel")
+											.collapse();
+								},
+								scope : me
+							}],
 					columns : [{
 						dataIndex : "name",
 						menuDisabled : true,
@@ -101,6 +109,7 @@ Ext.define("PSI.App", {
 									xtype : "panel",
 									items : [me.mainPanel]
 								}, {
+									id : "PSI_Main_RecentPanel",
 									xtype : "panel",
 									region : "east",
 									width : 250,
