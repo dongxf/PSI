@@ -921,7 +921,10 @@ class POBillDAO extends PSIBaseExDAO {
 				$bs = "待入库";
 			} else if ($billStatus == 1000) {
 				$bs = "已入库";
+			} else if ($billStatus == 2000) {
+				$bs = "已退货";
 			} else if ($billStatus == 9000) {
+				// TODO 9000这个状态似乎并没有使用？？？
 				$bs = "作废";
 			}
 			

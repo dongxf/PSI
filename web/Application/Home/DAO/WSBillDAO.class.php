@@ -1584,7 +1584,7 @@ class WSBillDAO extends PSIBaseExDAO {
 					"warehouseName" => $v["warehouse_name"],
 					"inputUserName" => $v["input_user_name"],
 					"bizUserName" => $v["biz_user_name"],
-					"billStatus" => $v["bill_status"] == 0 ? "待出库" : "已出库",
+					"billStatus" => $this->billStatusCodeToName($v["bill_status"]),
 					"amount" => $v["sale_money"],
 					"dateCreated" => $v["date_created"],
 					"receivingType" => $v["receiving_type"],

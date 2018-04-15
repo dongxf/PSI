@@ -1089,8 +1089,15 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 						sortable : false,
 						width : 60,
 						renderer : function(value) {
-							return value == "待出库" ? "<span style='color:red'>"
-									+ value + "</span>" : value;
+							if (value == "待出库") {
+								return "<span style='color:red'>" + value
+										+ "</span>";
+							} else if (value == "已退货") {
+								return "<span style='color:blue'>" + value
+										+ "</span>";
+							} else {
+								return value;
+							}
 						}
 					}, {
 						header : "单号",
