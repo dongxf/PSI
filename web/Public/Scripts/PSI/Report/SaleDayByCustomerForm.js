@@ -9,6 +9,24 @@ Ext.define("PSI.Report.SaleDayByCustomerForm", {
 
 		Ext.apply(me, {
 					tbar : [{
+								id : "editQueryDT",
+								xtype : "datefield",
+								format : "Y-m-d",
+								labelAlign : "right",
+								labelSeparator : "",
+								labelWidth : 60,
+								fieldLabel : "业务日期",
+								value : new Date()
+							}, " ", {
+								text : "查询",
+								iconCls : "PSI-button-refresh",
+								handler : me.onQuery,
+								scope : me
+							}, "-", {
+								text : "重置查询条件",
+								handler : me.onClearQuery,
+								scope : me
+							}, "-", {
 								text : "关闭",
 								iconCls : "PSI-button-exit",
 								handler : function() {
@@ -16,46 +34,6 @@ Ext.define("PSI.Report.SaleDayByCustomerForm", {
 								}
 							}],
 					items : [{
-								region : "north",
-								height : 60,
-								border : 0,
-								layout : "fit",
-								border : 1,
-								title : "查询条件",
-								collapsible : true,
-								layout : {
-									type : "table",
-									columns : 4
-								},
-								items : [{
-											id : "editQueryDT",
-											xtype : "datefield",
-											margin : "5, 0, 0, 0",
-											format : "Y-m-d",
-											labelAlign : "right",
-											labelSeparator : "",
-											fieldLabel : "业务日期",
-											value : new Date()
-										}, {
-											xtype : "container",
-											items : [{
-														xtype : "button",
-														text : "查询",
-														width : 100,
-														margin : "5 0 0 10",
-														iconCls : "PSI-button-refresh",
-														handler : me.onQuery,
-														scope : me
-													}, {
-														xtype : "button",
-														text : "重置查询条件",
-														width : 100,
-														margin : "5, 0, 0, 10",
-														handler : me.onClearQuery,
-														scope : me
-													}]
-										}]
-							}, {
 								region : "center",
 								layout : "border",
 								border : 0,

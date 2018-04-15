@@ -9,6 +9,46 @@ Ext.define("PSI.Report.SaleMonthByGoodsForm", {
 
 		Ext.apply(me, {
 					tbar : [{
+								id : "editQueryYear",
+								xtype : "numberfield",
+								labelAlign : "right",
+								labelSeparator : "",
+								fieldLabel : "年",
+								labelWidth : 20,
+								width : 100,
+								value : (new Date()).getFullYear()
+							}, {
+								id : "editQueryMonth",
+								xtype : "combobox",
+								labelAlign : "right",
+								labelSeparator : "",
+								labelWidth : 20,
+								fieldLabel : " ",
+								store : Ext.create("Ext.data.ArrayStore", {
+											fields : ["id", "text"],
+											data : [[1, "一月"], [2, "二月"],
+													[3, "三月"], [4, "四月"],
+													[5, "五月"], [6, "六月"],
+													[7, "七月"], [8, "八月"],
+													[9, "九月"], [10, "十月"],
+													[11, "十一月"], [12, "十二月"]]
+										}),
+								valueField : "id",
+								displayFIeld : "text",
+								queryMode : "local",
+								editable : false,
+								value : (new Date()).getMonth() + 1,
+								width : 90
+							}, " ", {
+								text : "查询",
+								iconCls : "PSI-button-refresh",
+								handler : me.onQuery,
+								scope : me
+							}, "-", {
+								text : "重置查询条件",
+								handler : me.onClearQuery,
+								scope : me
+							}, "-", {
 								text : "关闭",
 								iconCls : "PSI-button-exit",
 								handler : function() {
@@ -16,86 +56,21 @@ Ext.define("PSI.Report.SaleMonthByGoodsForm", {
 								}
 							}],
 					items : [{
-						region : "north",
-						height : 60,
-						border : 0,
-						layout : "fit",
-						border : 1,
-						title : "查询条件",
-						collapsible : true,
-						layout : {
-							type : "table",
-							columns : 4
-						},
-						items : [{
-									id : "editQueryYear",
-									xtype : "numberfield",
-									margin : "5, 0, 0, 0",
-									labelAlign : "right",
-									labelSeparator : "",
-									fieldLabel : "年",
-									labelWidth : 20,
-									width : 100,
-									value : (new Date()).getFullYear()
-								}, {
-									id : "editQueryMonth",
-									xtype : "combobox",
-									margin : "5, 0, 0, 0",
-									labelAlign : "right",
-									labelSeparator : "",
-									labelWidth : 20,
-									fieldLabel : " ",
-									store : Ext.create("Ext.data.ArrayStore", {
-												fields : ["id", "text"],
-												data : [[1, "一月"], [2, "二月"],
-														[3, "三月"], [4, "四月"],
-														[5, "五月"], [6, "六月"],
-														[7, "七月"], [8, "八月"],
-														[9, "九月"], [10, "十月"],
-														[11, "十一月"],
-														[12, "十二月"]]
-											}),
-									valueField : "id",
-									displayFIeld : "text",
-									queryMode : "local",
-									editable : false,
-									value : (new Date()).getMonth() + 1,
-									width : 90
-								}, {
-									xtype : "container",
-									items : [{
-												xtype : "button",
-												text : "查询",
-												width : 100,
-												margin : "5 0 0 10",
-												iconCls : "PSI-button-refresh",
-												handler : me.onQuery,
-												scope : me
-											}, {
-												xtype : "button",
-												text : "重置查询条件",
-												width : 100,
-												margin : "5, 0, 0, 10",
-												handler : me.onClearQuery,
-												scope : me
-											}]
-								}]
-					}, {
-						region : "center",
-						layout : "border",
-						border : 0,
-						items : [{
-									region : "center",
-									layout : "fit",
-									border : 0,
-									items : [me.getMainGrid()]
-								}, {
-									region : "south",
-									layout : "fit",
-									height : 100,
-									items : [me.getSummaryGrid()]
-								}]
-					}]
+								region : "center",
+								layout : "border",
+								border : 0,
+								items : [{
+											region : "center",
+											layout : "fit",
+											border : 0,
+											items : [me.getMainGrid()]
+										}, {
+											region : "south",
+											layout : "fit",
+											height : 100,
+											items : [me.getSummaryGrid()]
+										}]
+							}]
 				});
 
 		me.callParent(arguments);
