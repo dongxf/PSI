@@ -794,13 +794,13 @@ Ext.define("PSI.Goods.MainForm", {
 						enableTextSelection : true
 					},
 					title : "商品安全库存",
-					tbar : ["-", {
+					tbar : [{
 								text : "设置商品安全库存",
 								disabled : me.getPGoodsSI() == "0",
 								iconCls : "PSI-button-commit",
 								handler : me.onSafetyInventory,
 								scope : me
-							}, "-"],
+							}],
 					columnLines : true,
 					columns : [{
 								header : "仓库编码",
@@ -1348,12 +1348,12 @@ Ext.define("PSI.Goods.MainForm", {
 								autoLoad : false,
 								data : []
 							}),
-					tbar : ["-", {
+					tbar : [{
 								text : "设置商品价格体系",
 								iconCls : "PSI-button-commit",
 								handler : me.onGoodsPriceSystem,
 								scope : me
-							}, "-"]
+							}]
 				});
 
 		return me.__priceGrid;
