@@ -140,3 +140,7 @@
 	font-weight: normal;
 	color: #002766;
 }
+
+.x-btn-default-small .x-btn-inner {
+	color: #096dd9;
+}
