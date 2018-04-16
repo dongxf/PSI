@@ -108,3 +108,8 @@
 	background-image: none;
 	border-color: #1890ff;
 }
+
+.x-toolbar-separator-horizontal {
+	border-left-color: #2c9ba0;
+	border-right-color: #dcdada
+}
