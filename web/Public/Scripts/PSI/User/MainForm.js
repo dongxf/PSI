@@ -84,6 +84,7 @@ Ext.define("PSI.User.MainForm", {
 								border : 0,
 								items : [me.getUserGrid()]
 							}, {
+								id : "panelOrg",
 								xtype : "panel",
 								region : "west",
 								layout : "fit",
@@ -133,6 +134,12 @@ Ext.define("PSI.User.MainForm", {
 					viewConfig : {
 						loadMask : true
 					},
+					tools : [{
+								type : "close",
+								handler : function() {
+									Ext.getCmp("panelOrg").collapse();
+								}
+							}],
 					columns : {
 						defaults : {
 							sortable : false,
