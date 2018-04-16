@@ -97,3 +97,13 @@
 .x-panel-body-default {
 	border-color: #c3cbcc
 }
+
+.x-btn-default-small-over {
+	background-image: none;
+	border-color: #f759ab;
+	background-color: #f759ab;
+}
+
+.x-btn-default-small {
+	background-image: none;
+}
