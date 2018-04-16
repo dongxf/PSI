@@ -2,40 +2,44 @@
  * 销售退货入库单-选择销售出库单界面
  */
 Ext.define("PSI.Sale.SRSelectWSBillForm", {
-	extend : "Ext.window.Window",
-
-	config : {
-		parentForm : null
-	},
+	extend : "PSI.AFX.BaseDialogForm",
 
 	initComponent : function() {
 		var me = this;
 		Ext.apply(me, {
 					title : "选择销售出库单",
-					modal : true,
-					onEsc : Ext.emptyFn,
-					width : 800,
-					height : 500,
+					width : 1000,
+					height : 600,
 					layout : "border",
 					items : [{
 								region : "center",
 								border : 0,
 								bodyPadding : 10,
-								layout : "fit",
-								items : [me.getWSBillGrid()]
+								layout : "border",
+								items : [{
+											region : "north",
+											height : "50%",
+											split : true,
+											layout : "fit",
+											items : [me.getWSBillGrid()]
+										}, {
+											region : "center",
+											layout : "fit",
+											items : [me.getDetailGrid()]
+										}]
 							}, {
 								region : "north",
 								border : 0,
 								layout : {
 									type : "table",
-									columns : 2
+									columns : 4
 								},
-								height : 180,
+								height : 130,
 								bodyPadding : 10,
 								items : [{
-											html : "<h1>选择销售出库单</h1>",
+											html : "<h1>选择要退货的销售出库单</h1>",
 											border : 0,
-											colspan : 2
+											colspan : 4
 										}, {
 											id : "editWSRef",
 											xtype : "textfield",
@@ -47,7 +51,9 @@ Ext.define("PSI.Sale.SRSelectWSBillForm", {
 											id : "editWSCustomer",
 											labelAlign : "right",
 											labelSeparator : "",
-											fieldLabel : "客户"
+											fieldLabel : "客户",
+											labelWidth : 60,
+											width : 200
 										}, {
 											id : "editFromDT",
 											xtype : "datefield",
@@ -73,7 +79,9 @@ Ext.define("PSI.Sale.SRSelectWSBillForm", {
 											xtype : "textfield",
 											labelAlign : "right",
 											labelSeparator : "",
-											fieldLabel : "序列号"
+											fieldLabel : "序列号",
+											labelWidth : 60,
+											width : 200
 										}, {
 											xtype : "container",
 											items : [{
@@ -217,6 +225,10 @@ Ext.define("PSI.Sale.SRSelectWSBillForm", {
 						sortable : false
 					}],
 			listeners : {
+				select : {
+					fn : me.onMainGridSelect,
+					scope : me
+				},
 				itemdblclick : {
 					fn : me.onOK,
 					scope : me
@@ -314,5 +326,145 @@ Ext.define("PSI.Sale.SRSelectWSBillForm", {
 		Ext.getCmp("editWSSN").setValue(null);
 
 		this.onQuery();
+	},
+
+	getDetailGrid : function() {
+		var me = this;
+
+		if (me.__detailGrid) {
+			return me.__detailGrid;
+		}
+
+		var modelName = "SRSelectWSBillForm_PSIWSBillDetail";
+		Ext.define(modelName, {
+					extend : "Ext.data.Model",
+					fields : ["id", "goodsCode", "goodsName", "goodsSpec",
+							"unitName", "goodsCount", "goodsMoney",
+							"goodsPrice", "sn", "memo"]
+				});
+		var store = Ext.create("Ext.data.Store", {
+					autoLoad : false,
+					model : modelName,
+					data : []
+				});
+
+		me.__detailGrid = Ext.create("Ext.grid.Panel", {
+					viewConfig : {
+						enableTextSelection : true
+					},
+					title : "销售出库单明细",
+					columnLines : true,
+					columns : [Ext.create("Ext.grid.RowNumberer", {
+										text : "序号",
+										width : 30
+									}), {
+								header : "商品编码",
+								dataIndex : "goodsCode",
+								menuDisabled : true,
+								sortable : false,
+								width : 120
+							}, {
+								header : "商品名称",
+								dataIndex : "goodsName",
+								menuDisabled : true,
+								sortable : false,
+								width : 200
+							}, {
+								header : "规格型号",
+								dataIndex : "goodsSpec",
+								menuDisabled : true,
+								sortable : false,
+								width : 200
+							}, {
+								header : "数量",
+								dataIndex : "goodsCount",
+								menuDisabled : true,
+								sortable : false,
+								align : "right"
+							}, {
+								header : "单位",
+								dataIndex : "unitName",
+								menuDisabled : true,
+								sortable : false,
+								width : 60
+							}, {
+								header : "单价",
+								dataIndex : "goodsPrice",
+								menuDisabled : true,
+								sortable : false,
+								align : "right",
+								xtype : "numbercolumn",
+								width : 150
+							}, {
+								header : "销售金额",
+								dataIndex : "goodsMoney",
+								menuDisabled : true,
+								sortable : false,
+								align : "right",
+								xtype : "numbercolumn",
+								width : 150
+							}, {
+								header : "序列号",
+								dataIndex : "sn",
+								menuDisabled : true,
+								sortable : false
+							}, {
+								header : "备注",
+								dataIndex : "memo",
+								width : 200,
+								menuDisabled : true,
+								sortable : false
+							}],
+					store : store
+				});
+
+		return me.__detailGrid;
+	},
+
+	onMainGridSelect : function() {
+		var me = this;
+		me.getDetailGrid().setTitle("销售出库单明细");
+
+		me.refreshDetailGrid();
+	},
+
+	refreshDetailGrid : function() {
+		var me = this;
+		me.getDetailGrid().setTitle("销售出库单明细");
+		var grid = me.getWSBillGrid();
+		var item = grid.getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			return;
+		}
+		var bill = item[0];
+
+		grid = me.getDetailGrid();
+		grid.setTitle("单号: " + bill.get("ref") + " 客户: "
+				+ bill.get("customerName") + " 出库仓库: "
+				+ bill.get("warehouseName"));
+		var el = grid.getEl();
+		el.mask(PSI.Const.LOADING);
+
+		var r = {
+			url : PSI.Const.BASE_URL + "Home/Sale/wsBillDetailListForSRBill",
+			params : {
+				billId : bill.get("id")
+			},
+			method : "POST",
+			callback : function(options, success, response) {
+				var store = grid.getStore();
+
+				store.removeAll();
+
+				if (success) {
+					var data = Ext.JSON.decode(response.responseText);
+					store.add(data);
+				}
+
+				el.unmask();
+			}
+		};
+
+		Ext.Ajax.request(r);
 	}
 });

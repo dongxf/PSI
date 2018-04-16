@@ -465,4 +465,19 @@ class SaleController extends PSIBaseController {
 			$this->ajaxReturn($ws->soBillWSBillList($soBillId));
 		}
 	}
+
+	/**
+	 * 销售出库单明细信息列表
+	 * 销售退货入库 - 选择销售出库单
+	 */
+	public function wsBillDetailListForSRBill() {
+		if (IS_POST) {
+			$params = array(
+					"billId" => I("post.billId")
+			);
+			
+			$ws = new WSBillService();
+			$this->ajaxReturn($ws->wsBillDetailListForSRBill($params));
+		}
+	}
 }

@@ -257,6 +257,53 @@ class WSBillDAO extends PSIBaseExDAO {
 	}
 
 	/**
+	 * 获得某个销售出库单的明细记录列表
+	 * 销售退货入库 - 选择销售出库单
+	 *
+	 * @param array $params        	
+	 * @return array
+	 */
+	public function wsBillDetailListForSRBill($params) {
+		$db = $this->db;
+		
+		$companyId = $params["companyId"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->emptyResult();
+		}
+		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
+		$billId = $params["billId"];
+		$sql = "select d.id, g.code, g.name, g.spec, u.name as unit_name,
+		convert(d.goods_count, $fmt) as goods_count,
+		d.goods_price, d.goods_money, d.sn_note, d.memo
+		from t_ws_bill_detail d, t_goods g, t_goods_unit u
+		where d.wsbill_id = '%s' and d.goods_id = g.id and g.unit_id = u.id
+		order by d.show_order";
+		$data = $db->query($sql, $billId);
+		$result = [];
+		
+		foreach ( $data as $v ) {
+			$result[] = [
+					"id" => $v["id"],
+					"goodsCode" => $v["code"],
+					"goodsName" => $v["name"],
+					"goodsSpec" => $v["spec"],
+					"unitName" => $v["unit_name"],
+					"goodsCount" => $v["goods_count"],
+					"goodsPrice" => $v["goods_price"],
+					"goodsMoney" => $v["goods_money"],
+					"sn" => $v["sn_note"],
+					"memo" => $v["memo"]
+			];
+		}
+		
+		return $result;
+	}
+
+	/**
 	 * 新建销售出库单
 	 *
 	 * @param array $bill        	

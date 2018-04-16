@@ -129,6 +129,21 @@ class WSBillService extends PSIBaseExService {
 	}
 
 	/**
+	 * 获得某个销售出库单的明细记录列表
+	 * 销售退货入库 - 选择销售出库单
+	 */
+	public function wsBillDetailListForSRBill($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$params["companyId"] = $this->getCompanyId();
+		
+		$dao = new WSBillDAO($this->db());
+		return $dao->wsBillDetailListForSRBill($params);
+	}
+
+	/**
 	 * 删除销售出库单
 	 */
 	public function deleteWSBill($params) {
