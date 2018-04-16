@@ -88,3 +88,12 @@
 	background-image: none;
 	background-color: #DAE6F3;
 }
+
+.x-tab-bar-default-top {
+	background-image: none;
+	background-color: #DAE6F3;
+}
+
+.x-panel-body-default {
+	border-color: #c3cbcc
+}
