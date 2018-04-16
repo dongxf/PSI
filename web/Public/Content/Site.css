@@ -101,7 +101,7 @@
 .x-btn-default-small-over {
 	background-image: none;
 	border-color: #f759ab;
-	background-color: #f759ab;
+	background-color: #ffadd2;
 }
 
 .x-btn-default-small {
@@ -112,4 +112,31 @@
 .x-toolbar-separator-horizontal {
 	border-left-color: #2c9ba0;
 	border-right-color: #dcdada
+}
+
+.x-tab-bar .x-tab-bar-body {
+	height: 34px !important;
+}
+
+.x-tab-bar .x-tab-bar-body .x-box-inner {
+	height: 32px !important;
+}
+
+.x-tab-bar-strip {
+	height: 32px !important;
+}
+
+.x-tab-bar .x-tab-bar-body .x-box-inner .x-tab {
+	height: 32px !important;
+}
+
+.x-tab-bar .x-tab-bar-body .x-box-inner .x-tab-button {
+	height: 24px !important;
+	line-height: 24px !important;
+	margin-top: 5px;
+}
+
+.x-tab-default .x-tab-inner {
+	font-weight: normal;
+	color: #002766;
 }

@@ -63,6 +63,7 @@ Ext.define("PSI.Goods.MainForm", {
 												collapseMode : "mini",
 												header : false,
 												xtype : "tabpanel",
+												border : 0,
 												items : [me.getSIGrid(),
 														me.getGoodsBOMGrid(),
 														me.getGoodsPriceGrid()]
