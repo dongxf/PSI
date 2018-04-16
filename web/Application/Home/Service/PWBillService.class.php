@@ -335,4 +335,19 @@ class PWBillService extends PSIBaseExService {
 		$dao = new POBillDAO($this->db());
 		return $dao->poBillPWBillList($params);
 	}
+
+	/**
+	 * 获得采购入库单商品明细记录列表
+	 * 采购退货模块中 - 选择采购入库单
+	 */
+	public function pwBillDetailListForPRBill($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$params["companyId"] = $this->getCompanyId();
+		
+		$dao = new PWBillDAO($this->db());
+		return $dao->pwBillDetailListForPRBill($params);
+	}
 }

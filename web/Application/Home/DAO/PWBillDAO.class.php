@@ -1620,4 +1620,51 @@ class PWBillDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 获得采购入库单商品明细记录列表
+	 * 采购退货模块 - 选择采购入库单
+	 *
+	 * @param array $params        	
+	 * @return array
+	 */
+	public function pwBillDetailListForPRBill($params) {
+		$companyId = $params["companyId"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->emptyResult();
+		}
+		
+		$db = $this->db;
+		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
+		$pwbillId = $params["id"];
+		
+		$sql = "select p.id, g.code, g.name, g.spec, u.name as unit_name,
+		convert(p.goods_count, $fmt) as goods_count, p.goods_price,
+		p.goods_money, p.memo
+		from t_pw_bill_detail p, t_goods g, t_goods_unit u
+		where p.pwbill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id
+		order by p.show_order ";
+		$data = $db->query($sql, $pwbillId);
+		$result = [];
+		
+		foreach ( $data as $v ) {
+			$result[] = [
+					"id" => $v["id"],
+					"goodsCode" => $v["code"],
+					"goodsName" => $v["name"],
+					"goodsSpec" => $v["spec"],
+					"unitName" => $v["unit_name"],
+					"goodsCount" => $v["goods_count"],
+					"goodsMoney" => $canViewPrice ? $v["goods_money"] : null,
+					"goodsPrice" => $canViewPrice ? $v["goods_price"] : null,
+					"memo" => $v["memo"]
+			];
+		}
+		
+		return $result;
+	}
 }

@@ -2,25 +2,31 @@
  * 采购退货出库单-选择采购入库单界面
  */
 Ext.define("PSI.PurchaseRej.PRSelectPWBillForm", {
-	extend : "Ext.window.Window",
-	config : {
-		parentForm : null
-	},
+	extend : "PSI.AFX.BaseDialogForm",
+
 	initComponent : function() {
 		var me = this;
 		Ext.apply(me, {
 					title : "选择采购入库单",
-					modal : true,
-					onEsc : Ext.emptyFn,
-					width : 900,
+					width : 1000,
 					height : 600,
 					layout : "border",
 					items : [{
 								region : "center",
 								border : 0,
 								bodyPadding : 10,
-								layout : "fit",
-								items : [me.getPWBillGrid()]
+								layout : "border",
+								items : [{
+											region : "north",
+											height : "50%",
+											layout : "fit",
+											split : true,
+											items : [me.getPWBillGrid()]
+										}, {
+											region : "center",
+											layout : "fit",
+											items : [me.getPWBillDetailGrid()]
+										}]
 							}, {
 								region : "north",
 								border : 0,
@@ -28,10 +34,10 @@ Ext.define("PSI.PurchaseRej.PRSelectPWBillForm", {
 									type : "table",
 									columns : 2
 								},
-								height : 150,
+								height : 160,
 								bodyPadding : 10,
 								items : [{
-											html : "<h1>选择采购入库单</h1>",
+											html : "<h1>选择要退货的采购入库单</h1>",
 											border : 0,
 											colspan : 2
 										}, {
@@ -125,6 +131,7 @@ Ext.define("PSI.PurchaseRej.PRSelectPWBillForm", {
 		me.close();
 		me.getParentForm().getPWBillInfo(bill.get("id"));
 	},
+
 	getPWBillGrid : function() {
 		var me = this;
 
@@ -208,6 +215,10 @@ Ext.define("PSI.PurchaseRej.PRSelectPWBillForm", {
 						sortable : false
 					}],
 			listeners : {
+				select : {
+					fn : me.onPWBillGridSelect,
+					scope : me
+				},
 				itemdblclick : {
 					fn : me.onOK,
 					scope : me
@@ -256,8 +267,98 @@ Ext.define("PSI.PurchaseRej.PRSelectPWBillForm", {
 		return me.__billGrid;
 	},
 
+	getPWBillDetailGrid : function() {
+		var me = this;
+		if (me.__pwbillDetailGrid) {
+			return me.__pwbillDetailGrid;
+		}
+
+		var modelName = "PRSelectPWBillForm_PSIPWBillDetail";
+		Ext.define(modelName, {
+					extend : "Ext.data.Model",
+					fields : ["id", "goodsCode", "goodsName", "goodsSpec",
+							"unitName", "goodsCount", "goodsMoney",
+							"goodsPrice", "memo"]
+				});
+		var store = Ext.create("Ext.data.Store", {
+					autoLoad : false,
+					model : modelName,
+					data : []
+				});
+
+		me.__pwbillDetailGrid = Ext.create("Ext.grid.Panel", {
+					title : "采购入库单明细",
+					viewConfig : {
+						enableTextSelection : true
+					},
+					columnLines : true,
+					columns : [Ext.create("Ext.grid.RowNumberer", {
+										text : "序号",
+										width : 30
+									}), {
+								header : "商品编码",
+								dataIndex : "goodsCode",
+								menuDisabled : true,
+								sortable : false,
+								width : 120
+							}, {
+								header : "商品名称",
+								dataIndex : "goodsName",
+								menuDisabled : true,
+								sortable : false,
+								width : 200
+							}, {
+								header : "规格型号",
+								dataIndex : "goodsSpec",
+								menuDisabled : true,
+								sortable : false,
+								width : 200
+							}, {
+								header : "入库数量",
+								width : 120,
+								dataIndex : "goodsCount",
+								menuDisabled : true,
+								sortable : false,
+								align : "right"
+							}, {
+								header : "单位",
+								dataIndex : "unitName",
+								menuDisabled : true,
+								sortable : false,
+								width : 60
+							}, {
+								header : "采购单价",
+								dataIndex : "goodsPrice",
+								menuDisabled : true,
+								sortable : false,
+								align : "right",
+								xtype : "numbercolumn",
+								width : 150
+							}, {
+								header : "采购金额",
+								dataIndex : "goodsMoney",
+								menuDisabled : true,
+								sortable : false,
+								align : "right",
+								xtype : "numbercolumn",
+								width : 150
+							}, {
+								header : "备注",
+								dataIndex : "memo",
+								menuDisabled : true,
+								sortable : false,
+								width : 200
+							}],
+					store : store
+				});
+
+		return me.__pwbillDetailGrid;
+	},
+
 	onQuery : function() {
 		Ext.getCmp("prbill_selectform_pagingToobar").doRefresh();
+
+		this.refreshDetailGrid();
 	},
 
 	getQueryParam : function() {
@@ -299,5 +400,51 @@ Ext.define("PSI.PurchaseRej.PRSelectPWBillForm", {
 		Ext.getCmp("editPWToDT").setValue(null);
 
 		this.onQuery();
+	},
+
+	onPWBillGridSelect : function() {
+		var me = this;
+		me.getPWBillDetailGrid().setTitle("采购入库单明细");
+
+		me.refreshDetailGrid();
+	},
+
+	refreshDetailGrid : function() {
+		var me = this;
+		me.getPWBillDetailGrid().setTitle("采购入库单明细");
+		me.getPWBillDetailGrid().getStore().removeAll();
+		var item = me.getPWBillGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			return;
+		}
+		var bill = item[0];
+
+		var grid = me.getPWBillDetailGrid();
+		grid.setTitle("单号: " + bill.get("ref") + " 供应商: "
+				+ bill.get("supplierName") + " 入库仓库: "
+				+ bill.get("warehouseName"));
+		var el = grid.getEl();
+		el.mask(PSI.Const.LOADING);
+
+		var r = {
+			url : me.URL("Home/PurchaseRej/pwBillDetailList"),
+			params : {
+				pwBillId : bill.get("id")
+			},
+			callback : function(options, success, response) {
+				var store = grid.getStore();
+
+				store.removeAll();
+
+				if (success) {
+					var data = me.decodeJSON(response.responseText);
+					store.add(data);
+				}
+
+				el.unmask();
+			}
+		};
+
+		me.ajax(r);
 	}
 });

@@ -5,6 +5,7 @@ namespace Home\Controller;
 use Home\Common\FIdConst;
 use Home\Service\PRBillService;
 use Home\Service\UserService;
+use Home\Service\PWBillService;
 
 /**
  * 采购退货出库Controller
@@ -113,6 +114,19 @@ class PurchaseRejController extends PSIBaseController {
 			$pr = new PRBillService();
 			
 			$this->ajaxReturn($pr->selectPWBillList($params));
+		}
+	}
+
+	/**
+	 * 获得采购入库单的商品明细记录
+	 */
+	public function pwBillDetailList() {
+		if (IS_POST) {
+			$params = [
+					"id" => I("post.pwBillId")
+			];
+			$ps = new PWBillService();
+			$this->ajaxReturn($ps->pwBillDetailListForPRBill($params));
 		}
 	}
 
