@@ -32,14 +32,14 @@ Ext.define("PSI.PurchaseRej.PRSelectPWBillForm", {
 								border : 0,
 								layout : {
 									type : "table",
-									columns : 2
+									columns : 4
 								},
-								height : 160,
+								height : 130,
 								bodyPadding : 10,
 								items : [{
 											html : "<h1>选择要退货的采购入库单</h1>",
 											border : 0,
-											colspan : 2
+											colspan : 4
 										}, {
 											id : "editPWRef",
 											xtype : "textfield",
@@ -58,14 +58,16 @@ Ext.define("PSI.PurchaseRej.PRSelectPWBillForm", {
 											format : "Y-m-d",
 											labelAlign : "right",
 											labelSeparator : "",
-											fieldLabel : "业务日期（起）"
+											fieldLabel : "业务日期（起）",
+											width : 200
 										}, {
 											id : "editPWToDT",
 											xtype : "datefield",
 											format : "Y-m-d",
 											labelAlign : "right",
 											labelSeparator : "",
-											fieldLabel : "业务日期（止）"
+											fieldLabel : "业务日期（止）",
+											width : 200
 										}, {
 											id : "editPWWarehouse",
 											xtype : "psi_warehousefield",
@@ -78,7 +80,7 @@ Ext.define("PSI.PurchaseRej.PRSelectPWBillForm", {
 														xtype : "button",
 														text : "查询",
 														width : 100,
-														margin : "0 0 0 10",
+														margin : "0 0 0 40",
 														iconCls : "PSI-button-refresh",
 														handler : me.onQuery,
 														scope : me
