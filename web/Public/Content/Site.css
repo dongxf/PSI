@@ -144,3 +144,8 @@
 .x-btn-default-small .x-btn-inner {
 	color: #096dd9;
 }
+
+.x-panel-header-text-container-default {
+	font-weight: normal;
+	color: #002766;
+}
