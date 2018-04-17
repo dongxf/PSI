@@ -49,6 +49,7 @@ Ext.define("PSI.Customer.MainForm", {
 											border : 0,
 											items : [me.getMainGrid()]
 										}, {
+											id : "panelCategory",
 											xtype : "panel",
 											region : "west",
 											layout : "fit",
@@ -286,6 +287,12 @@ Ext.define("PSI.Customer.MainForm", {
 						enableTextSelection : true
 					},
 					title : "客户分类",
+					tools : [{
+								type : "close",
+								handler : function() {
+									Ext.getCmp("panelCategory").collapse();
+								}
+							}],
 					features : [{
 								ftype : "summary"
 							}],
