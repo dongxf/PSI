@@ -69,6 +69,7 @@ Ext.define("PSI.Goods.MainForm", {
 														me.getGoodsPriceGrid()]
 											}]
 								}, {
+									id : "panelCategory",
 									xtype : "panel",
 									region : "west",
 									layout : "fit",
@@ -1037,6 +1038,12 @@ Ext.define("PSI.Goods.MainForm", {
 					viewConfig : {
 						loadMask : true
 					},
+					tools : [{
+								type : "close",
+								handler : function() {
+									Ext.getCmp("panelCategory").collapse();
+								}
+							}],
 					bbar : [{
 								id : "fieldTotalGoodsCount",
 								xtype : "displayfield",
@@ -1096,10 +1103,16 @@ Ext.define("PSI.Goods.MainForm", {
 
 	onCategoryTreeNodeSelect : function(record) {
 		if (!record) {
+			me.getMainGrid().setTitle("商品列表");
 			return;
 		}
 
-		this.onCategoryGridSelect();
+		var me = this;
+
+		var title = "属于商品分类 [" + record.get("fullName") + "] 的商品列表";
+		me.getMainGrid().setTitle(title);
+
+		me.onCategoryGridSelect();
 	},
 
 	queryTotalGoodsCount : function() {
