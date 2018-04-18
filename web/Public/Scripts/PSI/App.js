@@ -281,7 +281,7 @@ Ext.define("PSI.App", {
 		theCmp.addTool(spacers);
 		theCmp.addTool({
 					xtype : "tbtext",
-					text : "<span style='color:#708090;font-weight:bold'>当前用户："
+					text : "<span style='color:#196d6d;font-weight:bold'>当前用户："
 							+ me.getUserName() + "&nbsp;</span>"
 				});
 	},
@@ -292,7 +292,7 @@ Ext.define("PSI.App", {
 			return;
 		}
 		var panel = Ext.getCmp("__PSITopPanel");
-		var title = "<span style='font-size:160%;color:#002766;font-weight:bold;'>"
+		var title = "<span style='font-size:160%;color:#196d6d;font-weight:bold;'>"
 				+ header.title + " - " + this.getProductionName() + "</span>";
 		panel.setTitle(title);
 		// panel.setIconCls(header.iconCls);

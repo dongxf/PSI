@@ -147,5 +147,33 @@
 
 .x-panel-header-text-container-default {
 	font-weight: normal;
-	color: #002766;
+	color: #196d6d;
+}
+
+.x-btn-default-toolbar-small .x-btn-inner {
+	color: #196d6d;
+}
+
+.x-menu-item-text {
+	color: #196d6d;
+}
+
+.x-column-header-text {
+	color: #196d6d;
+}
+
+.x-form-item-label {
+	color: #196d6d;
+}
+
+.x-form-display-field {
+	color: #196d6d;
+}
+
+.x-toolbar .x-toolbar-text {
+	color: #196d6d;
+}
+
+.x-grid-cell-inner {
+	color: #120338;
 }
