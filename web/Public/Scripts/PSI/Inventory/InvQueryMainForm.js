@@ -83,6 +83,7 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 								}
 							}],
 					items : [{
+								id : "panelWarehouse",
 								region : "west",
 								layout : "fit",
 								border : 0,
@@ -100,7 +101,15 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 											border : 0,
 											items : [me.getInventoryGrid()]
 										}, {
+											id : "panelDetail",
 											title : "明细账",
+											tools : [{
+												type : "close",
+												handler : function() {
+													Ext.getCmp("panelDetail")
+															.collapse();
+												}
+											}],
 											region : "south",
 											height : "50%",
 											split : true,
@@ -128,6 +137,12 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 
 		me.__warehouseGrid = Ext.create("Ext.grid.Panel", {
 					title : "仓库",
+					tools : [{
+								type : "close",
+								handler : function() {
+									Ext.getCmp("panelWarehouse").collapse();
+								}
+							}],
 					columnLines : true,
 					columns : [{
 								header : "仓库编码",
