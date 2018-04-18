@@ -162,11 +162,27 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 								handler : me.onCancelClosedPO
 							}]
 				}, "-", {
-					text : "单据生成pdf",
-					id : "buttonPDF",
-					iconCls : "PSI-button-pdf",
-					scope : me,
-					handler : me.onPDF
+					text : "导出",
+					menu : [{
+								text : "单据生成pdf",
+								id : "buttonPDF",
+								iconCls : "PSI-button-pdf",
+								scope : me,
+								handler : me.onPDF
+							}]
+				}, "-", {
+					text : "打印",
+					menu : [{
+								text : "打印预览",
+								iconCls : "PSI-button-print-preview",
+								scope : me,
+								handler : me.onPrintPreview
+							}, "-", {
+								text : "直接打印",
+								iconCls : "PSI-button-print",
+								scope : me,
+								handler : me.onPrint
+							}]
 				}, "-", {
 					text : "帮助",
 					iconCls : "PSI-help",
@@ -1344,5 +1360,13 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 			me.ajax(r);
 		};
 		me.confirm(info, funcConfirm);
+	},
+
+	onPrintPreview : function() {
+		PSI.MsgBox.showInfo("TODO");
+	},
+
+	onPrint : function() {
+		PSI.MsgBox.showInfo("TODO");
 	}
 });
