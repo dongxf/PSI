@@ -145,6 +145,7 @@ Ext.define("PSI.Inventory.InitInventoryEditForm", {
 											}, {
 												id : "buttonSubmit",
 												xtype : "button",
+												height : 36,
 												text : "保存当前商品的建账信息",
 												iconCls : "PSI-button-ok",
 												flex : 2,
@@ -157,6 +158,7 @@ Ext.define("PSI.Inventory.InitInventoryEditForm", {
 								}, {
 									xtype : "container",
 									layout : "hbox",
+									margin : 10,
 									items : [{
 												xtype : "container",
 												flex : 1

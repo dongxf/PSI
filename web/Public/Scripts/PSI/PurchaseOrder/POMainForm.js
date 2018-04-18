@@ -260,6 +260,7 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 						xtype : "button",
 						text : "查询",
 						width : 100,
+						height : 26,
 						margin : "5 0 0 10",
 						handler : me.onQuery,
 						scope : me
@@ -267,6 +268,7 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 						xtype : "button",
 						text : "清空查询条件",
 						width : 100,
+						height : 26,
 						margin : "5, 0, 0, 10",
 						handler : me.onClearQuery,
 						scope : me
@@ -275,8 +277,10 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 			xtype : "container",
 			items : [{
 						xtype : "button",
+						iconCls : "PSI-button-hide",
 						text : "隐藏查询条件栏",
-						width : 100,
+						width : 130,
+						height : 26,
 						margin : "5 0 0 10",
 						handler : function() {
 							Ext.getCmp("panelQueryCmp").collapse();
