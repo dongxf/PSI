@@ -45,7 +45,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 							}
 						}
 
-					}, "-", {
+					}, " ", {
 						text : "保存",
 						id : "buttonSave",
 						iconCls : "PSI-button-ok",

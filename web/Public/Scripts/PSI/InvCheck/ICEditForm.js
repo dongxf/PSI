@@ -25,7 +25,7 @@ Ext.define("PSI.InvCheck.ICEditForm", {
 			height : 600,
 			layout : "border",
 			defaultFocus : "editWarehouse",
-			tbar : ["-", {
+			tbar : [{
 						text : "保存",
 						iconCls : "PSI-button-ok",
 						handler : me.onOK,

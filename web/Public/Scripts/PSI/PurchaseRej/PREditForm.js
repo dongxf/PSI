@@ -23,7 +23,7 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 			maximized : true,
 			width : 1200,
 			height : 600,
-			tbar : ["-", {
+			tbar : [{
 						text : "选择采购入库单",
 						iconCls : "PSI-button-add",
 						handler : me.onSelectPWBill,

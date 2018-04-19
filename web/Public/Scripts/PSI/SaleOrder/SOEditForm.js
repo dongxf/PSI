@@ -30,7 +30,7 @@ Ext.define("PSI.SaleOrder.SOEditForm", {
 			width : 1000,
 			height : 600,
 			layout : "border",
-			tbar : ["-", {
+			tbar : [{
 						text : "保存",
 						id : "buttonSave",
 						iconCls : "PSI-button-ok",

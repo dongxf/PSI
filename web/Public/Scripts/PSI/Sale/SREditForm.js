@@ -24,7 +24,7 @@ Ext.define("PSI.Sale.SREditForm", {
 			width : 900,
 			height : 600,
 			layout : "border",
-			tbar : ["-", {
+			tbar : [{
 						text : "选择销售出库单",
 						iconCls : "PSI-button-add",
 						handler : me.onSelectWSBill,

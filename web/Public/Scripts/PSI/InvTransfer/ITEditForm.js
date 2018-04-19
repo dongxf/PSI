@@ -25,7 +25,7 @@ Ext.define("PSI.InvTransfer.ITEditForm", {
 			height : 600,
 			layout : "border",
 			defaultFocus : "editFromWarehouse",
-			tbar : ["-", {
+			tbar : [{
 						text : "保存",
 						iconCls : "PSI-button-ok",
 						handler : me.onOK,

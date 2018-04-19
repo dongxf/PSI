@@ -56,7 +56,7 @@ Ext.define("PSI.Sale.WSEditForm", {
 								scope : me
 							}
 						}
-					}, "-", {
+					}, " ", {
 						text : "保存",
 						iconCls : "PSI-button-ok",
 						handler : me.onOK,
