@@ -1363,6 +1363,11 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 	},
 
 	onPrintPreview : function() {
+		var lodop = getLodop();
+		if (!lodop) {
+			PSI.MsgBox.showInfo("没有安装Lodop控件，无法打印");
+			return;
+		}
 		PSI.MsgBox.showInfo("TODO");
 	},
 
