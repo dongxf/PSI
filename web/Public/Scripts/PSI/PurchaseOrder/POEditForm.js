@@ -34,7 +34,7 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 			height : 600,
 			layout : "border",
 			defaultFocus : "editSupplier",
-			tbar : ["-", {
+			tbar : [{
 						text : "保存",
 						id : "buttonSave",
 						iconCls : "PSI-button-ok",
