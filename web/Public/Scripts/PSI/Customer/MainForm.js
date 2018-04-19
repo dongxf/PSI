@@ -29,7 +29,7 @@ Ext.define("PSI.Customer.MainForm", {
 					items : [{
 								id : "panelQueryCmp",
 								region : "north",
-								height : 60,
+								height : 65,
 								border : 0,
 								collapsible : true,
 								collapseMode : "mini",

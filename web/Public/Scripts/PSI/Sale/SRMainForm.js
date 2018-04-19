@@ -16,7 +16,7 @@ Ext.define("PSI.Sale.SRMainForm", {
 					items : [{
 								id : "panelQueryCmp",
 								region : "north",
-								height : 60,
+								height : 65,
 								layout : "fit",
 								border : 0,
 								header : false,

@@ -16,7 +16,7 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
 					items : [{
 								id : "panelQueryCmp",
 								region : "north",
-								height : 60,
+								height : 65,
 								layout : "fit",
 								header : false,
 								border : 0,
