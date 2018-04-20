@@ -228,7 +228,6 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 					viewConfig : {
 						enableTextSelection : true
 					},
-					border : 0,
 					bbar : [{
 								xtype : "pagingtoolbar",
 								store : store
