@@ -186,6 +186,7 @@
 .x-column-header {
 	background-image: none;
 	background-color: #f5f5f5;
+	line-height: 18px;
 }
 
 .x-column-header-over {
@@ -214,5 +215,5 @@
 }
 
 ::-webkit-scrollbar-thumb:hover {
-	background-color: #d3adf7;
+	background-color: #ffadd2;
 }
