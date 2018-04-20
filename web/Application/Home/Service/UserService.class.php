@@ -22,7 +22,7 @@ class UserService extends PSIBaseExService {
 	 */
 	public function getDemoLoginInfo() {
 		if ($this->isDemo()) {
-			return "当前处于演示环境，请勿保存正式数据，默认的登录名和密码均为 admin";
+			return "当前处于演示环境，请勿保存正式数据，默认的登录名和密码均为 admin <br /><br />如果发现登录失败或者页面样式不正确，请使用<a href='https://browser.360.cn/se/' target='_blank'>360浏览器</a>来访问";
 		} else {
 			return "";
 		}
