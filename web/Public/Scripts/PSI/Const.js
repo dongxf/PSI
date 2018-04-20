@@ -6,6 +6,6 @@ Ext.define("PSI.Const", {
 		BASE_URL : "",
 		MOT : "0", // 模块打开方式
 		GC_DEC_NUMBER : 0, // 商品数量小数位数
-		VERSION : "PSI 2018 - build201804192145"
+		VERSION : "PSI 2018 - build201804200830"
 	}
 });
