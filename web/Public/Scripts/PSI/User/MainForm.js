@@ -127,6 +127,7 @@ Ext.define("PSI.User.MainForm", {
 		orgStore.on("load", me.onOrgStoreLoad, me);
 
 		var orgTree = Ext.create("Ext.tree.Panel", {
+					cls : "PSI",
 					title : "组织机构",
 					store : orgStore,
 					rootVisible : false,
@@ -210,6 +211,7 @@ Ext.define("PSI.User.MainForm", {
 				});
 
 		me.__userGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
 					title : "人员列表",
 					viewConfig : {
 						enableTextSelection : true
