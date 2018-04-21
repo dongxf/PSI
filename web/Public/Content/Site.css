@@ -145,6 +145,14 @@
 	background-color: #dae6f3;
 }
 
+.x-splitter-horizontal {
+	background-color: #efdbff;
+}
+
+.x-splitter-vertical {
+	background-color: #f0f5ff;
+}
+
 .x-btn-default-small .x-btn-inner {
 	color: #096dd9;
 }
