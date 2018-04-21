@@ -59,6 +59,7 @@ Ext.define("PSI.Inventory.InitInventoryMainForm", {
 				});
 
 		var gridInitInv = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
 					title : "请选择一个仓库",
 					columnLines : true,
 					columns : [{
@@ -157,6 +158,7 @@ Ext.define("PSI.Inventory.InitInventoryMainForm", {
 				});
 
 		var gridWarehouse = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
 					title : "仓库",
 					forceFit : true,
 					columnLines : true,

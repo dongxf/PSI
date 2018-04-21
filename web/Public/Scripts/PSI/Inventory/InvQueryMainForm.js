@@ -136,6 +136,7 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 		}
 
 		me.__warehouseGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
 					title : "仓库",
 					tools : [{
 								type : "close",
@@ -225,6 +226,7 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 				});
 
 		me.__inventoryGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
 					viewConfig : {
 						enableTextSelection : true
 					},
@@ -403,6 +405,7 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 				});
 
 		me.__inventoryDetailGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
 					viewConfig : {
 						enableTextSelection : true
 					},
