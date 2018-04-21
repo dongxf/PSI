@@ -75,6 +75,7 @@ Ext.define("PSI.Goods.BrandMainForm", {
 						});
 
 				me.__mainGrid = Ext.create("Ext.tree.Panel", {
+							cls : "PSI",
 							border : 0,
 							store : store,
 							rootVisible : false,

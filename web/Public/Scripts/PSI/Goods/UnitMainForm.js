@@ -56,6 +56,7 @@ Ext.define("PSI.Goods.UnitMainForm", {
 						});
 
 				me.__mainGrid = Ext.create("Ext.grid.Panel", {
+							cls : "PSI",
 							columnLines : true,
 							columns : [{
 										xtype : "rownumberer"

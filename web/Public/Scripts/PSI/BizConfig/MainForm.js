@@ -91,6 +91,7 @@ Ext.define("PSI.BizConfig.MainForm", {
 						});
 
 				me.__mainGrid = Ext.create("Ext.grid.Panel", {
+							cls : "PSI",
 							viewConfig : {
 								enableTextSelection : true
 							},

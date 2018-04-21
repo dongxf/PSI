@@ -196,6 +196,7 @@ Ext.define("PSI.Goods.PriceSystemMainForm", {
 				});
 
 		me.__mainGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
 					border : 0,
 					columnLines : true,
 					columns : [{

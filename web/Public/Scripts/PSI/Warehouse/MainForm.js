@@ -95,6 +95,7 @@ Ext.define("PSI.Warehouse.MainForm", {
 				});
 
 		me.__mainGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
 					border : 0,
 					viewConfig : {
 						enableTextSelection : true
