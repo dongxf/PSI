@@ -287,6 +287,7 @@ Ext.define("PSI.Customer.MainForm", {
 				});
 
 		me.__categoryGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
 					viewConfig : {
 						enableTextSelection : true
 					},
@@ -405,6 +406,7 @@ Ext.define("PSI.Customer.MainForm", {
 				});
 
 		me.__mainGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
 					viewConfig : {
 						enableTextSelection : true
 					},

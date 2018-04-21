@@ -285,6 +285,7 @@ Ext.define("PSI.Goods.MainForm", {
 				});
 
 		me.__mainGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
 					viewConfig : {
 						enableTextSelection : true
 					},
@@ -795,6 +796,7 @@ Ext.define("PSI.Goods.MainForm", {
 				});
 
 		me.__siGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
 					viewConfig : {
 						enableTextSelection : true
 					},
@@ -1035,6 +1037,7 @@ Ext.define("PSI.Goods.MainForm", {
 		store.on("load", me.onCategoryStoreLoad, me);
 
 		me.__categoryGrid = Ext.create("Ext.tree.Panel", {
+					cls : "PSI",
 					title : "商品分类",
 					store : store,
 					rootVisible : false,
@@ -1152,6 +1155,7 @@ Ext.define("PSI.Goods.MainForm", {
 				});
 
 		me.__bomGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
 					viewConfig : {
 						enableTextSelection : true
 					},
@@ -1340,6 +1344,7 @@ Ext.define("PSI.Goods.MainForm", {
 				});
 
 		me.__priceGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
 					viewConfig : {
 						enableTextSelection : true
 					},
