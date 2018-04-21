@@ -385,6 +385,7 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
 				});
 
 		me.__mainGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
 					viewConfig : {
 						enableTextSelection : true
 					},
@@ -516,6 +517,7 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
 				});
 
 		me.__detailGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
 					viewConfig : {
 						enableTextSelection : true
 					},

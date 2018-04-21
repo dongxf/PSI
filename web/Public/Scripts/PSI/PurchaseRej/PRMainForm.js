@@ -400,6 +400,7 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
 				});
 
 		me.__mainGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
 					viewConfig : {
 						enableTextSelection : true
 					},
@@ -554,6 +555,7 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
 				});
 
 		me.__detailGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
 					viewConfig : {
 						enableTextSelection : true
 					},

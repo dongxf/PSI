@@ -317,6 +317,7 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 				});
 
 		me.__mainGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
 					viewConfig : {
 						enableTextSelection : true
 					},
@@ -534,6 +535,7 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 				});
 
 		me.__detailGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
 					title : "销售订单明细",
 					viewConfig : {
 						enableTextSelection : true
@@ -1078,6 +1080,7 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 				});
 
 		me.__wsGrid = Ext.create("Ext.grid.Panel", {
+			cls : "PSI",
 			title : "销售订单出库详情",
 			viewConfig : {
 				enableTextSelection : true

@@ -265,6 +265,7 @@ Ext.define("PSI.Purchase.PWMainForm", {
 				});
 
 		me.__mainGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
 					viewConfig : {
 						enableTextSelection : true
 					},
@@ -433,6 +434,7 @@ Ext.define("PSI.Purchase.PWMainForm", {
 				});
 
 		me.__detailGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
 					title : "采购入库单明细",
 					viewConfig : {
 						enableTextSelection : true
