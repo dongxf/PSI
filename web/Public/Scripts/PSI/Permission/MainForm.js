@@ -125,6 +125,7 @@ Ext.define("PSI.Permission.MainForm", {
 				});
 
 		var roleGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
 					title : "角色",
 					store : roleStore,
 					columns : [{
@@ -165,12 +166,13 @@ Ext.define("PSI.Permission.MainForm", {
 				});
 
 		me.__permissionGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
 					store : permissionStore,
 					columnLines : true,
 					columns : [{
 								header : "权限名称",
 								dataIndex : "name",
-								width: 200,
+								width : 200,
 								menuDisabled : true
 							}, {
 								header : "说明",
@@ -214,6 +216,7 @@ Ext.define("PSI.Permission.MainForm", {
 				});
 
 		me.__userGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
 					store : userStore,
 					columns : [{
 								header : "用户姓名",
@@ -429,6 +432,7 @@ Ext.define("PSI.Permission.MainForm", {
 				});
 
 		me.__dataOrgGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
 					title : "数据域",
 					store : store,
 					columns : [{
