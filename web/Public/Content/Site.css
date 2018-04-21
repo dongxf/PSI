@@ -194,6 +194,11 @@
 	background-image: none;
 }
 
+.PSI .x-grid-row td, .x-grid-summary-row td {
+	line-height: 15px;
+	vertical-align: top;
+}
+
 ::-webkit-scrollbar {
 	width: 12px;
 	height: 12px;
