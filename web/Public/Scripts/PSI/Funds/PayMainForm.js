@@ -135,6 +135,7 @@ Ext.define("PSI.Funds.PayMainForm", {
 				});
 
 		me.__payGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
 					bbar : [{
 								xtype : "pagingtoolbar",
 								store : store
@@ -236,6 +237,7 @@ Ext.define("PSI.Funds.PayMainForm", {
 				});
 
 		me.__payDetailGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
 					title : "业务单据",
 					bbar : [{
 								xtype : "pagingtoolbar",
@@ -364,6 +366,7 @@ Ext.define("PSI.Funds.PayMainForm", {
 		});
 
 		me.__payRecordGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
 					title : "付款记录",
 					tbar : [{
 								text : "录入付款记录",

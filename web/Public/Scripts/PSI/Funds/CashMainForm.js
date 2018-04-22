@@ -102,6 +102,7 @@ Ext.define("PSI.Funds.CashMainForm", {
 				});
 
 		me.__mainGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
 					bbar : [{
 								xtype : "pagingtoolbar",
 								store : store
@@ -196,6 +197,7 @@ Ext.define("PSI.Funds.CashMainForm", {
 				});
 
 		me.__detailGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
 					title : "现金收支流水明细",
 					bbar : [{
 								xtype : "pagingtoolbar",

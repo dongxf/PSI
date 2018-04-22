@@ -134,6 +134,7 @@ Ext.define("PSI.Funds.RvMainForm", {
 				});
 
 		me.__rvGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
 					viewConfig : {
 						enableTextSelection : true
 					},
@@ -245,6 +246,7 @@ Ext.define("PSI.Funds.RvMainForm", {
 				});
 
 		me.__rvDetailGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
 					viewConfig : {
 						enableTextSelection : true
 					},
@@ -391,6 +393,7 @@ Ext.define("PSI.Funds.RvMainForm", {
 				});
 
 		me.__rvRecordGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
 					viewConfig : {
 						enableTextSelection : true
 					},
