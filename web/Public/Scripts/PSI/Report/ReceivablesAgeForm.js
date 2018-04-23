@@ -188,12 +188,13 @@ Ext.define("PSI.Report.ReceivablesAgeForm", {
 				});
 
 		me.__summaryGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
 					title : "应收账款汇总",
 					viewConfig : {
 						enableTextSelection : true
 					},
 					columnLines : true,
-					border : 0,
+					border : 1,
 					columns : [{
 								header : "当期余额",
 								dataIndex : "balanceMoney",
