@@ -64,6 +64,7 @@ Ext.define("PSI.Report.SafetyInventoryForm", {
 				});
 
 		me.__mainGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
 					viewConfig : {
 						enableTextSelection : true
 					},

@@ -69,6 +69,7 @@ Ext.define("PSI.Report.ReceivablesAgeForm", {
 				});
 
 		me.__mainGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
 					viewConfig : {
 						enableTextSelection : true
 					},

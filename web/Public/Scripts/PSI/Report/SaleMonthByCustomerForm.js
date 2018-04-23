@@ -113,6 +113,7 @@ Ext.define("PSI.Report.SaleMonthByCustomerForm", {
 				});
 
 		me.__mainGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
 					viewConfig : {
 						enableTextSelection : true
 					},
@@ -234,6 +235,7 @@ Ext.define("PSI.Report.SaleMonthByCustomerForm", {
 				});
 
 		me.__summaryGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
 					title : "月销售汇总",
 					viewConfig : {
 						enableTextSelection : true

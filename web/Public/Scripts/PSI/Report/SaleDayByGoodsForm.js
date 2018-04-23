@@ -91,6 +91,7 @@ Ext.define("PSI.Report.SaleDayByGoodsForm", {
 				});
 
 		me.__mainGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
 					viewConfig : {
 						enableTextSelection : true
 					},
@@ -240,6 +241,7 @@ Ext.define("PSI.Report.SaleDayByGoodsForm", {
 				});
 
 		me.__summaryGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
 					title : "日销售汇总",
 					viewConfig : {
 						enableTextSelection : true
