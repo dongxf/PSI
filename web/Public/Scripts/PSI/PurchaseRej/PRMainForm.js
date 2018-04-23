@@ -404,7 +404,7 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
 					viewConfig : {
 						enableTextSelection : true
 					},
-					border : 0,
+					border : 1,
 					columnLines : true,
 					columns : [{
 								xtype : "rownumberer",
@@ -495,7 +495,7 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
 						}
 					},
 					store : store,
-					tbar : [{
+					bbar : ["->", {
 								id : "pagingToobar",
 								xtype : "pagingtoolbar",
 								border : 0,
