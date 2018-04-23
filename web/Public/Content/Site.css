@@ -225,6 +225,11 @@
 	vertical-align: top;
 }
 
+.x-form-text {
+	background-image: none;
+	border-color: #adc6ff;
+}
+
 ::-webkit-scrollbar {
 	width: 12px;
 	height: 12px;
