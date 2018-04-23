@@ -340,7 +340,7 @@ class POBillService extends PSIBaseExService {
 
 	/**
 	 * 取消关闭采购订单
-	 * 
+	 *
 	 * @param array $params        	
 	 * @return array
 	 */
@@ -370,5 +370,20 @@ class POBillService extends PSIBaseExService {
 		$db->commit();
 		
 		return $this->ok($id);
+	}
+
+	/**
+	 * 为使用Lodop打印准备数据
+	 * 
+	 * @param array $params        	
+	 */
+	public function getPOBillDataForLodopPrint($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$dao = new POBillDAO($this->db());
+		
+		return $dao->getPOBillDataForLodopPrint($params);
 	}
 }

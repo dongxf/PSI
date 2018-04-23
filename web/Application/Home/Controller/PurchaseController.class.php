@@ -339,4 +339,20 @@ class PurchaseController extends PSIBaseController {
 			$this->ajaxReturn($ps->cancelClosedPOBill($params));
 		}
 	}
+
+	/**
+	 * 生成打印采购订单的页面
+	 */
+	public function genPOBillPrintPage() {
+		if (IS_POST) {
+			$params = [
+					"id" => I("post.id")
+			];
+			
+			$ss = new POBillService();
+			$data = $ss->getPOBillDataForLodopPrint($params);
+			$this->assign("data", $data);
+			$this->display();
+		}
+	}
 }
