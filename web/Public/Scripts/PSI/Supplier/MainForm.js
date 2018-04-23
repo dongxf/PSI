@@ -510,7 +510,7 @@ Ext.define("PSI.Supplier.MainForm", {
 								sortable : false
 							}],
 					store : store,
-					bbar : [{
+					bbar : ["->", {
 								id : "pagingToolbar",
 								border : 0,
 								xtype : "pagingtoolbar",

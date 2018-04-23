@@ -113,7 +113,7 @@ Ext.define("PSI.Inventory.InitInventoryMainForm", {
 								width : 80
 							}],
 					store : store,
-					bbar : [{
+					bbar : ["->", {
 								id : "pagingToolbar",
 								border : 0,
 								xtype : "pagingtoolbar",

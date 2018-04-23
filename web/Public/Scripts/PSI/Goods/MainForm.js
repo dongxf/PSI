@@ -290,7 +290,7 @@ Ext.define("PSI.Goods.MainForm", {
 						enableTextSelection : true
 					},
 					title : "商品列表",
-					bbar : [{
+					bbar : ["->", {
 								id : "pagingToolbar",
 								border : 0,
 								xtype : "pagingtoolbar",

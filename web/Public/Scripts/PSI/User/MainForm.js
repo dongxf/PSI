@@ -300,7 +300,7 @@ Ext.define("PSI.User.MainForm", {
 							scope : me
 						}
 					},
-					bbar : [{
+					bbar : ["->",{
 								id : "pagingToolbar",
 								border : 0,
 								xtype : "pagingtoolbar",

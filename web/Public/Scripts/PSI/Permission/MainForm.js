@@ -41,6 +41,7 @@ Ext.define("PSI.Permission.MainForm", {
 													layout : "fit",
 													width : "40%",
 													border : 0,
+													split : true,
 													items : [me
 															.getDataOrgGrid()]
 												}]

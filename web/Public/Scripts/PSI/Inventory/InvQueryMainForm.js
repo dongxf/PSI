@@ -103,6 +103,7 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 										}, {
 											id : "panelDetail",
 											title : "明细账",
+											cls : "PSI",
 											tools : [{
 												type : "close",
 												handler : function() {
@@ -114,7 +115,7 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 											height : "50%",
 											split : true,
 											layout : "fit",
-											border : 0,
+											border : 1,
 											items : [me
 													.getInventoryDetailGrid()]
 										}]
@@ -230,8 +231,9 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 					viewConfig : {
 						enableTextSelection : true
 					},
-					bbar : [{
+					bbar : ["->", {
 								xtype : "pagingtoolbar",
+								border : 0,
 								store : store
 							}],
 					columnLines : true,
@@ -409,6 +411,7 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 					viewConfig : {
 						enableTextSelection : true
 					},
+					border : 0,
 					tbar : [{
 								xtype : "displayfield",
 								value : "业务日期 从"
@@ -426,13 +429,14 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 								format : "Y-m-d",
 								width : 90,
 								value : new Date()
-							}, {
+							}, " ", {
 								text : "查询",
 								iconCls : "PSI-button-refresh",
 								handler : me.onQuery,
 								scope : me
-							}, {
+							}, "->", {
 								xtype : "pagingtoolbar",
+								border : 0,
 								store : store
 							}],
 					columnLines : true,
