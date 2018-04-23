@@ -84,9 +84,23 @@
 	background-color: #DAE6F3;
 }
 
+.PSI .x-panel-header-default {
+	background-image: none;
+	background-color: #f5f5f5;
+}
+
 .x-toolbar-default {
 	background-image: none;
 	background-color: #DAE6F3;
+}
+
+.PSI .x-toolbar-default {
+	background-image: none;
+	background-color: #f5f5f5;
+}
+
+.PSI .x-btn-default-toolbar-small-disabled {
+	border-color: transparent;
 }
 
 .x-tab-bar-default-top {
