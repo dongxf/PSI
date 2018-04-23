@@ -17,6 +17,39 @@ Ext.define("PSI.Bizlog.MainForm", {
 		var me = this;
 
 		var buttons = [{
+					id : "pagingToobar",
+					xtype : "pagingtoolbar",
+					border : 0,
+					store : me.getMainGrid().getStore()
+				}, "-", {
+					xtype : "displayfield",
+					value : "每页显示"
+				}, {
+					id : "comboCountPerPage",
+					xtype : "combobox",
+					editable : false,
+					width : 60,
+					store : Ext.create("Ext.data.ArrayStore", {
+								fields : ["text"],
+								data : [["20"], ["50"], ["100"], ["300"],
+										["1000"]]
+							}),
+					value : 20,
+					listeners : {
+						change : {
+							fn : function() {
+								store.pageSize = Ext
+										.getCmp("comboCountPerPage").getValue();
+								store.currentPage = 1;
+								Ext.getCmp("pagingToobar").doRefresh();
+							},
+							scope : me
+						}
+					}
+				}, {
+					xtype : "displayfield",
+					value : "条记录"
+				}, "-", {
 					text : "刷新",
 					handler : me.onRefresh,
 					scope : me,
@@ -145,47 +178,7 @@ Ext.define("PSI.Bizlog.MainForm", {
 								menuDisabled : true,
 								sortable : false
 							}],
-					store : store,
-					tbar : [{
-								id : "pagingToobar",
-								xtype : "pagingtoolbar",
-								border : 0,
-								store : store
-							}, "-", {
-								xtype : "displayfield",
-								value : "每页显示"
-							}, {
-								id : "comboCountPerPage",
-								xtype : "combobox",
-								editable : false,
-								width : 60,
-								store : Ext.create("Ext.data.ArrayStore", {
-											fields : ["text"],
-											data : [["20"], ["50"], ["100"],
-													["300"], ["1000"]]
-										}),
-								value : 20,
-								listeners : {
-									change : {
-										fn : function() {
-											store.pageSize = Ext
-													.getCmp("comboCountPerPage")
-													.getValue();
-											store.currentPage = 1;
-											Ext.getCmp("pagingToobar")
-													.doRefresh();
-										},
-										scope : me
-									}
-								}
-							}, {
-								xtype : "displayfield",
-								value : "条记录"
-							}],
-					bbar : {
-						xtype : "pagingtoolbar",
-						store : store
-					}
+					store : store
 				});
 
 		return me.__mainGrid;
