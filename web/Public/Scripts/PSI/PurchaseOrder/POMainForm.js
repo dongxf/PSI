@@ -356,7 +356,7 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 					viewConfig : {
 						enableTextSelection : true
 					},
-					border : 0,
+					border : 1,
 					columnLines : true,
 					columns : [{
 								xtype : "rownumberer",
@@ -503,7 +503,7 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 								sortable : false
 							}],
 					store : store,
-					tbar : [{
+					bbar : ["->", {
 								id : "pagingToobar",
 								xtype : "pagingtoolbar",
 								border : 0,
