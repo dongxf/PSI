@@ -227,7 +227,22 @@
 
 .x-form-text {
 	background-image: none;
-	border-color: #adc6ff;
+	border-color: transparent transparent #adc6ff transparent;
+}
+
+.x-form-type-text textarea.x-form-invalid-field, .x-form-type-text input.x-form-invalid-field,
+	.x-form-type-password textarea.x-form-invalid-field,
+	.x-form-type-password input.x-form-invalid-field, .x-form-type-number textarea.x-form-invalid-field,
+	.x-form-type-number input.x-form-invalid-field, .x-form-type-email textarea.x-form-invalid-field,
+	.x-form-type-email input.x-form-invalid-field, .x-form-type-search textarea.x-form-invalid-field,
+	.x-form-type-search input.x-form-invalid-field, .x-form-type-tel textarea.x-form-invalid-field,
+	.x-form-type-tel input.x-form-invalid-field {
+	background-image: none;
+	border-color: transparent transparent red transparent;
+}
+
+.x-form-trigger {
+	border-width: 1px;
 }
 
 ::-webkit-scrollbar {
