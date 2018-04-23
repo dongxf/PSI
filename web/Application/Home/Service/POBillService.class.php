@@ -374,7 +374,7 @@ class POBillService extends PSIBaseExService {
 
 	/**
 	 * 为使用Lodop打印准备数据
-	 * 
+	 *
 	 * @param array $params        	
 	 */
 	public function getPOBillDataForLodopPrint($params) {
