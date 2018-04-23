@@ -417,7 +417,7 @@ Ext.define("PSI.Sale.SRMainForm", {
 					viewConfig : {
 						enableTextSelection : true
 					},
-					border : 0,
+					border : 1,
 					columnLines : true,
 					columns : [{
 								xtype : "rownumberer",
@@ -509,7 +509,7 @@ Ext.define("PSI.Sale.SRMainForm", {
 						}
 					},
 					store : store,
-					tbar : [{
+					bbar : ["->", {
 								id : "pagingToobar",
 								xtype : "pagingtoolbar",
 								border : 0,
