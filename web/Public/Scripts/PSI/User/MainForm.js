@@ -78,6 +78,10 @@ Ext.define("PSI.User.MainForm", {
 								}
 							}],
 					items : [{
+								region : "north",
+								height : 3,
+								border : 0
+							}, {
 								region : "center",
 								xtype : "panel",
 								layout : "fit",
@@ -300,7 +304,7 @@ Ext.define("PSI.User.MainForm", {
 							scope : me
 						}
 					},
-					bbar : ["->",{
+					bbar : ["->", {
 								id : "pagingToolbar",
 								border : 0,
 								xtype : "pagingtoolbar",

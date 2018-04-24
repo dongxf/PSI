@@ -19,11 +19,16 @@ Ext.define("PSI.Permission.MainForm", {
 		Ext.apply(me, {
 			tbar : me.getToolbarCmp(),
 			items : [{
-				region : "center",
-				layout : "fit",
-				border : 0,
-				items : [{
+						region : "north",
+						height : 3,
+						border : 0
+					}, {
+						region : "center",
+						layout : "fit",
+						border : 0,
+						items : [{
 							layout : "border",
+							border : 0,
 							items : [{
 										region : "north",
 										height : "50%",
@@ -53,14 +58,14 @@ Ext.define("PSI.Permission.MainForm", {
 										items : [me.getUserGrid()]
 									}]
 						}]
-			}, {
-				region : "west",
-				layout : "fit",
-				width : 250,
-				split : true,
-				border : 0,
-				items : [me.getRoleGrid()]
-			}]
+					}, {
+						region : "west",
+						layout : "fit",
+						width : 250,
+						split : true,
+						border : 0,
+						items : [me.getRoleGrid()]
+					}]
 		});
 
 		me.callParent(arguments);
