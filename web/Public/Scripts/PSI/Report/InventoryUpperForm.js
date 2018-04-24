@@ -15,7 +15,6 @@ Ext.define("PSI.Report.InventoryUpperForm", {
 								scope : me
 							}, "-", {
 								text : "关闭",
-								iconCls : "PSI-button-exit",
 								handler : function() {
 									me.closeWindow();
 								}

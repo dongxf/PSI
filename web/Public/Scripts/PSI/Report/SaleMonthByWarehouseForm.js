@@ -52,7 +52,6 @@ Ext.define("PSI.Report.SaleMonthByWarehouseForm", {
 								scope : me
 							}, "-", {
 								text : "关闭",
-								iconCls : "PSI-button-exit",
 								handler : function() {
 									me.closeWindow();
 								}
