@@ -25,19 +25,16 @@ Ext.define("PSI.Goods.BrandMainForm", {
 							scope : me
 						}, "-", {
 							text : "刷新",
-							iconCls : "PSI-button-refresh",
 							handler : me.onRefreshGrid,
 							scope : me
 						}, "-", {
 							text : "帮助",
-							iconCls : "PSI-help",
 							handler : function() {
 								window.open(me
 										.URL("/Home/Help/index?t=goodsBrand"));
 							}
 						}, "-", {
 							text : "关闭",
-							iconCls : "PSI-button-exit",
 							handler : function() {
 								me.closeWindow();
 							}

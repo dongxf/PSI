@@ -122,13 +122,11 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 					id : "tbseparator1"
 				}, {
 					text : "审核",
-					iconCls : "PSI-button-commit",
 					scope : me,
 					handler : me.onCommit,
 					id : "buttonCommit"
 				}, {
 					text : "取消审核",
-					iconCls : "PSI-button-cancelconfirm",
 					scope : me,
 					handler : me.onCancelConfirm,
 					id : "buttonCancelConfirm"
@@ -137,25 +135,21 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 					id : "tbseparator2"
 				}, {
 					text : "生成销售出库单",
-					iconCls : "PSI-button-genbill",
 					scope : me,
 					handler : me.onGenWSBill,
 					id : "buttonGenWSBill"
 				}, "-", {
 					text : "单据生成pdf",
 					id : "buttonPDF",
-					iconCls : "PSI-button-pdf",
 					scope : me,
 					handler : me.onPDF
 				}, "-", {
 					text : "帮助",
-					iconCls : "PSI-help",
 					handler : function() {
 						window.open(me.URL("/Home/Help/index?t=sobill"));
 					}
 				}, "-", {
 					text : "关闭",
-					iconCls : "PSI-button-exit",
 					handler : function() {
 						me.closeWindow();
 					}

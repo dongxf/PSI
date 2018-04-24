@@ -102,7 +102,6 @@ Ext.define("PSI.Customer.MainForm", {
 				}, {
 					text : "导入客户",
 					disabled : me.getPImportCustomer() == "0",
-					iconCls : "PSI-button-import",
 					handler : me.onImportCustomer,
 					scope : me
 				}, {
@@ -117,13 +116,11 @@ Ext.define("PSI.Customer.MainForm", {
 					scope : me
 				}, "-", {
 					text : "帮助",
-					iconCls : "PSI-help",
 					handler : function() {
 						window.open(me.URL("/Home/Help/index?t=customer"));
 					}
 				}, "-", {
 					text : "关闭",
-					iconCls : "PSI-button-exit",
 					handler : function() {
 						me.closeWindow();
 					}

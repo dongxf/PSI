@@ -87,24 +87,20 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
 				}, "-", {
 					text : "提交调拨单",
 					id : "buttonCommit",
-					iconCls : "PSI-button-commit",
 					scope : me,
 					handler : me.onCommit
 				}, "-", {
 					text : "单据生成pdf",
 					id : "buttonPDF",
-					iconCls : "PSI-button-pdf",
 					scope : me,
 					handler : me.onPDF
 				}, "-", {
 					text : "帮助",
-					iconCls : "PSI-help",
 					handler : function() {
 						window.open(me.URL("/Home/Help/index?t=itbill"));
 					}
 				}, "-", {
 					text : "关闭",
-					iconCls : "PSI-button-exit",
 					handler : function() {
 						me.closeWindow();
 					}

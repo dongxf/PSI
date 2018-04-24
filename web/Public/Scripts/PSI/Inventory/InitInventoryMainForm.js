@@ -203,36 +203,30 @@ Ext.define("PSI.Inventory.InitInventoryMainForm", {
 		Ext.apply(me, {
 					tbar : [{
 								text : "建账",
-								iconCls : "PSI-button-add",
 								scope : me,
 								handler : me.onInitInv
 							}, "-", {
 								text : "刷新",
-								iconCls : "PSI-button-refresh",
 								scope : me,
 								handler : function() {
 									me.freshInvGrid();
 								}
 							}, "-", {
 								text : "标记建账完毕",
-								iconCls : "PSI-button-commit",
 								scope : me,
 								handler : me.onFinish
 							}, "-", {
 								text : "取消建账完毕标记",
-								iconCls : "PSI-button-cancel",
 								scope : me,
 								handler : me.onCancel
 							}, "-", {
 								text : "帮助",
-								iconCls : "PSI-help",
 								handler : function() {
 									window.open(me
 											.URL("/Home/Help/index?t=initInv"));
 								}
 							}, "-", {
 								text : "关闭",
-								iconCls : "PSI-button-exit",
 								handler : function() {
 									me.closeWindow();
 								}

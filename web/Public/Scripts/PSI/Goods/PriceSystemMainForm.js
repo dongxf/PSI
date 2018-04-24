@@ -27,7 +27,6 @@ Ext.define("PSI.Goods.PriceSystemMainForm", {
 								scope : me
 							}, "-", {
 								text : "帮助",
-								iconCls : "PSI-help",
 								handler : function() {
 									var url = me
 											.URL("/Home/Help/index?t=priceSystem")
@@ -35,7 +34,6 @@ Ext.define("PSI.Goods.PriceSystemMainForm", {
 								}
 							}, "-", {
 								text : "关闭",
-								iconCls : "PSI-button-exit",
 								handler : function() {
 									me.closeWindow();
 								}

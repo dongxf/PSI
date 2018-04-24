@@ -86,25 +86,21 @@ Ext.define("PSI.Purchase.PWMainForm", {
 					id : "buttonDelete"
 				}, "-", {
 					text : "提交入库",
-					iconCls : "PSI-button-commit",
 					scope : me,
 					handler : me.onCommit,
 					id : "buttonCommit"
 				}, "-", {
 					text : "单据生成pdf",
 					id : "buttonPDF",
-					iconCls : "PSI-button-pdf",
 					scope : me,
 					handler : me.onPDF
 				}, "-", {
 					text : "帮助",
-					iconCls : "PSI-help",
 					handler : function() {
 						window.open(me.URL("/Home/Help/index?t=pwbill"));
 					}
 				}, "-", {
 					text : "关闭",
-					iconCls : "PSI-button-exit",
 					handler : function() {
 						me.closeWindow();
 					}

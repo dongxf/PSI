@@ -118,7 +118,6 @@ Ext.define("PSI.Goods.MainForm", {
 				}, {
 					text : "导入商品",
 					disabled : me.getPImportGoods() == "0",
-					iconCls : "PSI-button-import",
 					handler : me.onImportGoods,
 					scope : me
 				}, "-", {
@@ -133,13 +132,11 @@ Ext.define("PSI.Goods.MainForm", {
 					scope : me
 				}, "-", {
 					text : "帮助",
-					iconCls : "PSI-help",
 					handler : function() {
 						window.open(me.URL("/Home/Help/index?t=goods"));
 					}
 				}, "-", {
 					text : "关闭",
-					iconCls : "PSI-button-exit",
 					handler : function() {
 						me.closeWindow();
 					}
