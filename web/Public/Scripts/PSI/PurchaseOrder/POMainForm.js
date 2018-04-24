@@ -107,19 +107,16 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 		var me = this;
 		return [{
 					text : "新建采购订单",
-					iconCls : "PSI-button-add",
 					scope : me,
 					handler : me.onAddBill,
 					id : "buttonAdd"
 				}, "-", {
 					text : "编辑采购订单",
-					iconCls : "PSI-button-edit",
 					scope : me,
 					handler : me.onEditBill,
 					id : "buttonEdit"
 				}, "-", {
 					text : "删除采购订单",
-					iconCls : "PSI-button-delete",
 					scope : me,
 					handler : me.onDeleteBill,
 					id : "buttonDelete"

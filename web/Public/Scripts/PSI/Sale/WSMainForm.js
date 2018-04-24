@@ -74,19 +74,16 @@ Ext.define("PSI.Sale.WSMainForm", {
 		return [{
 					text : "新建销售出库单",
 					id : "buttonAdd",
-					iconCls : "PSI-button-add",
 					scope : me,
 					handler : me.onAddBill
 				}, "-", {
 					text : "编辑销售出库单",
 					id : "buttonEdit",
-					iconCls : "PSI-button-edit",
 					scope : me,
 					handler : me.onEditBill
 				}, "-", {
 					text : "删除销售出库单",
 					id : "buttonDelete",
-					iconCls : "PSI-button-delete",
 					scope : me,
 					handler : me.onDeleteBill
 				}, "-", {

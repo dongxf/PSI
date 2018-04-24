@@ -72,19 +72,16 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
 		return [{
 					text : "新建采购退货出库单",
 					id : "buttonAdd",
-					iconCls : "PSI-button-add",
 					scope : me,
 					handler : me.onAddBill
 				}, "-", {
 					text : "编辑采购退货出库单",
 					id : "buttonEdit",
-					iconCls : "PSI-button-edit",
 					scope : me,
 					handler : me.onEditBill
 				}, "-", {
 					text : "删除采购退货出库单",
 					id : "buttonDelete",
-					iconCls : "PSI-button-delete",
 					scope : me,
 					handler : me.onDeleteBill
 				}, "-", {

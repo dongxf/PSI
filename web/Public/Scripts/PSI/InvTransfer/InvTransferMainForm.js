@@ -72,19 +72,16 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
 		return [{
 					text : "新建调拨单",
 					id : "buttonAdd",
-					iconCls : "PSI-button-add",
 					scope : me,
 					handler : me.onAddBill
 				}, "-", {
 					text : "编辑调拨单",
 					id : "buttonEdit",
-					iconCls : "PSI-button-edit",
 					scope : me,
 					handler : me.onEditBill
 				}, "-", {
 					text : "删除调拨单",
 					id : "buttonDelete",
-					iconCls : "PSI-button-delete",
 					scope : me,
 					handler : me.onDeleteBill
 				}, "-", {

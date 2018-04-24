@@ -72,19 +72,16 @@ Ext.define("PSI.Sale.SRMainForm", {
 		return [{
 					text : "新建销售退货入库单",
 					id : "buttonAdd",
-					iconCls : "PSI-button-add",
 					scope : me,
 					handler : me.onAddBill
 				}, "-", {
 					text : "编辑销售退货入库单",
 					id : "buttonEdit",
-					iconCls : "PSI-button-edit",
 					scope : me,
 					handler : me.onEditBill
 				}, "-", {
 					text : "删除销售退货入库单",
 					id : "buttonDelete",
-					iconCls : "PSI-button-delete",
 					scope : me,
 					handler : me.onDeleteBill
 				}, "-", {

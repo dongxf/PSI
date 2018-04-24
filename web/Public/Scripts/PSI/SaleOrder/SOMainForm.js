@@ -105,18 +105,15 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 		return [{
 					text : "新建销售订单",
 					id : "buttonAdd",
-					iconCls : "PSI-button-add",
 					scope : me,
 					handler : me.onAddBill
 				}, "-", {
 					text : "编辑销售订单",
-					iconCls : "PSI-button-edit",
 					scope : me,
 					handler : me.onEditBill,
 					id : "buttonEdit"
 				}, "-", {
 					text : "删除销售订单",
-					iconCls : "PSI-button-delete",
 					scope : me,
 					handler : me.onDeleteBill,
 					id : "buttonDelete"

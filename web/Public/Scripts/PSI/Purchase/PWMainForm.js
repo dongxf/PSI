@@ -72,18 +72,15 @@ Ext.define("PSI.Purchase.PWMainForm", {
 		return [{
 					text : "新建采购入库单",
 					id : "buttonAdd",
-					iconCls : "PSI-button-add",
 					scope : me,
 					handler : me.onAddBill
 				}, "-", {
 					text : "编辑采购入库单",
-					iconCls : "PSI-button-edit",
 					scope : me,
 					handler : me.onEditBill,
 					id : "buttonEdit"
 				}, "-", {
 					text : "删除采购入库单",
-					iconCls : "PSI-button-delete",
 					scope : me,
 					handler : me.onDeleteBill,
 					id : "buttonDelete"
