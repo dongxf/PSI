@@ -15,17 +15,14 @@ Ext.define("PSI.Goods.PriceSystemMainForm", {
 					layout : "border",
 					tbar : [{
 								text : "新增价格",
-								iconCls : "PSI-button-add",
 								handler : me.onAddPrice,
 								scope : me
 							}, {
 								text : "编辑价格",
-								iconCls : "PSI-button-edit",
 								handler : me.onEditPrice,
 								scope : me
 							}, {
 								text : "删除价格",
-								iconCls : "PSI-button-delete",
 								handler : me.onDeletePrice,
 								scope : me
 							}, "-", {

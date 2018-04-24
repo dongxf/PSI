@@ -23,44 +23,37 @@ Ext.define("PSI.User.MainForm", {
 		Ext.apply(me, {
 					tbar : [{
 								text : "新增组织机构",
-								iconCls : "PSI-button-add",
 								disabled : me.getPAddOrg() == "0",
 								handler : me.onAddOrg,
 								scope : me
 							}, {
 								text : "编辑组织机构",
-								iconCls : "PSI-button-edit",
 								disabled : me.getPEditOrg() == "0",
 								handler : me.onEditOrg,
 								scope : me
 							}, {
 								text : "删除组织机构",
 								disabled : me.getPDeleteOrg() == "0",
-								iconCls : "PSI-button-delete",
 								handler : me.onDeleteOrg,
 								scope : me
 							}, "-", {
 								text : "新增用户",
 								disabled : me.getPAddUser() == "0",
-								iconCls : "PSI-button-add-user",
 								handler : me.onAddUser,
 								scope : me
 							}, {
 								text : "修改用户",
 								disabled : me.getPEditUser() == "0",
-								iconCls : "PSI-button-edit-user",
 								handler : me.onEditUser,
 								scope : me
 							}, {
 								text : "删除用户",
 								disabled : me.getPDeleteUser() == "0",
-								iconCls : "PSI-button-delete-user",
 								handler : me.onDeleteUser,
 								scope : me
 							}, "-", {
 								text : "修改用户密码",
 								disabled : me.getPChangePassword() == "0",
-								iconCls : "PSI-button-change-password",
 								handler : me.onEditUserPassword,
 								scope : me
 							}, "-", {

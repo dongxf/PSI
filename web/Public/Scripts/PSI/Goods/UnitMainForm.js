@@ -11,17 +11,14 @@ Ext.define("PSI.Goods.UnitMainForm", {
 				var me = this;
 				return [{
 							text : "新增计量单位",
-							iconCls : "PSI-button-add",
 							handler : me.onAddUnit,
 							scope : me
 						}, {
 							text : "编辑计量单位",
-							iconCls : "PSI-button-edit",
 							handler : me.onEditUnit,
 							scope : me
 						}, {
 							text : "删除计量单位",
-							iconCls : "PSI-button-delete",
 							handler : me.onDeleteUnit,
 							scope : me
 						}, "-", {

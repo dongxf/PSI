@@ -21,19 +21,16 @@ Ext.define("PSI.Warehouse.MainForm", {
 		var result = [{
 					text : "新增仓库",
 					disabled : me.getPAdd() == "0",
-					iconCls : "PSI-button-add",
 					handler : me.onAddWarehouse,
 					scope : me
 				}, {
 					text : "编辑仓库",
-					iconCls : "PSI-button-edit",
 					disabled : me.getPEdit() == "0",
 					handler : me.onEditWarehouse,
 					scope : me
 				}, {
 					text : "删除仓库",
 					disabled : me.getPDelete() == "0",
-					iconCls : "PSI-button-delete",
 					handler : me.onDeleteWarehouse,
 					scope : me
 				}, "-", {
@@ -47,7 +44,6 @@ Ext.define("PSI.Warehouse.MainForm", {
 		if (me.getPInitInv() == "1") {
 			result.push("-", {
 						text : "打开库存建账模块",
-						iconCls : "PSI-button-openmodule",
 						handler : function() {
 							window.open(me
 									.URL("Home/MainMenu/navigateTo/fid/2000"));

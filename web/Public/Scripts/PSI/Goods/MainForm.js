@@ -98,25 +98,21 @@ Ext.define("PSI.Goods.MainForm", {
 		return [{
 					text : "新增商品分类",
 					disabled : me.getPAddCategory() == "0",
-					iconCls : "PSI-button-add",
 					handler : me.onAddCategory,
 					scope : me
 				}, {
 					text : "编辑商品分类",
 					disabled : me.getPEditCategory() == "0",
-					iconCls : "PSI-button-edit",
 					handler : me.onEditCategory,
 					scope : me
 				}, {
 					text : "删除商品分类",
 					disabled : me.getPDeleteCategory() == "0",
-					iconCls : "PSI-button-delete",
 					handler : me.onDeleteCategory,
 					scope : me
 				}, "-", {
 					text : "新增商品",
 					disabled : me.getPAddGoods() == "0",
-					iconCls : "PSI-button-add-detail",
 					handler : me.onAddGoods,
 					scope : me
 				}, {
@@ -128,13 +124,11 @@ Ext.define("PSI.Goods.MainForm", {
 				}, "-", {
 					text : "修改商品",
 					disabled : me.getPEditGoods() == "0",
-					iconCls : "PSI-button-edit-detail",
 					handler : me.onEditGoods,
 					scope : me
 				}, {
 					text : "删除商品",
 					disabled : me.getPDeleteGoods() == "0",
-					iconCls : "PSI-button-delete-detail",
 					handler : me.onDeleteGoods,
 					scope : me
 				}, "-", {

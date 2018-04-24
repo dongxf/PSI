@@ -75,37 +75,31 @@ Ext.define("PSI.Supplier.MainForm", {
 		return [{
 					text : "新增供应商分类",
 					disabled : me.getPAddCategory() == "0",
-					iconCls : "PSI-button-add",
 					handler : me.onAddCategory,
 					scope : me
 				}, {
 					text : "编辑供应商分类",
 					disabled : me.getPEditCategory() == "0",
-					iconCls : "PSI-button-edit",
 					handler : me.onEditCategory,
 					scope : me
 				}, {
 					text : "删除供应商分类",
 					disabled : me.getPDeleteCategory() == "0",
-					iconCls : "PSI-button-delete",
 					handler : me.onDeleteCategory,
 					scope : me
 				}, "-", {
 					text : "新增供应商",
 					disabled : me.getPAddSupplier() == "0",
-					iconCls : "PSI-button-add-detail",
 					handler : me.onAddSupplier,
 					scope : me
 				}, {
 					text : "修改供应商",
 					disabled : me.getPEditSupplier() == "0",
-					iconCls : "PSI-button-edit-detail",
 					handler : me.onEditSupplier,
 					scope : me
 				}, {
 					text : "删除供应商",
 					disabled : me.getPDeleteSupplier() == "0",
-					iconCls : "PSI-button-delete-detail",
 					handler : me.onDeleteSupplier,
 					scope : me
 				}, "-", {

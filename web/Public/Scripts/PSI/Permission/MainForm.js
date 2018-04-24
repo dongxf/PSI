@@ -83,20 +83,17 @@ Ext.define("PSI.Permission.MainForm", {
 					text : "新增角色",
 					handler : me.onAddRole,
 					scope : me,
-					disabled : me.getPAdd() == "0",
-					iconCls : "PSI-button-add"
+					disabled : me.getPAdd() == "0"
 				}, {
 					text : "编辑角色",
 					handler : me.onEditRole,
 					scope : me,
-					disabled : me.getPEdit() == "0",
-					iconCls : "PSI-button-edit"
+					disabled : me.getPEdit() == "0"
 				}, {
 					text : "删除角色",
 					handler : me.onDeleteRole,
 					scope : me,
-					disabled : me.getPDelete() == "0",
-					iconCls : "PSI-button-delete"
+					disabled : me.getPDelete() == "0"
 				}, "-", {
 					text : "帮助",
 					iconCls : "PSI-help",
