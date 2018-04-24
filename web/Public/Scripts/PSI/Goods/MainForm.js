@@ -44,6 +44,7 @@ Ext.define("PSI.Goods.MainForm", {
 							}, {
 								region : "center",
 								layout : "border",
+								border : 0,
 								items : [{
 									region : "center",
 									xtype : "panel",
