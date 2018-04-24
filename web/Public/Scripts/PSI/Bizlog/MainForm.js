@@ -16,11 +16,13 @@ Ext.define("PSI.Bizlog.MainForm", {
 	afxGetToolbarCmp : function() {
 		var me = this;
 
+		var store = me.getMainGrid().getStore();
+
 		var buttons = [{
 					id : "pagingToobar",
 					xtype : "pagingtoolbar",
 					border : 0,
-					store : me.getMainGrid().getStore()
+					store : store
 				}, "-", {
 					xtype : "displayfield",
 					value : "每页显示"

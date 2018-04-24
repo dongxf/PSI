@@ -230,6 +230,11 @@
 	border-color: transparent transparent #adc6ff transparent;
 }
 
+.PSI-toolbox .x-form-text {
+	background-image: none;
+	border-color: #adc6ff;
+}
+
 .x-form-type-text textarea.x-form-invalid-field, .x-form-type-text input.x-form-invalid-field,
 	.x-form-type-password textarea.x-form-invalid-field,
 	.x-form-type-password input.x-form-invalid-field, .x-form-type-number textarea.x-form-invalid-field,

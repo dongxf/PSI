@@ -7,8 +7,47 @@ Ext.define("PSI.Report.SafetyInventoryForm", {
 	initComponent : function() {
 		var me = this;
 
+		var store = me.getMainGrid().getStore();
+
 		Ext.apply(me, {
 					tbar : [{
+								id : "pagingToobar",
+								cls : "PSI-toolbox",
+								xtype : "pagingtoolbar",
+								border : 0,
+								store : store
+							}, "-", {
+								xtype : "displayfield",
+								value : "每页显示"
+							}, {
+								id : "comboCountPerPage",
+								cls : "PSI-toolbox",
+								xtype : "combobox",
+								editable : false,
+								width : 60,
+								store : Ext.create("Ext.data.ArrayStore", {
+											fields : ["text"],
+											data : [["20"], ["50"], ["100"],
+													["300"], ["1000"]]
+										}),
+								value : 20,
+								listeners : {
+									change : {
+										fn : function() {
+											store.pageSize = Ext
+													.getCmp("comboCountPerPage")
+													.getValue();
+											store.currentPage = 1;
+											Ext.getCmp("pagingToobar")
+													.doRefresh();
+										},
+										scope : me
+									}
+								}
+							}, {
+								xtype : "displayfield",
+								value : "条记录"
+							}, "-", {
 								text : "查询",
 								iconCls : "PSI-button-refresh",
 								handler : me.onQuery,
@@ -133,44 +172,7 @@ Ext.define("PSI.Report.SafetyInventoryForm", {
 								menuDisabled : true,
 								sortable : false
 							}],
-					store : store,
-					tbar : [{
-								id : "pagingToobar",
-								xtype : "pagingtoolbar",
-								border : 0,
-								store : store
-							}, "-", {
-								xtype : "displayfield",
-								value : "每页显示"
-							}, {
-								id : "comboCountPerPage",
-								xtype : "combobox",
-								editable : false,
-								width : 60,
-								store : Ext.create("Ext.data.ArrayStore", {
-											fields : ["text"],
-											data : [["20"], ["50"], ["100"],
-													["300"], ["1000"]]
-										}),
-								value : 20,
-								listeners : {
-									change : {
-										fn : function() {
-											store.pageSize = Ext
-													.getCmp("comboCountPerPage")
-													.getValue();
-											store.currentPage = 1;
-											Ext.getCmp("pagingToobar")
-													.doRefresh();
-										},
-										scope : me
-									}
-								}
-							}, {
-								xtype : "displayfield",
-								value : "条记录"
-							}],
-					listeners : {}
+					store : store
 				});
 
 		return me.__mainGrid;
