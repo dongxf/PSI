@@ -70,8 +70,9 @@ Ext.define("PSI.User.MainForm", {
 							}],
 					items : [{
 								region : "north",
-								height : 3,
-								border : 0
+								height : 2,
+								border : 0,
+								bodyStyle : "background-color:#f5f5f5"
 							}, {
 								region : "center",
 								xtype : "panel",
