@@ -16,12 +16,10 @@ Ext.define("PSI.Funds.PrePaymentMainForm", {
 		Ext.apply(me, {
 					tbar : [{
 								text : "预付供应商采购货款",
-								iconCls : "PSI-button-add",
 								handler : me.onPaymentMoney,
 								scope : me
 							}, "-", {
 								text : "供应商退回采购预付款",
-								iconCls : "PSI-button-delete",
 								handler : me.onReturnMoney,
 								scope : me
 							}, "-", {
@@ -46,7 +44,6 @@ Ext.define("PSI.Funds.PrePaymentMainForm", {
 								scope : me
 							}, "-", {
 								text : "关闭",
-								iconCls : "PSI-button-exit",
 								handler : function() {
 									me.closeWindow();
 								}

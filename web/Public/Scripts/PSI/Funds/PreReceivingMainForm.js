@@ -16,12 +16,10 @@ Ext.define("PSI.Funds.PreReceivingMainForm", {
 		Ext.apply(me, {
 					tbar : [{
 								text : "收取预收款",
-								iconCls : "PSI-button-add",
 								handler : me.onReceivingMoney,
 								scope : me
 							}, "-", {
 								text : "退还预收款",
-								iconCls : "PSI-button-delete",
 								handler : me.onReturnMoney,
 								scope : me
 							}, "-", {
@@ -46,7 +44,6 @@ Ext.define("PSI.Funds.PreReceivingMainForm", {
 								scope : me
 							}, "-", {
 								text : "关闭",
-								iconCls : "PSI-button-exit",
 								handler : function() {
 									me.closeWindow();
 								}
