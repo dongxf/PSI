@@ -19,6 +19,7 @@ Ext.define("PSI.Bizlog.MainForm", {
 		var store = me.getMainGrid().getStore();
 
 		var buttons = [{
+					cls : "PSI-toolbox",
 					id : "pagingToobar",
 					xtype : "pagingtoolbar",
 					border : 0,
@@ -27,6 +28,7 @@ Ext.define("PSI.Bizlog.MainForm", {
 					xtype : "displayfield",
 					value : "每页显示"
 				}, {
+					cls : "PSI-toolbox",
 					id : "comboCountPerPage",
 					xtype : "combobox",
 					editable : false,

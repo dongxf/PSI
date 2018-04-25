@@ -34,6 +34,7 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 								xtype : "displayfield",
 								value : "查询条件: 商品编码"
 							}, {
+								cls : "PSI-toolbox",
 								xtype : "textfield",
 								id : "editQueryCode",
 								listeners : {
@@ -46,6 +47,7 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 								xtype : "displayfield",
 								value : "品名"
 							}, {
+								cls : "PSI-toolbox",
 								xtype : "textfield",
 								id : "editQueryName",
 								listeners : {
@@ -58,6 +60,7 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 								xtype : "displayfield",
 								value : "规格型号"
 							}, {
+								cls : "PSI-toolbox",
 								xtype : "textfield",
 								id : "editQuerySpec",
 								listeners : {

@@ -154,6 +154,10 @@
 .x-tab-bar-default-top {
 	background-image: none;
 	background-color: #DAE6F3;
+	font-family: "Monospaced Number", "Chinese Quote", -apple-system,
+		BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC",
+		"Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica,
+		Arial, sans-serif;
 }
 
 .x-panel-body-default {
@@ -200,6 +204,12 @@
 
 .x-tab-default .x-tab-inner {
 	font-weight: normal;
+	font-size: 13px;
+	color: #002766;
+	font-family: "Monospaced Number", "Chinese Quote", -apple-system,
+		BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC",
+		"Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica,
+		Arial, sans-serif;
 	color: #002766;
 }
 

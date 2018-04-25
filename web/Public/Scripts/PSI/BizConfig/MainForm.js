@@ -29,6 +29,7 @@ Ext.define("PSI.BizConfig.MainForm", {
 							xtype : "displayfield",
 							value : "公司 "
 						}, {
+							cls : "PSI-toolbox",
 							xtype : "combobox",
 							id : "comboCompany",
 							queryMode : "local",
