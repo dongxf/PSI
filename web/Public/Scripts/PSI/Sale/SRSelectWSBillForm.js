@@ -179,6 +179,7 @@ Ext.define("PSI.Sale.SRSelectWSBillForm", {
 				});
 
 		me.__wsBillGrid = Ext.create("Ext.grid.Panel", {
+			cls : "PSI",
 			columnLines : true,
 			columns : [Ext.create("Ext.grid.RowNumberer", {
 								text : "序号",
@@ -349,6 +350,7 @@ Ext.define("PSI.Sale.SRSelectWSBillForm", {
 				});
 
 		me.__detailGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
 					viewConfig : {
 						enableTextSelection : true
 					},
@@ -356,7 +358,7 @@ Ext.define("PSI.Sale.SRSelectWSBillForm", {
 					columnLines : true,
 					columns : [Ext.create("Ext.grid.RowNumberer", {
 										text : "序号",
-										width : 30
+										width : 40
 									}), {
 								header : "商品编码",
 								dataIndex : "goodsCode",

@@ -7,7 +7,7 @@ Ext.define("PSI.Supplier.SupplierField", {
 
 	config : {
 		callbackFunc : null,
-		callbackScope: null,
+		callbackScope : null,
 		showAddButton : false
 	},
 
@@ -53,6 +53,7 @@ Ext.define("PSI.Supplier.SupplierField", {
 					data : []
 				});
 		var lookupGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
 					columnLines : true,
 					border : 0,
 					store : store,

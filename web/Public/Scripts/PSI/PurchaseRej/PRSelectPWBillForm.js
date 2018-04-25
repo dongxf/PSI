@@ -171,6 +171,7 @@ Ext.define("PSI.PurchaseRej.PRSelectPWBillForm", {
 				});
 
 		me.__billGrid = Ext.create("Ext.grid.Panel", {
+			cls : "PSI",
 			columnLines : true,
 			columns : [Ext.create("Ext.grid.RowNumberer", {
 								text : "序号",
@@ -289,6 +290,7 @@ Ext.define("PSI.PurchaseRej.PRSelectPWBillForm", {
 				});
 
 		me.__pwbillDetailGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
 					title : "采购入库单明细",
 					viewConfig : {
 						enableTextSelection : true
@@ -296,7 +298,7 @@ Ext.define("PSI.PurchaseRej.PRSelectPWBillForm", {
 					columnLines : true,
 					columns : [Ext.create("Ext.grid.RowNumberer", {
 										text : "序号",
-										width : 30
+										width : 40
 									}), {
 								header : "商品编码",
 								dataIndex : "goodsCode",

@@ -1,216 +1,218 @@
 // 自定义字段 - 用户字段
 Ext.define("PSI.User.UserField", {
-    extend: "Ext.form.field.Trigger",
-    alias: "widget.psi_userfield",
+	extend : "Ext.form.field.Trigger",
+	alias : "widget.psi_userfield",
 
-    /**
-     * 初始化组件
-     */
-    initComponent: function () {
-    	var me = this;
-    	me.__idValue = null;
-    	
-        me.enableKeyEvents = true;
+	/**
+	 * 初始化组件
+	 */
+	initComponent : function() {
+		var me = this;
+		me.__idValue = null;
 
-        me.callParent(arguments);
+		me.enableKeyEvents = true;
 
-        me.on("keydown", function (field, e) {
-        	if (me.readOnly) {
-        		return;
-        	}
-            if (e.getKey() == e.BACKSPACE) {
-                field.setValue(null);
-                me.setIdValue(null);
-                e.preventDefault();
-                return false;
-            }
+		me.callParent(arguments);
 
-            if (e.getKey() != e.ENTER && !e.isSpecialKey(e.getKey())) {
-                me.onTriggerClick(e);
-            }
-        });
-    },
+		me.on("keydown", function(field, e) {
+					if (me.readOnly) {
+						return;
+					}
+					if (e.getKey() == e.BACKSPACE) {
+						field.setValue(null);
+						me.setIdValue(null);
+						e.preventDefault();
+						return false;
+					}
 
-    onTriggerClick: function (e) {
-        var me = this;
-        var modelName = "PSIUserField";
-        Ext.define(modelName, {
-            extend: "Ext.data.Model",
-            fields: ["id", "loginName", "name"]
-        });
+					if (e.getKey() != e.ENTER && !e.isSpecialKey(e.getKey())) {
+						me.onTriggerClick(e);
+					}
+				});
+	},
 
-        var store = Ext.create("Ext.data.Store", {
-            model: modelName,
-            autoLoad: false,
-            data: []
-        });
-        var lookupGrid = Ext.create("Ext.grid.Panel", {
-            columnLines: true,
-            border: 0,
-            store: store,
-            columns: [{
-            	header: "登录名", dataIndex: "loginName", menuDisabled: true
-            },{
-                header: "人员", dataIndex: "name", menuDisabled: true, flex: 1
-            }]
-        });
-        me.lookupGrid = lookupGrid;
-        me.lookupGrid.on("itemdblclick", me.onOK, me);
+	onTriggerClick : function(e) {
+		var me = this;
+		var modelName = "PSIUserField";
+		Ext.define(modelName, {
+					extend : "Ext.data.Model",
+					fields : ["id", "loginName", "name"]
+				});
 
-        var wnd = Ext.create("Ext.window.Window", {
-            title: "选择 - 人员",
-            modal: true,
-            width: 400,
-            height: 300,
-            layout: "border",
-            items: [
-                {
-                    region: "center",
-                    xtype: "panel",
-                    layout: "fit",
-                    border: 0,
-                    items: [lookupGrid]
-                },
-                {
-                    xtype: "panel",
-                    region: "south",
-                    height: 40,
-                    layout: "fit",
-                    border: 0,
-                    items: [
-                        {
-                            xtype: "form",
-                            layout: "form",
-                            bodyPadding: 5,
-                            items: [
-                                {
-                                    id: "__editUser",
-                                    xtype: "textfield",
-                                    fieldLabel: "人员",
-                                    labelWidth: 50,
-                                    labelAlign: "right",
-                                    labelSeparator: ""
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ],
-            buttons: [
-                {
-                    text: "确定", handler: me.onOK, scope: me
-                },
-                {
-                    text: "取消", handler: function () { wnd.close(); }
-                }
-            ]
-        });
+		var store = Ext.create("Ext.data.Store", {
+					model : modelName,
+					autoLoad : false,
+					data : []
+				});
+		var lookupGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
+					columnLines : true,
+					border : 0,
+					store : store,
+					columns : [{
+								header : "登录名",
+								dataIndex : "loginName",
+								menuDisabled : true
+							}, {
+								header : "人员",
+								dataIndex : "name",
+								menuDisabled : true,
+								flex : 1
+							}]
+				});
+		me.lookupGrid = lookupGrid;
+		me.lookupGrid.on("itemdblclick", me.onOK, me);
 
-        wnd.on("close", function () {
-            me.focus();
-        });
-        me.wnd = wnd;
+		var wnd = Ext.create("Ext.window.Window", {
+					title : "选择 - 人员",
+					modal : true,
+					width : 400,
+					height : 300,
+					layout : "border",
+					items : [{
+								region : "center",
+								xtype : "panel",
+								layout : "fit",
+								border : 0,
+								items : [lookupGrid]
+							}, {
+								xtype : "panel",
+								region : "south",
+								height : 40,
+								layout : "fit",
+								border : 0,
+								items : [{
+											xtype : "form",
+											layout : "form",
+											bodyPadding : 5,
+											items : [{
+														id : "__editUser",
+														xtype : "textfield",
+														fieldLabel : "人员",
+														labelWidth : 50,
+														labelAlign : "right",
+														labelSeparator : ""
+													}]
+										}]
+							}],
+					buttons : [{
+								text : "确定",
+								handler : me.onOK,
+								scope : me
+							}, {
+								text : "取消",
+								handler : function() {
+									wnd.close();
+								}
+							}]
+				});
 
-        var editName = Ext.getCmp("__editUser");
-        editName.on("change", function () {
-            var store = me.lookupGrid.getStore();
-            Ext.Ajax.request({
-                url: PSI.Const.BASE_URL + "Home/User/queryData",
-                params: {
-                    queryKey: editName.getValue()
-                },
-                method: "POST",
-                callback: function (opt, success, response) {
-                    store.removeAll();
-                    if (success) {
-                        var data = Ext.JSON.decode(response.responseText);
-                        store.add(data);
-                        if (data.length > 0) {
-                            me.lookupGrid.getSelectionModel().select(0);
-                            editName.focus();
-                        }
-                    } else {
-                        PSI.MsgBox.showInfo("网络错误");
-                    }
-                },
-                scope: this
-            });
+		wnd.on("close", function() {
+					me.focus();
+				});
+		me.wnd = wnd;
 
-        }, me);
+		var editName = Ext.getCmp("__editUser");
+		editName.on("change", function() {
+			var store = me.lookupGrid.getStore();
+			Ext.Ajax.request({
+						url : PSI.Const.BASE_URL + "Home/User/queryData",
+						params : {
+							queryKey : editName.getValue()
+						},
+						method : "POST",
+						callback : function(opt, success, response) {
+							store.removeAll();
+							if (success) {
+								var data = Ext.JSON
+										.decode(response.responseText);
+								store.add(data);
+								if (data.length > 0) {
+									me.lookupGrid.getSelectionModel().select(0);
+									editName.focus();
+								}
+							} else {
+								PSI.MsgBox.showInfo("网络错误");
+							}
+						},
+						scope : this
+					});
 
-        editName.on("specialkey", function (field, e) {
-            if (e.getKey() == e.ENTER) {
-                me.onOK();
-            } else if (e.getKey() == e.UP) {
-                var m = me.lookupGrid.getSelectionModel();
-                var store = me.lookupGrid.getStore();
-                var index = 0;
-                for (var i = 0; i < store.getCount() ; i++) {
-                    if (m.isSelected(i)) {
-                        index = i;
-                    }
-                }
-                index--;
-                if (index < 0) {
-                    index = 0;
-                }
-                m.select(index);
-                e.preventDefault();
-                editName.focus();
-            } else if (e.getKey() == e.DOWN) {
-                var m = me.lookupGrid.getSelectionModel();
-                var store = me.lookupGrid.getStore();
-                var index = 0;
-                for (var i = 0; i < store.getCount() ; i++) {
-                    if (m.isSelected(i)) {
-                        index = i;
-                    }
-                }
-                index++;
-                if (index > store.getCount() - 1) {
-                    index = store.getCount() - 1;
-                }
-                m.select(index);
-                e.preventDefault();
-                editName.focus();
-            }
-        }, me);
+		}, me);
 
-        me.wnd.on("show", function () {
-            editName.focus();
-            editName.fireEvent("change");
-        }, me);
-        wnd.show();
-    },
+		editName.on("specialkey", function(field, e) {
+					if (e.getKey() == e.ENTER) {
+						me.onOK();
+					} else if (e.getKey() == e.UP) {
+						var m = me.lookupGrid.getSelectionModel();
+						var store = me.lookupGrid.getStore();
+						var index = 0;
+						for (var i = 0; i < store.getCount(); i++) {
+							if (m.isSelected(i)) {
+								index = i;
+							}
+						}
+						index--;
+						if (index < 0) {
+							index = 0;
+						}
+						m.select(index);
+						e.preventDefault();
+						editName.focus();
+					} else if (e.getKey() == e.DOWN) {
+						var m = me.lookupGrid.getSelectionModel();
+						var store = me.lookupGrid.getStore();
+						var index = 0;
+						for (var i = 0; i < store.getCount(); i++) {
+							if (m.isSelected(i)) {
+								index = i;
+							}
+						}
+						index++;
+						if (index > store.getCount() - 1) {
+							index = store.getCount() - 1;
+						}
+						m.select(index);
+						e.preventDefault();
+						editName.focus();
+					}
+				}, me);
 
-    onOK: function () {
-        var me = this;
-        var grid = me.lookupGrid;
-        var item = grid.getSelectionModel().getSelection();
-        if (item == null || item.length != 1) {
-            return;
-        }
+		me.wnd.on("show", function() {
+					editName.focus();
+					editName.fireEvent("change");
+				}, me);
+		wnd.show();
+	},
 
-        var data = item[0].getData();
+	onOK : function() {
+		var me = this;
+		var grid = me.lookupGrid;
+		var item = grid.getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			return;
+		}
 
-        me.wnd.close();
-        me.focus();
-        me.setValue(data.name);
-        me.focus();
-        
-        me.setIdValue(data.id);
-    },
-    
-    setIdValue: function(id) {
-    	this.__idValue = id;
-    },
-    
-    getIdValue: function() {
-    	return this.__idValue;
-    },
-    
-    clearIdValue: function() {
-    	this.setValue(null);
-    	this.__idValue = null;
-    }
+		var data = item[0].getData();
+
+		me.wnd.close();
+		me.focus();
+		me.setValue(data.name);
+		me.focus();
+
+		me.setIdValue(data.id);
+	},
+
+	setIdValue : function(id) {
+		this.__idValue = id;
+	},
+
+	getIdValue : function() {
+		return this.__idValue;
+	},
+
+	clearIdValue : function() {
+		this.setValue(null);
+		this.__idValue = null;
+	}
 });
