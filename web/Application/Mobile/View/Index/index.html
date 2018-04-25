@@ -1,29 +1,52 @@
-<layout name="layout" />
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy"
+	content="default-src * 'self' 'unsafe-inline' 'unsafe-eval' data: gap: content:">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#2196f3">
+<meta name="format-detection" content="telephone=no">
+<meta name="msapplication-tap-highlight" content="no">
+<title>PSI</title>
 
-<ul class="mui-table-view mui-grid-view mui-grid-9">
-	<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-		<a href="{$uri}/Mobile/Index/about"> <span class="mui-icon mui-icon-list"></span>
-			<div class="mui-media-body">价格查询</div>
-	</a>
-	</li>
-	<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-		<a href="{$uri}/Mobile/Index/about"> <span class="mui-icon mui-icon-info"></span>
-			<div class="mui-media-body">关于</div>
-	</a>
-	</li>
-    <li id='close1' class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-		<span class="mui-icon mui-icon-close"></span>
-			<div  class="mui-media-body">退出</div>
-	
-	</li>
-</ul>
-<script>
-    
-    var close1= document.getElementById('close1');
-    close1.addEventListener('tap',function(event) {
-	    sessionStorage.clear();
-        localStorage.clear();
-        location.replace("{$uri}/Mobile/login/login");
-    });
-    
-</script>
+<link rel="stylesheet"
+	href="{$uri}Public/Framework7/framework7/css/framework7.min.css">
+</head>
+<body>
+	<div id="app">
+		<div class="view view-main ios-edges">
+			<div class="page" data-name="home">
+				<div class="navbar">
+					<div class="navbar-inner">
+						<div class="title sliding">PSI</div>
+					</div>
+				</div>
+
+				<div class="page-content">
+					<div class="block-title">关于</div>
+					<div class="list">
+						<ul>
+							<li><a href="/about/" class="item-content item-link">
+									<div class="item-inner">
+										<div class="item-title">关于PSI</div>
+									</div>
+							</a></li>
+						</ul>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="{$uri}Public/Framework7/framework7/js/framework7.min.js"></script>
+
+	<script src="{$uri}Public/H5/JS/routes.js"></script>
+
+	<script src="{$uri}Public/H5/JS/app.js"></script>
+</body>
+</html>

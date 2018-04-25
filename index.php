@@ -14,12 +14,9 @@ if ($_isCGI) {
 $_root = rtrim(dirname($_phpFile), '/');
 $_root = ($_root == '/' || $_root == '\\') ? '' : $_root;
 
-// 2018.1.1 屏蔽掉移动端自动跳转到H5页面
-// $detect = new Mobile_Detect();
-// if ($detect->isMobile()) {
-// header('Location: ' . $_root . '/web/Mobile');
-// } else {
-// header('Location: ' . $_root . '/web/');
-// }
-
-header('Location: ' . $_root . '/web/');
+$detect = new Mobile_Detect();
+if ($detect->isMobile()) {
+	header('Location: ' . $_root . '/web/Mobile');
+} else {
+	header('Location: ' . $_root . '/web/');
+}
