@@ -26,6 +26,7 @@ Ext.define("PSI.Funds.PrePaymentMainForm", {
 								xtype : "displayfield",
 								value : "供应商分类"
 							}, {
+								cls : "PSI-toolbox",
 								xtype : "combobox",
 								id : "comboCategory",
 								queryMode : "local",
@@ -114,8 +115,9 @@ Ext.define("PSI.Funds.PrePaymentMainForm", {
 						enableTextSelection : true
 					},
 					border : 0,
-					bbar : [{
+					bbar : ["->", {
 								xtype : "pagingtoolbar",
+								border : 0,
 								store : store
 							}],
 					columnLines : true,
@@ -255,8 +257,9 @@ Ext.define("PSI.Funds.PrePaymentMainForm", {
 								iconCls : "PSI-button-refresh",
 								handler : me.onQueryDetail,
 								scope : me
-							}, {
+							}, "-", {
 								xtype : "pagingtoolbar",
+								border : 0,
 								store : store
 							}],
 					columnLines : true,

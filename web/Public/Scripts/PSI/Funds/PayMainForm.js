@@ -17,6 +17,7 @@ Ext.define("PSI.Funds.PayMainForm", {
 								xtype : "displayfield",
 								value : "往来单位："
 							}, {
+								cls : "PSI-toolbox",
 								xtype : "combo",
 								id : "comboCA",
 								queryMode : "local",
@@ -38,6 +39,7 @@ Ext.define("PSI.Funds.PayMainForm", {
 								xtype : "displayfield",
 								value : "分类"
 							}, {
+								cls : "PSI-toolbox",
 								xtype : "combobox",
 								id : "comboCategory",
 								queryMode : "local",
@@ -135,8 +137,9 @@ Ext.define("PSI.Funds.PayMainForm", {
 
 		me.__payGrid = Ext.create("Ext.grid.Panel", {
 					cls : "PSI",
-					bbar : [{
+					bbar : ["->", {
 								xtype : "pagingtoolbar",
+								border : 0,
 								store : store
 							}],
 					columnLines : true,
@@ -238,8 +241,9 @@ Ext.define("PSI.Funds.PayMainForm", {
 		me.__payDetailGrid = Ext.create("Ext.grid.Panel", {
 					cls : "PSI",
 					title : "业务单据",
-					bbar : [{
+					bbar : ["->", {
 								xtype : "pagingtoolbar",
+								border : 0,
 								store : store
 							}],
 					columnLines : true,
@@ -373,8 +377,9 @@ Ext.define("PSI.Funds.PayMainForm", {
 								handler : me.onAddPayment,
 								scope : me
 							}],
-					bbar : [{
+					bbar : ["->", {
 								xtype : "pagingtoolbar",
+								border : 0,
 								store : store
 							}],
 					columnLines : true,

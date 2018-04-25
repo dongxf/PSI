@@ -12,6 +12,7 @@ Ext.define("PSI.Funds.CashMainForm", {
 								xtype : "displayfield",
 								value : "业务日期 从"
 							}, {
+								cls : "PSI-toolbox",
 								id : "dtFrom",
 								xtype : "datefield",
 								format : "Y-m-d",
@@ -20,6 +21,7 @@ Ext.define("PSI.Funds.CashMainForm", {
 								xtype : "displayfield",
 								value : " 到 "
 							}, {
+								cls : "PSI-toolbox",
 								id : "dtTo",
 								xtype : "datefield",
 								format : "Y-m-d",
@@ -102,8 +104,9 @@ Ext.define("PSI.Funds.CashMainForm", {
 
 		me.__mainGrid = Ext.create("Ext.grid.Panel", {
 					cls : "PSI",
-					bbar : [{
+					bbar : ["->", {
 								xtype : "pagingtoolbar",
+								border : 0,
 								store : store
 							}],
 					columnLines : true,
@@ -198,8 +201,9 @@ Ext.define("PSI.Funds.CashMainForm", {
 		me.__detailGrid = Ext.create("Ext.grid.Panel", {
 					cls : "PSI",
 					title : "现金收支流水明细",
-					bbar : [{
+					bbar : ["->", {
 								xtype : "pagingtoolbar",
+								border : 0,
 								store : store
 							}],
 					columnLines : true,

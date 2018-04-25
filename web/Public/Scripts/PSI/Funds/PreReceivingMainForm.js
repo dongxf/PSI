@@ -26,6 +26,7 @@ Ext.define("PSI.Funds.PreReceivingMainForm", {
 								xtype : "displayfield",
 								value : "客户分类"
 							}, {
+								cls : "PSI-toolbox",
 								xtype : "combobox",
 								id : "comboCategory",
 								queryMode : "local",
@@ -115,8 +116,9 @@ Ext.define("PSI.Funds.PreReceivingMainForm", {
 						enableTextSelection : true
 					},
 					border : 0,
-					bbar : [{
+					bbar : ["->", {
 								xtype : "pagingtoolbar",
+								border : 0,
 								store : store
 							}],
 					columnLines : true,
@@ -255,8 +257,9 @@ Ext.define("PSI.Funds.PreReceivingMainForm", {
 								iconCls : "PSI-button-refresh",
 								handler : me.onQueryDetail,
 								scope : me
-							}, {
+							}, "-", {
 								xtype : "pagingtoolbar",
+								border : 0,
 								store : store
 							}],
 					columnLines : true,
