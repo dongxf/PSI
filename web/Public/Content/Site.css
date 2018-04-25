@@ -321,6 +321,11 @@
 	vertical-align: top;
 }
 
+.x-grid-row-summary .x-grid-cell, .x-grid-row-summary .x-grid-rowwrap,
+	.x-grid-row-summary .x-grid-cell-rowbody {
+	font-size: 13px;
+}
+
 .x-form-text {
 	background-image: none;
 	border-color: transparent transparent #adc6ff transparent;
