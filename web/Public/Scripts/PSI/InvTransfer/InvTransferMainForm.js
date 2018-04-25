@@ -518,7 +518,7 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
 					columnLines : true,
 					columns : [Ext.create("Ext.grid.RowNumberer", {
 										text : "序号",
-										width : 30
+										width : 40
 									}), {
 								header : "商品编码",
 								dataIndex : "goodsCode",

@@ -406,7 +406,7 @@ Ext.define("PSI.Customer.MainForm", {
 					columnLines : true,
 					columns : [Ext.create("Ext.grid.RowNumberer", {
 										text : "序号",
-										width : 30
+										width : 40
 									}), {
 								header : "客户编码",
 								dataIndex : "code",
