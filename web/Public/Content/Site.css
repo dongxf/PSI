@@ -280,6 +280,14 @@
 	background-image: none;
 }
 
+.x-grid-cell-inner {
+	color: #262626;
+	font-family: "Monospaced Number", "Chinese Quote", -apple-system,
+		BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC",
+		"Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica,
+		Arial, sans-serif;
+}
+
 .PSI .x-grid-row td, .x-grid-summary-row td {
 	line-height: 18px;
 	vertical-align: top;
