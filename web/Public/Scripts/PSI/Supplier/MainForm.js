@@ -120,7 +120,7 @@ Ext.define("PSI.Supplier.MainForm", {
 
 		return [{
 					id : "editQueryCode",
-					labelWidth : 60,
+					labelWidth : 70,
 					labelAlign : "right",
 					labelSeparator : "",
 					fieldLabel : "供应商编码",
@@ -134,7 +134,7 @@ Ext.define("PSI.Supplier.MainForm", {
 					}
 				}, {
 					id : "editQueryName",
-					labelWidth : 60,
+					labelWidth : 70,
 					labelAlign : "right",
 					labelSeparator : "",
 					fieldLabel : "供应商名称",
@@ -148,7 +148,7 @@ Ext.define("PSI.Supplier.MainForm", {
 					}
 				}, {
 					id : "editQueryAddress",
-					labelWidth : 60,
+					labelWidth : 70,
 					labelAlign : "right",
 					labelSeparator : "",
 					fieldLabel : "地址",
@@ -162,7 +162,7 @@ Ext.define("PSI.Supplier.MainForm", {
 					}
 				}, {
 					id : "editQueryContact",
-					labelWidth : 60,
+					labelWidth : 70,
 					labelAlign : "right",
 					labelSeparator : "",
 					fieldLabel : "联系人",
@@ -176,7 +176,7 @@ Ext.define("PSI.Supplier.MainForm", {
 					}
 				}, {
 					id : "editQueryMobile",
-					labelWidth : 60,
+					labelWidth : 70,
 					labelAlign : "right",
 					labelSeparator : "",
 					fieldLabel : "手机",
@@ -190,7 +190,7 @@ Ext.define("PSI.Supplier.MainForm", {
 					}
 				}, {
 					id : "editQueryTel",
-					labelWidth : 60,
+					labelWidth : 70,
 					labelAlign : "right",
 					labelSeparator : "",
 					fieldLabel : "固话",
@@ -204,7 +204,7 @@ Ext.define("PSI.Supplier.MainForm", {
 					}
 				}, {
 					id : "editQueryQQ",
-					labelWidth : 60,
+					labelWidth : 70,
 					labelAlign : "right",
 					labelSeparator : "",
 					fieldLabel : "QQ",

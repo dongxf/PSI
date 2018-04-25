@@ -47,6 +47,7 @@ Ext.define("PSI.Goods.BrandEditForm", {
 						}, {
 							id : "PSI_Goods_BrandEditForm_editName",
 							fieldLabel : "品牌",
+							labelWidth : 60,
 							allowBlank : false,
 							blankText : "没有输入品牌",
 							beforeLabelTextTpl : PSI.Const.REQUIRED,
@@ -64,6 +65,7 @@ Ext.define("PSI.Goods.BrandEditForm", {
 							xtype : "PSI_parent_brand_editor",
 							parentItem : me,
 							fieldLabel : "上级品牌",
+							labelWidth : 60,
 							listeners : {
 								specialkey : {
 									fn : me.onEditParentBrandSpecialKey,

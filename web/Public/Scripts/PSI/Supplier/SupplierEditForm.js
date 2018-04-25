@@ -68,7 +68,7 @@ Ext.define("PSI.Supplier.SupplierEditForm", {
 				bodyPadding : 5,
 				defaultType : 'textfield',
 				fieldDefaults : {
-					labelWidth : 90,
+					labelWidth : 100,
 					labelAlign : "right",
 					labelSeparator : "",
 					msgTarget : 'side'
@@ -127,7 +127,7 @@ Ext.define("PSI.Supplier.SupplierEditForm", {
 								}
 							},
 							colspan : 2,
-							width : 490
+							width : 510
 						}, {
 							id : "PSI_Supplier_SupplierEditForm_editAddress",
 							fieldLabel : "地址",
@@ -141,7 +141,7 @@ Ext.define("PSI.Supplier.SupplierEditForm", {
 								}
 							},
 							colspan : 2,
-							width : 490
+							width : 510
 						}, {
 							id : "PSI_Supplier_SupplierEditForm_editContact01",
 							fieldLabel : "联系人",
@@ -247,7 +247,7 @@ Ext.define("PSI.Supplier.SupplierEditForm", {
 								}
 							},
 							colspan : 2,
-							width : 490
+							width : 510
 						}, {
 							id : "PSI_Supplier_SupplierEditForm_editBankName",
 							fieldLabel : "开户行",
@@ -351,7 +351,7 @@ Ext.define("PSI.Supplier.SupplierEditForm", {
 									scope : me
 								}
 							},
-							width : 490,
+							width : 510,
 							colspan : 2
 						}],
 				buttons : buttons

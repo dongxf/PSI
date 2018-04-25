@@ -67,7 +67,7 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 				bodyPadding : 5,
 				defaultType : 'textfield',
 				fieldDefaults : {
-					labelWidth : 90,
+					labelWidth : 100,
 					labelAlign : "right",
 					labelSeparator : "",
 					msgTarget : 'side'
@@ -125,7 +125,7 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 									scope : me
 								}
 							},
-							width : 490,
+							width : 510,
 							colspan : 2
 						}, {
 							id : "PSI_Customer_CustomerEditForm_editAddress",
@@ -139,7 +139,7 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 									scope : me
 								}
 							},
-							width : 490,
+							width : 510,
 							colspan : 2
 						}, {
 							id : "PSI_Customer_CustomerEditForm_editContact01",
@@ -245,7 +245,7 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 									scope : me
 								}
 							},
-							width : 490,
+							width : 510,
 							colspan : 2
 						}, {
 							id : "PSI_Customer_CustomerEditForm_editBankName",
@@ -332,7 +332,7 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 									scope : me
 								}
 							},
-							width : 490,
+							width : 510,
 							colspan : 2
 						}, {
 							id : "PSI_Customer_CustomerEditForm_editWarehouseId",
@@ -349,7 +349,7 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 									scope : me
 								}
 							},
-							width : 490,
+							width : 510,
 							colspan : 2
 						}],
 				buttons : buttons

@@ -247,11 +247,13 @@
 }
 
 .x-form-item-label {
+	font-size: 13px;
 	color: #196d6d;
 	font-family: "Monospaced Number", "Chinese Quote", -apple-system,
 		BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC",
 		"Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica,
 		Arial, sans-serif;
+	color: #196d6d;
 }
 
 .x-toolbar-item .x-form-display-field {
@@ -263,11 +265,13 @@
 }
 
 .x-form-display-field {
+	font-size: 13px;
 	color: #196d6d;
 	font-family: "Monospaced Number", "Chinese Quote", -apple-system,
 		BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC",
 		"Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica,
 		Arial, sans-serif;
+	color: #196d6d;
 }
 
 .x-form-cb-label {
@@ -327,12 +331,14 @@
 }
 
 .x-form-text {
+	font-size: 13px;
 	background-image: none;
 	border-color: transparent transparent #adc6ff transparent;
 	font-family: "Monospaced Number", "Chinese Quote", -apple-system,
 		BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC",
 		"Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica,
 		Arial, sans-serif;
+	background-image: none;
 }
 
 .PSI-toolbox .x-form-text {

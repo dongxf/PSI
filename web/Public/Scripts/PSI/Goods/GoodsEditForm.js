@@ -94,7 +94,7 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 						bodyPadding : 5,
 						defaultType : 'textfield',
 						fieldDefaults : {
-							labelWidth : 60,
+							labelWidth : 70,
 							labelAlign : "right",
 							labelSeparator : "",
 							msgTarget : 'side'
@@ -125,6 +125,7 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 								}, {
 									id : "PSI_Goods_GoodsEditForm_editCode",
 									fieldLabel : "商品编码",
+									width : 205,
 									allowBlank : false,
 									blankText : "没有输入商品编码",
 									beforeLabelTextTpl : PSI.Const.REQUIRED,
@@ -190,6 +191,7 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 								}, {
 									id : "PSI_Goods_GoodsEditForm_editBarCode",
 									fieldLabel : "条形码",
+									width : 205,
 									name : "barCode",
 									value : entity == null ? null : entity
 											.get("barCode"),
@@ -233,6 +235,7 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 								}, {
 									fieldLabel : "建议采购价",
 									xtype : "numberfield",
+									width : 205,
 									hideTrigger : true,
 									name : "purchasePrice",
 									id : "PSI_Goods_GoodsEditForm_editPurchasePrice",
