@@ -292,7 +292,7 @@ Ext.define("PSI.App", {
 			return;
 		}
 		var panel = Ext.getCmp("__PSITopPanel");
-		var title = "<span style='font-size:160%;color:#196d6d;font-weight:bold;'>"
+		var title = "<span style='font-size:140%;color:#196d6d;font-weight:bold;'>"
 				+ header.title + " - " + this.getProductionName() + "</span>";
 		panel.setTitle(title);
 		// panel.setIconCls(header.iconCls);
