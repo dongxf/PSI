@@ -44,6 +44,7 @@ Ext.define("PSI.User.OrgWithDataOrgField", {
 						});
 
 				var orgTree = Ext.create("Ext.grid.Panel", {
+							cls : "PSI",
 							store : orgStore,
 							columns : [{
 										header : "组织机构",

@@ -38,6 +38,7 @@ Ext.define("PSI.User.OrgEditor", {
 						});
 
 				var orgTree = Ext.create("Ext.tree.Panel", {
+							cls : "PSI",
 							store : orgStore,
 							rootVisible : false,
 							useArrows : true,

@@ -36,7 +36,7 @@ Ext.define("PSI.User.OrgEditForm", {
 				bodyPadding : 5,
 				defaultType : 'textfield',
 				fieldDefaults : {
-					labelWidth : 50,
+					labelWidth : 60,
 					labelAlign : "right",
 					labelSeparator : "",
 					msgTarget : 'side'
