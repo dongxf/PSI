@@ -6,7 +6,8 @@ Ext.define("PSI.Permission.SelectDataOrgForm", {
 
 			config : {
 				parentForm : null,
-				editForm: null // PSI.Permission.EditForm
+				editForm : null
+				// PSI.Permission.EditForm
 			},
 
 			title : "选择数据域",
@@ -94,9 +95,10 @@ Ext.define("PSI.Permission.SelectDataOrgForm", {
 					me.getParentForm().setDataOrgList(fullNameList.join(";"),
 							dataOrgList.join(";"));
 				}
-				
+
 				if (me.getEditForm()) {
-					me.getEditForm().onEditDataOrgCallback(dataOrgList.join(";"));
+					me.getEditForm().onEditDataOrgCallback(dataOrgList
+							.join(";"));
 				}
 
 				me.close();
@@ -121,6 +123,7 @@ Ext.define("PSI.Permission.SelectDataOrgForm", {
 						});
 
 				me.__mainGrid = Ext.create("Ext.grid.Panel", {
+							cls : "PSI",
 							padding : 5,
 							selModel : {
 								mode : "MULTI"
@@ -149,7 +152,7 @@ Ext.define("PSI.Permission.SelectDataOrgForm", {
 				if (me.getParentForm()) {
 					me.getParentForm().setDataOrgList("[本人数据]", "#");
 				}
-				
+
 				if (me.getEditForm()) {
 					me.getEditForm().onEditDataOrgCallback("#");
 				}

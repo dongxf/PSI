@@ -30,6 +30,7 @@ Ext.define("PSI.Permission.SelectUserForm", {
 						});
 
 				var grid = Ext.create("Ext.grid.Panel", {
+							cls : "PSI",
 							title : "属于当前角色的用户",
 							padding : 5,
 							selModel : {

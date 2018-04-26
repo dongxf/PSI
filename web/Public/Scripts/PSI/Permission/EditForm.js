@@ -20,6 +20,7 @@ Ext.define("PSI.Permission.EditForm", {
 				});
 
 		var permissionGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
 					title : "角色的权限",
 					padding : 5,
 					selModel : {
@@ -86,6 +87,7 @@ Ext.define("PSI.Permission.EditForm", {
 				});
 
 		var userGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
 					title : "属于当前角色的用户",
 					padding : 5,
 					selModel : {

@@ -22,12 +22,15 @@ Ext.define("PSI.Permission.SelectPermissionForm", {
 			items : [{
 						region : "center",
 						layout : "border",
+						bodyStyle : "background-color:white",
 						border : 0,
 						items : [{
 									region : "north",
 									layout : "border",
 									height : "50%",
-									border : 0,
+									border : 1,
+									cls : "PSI",
+									margin : 5,
 									title : "所有可以选择的权限",
 									items : [{
 												region : "west",
@@ -45,6 +48,7 @@ Ext.define("PSI.Permission.SelectPermissionForm", {
 								}, {
 									region : "center",
 									layout : "fit",
+									cls : "PSI",
 									border : 0,
 									items : [me.getSelectedGrid()]
 								}]
@@ -195,6 +199,8 @@ Ext.define("PSI.Permission.SelectPermissionForm", {
 				});
 
 		me.__permissionGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
+					border : 0,
 					store : store,
 					bbar : [{
 								text : "全部添加",
@@ -317,7 +323,9 @@ Ext.define("PSI.Permission.SelectPermissionForm", {
 				});
 
 		me.__categoryGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
 					store : store,
+					border : 0,
 					columns : [{
 								header : "权限分类",
 								dataIndex : "name",
