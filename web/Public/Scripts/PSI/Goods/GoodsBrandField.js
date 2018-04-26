@@ -50,6 +50,7 @@ Ext.define("PSI.Goods.GoodsBrandField", {
 						});
 
 				var tree = Ext.create("Ext.tree.Panel", {
+							cls : "PSI",
 							store : store,
 							rootVisible : false,
 							useArrows : true,
