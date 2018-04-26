@@ -339,7 +339,7 @@ Ext.define("PSI.Home.MainForm", {
 			height : 240,
 			margin : "5",
 			header : {
-				title : "<span style='font-size:120%;font-weight:bold;'>销售看板</span>",
+				title : "<span style='font-size:120%;font-weight:normal;'>销售看板</span>",
 				iconCls : "PSI-portal-sale",
 				height : 40
 			},
@@ -352,7 +352,7 @@ Ext.define("PSI.Home.MainForm", {
 		var me = this;
 		return {
 			header : {
-				title : "<span style='font-size:120%;font-weight:bold;'>采购看板</span>",
+				title : "<span style='font-size:120%;font-weight:normal;'>采购看板</span>",
 				iconCls : "PSI-portal-purchase",
 				height : 40
 			},
@@ -369,7 +369,7 @@ Ext.define("PSI.Home.MainForm", {
 		var me = this;
 		return {
 			header : {
-				title : "<span style='font-size:120%;font-weight:bold;'>库存看板</span>",
+				title : "<span style='font-size:120%;font-weight:normal;'>库存看板</span>",
 				iconCls : "PSI-portal-inventory",
 				height : 40
 			},
@@ -386,7 +386,7 @@ Ext.define("PSI.Home.MainForm", {
 		var me = this;
 		return {
 			header : {
-				title : "<span style='font-size:120%;font-weight:bold;'>资金看板</span>",
+				title : "<span style='font-size:120%;font-weight:normal;'>资金看板</span>",
 				iconCls : "PSI-portal-money",
 				height : 40
 			},
