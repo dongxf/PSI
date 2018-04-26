@@ -51,6 +51,7 @@ Ext.define("PSI.Goods.GoodsWithPurchaseFieldField", {
 					data : []
 				});
 		var lookupGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
 					columnLines : true,
 					border : 0,
 					store : store,
