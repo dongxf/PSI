@@ -1357,16 +1357,109 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 		me.confirm(info, funcConfirm);
 	},
 
+	/**
+	 * 打印预览
+	 */
 	onPrintPreview : function() {
 		var lodop = getLodop();
 		if (!lodop) {
 			PSI.MsgBox.showInfo("没有安装Lodop控件，无法打印");
 			return;
 		}
-		PSI.MsgBox.showInfo("TODO");
+
+		var me = this;
+
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			me.showInfo("没有选择要打印的采购订单");
+			return;
+		}
+		var bill = item[0];
+
+		var el = Ext.getBody();
+		el.mask("数据加载中...");
+		var r = {
+			url : PSI.Const.BASE_URL + "Home/Purchase/genPOBillPrintPage",
+			params : {
+				id : bill.get("id")
+			},
+			callback : function(options, success, response) {
+				el.unmask();
+
+				if (success) {
+					var data = response.responseText;
+					me.previewPOBill(bill.get("ref"), data);
+				}
+			}
+		};
+		me.ajax(r);
 	},
 
+	previewPOBill : function(ref, data) {
+		var me = this;
+
+		var lodop = getLodop();
+		if (!lodop) {
+			PSI.MsgBox.showInfo("Lodop打印控件没有正确安装");
+			return;
+		}
+
+		lodop.PRINT_INIT("采购订单" + ref);
+		lodop.SET_PRINT_PAGESIZE(1, "200mm", "95mm", "");
+		lodop.ADD_PRINT_HTM("0mm", "0mm", "100%", "100%", data);
+		var result = lodop.PREVIEW("_blank");
+	},
+
+	/**
+	 * 直接打印
+	 */
 	onPrint : function() {
-		PSI.MsgBox.showInfo("TODO");
+		var lodop = getLodop();
+		if (!lodop) {
+			PSI.MsgBox.showInfo("没有安装Lodop控件，无法打印");
+			return;
+		}
+
+		var me = this;
+
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			me.showInfo("没有选择要打印的采购订单");
+			return;
+		}
+		var bill = item[0];
+
+		var el = Ext.getBody();
+		el.mask("数据加载中...");
+		var r = {
+			url : PSI.Const.BASE_URL + "Home/Purchase/genPOBillPrintPage",
+			params : {
+				id : bill.get("id")
+			},
+			callback : function(options, success, response) {
+				el.unmask();
+
+				if (success) {
+					var data = response.responseText;
+					me.printPOBill(bill.get("ref"), data);
+				}
+			}
+		};
+		me.ajax(r);
+	},
+
+	printPOBill : function(ref, data) {
+		var me = this;
+
+		var lodop = getLodop();
+		if (!lodop) {
+			PSI.MsgBox.showInfo("Lodop打印控件没有正确安装");
+			return;
+		}
+
+		lodop.PRINT_INIT("采购订单" + ref);
+		lodop.SET_PRINT_PAGESIZE(1, "200mm", "95mm", "");
+		lodop.ADD_PRINT_HTM("0mm", "0mm", "100%", "100%", data);
+		var result = lodop.PRINT();
 	}
 });

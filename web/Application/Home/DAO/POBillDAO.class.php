@@ -1111,12 +1111,17 @@ class POBillDAO extends PSIBaseExDAO {
 		$result["dealAddress"] = $v["deal_address"];
 		$result["billMemo"] = $v["bill_memo"];
 		
+		$companyId = $v["company_id"];
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
 		$sql = "select p.id, g.code, g.name, g.spec, convert(p.goods_count, $fmt) as goods_count,
-		p.goods_price, p.goods_money,
-		p.tax_rate, p.tax, p.money_with_tax, u.name as unit_name
-		from t_po_bill_detail p, t_goods g, t_goods_unit u
-		where p.pobill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id
-		order by p.show_order";
+				p.goods_price, p.goods_money,
+				p.tax_rate, p.tax, p.money_with_tax, u.name as unit_name
+				from t_po_bill_detail p, t_goods g, t_goods_unit u
+				where p.pobill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id
+				order by p.show_order";
 		$items = [];
 		$data = $db->query($sql, $id);
 		
