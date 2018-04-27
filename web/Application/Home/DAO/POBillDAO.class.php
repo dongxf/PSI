@@ -1085,7 +1085,7 @@ class POBillDAO extends PSIBaseExDAO {
 		
 		$id = $params["id"];
 		
-		$sql = "select p.id, p.bill_status, p.goods_money, p.tax, p.money_with_tax,
+		$sql = "select p.bill_status, p.goods_money, p.tax, p.money_with_tax,
 					s.name as supplier_name, p.contact, p.tel, p.fax, p.deal_address,
 					p.deal_date, p.payment_type, p.bill_memo, p.date_created,
 					o.full_name as org_name, u1.name as biz_user_name, u2.name as input_user_name,
@@ -1111,7 +1111,28 @@ class POBillDAO extends PSIBaseExDAO {
 		$result["dealAddress"] = $v["deal_address"];
 		$result["billMemo"] = $v["bill_memo"];
 		
-		$result["items"] = [];
+		$sql = "select p.id, g.code, g.name, g.spec, convert(p.goods_count, $fmt) as goods_count,
+		p.goods_price, p.goods_money,
+		p.tax_rate, p.tax, p.money_with_tax, u.name as unit_name
+		from t_po_bill_detail p, t_goods g, t_goods_unit u
+		where p.pobill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id
+		order by p.show_order";
+		$items = [];
+		$data = $db->query($sql, $id);
+		
+		foreach ( $data as $v ) {
+			$items[] = [
+					"goodsCode" => $v["code"],
+					"goodsName" => $v["name"],
+					"goodsSpec" => $v["spec"],
+					"goodsCount" => $v["goods_count"],
+					"unitName" => $v["unit_name"],
+					"goodsPrice" => $v["goods_price"],
+					"goodsMoney" => $v["goods_money"]
+			];
+		}
+		
+		$result["items"] = $items;
 		
 		return $result;
 	}
