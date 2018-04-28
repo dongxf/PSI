@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy"
+	content="default-src * 'self' 'unsafe-inline' 'unsafe-eval' data: gap: content:">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#2196f3">
+<meta name="format-detection" content="telephone=no">
+<meta name="msapplication-tap-highlight" content="no">
+<title>PSI</title>
+
+<link rel="stylesheet"
+	href="{$uri}Public/Framework7/framework7/css/framework7.min.css">
+</head>
+<body>
+	<div id="app">
+		<div class="view view-main ios-edges">
+			<div class="page-content login-screen-content">
+				<div class="login-screen-title">PSI</div>
+				<!-- Login form -->
+				<form>
+					<div class="list">
+						<ul>
+							<li class="item-content item-input">
+								<div class="item-inner">
+									<div class="item-title item-label">登录名</div>
+									<div class="item-input-wrap">
+										<input type="text" name="logigName" placeholder="请输入登录名">
+										<span class="input-clear-button"></span>
+									</div>
+								</div>
+							</li>
+							<li class="item-content item-input">
+								<div class="item-inner">
+									<div class="item-title item-label">密码</div>
+									<div class="item-input-wrap">
+										<input type="password" name="password" placeholder="请输入登录密码">
+										<span class="input-clear-button"></span>
+									</div>
+								</div>
+							</li>
+						</ul>
+					</div>
+					<div class="list">
+						<ul>
+							<li><a href="#" class="item-link list-button">登录</a></li>
+						</ul>
+						<div class="block-footer">当前处于演示环境，请勿保存正式数据<br/>默认的登录名和密码均为 admin </div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<script src="{$uri}Public/Framework7/framework7/js/framework7.min.js"></script>
+
+	<script src="{$uri}Public/H5/JS/routes.js"></script>
+
+	<script src="{$uri}Public/H5/JS/app.js"></script>
+</body>
+</html>
