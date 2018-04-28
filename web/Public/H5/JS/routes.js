@@ -1,13 +1,17 @@
+function toURL(url) {
+	return baseURI + "Public/H5/Pages/" + url;
+}
+
 routesPSI = [{
 			path : '/',
 			async : function(routeTo, routeFrom, resolve, reject) {
 				if (true) {
 					resolve({
-								url : './Public/H5/Pages/home.html'
+								url : toURL("home.html")
 							});
 				} else {
 					resolve({
-								url : './Public/H5/Pages/login.html'
+								url : toURL("login.html")
 							});
 
 				}
@@ -17,11 +21,11 @@ routesPSI = [{
 
 routesPSI.push({
 			path : '/about/',
-			url : './Public/H5/Pages/about.html'
+			url : toURL("about.html")
 		});
 
 // Default route (404 page). MUST BE THE LAST
 routesPSI.push({
 			path : '(.*)',
-			url : './Public/H5/Pages/404.html'
+			url : toURL("404.html")
 		});
