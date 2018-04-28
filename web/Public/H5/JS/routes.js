@@ -11,7 +11,7 @@ routesPSI = [{
 							});
 				} else {
 					resolve({
-								url : toURL("login.html")
+								templateUrl : toURL("login.html")
 							});
 
 				}
