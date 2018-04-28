@@ -16,7 +16,7 @@ var app  = new Framework7({
   methods: {
   },
   // App routes
-  routes: routes,
+  routes: routesPSI
 });
 
 // Init/Create main view
