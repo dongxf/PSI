@@ -68,8 +68,8 @@
 	</div>
 	<div class="top-bar-right">
 		<ul class="menu">
-			<li><a href="https://gitee.com/crm8000/PSI"
-				target="_blank"><span style="font-size: 1em">官网</span></a></li>
+			<li><a href="https://gitee.com/crm8000/PSI" target="_blank"><span
+					style="font-size: 1em">官网</span></a></li>
 			<li><a href="{$uri}Home/Help/index?t=login" target="_blank"><span
 					style="font-size: 1em">帮助</span></a></li>
 		</ul>
@@ -125,7 +125,10 @@
 <footer>
 	<div class="row">
 		<div class="large-3 columns">&nbsp;</div>
-		<div class="large-6 columns"><span style="font-size:0.8em">Copyright &copy; 2015-{$year} PSI Team, All Rights Reserved</span></div>
+		<div class="large-6 columns">
+			<span style="font-size: 0.8em">Copyright &copy; 2015-{$year}
+				PSI Team, All Rights Reserved</span>
+		</div>
 		<div class="large-3 columns">&nbsp;</div>
 	</div>
 </footer>
@@ -190,6 +193,7 @@
 
 		var r = {
 			url : PSI.Const.BASE_URL + "Home/User/loginPOST",
+			method : "POST",
 			params : {
 				loginName : loginName,
 				password : password,
