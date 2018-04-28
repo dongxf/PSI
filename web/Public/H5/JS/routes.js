@@ -5,7 +5,7 @@ function toURL(url) {
 routesPSI = [{
 			path : '/',
 			async : function(routeTo, routeFrom, resolve, reject) {
-				if (true) {
+				if (userIsLoggedIn) {
 					resolve({
 								url : toURL("home.html")
 							});
