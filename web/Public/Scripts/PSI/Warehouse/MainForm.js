@@ -114,7 +114,7 @@ Ext.define("PSI.Warehouse.MainForm", {
 								dataIndex : "inited",
 								menuDisabled : true,
 								sortable : false,
-								width : 70,
+								width : 90,
 								renderer : function(value) {
 									return value == 1
 											? "建账完毕"
@@ -124,7 +124,8 @@ Ext.define("PSI.Warehouse.MainForm", {
 								header : "创建人的数据域",
 								dataIndex : "dataOrg",
 								menuDisabled : true,
-								sortable : false
+								sortable : false,
+								width : 150
 							}],
 					store : Ext.create("Ext.data.Store", {
 								model : modelName,
