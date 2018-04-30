@@ -253,6 +253,10 @@ h1 {
 	color: #196d6d;
 }
 
+.x-btn-default-toolbar-small-over {
+	background-image: none;
+}
+
 .x-menu-item-text {
 	color: #196d6d;
 }
@@ -383,7 +387,7 @@ h1 {
 }
 
 ::-webkit-scrollbar {
-	width: 12px;
+	width: 10px;
 	height: 10px;
 	background-color: #f5f5f5;
 }
