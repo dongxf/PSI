@@ -321,7 +321,7 @@ Ext.define("PSI.InvCheck.ICEditForm", {
 					plugins : [me.__cellEditing],
 					columnLines : true,
 					columns : [Ext.create("Ext.grid.RowNumberer", {
-										text : "序号",
+										text : "",
 										width : 30
 									}), {
 								header : "商品编码",
