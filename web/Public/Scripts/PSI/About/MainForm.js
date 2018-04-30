@@ -26,21 +26,22 @@ Ext.define("PSI.About.MainForm", {
 				iconCls : "PSI-fid-9994",
 				height : 40
 			},
-			height : 300,
+			height : 350,
 			items : [{
 				border : 0,
 				xtype : "container",
 				margin : "0 0 0 10",
+				cls : "PSI-about",
 				html : "<h1>欢迎使用"
 						+ me.getProductionName()
 						+ "</h1><p>当前版本："
 						+ PSI.Const.VERSION
 						+ "</p>"
 						+ "<p>产品源码下载请访问  <a href='https://gitee.com/crm8000/PSI' target='_blank'>https://gitee.com/crm8000/PSI</a></p>"
-						+ "<p>技术支持QQ群 414474186</p>" + "<p>PHP版本号:"
+						+ "<p>技术支持QQ群 414474186</p>" + "<p>PHP版本号: "
 						+ me.getPhpVersion() + " , MySQL版本号: "
-						+ me.getMySQLVersion() + "</p><p>数据库表结构版本号:"
-						+ me.getPSIDBVersion() + "</p><p>数据库表结构更新时间:"
+						+ me.getMySQLVersion() + "</p><p>数据库表结构版本号: "
+						+ me.getPSIDBVersion() + "</p><p>数据库表结构更新时间: "
 						+ me.getPSIDBUpdateDT() + "</p>"
 			}],
 			buttons : [{
