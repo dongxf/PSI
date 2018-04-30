@@ -1085,7 +1085,7 @@ class POBillDAO extends PSIBaseExDAO {
 		
 		$id = $params["id"];
 		
-		$sql = "select p.bill_status, p.goods_money, p.tax, p.money_with_tax,
+		$sql = "select p.ref, p.bill_status, p.goods_money, p.tax, p.money_with_tax,
 					s.name as supplier_name, p.contact, p.tel, p.fax, p.deal_address,
 					p.deal_date, p.payment_type, p.bill_memo, p.date_created,
 					o.full_name as org_name, u1.name as biz_user_name, u2.name as input_user_name,
@@ -1101,15 +1101,18 @@ class POBillDAO extends PSIBaseExDAO {
 		}
 		
 		$v = $data[0];
+		$result["ref"] = $v["ref"];
 		$result["goodsMoney"] = $v["goods_money"];
 		$result["tax"] = $v["tax"];
 		$result["moneyWithTax"] = $v["money_with_tax"];
 		$result["supplierName"] = $v["supplier_name"];
 		$result["contact"] = $v["contact"];
 		$result["tel"] = $v["tel"];
-		$result["dealDate"] = $v["deal_date"];
+		$result["dealDate"] = $this->toYMD($v["deal_date"]);
 		$result["dealAddress"] = $v["deal_address"];
 		$result["billMemo"] = $v["bill_memo"];
+		
+		$result["printDT"] = date("Y-m-d H:i:s");
 		
 		$companyId = $v["company_id"];
 		$bcDAO = new BizConfigDAO($db);
@@ -1133,7 +1136,9 @@ class POBillDAO extends PSIBaseExDAO {
 					"goodsCount" => $v["goods_count"],
 					"unitName" => $v["unit_name"],
 					"goodsPrice" => $v["goods_price"],
-					"goodsMoney" => $v["goods_money"]
+					"goodsMoney" => $v["goods_money"],
+					"taxRate" => intval($v["tax_rate"]),
+					"goodsMoneyWithTax" => $v["money_with_tax"]
 			];
 		}
 		
