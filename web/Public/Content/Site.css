@@ -257,8 +257,17 @@ h1, h2 {
 	background-image: none;
 }
 
+.x-btn-default-toolbar-small-menu-active,
+	.x-btn-default-toolbar-small-pressed {
+	background-image: none;
+}
+
 .x-menu-item-text {
 	color: #196d6d;
+}
+
+.x-menu-item-active {
+	background-image: none;
 }
 
 .x-column-header-text {
