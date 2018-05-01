@@ -234,7 +234,7 @@ Ext.define("PSI.Home.MainForm", {
 							}, {
 								header : "超过库存上限的商品种类数",
 								dataIndex : "iuCount",
-								width : 160,
+								width : 170,
 								menuDisabled : true,
 								sortable : false,
 								align : "right",
