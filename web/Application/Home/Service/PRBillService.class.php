@@ -296,4 +296,21 @@ class PRBillService extends PSIBaseExService {
 		
 		$pdf->Output("$ref.pdf", "I");
 	}
+
+	/**
+	 * 生成打印采购退货出库单的页面
+	 *
+	 * @param array $params        	
+	 * @return array
+	 */
+	public function getPRBillDataForLodopPrint($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$params["companyId"] = $this->getCompanyId();
+		
+		$dao = new PRBillDAO($this->db());
+		return $dao->getPRBillDataForLodopPrint($params);
+	}
 }

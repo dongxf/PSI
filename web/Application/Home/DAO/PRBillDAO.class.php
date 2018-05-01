@@ -1282,7 +1282,7 @@ class PRBillDAO extends PSIBaseExDAO {
 				"billStatus" => $v["bill_status"],
 				"supplierName" => $v["supplier_name"],
 				"goodsMoney" => $v["rejection_money"],
-				"bizDT" => $this->toYMD($v["biz_dt"]),
+				"bizDT" => $this->toYMD($v["bizdt"]),
 				"warehouseName" => $v["warehouse_name"],
 				"bizUserName" => $v["biz_user_name"]
 		];
@@ -1378,6 +1378,76 @@ class PRBillDAO extends PSIBaseExDAO {
 					"rejCount" => $v["rej_count"],
 					"rejPrice" => $v["rej_price"],
 					"rejMoney" => $v["rej_money"]
+			];
+		}
+		
+		$result["items"] = $items;
+		
+		return $result;
+	}
+
+	/**
+	 * 生成打印采购退货出库单的页面
+	 *
+	 * @param array $params        	
+	 */
+	public function getPRBillDataForLodopPrint($params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		
+		$sql = "select p.ref, p.bill_status, w.name as warehouse_name, p.bizdt,
+					p.rejection_money, u1.name as biz_user_name, u2.name as input_user_name,
+					s.name as supplier_name, p.date_created, p.receiving_type, p.company_id
+				from t_pr_bill p, t_warehouse w, t_user u1, t_user u2, t_supplier s
+				where (p.warehouse_id = w.id)
+					and (p.biz_user_id = u1.id)
+					and (p.input_user_id = u2.id)
+					and (p.supplier_id = s.id)
+					and (p.id = '%s')";
+		
+		$data = $db->query($sql, $id);
+		if (! $data) {
+			return null;
+		}
+		
+		$v = $data[0];
+		$companyId = $v["company_id"];
+		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
+		$result = [
+				"ref" => $v["ref"],
+				"billStatus" => $v["bill_status"],
+				"supplierName" => $v["supplier_name"],
+				"goodsMoney" => $v["rejection_money"],
+				"bizDT" => $this->toYMD($v["bizdt"]),
+				"warehouseName" => $v["warehouse_name"],
+				"bizUserName" => $v["biz_user_name"],
+				"printDT" => date("Y-m-d H:i:s")
+		];
+		
+		$sql = "select g.code, g.name, g.spec, u.name as unit_name,
+				convert(p.rejection_goods_count, $fmt) as rej_count, p.rejection_goods_price as rej_price,
+				p.rejection_money as rej_money
+				from t_pr_bill_detail p, t_goods g, t_goods_unit u
+				where p.goods_id = g.id and g.unit_id = u.id and p.prbill_id = '%s'
+				and p.rejection_goods_count > 0
+				order by p.show_order";
+		$items = [];
+		$data = $db->query($sql, $id);
+		
+		foreach ( $data as $v ) {
+			$items[] = [
+					"goodsCode" => $v["code"],
+					"goodsName" => $v["name"],
+					"goodsSpec" => $v["spec"],
+					"goodsCount" => $v["rej_count"],
+					"unitName" => $v["unit_name"],
+					"goodsPrice" => $v["rej_price"],
+					"goodsMoney" => $v["rej_money"]
 			];
 		}
 		

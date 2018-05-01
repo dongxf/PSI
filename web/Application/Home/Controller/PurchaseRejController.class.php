@@ -201,4 +201,20 @@ class PurchaseRejController extends PSIBaseController {
 		$ps = new PRBillService();
 		$ps->pdf($params);
 	}
+
+	/**
+	 * 生成打印采购退货出库单的页面
+	 */
+	public function genPRBillPrintPage() {
+		if (IS_POST) {
+			$params = [
+					"id" => I("post.id")
+			];
+			
+			$ss = new PRBillService();
+			$data = $ss->getPRBillDataForLodopPrint($params);
+			$this->assign("data", $data);
+			$this->display();
+		}
+	}
 }
