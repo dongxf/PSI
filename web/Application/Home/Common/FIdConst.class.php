@@ -335,6 +335,11 @@ class FIdConst {
 	const PURCHASE_WAREHOUSE_CAN_VIEW_PRICE = "2001-06";
 	
 	/**
+	 * 采购入库 - 打印
+	 */
+	const PURCHASE_WAREHOUSE_PRINT = "2001-07";
+	
+	/**
 	 * 库存账查询
 	 */
 	const INVENTORY_QUERY = "2003";
