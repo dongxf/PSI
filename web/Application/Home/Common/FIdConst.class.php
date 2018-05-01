@@ -640,6 +640,11 @@ class FIdConst {
 	const PURCHASE_ORDER_PDF = "2027-07";
 	
 	/**
+	 * 采购订单 - 打印
+	 */
+	const PURCHASE_ORDER_PRINT = "2027-08";
+	
+	/**
 	 * 销售订单
 	 */
 	const SALE_ORDER = "2028";
