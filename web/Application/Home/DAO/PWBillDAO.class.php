@@ -1667,4 +1667,17 @@ class PWBillDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 生成打印采购入库单的页面
+	 * 
+	 * @param array $params        	
+	 */
+	public function getPWBillDataForLodopPrint($params) {
+		$db = $this->db;
+		
+		$result = [];
+		
+		return $result;
+	}
 }

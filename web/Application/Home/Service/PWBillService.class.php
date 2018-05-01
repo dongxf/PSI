@@ -350,4 +350,20 @@ class PWBillService extends PSIBaseExService {
 		$dao = new PWBillDAO($this->db());
 		return $dao->pwBillDetailListForPRBill($params);
 	}
+
+	/**
+	 * 生成打印采购入库单的页面
+	 *
+	 * @param array $params        	
+	 */
+	public function getPWBillDataForLodopPrint($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$params["companyId"] = $this->getCompanyId();
+		
+		$dao = new PWBillDAO($this->db());
+		return $dao->getPWBillDataForLodopPrint($params);
+	}
 }

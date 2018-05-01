@@ -356,4 +356,20 @@ class PurchaseController extends PSIBaseController {
 			$this->display();
 		}
 	}
+
+	/**
+	 * 生成打印采购入库单的页面
+	 */
+	public function genPWBillPrintPage() {
+		if (IS_POST) {
+			$params = [
+					"id" => I("post.id")
+			];
+			
+			$ss = new PWBillService();
+			$data = $ss->getPWBillDataForLodopPrint($params);
+			$this->assign("data", $data);
+			$this->display();
+		}
+	}
 }
