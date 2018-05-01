@@ -1384,6 +1384,9 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 		me.ajax(r);
 	},
 
+	PRINT_PAGE_WIDTH : "200mm",
+	PRINT_PAGE_HEIGHT : "95mm",
+
 	previewPOBill : function(ref, data) {
 		var me = this;
 
@@ -1394,7 +1397,8 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 		}
 
 		lodop.PRINT_INIT("采购订单" + ref);
-		lodop.SET_PRINT_PAGESIZE(1, "200mm", "95mm", "");
+		lodop.SET_PRINT_PAGESIZE(1, me.PRINT_PAGE_WIDTH, me.PRINT_PAGE_HEIGHT,
+				"");
 		lodop.ADD_PRINT_HTM("0mm", "0mm", "100%", "100%", data);
 		var result = lodop.PREVIEW("_blank");
 	},
@@ -1447,7 +1451,8 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 		}
 
 		lodop.PRINT_INIT("采购订单" + ref);
-		lodop.SET_PRINT_PAGESIZE(1, "200mm", "95mm", "");
+		lodop.SET_PRINT_PAGESIZE(1, me.PRINT_PAGE_WIDTH, me.PRINT_PAGE_HEIGHT,
+				"");
 		lodop.ADD_PRINT_HTM("0mm", "0mm", "100%", "100%", data);
 		var result = lodop.PRINT();
 	}
