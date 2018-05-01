@@ -49,21 +49,6 @@ Ext.define("PSI.Purchase.PWMainForm", {
 
 		me.callParent(arguments);
 
-		var bAdd = me.getPermission().add == "1";
-		Ext.getCmp("buttonAdd").setVisible(bAdd);
-
-		var bEdit = me.getPermission().edit == "1";
-		Ext.getCmp("buttonEdit").setVisible(bEdit);
-
-		var bDel = me.getPermission().del == "1";
-		Ext.getCmp("buttonDelete").setVisible(bDel);
-
-		var bCommit = me.getPermission().commit == "1";
-		Ext.getCmp("buttonCommit").setVisible(bCommit);
-
-		var bPDF = me.getPermission().genPDF == "1";
-		Ext.getCmp("buttonPDF").setVisible(bPDF);
-
 		me.refreshMainGrid();
 	},
 
@@ -71,25 +56,42 @@ Ext.define("PSI.Purchase.PWMainForm", {
 		var me = this;
 		return [{
 					text : "新建采购入库单",
+					hidden : me.getPermission().add == "0",
 					id : "buttonAdd",
 					scope : me,
 					handler : me.onAddBill
-				}, "-", {
+				}, {
+					hidden : me.getPermission().add == "0",
+					xtype : "tbseparator"
+				}, {
 					text : "编辑采购入库单",
+					hidden : me.getPermission().edit == "0",
 					scope : me,
 					handler : me.onEditBill,
 					id : "buttonEdit"
-				}, "-", {
+				}, {
+					hidden : me.getPermission().edit == "0",
+					xtype : "tbseparator"
+				}, {
 					text : "删除采购入库单",
+					hidden : me.getPermission().del == "0",
 					scope : me,
 					handler : me.onDeleteBill,
 					id : "buttonDelete"
-				}, "-", {
+				}, {
+					hidden : me.getPermission().del == "0",
+					xtype : "tbseparator"
+				}, {
 					text : "提交入库",
+					hidden : me.getPermission().commit == "0",
 					scope : me,
 					handler : me.onCommit,
 					id : "buttonCommit"
-				}, "-", {
+				}, {
+					hidden : me.getPermission().commit == "0",
+					xtype : "tbseparator"
+				}, {
+					hidden : me.getPermission().genPDF == "0",
 					text : "导出",
 					menu : [{
 								text : "单据生成pdf",
@@ -98,7 +100,10 @@ Ext.define("PSI.Purchase.PWMainForm", {
 								scope : me,
 								handler : me.onPDF
 							}]
-				}, "-", {
+				}, {
+					hidden : me.getPermission().genPDF == "0",
+					xtype : "tbseparator"
+				}, {
 					text : "打印",
 					hidden : me.getPermission().print == "0",
 					menu : [{
@@ -112,7 +117,10 @@ Ext.define("PSI.Purchase.PWMainForm", {
 								scope : me,
 								handler : me.onPrint
 							}]
-				}, "-", {
+				}, {
+					hidden : me.getPermission().print == "0",
+					xtype : "tbseparator"
+				}, {
 					text : "帮助",
 					handler : function() {
 						window.open(me.URL("/Home/Help/index?t=pwbill"));
