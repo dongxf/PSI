@@ -42,8 +42,7 @@
 	src="{$uri}Public/Scripts/PSI/Warehouse/WarehouseField.js?dt={$dtFlag}"
 	type="text/javascript"></script>
 
-<script
-	src="{$uri}Public/Lodop/LodopFuncs.js?dt={$dtFlag}"
+<script src="{$uri}Public/Lodop/LodopFuncs.js?dt={$dtFlag}"
 	type="text/javascript"></script>
 
 <script>
@@ -61,7 +60,8 @@
 			genPDF : "{$pGenPDF}",
 			confirm : "{$pConfirm}",
 			genPWBill : "{$pGenPWBill}",
-			showAddGoodsButton : "{$showAddGoodsButton}"
+			showAddGoodsButton : "{$showAddGoodsButton}",
+			print : "{$pPrint}"
 		};
 
 		app.add(Ext.create("PSI.PurchaseOrder.POMainForm", {

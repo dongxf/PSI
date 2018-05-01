@@ -162,6 +162,7 @@ class PurchaseController extends PSIBaseController {
 			$this->assign("pCloseBill", 
 					$us->hasPermission(FIdConst::PURCHASE_ORDER_CLOSE) ? "1" : "0");
 			$this->assign("pGenPDF", $us->hasPermission(FIdConst::PURCHASE_ORDER_PDF) ? "1" : "0");
+			$this->assign("pPrint", $us->hasPermission(FIdConst::PURCHASE_ORDER_PRINT) ? "1" : "0");
 			
 			$this->display();
 		} else {
