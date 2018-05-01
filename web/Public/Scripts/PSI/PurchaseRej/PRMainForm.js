@@ -85,16 +85,37 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
 					scope : me,
 					handler : me.onDeleteBill
 				}, "-", {
-					text : "提交采购退货出库单",
+					text : "提交出库",
 					id : "buttonCommit",
 					scope : me,
 					handler : me.onCommit
 				}, "-", {
-					text : "单据生成pdf",
-					id : "buttonPDF",
-					scope : me,
-					handler : me.onPDF
+					text : "导出",
+					menu : [{
+								text : "单据生成pdf",
+								id : "buttonPDF",
+								iconCls : "PSI-button-pdf",
+								scope : me,
+								handler : me.onPDF
+							}]
 				}, "-", {
+					text : "打印",
+					hidden : me.getPermission().print == "0",
+					menu : [{
+								text : "打印预览",
+								iconCls : "PSI-button-print-preview",
+								scope : me,
+								handler : me.onPrintPreview
+							}, "-", {
+								text : "直接打印",
+								iconCls : "PSI-button-print",
+								scope : me,
+								handler : me.onPrint
+							}]
+				}, {
+					xtype : "tbseparator",
+					hidden : me.getPermission().print == "0"
+				}, {
 					text : "帮助",
 					handler : function() {
 						window.open(me.URL("/Home/Help/index?t=prbill"));
@@ -788,5 +809,13 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
 		var url = PSI.Const.BASE_URL + "Home/PurchaseRej/prBillPdf?ref="
 				+ bill.get("ref");
 		window.open(url);
+	},
+
+	onPrintPreview : function() {
+		PSI.MsgBox.showInfo("TODO");
+	},
+
+	onPrint : function() {
+		PSI.MsgBox.showInfo("TODO");
 	}
 });
