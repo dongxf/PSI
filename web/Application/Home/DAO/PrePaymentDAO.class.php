@@ -232,6 +232,7 @@ class PrePaymentDAO extends PSIBaseExDAO {
 				from t_pre_payment r, t_supplier c
 				where r.supplier_id = c.id and c.category_id = '%s'
 					and r.company_id = '%s'
+				order by c.code
 				limit %d , %d
 				";
 		$data = $db->query($sql, $categoryId, $companyId, $start, $limit);
