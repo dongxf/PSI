@@ -450,6 +450,11 @@ class FIdConst {
 	const INVENTORY_TRANSFER_PDF = "2009-05";
 	
 	/**
+	 * 库间调拨 - 打印
+	 */
+	const INVENTORY_TRANSFER_PRINT = "2009-06";
+	
+	/**
 	 * 库存盘点
 	 */
 	const INVENTORY_CHECK = "2010";
