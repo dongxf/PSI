@@ -889,4 +889,69 @@ class ICBillDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 生成打印盘点单的数据
+	 *
+	 * @param array $params        	
+	 */
+	public function getICBillDataForLodopPrint($params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		
+		$sql = "select t.ref, t.bizdt, t.bill_status,
+					w.name as warehouse_name,
+					u.name as biz_user_name,
+					u1.name as input_user_name,
+					t.date_created, t.bill_memo, t.company_id
+				from t_ic_bill t, t_warehouse w, t_user u, t_user u1
+				where (t.warehouse_id = w.id)
+				and (t.biz_user_id = u.id)
+				and (t.input_user_id = u1.id)
+				and (t.id = '%s')";
+		$data = $db->query($sql, $id);
+		if (! $data) {
+			return null;
+		}
+		
+		$companyId = $data[0]["company_id"];
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
+		$bill = [];
+		
+		$bill["ref"] = $data[0]["ref"];
+		$bill["bizDT"] = $this->toYMD($data[0]["bizdt"]);
+		$bill["warehouseName"] = $data[0]["warehouse_name"];
+		$bill["bizUserName"] = $data[0]["biz_user_name"];
+		$bill["billMemo"] = $data[0]["bill_memo"];
+		
+		$bill["printDT"] = date("Y-m-d H:i:s");
+		
+		// 明细表
+		$sql = "select t.id, g.code, g.name, g.spec, u.name as unit_name,
+				convert(t.goods_count, $fmt) as goods_count, t.goods_money,
+				t.memo
+				from t_ic_bill_detail t, t_goods g, t_goods_unit u
+				where t.icbill_id = '%s' and t.goods_id = g.id and g.unit_id = u.id
+				order by t.show_order ";
+		$data = $db->query($sql, $id);
+		$items = array();
+		foreach ( $data as $v ) {
+			$items[] = [
+					"goodsCode" => $v["code"],
+					"goodsName" => $v["name"],
+					"goodsSpec" => $v["spec"],
+					"unitName" => $v["unit_name"],
+					"goodsCount" => $v["goods_count"],
+					"goodsMoney" => $v["goods_money"],
+					"memo" => $v["memo"]
+			];
+		}
+		$bill["items"] = $items;
+		
+		return $bill;
+	}
 }

@@ -93,11 +93,32 @@ Ext.define("PSI.InvCheck.InvCheckMainForm", {
 					scope : me,
 					handler : me.onCommit
 				}, "-", {
-					text : "单据生成pdf",
-					id : "buttonPDF",
-					scope : me,
-					handler : me.onPDF
+					text : "导出",
+					menu : [{
+								text : "单据生成pdf",
+								id : "buttonPDF",
+								iconCls : "PSI-button-pdf",
+								scope : me,
+								handler : me.onPDF
+							}]
 				}, "-", {
+					text : "打印",
+					hidden : me.getPermission().print == "0",
+					menu : [{
+								text : "打印预览",
+								iconCls : "PSI-button-print-preview",
+								scope : me,
+								handler : me.onPrintPreview
+							}, "-", {
+								text : "直接打印",
+								iconCls : "PSI-button-print",
+								scope : me,
+								handler : me.onPrint
+							}]
+				}, {
+					xtype : "tbseparator",
+					hidden : me.getPermission().print == "0"
+				}, {
 					text : "帮助",
 					handler : function() {
 						window.open(me.URL("/Home/Help/index?t=icbill"));
@@ -733,5 +754,110 @@ Ext.define("PSI.InvCheck.InvCheckMainForm", {
 		var url = PSI.Const.BASE_URL + "Home/InvCheck/pdf?ref="
 				+ bill.get("ref");
 		window.open(url);
+	},
+
+	onPrintPreview : function() {
+		var lodop = getLodop();
+		if (!lodop) {
+			PSI.MsgBox.showInfo("没有安装Lodop控件，无法打印");
+			return;
+		}
+
+		var me = this;
+
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			me.showInfo("没有选择要打印的盘点单");
+			return;
+		}
+		var bill = item[0];
+
+		var el = Ext.getBody();
+		el.mask("数据加载中...");
+		var r = {
+			url : PSI.Const.BASE_URL + "Home/InvCheck/genICBillPrintPage",
+			params : {
+				id : bill.get("id")
+			},
+			callback : function(options, success, response) {
+				el.unmask();
+
+				if (success) {
+					var data = response.responseText;
+					me.previewICBill(bill.get("ref"), data);
+				}
+			}
+		};
+		me.ajax(r);
+	},
+
+	PRINT_PAGE_WIDTH : "200mm",
+	PRINT_PAGE_HEIGHT : "95mm",
+
+	previewICBill : function(ref, data) {
+		var me = this;
+
+		var lodop = getLodop();
+		if (!lodop) {
+			PSI.MsgBox.showInfo("Lodop打印控件没有正确安装");
+			return;
+		}
+
+		lodop.PRINT_INIT("盘点单" + ref);
+		lodop.SET_PRINT_PAGESIZE(1, me.PRINT_PAGE_WIDTH, me.PRINT_PAGE_HEIGHT,
+				"");
+		lodop.ADD_PRINT_HTM("0mm", "0mm", "100%", "100%", data);
+		var result = lodop.PREVIEW("_blank");
+	},
+
+	onPrint : function() {
+		var lodop = getLodop();
+		if (!lodop) {
+			PSI.MsgBox.showInfo("没有安装Lodop控件，无法打印");
+			return;
+		}
+
+		var me = this;
+
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			me.showInfo("没有选择要打印的盘点单");
+			return;
+		}
+		var bill = item[0];
+
+		var el = Ext.getBody();
+		el.mask("数据加载中...");
+		var r = {
+			url : PSI.Const.BASE_URL + "Home/InvCheck/genICBillPrintPage",
+			params : {
+				id : bill.get("id")
+			},
+			callback : function(options, success, response) {
+				el.unmask();
+
+				if (success) {
+					var data = response.responseText;
+					me.printICBill(bill.get("ref"), data);
+				}
+			}
+		};
+		me.ajax(r);
+	},
+
+	printICBill : function(ref, data) {
+		var me = this;
+
+		var lodop = getLodop();
+		if (!lodop) {
+			PSI.MsgBox.showInfo("Lodop打印控件没有正确安装");
+			return;
+		}
+
+		lodop.PRINT_INIT("盘点单" + ref);
+		lodop.SET_PRINT_PAGESIZE(1, me.PRINT_PAGE_WIDTH, me.PRINT_PAGE_HEIGHT,
+				"");
+		lodop.ADD_PRINT_HTM("0mm", "0mm", "100%", "100%", data);
+		var result = lodop.PRINT();
 	}
 });

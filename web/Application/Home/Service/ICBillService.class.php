@@ -270,4 +270,20 @@ class ICBillService extends PSIBaseExService {
 		
 		$pdf->Output("$ref.pdf", "I");
 	}
+
+	/**
+	 * 生成打印盘点单的数据
+	 * 
+	 * @param array $params        	
+	 */
+	public function getICBillDataForLodopPrint($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$params["companyId"] = $this->getCompanyId();
+		
+		$dao = new ICBillDAO($this->db());
+		return $dao->getICBillDataForLodopPrint($params);
+	}
 }
