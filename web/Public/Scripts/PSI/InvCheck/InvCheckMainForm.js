@@ -52,21 +52,6 @@ Ext.define("PSI.InvCheck.InvCheckMainForm", {
 
 		me.callParent(arguments);
 
-		var bAdd = me.getPermission().add == "1";
-		Ext.getCmp("buttonAdd").setVisible(bAdd);
-
-		var bEdit = me.getPermission().edit == "1";
-		Ext.getCmp("buttonEdit").setVisible(bEdit);
-
-		var bDel = me.getPermission().del == "1";
-		Ext.getCmp("buttonDelete").setVisible(bDel);
-
-		var bCommit = me.getPermission().commit == "1";
-		Ext.getCmp("buttonCommit").setVisible(bCommit);
-
-		var bPDF = me.getPermission().genPDF == "1";
-		Ext.getCmp("buttonPDF").setVisible(bPDF);
-
 		me.refreshMainGrid();
 	},
 
@@ -74,26 +59,43 @@ Ext.define("PSI.InvCheck.InvCheckMainForm", {
 		var me = this;
 		return [{
 					text : "新建盘点单",
+					hidden : me.getPermission().add == "0",
 					id : "buttonAdd",
 					scope : me,
 					handler : me.onAddBill
-				}, "-", {
+				}, {
+					xtype : "tbseparator",
+					hidden : me.getPermission().add == "0"
+				}, {
 					text : "编辑盘点单",
+					hidden : me.getPermission().edit == "0",
 					id : "buttonEdit",
 					scope : me,
 					handler : me.onEditBill
-				}, "-", {
+				}, {
+					xtype : "tbseparator",
+					hidden : me.getPermission().edit == "0"
+				}, {
 					text : "删除盘点单",
+					hidden : me.getPermission().del == "0",
 					id : "buttonDelete",
 					scope : me,
 					handler : me.onDeleteBill
-				}, "-", {
+				}, {
+					xtype : "tbseparator",
+					hidden : me.getPermission().del == "0"
+				}, {
 					text : "提交盘点单",
+					hidden : me.getPermission().commit == "0",
 					id : "buttonCommit",
 					scope : me,
 					handler : me.onCommit
-				}, "-", {
+				}, {
+					xtype : "tbseparator",
+					hidden : me.getPermission().commit == "0"
+				}, {
 					text : "导出",
+					hidden : me.getPermission().genPDF == "0",
 					menu : [{
 								text : "单据生成pdf",
 								id : "buttonPDF",
@@ -101,7 +103,10 @@ Ext.define("PSI.InvCheck.InvCheckMainForm", {
 								scope : me,
 								handler : me.onPDF
 							}]
-				}, "-", {
+				}, {
+					xtype : "tbseparator",
+					hidden : me.getPermission().genPDF == "0"
+				}, {
 					text : "打印",
 					hidden : me.getPermission().print == "0",
 					menu : [{
@@ -465,7 +470,9 @@ Ext.define("PSI.InvCheck.InvCheckMainForm", {
 							scope : me
 						},
 						itemdblclick : {
-							fn : me.onEditBill,
+							fn : me.getPermission().edit == "1"
+									? me.onEditBill
+									: Ext.emptyFn,
 							scope : me
 						}
 					},

@@ -32,6 +32,7 @@ class InvCheckController extends PSIBaseController {
 			$this->assign("pCommit", 
 					$us->hasPermission(FIdConst::INVENTORY_CHECK_COMMIT) ? "1" : "0");
 			$this->assign("pGenPDF", $us->hasPermission(FIdConst::INVENTORY_CHECK_PDF) ? "1" : "0");
+			$this->assign("pPrint", $us->hasPermission(FIdConst::INVENTORY_CHECK_PRINT) ? "1" : "0");
 			
 			$this->display();
 		} else {
