@@ -497,4 +497,20 @@ class SaleController extends PSIBaseController {
 			$this->display();
 		}
 	}
+
+	/**
+	 * 生成打印销售出库单的页面
+	 */
+	public function genWSBillPrintPage() {
+		if (IS_POST) {
+			$params = [
+					"id" => I("post.id")
+			];
+			
+			$ss = new WSBillService();
+			$data = $ss->getWSBillDataForLodopPrint($params);
+			$this->assign("data", $data);
+			$this->display();
+		}
+	}
 }

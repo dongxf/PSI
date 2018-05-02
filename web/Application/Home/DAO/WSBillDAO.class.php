@@ -1643,4 +1643,72 @@ class WSBillDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 获得打印销售出库单的数据
+	 *
+	 * @param array $params        	
+	 * @return array
+	 */
+	public function getWSBillDataForLodopPrint($params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		
+		$sql = "select w.ref, w.bizdt, c.name as customer_name,
+				  u.name as biz_user_name,
+				  h.name as warehouse_name,
+				  w.sale_money, w.memo, w.deal_address, w.company_id
+				from t_ws_bill w, t_customer c, t_user u, t_warehouse h
+				where w.customer_id = c.id and w.biz_user_id = u.id
+				  and w.warehouse_id = h.id
+				  and w.id = '%s' ";
+		$data = $db->query($sql, $id);
+		if (! $data) {
+			return null;
+		}
+		
+		$companyId = $data[0]["company_id"];
+		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
+		$bill = [];
+		
+		$bill["ref"] = $data[0]["ref"];
+		$bill["bizDT"] = $this->toYMD($data[0]["bizdt"]);
+		$bill["customerName"] = $data[0]["customer_name"];
+		$bill["warehouseName"] = $data[0]["warehouse_name"];
+		$bill["bizUserName"] = $data[0]["biz_user_name"];
+		$bill["saleMoney"] = $data[0]["sale_money"];
+		$bill["memo"] = $data[0]["memo"];
+		$bill["dealAddress"] = $data[0]["deal_address"];
+		
+		// 明细表
+		$sql = "select g.code, g.name, g.spec, u.name as unit_name,
+					convert(d.goods_count, $fmt) as goods_count,
+					d.goods_price, d.goods_money, d.sn_note
+				from t_ws_bill_detail d, t_goods g, t_goods_unit u
+				where d.wsbill_id = '%s' and d.goods_id = g.id and g.unit_id = u.id
+				order by d.show_order";
+		$data = $db->query($sql, $id);
+		$items = [];
+		foreach ( $data as $v ) {
+			$items[] = [
+					"goodsCode" => $v["code"],
+					"goodsName" => $v["name"],
+					"goodsSpec" => $v["spec"],
+					"unitName" => $v["unit_name"],
+					"goodsCount" => $v["goods_count"],
+					"goodsPrice" => $v["goods_price"],
+					"goodsMoney" => $v["goods_money"],
+					"sn" => $v["sn_note"]
+			
+			];
+		}
+		$bill["items"] = $items;
+		
+		return $bill;
+	}
 }

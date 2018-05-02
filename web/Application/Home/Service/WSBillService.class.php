@@ -311,4 +311,19 @@ class WSBillService extends PSIBaseExService {
 		$dao = new WSBillDAO($this->db());
 		return $dao->soBillWSBillList($soBillId);
 	}
+
+	/**
+	 * 获得打印销售出库单的数据
+	 *
+	 * @param array $params        	
+	 * @return array
+	 */
+	public function getWSBillDataForLodopPrint($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$dao = new WSBillDAO($this->db());
+		return $dao->getWSBillDataForLodopPrint($params);
+	}
 }
