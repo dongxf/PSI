@@ -307,4 +307,20 @@ class SOBillService extends PSIBaseExService {
 		
 		$pdf->Output("$ref.pdf", "I");
 	}
+
+	/**
+	 * 获得打印销售订单的数据
+	 *
+	 * @param array $params        	
+	 */
+	public function getSOBillDataForLodopPrint($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$params["companyId"] = $this->getCompanyId();
+		
+		$dao = new SOBillDAO($this->db());
+		return $dao->getSOBillDataForLodopPrint($params);
+	}
 }

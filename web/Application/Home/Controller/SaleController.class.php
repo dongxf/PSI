@@ -480,4 +480,20 @@ class SaleController extends PSIBaseController {
 			$this->ajaxReturn($ws->wsBillDetailListForSRBill($params));
 		}
 	}
+
+	/**
+	 * 生成打印销售订单的页面
+	 */
+	public function genSOBillPrintPage() {
+		if (IS_POST) {
+			$params = [
+					"id" => I("post.id")
+			];
+			
+			$ss = new SOBillService();
+			$data = $ss->getSOBillDataForLodopPrint($params);
+			$this->assign("data", $data);
+			$this->display();
+		}
+	}
 }

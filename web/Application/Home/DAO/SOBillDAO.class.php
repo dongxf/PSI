@@ -829,4 +829,73 @@ class SOBillDAO extends PSIBaseExDAO {
 		
 		return $bill;
 	}
+
+	/**
+	 * 获得打印销售订单的数据
+	 *
+	 * @param array $params        	
+	 */
+	public function getSOBillDataForLodopPrint($params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		
+		$sql = "select s.ref, s.bill_status, s.goods_money, s.tax, s.money_with_tax,
+					c.name as customer_name, s.contact, s.tel, s.fax, s.deal_address,
+					s.deal_date, s.receiving_type, s.bill_memo, s.date_created,
+					o.full_name as org_name, u1.name as biz_user_name, u2.name as input_user_name,
+					s.confirm_user_id, s.confirm_date, s.company_id, s.deal_date
+				from t_so_bill s, t_customer c, t_org o, t_user u1, t_user u2
+				where (s.customer_id = c.id) and (s.org_id = o.id)
+					and (s.biz_user_id = u1.id) and (s.input_user_id = u2.id)
+					and (s.id = '%s')";
+		$data = $db->query($sql, $id);
+		if (! $data) {
+			return null;
+		}
+		
+		$companyId = $data[0]["company_id"];
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
+		$bill["ref"] = $data[0]["ref"];
+		$bill["bizDT"] = $this->toYMD($data[0]["bizdt"]);
+		$bill["customerName"] = $data[0]["customer_name"];
+		$bill["bizUserName"] = $data[0]["biz_user_name"];
+		$bill["saleMoney"] = $data[0]["goods_money"];
+		$bill["dealAddress"] = $data[0]["deal_address"];
+		$bill["dealDate"] = $this->toYMD($data[0]["deal_date"]);
+		$bill["tel"] = $data[0]["tel"];
+		$bill["billMemo"] = $data[0]["bill_memo"];
+		$bill["goodsMoney"] = $data[0]["goods_money"];
+		$bill["moneyWithTax"] = $data[0]["money_with_tax"];
+		
+		$bill["printDT"] = date("Y-m-d H:i:s");
+		
+		// 明细表
+		$sql = "select s.id, g.code, g.name, g.spec, convert(s.goods_count, $fmt) as goods_count,
+					s.goods_price, s.goods_money, s.memo,
+					s.tax_rate, s.tax, s.money_with_tax, u.name as unit_name
+				from t_so_bill_detail s, t_goods g, t_goods_unit u
+				where s.sobill_id = '%s' and s.goods_id = g.id and g.unit_id = u.id
+				order by s.show_order";
+		$data = $db->query($sql, $id);
+		$items = array();
+		foreach ( $data as $i => $v ) {
+			$items[$i]["goodsCode"] = $v["code"];
+			$items[$i]["goodsName"] = $v["name"];
+			$items[$i]["goodsSpec"] = $v["spec"];
+			$items[$i]["unitName"] = $v["unit_name"];
+			$items[$i]["goodsCount"] = $v["goods_count"];
+			$items[$i]["goodsPrice"] = $v["goods_price"];
+			$items[$i]["goodsMoney"] = $v["goods_money"];
+			$items[$i]["taxRate"] = intval($v["tax_rate"]);
+			$items[$i]["goodsMoneyWithTax"] = $v["money_with_tax"];
+			$items[$i]["memo"] = $v["memo"];
+		}
+		$bill["items"] = $items;
+		
+		return $bill;
+	}
 }

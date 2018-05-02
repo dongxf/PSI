@@ -139,11 +139,35 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 					handler : me.onGenWSBill,
 					id : "buttonGenWSBill"
 				}, "-", {
-					text : "单据生成pdf",
-					id : "buttonPDF",
-					scope : me,
-					handler : me.onPDF
-				}, "-", {
+					text : "导出",
+					menu : [{
+								text : "单据生成pdf",
+								iconCls : "PSI-button-pdf",
+								id : "buttonPDF",
+								scope : me,
+								handler : me.onPDF
+							}]
+				}, {
+					hidden : me.getPermission().genPDF == "0",
+					xtype : "tbseparator"
+				}, {
+					text : "打印",
+					hidden : me.getPermission().print == "0",
+					menu : [{
+								text : "打印预览",
+								iconCls : "PSI-button-print-preview",
+								scope : me,
+								handler : me.onPrintPreview
+							}, "-", {
+								text : "直接打印",
+								iconCls : "PSI-button-print",
+								scope : me,
+								handler : me.onPrint
+							}]
+				}, {
+					xtype : "tbseparator",
+					hidden : me.getPermission().print == "0"
+				}, {
 					text : "帮助",
 					handler : function() {
 						window.open(me.URL("/Home/Help/index?t=sobill"));
@@ -1215,5 +1239,110 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 			}
 		};
 		me.ajax(r);
+	},
+
+	onPrintPreview : function() {
+		var lodop = getLodop();
+		if (!lodop) {
+			PSI.MsgBox.showInfo("没有安装Lodop控件，无法打印");
+			return;
+		}
+
+		var me = this;
+
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			me.showInfo("没有选择要打印的销售订单");
+			return;
+		}
+		var bill = item[0];
+
+		var el = Ext.getBody();
+		el.mask("数据加载中...");
+		var r = {
+			url : PSI.Const.BASE_URL + "Home/Sale/genSOBillPrintPage",
+			params : {
+				id : bill.get("id")
+			},
+			callback : function(options, success, response) {
+				el.unmask();
+
+				if (success) {
+					var data = response.responseText;
+					me.previewSOBill(bill.get("ref"), data);
+				}
+			}
+		};
+		me.ajax(r);
+	},
+
+	PRINT_PAGE_WIDTH : "200mm",
+	PRINT_PAGE_HEIGHT : "95mm",
+
+	previewSOBill : function(ref, data) {
+		var me = this;
+
+		var lodop = getLodop();
+		if (!lodop) {
+			PSI.MsgBox.showInfo("Lodop打印控件没有正确安装");
+			return;
+		}
+
+		lodop.PRINT_INIT("销售订单" + ref);
+		lodop.SET_PRINT_PAGESIZE(1, me.PRINT_PAGE_WIDTH, me.PRINT_PAGE_HEIGHT,
+				"");
+		lodop.ADD_PRINT_HTM("0mm", "0mm", "100%", "100%", data);
+		var result = lodop.PREVIEW("_blank");
+	},
+
+	onPrint : function() {
+		var lodop = getLodop();
+		if (!lodop) {
+			PSI.MsgBox.showInfo("没有安装Lodop控件，无法打印");
+			return;
+		}
+
+		var me = this;
+
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			me.showInfo("没有选择要打印的销售订单");
+			return;
+		}
+		var bill = item[0];
+
+		var el = Ext.getBody();
+		el.mask("数据加载中...");
+		var r = {
+			url : PSI.Const.BASE_URL + "Home/Sale/genSOBillPrintPage",
+			params : {
+				id : bill.get("id")
+			},
+			callback : function(options, success, response) {
+				el.unmask();
+
+				if (success) {
+					var data = response.responseText;
+					me.printSOBill(bill.get("ref"), data);
+				}
+			}
+		};
+		me.ajax(r);
+	},
+
+	printSOBill : function(ref, data) {
+		var me = this;
+
+		var lodop = getLodop();
+		if (!lodop) {
+			PSI.MsgBox.showInfo("Lodop打印控件没有正确安装");
+			return;
+		}
+
+		lodop.PRINT_INIT("销售订单" + ref);
+		lodop.SET_PRINT_PAGESIZE(1, me.PRINT_PAGE_WIDTH, me.PRINT_PAGE_HEIGHT,
+				"");
+		lodop.ADD_PRINT_HTM("0mm", "0mm", "100%", "100%", data);
+		var result = lodop.PRINT();
 	}
 });
