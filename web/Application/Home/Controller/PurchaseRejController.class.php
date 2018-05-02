@@ -35,6 +35,8 @@ class PurchaseRejController extends PSIBaseController {
 					$us->hasPermission(FIdConst::PURCHASE_REJECTION_COMMIT) ? "1" : "0");
 			$this->assign("pGenPDF", 
 					$us->hasPermission(FIdConst::PURCHASE_REJECTION_PDF) ? "1" : "0");
+			$this->assign("pPrint", 
+					$us->hasPermission(FIdConst::PURCHASE_REJECTION_PRINT) ? "1" : "0");
 			
 			$this->display();
 		} else {

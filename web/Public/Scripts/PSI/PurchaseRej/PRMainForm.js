@@ -49,21 +49,6 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
 
 		me.callParent(arguments);
 
-		var bAdd = me.getPermission().add == "1";
-		Ext.getCmp("buttonAdd").setVisible(bAdd);
-
-		var bEdit = me.getPermission().edit == "1";
-		Ext.getCmp("buttonEdit").setVisible(bEdit);
-
-		var bDel = me.getPermission().del == "1";
-		Ext.getCmp("buttonDelete").setVisible(bDel);
-
-		var bCommit = me.getPermission().commit == "1";
-		Ext.getCmp("buttonCommit").setVisible(bCommit);
-
-		var bPDF = me.getPermission().genPDF == "1";
-		Ext.getCmp("buttonPDF").setVisible(bPDF);
-
 		me.refreshMainGrid();
 	},
 
@@ -72,25 +57,42 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
 		return [{
 					text : "新建采购退货出库单",
 					id : "buttonAdd",
+					hidden : me.getPermission().add == "0",
 					scope : me,
 					handler : me.onAddBill
-				}, "-", {
+				}, {
+					xtype : "tbseparator",
+					hidden : me.getPermission().add == "0"
+				}, {
 					text : "编辑采购退货出库单",
 					id : "buttonEdit",
+					hidden : me.getPermission().edit == "0",
 					scope : me,
 					handler : me.onEditBill
-				}, "-", {
+				}, {
+					xtype : "tbseparator",
+					hidden : me.getPermission().edit == "0"
+				}, {
 					text : "删除采购退货出库单",
 					id : "buttonDelete",
+					hidden : me.getPermission().del == "0",
 					scope : me,
 					handler : me.onDeleteBill
-				}, "-", {
+				}, {
+					xtype : "tbseparator",
+					hidden : me.getPermission().del == "0"
+				}, {
 					text : "提交出库",
 					id : "buttonCommit",
+					hidden : me.getPermission().commit == "0",
 					scope : me,
 					handler : me.onCommit
-				}, "-", {
+				}, {
+					xtype : "tbseparator",
+					hidden : me.getPermission().commit == "0"
+				}, {
 					text : "导出",
+					hidden : me.getPermission().genPDF == "0",
 					menu : [{
 								text : "单据生成pdf",
 								id : "buttonPDF",
@@ -98,7 +100,10 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
 								scope : me,
 								handler : me.onPDF
 							}]
-				}, "-", {
+				}, {
+					xtype : "tbseparator",
+					hidden : me.getPermission().genPDF == "0"
+				}, {
 					text : "打印",
 					hidden : me.getPermission().print == "0",
 					menu : [{
@@ -504,7 +509,9 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
 							scope : me
 						},
 						itemdblclick : {
-							fn : me.onEditBill,
+							fn : me.getPermission().edit == "1"
+									? me.onEditBill
+									: Ext.emptyFn,
 							scope : me
 						}
 					},
