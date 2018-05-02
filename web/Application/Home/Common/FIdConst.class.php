@@ -510,6 +510,11 @@ class FIdConst {
 	const PURCHASE_REJECTION_PDF = "2007-05";
 	
 	/**
+	 * 采购退货出库 - 打印
+	 */
+	const PURCHASE_REJECTION_PRINT = "2007-06";
+	
+	/**
 	 * 首页-销售看板
 	 */
 	const PORTAL_SALE = "2011-01";
