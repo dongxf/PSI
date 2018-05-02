@@ -2,7 +2,7 @@
 <body>
 	<table border=0 cellSpacing=0 cellPadding=0 width="100%">
 		<tr>
-			<td colspan="6" align="center">采购退货出库单</td>
+			<td colspan="6" align="center">调拨单</td>
 		</tr>
 		<tr>
 			<td width="12%"><span style='font-size: 13'>单号</span></td>
@@ -13,10 +13,10 @@
 			<td><span style='font-size: 13'>{$data["printDT"]}</span></td>
 		</tr>
 		<tr>
-			<td><span style='font-size: 13'>供应商</span></td>
-			<td colspan="3"><span style='font-size: 13'>{$data["supplierName"]}</span></td>
-			<td><span style='font-size: 13'>出库仓库</span></td>
-			<td colspan="3"><span style='font-size: 13'>{$data["warehouseName"]}</span></td>
+			<td><span style='font-size: 13'>调出仓库</span></td>
+			<td colspan="3"><span style='font-size: 13'>{$data["fromWarehouseName"]}</span></td>
+			<td><span style='font-size: 13'>调入仓库</span></td>
+			<td colspan="3"><span style='font-size: 13'>{$data["toWarehouseName"]}</span></td>
 		</tr>
 	</table>
 	<br />
@@ -29,8 +29,6 @@
 			<td><div align="center" style='font-size: 13'>规格型号</div></td>
 			<td><div align="center" style='font-size: 13'>数量</div></td>
 			<td><div align="center" style='font-size: 13'>单位</div></td>
-			<td><div align="center" style='font-size: 13'>退货单价</div></td>
-			<td><div align="center" style='font-size: 13'>退货金额</div></td>
 		</tr>
 		<foreach name="data['items']" item="v" key="i">
 		<tr>
@@ -40,20 +38,8 @@
 			<td><div style='font-size: 13'>{$v["goodsSpec"]}</div></td>
 			<td><div align="center" style='font-size: 13'>{$v["goodsCount"]}</div></td>
 			<td><div style='font-size: 13'>{$v["unitName"]}</div></td>
-			<td><div align="right" style='font-size: 13'>{$v["goodsPrice"]}</div></td>
-			<td><div align="right" style='font-size: 13'>{$v["goodsMoney"]}</div></td>
 		</tr>
 		</foreach>
-		<tr>
-			<td><div align="center">合计</div></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td><div align="right">￥{$data["goodsMoney"]}</div></td>
-		</tr>
 	</table>
 </body>
 </html>

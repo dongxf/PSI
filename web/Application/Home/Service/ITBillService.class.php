@@ -268,4 +268,20 @@ class ITBillService extends PSIBaseExService {
 		
 		$pdf->Output("$ref.pdf", "I");
 	}
+
+	/**
+	 * 生成打印调拨的数据
+	 *
+	 * @param array $params        	
+	 */
+	public function getITBillDataForLodopPrint($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$params["companyId"] = $this->getCompanyId();
+		
+		$dao = new ITBillDAO($this->db());
+		return $dao->getITBillDataForLodopPrint($params);
+	}
 }

@@ -150,4 +150,20 @@ class InvTransferController extends PSIBaseController {
 		$ws = new ITBillService();
 		$ws->pdf($params);
 	}
+
+	/**
+	 * 生成打印调拨单的页面
+	 */
+	public function genITBillPrintPage() {
+		if (IS_POST) {
+			$params = [
+					"id" => I("post.id")
+			];
+			
+			$ss = new ITBillService();
+			$data = $ss->getITBillDataForLodopPrint($params);
+			$this->assign("data", $data);
+			$this->display();
+		}
+	}
 }
