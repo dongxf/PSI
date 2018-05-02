@@ -700,6 +700,11 @@ class FIdConst {
 	const SALE_ORDER_PDF = "2028-06";
 	
 	/**
+	 * 销售订单 - 打印
+	 */
+	const SALE_ORDER_PRINT = "2028-07";
+	
+	/**
 	 * 基础数据 - 商品品牌
 	 */
 	const GOODS_BRAND = "2029";
