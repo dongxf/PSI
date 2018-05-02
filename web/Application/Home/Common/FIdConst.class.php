@@ -485,6 +485,11 @@ class FIdConst {
 	const INVENTORY_CHECK_PDF = "2010-05";
 	
 	/**
+	 * 库存盘点 - 打印
+	 */
+	const INVENTORY_CHECK_PRINT = "2010-06";
+	
+	/**
 	 * 采购退货出库
 	 */
 	const PURCHASE_REJECTION = "2007";
