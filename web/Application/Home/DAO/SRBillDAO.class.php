@@ -1484,6 +1484,7 @@ class SRBillDAO extends PSIBaseExDAO {
 		$fmt = "decimal(19, " . $dataScale . ")";
 		
 		$bill = [
+				"ref" => $data[0]["ref"],
 				"bizDT" => $this->toYMD($data[0]["bizdt"]),
 				"customerName" => $data[0]["customer_name"],
 				"warehouseName" => $data[0]["warehouse_name"],
