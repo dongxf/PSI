@@ -81,55 +81,69 @@ Ext.define("PSI.Customer.CustomerField", {
 		me.lookupGrid.on("itemdblclick", me.onOK, me);
 
 		var wnd = Ext.create("Ext.window.Window", {
-					title : "选择 - 客户",
-					modal : true,
-					width : 700,
-					height : 300,
-					layout : "border",
-					defaultFocus : "__editCustomer",
-					items : [{
-								region : "center",
-								xtype : "panel",
-								layout : "fit",
-								border : 0,
-								items : [lookupGrid]
-							}, {
-								xtype : "panel",
-								region : "south",
-								height : 40,
-								layout : "fit",
-								border : 0,
-								items : [{
-											xtype : "form",
-											layout : "form",
-											bodyPadding : 5,
-											items : [{
-														id : "__editCustomer",
-														xtype : "textfield",
-														fieldLabel : "客户",
-														labelWidth : 50,
-														labelAlign : "right",
-														labelSeparator : ""
-													}]
-										}]
-							}],
-					buttons : [{
-								text : "新增客户资料",
-								iconCls : "PSI-button-add",
-								hidden : !me.getShowAddButton(),
-								handler : me.onAdd,
-								scope : me
-							}, {
-								text : "确定",
-								handler : me.onOK,
-								scope : me
-							}, {
-								text : "取消",
-								handler : function() {
-									wnd.close();
-								}
-							}]
-				});
+			title : "选择 - 客户",
+			modal : true,
+			width : 700,
+			height : 360,
+			layout : "border",
+			defaultFocus : "__editCustomer",
+			items : [{
+						region : "center",
+						xtype : "panel",
+						layout : "fit",
+						border : 0,
+						items : [lookupGrid]
+					}, {
+						xtype : "panel",
+						region : "south",
+						height : 80,
+						layout : "fit",
+						border : 0,
+						items : [{
+									xtype : "form",
+									layout : "form",
+									bodyPadding : 5,
+									items : [{
+												id : "__editCustomer",
+												xtype : "textfield",
+												fieldLabel : "客户",
+												labelWidth : 50,
+												labelAlign : "right",
+												labelSeparator : ""
+											}, {
+												xtype : "displayfield",
+												fieldLabel : " ",
+												value : "输入编码、客户拼音字头、手机号可以过滤查询",
+												labelWidth : 50,
+												labelAlign : "right",
+												labelSeparator : ""
+											}, {
+												xtype : "displayfield",
+												fieldLabel : " ",
+												value : "↑ ↓ 键改变当前选择项 ；回车键返回",
+												labelWidth : 50,
+												labelAlign : "right",
+												labelSeparator : ""
+											}]
+								}]
+					}],
+			buttons : [{
+						text : "新增客户资料",
+						iconCls : "PSI-button-add",
+						hidden : !me.getShowAddButton(),
+						handler : me.onAdd,
+						scope : me
+					}, {
+						text : "确定",
+						handler : me.onOK,
+						scope : me
+					}, {
+						text : "取消",
+						handler : function() {
+							wnd.close();
+						}
+					}]
+		});
 
 		wnd.on("close", function() {
 					me.focus();
