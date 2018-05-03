@@ -61,6 +61,8 @@ class SaleController extends PSIBaseController {
 			$this->assign("pCommit", 
 					$us->hasPermission(FIdConst::WAREHOUSING_SALE_COMMIT) ? "1" : "0");
 			$this->assign("pGenPDF", $us->hasPermission(FIdConst::WAREHOUSING_SALE_PDF) ? "1" : "0");
+			$this->assign("pPrint", 
+					$us->hasPermission(FIdConst::WAREHOUSING_SALE_PRINT) ? "1" : "0");
 			
 			$this->display();
 		} else {
