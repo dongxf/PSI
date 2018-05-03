@@ -183,6 +183,7 @@ class SaleController extends PSIBaseController {
 			$this->assign("pCommit", 
 					$us->hasPermission(FIdConst::SALE_REJECTION_COMMIT) ? "1" : "0");
 			$this->assign("pGenPDF", $us->hasPermission(FIdConst::SALE_REJECTION_PDF) ? "1" : "0");
+			$this->assign("pPrint", $us->hasPermission(FIdConst::SALE_REJECTION_PRINT) ? "1" : "0");
 			
 			$this->display();
 		} else {
@@ -515,6 +516,7 @@ class SaleController extends PSIBaseController {
 			$this->display();
 		}
 	}
+
 	/**
 	 * 生成打印销售退货入库单的页面
 	 */

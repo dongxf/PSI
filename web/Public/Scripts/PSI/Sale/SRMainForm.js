@@ -49,21 +49,6 @@ Ext.define("PSI.Sale.SRMainForm", {
 
 		me.callParent(arguments);
 
-		var bAdd = me.getPermission().add == "1";
-		Ext.getCmp("buttonAdd").setVisible(bAdd);
-
-		var bEdit = me.getPermission().edit == "1";
-		Ext.getCmp("buttonEdit").setVisible(bEdit);
-
-		var bDel = me.getPermission().del == "1";
-		Ext.getCmp("buttonDelete").setVisible(bDel);
-
-		var bCommit = me.getPermission().commit == "1";
-		Ext.getCmp("buttonCommit").setVisible(bCommit);
-
-		var bPDF = me.getPermission().genPDF == "1";
-		Ext.getCmp("buttonPDF").setVisible(bPDF);
-
 		me.refreshMainGrid();
 	},
 
@@ -71,25 +56,41 @@ Ext.define("PSI.Sale.SRMainForm", {
 		var me = this;
 		return [{
 					text : "新建销售退货入库单",
+					hidden : me.getPermission().add == "0",
 					id : "buttonAdd",
 					scope : me,
 					handler : me.onAddBill
-				}, "-", {
+				}, {
+					hidden : me.getPermission().add == "0",
+					xtype : "tbseparator"
+				}, {
+					hidden : me.getPermission().edit == "0",
 					text : "编辑销售退货入库单",
 					id : "buttonEdit",
 					scope : me,
 					handler : me.onEditBill
-				}, "-", {
+				}, {
+					hidden : me.getPermission().edit == "0",
+					xtype : "tbseparator"
+				}, {
 					text : "删除销售退货入库单",
+					hidden : me.getPermission().del == "0",
 					id : "buttonDelete",
 					scope : me,
 					handler : me.onDeleteBill
-				}, "-", {
+				}, {
+					hidden : me.getPermission().del == "0",
+					xtype : "tbseparator"
+				}, {
+					hidden : me.getPermission().commit == "0",
 					text : "提交入库",
 					id : "buttonCommit",
 					scope : me,
 					handler : me.onCommit
-				}, "-", {
+				}, {
+					hidden : me.getPermission().commit == "0",
+					xtype : "tbseparator"
+				}, {
 					text : "导出",
 					hidden : me.getPermission().genPDF == "0",
 					menu : [{
@@ -522,7 +523,9 @@ Ext.define("PSI.Sale.SRMainForm", {
 							scope : me
 						},
 						itemdblclick : {
-							fn : me.onEditBill,
+							fn : me.getPermission().edit == "1"
+									? me.onEditBill
+									: Ext.emptyFn,
 							scope : me
 						}
 					},
