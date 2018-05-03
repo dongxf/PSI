@@ -85,6 +85,11 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 								}
 							}],
 					items : [{
+								region : "north",
+								height : 2,
+								border : 0,
+								bodyStyle : "background-color:#f5f5f5"
+							}, {
 								id : "panelWarehouse",
 								region : "west",
 								layout : "fit",
@@ -97,6 +102,7 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 							}, {
 								region : "center",
 								layout : "border",
+								border : 0,
 								items : [{
 											region : "center",
 											layout : "fit",

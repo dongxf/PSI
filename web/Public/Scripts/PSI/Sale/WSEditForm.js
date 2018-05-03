@@ -33,7 +33,6 @@ Ext.define("PSI.Sale.WSEditForm", {
 			tbar : [{
 						id : "buttonToolbox",
 						text : "工具",
-						iconCls : "PSI-button-toolbox",
 						menu : [{
 									text : "临时保存销售出库单",
 									scope : me,
@@ -49,6 +48,7 @@ Ext.define("PSI.Sale.WSEditForm", {
 						xtype : "displayfield"
 					}, {
 						xtype : "textfield",
+						cls : "PSI-toolbox",
 						id : "editBarcode",
 						listeners : {
 							specialkey : {

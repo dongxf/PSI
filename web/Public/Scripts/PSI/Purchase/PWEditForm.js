@@ -37,6 +37,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 						id : "displayFieldBarcode"
 					}, {
 						xtype : "textfield",
+						cls : "PSI-toolbox",
 						id : "editBarcode",
 						listeners : {
 							specialkey : {

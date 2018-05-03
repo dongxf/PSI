@@ -232,6 +232,11 @@ Ext.define("PSI.Inventory.InitInventoryMainForm", {
 								}
 							}],
 					items : [{
+								region : "north",
+								height : 2,
+								border : 0,
+								bodyStyle : "background-color:#f5f5f5"
+							},{
 								region : "west",
 								xtype : "panel",
 								layout : "fit",
