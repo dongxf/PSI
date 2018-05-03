@@ -740,4 +740,13 @@ class FIdConst {
 	 * @var string
 	 */
 	const PRICE_SYSTEM = "2031";
+	
+	/**
+	 * 商品模块 - 设置商品价格体系
+	 *
+	 * 按钮权限
+	 *
+	 * @var string
+	 */
+	const PRICE_SYSTEM_SETTING_GOODS = "2031-01";
 }
