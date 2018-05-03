@@ -357,6 +357,7 @@ h1, h2 {
 }
 
 .x-form-text {
+	color: #262626;
 	font-size: 13px;
 	background-image: none;
 	border-color: transparent transparent #adc6ff transparent;
