@@ -385,6 +385,11 @@ class FIdConst {
 	const WAREHOUSING_SALE_PDF = "2002-06";
 	
 	/**
+	 * 销售出库 - 打印
+	 */
+	const WAREHOUSING_SALE_PRINT = "2002-07";
+	
+	/**
 	 * 销售退货入库
 	 */
 	const SALE_REJECTION = "2006";
