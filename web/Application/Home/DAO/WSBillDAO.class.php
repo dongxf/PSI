@@ -1682,8 +1682,10 @@ class WSBillDAO extends PSIBaseExDAO {
 		$bill["warehouseName"] = $data[0]["warehouse_name"];
 		$bill["bizUserName"] = $data[0]["biz_user_name"];
 		$bill["saleMoney"] = $data[0]["sale_money"];
-		$bill["memo"] = $data[0]["memo"];
+		$bill["billMemo"] = $data[0]["memo"];
 		$bill["dealAddress"] = $data[0]["deal_address"];
+		
+		$bill["printDT"] = date("Y-m-d H:i:s");
 		
 		// 明细表
 		$sql = "select g.code, g.name, g.spec, u.name as unit_name,
