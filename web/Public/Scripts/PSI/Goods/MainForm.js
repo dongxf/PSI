@@ -17,7 +17,8 @@ Ext.define("PSI.Goods.MainForm", {
 		pGoodsSI : null,
 		pAddBOM : null,
 		pEditBOM : null,
-		pDeleteBOM : null
+		pDeleteBOM : null,
+		pPriceSystem : null
 	},
 
 	/**
@@ -1364,6 +1365,7 @@ Ext.define("PSI.Goods.MainForm", {
 							}),
 					tbar : [{
 								text : "设置商品价格体系",
+								disabled : me.getPPriceSystem() == "0",
 								iconCls : "PSI-button-commit",
 								handler : me.onGoodsPriceSystem,
 								scope : me

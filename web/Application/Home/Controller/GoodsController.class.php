@@ -41,6 +41,9 @@ class GoodsController extends PSIBaseController {
 			$this->assign("pEditBOM", $us->hasPermission(FIdConst::GOODS_BOM_EDIT) ? 1 : 0);
 			$this->assign("pDeleteBOM", $us->hasPermission(FIdConst::GOODS_BOM_DELETE) ? 1 : 0);
 			
+			$this->assign("pPriceSystem", 
+					$us->hasPermission(FIdConst::PRICE_SYSTEM_SETTING_GOODS) ? 1 : 0);
+			
 			$this->display();
 		} else {
 			$this->gotoLoginPage("/Home/Goods/index");
