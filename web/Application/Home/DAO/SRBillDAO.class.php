@@ -1454,4 +1454,69 @@ class SRBillDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 获得打印销售退货入库单的数据
+	 *
+	 * @param array $params        	
+	 */
+	public function getSRBillDataForLodopPrint($params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		
+		$sql = "select w.ref, w.bizdt, c.name as customer_name, u.name as biz_user_name,
+				 	user.name as input_user_name, h.name as warehouse_name, w.rejection_sale_money,
+				 	w.bill_status, w.date_created, w.payment_type, w.company_id
+				 from t_sr_bill w, t_customer c, t_user u, t_user user, t_warehouse h
+				 where (w.customer_id = c.id) and (w.biz_user_id = u.id)
+				 and (w.input_user_id = user.id) and (w.warehouse_id = h.id)
+					and (w.id = '%s')";
+		$data = $db->query($sql, $id);
+		if (! $data) {
+			return null;
+		}
+		
+		$companyId = $data[0]["company_id"];
+		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
+		$bill = [
+				"bizDT" => $this->toYMD($data[0]["bizdt"]),
+				"customerName" => $data[0]["customer_name"],
+				"warehouseName" => $data[0]["warehouse_name"],
+				"bizUserName" => $data[0]["biz_user_name"],
+				"rejMoney" => $data[0]["rejection_sale_money"],
+				"printDT" => date("Y-m-d H:i:s")
+		];
+		
+		// 明细表
+		$sql = "select s.id, g.code, g.name, g.spec, u.name as unit_name,
+					convert(s.rejection_goods_count, $fmt) as rejection_goods_count,
+					s.rejection_goods_price, s.rejection_sale_money,
+					s.sn_note
+				from t_sr_bill_detail s, t_goods g, t_goods_unit u
+				where s.srbill_id = '%s' and s.goods_id = g.id and g.unit_id = u.id
+				and s.rejection_goods_count > 0
+				order by s.show_order";
+		$data = $db->query($sql, $id);
+		$items = [];
+		foreach ( $data as $v ) {
+			$items[] = [
+					"goodsCode" => $v["code"],
+					"goodsName" => $v["name"],
+					"goodsSpec" => $v["spec"],
+					"unitName" => $v["unit_name"],
+					"goodsCount" => $v["rejection_goods_count"],
+					"goodsPrice" => $v["rejection_goods_price"],
+					"goodsMoney" => $v["rejection_sale_money"],
+					"sn" => $v["sn_note"]
+			];
+		}
+		$bill["items"] = $items;
+		
+		return $bill;
+	}
 }

@@ -302,4 +302,18 @@ class SRBillService extends PSIBaseExService {
 		
 		$pdf->Output("$ref.pdf", "I");
 	}
+
+	/**
+	 * 获得打印销售退货入库单的数据
+	 * 
+	 * @param array $params        	
+	 */
+	public function getSRBillDataForLodopPrint($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$dao = new SRBillDAO($this->db());
+		return $dao->getSRBillDataForLodopPrint($params);
+	}
 }

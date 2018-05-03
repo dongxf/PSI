@@ -515,4 +515,19 @@ class SaleController extends PSIBaseController {
 			$this->display();
 		}
 	}
+	/**
+	 * 生成打印销售退货入库单的页面
+	 */
+	public function genSRBillPrintPage() {
+		if (IS_POST) {
+			$params = [
+					"id" => I("post.id")
+			];
+			
+			$ss = new SRBillService();
+			$data = $ss->getSRBillDataForLodopPrint($params);
+			$this->assign("data", $data);
+			$this->display();
+		}
+	}
 }
