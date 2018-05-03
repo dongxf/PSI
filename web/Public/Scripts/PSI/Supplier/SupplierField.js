@@ -75,7 +75,7 @@ Ext.define("PSI.Supplier.SupplierField", {
 					title : "选择 - 供应商",
 					modal : true,
 					width : 400,
-					height : 300,
+					height : 360,
 					layout : "border",
 					items : [{
 								region : "center",
@@ -86,7 +86,7 @@ Ext.define("PSI.Supplier.SupplierField", {
 							}, {
 								xtype : "panel",
 								region : "south",
-								height : 40,
+								height : 80,
 								layout : "fit",
 								border : 0,
 								items : [{
@@ -97,6 +97,20 @@ Ext.define("PSI.Supplier.SupplierField", {
 														id : "__editSupplier",
 														xtype : "textfield",
 														fieldLabel : "供应商",
+														labelWidth : 50,
+														labelAlign : "right",
+														labelSeparator : ""
+													}, {
+														xtype : "displayfield",
+														fieldLabel : " ",
+														value : "输入编码、供应商拼音字头可以过滤查询",
+														labelWidth : 50,
+														labelAlign : "right",
+														labelSeparator : ""
+													}, {
+														xtype : "displayfield",
+														fieldLabel : " ",
+														value : "↑ ↓ 键改变当前选择项 ；回车键返回",
 														labelWidth : 50,
 														labelAlign : "right",
 														labelSeparator : ""
