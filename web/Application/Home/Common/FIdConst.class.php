@@ -420,6 +420,11 @@ class FIdConst {
 	const SALE_REJECTION_PDF = "2006-05";
 	
 	/**
+	 * 销售退货入库 - 打印
+	 */
+	const SALE_REJECTION_PRINT = "2006-06";
+	
+	/**
 	 * 业务设置
 	 */
 	const BIZ_CONFIG = "2008";

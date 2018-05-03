@@ -167,6 +167,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20180502_03();
 		$this->update_20180502_04();
 		$this->update_20180503_01();
+		$this->update_20180503_02();
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -187,6 +188,38 @@ class UpdateDBService extends PSIBaseService {
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	// ============================================
 	private function notForgot() {
+	}
+
+	private function update_20180503_02() {
+		// 本次更新：新增权限 销售退货入库-打印
+		$db = $this->db;
+		
+		$ps = new PinyinService();
+		
+		$category = "销售退货入库";
+		
+		$fid = FIdConst::SALE_REJECTION_PRINT;
+		$name = "销售退货入库-打印";
+		$note = "按钮权限：销售退货入库模块[打印预览]和[直接打印]按钮权限";
+		$showOrder = 206;
+		$sql = "select count(*) as cnt from t_fid where fid = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_fid(fid, name) value('%s', '%s')";
+			$db->execute($sql, $fid, $name);
+		}
+		
+		$sql = "select count(*) as cnt from t_permission where id = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$py = $ps->toPY($name);
+			
+			$sql = "insert into t_permission (id, fid, name, note, category, py, show_order)
+				values ('%s', '%s', '%s', '%s', '%s', '%s', %d) ";
+			$db->execute($sql, $fid, $fid, $name, $note, $category, $py, $showOrder);
+		}
 	}
 
 	private function update_20180503_01() {
