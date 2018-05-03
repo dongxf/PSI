@@ -119,7 +119,8 @@ INSERT INTO `t_fid` (`fid`, `name`) VALUES
 ('2030-01', '商品构成-新增子商品'),
 ('2030-02', '商品构成-编辑子商品'),
 ('2030-03', '商品构成-删除子商品'),
-('2031', '价格体系');
+('2031', '价格体系'),
+('2031-01', '商品-设置商品价格体系');
 
 TRUNCATE TABLE `t_menu_item`;
 INSERT INTO `t_menu_item` (`id`, `caption`, `fid`, `parent_id`, `show_order`) VALUES
@@ -330,7 +331,8 @@ INSERT INTO `t_permission` (`id`, `fid`, `name`, `note`, `category`, `py`, `show
 ('2030-01', '2030-01', '商品构成-新增子商品', '按钮权限：商品模块[新增子商品]按钮权限', '商品', 'SPGC_XZZSP', 209),
 ('2030-02', '2030-02', '商品构成-编辑子商品', '按钮权限：商品模块[编辑子商品]按钮权限', '商品', 'SPGC_BJZSP', 210),
 ('2030-03', '2030-03', '商品构成-删除子商品', '按钮权限：商品模块[删除子商品]按钮权限', '商品', 'SPGC_SCZSP', 211),
-('2031', '2031', '价格体系', '模块权限：通过菜单进入价格体系模块的权限', '商品', 'JGTX', 700);
+('2031', '2031', '价格体系', '模块权限：通过菜单进入价格体系模块的权限', '商品', 'JGTX', 700),
+('2031-01', '2031-01', '商品-设置商品价格体系', '按钮权限：商品模块[设置商品价格体系]按钮权限', '商品', 'JGTX', 701);
 
 TRUNCATE TABLE `t_role`;
 INSERT INTO `t_role` (`id`, `name`, `data_org`, `company_id`, `code`) VALUES
@@ -421,7 +423,7 @@ update t_config set company_id = '4D74E1E4-A129-11E4-9B6A-782BCBD7746B' ;
 
 TRUNCATE TABLE `t_psi_db_version`;
 INSERT INTO `t_psi_db_version` (`db_version`, `update_dt`) VALUES
-('20180503-02', now());
+('20180503-03', now());
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
