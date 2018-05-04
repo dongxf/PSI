@@ -84,7 +84,7 @@ Ext.define("PSI.Customer.CustomerField", {
 			title : "选择 - 客户",
 			modal : true,
 			width : 700,
-			height : 360,
+			height : 390,
 			layout : "border",
 			defaultFocus : "__editCustomer",
 			items : [{
@@ -96,7 +96,7 @@ Ext.define("PSI.Customer.CustomerField", {
 					}, {
 						xtype : "panel",
 						region : "south",
-						height : 80,
+						height : 90,
 						layout : "fit",
 						border : 0,
 						items : [{

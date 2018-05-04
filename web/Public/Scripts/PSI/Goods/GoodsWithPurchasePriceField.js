@@ -115,7 +115,7 @@ Ext.define("PSI.Goods.GoodsWithPurchaseFieldField", {
 					title : "选择 - 商品",
 					modal : true,
 					width : 950,
-					height : 300,
+					height : 390,
 					layout : "border",
 					items : [{
 								region : "center",
@@ -126,7 +126,7 @@ Ext.define("PSI.Goods.GoodsWithPurchaseFieldField", {
 							}, {
 								xtype : "panel",
 								region : "south",
-								height : 40,
+								height : 90,
 								layout : "fit",
 								border : 0,
 								items : [{
@@ -137,6 +137,20 @@ Ext.define("PSI.Goods.GoodsWithPurchaseFieldField", {
 														id : "__editGoods",
 														xtype : "textfield",
 														fieldLabel : "商品",
+														labelWidth : 50,
+														labelAlign : "right",
+														labelSeparator : ""
+													}, {
+														xtype : "displayfield",
+														fieldLabel : " ",
+														value : "输入编码、商品名称拼音字头、规格型号拼音字头可以过滤查询",
+														labelWidth : 50,
+														labelAlign : "right",
+														labelSeparator : ""
+													}, {
+														xtype : "displayfield",
+														fieldLabel : " ",
+														value : "↑ ↓ 键改变当前选择项 ；回车键返回",
 														labelWidth : 50,
 														labelAlign : "right",
 														labelSeparator : ""
