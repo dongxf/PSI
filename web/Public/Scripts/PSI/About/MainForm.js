@@ -13,7 +13,7 @@ Ext.define("PSI.About.MainForm", {
 
 	modal : true,
 	closable : false,
-	width : 400,
+	width : 470,
 	layout : "fit",
 
 	initComponent : function() {
@@ -21,7 +21,7 @@ Ext.define("PSI.About.MainForm", {
 
 		Ext.apply(me, {
 			header : {
-				title : "<span style='font-size:120%'>关于 - "
+				title : "<span style='font-size:160%'>关于 - "
 						+ me.getProductionName() + "</span>",
 				iconCls : "PSI-fid-9994",
 				height : 40
@@ -37,7 +37,7 @@ Ext.define("PSI.About.MainForm", {
 						+ "</h1><h2>当前版本："
 						+ PSI.Const.VERSION
 						+ "</h2>"
-						+ "<p>产品源码下载请访问  <a href='https://gitee.com/crm8000/PSI' target='_blank'>https://gitee.com/crm8000/PSI</a></p>"
+						+ "<h2>产品源码下载请访问  <a href='https://gitee.com/crm8000/PSI' target='_blank'>https://gitee.com/crm8000/PSI</a></h2>"
 						+ "<p>技术支持QQ群 414474186</p>" + "<p>PHP版本号: "
 						+ me.getPhpVersion() + " , MySQL版本号: "
 						+ me.getMySQLVersion() + "</p><p>数据库表结构版本号: "
