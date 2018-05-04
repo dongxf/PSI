@@ -41,6 +41,8 @@ Ext.define("PSI.App", {
 
 		me.gridRecentFid = Ext.create("Ext.grid.Panel", {
 					title : "常用功能",
+					titleAlign : "center",
+					cls : "PSI-recent-fid",
 					forceFit : true,
 					hideHeaders : true,
 					tools : [{

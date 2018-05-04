@@ -352,6 +352,11 @@ h1, h2 {
 	vertical-align: top;
 }
 
+.PSI-recent-fid .x-grid-row td, .x-grid-summary-row td {
+	line-height: 26px;
+	vertical-align: top;
+}
+
 .x-grid-row-summary .x-grid-cell, .x-grid-row-summary .x-grid-rowwrap,
 	.x-grid-row-summary .x-grid-cell-rowbody {
 	font-size: 13px;
