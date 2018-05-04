@@ -74,8 +74,8 @@ Ext.define("PSI.Supplier.SupplierField", {
 		var wnd = Ext.create("Ext.window.Window", {
 					title : "选择 - 供应商",
 					modal : true,
-					width : 400,
-					height : 360,
+					width : 500,
+					height : 380,
 					layout : "border",
 					items : [{
 								region : "center",
@@ -86,7 +86,7 @@ Ext.define("PSI.Supplier.SupplierField", {
 							}, {
 								xtype : "panel",
 								region : "south",
-								height : 80,
+								height : 90,
 								layout : "fit",
 								border : 0,
 								items : [{
