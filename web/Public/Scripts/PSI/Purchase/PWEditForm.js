@@ -66,6 +66,12 @@ Ext.define("PSI.Purchase.PWEditForm", {
 									});
 						},
 						scope : me
+					}, "->", {
+						text : "表单通用操作帮助",
+						iconCls : "PSI-help",
+						handler : function() {
+							window.open(me.URL("/Home/Help/index?t=commBill"));
+						}
 					}],
 			items : [{
 						region : "center",
@@ -746,7 +752,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 	setBillReadonly : function() {
 		var me = this;
 		me.__readonly = true;
-		me.setTitle("查看采购入库单");
+		me.setTitle("<span style='font-size:160%;'>查看采购入库单</span>");
 		me.buttonSave.setDisabled(true);
 		me.buttonCancel.setText("关闭");
 		me.editBizDT.setReadOnly(true);
@@ -754,6 +760,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 		me.editWarehouse.setReadOnly(true);
 		me.editBizUser.setReadOnly(true);
 		me.editPaymentType.setReadOnly(true);
+		me.editBillMemo.setReadOnly(true);
 		me.columnActionDelete.hide();
 		me.columnActionAdd.hide();
 		me.columnActionAppend.hide();
