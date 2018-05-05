@@ -12,7 +12,9 @@ var app = new Framework7({
 				return {
 					PSI : {
 						productionName : productionName,
-						demoLoginInfo: demoLoginInfo
+						demoLoginInfo : demoLoginInfo,
+						baseURI : baseURI,
+						userIsLoggedIn : userIsLoggedIn
 					}
 				};
 			},

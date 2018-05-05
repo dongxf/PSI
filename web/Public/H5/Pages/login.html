@@ -43,7 +43,9 @@
 		methods : {
 			doLogin : function() {
 				var me = this;
-				me.$app.dialog.alert("开发中......");
+				//me.$app.dialog.alert("开发中......");
+				me.$app.data.PSI.userIsLoggedIn = true;
+				me.$router.refreshPage();
 			}
 		}
 	};
