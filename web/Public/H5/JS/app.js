@@ -4,14 +4,15 @@ var $$ = Dom7;
 // Framework7 App main instance
 var app = new Framework7({
 			root : '#app',
-			id : 'io.framework7.testapp',
+			id : 'com.gitee.crm8000.psi',
 			name : 'PSI',
 			theme : 'auto', // Automatic theme detection
 			// App root data
 			data : function() {
 				return {
 					PSI : {
-						productionName : productionName
+						productionName : productionName,
+						demoLoginInfo: demoLoginInfo
 					}
 				};
 			},
