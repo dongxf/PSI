@@ -1,6 +1,6 @@
 <?php
 
-namespace Mobile\Controller;
+namespace H5\Controller;
 
 use Think\Controller;
 use Home\Service\UserService;
