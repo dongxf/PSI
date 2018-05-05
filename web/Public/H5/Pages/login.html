@@ -1,3 +1,4 @@
+<template>
 <div class="page">
 	<!-- page-content has additional login-screen content -->
 	<div class="page-content login-screen-content">
@@ -10,8 +11,8 @@
 						<div class="item-inner">
 							<div class="item-title item-label">登录名</div>
 							<div class="item-input-wrap">
-								<input type="text" name="loginName" placeholder="登录名">
-								<span class="input-clear-button"></span>
+								<input type="text" name="loginName" placeholder="登录名"> <span
+									class="input-clear-button"></span>
 							</div>
 						</div>
 					</li>
@@ -28,10 +29,22 @@
 			</div>
 			<div class="list">
 				<ul>
-					<li><a href="#" class="item-link list-button">登录</a></li>
+					<li><a href="#" class="item-link list-button" @click="doLogin">登录</a></li>
 				</ul>
 				<div class="block-footer">{{$root.PSI.demoLoginInfo}}</div>
 			</div>
 		</form>
 	</div>
 </div>
+</template>
+
+<script>
+	return {
+		methods : {
+			doLogin : function() {
+				var me = this;
+				me.$app.dialog.alert("开发中......");
+			}
+		}
+	};
+</script>

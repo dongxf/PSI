@@ -11,7 +11,7 @@ routesPSI = [{
 							});
 				} else {
 					resolve({
-								templateUrl : toURL("login.html")
+								componentUrl : toURL("login.html")
 							});
 
 				}
