@@ -11,8 +11,8 @@
 						<div class="item-inner">
 							<div class="item-title item-label">登录名</div>
 							<div class="item-input-wrap">
-								<input type="text" name="loginName" placeholder="登录名"> <span
-									class="input-clear-button"></span>
+								<input id="editLoginName" type="text" name="loginName"
+									placeholder="登录名"> <span class="input-clear-button"></span>
 							</div>
 						</div>
 					</li>
@@ -20,8 +20,8 @@
 						<div class="item-inner">
 							<div class="item-title item-label">密码</div>
 							<div class="item-input-wrap">
-								<input type="password" name="password" placeholder="密码">
-								<span class="input-clear-button"></span>
+								<input id="editPassword" type="password" name="password"
+									placeholder="密码"> <span class="input-clear-button"></span>
 							</div>
 						</div>
 					</li>
@@ -43,9 +43,36 @@
 		methods : {
 			doLogin : function() {
 				var me = this;
-				//me.$app.dialog.alert("开发中......");
-				me.$app.data.PSI.userIsLoggedIn = true;
-				me.$router.refreshPage();
+				var app = me.$app;
+				var $$ = me.$$;
+
+				var loginName = $$("#editLoginName").val();
+				var password = $$("#editPassword").val();
+				if (!loginName) {
+					app.dialog.alert("没有输入登录名");
+					return;
+				}
+				if (!password) {
+					app.dialog.alert("没有输入登录密码");
+					return;
+				}
+
+				var loginURL = app.data.PSI.baseURI + "H5/User/doLogin";
+				var params = {
+					loginName : loginName,
+					password : password
+				};
+
+				app.request.post(loginURL, params, function(data) {
+					if (data.success) {
+						app.data.PSI.userIsLoggedIn = true;
+						me.$router.refreshPage();
+					} else {
+						app.dialog.alert(data.msg);
+					}
+				}, function() {
+					app.dialog.alert("网络错误");
+				}, "json");
 			}
 		}
 	};
