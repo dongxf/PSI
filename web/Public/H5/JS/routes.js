@@ -7,7 +7,7 @@ routesPSI = [{
 			async : function(routeTo, routeFrom, resolve, reject) {
 				if (app.data.PSI.userIsLoggedIn) {
 					resolve({
-								url : toURL("home.html")
+								componentUrl : toURL("home.html")
 							});
 				} else {
 					resolve({

@@ -18,4 +18,14 @@ class UserController extends Controller {
 			$this->ajaxReturn($us->doLogin($params));
 		}
 	}
+
+	public function doLogout() {
+		if (IS_POST) {
+			$us = new UserServiceH5();
+			$us->clearLoginUserInSession();
+			$this->ajaxReturn([
+					"success" => true
+			]);
+		}
+	}
 }

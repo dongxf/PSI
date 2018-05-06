@@ -17,7 +17,8 @@ var app = new Framework7({
 			routes : routesPSI,
 			dialog : {
 				buttonOk : "确定",
-				buttonCancel : "取消"
+				buttonCancel : "取消",
+				title: productionName
 			}
 		});
 

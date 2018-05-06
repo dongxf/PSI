@@ -1,7 +1,8 @@
+<template>
 <div class="page" data-name="home">
 	<div class="navbar">
 		<div class="navbar-inner">
-			<div class="title sliding">PSI</div>
+			<div class="title sliding">{{$root.PSI.productionName}}</div>
 		</div>
 	</div>
 
@@ -11,10 +12,51 @@
 			<ul>
 				<li><a href="/about/" class="item-content item-link">
 						<div class="item-inner">
-							<div class="item-title">关于PSI</div>
+							<div class="item-title">关于 {{$root.PSI.productionName}}</div>
+						</div>
+				</a></li>
+				<li><a href="#" @click="doLogout"
+					class="item-content item-link">
+						<div class="item-inner">
+							<div class="item-title">安全退出</div>
 						</div>
 				</a></li>
 			</ul>
 		</div>
 	</div>
 </div>
+</template>
+
+<script>
+	return {
+		methods : {
+			doLogout : function() {
+				var me = this;
+				var app = me.$app;
+				var $$ = me.$$;
+
+				app.dialog.confirm("请确认是否退出？", me.$root.PSI.productionName,
+						function() {
+							var loginURL = app.data.PSI.baseURI
+									+ "H5/User/doLogout";
+
+							app.preloader.show();
+
+							app.request.post(loginURL, {}, function(data) {
+								app.preloader.hide();
+								if (data.success) {
+									app.data.PSI.userIsLoggedIn = false;
+									me.$router.refreshPage();
+								} else {
+									app.dialog.alert(data.msg);
+								}
+							}, function() {
+								app.preloader.hide();
+								app.dialog.alert("网络错误");
+							}, "json");
+						});
+			}
+		}
+	};
+</script>
+
