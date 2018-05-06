@@ -63,7 +63,10 @@
 					password : password
 				};
 
+				app.preloader.show();
+
 				app.request.post(loginURL, params, function(data) {
+					app.preloader.hide();
 					if (data.success) {
 						app.data.PSI.userIsLoggedIn = true;
 						me.$router.refreshPage();
@@ -71,6 +74,7 @@
 						app.dialog.alert(data.msg);
 					}
 				}, function() {
+					app.preloader.hide();
 					app.dialog.alert("网络错误");
 				}, "json");
 			}
