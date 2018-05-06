@@ -11,7 +11,8 @@ class UserController extends Controller {
 		if (IS_POST) {
 			$params = array(
 					"loginName" => I("post.loginName"),
-					"password" => I("post.password")
+					"password" => I("post.password"),
+					"isH5" => I("post.isH5")
 			);
 			
 			$us = new UserServiceH5();

@@ -125,8 +125,11 @@ class UserService extends PSIBaseExService {
 		if ($loginUserId) {
 			session("loginUserId", $loginUserId);
 			
+			$isH5 = $params["isH5"];
+			$log = $isH5 == "1" ? "从H5端登录系统 " : "登录系统";
+			
 			$bls = new BizlogService();
-			$bls->insertBizlog("登录系统");
+			$bls->insertBizlog($log);
 			return $this->ok();
 		} else {
 			return $this->bad("用户名或者密码错误");
