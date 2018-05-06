@@ -31,6 +31,10 @@ h1, h2, h3 {
 		Arial, sans-serif;
 }
 
+.x-tree-node-text {
+	font-size: 13px;
+}
+
 .x-mask-msg div {
 	font-size: 12px;
 }
