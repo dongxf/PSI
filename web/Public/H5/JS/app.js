@@ -1,13 +1,8 @@
-// Dom7
-var $$ = Dom7;
-
-// Framework7 App main instance
 var app = new Framework7({
 			root : '#app',
 			id : 'com.gitee.crm8000.psi',
 			name : 'PSI',
-			theme : 'auto', // Automatic theme detection
-			// App root data
+			theme : 'auto',
 			data : function() {
 				return {
 					PSI : {
@@ -18,13 +13,14 @@ var app = new Framework7({
 					}
 				};
 			},
-			// App root methods
 			methods : {},
-			// App routes
-			routes : routesPSI
+			routes : routesPSI,
+			dialog : {
+				buttonOk : "确定",
+				buttonCancel : "取消"
+			}
 		});
 
-// Init/Create main view
 var mainView = app.views.create('.view-main', {
 			url : '/'
 		});
