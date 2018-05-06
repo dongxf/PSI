@@ -13,11 +13,11 @@ Ext.define("PSI.Goods.UnitMainForm", {
 							text : "新增计量单位",
 							handler : me.onAddUnit,
 							scope : me
-						}, {
+						}, "-", {
 							text : "编辑计量单位",
 							handler : me.onEditUnit,
 							scope : me
-						}, {
+						}, "-", {
 							text : "删除计量单位",
 							handler : me.onDeleteUnit,
 							scope : me
@@ -67,7 +67,7 @@ Ext.define("PSI.Goods.UnitMainForm", {
 										menuDisabled : true,
 										sortable : false,
 										align : "right",
-										width : 150
+										width : 160
 									}],
 							store : Ext.create("Ext.data.Store", {
 										model : modelName,
