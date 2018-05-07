@@ -409,6 +409,15 @@ h1, h2, h3 {
 		Arial, sans-serif;
 }
 
+.x-datepicker-header {
+	background-color: white;
+	background-image: none;
+}
+
+.x-datepicker-footer {
+	background-image: none;
+}
+
 ::-webkit-scrollbar {
 	width: 10px;
 	height: 10px;
