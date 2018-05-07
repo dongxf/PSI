@@ -40,39 +40,38 @@ Ext.define("PSI.App", {
 				});
 
 		me.gridRecentFid = Ext.create("Ext.grid.Panel", {
-					header : {
-						title : "常用功能",
-						height : 28
-					},
-					titleAlign : "center",
-					cls : "PSI-recent-fid",
-					forceFit : true,
-					hideHeaders : true,
-					tools : [{
-								type : "close",
-								handler : function() {
-									Ext.getCmp("PSI_Main_RecentPanel")
-											.collapse();
-								},
-								scope : me
-							}],
-					columns : [{
-						dataIndex : "name",
-						menuDisabled : true,
-						menuDisabled : true,
-						sortable : false,
-						renderer : function(value, metaData, record) {
-							var fid = record.get("fid");
-							var fileName = PSI.Const.BASE_URL
-									+ "Public/Images/fid/fid" + fid + ".png";
-							return "<img src='"
-									+ fileName
-									+ "'><a href='#' style='text-decoration:none'>"
-									+ value + "</a></img>";
-						}
+			header : {
+				title : "常用功能",
+				height : 28
+			},
+			titleAlign : "center",
+			cls : "PSI-recent-fid",
+			forceFit : true,
+			hideHeaders : true,
+			tools : [{
+						type : "close",
+						handler : function() {
+							Ext.getCmp("PSI_Main_RecentPanel").collapse();
+						},
+						scope : me
 					}],
-					store : storeRecentFid
-				});
+			columns : [{
+				dataIndex : "name",
+				menuDisabled : true,
+				menuDisabled : true,
+				sortable : false,
+				renderer : function(value, metaData, record) {
+					var fid = record.get("fid");
+					var fileName = PSI.Const.BASE_URL + "Public/Images/fid/fid"
+							+ fid + ".png";
+					return "<a href='#' style='text-decoration:none'><img src='"
+							+ fileName
+							+ "' style='vertical-align: middle;margin:0px 5px 0px 5px'></img><span style='vertical-align: middle'>"
+							+ value + "</span></a>";
+				}
+			}],
+			store : storeRecentFid
+		});
 
 		me.gridRecentFid.on("itemclick", function(v, r) {
 					var fid = r.get("fid");
