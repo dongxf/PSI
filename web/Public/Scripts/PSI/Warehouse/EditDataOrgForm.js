@@ -12,7 +12,14 @@ Ext.define("PSI.Warehouse.EditDataOrgForm", {
 
 		var entity = me.getEntity();
 
-		var buttons = [];
+		var buttons = [{
+					text : "数据域的使用帮助",
+					iconCls : "PSI-help",
+					handler : function() {
+						var url = me.URL("/Home/Help/index?t=dataOrg")
+						window.open(url);
+					}
+				}, "->"];
 
 		var btn = {
 			text : "保存",
@@ -170,9 +177,9 @@ Ext.define("PSI.Warehouse.EditDataOrgForm", {
 
 	onWndClose : function() {
 		var me = this;
-		
+
 		Ext.get(window).un('beforeunload', me.onWindowBeforeUnload);
-		
+
 		if (me.__lastId) {
 			if (me.getParentForm()) {
 				me.getParentForm().freshGrid(me.__lastId);
@@ -182,9 +189,9 @@ Ext.define("PSI.Warehouse.EditDataOrgForm", {
 
 	onWndShow : function() {
 		var me = this;
-		
+
 		Ext.get(window).on('beforeunload', me.onWindowBeforeUnload);
-		
+
 		me.editDataOrg.focus();
 	}
 });
