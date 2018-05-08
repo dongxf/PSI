@@ -62,12 +62,24 @@ class PWBillDAO extends PSIBaseExDAO {
 		$start = $params["start"];
 		$limit = $params["limit"];
 		
+		// 订单状态
 		$billStatus = $params["billStatus"];
+		
+		// 单号
 		$ref = $params["ref"];
+		
+		// 业务日期 -起
 		$fromDT = $params["fromDT"];
+		// 业务日期-止
 		$toDT = $params["toDT"];
+		
+		// 仓库id
 		$warehouseId = $params["warehouseId"];
+		
+		// 供应商id
 		$supplierId = $params["supplierId"];
+		
+		// 付款方式
 		$paymentType = $params["paymentType"];
 		
 		$loginUserId = $params["loginUserId"];
@@ -75,6 +87,7 @@ class PWBillDAO extends PSIBaseExDAO {
 			return $this->emptyResult();
 		}
 		
+		// 是否有权限查看单价和金额
 		$canViewPrice = $params["canViewPrice"];
 		
 		$queryParams = [];
@@ -86,6 +99,7 @@ class PWBillDAO extends PSIBaseExDAO {
 				and (p.biz_user_id = u1.id) and (p.input_user_id = u2.id) ";
 		
 		$ds = new DataOrgDAO($db);
+		// 构建数据域SQL
 		$rs = $ds->buildSQL(FIdConst::PURCHASE_WAREHOUSE, "p", $loginUserId);
 		if ($rs) {
 			$sql .= " and " . $rs[0];
@@ -206,6 +220,7 @@ class PWBillDAO extends PSIBaseExDAO {
 			return $this->emptyResult();
 		}
 		
+		// 是否有权限查看单价和金额
 		$canViewPrice = $params["canViewPrice"];
 		
 		$db = $this->db;
