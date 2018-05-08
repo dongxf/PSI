@@ -51,7 +51,13 @@ $pathList = array(
 	$baseDir . "/Application/Home/Controller",
 	$baseDir . "/Application/Home/View",
 	$baseDir . "/Public/Scripts/PSI",
-	$baseDir . "/Public/Content"
+	$baseDir . "/Public/Content",
+	$baseDir . "/Application/H5/Service",
+	$baseDir . "/Application/H5/Controller",
+	$baseDir . "/Application/H5/View",
+	$baseDir . "/Public/H5/JS",
+	$baseDir . "/Public/H5/Pages",
+	$baseDir . "/Public/H5/css",
 	);
 
 foreach ($pathList as $filePath) {
