@@ -284,10 +284,10 @@ Ext.define("PSI.App", {
 		}
 		theCmp.addTool(spacers);
 		theCmp.addTool({
-					xtype : "tbtext",
-					text : "<span style='color:#196d6d;font-weight:bold'>当前用户："
-							+ me.getUserName() + "&nbsp;</span>"
-				});
+			xtype : "tbtext",
+			text : "<span style='color:#196d6d;font-weight:bold;font-size:13px'>当前用户："
+					+ me.getUserName() + "&nbsp;</span>"
+		});
 	},
 
 	// 设置模块的标题
