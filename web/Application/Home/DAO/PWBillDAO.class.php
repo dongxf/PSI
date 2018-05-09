@@ -763,9 +763,13 @@ class PWBillDAO extends PSIBaseExDAO {
 	public function updateAfloatInventoryByPWBill(& $bill) {
 		$db = $this->db;
 		
+		// 采购入库单id
 		$id = $bill["id"];
+		
+		// 仓库id
 		$warehouseId = $bill["warehouseId"];
 		
+		// 公司id
 		$companyId = $bill["companyId"];
 		
 		$bcDAO = new BizConfigDAO($db);
@@ -845,8 +849,10 @@ class PWBillDAO extends PSIBaseExDAO {
 	public function pwBillInfo($params) {
 		$db = $this->db;
 		
+		// 是否能查看采购单价和金额
 		$canViewPrice = $params["canViewPrice"];
 		
+		// 公司id
 		$companyId = $params["companyId"];
 		
 		$bcDAO = new BizConfigDAO($db);
@@ -978,6 +984,8 @@ class PWBillDAO extends PSIBaseExDAO {
 					$result["items"] = $items;
 				}
 			} else {
+				// 不是由采购订单生成采购入库单，是普通的新建采购入库单
+				
 				// 采购入库单默认付款方式
 				$result["paymentType"] = $tc->getPWBillDefaultPayment($companyId);
 			}
@@ -995,6 +1003,7 @@ class PWBillDAO extends PSIBaseExDAO {
 	public function deletePWBill(& $params) {
 		$db = $this->db;
 		
+		// 采购入库单id
 		$id = $params["id"];
 		
 		$companyId = $params["companyId"];
@@ -1007,11 +1016,16 @@ class PWBillDAO extends PSIBaseExDAO {
 			return $this->bad("要删除的采购入库单不存在");
 		}
 		
+		// 单号
 		$ref = $bill["ref"];
+		
+		// 单据状态
 		$billStatus = $bill["billStatus"];
 		if ($billStatus != 0) {
 			return $this->bad("当前采购入库单已经提交入库，不能删除");
 		}
+		
+		// 仓库id
 		$warehouseId = $bill["warehouseId"];
 		
 		$sql = "select goods_id
@@ -1024,12 +1038,14 @@ class PWBillDAO extends PSIBaseExDAO {
 			$goodsIdList[] = $v["goods_id"];
 		}
 		
+		// 先删除明细记录
 		$sql = "delete from t_pw_bill_detail where pwbill_id = '%s' ";
 		$rc = $db->execute($sql, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
 		
+		// 再删除主表
 		$sql = "delete from t_pw_bill where id = '%s' ";
 		$rc = $db->execute($sql, $id);
 		if ($rc === false) {
