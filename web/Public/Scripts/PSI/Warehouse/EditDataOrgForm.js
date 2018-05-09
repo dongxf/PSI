@@ -41,18 +41,22 @@ Ext.define("PSI.Warehouse.EditDataOrgForm", {
 		};
 		buttons.push(btn);
 
+		var logoHtml = "<img style='float:left;margin:10px 10px 0px 20px;width:48px;height:48px;' src='"
+				+ PSI.Const.BASE_URL
+				+ "Public/Images/edit-form-data.png'></img>"
+				+ "<h1 style='color:#196d83'>修改数据域</h1>";
+
 		Ext.apply(me, {
 			header : {
-				title : me.formatTitle("修改数据域"),
-				height : 40,
-				iconCls : "PSI-button-dataorg"
+				title : me.formatTitle(PSI.Const.PROD_NAME),
+				height : 40
 			},
 			modal : true,
 			resizable : false,
 			onEsc : Ext.emptyFn,
 			width : 400,
-			height : 220,
-			layout : "fit",
+			height : 290,
+			layout : "border",
 			listeners : {
 				show : {
 					fn : me.onWndShow,
@@ -64,6 +68,13 @@ Ext.define("PSI.Warehouse.EditDataOrgForm", {
 				}
 			},
 			items : [{
+						region : "north",
+						height : 70,
+						border : 0,
+						html : logoHtml
+					}, {
+						region : "center",
+						border : 0,
 						id : "PSI_Warehouse_EditDataOrgForm_editForm",
 						xtype : "form",
 						layout : {
