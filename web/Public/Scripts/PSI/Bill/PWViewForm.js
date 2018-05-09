@@ -144,12 +144,15 @@ Ext.define("PSI.Bill.PWViewForm", {
 						});
 
 				me.__goodsGrid = Ext.create("Ext.grid.Panel", {
+							cls : "PSI",
 							viewConfig : {
 								enableTextSelection : true
 							},
 							columnLines : true,
 							columns : [{
-										xtype : "rownumberer"
+										xtype : "rownumberer",
+										width : 40,
+										text : "序号"
 									}, {
 										header : "商品编码",
 										dataIndex : "goodsCode",
