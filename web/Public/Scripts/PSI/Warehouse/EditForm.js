@@ -2,77 +2,88 @@
  * 仓库 - 新增或编辑界面
  */
 Ext.define("PSI.Warehouse.EditForm", {
-			extend : "PSI.AFX.BaseDialogForm",
+	extend : "PSI.AFX.BaseDialogForm",
 
-			/**
-			 * 初始化组件
-			 */
-			initComponent : function() {
-				var me = this;
+	/**
+	 * 初始化组件
+	 */
+	initComponent : function() {
+		var me = this;
 
-				var entity = me.getEntity();
+		var entity = me.getEntity();
 
-				me.adding = entity == null;
+		me.adding = entity == null;
 
-				var buttons = [];
-				if (!entity) {
-					var btn = {
-						text : "保存并继续新增",
-						formBind : true,
-						handler : function() {
-							me.onOK(true);
+		var buttons = [];
+		if (!entity) {
+			var btn = {
+				text : "保存并继续新增",
+				formBind : true,
+				handler : function() {
+					me.onOK(true);
+				},
+				scope : me
+			};
+
+			buttons.push(btn);
+		}
+
+		var btn = {
+			text : "保存",
+			formBind : true,
+			iconCls : "PSI-button-ok",
+			handler : function() {
+				me.onOK(false);
+			},
+			scope : me
+		};
+		buttons.push(btn);
+
+		var btn = {
+			text : entity == null ? "关闭" : "取消",
+			handler : function() {
+				me.close();
+			},
+			scope : me
+		};
+		buttons.push(btn);
+
+		var t = entity == null ? "新增仓库" : "编辑仓库";
+		var f = entity == null
+				? "edit-form-create.png"
+				: "edit-form-update.png";
+		var logoHtml = "<img style='float:left;margin:10px 20px 0px 10px;width:48px;height:48px;' src='"
+				+ PSI.Const.BASE_URL
+				+ "Public/Images/"
+				+ f
+				+ "'></img>"
+				+ "<h1>" + t + "</h1>";
+		Ext.apply(me, {
+					header : {
+						title : me.formatTitle("仓库"),
+						height : 40
+					},
+					width : 400,
+					height : 240,
+					layout : "border",
+					listeners : {
+						show : {
+							fn : me.onWndShow,
+							scope : me
 						},
-						scope : me
-					};
-
-					buttons.push(btn);
-				}
-
-				var btn = {
-					text : "保存",
-					formBind : true,
-					iconCls : "PSI-button-ok",
-					handler : function() {
-						me.onOK(false);
+						close : {
+							fn : me.onWndClose,
+							scope : me
+						}
 					},
-					scope : me
-				};
-				buttons.push(btn);
-
-				var btn = {
-					text : entity == null ? "关闭" : "取消",
-					handler : function() {
-						me.close();
-					},
-					scope : me
-				};
-				buttons.push(btn);
-
-				var title = entity == null ? "新增仓库" : "编辑仓库";
-				title = me.formatTitle(title);
-				var iconCls = entity == null
-						? "PSI-button-add"
-						: "PSI-button-edit";
-				Ext.apply(me, {
-							header : {
-								title : title,
-								height : 40,
-								iconCls : iconCls
-							},
-							width : 400,
-							height : 160,
-							layout : "fit",
-							listeners : {
-								show : {
-									fn : me.onWndShow,
-									scope : me
-								},
-								close : {
-									fn : me.onWndClose,
-									scope : me
-								}
-							},
-							items : [{
+					items : [{
+								region : "north",
+								height : 70,
+								border : 0,
+								html : logoHtml
+							}, {
+								region : "center",
+								border : 0,
 								id : "PSI_Warehouse_EditForm_editForm",
 								xtype : "form",
 								layout : {
@@ -128,106 +139,106 @@ Ext.define("PSI.Warehouse.EditForm", {
 								}],
 								buttons : buttons
 							}]
+				});
+
+		me.callParent(arguments);
+
+		me.editForm = Ext.getCmp("PSI_Warehouse_EditForm_editForm");
+
+		me.editCode = Ext.getCmp("PSI_Warehouse_EditForm_editCode");
+		me.editName = Ext.getCmp("PSI_Warehouse_EditForm_editName");
+	},
+
+	/**
+	 * 保存
+	 */
+	onOK : function(thenAdd) {
+		var me = this;
+		var f = me.editForm;
+		var el = f.getEl();
+		el.mask(PSI.Const.SAVING);
+		var sf = {
+			url : me.URL("/Home/Warehouse/editWarehouse"),
+			method : "POST",
+			success : function(form, action) {
+				me.__lastId = action.result.id;
+
+				el.unmask();
+
+				PSI.MsgBox.tip("数据保存成功");
+				me.focus();
+				if (thenAdd) {
+					me.clearEdit();
+				} else {
+					me.close();
+				}
+			},
+			failure : function(form, action) {
+				el.unmask();
+				PSI.MsgBox.showInfo(action.result.msg, function() {
+							me.editCode.focus();
 						});
-
-				me.callParent(arguments);
-
-				me.editForm = Ext.getCmp("PSI_Warehouse_EditForm_editForm");
-
-				me.editCode = Ext.getCmp("PSI_Warehouse_EditForm_editCode");
-				me.editName = Ext.getCmp("PSI_Warehouse_EditForm_editName");
-			},
-
-			/**
-			 * 保存
-			 */
-			onOK : function(thenAdd) {
-				var me = this;
-				var f = me.editForm;
-				var el = f.getEl();
-				el.mask(PSI.Const.SAVING);
-				var sf = {
-					url : me.URL("/Home/Warehouse/editWarehouse"),
-					method : "POST",
-					success : function(form, action) {
-						me.__lastId = action.result.id;
-
-						el.unmask();
-
-						PSI.MsgBox.tip("数据保存成功");
-						me.focus();
-						if (thenAdd) {
-							me.clearEdit();
-						} else {
-							me.close();
-						}
-					},
-					failure : function(form, action) {
-						el.unmask();
-						PSI.MsgBox.showInfo(action.result.msg, function() {
-									me.editCode.focus();
-								});
-					}
-				};
-				f.submit(sf);
-			},
-
-			onEditCodeSpecialKey : function(field, e) {
-				var me = this;
-
-				if (e.getKey() == e.ENTER) {
-					var editName = me.editName;
-					editName.focus();
-					editName.setValue(editName.getValue());
-				}
-			},
-
-			onEditNameSpecialKey : function(field, e) {
-				var me = this;
-
-				if (e.getKey() == e.ENTER) {
-					var f = me.editForm;
-					if (f.getForm().isValid()) {
-						me.onOK(me.adding);
-					}
-				}
-			},
-
-			clearEdit : function() {
-				var me = this;
-				me.editCode.focus();
-
-				var editors = [me.editCode, me.editName];
-				for (var i = 0; i < editors.length; i++) {
-					var edit = editors[i];
-					edit.setValue(null);
-					edit.clearInvalid();
-				}
-			},
-
-			onWindowBeforeUnload : function(e) {
-				return (window.event.returnValue = e.returnValue = '确认离开当前页面？');
-			},
-
-			onWndClose : function() {
-				var me = this;
-
-				Ext.get(window).un('beforeunload', me.onWindowBeforeUnload);
-
-				if (me.__lastId) {
-					if (me.getParentForm()) {
-						me.getParentForm().freshGrid(me.__lastId);
-					}
-				}
-			},
-
-			onWndShow : function() {
-				var me = this;
-
-				Ext.get(window).on('beforeunload', me.onWindowBeforeUnload);
-
-				var editCode = me.editCode;
-				editCode.focus();
-				editCode.setValue(editCode.getValue());
 			}
-		});
+		};
+		f.submit(sf);
+	},
+
+	onEditCodeSpecialKey : function(field, e) {
+		var me = this;
+
+		if (e.getKey() == e.ENTER) {
+			var editName = me.editName;
+			editName.focus();
+			editName.setValue(editName.getValue());
+		}
+	},
+
+	onEditNameSpecialKey : function(field, e) {
+		var me = this;
+
+		if (e.getKey() == e.ENTER) {
+			var f = me.editForm;
+			if (f.getForm().isValid()) {
+				me.onOK(me.adding);
+			}
+		}
+	},
+
+	clearEdit : function() {
+		var me = this;
+		me.editCode.focus();
+
+		var editors = [me.editCode, me.editName];
+		for (var i = 0; i < editors.length; i++) {
+			var edit = editors[i];
+			edit.setValue(null);
+			edit.clearInvalid();
+		}
+	},
+
+	onWindowBeforeUnload : function(e) {
+		return (window.event.returnValue = e.returnValue = '确认离开当前页面？');
+	},
+
+	onWndClose : function() {
+		var me = this;
+
+		Ext.get(window).un('beforeunload', me.onWindowBeforeUnload);
+
+		if (me.__lastId) {
+			if (me.getParentForm()) {
+				me.getParentForm().freshGrid(me.__lastId);
+			}
+		}
+	},
+
+	onWndShow : function() {
+		var me = this;
+
+		Ext.get(window).on('beforeunload', me.onWindowBeforeUnload);
+
+		var editCode = me.editCode;
+		editCode.focus();
+		editCode.setValue(editCode.getValue());
+	}
+});
