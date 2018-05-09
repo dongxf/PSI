@@ -57,10 +57,10 @@ Ext.define("PSI.Warehouse.EditForm", {
 				+ "Public/Images/"
 				+ f
 				+ "'></img>"
-				+ "<h1>" + t + "</h1>";
+				+ "<h1 style='color:#196d83'>" + t + "</h1>";
 		Ext.apply(me, {
 					header : {
-						title : me.formatTitle("仓库"),
+						title : me.formatTitle(PSI.Const.PROD_NAME),
 						height : 40
 					},
 					width : 400,
