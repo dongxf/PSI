@@ -229,6 +229,7 @@ class PWBillDAO extends PSIBaseExDAO {
 		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
 		$fmt = "decimal(19, " . $dataScale . ")";
 		
+		// 采购入库单id
 		$pwbillId = $params["id"];
 		
 		$sql = "select p.id, g.code, g.name, g.spec, u.name as unit_name, 
@@ -271,13 +272,25 @@ class PWBillDAO extends PSIBaseExDAO {
 			return $this->bad("没有赋权[采购入库-采购单价和金额可见]，不能新建采购入库单");
 		}
 		
+		// 业务日期
 		$bizDT = $bill["bizDT"];
+		
+		// 仓库id
 		$warehouseId = $bill["warehouseId"];
+		
+		// 供应商id
 		$supplierId = $bill["supplierId"];
+		
+		// 业务员id
 		$bizUserId = $bill["bizUserId"];
+		
+		// 付款方式
 		$paymentType = $bill["paymentType"];
+		
+		// 单据备注
 		$billMemo = $bill["billMemo"];
 		
+		// 采购订单单号
 		$pobillRef = $bill["pobillRef"];
 		
 		$warehouseDAO = new WarehouseDAO($db);
@@ -342,6 +355,7 @@ class PWBillDAO extends PSIBaseExDAO {
 		// 明细记录
 		$items = $bill["items"];
 		foreach ( $items as $i => $item ) {
+			// 商品id
 			$goodsId = $item["goodsId"];
 			if ($goodsId == null) {
 				continue;
@@ -361,10 +375,16 @@ class PWBillDAO extends PSIBaseExDAO {
 				return $this->bad("入库数量不能是负数");
 			}
 			
+			// 入库单明细记录的备注
 			$memo = $item["memo"];
+			
+			// 采购单价
 			$goodsPrice = $item["goodsPrice"];
+			
+			// 采购金额
 			$goodsMoney = $item["goodsMoney"];
 			
+			// 采购订单明细记录id
 			$poBillDetailId = $item["poBillDetailId"];
 			
 			$sql = "insert into t_pw_bill_detail
@@ -379,6 +399,7 @@ class PWBillDAO extends PSIBaseExDAO {
 			}
 		}
 		
+		// 同步入库单主表中的采购金额合计值
 		$sql = "select sum(goods_money) as goods_money from t_pw_bill_detail
 				where pwbill_id = '%s' ";
 		$data = $db->query($sql, $id);
@@ -399,6 +420,7 @@ class PWBillDAO extends PSIBaseExDAO {
 			$sql = "select id, company_id from t_po_bill where ref = '%s' ";
 			$data = $db->query($sql, $pobillRef);
 			if (! $data) {
+				// 传入了不存在的采购订单单号
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
 			$pobillId = $data[0]["id"];
@@ -412,6 +434,7 @@ class PWBillDAO extends PSIBaseExDAO {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
 			
+			// 关联采购订单和采购入库单
 			$sql = "insert into t_po_pw(po_id, pw_id) values('%s', '%s')";
 			$rc = $db->execute($sql, $pobillId, $id);
 			if (! $rc) {
