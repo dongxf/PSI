@@ -41,319 +41,344 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 			categoryStore = me.getParentForm().categoryGrid.getStore();
 		}
 
-		var title = entity == null ? "新增客户" : "编辑客户";
-		title = me.formatTitle(title);
-		var iconCls = entity == null
-				? "PSI-button-add-detail"
-				: "PSI-button-edit-detail";
+		var t = entity == null ? "新增客户" : "编辑客户";
+		var f = entity == null
+				? "edit-form-create.png"
+				: "edit-form-update.png";
+		var logoHtml = "<img style='float:left;margin:10px 20px 0px 10px;width:48px;height:48px;' src='"
+				+ PSI.Const.BASE_URL
+				+ "Public/Images/"
+				+ f
+				+ "'></img>"
+				+ "<h2 style='color:#196d83'>"
+				+ t
+				+ "</h2>"
+				+ "<p style='color:#196d83'>标记 <span style='color:red;font-weight:bold'>*</span>的是必须录入数据的字段</p>";
 
 		Ext.apply(me, {
 			header : {
-				title : title,
-				height : 40,
-				iconCls : iconCls
+				title : me.formatTitle(PSI.Const.PROD_NAME),
+				height : 40
 			},
 			width : 550,
-			height : 440,
-			layout : "fit",
+			height : 530,
+			layout : "border",
 			items : [{
-				id : "PSI_Customer_CustomerEditForm_editForm",
-				xtype : "form",
-				layout : {
-					type : "table",
-					columns : 2
-				},
-				height : "100%",
-				bodyPadding : 5,
-				defaultType : 'textfield',
-				fieldDefaults : {
-					labelWidth : 100,
-					labelAlign : "right",
-					labelSeparator : "",
-					msgTarget : 'side'
-				},
-				items : [{
-							xtype : "hidden",
-							name : "id",
-							value : entity == null ? null : entity.get("id")
-						}, {
-							id : "PSI_Customer_CustomerEditForm_editCategory",
-							xtype : "combo",
-							fieldLabel : "分类",
-							allowBlank : false,
-							blankText : "没有输入客户分类",
-							beforeLabelTextTpl : PSI.Const.REQUIRED,
-							valueField : "id",
-							displayField : "name",
-							store : categoryStore,
-							queryMode : "local",
-							editable : false,
-							value : categoryStore != null ? categoryStore
-									.getAt(0).get("id") : null,
-							name : "categoryId",
-							listeners : {
-								specialkey : {
-									fn : me.onEditSpecialKey,
-									scope : me
-								}
-							}
-						}, {
-							id : "PSI_Customer_CustomerEditForm_editCode",
-							fieldLabel : "编码",
-							allowBlank : false,
-							blankText : "没有输入客户编码",
-							beforeLabelTextTpl : PSI.Const.REQUIRED,
-							name : "code",
-							value : entity == null ? null : entity.get("code"),
-							listeners : {
-								specialkey : {
-									fn : me.onEditSpecialKey,
-									scope : me
-								}
-							}
-						}, {
-							id : "PSI_Customer_CustomerEditForm_editName",
-							fieldLabel : "客户名称",
-							allowBlank : false,
-							blankText : "没有输入客户名称",
-							beforeLabelTextTpl : PSI.Const.REQUIRED,
-							name : "name",
-							value : entity == null ? null : entity.get("name"),
-							listeners : {
-								specialkey : {
-									fn : me.onEditSpecialKey,
-									scope : me
-								}
-							},
-							width : 510,
-							colspan : 2
-						}, {
-							id : "PSI_Customer_CustomerEditForm_editAddress",
-							fieldLabel : "地址",
-							name : "address",
-							value : entity == null ? null : entity
-									.get("address"),
-							listeners : {
-								specialkey : {
-									fn : me.onEditSpecialKey,
-									scope : me
-								}
-							},
-							width : 510,
-							colspan : 2
-						}, {
-							id : "PSI_Customer_CustomerEditForm_editContact01",
-							fieldLabel : "联系人",
-							name : "contact01",
-							value : entity == null ? null : entity
-									.get("contact01"),
-							listeners : {
-								specialkey : {
-									fn : me.onEditSpecialKey,
-									scope : me
-								}
-							}
-						}, {
-							id : "PSI_Customer_CustomerEditForm_editMobile01",
-							fieldLabel : "手机",
-							name : "mobile01",
-							value : entity == null ? null : entity
-									.get("mobile01"),
-							listeners : {
-								specialkey : {
-									fn : me.onEditSpecialKey,
-									scope : me
-								}
-							}
-						}, {
-							id : "PSI_Customer_CustomerEditForm_editTel01",
-							fieldLabel : "固话",
-							name : "tel01",
-							value : entity == null ? null : entity.get("tel01"),
-							listeners : {
-								specialkey : {
-									fn : me.onEditSpecialKey,
-									scope : me
-								}
-							}
-						}, {
-							id : "PSI_Customer_CustomerEditForm_editQQ01",
-							fieldLabel : "QQ",
-							name : "qq01",
-							value : entity == null ? null : entity.get("qq01"),
-							listeners : {
-								specialkey : {
-									fn : me.onEditSpecialKey,
-									scope : me
-								}
-							}
-						}, {
-							id : "PSI_Customer_CustomerEditForm_editContact02",
-							fieldLabel : "备用联系人",
-							name : "contact02",
-							value : entity == null ? null : entity
-									.get("contact02"),
-							listeners : {
-								specialkey : {
-									fn : me.onEditSpecialKey,
-									scope : me
-								}
-							}
-						}, {
-							id : "PSI_Customer_CustomerEditForm_editMobile02",
-							fieldLabel : "备用联系人手机",
-							name : "mobile02",
-							value : entity == null ? null : entity
-									.get("mobile02"),
-							listeners : {
-								specialkey : {
-									fn : me.onEditSpecialKey,
-									scope : me
-								}
-							}
-						}, {
-							id : "PSI_Customer_CustomerEditForm_editTel02",
-							fieldLabel : "备用联系人固话",
-							name : "tel02",
-							value : entity == null ? null : entity.get("tel02"),
-							listeners : {
-								specialkey : {
-									fn : me.onEditSpecialKey,
-									scope : me
-								}
-							}
-						}, {
-							id : "PSI_Customer_CustomerEditForm_editQQ02",
-							fieldLabel : "备用联系人QQ",
-							name : "qq02",
-							value : entity == null ? null : entity.get("qq02"),
-							listeners : {
-								specialkey : {
-									fn : me.onEditSpecialKey,
-									scope : me
-								}
-							}
-						}, {
-							id : "PSI_Customer_CustomerEditForm_editAddressReceipt",
-							fieldLabel : "收货地址",
-							name : "addressReceipt",
-							value : entity == null ? null : entity
-									.get("addressReceipt"),
-							listeners : {
-								specialkey : {
-									fn : me.onEditSpecialKey,
-									scope : me
-								}
-							},
-							width : 510,
-							colspan : 2
-						}, {
-							id : "PSI_Customer_CustomerEditForm_editBankName",
-							fieldLabel : "开户行",
-							name : "bankName",
-							value : entity == null ? null : entity
-									.get("bankName"),
-							listeners : {
-								specialkey : {
-									fn : me.onEditSpecialKey,
-									scope : me
-								}
-							}
-						}, {
-							id : "PSI_Customer_CustomerEditForm_editBankAccount",
-							fieldLabel : "开户行账号",
-							name : "bankAccount",
-							value : entity == null ? null : entity
-									.get("bankAccount"),
-							listeners : {
-								specialkey : {
-									fn : me.onEditSpecialKey,
-									scope : me
-								}
-							}
-						}, {
-							id : "PSI_Customer_CustomerEditForm_editTax",
-							fieldLabel : "税号",
-							name : "tax",
-							value : entity == null ? null : entity.get("tax"),
-							listeners : {
-								specialkey : {
-									fn : me.onEditSpecialKey,
-									scope : me
-								}
-							}
-						}, {
-							id : "PSI_Customer_CustomerEditForm_editFax",
-							fieldLabel : "传真",
-							name : "fax",
-							value : entity == null ? null : entity.get("fax"),
-							listeners : {
-								specialkey : {
-									fn : me.onEditSpecialKey,
-									scope : me
-								}
-							}
-						}, {
-							id : "PSI_Customer_CustomerEditForm_editInitReceivables",
-							fieldLabel : "应收期初余额",
-							name : "initReceivables",
-							xtype : "numberfield",
-							hideTrigger : true,
-							value : entity == null ? null : entity
-									.get("initReceivables"),
-							listeners : {
-								specialkey : {
-									fn : me.onEditSpecialKey,
-									scope : me
-								}
-							}
-						}, {
-							id : "PSI_Customer_CustomerEditForm_editInitReceivablesDT",
-							fieldLabel : "余额日期",
-							name : "initReceivablesDT",
-							xtype : "datefield",
-							format : "Y-m-d",
-							value : entity == null ? null : entity
-									.get("initReceivablesDT"),
-							listeners : {
-								specialkey : {
-									fn : me.onEditSpecialKey,
-									scope : me
-								}
-							}
-						}, {
-							id : "PSI_Customer_CustomerEditForm_editWarehouse",
-							xtype : "psi_warehousefield",
-							fieldLabel : "销售出库仓库",
-							value : null,
-							listeners : {
-								specialkey : {
-									fn : me.onEditSpecialKey,
-									scope : me
-								}
-							},
-							width : 510,
-							colspan : 2
-						}, {
-							id : "PSI_Customer_CustomerEditForm_editWarehouseId",
-							xtype : "hiddenfield",
-							name : "warehouseId"
-						}, {
-							id : "PSI_Customer_CustomerEditForm_editNote",
-							fieldLabel : "备注",
-							name : "note",
-							value : entity == null ? null : entity.get("note"),
-							listeners : {
-								specialkey : {
-									fn : me.onEditLastSpecialKey,
-									scope : me
-								}
-							},
-							width : 510,
-							colspan : 2
-						}],
-				buttons : buttons
-			}],
+						region : "north",
+						border : 0,
+						height : 90,
+						html : logoHtml
+					}, {
+						region : "center",
+						border : 0,
+						id : "PSI_Customer_CustomerEditForm_editForm",
+						xtype : "form",
+						layout : {
+							type : "table",
+							columns : 2
+						},
+						height : "100%",
+						bodyPadding : 5,
+						defaultType : 'textfield',
+						fieldDefaults : {
+							labelWidth : 100,
+							labelAlign : "right",
+							labelSeparator : "",
+							msgTarget : 'side'
+						},
+						items : [{
+									xtype : "hidden",
+									name : "id",
+									value : entity == null ? null : entity
+											.get("id")
+								}, {
+									id : "PSI_Customer_CustomerEditForm_editCategory",
+									xtype : "combo",
+									fieldLabel : "分类",
+									allowBlank : false,
+									blankText : "没有输入客户分类",
+									beforeLabelTextTpl : PSI.Const.REQUIRED,
+									valueField : "id",
+									displayField : "name",
+									store : categoryStore,
+									queryMode : "local",
+									editable : false,
+									value : categoryStore != null
+											? categoryStore.getAt(0).get("id")
+											: null,
+									name : "categoryId",
+									listeners : {
+										specialkey : {
+											fn : me.onEditSpecialKey,
+											scope : me
+										}
+									}
+								}, {
+									id : "PSI_Customer_CustomerEditForm_editCode",
+									fieldLabel : "编码",
+									allowBlank : false,
+									blankText : "没有输入客户编码",
+									beforeLabelTextTpl : PSI.Const.REQUIRED,
+									name : "code",
+									value : entity == null ? null : entity
+											.get("code"),
+									listeners : {
+										specialkey : {
+											fn : me.onEditSpecialKey,
+											scope : me
+										}
+									}
+								}, {
+									id : "PSI_Customer_CustomerEditForm_editName",
+									fieldLabel : "客户名称",
+									allowBlank : false,
+									blankText : "没有输入客户名称",
+									beforeLabelTextTpl : PSI.Const.REQUIRED,
+									name : "name",
+									value : entity == null ? null : entity
+											.get("name"),
+									listeners : {
+										specialkey : {
+											fn : me.onEditSpecialKey,
+											scope : me
+										}
+									},
+									width : 510,
+									colspan : 2
+								}, {
+									id : "PSI_Customer_CustomerEditForm_editAddress",
+									fieldLabel : "地址",
+									name : "address",
+									value : entity == null ? null : entity
+											.get("address"),
+									listeners : {
+										specialkey : {
+											fn : me.onEditSpecialKey,
+											scope : me
+										}
+									},
+									width : 510,
+									colspan : 2
+								}, {
+									id : "PSI_Customer_CustomerEditForm_editContact01",
+									fieldLabel : "联系人",
+									name : "contact01",
+									value : entity == null ? null : entity
+											.get("contact01"),
+									listeners : {
+										specialkey : {
+											fn : me.onEditSpecialKey,
+											scope : me
+										}
+									}
+								}, {
+									id : "PSI_Customer_CustomerEditForm_editMobile01",
+									fieldLabel : "手机",
+									name : "mobile01",
+									value : entity == null ? null : entity
+											.get("mobile01"),
+									listeners : {
+										specialkey : {
+											fn : me.onEditSpecialKey,
+											scope : me
+										}
+									}
+								}, {
+									id : "PSI_Customer_CustomerEditForm_editTel01",
+									fieldLabel : "固话",
+									name : "tel01",
+									value : entity == null ? null : entity
+											.get("tel01"),
+									listeners : {
+										specialkey : {
+											fn : me.onEditSpecialKey,
+											scope : me
+										}
+									}
+								}, {
+									id : "PSI_Customer_CustomerEditForm_editQQ01",
+									fieldLabel : "QQ",
+									name : "qq01",
+									value : entity == null ? null : entity
+											.get("qq01"),
+									listeners : {
+										specialkey : {
+											fn : me.onEditSpecialKey,
+											scope : me
+										}
+									}
+								}, {
+									id : "PSI_Customer_CustomerEditForm_editContact02",
+									fieldLabel : "备用联系人",
+									name : "contact02",
+									value : entity == null ? null : entity
+											.get("contact02"),
+									listeners : {
+										specialkey : {
+											fn : me.onEditSpecialKey,
+											scope : me
+										}
+									}
+								}, {
+									id : "PSI_Customer_CustomerEditForm_editMobile02",
+									fieldLabel : "备用联系人手机",
+									name : "mobile02",
+									value : entity == null ? null : entity
+											.get("mobile02"),
+									listeners : {
+										specialkey : {
+											fn : me.onEditSpecialKey,
+											scope : me
+										}
+									}
+								}, {
+									id : "PSI_Customer_CustomerEditForm_editTel02",
+									fieldLabel : "备用联系人固话",
+									name : "tel02",
+									value : entity == null ? null : entity
+											.get("tel02"),
+									listeners : {
+										specialkey : {
+											fn : me.onEditSpecialKey,
+											scope : me
+										}
+									}
+								}, {
+									id : "PSI_Customer_CustomerEditForm_editQQ02",
+									fieldLabel : "备用联系人QQ",
+									name : "qq02",
+									value : entity == null ? null : entity
+											.get("qq02"),
+									listeners : {
+										specialkey : {
+											fn : me.onEditSpecialKey,
+											scope : me
+										}
+									}
+								}, {
+									id : "PSI_Customer_CustomerEditForm_editAddressReceipt",
+									fieldLabel : "收货地址",
+									name : "addressReceipt",
+									value : entity == null ? null : entity
+											.get("addressReceipt"),
+									listeners : {
+										specialkey : {
+											fn : me.onEditSpecialKey,
+											scope : me
+										}
+									},
+									width : 510,
+									colspan : 2
+								}, {
+									id : "PSI_Customer_CustomerEditForm_editBankName",
+									fieldLabel : "开户行",
+									name : "bankName",
+									value : entity == null ? null : entity
+											.get("bankName"),
+									listeners : {
+										specialkey : {
+											fn : me.onEditSpecialKey,
+											scope : me
+										}
+									}
+								}, {
+									id : "PSI_Customer_CustomerEditForm_editBankAccount",
+									fieldLabel : "开户行账号",
+									name : "bankAccount",
+									value : entity == null ? null : entity
+											.get("bankAccount"),
+									listeners : {
+										specialkey : {
+											fn : me.onEditSpecialKey,
+											scope : me
+										}
+									}
+								}, {
+									id : "PSI_Customer_CustomerEditForm_editTax",
+									fieldLabel : "税号",
+									name : "tax",
+									value : entity == null ? null : entity
+											.get("tax"),
+									listeners : {
+										specialkey : {
+											fn : me.onEditSpecialKey,
+											scope : me
+										}
+									}
+								}, {
+									id : "PSI_Customer_CustomerEditForm_editFax",
+									fieldLabel : "传真",
+									name : "fax",
+									value : entity == null ? null : entity
+											.get("fax"),
+									listeners : {
+										specialkey : {
+											fn : me.onEditSpecialKey,
+											scope : me
+										}
+									}
+								}, {
+									id : "PSI_Customer_CustomerEditForm_editInitReceivables",
+									fieldLabel : "应收期初余额",
+									name : "initReceivables",
+									xtype : "numberfield",
+									hideTrigger : true,
+									value : entity == null ? null : entity
+											.get("initReceivables"),
+									listeners : {
+										specialkey : {
+											fn : me.onEditSpecialKey,
+											scope : me
+										}
+									}
+								}, {
+									id : "PSI_Customer_CustomerEditForm_editInitReceivablesDT",
+									fieldLabel : "余额日期",
+									name : "initReceivablesDT",
+									xtype : "datefield",
+									format : "Y-m-d",
+									value : entity == null ? null : entity
+											.get("initReceivablesDT"),
+									listeners : {
+										specialkey : {
+											fn : me.onEditSpecialKey,
+											scope : me
+										}
+									}
+								}, {
+									id : "PSI_Customer_CustomerEditForm_editWarehouse",
+									xtype : "psi_warehousefield",
+									fieldLabel : "销售出库仓库",
+									value : null,
+									listeners : {
+										specialkey : {
+											fn : me.onEditSpecialKey,
+											scope : me
+										}
+									},
+									width : 510,
+									colspan : 2
+								}, {
+									id : "PSI_Customer_CustomerEditForm_editWarehouseId",
+									xtype : "hiddenfield",
+									name : "warehouseId"
+								}, {
+									id : "PSI_Customer_CustomerEditForm_editNote",
+									fieldLabel : "备注",
+									name : "note",
+									value : entity == null ? null : entity
+											.get("note"),
+									listeners : {
+										specialkey : {
+											fn : me.onEditLastSpecialKey,
+											scope : me
+										}
+									},
+									width : 510,
+									colspan : 2
+								}],
+						buttons : buttons
+					}],
 			listeners : {
 				show : {
 					fn : me.onWndShow,
