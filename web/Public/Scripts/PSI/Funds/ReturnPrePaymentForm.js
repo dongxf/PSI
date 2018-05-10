@@ -6,15 +6,27 @@ Ext.define("PSI.Funds.ReturnPrePaymentForm", {
 
 	initComponent : function() {
 		var me = this;
+
+		var t = "供应商退回采购预付款";
+		var f = "edit-form-money.png";
+		var logoHtml = "<img style='float:left;margin:20px 20px 0px 10px;width:48px;height:48px;' src='"
+				+ PSI.Const.BASE_URL
+				+ "Public/Images/"
+				+ f
+				+ "'></img>"
+				+ "<h2 style='color:#196d83'>"
+				+ t
+				+ "</h2>"
+				+ "<p style='color:#196d83'>标记 <span style='color:red;font-weight:bold'>*</span>的是必须录入数据的字段</p>";
+
 		Ext.apply(me, {
 					header : {
-						title : me.formatTitle("供应商退回采购预付款"),
-						height : 40,
-						iconCls : "PSI-button-delete"
+						title : me.formatTitle(PSI.Const.PROD_NAME),
+						height : 40
 					},
 					width : 400,
-					height : 220,
-					layout : "fit",
+					height : 310,
+					layout : "border",
 					defaultFocus : "editSupplier",
 					listeners : {
 						show : {
@@ -27,6 +39,13 @@ Ext.define("PSI.Funds.ReturnPrePaymentForm", {
 						}
 					},
 					items : [{
+								region : "north",
+								border : 0,
+								height : 90,
+								html : logoHtml
+							}, {
+								region : "center",
+								border : 0,
 								id : "editForm",
 								xtype : "form",
 								layout : {
