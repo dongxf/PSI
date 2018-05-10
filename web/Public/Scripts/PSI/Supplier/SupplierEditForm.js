@@ -131,9 +131,9 @@ Ext.define("PSI.Supplier.SupplierEditForm", {
 									}
 								}, {
 									id : "PSI_Supplier_SupplierEditForm_editName",
-									fieldLabel : "供应商",
+									fieldLabel : "供应商名称",
 									allowBlank : false,
-									blankText : "没有输入供应商",
+									blankText : "没有输入供应商名称",
 									beforeLabelTextTpl : PSI.Const.REQUIRED,
 									name : "name",
 									value : entity == null ? null : entity
