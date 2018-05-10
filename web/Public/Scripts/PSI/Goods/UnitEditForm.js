@@ -49,7 +49,10 @@ Ext.define("PSI.Goods.UnitEditForm", {
 				+ "Public/Images/"
 				+ f
 				+ "'></img>"
-				+ "<h1 style='color:#196d83'>" + t + "</h1>";
+				+ "<h2 style='color:#196d83'>"
+				+ t
+				+ "</h2>"
+				+ "<p style='color:#196d83'>标记 <span style='color:red;font-weight:bold'>*</span>的是必须录入数据的字段</p>";;
 
 		Ext.apply(me, {
 					header : {
@@ -62,7 +65,7 @@ Ext.define("PSI.Goods.UnitEditForm", {
 					items : [{
 								region : "north",
 								border : 0,
-								height : 70,
+								height : 90,
 								html : logoHtml
 							}, {
 								region : "center",
