@@ -69,21 +69,36 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 			// 例如：业务单据中选择商品的界面中，也可以新增商品
 		}
 
-		var title = entity == null ? "新增商品" : "编辑商品";
-		title = me.formatTitle(title);
-		var iconCls = entity == null
-				? "PSI-button-add-detail"
-				: "PSI-button-edit-detail";
+		var t = entity == null ? "新增商品" : "编辑商品";
+		var f = entity == null
+				? "edit-form-create.png"
+				: "edit-form-update.png";
+		var logoHtml = "<img style='float:left;margin:10px 20px 0px 10px;width:48px;height:48px;' src='"
+				+ PSI.Const.BASE_URL
+				+ "Public/Images/"
+				+ f
+				+ "'></img>"
+				+ "<h2 style='color:#196d83'>"
+				+ t
+				+ "</h2>"
+				+ "<p style='color:#196d83'>标记 <span style='color:red;font-weight:bold'>*</span>的是必须录入数据的字段</p>";;
+
 		Ext.apply(me, {
-					header : {
-						title : title,
-						height : 40,
-						iconCls : iconCls
-					},
-					width : 460,
-					height : 280,
-					layout : "fit",
-					items : [{
+			header : {
+				title : me.formatTitle(PSI.Const.PROD_NAME),
+				height : 40
+			},
+			width : 460,
+			height : 370,
+			layout : "border",
+			items : [{
+						region : "north",
+						border : 0,
+						height : 90,
+						html : logoHtml
+					}, {
+						region : "center",
+						border : 0,
 						id : "PSI_Goods_GoodsEditForm_editForm",
 						xtype : "form",
 						layout : {
@@ -264,17 +279,17 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 								}],
 						buttons : buttons
 					}],
-					listeners : {
-						show : {
-							fn : me.onWndShow,
-							scope : me
-						},
-						close : {
-							fn : me.onWndClose,
-							scope : me
-						}
-					}
-				});
+			listeners : {
+				show : {
+					fn : me.onWndShow,
+					scope : me
+				},
+				close : {
+					fn : me.onWndClose,
+					scope : me
+				}
+			}
+		});
 
 		me.callParent(arguments);
 
