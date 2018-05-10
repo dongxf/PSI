@@ -57,7 +57,10 @@ Ext.define("PSI.Warehouse.EditForm", {
 				+ "Public/Images/"
 				+ f
 				+ "'></img>"
-				+ "<h1 style='color:#196d83'>" + t + "</h1>";
+				+ "<h2 style='color:#196d83'>"
+				+ t
+				+ "</h2>"
+				+ "<p style='color:#196d83'>标记 <span style='color:red;font-weight:bold'>*</span>的是必须录入数据的字段</p>";
 		Ext.apply(me, {
 					header : {
 						title : me.formatTitle(PSI.Const.PROD_NAME),
@@ -78,7 +81,7 @@ Ext.define("PSI.Warehouse.EditForm", {
 					},
 					items : [{
 								region : "north",
-								height : 70,
+								height : 90,
 								border : 0,
 								html : logoHtml
 							}, {
