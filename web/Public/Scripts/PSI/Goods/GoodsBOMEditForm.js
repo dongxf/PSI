@@ -54,19 +54,28 @@ Ext.define("PSI.Goods.GoodsBOMEditForm", {
 		};
 		buttons.push(btn);
 
-		var title = entity == null ? "新增子商品" : "编辑子商品";
-		title = me.formatTitle(title);
-		var iconCls = entity == null ? "PSI-button-add" : "PSI-button-edit";
+		var t = entity == null ? "新增子商品" : "编辑子商品";
+		var f = entity == null
+				? "edit-form-create.png"
+				: "edit-form-update.png";
+		var logoHtml = "<img style='float:left;margin:10px 20px 0px 10px;width:48px;height:48px;' src='"
+				+ PSI.Const.BASE_URL
+				+ "Public/Images/"
+				+ f
+				+ "'></img>"
+				+ "<h2 style='color:#196d83'>"
+				+ t
+				+ "</h2>"
+				+ "<p style='color:#196d83'>标记 <span style='color:red;font-weight:bold'>*</span>的是必须录入数据的字段</p>";;
 
 		Ext.apply(me, {
 			header : {
-				title : title,
-				height : 40,
-				iconCls : iconCls
+				title : me.formatTitle(PSI.Const.PROD_NAME),
+				height : 40
 			},
 			width : 520,
-			height : 390,
-			layout : "fit",
+			height : 480,
+			layout : "border",
 			listeners : {
 				show : {
 					fn : me.onWndShow,
@@ -78,100 +87,110 @@ Ext.define("PSI.Goods.GoodsBOMEditForm", {
 				}
 			},
 			items : [{
-				id : "PSI_Goods_GoodsBOMEditForm_editForm",
-				xtype : "form",
-				layout : {
-					type : "table",
-					columns : 1
-				},
-				height : "100%",
-				bodyPadding : 5,
-				defaultType : 'textfield',
-				fieldDefaults : {
-					labelAlign : "right",
-					labelSeparator : "",
-					msgTarget : 'side',
-					margin : "5"
-				},
-				items : [{
-							xtype : "hidden",
-							name : "id",
-							value : goods.get("id")
-						}, {
-							fieldLabel : "商品编码",
-							width : 470,
-							readOnly : true,
-							value : goods.get("code")
-						}, {
-							fieldLabel : "品名",
-							width : 470,
-							readOnly : true,
-							value : goods.get("name")
-						}, {
-							fieldLabel : "规格型号",
-							readOnly : true,
-							width : 470,
-							value : goods.get("spec")
-						}, {
-							fieldLabel : "商品单位",
-							readOnly : true,
-							value : goods.get("unitName")
-						}, {
-							id : "PSI_Goods_GoodsBOMEditForm_editSubGoodsCode",
-							fieldLabel : "子商品编码",
-							width : 470,
-							allowBlank : false,
-							blankText : "没有输入子商品",
-							beforeLabelTextTpl : PSI.Const.REQUIRED,
-							xtype : "psi_subgoodsfield",
-							parentCmp : me,
-							parentGoodsId : me.goods.get("id"),
-							listeners : {
-								specialkey : {
-									fn : me.onEditCodeSpecialKey,
-									scope : me
-								}
-							}
-						}, {
-							fieldLabel : "子商品名称",
-							width : 470,
-							readOnly : true,
-							id : "PSI_Goods_GoodsBOMEditForm_editSubGoodsName"
-						}, {
-							fieldLabel : "子商品规格型号",
-							readOnly : true,
-							width : 470,
-							id : "PSI_Goods_GoodsBOMEditForm_editSubGoodsSpec"
-						}, {
-							id : "PSI_Goods_GoodsBOMEditForm_editSubGoodsCount",
-							xtype : "numberfield",
-							fieldLabel : "子商品数量",
-							allowDecimals : PSI.Const.GC_DEC_NUMBER > 0,
-							decimalPrecision : PSI.Const.GC_DEC_NUMBER,
-							minValue : 0,
-							hideTrigger : true,
-							name : "subGoodsCount",
-							listeners : {
-								specialkey : {
-									fn : me.onEditCountSpecialKey,
-									scope : me
-								}
-							}
-						}, {
-							fieldLabel : "子商品单位",
-							readOnly : true,
-							id : "PSI_Goods_GoodsBOMEditForm_editSubGoodsUnitName"
-						}, {
-							xtype : "hidden",
-							id : "PSI_Goods_GoodsBOMEditForm_editSubGoodsId",
-							name : "subGoodsId"
-						}, {
-							xtype : "hidden",
-							name : "addBOM",
-							value : entity == null ? "1" : "0"
-						}],
-				buttons : buttons
-			}]
+						region : "north",
+						border : 0,
+						height : 90,
+						html : logoHtml
+					}, {
+						region : "center",
+						border : 0,
+						id : "PSI_Goods_GoodsBOMEditForm_editForm",
+						xtype : "form",
+						layout : {
+							type : "table",
+							columns : 1
+						},
+						height : "100%",
+						bodyPadding : 5,
+						defaultType : 'textfield',
+						fieldDefaults : {
+							labelAlign : "right",
+							labelSeparator : "",
+							msgTarget : 'side',
+							margin : "5"
+						},
+						items : [{
+									xtype : "hidden",
+									name : "id",
+									value : goods.get("id")
+								}, {
+									fieldLabel : "商品编码",
+									width : 470,
+									readOnly : true,
+									value : goods.get("code")
+								}, {
+									fieldLabel : "品名",
+									width : 470,
+									readOnly : true,
+									value : goods.get("name")
+								}, {
+									fieldLabel : "规格型号",
+									readOnly : true,
+									width : 470,
+									value : goods.get("spec")
+								}, {
+									fieldLabel : "商品单位",
+									readOnly : true,
+									value : goods.get("unitName")
+								}, {
+									id : "PSI_Goods_GoodsBOMEditForm_editSubGoodsCode",
+									fieldLabel : "子商品编码",
+									width : 470,
+									allowBlank : false,
+									blankText : "没有输入子商品",
+									beforeLabelTextTpl : entity == null
+											? PSI.Const.REQUIRED
+											: "",
+									xtype : "psi_subgoodsfield",
+									parentCmp : me,
+									parentGoodsId : me.goods.get("id"),
+									listeners : {
+										specialkey : {
+											fn : me.onEditCodeSpecialKey,
+											scope : me
+										}
+									}
+								}, {
+									fieldLabel : "子商品名称",
+									width : 470,
+									readOnly : true,
+									id : "PSI_Goods_GoodsBOMEditForm_editSubGoodsName"
+								}, {
+									fieldLabel : "子商品规格型号",
+									readOnly : true,
+									width : 470,
+									id : "PSI_Goods_GoodsBOMEditForm_editSubGoodsSpec"
+								}, {
+									id : "PSI_Goods_GoodsBOMEditForm_editSubGoodsCount",
+									xtype : "numberfield",
+									fieldLabel : "子商品数量",
+									allowDecimals : PSI.Const.GC_DEC_NUMBER > 0,
+									decimalPrecision : PSI.Const.GC_DEC_NUMBER,
+									minValue : 0,
+									hideTrigger : true,
+									name : "subGoodsCount",
+									beforeLabelTextTpl : PSI.Const.REQUIRED,
+									listeners : {
+										specialkey : {
+											fn : me.onEditCountSpecialKey,
+											scope : me
+										}
+									}
+								}, {
+									fieldLabel : "子商品单位",
+									readOnly : true,
+									id : "PSI_Goods_GoodsBOMEditForm_editSubGoodsUnitName"
+								}, {
+									xtype : "hidden",
+									id : "PSI_Goods_GoodsBOMEditForm_editSubGoodsId",
+									name : "subGoodsId"
+								}, {
+									xtype : "hidden",
+									name : "addBOM",
+									value : entity == null ? "1" : "0"
+								}],
+						buttons : buttons
+					}]
 		});
 
 		me.callParent(arguments);

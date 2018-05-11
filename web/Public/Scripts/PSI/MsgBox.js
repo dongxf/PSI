@@ -52,7 +52,7 @@ Ext.define("PSI.MsgBox", {
                 ]
             });
 
-            wnd.showAt(document.body.clientWidth / 2 - 150, 0);
+            wnd.showAt(document.body.clientWidth - 300, 0);
 
             Ext.Function.defer(function () {
                 wnd.hide();

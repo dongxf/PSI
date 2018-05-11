@@ -15,7 +15,7 @@ Ext.define("PSI.Goods.SafetyInventoryEditForm", {
 					header : {
 						title : me.formatTitle("设置商品安全库存"),
 						height : 40,
-						iconCls : "PSI-button-view"
+						iconCls : "PSI-button-commit"
 					},
 					modal : true,
 					onEsc : Ext.emptyFn,
