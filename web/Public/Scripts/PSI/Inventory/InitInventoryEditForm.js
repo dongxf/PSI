@@ -20,8 +20,15 @@ Ext.define("PSI.Inventory.InitInventoryEditForm", {
 					data : []
 				});
 		me.storeGoodsCategory = storeGoodsCategory;
+
+		var logoHtml = "<img style='float:left;margin:10px 10px 0px 10px;width:48px;height:48px;' src='"
+				+ PSI.Const.BASE_URL
+				+ "Public/Images/edit-form-update.png'></img>"
+				+ "<h2 style='margin:20px'>建账仓库：<span style='color:#cf1322'>"
+				+ warehouse.get("name") + "</span></h2>";
+
 		Ext.apply(me, {
-			title : "库存建账",
+			title : PSI.Const.PROD_NAME,
 			modal : true,
 			onEsc : Ext.emptyFn,
 			width : 1000,
@@ -34,17 +41,17 @@ Ext.define("PSI.Inventory.InitInventoryEditForm", {
 				border : 0,
 				bodyPadding : 5,
 				items : [{
-					xtype : "container",
-					region : "north",
-					height : 40,
-					html : "<h2>建账仓库：<span style='color:red'>"
-							+ warehouse.get("name") + "</span></h2>"
-				}, {
-					xtype : "panel",
-					region : "center",
-					layout : "border",
-					border : 0,
-					items : [{
+							xtype : "panel",
+							region : "north",
+							height : 70,
+							border : 0,
+							html : logoHtml
+						}, {
+							xtype : "panel",
+							region : "center",
+							layout : "border",
+							border : 0,
+							items : [{
 								xtype : "panel",
 								region : "center",
 								layout : "border",
@@ -52,14 +59,17 @@ Ext.define("PSI.Inventory.InitInventoryEditForm", {
 								items : [{
 											xtype : "panel",
 											region : "north",
-											height : 30,
+											height : 40,
 											layout : "hbox",
 											border : 0,
 											items : [{
 														xtype : "displayfield",
+														margin : 5,
 														value : "商品分类"
 													}, {
 														id : "comboboxGoodsCategory",
+														cls : "PSI-toolbox",
+														margin : 5,
 														xtype : "combobox",
 														flex : 1,
 														store : storeGoodsCategory,
@@ -80,12 +90,10 @@ Ext.define("PSI.Inventory.InitInventoryEditForm", {
 											items : [this.getGoodsGrid()]
 										}]
 							}, {
-								title : "编辑区",
 								xtype : "panel",
 								region : "east",
 								width : 400,
 								split : true,
-								collapsible : true,
 								items : [{
 									xtype : "form",
 									layout : "form",
@@ -167,15 +175,22 @@ Ext.define("PSI.Inventory.InitInventoryEditForm", {
 												id : "checkboxGotoNext",
 												checked : true,
 												fieldLabel : "保存后自动跳转到下一条记录",
-												labelWidth : 160,
+												labelWidth : 180,
 												labelSeparator : ""
 											}, {
 												xtype : "container",
 												flex : 1
 											}]
+								}, {
+									fieldLabel : "说明",
+									xtype : "displayfield",
+									labelWidth : 60,
+									labelAlign : "right",
+									labelSeparator : "",
+									value : "如果期初数量设置为0，就会清除该商品的建账记录"
 								}]
 							}]
-				}]
+						}]
 			}],
 			buttons : [{
 						text : "关闭",
@@ -281,6 +296,7 @@ Ext.define("PSI.Inventory.InitInventoryEditForm", {
 					}
 				});
 		me.__gridGoods = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
 					border : 0,
 					columnLines : true,
 					columns : [Ext.create("Ext.grid.RowNumberer", {

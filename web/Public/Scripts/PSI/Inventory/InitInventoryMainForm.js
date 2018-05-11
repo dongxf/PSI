@@ -202,7 +202,7 @@ Ext.define("PSI.Inventory.InitInventoryMainForm", {
 
 		Ext.apply(me, {
 					tbar : [{
-								text : "建账",
+								text : "录入建账数据",
 								scope : me,
 								handler : me.onInitInv
 							}, "-", {
