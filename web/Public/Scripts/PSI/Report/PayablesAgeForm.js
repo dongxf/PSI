@@ -190,7 +190,10 @@ Ext.define("PSI.Report.PayablesAgeForm", {
 
 		me.__summaryGrid = Ext.create("Ext.grid.Panel", {
 					cls : "PSI",
-					title : "应付账款汇总",
+					header : {
+						height : 30,
+						title : me.formatGridHeaderTitle("应付账款汇总")
+					},
 					viewConfig : {
 						enableTextSelection : true
 					},

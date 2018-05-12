@@ -238,7 +238,10 @@ Ext.define("PSI.Report.SaleMonthByBizuserForm", {
 
 		me.__summaryGrid = Ext.create("Ext.grid.Panel", {
 					cls : "PSI",
-					title : "月销售汇总",
+					header : {
+						height : 30,
+						title : me.formatGridHeaderTitle("月销售汇总")
+					},
 					viewConfig : {
 						enableTextSelection : true
 					},
