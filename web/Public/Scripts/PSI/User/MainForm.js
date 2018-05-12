@@ -124,7 +124,10 @@ Ext.define("PSI.User.MainForm", {
 
 		var orgTree = Ext.create("Ext.tree.Panel", {
 					cls : "PSI",
-					title : "组织机构",
+					header : {
+						height : 30,
+						title : me.formatGridHeaderTitle("组织机构")
+					},
 					store : orgStore,
 					rootVisible : false,
 					useArrows : true,
@@ -208,7 +211,10 @@ Ext.define("PSI.User.MainForm", {
 
 		me.__userGrid = Ext.create("Ext.grid.Panel", {
 					cls : "PSI",
-					title : "人员列表",
+					header : {
+						height : 30,
+						title : me.formatGridHeaderTitle("人员列表")
+					},
 					viewConfig : {
 						enableTextSelection : true
 					},
@@ -569,7 +575,7 @@ Ext.define("PSI.User.MainForm", {
 		var me = this;
 		var grid = me.getUserGrid();
 
-		grid.setTitle(org.fullName + " - 人员列表");
+		grid.setTitle(me.formatGridHeaderTitle(org.fullName + " - 人员列表"));
 
 		Ext.getCmp("pagingToolbar").doRefresh();
 	},
