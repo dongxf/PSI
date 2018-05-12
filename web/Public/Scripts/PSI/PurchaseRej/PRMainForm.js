@@ -247,7 +247,7 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
 		Ext.getCmp("buttonCommit").setDisabled(true);
 
 		var gridDetail = me.getDetailGrid();
-		gridDetail.setTitle("采购退货出库单明细");
+		gridDetail.setTitle(me.formatGridHeaderTitle("采购退货出库单明细"));
 		gridDetail.getStore().removeAll();
 		Ext.getCmp("pagingToobar").doRefresh();
 		me.__lastId = id;
@@ -580,7 +580,10 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
 					viewConfig : {
 						enableTextSelection : true
 					},
-					title : "采购退货出库单明细",
+					header : {
+						height : 30,
+						title : me.formatGridHeaderTitle("采购退货出库单明细")
+					},
 					columnLines : true,
 					columns : [Ext.create("Ext.grid.RowNumberer", {
 										text : "序号",
@@ -658,7 +661,7 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
 
 	onMainGridSelect : function() {
 		var me = this;
-		me.getDetailGrid().setTitle("采购退货出库单明细");
+		me.getDetailGrid().setTitle(me.formatGridHeaderTitle("采购退货出库单明细"));
 		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
 			Ext.getCmp("buttonEdit").setDisabled(true);
@@ -686,7 +689,7 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
 
 	refreshDetailGrid : function(id) {
 		var me = this;
-		me.getDetailGrid().setTitle("采购退货出库单明细");
+		me.getDetailGrid().setTitle(me.formatGridHeaderTitle("采购退货出库单明细"));
 		var grid = me.getMainGrid();
 		var item = grid.getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
@@ -695,8 +698,8 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
 		var bill = item[0];
 
 		grid = me.getDetailGrid();
-		grid.setTitle("单号: " + bill.get("ref") + " 出库仓库: "
-				+ bill.get("warehouseName"));
+		grid.setTitle(me.formatGridHeaderTitle("单号: " + bill.get("ref")
+				+ " 出库仓库: " + bill.get("warehouseName")));
 		var el = grid.getEl();
 		el.mask(PSI.Const.LOADING);
 		me.ajax({
