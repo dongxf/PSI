@@ -229,7 +229,7 @@ Ext.define("PSI.InvCheck.InvCheckMainForm", {
 
 		var me = this;
 		var gridDetail = me.getDetailGrid();
-		gridDetail.setTitle("盘点单明细");
+		gridDetail.setTitle(me.formatGridHeaderTitle("盘点单明细"));
 		gridDetail.getStore().removeAll();
 		Ext.getCmp("pagingToobar").doRefresh();
 		me.__lastId = id;
@@ -544,7 +544,10 @@ Ext.define("PSI.InvCheck.InvCheckMainForm", {
 					viewConfig : {
 						enableTextSelection : true
 					},
-					title : "盘点单明细",
+					header : {
+						height : 30,
+						title : me.formatGridHeaderTitle("盘点单明细")
+					},
 					columnLines : true,
 					columns : [Ext.create("Ext.grid.RowNumberer", {
 										text : "序号",
@@ -620,7 +623,7 @@ Ext.define("PSI.InvCheck.InvCheckMainForm", {
 
 	onMainGridSelect : function() {
 		var me = this;
-		me.getDetailGrid().setTitle("盘点单明细");
+		me.getDetailGrid().setTitle(me.formatGridHeaderTitle("盘点单明细"));
 		var grid = me.getMainGrid();
 		var item = grid.getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
@@ -648,7 +651,7 @@ Ext.define("PSI.InvCheck.InvCheckMainForm", {
 
 	refreshDetailGrid : function(id) {
 		var me = this;
-		me.getDetailGrid().setTitle("盘点单明细");
+		me.getDetailGrid().setTitle(me.formatGridHeaderTitle("盘点单明细"));
 		var grid = me.getMainGrid();
 		var item = grid.getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
@@ -657,8 +660,8 @@ Ext.define("PSI.InvCheck.InvCheckMainForm", {
 		var bill = item[0];
 
 		grid = me.getDetailGrid();
-		grid.setTitle("单号: " + bill.get("ref") + " 盘点仓库: "
-				+ bill.get("warehouseName"));
+		grid.setTitle(me.formatGridHeaderTitle("单号: " + bill.get("ref")
+				+ " 盘点仓库: " + bill.get("warehouseName")));
 		var el = grid.getEl();
 		el.mask(PSI.Const.LOADING);
 		Ext.Ajax.request({
