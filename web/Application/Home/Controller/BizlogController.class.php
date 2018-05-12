@@ -40,6 +40,8 @@ class BizlogController extends PSIBaseController {
 	public function logList() {
 		if (IS_POST) {
 			$params = array(
+					"ip" => I("post.ip"),
+					"loginName" => I("post.loginName"),
 					"page" => I("post.page"),
 					"start" => I("post.start"),
 					"limit" => I("post.limit")

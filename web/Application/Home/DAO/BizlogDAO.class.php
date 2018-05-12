@@ -22,18 +22,30 @@ class BizlogDAO extends PSIBaseExDAO {
 		$start = $params["start"];
 		$limit = $params["limit"];
 		
+		$ip = $params["ip"];
+		$loginName = $params["loginName"];
+		
 		$db = $this->db;
 		
 		$sql = "select b.id, u.login_name, u.name, b.ip, b.info, b.date_created,
 					b.log_category, b.ip_from
 				from t_biz_log b, t_user u
-				where b.user_id = u.id ";
+				where (b.user_id = u.id) ";
 		$queryParams = [];
 		$ds = new DataOrgDAO($db);
 		$rs = $ds->buildSQL(FIdConst::BIZ_LOG, "b", $loginUserId);
 		if ($rs) {
 			$sql .= " and " . $rs[0];
 			$queryParams = $rs[1];
+		}
+		
+		if ($ip) {
+			$sql .= " and (b.ip like '%s') ";
+			$queryParams[] = "{$ip}%";
+		}
+		if ($loginName) {
+			$sql .= " and (u.login_name like '%s') ";
+			$queryParams[] = "{$loginName}%";
 		}
 		
 		$sql .= " order by b.date_created desc
@@ -59,13 +71,22 @@ class BizlogDAO extends PSIBaseExDAO {
 		
 		$sql = "select count(*) as cnt
 				from t_biz_log b, t_user u
-				where b.user_id = u.id";
+				where (b.user_id = u.id) ";
 		$queryParams = [];
 		$ds = new DataOrgDAO($db);
 		$rs = $ds->buildSQL(FIdConst::BIZ_LOG, "b", $loginUserId);
 		if ($rs) {
 			$sql .= " and " . $rs[0];
 			$queryParams = $rs[1];
+		}
+		
+		if ($ip) {
+			$sql .= " and (b.ip like '%s') ";
+			$queryParams[] = "{$ip}%";
+		}
+		if ($loginName) {
+			$sql .= " and (u.login_name like '%s') ";
+			$queryParams[] = "{$loginName}%";
 		}
 		
 		$data = $db->query($sql, $queryParams);
