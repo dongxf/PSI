@@ -200,7 +200,10 @@ Ext.define("PSI.Funds.CashMainForm", {
 
 		me.__detailGrid = Ext.create("Ext.grid.Panel", {
 					cls : "PSI",
-					title : "现金收支流水明细",
+					header : {
+						height : 30,
+						title : me.formatGridHeaderTitle("现金收支流水明细")
+					},
 					bbar : ["->", {
 								xtype : "pagingtoolbar",
 								border : 0,
