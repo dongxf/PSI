@@ -269,7 +269,10 @@ Ext.define("PSI.Supplier.MainForm", {
 					viewConfig : {
 						enableTextSelection : true
 					},
-					title : "供应商分类",
+					header : {
+						height : 30,
+						title : me.formatGridHeaderTitle("供应商分类")
+					},
 					tools : [{
 								type : "close",
 								handler : function() {
@@ -381,7 +384,10 @@ Ext.define("PSI.Supplier.MainForm", {
 					viewConfig : {
 						enableTextSelection : true
 					},
-					title : "供应商列表",
+					header : {
+						height : 30,
+						title : "供应商列表"
+					},
 					columnLines : true,
 					columns : [Ext.create("Ext.grid.RowNumberer", {
 										text : "序号",
@@ -675,14 +681,15 @@ Ext.define("PSI.Supplier.MainForm", {
 		var item = me.getCategoryGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
 			var grid = me.getMainGrid();
-			grid.setTitle("供应商档案");
+			grid.setTitle(me.formatGridHeaderTitle("供应商档案"));
 			return;
 		}
 
 		var category = item[0];
 
 		var grid = me.getMainGrid();
-		grid.setTitle("属于分类 [" + category.get("name") + "] 的供应商");
+		grid.setTitle(me.formatGridHeaderTitle("属于分类 [" + category.get("name")
+				+ "] 的供应商"));
 
 		me.__lastId = id;
 		Ext.getCmp("pagingToolbar").doRefresh()
