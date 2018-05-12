@@ -283,7 +283,10 @@ Ext.define("PSI.Customer.MainForm", {
 					viewConfig : {
 						enableTextSelection : true
 					},
-					title : "客户分类",
+					header : {
+						height : 30,
+						title : "客户分类"
+					},
 					tools : [{
 								type : "close",
 								handler : function() {
@@ -402,7 +405,10 @@ Ext.define("PSI.Customer.MainForm", {
 					viewConfig : {
 						enableTextSelection : true
 					},
-					title : "客户列表",
+					header : {
+						height : 30,
+						title : "客户列表"
+					},
 					columnLines : true,
 					columns : [Ext.create("Ext.grid.RowNumberer", {
 										text : "序号",
@@ -711,14 +717,15 @@ Ext.define("PSI.Customer.MainForm", {
 		var item = me.getCategoryGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
 			var grid = me.getMainGrid();
-			grid.setTitle("客户列表");
+			grid.setTitle(me.formatGridHeaderTitle("客户列表"));
 			return;
 		}
 
 		var category = item[0];
 
 		var grid = me.getMainGrid();
-		grid.setTitle("属于分类 [" + category.get("name") + "] 的客户");
+		grid.setTitle(me.formatGridHeaderTitle("属于分类 [" + category.get("name")
+				+ "] 的客户"));
 
 		me.__lastId = id;
 		Ext.getCmp("pagingToolbar").doRefresh()
