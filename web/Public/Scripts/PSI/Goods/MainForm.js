@@ -509,6 +509,8 @@ Ext.define("PSI.Goods.MainForm", {
 		var me = this;
 		me.getSIGrid().setTitle("商品安全库存");
 		me.getSIGrid().getStore().removeAll();
+		me.getGoodsBOMGrid().getStore().removeAll();
+		me.getGoodsPriceGrid().getStore().removeAll();
 
 		me.getMainGrid().getStore().currentPage = 1;
 
