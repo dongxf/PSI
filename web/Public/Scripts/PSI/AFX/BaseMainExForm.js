@@ -45,5 +45,9 @@ Ext.define("PSI.AFX.BaseMainExForm", {
 						window.location.replace(PSI.Const.BASE_URL);
 					}
 				}
+			},
+
+			formatGridHeaderTitle : function(title) {
+				return "<span style='font-size:13px'>" + title + "</sapn>";
 			}
 		});

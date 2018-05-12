@@ -454,7 +454,10 @@ Ext.define("PSI.Purchase.PWMainForm", {
 
 		me.__detailGrid = Ext.create("Ext.grid.Panel", {
 					cls : "PSI",
-					title : "采购入库单明细",
+					header : {
+						height : 30,
+						title : me.formatGridHeaderTitle("采购入库单明细")
+					},
 					viewConfig : {
 						enableTextSelection : true
 					},
@@ -532,7 +535,7 @@ Ext.define("PSI.Purchase.PWMainForm", {
 		Ext.getCmp("buttonCommit").setDisabled(true);
 
 		var gridDetail = me.getDetailGrid();
-		gridDetail.setTitle("采购入库单明细");
+		gridDetail.setTitle(me.formatGridHeaderTitle("采购入库单明细"));
 		gridDetail.getStore().removeAll();
 
 		Ext.getCmp("pagingToobar").doRefresh();
@@ -643,7 +646,7 @@ Ext.define("PSI.Purchase.PWMainForm", {
 
 	onMainGridSelect : function() {
 		var me = this;
-		me.getDetailGrid().setTitle("采购入库单明细");
+		me.getDetailGrid().setTitle(me.formatGridHeaderTitle("采购入库单明细"));
 		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
 			Ext.getCmp("buttonEdit").setDisabled(true);
@@ -671,7 +674,7 @@ Ext.define("PSI.Purchase.PWMainForm", {
 
 	refreshDetailGrid : function(id) {
 		var me = this;
-		me.getDetailGrid().setTitle("采购入库单明细");
+		me.getDetailGrid().setTitle(me.formatGridHeaderTitle("采购入库单明细"));
 		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
 			return;
@@ -679,9 +682,9 @@ Ext.define("PSI.Purchase.PWMainForm", {
 		var bill = item[0];
 
 		var grid = me.getDetailGrid();
-		grid.setTitle("单号: " + bill.get("ref") + " 供应商: "
-				+ bill.get("supplierName") + " 入库仓库: "
-				+ bill.get("warehouseName"));
+		grid.setTitle(me.formatGridHeaderTitle("单号: " + bill.get("ref")
+				+ " 供应商: " + bill.get("supplierName") + " 入库仓库: "
+				+ bill.get("warehouseName")));
 		var el = grid.getEl();
 		el.mask(PSI.Const.LOADING);
 		me.ajax({
