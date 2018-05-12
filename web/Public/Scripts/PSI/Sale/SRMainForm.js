@@ -252,12 +252,14 @@ Ext.define("PSI.Sale.SRMainForm", {
 	},
 
 	refreshMainGrid : function(id) {
+		var me = this;
+
 		Ext.getCmp("buttonEdit").setDisabled(true);
 		Ext.getCmp("buttonDelete").setDisabled(true);
 		Ext.getCmp("buttonCommit").setDisabled(true);
 
 		var gridDetail = this.getDetailGrid();
-		gridDetail.setTitle("销售退货入库单明细");
+		gridDetail.setTitle(me.formatGridHeaderTitle("销售退货入库单明细"));
 		gridDetail.getStore().removeAll();
 		Ext.getCmp("pagingToobar").doRefresh();
 		this.__lastId = id;
@@ -596,7 +598,10 @@ Ext.define("PSI.Sale.SRMainForm", {
 					viewConfig : {
 						enableTextSelection : true
 					},
-					title : "销售退货入库单明细",
+					header : {
+						height : 30,
+						title : me.formatGridHeaderTitle("销售退货入库单明细")
+					},
 					columnLines : true,
 					columns : [Ext.create("Ext.grid.RowNumberer", {
 										text : "序号",
@@ -678,7 +683,7 @@ Ext.define("PSI.Sale.SRMainForm", {
 
 	onMainGridSelect : function() {
 		var me = this;
-		me.getDetailGrid().setTitle("销售退货入库单明细");
+		me.getDetailGrid().setTitle(me.formatGridHeaderTitle("销售退货入库单明细"));
 		var grid = me.getMainGrid();
 		var item = grid.getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
@@ -707,7 +712,7 @@ Ext.define("PSI.Sale.SRMainForm", {
 
 	freshDetailGrid : function(id) {
 		var me = this;
-		me.getDetailGrid().setTitle("销售退货入库单明细");
+		me.getDetailGrid().setTitle(me.formatGridHeaderTitle("销售退货入库单明细"));
 		var grid = me.getMainGrid();
 		var item = grid.getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
@@ -716,9 +721,9 @@ Ext.define("PSI.Sale.SRMainForm", {
 		var bill = item[0];
 
 		grid = me.getDetailGrid();
-		grid.setTitle("单号: " + bill.get("ref") + " 客户: "
-				+ bill.get("customerName") + " 入库仓库: "
-				+ bill.get("warehouseName"));
+		grid.setTitle(me.formatGridHeaderTitle("单号: " + bill.get("ref")
+				+ " 客户: " + bill.get("customerName") + " 入库仓库: "
+				+ bill.get("warehouseName")));
 		var el = grid.getEl();
 		el.mask(PSI.Const.LOADING);
 		Ext.Ajax.request({
