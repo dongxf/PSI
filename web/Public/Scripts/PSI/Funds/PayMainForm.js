@@ -240,7 +240,10 @@ Ext.define("PSI.Funds.PayMainForm", {
 
 		me.__payDetailGrid = Ext.create("Ext.grid.Panel", {
 					cls : "PSI",
-					title : "业务单据",
+					header : {
+						height : 30,
+						title : me.formatGridHeaderTitle("业务单据")
+					},
 					bbar : ["->", {
 								xtype : "pagingtoolbar",
 								border : 0,
@@ -370,7 +373,10 @@ Ext.define("PSI.Funds.PayMainForm", {
 
 		me.__payRecordGrid = Ext.create("Ext.grid.Panel", {
 					cls : "PSI",
-					title : "付款记录",
+					header : {
+						height : 30,
+						title : me.formatGridHeaderTitle("付款记录")
+					},
 					tbar : [{
 								text : "录入付款记录",
 								iconCls : "PSI-button-add",
@@ -465,30 +471,34 @@ Ext.define("PSI.Funds.PayMainForm", {
 		var me = this;
 		me.getPayDetailGrid().getStore().removeAll();
 		me.getPayRecordGrid().getStore().removeAll();
-		me.getPayRecordGrid().setTitle("付款记录");
+		me.getPayRecordGrid().setTitle(me.formatGridHeaderTitle("付款记录"));
 
 		me.getPayGrid().getStore().loadPage(1);
 	},
 
 	onPayGridSelect : function() {
+		var me = this;
+
 		this.getPayRecordGrid().getStore().removeAll();
-		this.getPayRecordGrid().setTitle("付款记录");
+		this.getPayRecordGrid().setTitle(me.formatGridHeaderTitle("付款记录"));
 
 		this.getPayDetailGrid().getStore().loadPage(1);
 	},
 
 	onPayDetailGridSelect : function() {
+		var me = this;
+
 		var grid = this.getPayRecordGrid();
 		var item = this.getPayDetailGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			grid.setTitle("付款记录");
+			grid.setTitle(me.formatGridHeaderTitle("付款记录"));
 			return null;
 		}
 
 		var payDetail = item[0];
 
-		grid.setTitle(payDetail.get("refType") + " - 单号: "
-				+ payDetail.get("refNumber") + " 的付款记录")
+		grid.setTitle(me.formatGridHeaderTitle(payDetail.get("refType")
+				+ " - 单号: " + payDetail.get("refNumber") + " 的付款记录"));
 		grid.getStore().loadPage(1);
 	},
 
