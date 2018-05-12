@@ -128,7 +128,10 @@ Ext.define("PSI.Permission.MainForm", {
 
 		var roleGrid = Ext.create("Ext.grid.Panel", {
 					cls : "PSI",
-					title : "角色",
+					header : {
+						height : 30,
+						title : me.formatGridHeaderTitle("角色")
+					},
 					store : roleStore,
 					columns : [{
 								header : "编码",
@@ -168,6 +171,10 @@ Ext.define("PSI.Permission.MainForm", {
 				});
 
 		me.__permissionGrid = Ext.create("Ext.grid.Panel", {
+					header : {
+						height : 30,
+						title : me.formatGridHeaderTitle("权限")
+					},
 					cls : "PSI",
 					store : permissionStore,
 					columnLines : true,
@@ -218,6 +225,10 @@ Ext.define("PSI.Permission.MainForm", {
 				});
 
 		me.__userGrid = Ext.create("Ext.grid.Panel", {
+					header : {
+						height : 30,
+						title : me.formatGridHeaderTitle("用户")
+					},
 					cls : "PSI",
 					store : userStore,
 					columns : [{
@@ -277,7 +288,7 @@ Ext.define("PSI.Permission.MainForm", {
 	onRoleGridItemClick : function() {
 		var me = this;
 		me.getDataOrgGrid().getStore().removeAll();
-		me.getDataOrgGrid().setTitle("数据域");
+		me.getDataOrgGrid().setTitle(me.formatGridHeaderTitle("数据域"));
 
 		var grid = me.getPermissionGrid();
 
@@ -288,7 +299,7 @@ Ext.define("PSI.Permission.MainForm", {
 
 		var role = item[0].data;
 		var store = grid.getStore();
-		grid.setTitle("角色 [" + role.name + "] 的权限列表");
+		grid.setTitle(me.formatGridHeaderTitle("角色 [" + role.name + "] 的权限列表"));
 
 		var el = grid.getEl() || Ext.getBody();
 
@@ -313,7 +324,8 @@ Ext.define("PSI.Permission.MainForm", {
 		var userGrid = me.getUserGrid();
 		var userStore = userGrid.getStore();
 		var userEl = userGrid.getEl() || Ext.getBody();
-		userGrid.setTitle("属于角色 [" + role.name + "] 的人员列表");
+		userGrid.setTitle(me.formatGridHeaderTitle("属于角色 [" + role.name
+				+ "] 的人员列表"));
 		userEl.mask("数据加载中...");
 		me.ajax({
 					url : me.URL("Home/Permission/userList"),
@@ -435,7 +447,10 @@ Ext.define("PSI.Permission.MainForm", {
 
 		me.__dataOrgGrid = Ext.create("Ext.grid.Panel", {
 					cls : "PSI",
-					title : "数据域",
+					header : {
+						height : 30,
+						title : me.formatGridHeaderTitle("数据域")
+					},
 					store : store,
 					columns : [{
 								header : "数据域",
@@ -473,8 +488,8 @@ Ext.define("PSI.Permission.MainForm", {
 		var permission = items[0];
 
 		var grid = me.getDataOrgGrid();
-		grid.setTitle("角色 [" + role.get("name") + "] - 权限 ["
-				+ permission.get("name") + "] - 数据域");
+		grid.setTitle(me.formatGridHeaderTitle("角色 [" + role.get("name")
+				+ "] - 权限 [" + permission.get("name") + "] - 数据域"));
 
 		var el = grid.getEl() || Ext.getBody();
 		var store = grid.getStore();
