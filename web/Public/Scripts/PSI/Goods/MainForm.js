@@ -282,7 +282,10 @@ Ext.define("PSI.Goods.MainForm", {
 					viewConfig : {
 						enableTextSelection : true
 					},
-					title : "商品列表",
+					header : {
+						height : 30,
+						title : me.formatGridHeaderTitle("商品列表")
+					},
 					bbar : ["->", {
 								id : "pagingToolbar",
 								border : 0,
@@ -495,7 +498,7 @@ Ext.define("PSI.Goods.MainForm", {
 		var me = this;
 		var item = me.getCategoryGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			me.getMainGrid().setTitle("商品列表");
+			me.getMainGrid().setTitle(me.formatGridHeaderTitle("商品列表"));
 			return;
 		}
 
@@ -1031,7 +1034,10 @@ Ext.define("PSI.Goods.MainForm", {
 
 		me.__categoryGrid = Ext.create("Ext.tree.Panel", {
 					cls : "PSI",
-					title : "商品分类",
+					header : {
+						height : 30,
+						title : me.formatGridHeaderTitle("商品分类")
+					},
 					store : store,
 					rootVisible : false,
 					useArrows : true,
@@ -1103,14 +1109,14 @@ Ext.define("PSI.Goods.MainForm", {
 
 	onCategoryTreeNodeSelect : function(record) {
 		if (!record) {
-			me.getMainGrid().setTitle("商品列表");
+			me.getMainGrid().setTitle(me.formatGridHeaderTitle("商品列表"));
 			return;
 		}
 
 		var me = this;
 
 		var title = "属于商品分类 [" + record.get("fullName") + "] 的商品列表";
-		me.getMainGrid().setTitle(title);
+		me.getMainGrid().setTitle(me.formatGridHeaderTitle(title));
 
 		me.onCategoryGridSelect();
 	},
