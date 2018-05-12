@@ -285,7 +285,7 @@ Ext.define("PSI.Customer.MainForm", {
 					},
 					header : {
 						height : 30,
-						title : "客户分类"
+						title : me.formatGridHeaderTitle("客户分类")
 					},
 					tools : [{
 								type : "close",
@@ -407,7 +407,7 @@ Ext.define("PSI.Customer.MainForm", {
 					},
 					header : {
 						height : 30,
-						title : "客户列表"
+						title : me.formatGridHeaderTitle("客户列表")
 					},
 					columnLines : true,
 					columns : [Ext.create("Ext.grid.RowNumberer", {
