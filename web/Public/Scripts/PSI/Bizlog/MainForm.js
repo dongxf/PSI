@@ -208,8 +208,11 @@ Ext.define("PSI.Bizlog.MainForm", {
 	 * 刷新
 	 */
 	onRefresh : function() {
+		var me = this;
+		
+		me.getMainGrid().getStore().currentPage = 1;
 		Ext.getCmp("pagingToobar").doRefresh();
-		this.focus();
+		me.focus();
 	},
 
 	/**
@@ -264,6 +267,8 @@ Ext.define("PSI.Bizlog.MainForm", {
 
 		Ext.getCmp("editLoginName").setValue(null);
 		Ext.getCmp("editIP").setValue(null);
+
+		me.getMainGrid().getStore().currentPage = 1;
 
 		me.onRefresh();
 	}
