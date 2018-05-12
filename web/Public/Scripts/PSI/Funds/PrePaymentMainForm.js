@@ -233,7 +233,10 @@ Ext.define("PSI.Funds.PrePaymentMainForm", {
 					viewConfig : {
 						enableTextSelection : true
 					},
-					title : "采购预付款明细",
+					header : {
+						height : 30,
+						title : me.formatGridHeaderTitle("采购预付款明细")
+					},
 					border : 0,
 					tbar : [{
 								xtype : "displayfield",
