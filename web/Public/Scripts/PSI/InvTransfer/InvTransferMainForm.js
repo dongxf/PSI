@@ -234,7 +234,7 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
 
 		var me = this;
 		var gridDetail = me.getDetailGrid();
-		gridDetail.setTitle("调拨单明细");
+		gridDetail.setTitle(me.formatGridHeaderTitle("调拨单明细"));
 		gridDetail.getStore().removeAll();
 		Ext.getCmp("pagingToobar").doRefresh();
 		me.__lastId = id;
@@ -542,7 +542,10 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
 					viewConfig : {
 						enableTextSelection : true
 					},
-					title : "调拨单明细",
+					header : {
+						height : 30,
+						title : me.formatGridHeaderTitle("调拨单明细")
+					},
 					columnLines : true,
 					columns : [Ext.create("Ext.grid.RowNumberer", {
 										text : "序号",
@@ -604,7 +607,7 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
 
 	onMainGridSelect : function() {
 		var me = this;
-		me.getDetailGrid().setTitle("调拨单明细");
+		me.getDetailGrid().setTitle(me.formatGridHeaderTitle("调拨单明细"));
 		var grid = me.getMainGrid();
 		var item = grid.getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
@@ -633,7 +636,7 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
 
 	refreshDetailGrid : function(id) {
 		var me = this;
-		me.getDetailGrid().setTitle("调拨单明细");
+		me.getDetailGrid().setTitle(me.formatGridHeaderTitle("调拨单明细"));
 		var grid = me.getMainGrid();
 		var item = grid.getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
@@ -642,9 +645,9 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
 		var bill = item[0];
 
 		grid = me.getDetailGrid();
-		grid.setTitle("单号: " + bill.get("ref") + " 调出仓库: "
-				+ bill.get("fromWarehouseName") + " 调入仓库: "
-				+ bill.get("toWarehouseName"));
+		grid.setTitle(me.formatGridHeaderTitle("单号: " + bill.get("ref")
+				+ " 调出仓库: " + bill.get("fromWarehouseName") + " 调入仓库: "
+				+ bill.get("toWarehouseName")));
 		var el = grid.getEl();
 		el.mask(PSI.Const.LOADING);
 		Ext.Ajax.request({
