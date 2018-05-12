@@ -21,6 +21,8 @@ class PWBillDAO extends PSIBaseExDAO {
 		$db = $this->db;
 		
 		$bs = new BizConfigDAO($db);
+		
+		// 取单号前缀
 		$pre = $bs->getPWBillRefPre($companyId);
 		
 		$mid = date("Ymd");
@@ -37,6 +39,12 @@ class PWBillDAO extends PSIBaseExDAO {
 		return $pre . $mid . $suf;
 	}
 
+	/**
+	 * 单据状态标志转化为文字
+	 *
+	 * @param int $code        	
+	 * @return string
+	 */
 	private function billStatusCodeToName($code) {
 		switch ($code) {
 			case 0 :
@@ -339,6 +347,7 @@ class PWBillDAO extends PSIBaseExDAO {
 		
 		$id = $this->newId();
 		
+		// 主表
 		$sql = "insert into t_pw_bill (id, ref, supplier_id, warehouse_id, biz_dt,
 				biz_user_id, bill_status, date_created, goods_money, input_user_id, payment_type,
 				data_org, company_id, bill_memo)
