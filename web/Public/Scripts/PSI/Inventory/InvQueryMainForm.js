@@ -110,7 +110,11 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 											items : [me.getInventoryGrid()]
 										}, {
 											id : "panelDetail",
-											title : "明细账",
+											header : {
+												height : 30,
+												title : me
+														.formatGridHeaderTitle("明细账")
+											},
 											cls : "PSI",
 											tools : [{
 												type : "close",
@@ -146,7 +150,10 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 
 		me.__warehouseGrid = Ext.create("Ext.grid.Panel", {
 					cls : "PSI",
-					title : "仓库",
+					header : {
+						height : 30,
+						title : me.formatGridHeaderTitle("仓库")
+					},
 					tools : [{
 								type : "close",
 								handler : function() {
@@ -236,6 +243,10 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 
 		me.__inventoryGrid = Ext.create("Ext.grid.Panel", {
 					cls : "PSI",
+					header : {
+						height : 30,
+						title : me.formatGridHeaderTitle("总账")
+					},
 					viewConfig : {
 						enableTextSelection : true
 					},
@@ -625,7 +636,8 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 		var warehouse = item[0];
 
 		var grid = me.getInventoryGrid();
-		grid.setTitle("仓库 [" + warehouse.get("name") + "] 的总账");
+		grid.setTitle(me.formatGridHeaderTitle("仓库 [" + warehouse.get("name")
+				+ "] 的总账"));
 
 		grid.getStore().loadPage(1);
 	},
