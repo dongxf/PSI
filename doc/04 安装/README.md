@@ -26,3 +26,9 @@ PSI在phpstudy的默认安装下不能正常启动，如果自己不能解决，
 IDE: Eclipse
 
 ExtJS插件：http://www.spket.com/
+
+# 百度网盘
+
+里面有 XAMPP、Eclipse和ExtJS
+
+链接：https://pan.baidu.com/s/1cFRzZGONN75AeemXCdHPlg 密码：8sq4
