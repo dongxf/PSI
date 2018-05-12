@@ -204,8 +204,10 @@ Ext.define("PSI.Funds.RvMainForm", {
 	},
 
 	onRvGridSelect : function() {
+		var me = this;
+		
 		this.getRvRecordGrid().getStore().removeAll();
-		this.getRvRecordGrid().setTitle("收款记录");
+		this.getRvRecordGrid().setTitle(me.formatGridHeaderTitle("收款记录"));
 
 		this.getRvDetailGrid().getStore().loadPage(1);
 	},
@@ -252,7 +254,10 @@ Ext.define("PSI.Funds.RvMainForm", {
 					viewConfig : {
 						enableTextSelection : true
 					},
-					title : "业务单据",
+					header : {
+						height : 30,
+						title : me.formatGridHeaderTitle("业务单据")
+					},
 					bbar : ["->", {
 								xtype : "pagingtoolbar",
 								border : 0,
@@ -333,17 +338,19 @@ Ext.define("PSI.Funds.RvMainForm", {
 	},
 
 	onRvDetailGridSelect : function() {
+		var me = this;
+		
 		var grid = this.getRvRecordGrid();
 		var item = this.getRvDetailGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			grid.setTitle("收款记录");
+			grid.setTitle(me.formatGridHeaderTitle("收款记录"));
 			return null;
 		}
 
 		var rvDetail = item[0];
 
-		grid.setTitle(rvDetail.get("refType") + " - 单号: "
-				+ rvDetail.get("refNumber") + " 的收款记录")
+		grid.setTitle(me.formatGridHeaderTitle(rvDetail.get("refType")
+				+ " - 单号: " + rvDetail.get("refNumber") + " 的收款记录"));
 		grid.getStore().loadPage(1);
 	},
 
@@ -400,7 +407,10 @@ Ext.define("PSI.Funds.RvMainForm", {
 					viewConfig : {
 						enableTextSelection : true
 					},
-					title : "收款记录",
+					header : {
+						height : 30,
+						title : me.formatGridHeaderTitle("收款记录")
+					},
 					tbar : [{
 								text : "录入收款记录",
 								iconCls : "PSI-button-add",
@@ -495,7 +505,7 @@ Ext.define("PSI.Funds.RvMainForm", {
 		var me = this;
 		me.getRvDetailGrid().getStore().removeAll();
 		me.getRvRecordGrid().getStore().removeAll();
-		me.getRvRecordGrid().setTitle("收款记录");
+		me.getRvRecordGrid().setTitle(me.formatGridHeaderTitle("收款记录"));
 
 		me.getRvGrid().getStore().loadPage(1);
 	},
