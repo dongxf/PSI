@@ -202,13 +202,13 @@ Ext.define("PSI.Goods.GoodsPriceSystemEditForm", {
 										id : "editBaseSalePrice",
 										xtype : "numberfield",
 										hideTrigger : true
-									}, "-", {
+									}, " ", {
 										xtype : "button",
 										text : "根据销售基准价自动计算其他价格",
 										iconCls : "PSI-button-ok",
 										handler : me.onCalPrice,
 										scope : me
-									}, "-"],
+									}],
 							columns : [{
 										header : "名称",
 										dataIndex : "name",
