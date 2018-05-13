@@ -75,6 +75,7 @@ Ext.define("PSI.Bizlog.MainForm", {
 					value : "条记录"
 				}, "-", {
 					text : "帮助",
+					iconCls : "PSI-help",
 					handler : function() {
 						window.open(me.URL("/Home/Help/index?t=bizlog"));
 					}
@@ -209,7 +210,7 @@ Ext.define("PSI.Bizlog.MainForm", {
 	 */
 	onRefresh : function() {
 		var me = this;
-		
+
 		me.getMainGrid().getStore().currentPage = 1;
 		Ext.getCmp("pagingToobar").doRefresh();
 		me.focus();
