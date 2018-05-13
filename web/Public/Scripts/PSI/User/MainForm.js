@@ -42,7 +42,7 @@ Ext.define("PSI.User.MainForm", {
 								handler : me.onAddUser,
 								scope : me
 							}, {
-								text : "修改用户",
+								text : "编辑用户",
 								disabled : me.getPEditUser() == "0",
 								handler : me.onEditUser,
 								scope : me
