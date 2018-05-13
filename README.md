@@ -39,6 +39,8 @@
 > 《如何为开源项目做出自己的贡献》- https://my.oschina.net/u/134395/blog/670779
 >
 > 《为什么PSI不接受外部代码》- https://my.oschina.net/u/134395/blog/1580780
+>
+> 《为什么不用Java重写一个？》- https://my.oschina.net/u/134395/blog/1811490
 
 # PSI相关项目
 
