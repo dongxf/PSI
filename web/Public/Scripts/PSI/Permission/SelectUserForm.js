@@ -2,7 +2,7 @@
  * 选择用户
  */
 Ext.define("PSI.Permission.SelectUserForm", {
-			extend : "Ext.window.Window",
+			extend : "PSI.AFX.BaseDialogForm",
 
 			config : {
 				idList : null, // idList是数组
@@ -31,7 +31,10 @@ Ext.define("PSI.Permission.SelectUserForm", {
 
 				var grid = Ext.create("Ext.grid.Panel", {
 							cls : "PSI",
-							title : "属于当前角色的用户",
+							header : {
+								height : 30,
+								title : me.formatGridHeaderTitle("属于当前角色的用户")
+							},
 							padding : 5,
 							selModel : {
 								mode : "MULTI"

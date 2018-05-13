@@ -31,18 +31,23 @@ Ext.define("PSI.Permission.SelectPermissionForm", {
 									border : 1,
 									cls : "PSI",
 									margin : 5,
-									title : "所有可以选择的权限",
+									header : {
+										height : 30,
+										title : me
+												.formatGridHeaderTitle("所有可以选择的权限")
+									},
 									items : [{
 												region : "west",
-												width : "30%",
+												width : 200,
 												layout : "fit",
 												border : 0,
-												split : true,
+												bodyPadding : 5,
 												items : [me.getCategoryGrid()]
 											}, {
 												region : "center",
 												border : 0,
 												layout : "fit",
+												bodyPadding : 5,
 												items : [me.getPermissionGrid()]
 											}]
 								}, {
@@ -210,8 +215,8 @@ Ext.define("PSI.Permission.SelectPermissionForm", {
 
 		me.__permissionGrid = Ext.create("Ext.grid.Panel", {
 					cls : "PSI",
-					border : 0,
 					store : store,
+					columnLines : true,
 					bbar : [{
 								text : "全部添加",
 								handler : me.addAllPermission,
@@ -228,7 +233,7 @@ Ext.define("PSI.Permission.SelectPermissionForm", {
 								align : "center",
 								menuDisabled : true,
 								draggable : false,
-								width : 40,
+								width : 30,
 								xtype : "actioncolumn",
 								items : [{
 									icon : PSI.Const.BASE_URL
@@ -239,7 +244,7 @@ Ext.define("PSI.Permission.SelectPermissionForm", {
 							}, {
 								header : "权限说明",
 								dataIndex : "note",
-								width : 400,
+								width : 600,
 								menuDisabled : true
 							}]
 				});
@@ -281,7 +286,10 @@ Ext.define("PSI.Permission.SelectPermissionForm", {
 				});
 
 		me.__selectedGrid = Ext.create("Ext.grid.Panel", {
-					title : "已经选择的权限",
+					header : {
+						height : 30,
+						title : me.formatGridHeaderTitle("已经选择的权限")
+					},
 					padding : 5,
 					store : store,
 					columns : [{
@@ -335,7 +343,6 @@ Ext.define("PSI.Permission.SelectPermissionForm", {
 		me.__categoryGrid = Ext.create("Ext.grid.Panel", {
 					cls : "PSI",
 					store : store,
-					border : 0,
 					columns : [{
 								header : "权限分类",
 								dataIndex : "name",

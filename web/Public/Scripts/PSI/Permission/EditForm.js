@@ -21,7 +21,10 @@ Ext.define("PSI.Permission.EditForm", {
 
 		var permissionGrid = Ext.create("Ext.grid.Panel", {
 					cls : "PSI",
-					title : "角色的权限",
+					header : {
+						height : 30,
+						title : me.formatGridHeaderTitle("角色的权限")
+					},
 					padding : 5,
 					selModel : {
 						mode : "MULTI"
@@ -88,7 +91,10 @@ Ext.define("PSI.Permission.EditForm", {
 
 		var userGrid = Ext.create("Ext.grid.Panel", {
 					cls : "PSI",
-					title : "属于当前角色的用户",
+					header : {
+						height : 30,
+						title : me.formatGridHeaderTitle("属于当前角色的用户")
+					},
 					padding : 5,
 					selModel : {
 						mode : "MULTI"

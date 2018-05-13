@@ -42,5 +42,9 @@ Ext.define("PSI.AFX.BaseDialogForm", {
 
 			formatTitle : function(title) {
 				return "<span style='font-size:160%'>" + title + "</span>";
+			},
+
+			formatGridHeaderTitle : function(title) {
+				return "<span style='font-size:13px'>" + title + "</sapn>";
 			}
 		});
