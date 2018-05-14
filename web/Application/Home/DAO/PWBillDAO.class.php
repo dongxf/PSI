@@ -1328,7 +1328,7 @@ class PWBillDAO extends PSIBaseExDAO {
 				$sql = "insert into t_inventory_fifo (in_count, in_price, in_money, balance_count,
 						balance_price, balance_money, warehouse_id, goods_id, date_created, in_ref,
 						in_ref_type, pwbilldetail_id)
-						values (%d, %f, %f, %d, %f, %f, '%s', '%s', '%s', '%s', '采购入库', '%s')";
+						values (convert(%f, $fmt), %f, %f, convert(%f, $fmt), %f, %f, '%s', '%s', '%s', '%s', '采购入库', '%s')";
 				$rc = $db->execute($sql, $goodsCount, $goodsPrice, $goodsMoney, $goodsCount, 
 						$goodsPrice, $goodsMoney, $warehouseId, $goodsId, $dt, $ref, $pwbilldetailId);
 				if ($rc === false) {
@@ -1338,7 +1338,7 @@ class PWBillDAO extends PSIBaseExDAO {
 				// fifo 明细记录
 				$sql = "insert into t_inventory_fifo_detail(in_count, in_price, in_money, balance_count,
 						balance_price, balance_money, warehouse_id, goods_id, date_created, pwbilldetail_id)
-						values (%d, %f, %f, %d, %f, %f, '%s', '%s', '%s', '%s')";
+						values (convert(%f, $fmt), %f, %f, convert(%f, $fmt), %f, %f, '%s', '%s', '%s', '%s')";
 				$rc = $db->execute($sql, $goodsCount, $goodsPrice, $goodsMoney, $goodsCount, 
 						$goodsPrice, $goodsMoney, $warehouseId, $goodsId, $dt, $pwbilldetailId);
 				if ($rc === false) {
