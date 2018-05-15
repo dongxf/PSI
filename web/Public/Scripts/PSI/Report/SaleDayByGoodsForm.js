@@ -58,11 +58,11 @@ Ext.define("PSI.Report.SaleDayByGoodsForm", {
 								fieldLabel : "业务日期",
 								value : new Date()
 							}, " ", {
-								text : "前一日",
+								text : "前一天",
 								handler : me.onPreDay,
 								scope : me
 							}, {
-								text : "后一日",
+								text : "后一天",
 								handler : me.onNextDay,
 								scope : me
 							}, " ", {
