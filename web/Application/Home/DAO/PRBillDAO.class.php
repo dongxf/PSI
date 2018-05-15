@@ -21,6 +21,7 @@ class PRBillDAO extends PSIBaseExDAO {
 	private function genNewBillRef($companyId) {
 		$db = $this->db;
 		
+		// 单号前缀
 		$bs = new BizConfigDAO($db);
 		$pre = $bs->getPRBillRefPre($companyId);
 		
@@ -48,7 +49,10 @@ class PRBillDAO extends PSIBaseExDAO {
 	public function addPRBill(& $bill) {
 		$db = $this->db;
 		
+		// 业务日期
 		$bizDT = $bill["bizDT"];
+		
+		// 仓库id
 		$warehouseId = $bill["warehouseId"];
 		$warehouseDAO = new WarehouseDAO($db);
 		$warehouse = $warehouseDAO->getWarehouseById($warehouseId);
@@ -63,16 +67,21 @@ class PRBillDAO extends PSIBaseExDAO {
 			return $this->bad("选择的业务人员不存在，无法保存");
 		}
 		
+		// 采购入库单id
 		$pwBillId = $bill["pwBillId"];
 		$sql = "select supplier_id from t_pw_bill where id = '%s' ";
 		$data = $db->query($sql, $pwBillId);
 		if (! $data) {
 			return $this->bad("选择采购入库单不存在，无法保存");
 		}
+		
+		// 供应商id
 		$supplierId = $data[0]["supplier_id"];
 		
+		// 收款方式
 		$receivingType = $bill["receivingType"];
 		
+		// 退货明细记录
 		$items = $bill["items"];
 		
 		// 检查业务日期
@@ -100,6 +109,7 @@ class PRBillDAO extends PSIBaseExDAO {
 		$fmt = "decimal(19, " . $dataScale . ")";
 		
 		// 新增采购退货出库单
+		// 生成单号
 		$ref = $this->genNewBillRef($companyId);
 		
 		// 主表
@@ -136,6 +146,7 @@ class PRBillDAO extends PSIBaseExDAO {
 			}
 		}
 		
+		// 同步主表退货金额
 		$sql = "select sum(rejection_money) as rej_money
 				from t_pr_bill_detail
 				where prbill_id = '%s' ";
