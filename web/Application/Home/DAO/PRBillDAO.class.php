@@ -209,7 +209,10 @@ class PRBillDAO extends PSIBaseExDAO {
 			return $this->badParam("loginUserId");
 		}
 		
+		// 业务日期
 		$bizDT = $bill["bizDT"];
+		
+		// 仓库id
 		$warehouseId = $bill["warehouseId"];
 		$warehouseDAO = new WarehouseDAO($db);
 		$warehouse = $warehouseDAO->getWarehouseById($warehouseId);
@@ -217,6 +220,7 @@ class PRBillDAO extends PSIBaseExDAO {
 			return $this->bad("选择的仓库不存在，无法保存");
 		}
 		
+		// 业务员id
 		$bizUserId = $bill["bizUserId"];
 		$userDAO = new UserDAO($db);
 		$user = $userDAO->getUserById($bizUserId);
@@ -224,16 +228,21 @@ class PRBillDAO extends PSIBaseExDAO {
 			return $this->bad("选择的业务人员不存在，无法保存");
 		}
 		
+		// 要退货的采购入库单id
 		$pwBillId = $bill["pwBillId"];
 		$sql = "select supplier_id from t_pw_bill where id = '%s' ";
 		$data = $db->query($sql, $pwBillId);
 		if (! $data) {
 			return $this->bad("选择采购入库单不存在，无法保存");
 		}
+		
+		// 供应商id
 		$supplierId = $data[0]["supplier_id"];
 		
+		// 收款方式
 		$receivingType = $bill["receivingType"];
 		
+		// 退货商品明细记录
 		$items = $bill["items"];
 		
 		// 检查业务日期
@@ -245,7 +254,10 @@ class PRBillDAO extends PSIBaseExDAO {
 		if (! $oldBill) {
 			return $this->bad("要编辑的采购退货出库单不存在");
 		}
+		
+		// 单号
 		$ref = $oldBill["ref"];
+		
 		$companyId = $oldBill["companyId"];
 		$billStatus = $oldBill["billStatus"];
 		if ($billStatus != 0) {
@@ -258,6 +270,7 @@ class PRBillDAO extends PSIBaseExDAO {
 		$fmt = "decimal(19, " . $dataScale . ")";
 		
 		// 明细表
+		// 先删除旧数据，再插入新记录
 		$sql = "delete from t_pr_bill_detail where prbill_id = '%s' ";
 		$rc = $db->execute($sql, $id);
 		if ($rc === false) {
@@ -287,6 +300,7 @@ class PRBillDAO extends PSIBaseExDAO {
 			}
 		}
 		
+		// 同步主表退货金额
 		$sql = "select sum(rejection_money) as rej_money
 				from t_pr_bill_detail
 				where prbill_id = '%s' ";
