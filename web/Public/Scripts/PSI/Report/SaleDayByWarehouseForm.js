@@ -58,6 +58,14 @@ Ext.define("PSI.Report.SaleDayByWarehouseForm", {
 								fieldLabel : "业务日期",
 								value : new Date()
 							}, " ", {
+								text : "前一日",
+								handler : me.onPreDay,
+								scope : me
+							}, {
+								text : "后一日",
+								handler : me.onNextDay,
+								scope : me
+							}, " ", {
 								text : "查询",
 								iconCls : "PSI-button-refresh",
 								handler : me.onQuery,
@@ -323,5 +331,25 @@ Ext.define("PSI.Report.SaleDayByWarehouseForm", {
 
 	refreshMainGrid : function(id) {
 		Ext.getCmp("pagingToobar").doRefresh();
+	},
+
+	onPreDay : function() {
+		var me = this;
+
+		var editQueryDT = Ext.getCmp("editQueryDT");
+		var day = Ext.Date.add(editQueryDT.getValue(), Ext.Date.DAY, -1);
+		editQueryDT.setValue(day);
+
+		me.onQuery();
+	},
+
+	onNextDay : function() {
+		var me = this;
+
+		var editQueryDT = Ext.getCmp("editQueryDT");
+		var day = Ext.Date.add(editQueryDT.getValue(), Ext.Date.DAY, 1);
+		editQueryDT.setValue(day);
+
+		me.onQuery();
 	}
 });
