@@ -44,6 +44,10 @@ Ext.define("PSI.App", {
 				title : "常用功能",
 				height : 28
 			},
+			bbar : [" ", " ", " ", " ", " ", {
+						xtype : 'displayfield',
+						value : "常用功能根据使用频率自动生成"
+					}],
 			titleAlign : "center",
 			cls : "PSI-recent-fid",
 			forceFit : true,
