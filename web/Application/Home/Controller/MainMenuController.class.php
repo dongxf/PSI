@@ -25,12 +25,22 @@ class MainMenuController extends Controller {
 		
 		$fid = I("get.fid");
 		
+		// $t == 1的时候，是从常用功能链接点击而来的
+		$t = I("get.t");
+		
 		$fidService = new FIdService();
 		$fidService->insertRecentFid($fid);
 		$fidName = $fidService->getFIdName($fid);
 		if ($fidName) {
+			// 记录业务日志
+			
 			$bizLogService = new BizlogService();
-			$bizLogService->insertBizlog("进入模块：" . $fidName);
+			
+			if ($t == "1") {
+				$bizLogService->insertBizlog("通过常用功能进入模块：" . $fidName, "常用功能");
+			} else {
+				$bizLogService->insertBizlog("通过主菜单进入模块：" . $fidName);
+			}
 		}
 		if (! $fid) {
 			redirect(__ROOT__ . "/Home");

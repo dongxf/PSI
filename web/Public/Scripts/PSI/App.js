@@ -77,7 +77,7 @@ Ext.define("PSI.App", {
 					var fid = r.get("fid");
 
 					var url = PSI.Const.BASE_URL
-							+ "Home/MainMenu/navigateTo/fid/" + fid;
+							+ "Home/MainMenu/navigateTo/fid/" + fid + "/t/1";
 
 					if (fid === "-9999") {
 						PSI.MsgBox.confirm("请确认是否重新登录", function() {
