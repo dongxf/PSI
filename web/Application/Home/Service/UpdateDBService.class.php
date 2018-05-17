@@ -179,7 +179,7 @@ class UpdateDBService extends PSIBaseService {
 		$db->execute($sql, $this->CURRENT_DB_VERSION);
 		
 		$bl = new BizlogService();
-		$bl->insertBizlog("升级数据库，数据库版本 = " . $this->CURRENT_DB_VERSION);
+		$bl->insertBizlog("升级数据库表结构，数据库表结构版本 = " . $this->CURRENT_DB_VERSION);
 		
 		return $this->ok();
 	}
