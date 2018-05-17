@@ -11,15 +11,29 @@ class MainMenuController extends Controller {
 			$result = [];
 			$result[] = [
 					"caption" => "销售",
-					"items" => [[
-							"caption" => "销售订单",
-							"url"=>"#",
-							"click"=>"todo"]
+					"items" => [
+							[
+									"caption" => "销售订单",
+									"url" => "#",
+									"click" => "todo"
+							]
 					]
 			];
 			
-			$result[] =["caption"=>"关于",
-					"items"=>[]
+			$result[] = [
+					"caption" => "关于",
+					"items" => [
+							[
+									"caption" => "关于PSI",
+									"url" => "/about/",
+									"click" => "doNothing"
+							],
+							[
+									"caption" => "安全退出",
+									"url" => "#",
+									"click" => "doLogout"
+							]
+					]
 			];
 			
 			$this->ajaxReturn($result);

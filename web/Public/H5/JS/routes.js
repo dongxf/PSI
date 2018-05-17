@@ -6,9 +6,26 @@ routesPSI = [{
 			path : '/',
 			async : function(routeTo, routeFrom, resolve, reject) {
 				if (app.data.PSI.userIsLoggedIn) {
-					resolve({
-								componentUrl : toURL("home.html")
-							});
+					var url = app.data.PSI.baseURI
+							+ "H5/MainMenu/mainMenuItems";
+
+					app.preloader.show();
+
+					app.request.post(url, {}, function(data) {
+								app.preloader.hide();
+								resolve({
+											componentUrl : toURL("home.html")
+										}, {
+											context : {
+												mainMenu : data
+											}
+										});
+							}, function() {
+								app.preloader.hide();
+								app.dialog.alert("网络错误");
+								reject();
+							}, "json");
+
 				} else {
 					resolve({
 								componentUrl : toURL("login.html")

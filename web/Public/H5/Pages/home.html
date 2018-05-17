@@ -31,7 +31,7 @@
 			todo : function() {
 				var me = this;
 				var app = me.$app;
-				app.dialog.alert("本模块开发中......");
+				app.dialog.alert("本模块正在开发中");
 			},
 			doNothing : function() {
 
@@ -65,35 +65,8 @@
 		},
 		data : function() {
 			return {
-				mainMenu : []
+				mainMenu : this.$route.context.mainMenu
 			};
-		},
-		beforeCreate : function() {
-			var me = this;
-			var app = me.$app;
-			app.preloader.show();
-
-			me.mainMenu.push({
-				caption : "销售",
-				items : [ {
-					caption : "销售订单",
-					url : "#",
-					click : "todo"
-				} ]
-			}, {
-				caption : "关于",
-				items : [ {
-					caption : "关于PSI",
-					url : "/about/",
-					click : "doNothing"
-				}, {
-					caption : "安全退出",
-					url : "#",
-					click : "doLogout"
-				} ]
-			});
-
-			app.preloader.hide();
 		}
 	};
 </script>
