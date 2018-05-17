@@ -7,22 +7,20 @@
 	</div>
 
 	<div class="page-content">
-		<div class="block-title">关于</div>
+		{{#each mainMenu}} {{#each this}}
+		<div class="block-title">{{caption}}</div>
 		<div class="list">
 			<ul>
-				<li><a href="/about/" class="item-content item-link">
-						<div class="item-inner">
-							<div class="item-title">关于 {{$root.PSI.productionName}}</div>
-						</div>
-				</a></li>
-				<li><a href="#" @click="doLogout"
+				{{#each items}}
+				<li><a href="{{url}}" @click="{{click}}"
 					class="item-content item-link">
 						<div class="item-inner">
-							<div class="item-title">安全退出</div>
+							<div class="item-title">{{caption}}</div>
 						</div>
-				</a></li>
+				</a></li> {{/each}}
 			</ul>
 		</div>
+		{{/each}} {{/each}}
 	</div>
 </div>
 </template>
@@ -30,6 +28,14 @@
 <script>
 	return {
 		methods : {
+			todo : function() {
+				var me = this;
+				var app = me.$app;
+				app.dialog.alert("本模块开发中......");
+			},
+			doNothing : function() {
+
+			},
 			doLogout : function() {
 				var me = this;
 				var app = me.$app;
@@ -55,6 +61,34 @@
 								app.dialog.alert("网络错误");
 							}, "json");
 						});
+			}
+		},
+		data : function() {
+			return {
+				mainMenu : [ [ {
+					caption : "销售",
+					items : [ {
+						caption : "销售订单",
+						url : "#",
+						click : "todo"
+					} ]
+				} ], [ {
+					caption : "关于",
+					items : [ {
+						caption : "关于PSI",
+						url : "/about/",
+						click : "doNothing"
+					}, {
+						caption : "安全退出",
+						url : "#",
+						click : "doLogout"
+					} ]
+				} ] ]
+			};
+		},
+		on : {
+			pageInit : function(e, page) {
+				var app = page.app;
 			}
 		}
 	};
