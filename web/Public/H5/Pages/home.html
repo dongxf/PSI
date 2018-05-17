@@ -7,7 +7,7 @@
 	</div>
 
 	<div class="page-content">
-		{{#each mainMenu}} {{#each this}}
+		{{#each mainMenu}}
 		<div class="block-title">{{caption}}</div>
 		<div class="list">
 			<ul>
@@ -20,7 +20,7 @@
 				</a></li> {{/each}}
 			</ul>
 		</div>
-		{{/each}} {{/each}}
+		{{/each}}
 	</div>
 </div>
 </template>
@@ -65,31 +65,40 @@
 		},
 		data : function() {
 			return {
-				mainMenu : [ [ {
-					caption : "销售",
-					items : [ {
-						caption : "销售订单",
-						url : "#",
-						click : "todo"
-					} ]
-				} ], [ {
-					caption : "关于",
-					items : [ {
-						caption : "关于PSI",
-						url : "/about/",
-						click : "doNothing"
-					}, {
-						caption : "安全退出",
-						url : "#",
-						click : "doLogout"
-					} ]
-				} ] ]
+				mainMenu : []
 			};
 		},
 		on : {
-			pageInit : function(e, page) {
+			pageMounted : function(e, page) {
 				var app = page.app;
 			}
+		},
+		beforeCreate : function() {
+			var me = this;
+			var app = me.$app;
+			app.preloader.show();
+
+			me.mainMenu.push({
+				caption : "销售",
+				items : [ {
+					caption : "销售订单",
+					url : "#",
+					click : "todo"
+				} ]
+			}, {
+				caption : "关于",
+				items : [ {
+					caption : "关于PSI",
+					url : "/about/",
+					click : "doNothing"
+				}, {
+					caption : "安全退出",
+					url : "#",
+					click : "doLogout"
+				} ]
+			});
+
+			app.preloader.hide();
 		}
 	};
 </script>
