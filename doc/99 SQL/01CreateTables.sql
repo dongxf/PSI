@@ -971,6 +971,16 @@ CREATE TABLE IF NOT EXISTS `t_bank_account` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `t_menu_item_h5`;
+CREATE TABLE IF NOT EXISTS `t_menu_item_h5` (
+  `id` varchar(255) NOT NULL,
+  `caption` varchar(255) NOT NULL,
+  `fid` varchar(255) DEFAULT NULL,
+  `parent_id` varchar(255) DEFAULT NULL,
+  `show_order` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
