@@ -39,6 +39,7 @@ class SOBillServiceH5 extends SOBillService {
 		
 		foreach ( $data["dataList"] as $v ) {
 			$result[] = [
+					"id" => $v["id"],
 					"ref" => $v["ref"],
 					"dealDate" => $v["dealDate"],
 					"customerName" => $v["customerName"],

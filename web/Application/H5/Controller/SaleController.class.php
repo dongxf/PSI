@@ -20,4 +20,18 @@ class SaleController extends Controller {
 			$this->ajaxReturn($ss->sobillListForH5($params));
 		}
 	}
+
+	public function sobillDetail() {
+		if (IS_POST) {
+			$params = [
+					"id" => I("post.id")
+			];
+			
+			$ss = new SOBillServiceH5();
+			
+			$data = $ss->soBillInfo($params);
+			
+			$this->ajaxReturn($data);
+		}
+	}
 }

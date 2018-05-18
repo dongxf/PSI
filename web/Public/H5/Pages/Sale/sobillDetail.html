@@ -11,21 +11,24 @@
 		</div>
 	</div>
 	<div class="page-content">
+		<div class="list inset">
+			<ul>
+				<li>单号：{{bill.ref}}</li>
+				<li>客户：{{bill.customerName}}</li>
+			</ul>
+		</div>
+
 		<div class="list media-list">
 			<ul>
-				{{#each billList}}
-				<li><a href="/sobillDetail/{{id}}"
-					class="item-link item-content">
-						<div class="item-inner">
-							<div class="item-title-row">
-								<div class="item-title">{{ref}}</div>
-								<div class="item-after">{{dealDate}}</div>
-							</div>
-							<div class="item-subtitle">客户：{{customerName}}</div>
-							<div class="item-subtitle">销售金额：{{goodsMoney}}</div>
-							<div class="item-subtitle">{{billStatus}}</div>
+				{{#each bill.items}}
+				<li><div class="item-inner">
+						<div class="item-title-row">
+							<div class="item-title">{{goodsName}}</div>
 						</div>
-				</a></li> {{/each}}
+						<div class="item-subtitle">销售数量：{{goodsCount}}</div>
+						<div class="item-subtitle">销售单价：{{goodsPrice}}</div>
+						<div class="item-subtitle">销售金额：{{goodsMoney}}</div>
+					</div></li> {{/each}}
 			</ul>
 		</div>
 	</div>
@@ -37,7 +40,7 @@
 		methods : {},
 		data : function() {
 			return {
-				billList : this.$route.context.billList
+				bill : this.$route.context.bill
 			};
 		}
 	};
