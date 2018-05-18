@@ -4,6 +4,7 @@ namespace H5\DAO;
 
 use Home\Common\FIdConst;
 use Home\DAO\PSIBaseExDAO;
+use H5\DAO\UserDAOH5;
 
 /**
  * 主菜单 DAO
