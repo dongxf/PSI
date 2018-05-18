@@ -1578,6 +1578,16 @@ class InstallService extends PSIBaseExService {
 		$sql = "update t_config set company_id = '4D74E1E4-A129-11E4-9B6A-782BCBD7746B' ;";
 		$db->execute($sql);
 		
+		// t_menu_item_h5
+		$sql = "INSERT INTO `t_menu_item_h5` (`id`, `caption`, `fid`, `parent_id`, `show_order`) VALUES
+				('01', '销售', NULL, NULL, 1),
+				('0101', '销售订单', '2028', '01', 1),
+				('99', '关于', NULL, NULL, 99),
+				('9901', '关于PSI', '-9994', '99', 1),
+				('9902', '重新登录', '-9999', '99', 2);
+		";
+		$db->execute($sql);
+		
 		// t_psi_db_version
 		$sql = "INSERT INTO `t_psi_db_version` (`db_version`, `update_dt`) VALUES
 					('%s', now());
