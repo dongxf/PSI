@@ -67,7 +67,7 @@ class MainMenuDAOH5 extends PSIBaseExDAO {
 			foreach ( $data2 as $v2 ) {
 				$fid = $v2["fid"];
 				
-				if ($userDAO->hasPermission($loginUserId, $fid)) {
+				if ($userDAO->hasPermission($loginUserId, $fid) || $fid == FIdConst::ABOUT || $fid == FIdConst::RELOGIN) {
 					$menu2[] = [
 							"caption" => $v2["caption"],
 							"url" => $this->fidToURL($fid),
