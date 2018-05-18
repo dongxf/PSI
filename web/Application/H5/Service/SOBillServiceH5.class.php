@@ -42,6 +42,7 @@ class SOBillServiceH5 extends SOBillService {
 					"ref" => $v["ref"],
 					"dealDate" => $v["dealDate"],
 					"customerName" => $v["customerName"],
+					"goodsMoney" => $v["goodsMoney"],
 					"billStatus" => $this->billStatusCodeToName($v["billStatus"])
 			];
 		}
