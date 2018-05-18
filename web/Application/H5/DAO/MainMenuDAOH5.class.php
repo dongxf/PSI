@@ -83,5 +83,7 @@ class MainMenuDAOH5 extends PSIBaseExDAO {
 				$result[] = $menu1;
 			}
 		}
+		
+		return $result;
 	}
 }
