@@ -10,7 +10,24 @@
 			<div class="title">销售订单</div>
 		</div>
 	</div>
-	<div class="page-content"></div>
+	<div class="page-content">
+		<div class="list media-list">
+			<ul>
+				{{#each billList}}
+				<li><a href="#" class="item-link item-content">
+						<div class="item-inner">
+							<div class="item-title-row">
+								<div class="item-title">{{ref}}</div>
+								<div class="item-after">{{dealDate}}</div>
+							</div>
+							<div class="item-subtitle">客户：{{customerName}}</div>
+							<div class="item-subtitle">销售金额：{{goodsMoney}}</div>
+							<div class="item-subtitle">{{billStatus}}</div>
+						</div>
+				</a></li> {{/each}}
+			</ul>
+		</div>
+	</div>
 </div>
 </template>
 
@@ -18,7 +35,9 @@
 	return {
 		methods : {},
 		data : function() {
-			return {};
+			return {
+				billList : this.$route.context.billList
+			};
 		}
 	};
 </script>

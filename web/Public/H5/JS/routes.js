@@ -41,12 +41,24 @@ routesPSI.push({
 			path : '/sobill/',
 			async : function(routeTo, routeFrom, resolve, reject) {
 				if (app.data.PSI.userIsLoggedIn) {
-					resolve({
-								componentUrl : toURL("Sale/sobill.html")
-							}, {
-								context : {
-								}
-							});
+					var url = app.data.PSI.baseURI + "H5/Sale/sobillList";
+
+					app.preloader.show();
+
+					app.request.post(url, {}, function(data) {
+								app.preloader.hide();
+								resolve({
+											componentUrl : toURL("Sale/sobill.html")
+										}, {
+											context : {
+												billList : data.dataList
+											}
+										});
+							}, function() {
+								app.preloader.hide();
+								app.dialog.alert("网络错误");
+								reject();
+							}, "json");
 
 				} else {
 					resolve({
