@@ -76,7 +76,7 @@ class MainMenuDAOH5 extends PSIBaseExDAO {
 			
 			// 如果没有一个二级菜单项，那么一级菜单也不显示
 			if (count($menu2) > 0) {
-				menu1["items"] = $menu2;
+				$menu1["items"] = $menu2;
 				
 				$result[] = $menu1;
 			}
