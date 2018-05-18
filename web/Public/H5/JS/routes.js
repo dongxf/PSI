@@ -51,7 +51,7 @@ routesPSI.push({
 											componentUrl : toURL("Sale/sobill.html")
 										}, {
 											context : {
-												billList : data.dataList
+												billList : data
 											}
 										});
 							}, function() {

@@ -17,7 +17,7 @@ class SaleController extends Controller {
 			
 			$ss = new SOBillServiceH5();
 			
-			$this->ajaxReturn($ss->sobillList($params));
+			$this->ajaxReturn($ss->sobillListForH5($params));
 		}
 	}
 }
