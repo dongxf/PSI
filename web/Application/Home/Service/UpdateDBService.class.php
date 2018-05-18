@@ -171,6 +171,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20180503_03();
 		$this->update_20180513_01();
 		$this->update_20180517_01();
+		$this->update_20180518_01();
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -191,6 +192,75 @@ class UpdateDBService extends PSIBaseService {
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	// ============================================
 	private function notForgot() {
+	}
+
+	private function update_20180518_01() {
+		// 本次更新：H5端菜单初始化
+		$db = $this->db;
+		
+		// 销售 - 一级菜单
+		$sql = "select count(*) as cnt from t_menu_item_h5
+				where id = '01' ";
+		$data = $db->query($sql);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_menu_item_h5(id, caption, fid, parent_id, show_order)
+					values ('01', '销售', null, null, 1)";
+			$db->execute($sql);
+		}
+		
+		// 销售订单 - 销售的二级菜单
+		$fid = FIdConst::SALE_ORDER;
+		$name = "销售订单";
+		
+		$sql = "select count(*) as cnt from t_menu_item_h5
+				where id = '0101' ";
+		$data = $db->query($sql);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_menu_item_h5(id, caption, fid, parent_id, show_order)
+					values ('0101', '%s', '%s', '01', 1)";
+			$db->execute($sql, $name, $fid);
+		}
+		
+		// 关于 - 一级菜单
+		$sql = "select count(*) as cnt from t_menu_item_h5
+				where id = '99' ";
+		$data = $db->query($sql);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_menu_item_h5(id, caption, fid, parent_id, show_order)
+					values ('99', '关于', null, null, 99)";
+			$db->execute($sql);
+		}
+		
+		// 关于PSI - 二级菜单
+		$fid = FIdConst::ABOUT;
+		$name = "关于PSI";
+		
+		$sql = "select count(*) as cnt from t_menu_item_h5
+				where id = '9901' ";
+		$data = $db->query($sql);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_menu_item_h5(id, caption, fid, parent_id, show_order)
+					values ('9901', '%s', '%s', '99', 1)";
+			$db->execute($sql, $name, $fid);
+		}
+		
+		// 安全退出- 二级菜单
+		$fid = FIdConst::RELOGIN;
+		$name = "安全退出";
+		
+		$sql = "select count(*) as cnt from t_menu_item_h5
+				where id = '9902' ";
+		$data = $db->query($sql);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_menu_item_h5(id, caption, fid, parent_id, show_order)
+					values ('9902', '%s', '%s', '99', 2)";
+			$db->execute($sql, $name, $fid);
+		}
 	}
 
 	private function update_20180517_01() {

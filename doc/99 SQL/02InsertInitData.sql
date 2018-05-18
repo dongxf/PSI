@@ -427,12 +427,12 @@ INSERT INTO `t_menu_item_h5` (`id`, `caption`, `fid`, `parent_id`, `show_order`)
 ('0101', '销售订单', '2028', '01', 1),
 ('99', '关于', NULL, NULL, 99),
 ('9901', '关于PSI', '-9994', '99', 1),
-('9902', '重新登录', '-9999', '99', 2);
+('9902', '安全退出', '-9999', '99', 2);
 
 
 TRUNCATE TABLE `t_psi_db_version`;
 INSERT INTO `t_psi_db_version` (`db_version`, `update_dt`) VALUES
-('20180517-01', now());
+('20180518-01', now());
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
