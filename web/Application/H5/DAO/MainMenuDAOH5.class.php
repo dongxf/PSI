@@ -17,16 +17,14 @@ class MainMenuDAOH5 extends PSIBaseExDAO {
 		switch ($fid) {
 			case FIdConst::ABOUT :
 				return "/about/";
+			case FIdConst::SALE_ORDER :
+				return "/sobill/";
 			default :
 				return "#";
 		}
 	}
 
 	private function fidToClick($fid) {
-		if ($fid == FIdConst::SALE_ORDER) {
-			return "todo";
-		}
-		
 		if ($fid == FIdConst::RELOGIN) {
 			return "doLogout";
 		}

@@ -2,6 +2,7 @@ function toURL(url) {
 	return baseURI + "Public/H5/Pages/" + url;
 }
 
+// 主页面
 routesPSI = [{
 			path : '/',
 			async : function(routeTo, routeFrom, resolve, reject) {
@@ -33,9 +34,29 @@ routesPSI = [{
 
 				}
 			}
-
 		}];
 
+// 销售订单
+routesPSI.push({
+			path : '/sobill/',
+			async : function(routeTo, routeFrom, resolve, reject) {
+				if (app.data.PSI.userIsLoggedIn) {
+					resolve({
+								componentUrl : toURL("Sale/sobill.html")
+							}, {
+								context : {
+								}
+							});
+
+				} else {
+					resolve({
+								componentUrl : toURL("login.html")
+							});
+
+				}
+			}
+		});
+// 关于
 routesPSI.push({
 			path : '/about/',
 			url : toURL("about.html")
