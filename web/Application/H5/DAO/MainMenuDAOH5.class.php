@@ -3,6 +3,7 @@
 namespace H5\DAO;
 
 use Home\Common\FIdConst;
+use Home\DAO\PSIBaseExDAO;
 
 /**
  * 主菜单 DAO
