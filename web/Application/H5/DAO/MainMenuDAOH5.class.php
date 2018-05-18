@@ -1,6 +1,6 @@
 <?php
 
-namespace Home\DAO;
+namespace H5\DAO;
 
 use Home\Common\FIdConst;
 
