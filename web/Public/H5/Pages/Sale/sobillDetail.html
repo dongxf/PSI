@@ -11,7 +11,7 @@
 		</div>
 	</div>
 	<div class="page-content">
-		<div class="list inset">
+		<div class="list no-hairlines">
 			<ul>
 				<li>&emsp;&emsp;单号：{{bill.ref}}</li>
 				<li>&emsp;&emsp;客户：{{bill.customerName}}</li>
@@ -20,6 +20,8 @@
 				<li>&emsp;业务员：{{bill.bizUserName}}</li>
 			</ul>
 		</div>
+
+		<div class="block-title">销售订单商品明细</div>
 
 		<div class="list media-list">
 			<ul>
@@ -32,7 +34,6 @@
 								<div class="item-after">商品编码：{{goodsCode}}</div>
 							</div>
 							<div class="item-row">规格型号：{{goodsSpec}}</div>
-							<div class="item-row">&emsp;</div>
 							<div class="item-row">
 								<div class="item-cell">数量：{{goodsCount}} {{unitName}}</div>
 								<div class="item-cell">单价：{{goodsPrice}}</div>
