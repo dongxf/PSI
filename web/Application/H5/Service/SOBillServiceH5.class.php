@@ -32,6 +32,17 @@ class SOBillServiceH5 extends SOBillService {
 		}
 	}
 
+	private function receivingTypeCodeToName($code) {
+		switch ($code) {
+			case 0 :
+				return "记应收账款";
+			case 1 :
+				return "现金收款";
+			default :
+				return "";
+		}
+	}
+
 	public function sobillListForH5($params) {
 		$data = $this->sobillList($params);
 		
@@ -44,7 +55,8 @@ class SOBillServiceH5 extends SOBillService {
 					"dealDate" => $v["dealDate"],
 					"customerName" => $v["customerName"],
 					"goodsMoney" => $v["goodsMoney"],
-					"billStatus" => $this->billStatusCodeToName($v["billStatus"])
+					"billStatus" => $this->billStatusCodeToName($v["billStatus"]),
+					"receivingType" => $this->receivingTypeCodeToName($v["receivingType"])
 			];
 		}
 		

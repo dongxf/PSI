@@ -21,9 +21,12 @@
 								<div class="item-title">{{ref}}</div>
 								<div class="item-after">交货日 {{dealDate}}</div>
 							</div>
-							<div class="item-subtitle">客户：{{customerName}}</div>
-							<div class="item-subtitle">销售金额：{{goodsMoney}}</div>
-							<div class="item-subtitle">{{billStatus}}</div>
+							<div class="item-row">客户：{{customerName}}</div>
+							<div class="item-row">销售金额：{{goodsMoney}}</div>
+							<div class="item-row">
+								<div class="item-cell">{{billStatus}}</div>
+								<div class="item-cell">{{receivingType}}</div>
+							</div>
 						</div>
 				</a></li> {{/each}}
 			</ul>
