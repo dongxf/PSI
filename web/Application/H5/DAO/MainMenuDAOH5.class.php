@@ -18,7 +18,7 @@ class MainMenuDAOH5 extends PSIBaseExDAO {
 			case FIdConst::ABOUT :
 				return "/about/";
 			case FIdConst::SALE_ORDER :
-				return "/sobill/";
+				return "/sobillList/";
 			default :
 				return "#";
 		}

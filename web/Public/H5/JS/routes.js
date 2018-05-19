@@ -38,7 +38,7 @@ routesPSI = [{
 
 // 销售订单列表
 routesPSI.push({
-			path : '/sobill/',
+			path : '/sobillList/',
 			async : function(routeTo, routeFrom, resolve, reject) {
 				if (app.data.PSI.userIsLoggedIn) {
 					var url = app.data.PSI.baseURI + "H5/Sale/sobillList";
@@ -48,7 +48,7 @@ routesPSI.push({
 					app.request.post(url, {}, function(data) {
 								app.preloader.hide();
 								resolve({
-											componentUrl : toURL("Sale/sobill.html")
+											componentUrl : toURL("Sale/sobillList.html")
 										}, {
 											context : {
 												billList : data
