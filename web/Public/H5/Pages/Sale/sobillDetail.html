@@ -13,22 +13,34 @@
 	<div class="page-content">
 		<div class="list inset">
 			<ul>
-				<li>单号：{{bill.ref}}</li>
-				<li>客户：{{bill.customerName}}</li>
+				<li>&emsp;&emsp;单号：{{bill.ref}}</li>
+				<li>&emsp;&emsp;客户：{{bill.customerName}}</li>
+				<li>&emsp;交货日：{{bill.dealDate}}</li>
+				<li>交货地点：{{bill.dealAddress}}</li>
+				<li>&emsp;业务员：{{bill.bizUserName}}</li>
 			</ul>
 		</div>
 
 		<div class="list media-list">
 			<ul>
 				{{#each bill.items}}
-				<li><div class="item-inner">
-						<div class="item-title-row">
-							<div class="item-title">{{goodsName}}</div>
+				<li>
+					<div class="item-content">
+						<div class="item-inner">
+							<div class="item-title-row">
+								<div class="item-title">{{goodsName}}</div>
+								<div class="item-after">商品编码：{{goodsCode}}</div>
+							</div>
+							<div class="item-row">规格型号：{{goodsSpec}}</div>
+							<div class="item-row">&emsp;</div>
+							<div class="item-row">
+								<div class="item-cell">销售数量：{{goodsCount}} {{unitName}}</div>
+								<div class="item-cell">销售单价：{{goodsPrice}}</div>
+							</div>
+							<div class="item-row">销售金额：{{goodsMoney}}</div>
 						</div>
-						<div class="item-subtitle">销售数量：{{goodsCount}}</div>
-						<div class="item-subtitle">销售单价：{{goodsPrice}}</div>
-						<div class="item-subtitle">销售金额：{{goodsMoney}}</div>
-					</div></li> {{/each}}
+					</div>
+				</li> {{/each}}
 			</ul>
 		</div>
 	</div>
