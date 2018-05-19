@@ -12,7 +12,8 @@ class SaleController extends Controller {
 			$params = [
 					"start" => 0,
 					"limit" => 20,
-					"billStatus" => - 1
+					"billStatus" => - 1,
+					"receivingType" => - 1
 			];
 			
 			$ss = new SOBillServiceH5();
