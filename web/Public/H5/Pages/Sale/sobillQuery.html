@@ -28,6 +28,27 @@
 								</div>
 							</div>
 						</div></li>
+					<li><div class="item-content item-input">
+							<div class="item-inner">
+								<div class="item-title item-label">单号</div>
+								<div class="item-input-wrap">
+									<input type="text" name="billNumber" id="editRef"><span
+										class="input-clear-button"></span>
+								</div>
+							</div>
+						</div></li>
+					<li><div class="item-content item-input">
+							<div class="item-inner">
+								<div class="item-title item-label">收款方式</div>
+								<div class="item-input-wrap">
+									<select name="receivingType" id="editReceivingType">
+										<option value="-1" selected>全部</option>
+										<option value="0">记应收账款</option>
+										<option value="1">现金收款</option>
+									</select>
+								</div>
+							</div>
+						</div></li>
 				</ul>
 			</div>
 		</form>
@@ -49,7 +70,9 @@
 				$$("#queryButton").on("click", function() {
 					page.router.navigate("/sobillList/", {
 						context : {
-							billStatus : $$("#editBillStatus").val()
+							billStatus : $$("#editBillStatus").val(),
+							ref : $$("#editRef").val(),
+							receivingType : $$("#editReceivingType").val()
 						}
 					});
 				});

@@ -13,7 +13,8 @@ class SaleController extends Controller {
 					"start" => 0,
 					"limit" => 20,
 					"billStatus" => I("post.billStatus"),
-					"receivingType" => - 1
+					"ref" => I("post.ref"),
+					"receivingType" => I("post.receivingType")
 			];
 			
 			$ss = new SOBillServiceH5();
