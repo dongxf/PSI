@@ -1,0 +1,58 @@
+<template>
+<div class="page" data-name="sobill-query">
+	<div class="navbar">
+		<div class="navbar-inner sliding">
+			<div class="left">
+				<a href="#" class="link back"> <i class="icon icon-back"></i> <span
+					class="ios-only">返回</span>
+				</a>
+			</div>
+			<div class="title">销售订单查询</div>
+		</div>
+	</div>
+	<div class="page-content">
+		<form class="list">
+			<ul>
+				<li><div class="item-content item-input">
+						<div class="item-inner">
+							<div class="item-title item-label">订单状态</div>
+							<div class="item-input-wrap">
+								<select name="billStatus" id="editBillStatus">
+									<option value="-1">全部</option>
+									<option value="0" selected>待审核</option>
+									<option value="1000">已审核</option>
+									<option value="2000">部分出库</option>
+									<option value="3000">全部出库</option>
+								</select>
+							</div>
+						</div>
+					</div></li>
+			</ul>
+		</form>
+		<a class="button button-round" id="queryButton" href="#">查询</a>
+	</div>
+</div>
+</template>
+
+<script>
+	return {
+		methods : {},
+		data : function() {
+			return {};
+		},
+		on : {
+			pageInit : function(e, page) {
+				var $$ = Dom7;
+				
+				$$("#queryButton").on("click", function(){
+					page.router.navigate("/sobillList/",{
+						context: {
+							billStatus:$$("#editBillStatus").val()
+						}
+					});
+				});
+			}
+		}
+	};
+</script>
+

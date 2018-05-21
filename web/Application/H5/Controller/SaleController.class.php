@@ -12,7 +12,7 @@ class SaleController extends Controller {
 			$params = [
 					"start" => 0,
 					"limit" => 20,
-					"billStatus" => - 1,
+					"billStatus" => I("post.billStatus"),
 					"receivingType" => - 1
 			];
 			
