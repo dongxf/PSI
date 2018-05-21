@@ -39,6 +39,24 @@
 						</div></li>
 					<li><div class="item-content item-input">
 							<div class="item-inner">
+								<div class="item-title item-label">交货日期(起)</div>
+								<div class="item-input-wrap">
+									<input type="text" name="dealDTFrom" id="editDealDTFrom"
+										readonly="readonly"><span class="input-clear-button"></span>
+								</div>
+							</div>
+						</div></li>
+					<li><div class="item-content item-input">
+							<div class="item-inner">
+								<div class="item-title item-label">交货日期(止)</div>
+								<div class="item-input-wrap">
+									<input type="text" name="dealDTTo" id="editDealDTTo"
+										readonly="readonly"><span class="input-clear-button"></span>
+								</div>
+							</div>
+						</div></li>
+					<li><div class="item-content item-input">
+							<div class="item-inner">
 								<div class="item-title item-label">收款方式</div>
 								<div class="item-input-wrap">
 									<select name="receivingType" id="editReceivingType">
@@ -65,6 +83,14 @@
 		},
 		on : {
 			pageInit : function(e, page) {
+				page.app.calendar.create({
+					inputEl : "#editDealDTFrom"
+				})
+
+				page.app.calendar.create({
+					inputEl : "#editDealDTTo"
+				})
+
 				var $$ = Dom7;
 
 				$$("#queryButton").on("click", function() {
@@ -72,7 +98,9 @@
 						context : {
 							billStatus : $$("#editBillStatus").val(),
 							ref : $$("#editRef").val(),
-							receivingType : $$("#editReceivingType").val()
+							receivingType : $$("#editReceivingType").val(),
+							fromDT : $$("#editDealDTFrom").val(),
+							toDT : $$("#editDealDTTo").val()
 						}
 					});
 				});

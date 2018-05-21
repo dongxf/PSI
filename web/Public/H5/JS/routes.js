@@ -65,7 +65,9 @@ routesPSI.push({
 			app.request.post(url, {
 						billStatus : routeTo.context.billStatus,
 						ref : routeTo.context.ref,
-						receivingType : routeTo.context.receivingType
+						receivingType : routeTo.context.receivingType,
+						fromDT : routeTo.context.fromDT,
+						toDT : routeTo.context.toDT
 					}, function(data) {
 						app.preloader.hide();
 						resolve({

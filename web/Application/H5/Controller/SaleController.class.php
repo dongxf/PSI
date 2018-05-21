@@ -14,7 +14,9 @@ class SaleController extends Controller {
 					"limit" => 20,
 					"billStatus" => I("post.billStatus"),
 					"ref" => I("post.ref"),
-					"receivingType" => I("post.receivingType")
+					"receivingType" => I("post.receivingType"),
+					"fromDT" => I("post.fromDT"),
+					"toDT" => I("post.toDT")
 			];
 			
 			$ss = new SOBillServiceH5();
