@@ -26,6 +26,9 @@ var app = new Framework7({
 				dayNamesShort : ["日", "一", "二", "三", "四", "五", "六"],
 				firstDay : 0,
 				dateFormat : "yyyy-mm-dd"
+			},
+			autocomplete: {
+				searchbarPlaceholder: "搜索..."
 			}
 		});
 
