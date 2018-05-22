@@ -27,8 +27,9 @@ var app = new Framework7({
 				firstDay : 0,
 				dateFormat : "yyyy-mm-dd"
 			},
-			autocomplete: {
-				searchbarPlaceholder: "搜索..."
+			autocomplete : {
+				searchbarPlaceholder : "搜索...",
+				notFoundText : "没有数据"
 			}
 		});
 
