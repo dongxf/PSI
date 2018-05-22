@@ -68,15 +68,18 @@ routesPSI.push({
 						receivingType : routeTo.context.receivingType,
 						fromDT : routeTo.context.fromDT,
 						toDT : routeTo.context.toDT,
-						customerId : routeTo.context.customerId
+						customerId : routeTo.context.customerId,
+						page : routeTo.context.currentPage
 					}, function(data) {
 						app.preloader.hide();
+						var ctx = routeTo.context;
+						ctx.billList = data.dataList;
+						ctx.totalPage = parseInt(data.totalPage);
+
 						resolve({
 									componentUrl : toURL("Sale/sobillList.html")
 								}, {
-									context : {
-										billList : data
-									}
+									context : ctx
 								});
 					}, function() {
 						app.preloader.hide();

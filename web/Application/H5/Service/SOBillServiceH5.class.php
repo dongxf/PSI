@@ -65,7 +65,16 @@ class SOBillServiceH5 extends SOBillService {
 			];
 		}
 		
-		return $result;
+		// 分页信息
+		$page = $params["page"];
+		$totalCount = $data["totalCount"];
+		$totalPage = ceil($totalCount / 10);
+		
+		return [
+				"dataList" => $result,
+				"totalPage" => $totalPage,
+				"currentPage" => $page
+		];
 	}
 
 	public function queryCustomerData($params) {

@@ -9,9 +9,16 @@ class SaleController extends Controller {
 
 	public function sobillList() {
 		if (IS_POST) {
+			$page = I("post.page");
+			
+			if (! $page) {
+				$page = 1;
+			}
+			
 			$params = [
-					"start" => 0,
-					"limit" => 20,
+					"page" => $page,
+					"start" => ($page - 1) * 10,
+					"limit" => 10,
 					"billStatus" => I("post.billStatus"),
 					"ref" => I("post.ref"),
 					"receivingType" => I("post.receivingType"),

@@ -31,6 +31,19 @@
 				</a></li> {{/each}}
 			</ul>
 		</div>
+
+		<div class="block">
+			<div class="row">
+				<div class="col-50">
+					{{#if hasPrePage}} <a class="col button" id="buttonPrePage"
+						href="#">上一页</a> {{/if}}
+				</div>
+				<div class="col-50">
+					{{#if hasNextPage}} <a class="col button" id="buttonNextPage"
+						href="#">下一页</a> {{/if}}
+				</div>
+			</div>
+		</div>
 	</div>
 </div>
 </template>
@@ -40,8 +53,45 @@
 		methods : {},
 		data : function() {
 			return {
-				billList : this.$route.context.billList
+				billList : this.$route.context.billList,
+				totalPage : this.$route.context.totalPage,
+				currentPage : this.$route.context.currentPage,
+				prePage : this.$route.context.currentPage - 1,
+				nextPage : this.$route.context.currentPage + 1,
+				hasPrePage : this.$route.context.currentPage > 1,
+				hasNextPage : this.$route.context.currentPage < this.$route.context.totalPage
 			};
+		},
+		on : {
+			pageInit : function(e, page) {
+				var me = this;
+
+				var $$ = Dom7;
+
+				$$("#buttonNextPage").on("click", function() {
+					var ctx = me.$route.context;
+					ctx.currentPage += 1;
+
+					delete ctx.billList;
+
+					page.router.navigate("/sobillList/", {
+						reloadCurrent : true,
+						context : ctx
+					});
+				});
+
+				$$("#buttonPrePage").on("click", function() {
+					var ctx = me.$route.context;
+					ctx.currentPage -= 1;
+
+					delete ctx.billList;
+
+					page.router.navigate("/sobillList/", {
+						reloadCurrent : true,
+						context : ctx
+					});
+				});
+			}
 		}
 	};
 </script>
