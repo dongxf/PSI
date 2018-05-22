@@ -39,7 +39,9 @@
 						href="#">上一页</a> {{/if}}
 				</div>
 				<div class="col-33">
-					<a class="col button" id="buttonSelectPage" href="#">{{currentPage}}/{{totalPage}}</a>
+					{{#if hasData}} <a class="col button" id="buttonSelectPage"
+						href="#">{{currentPage}}/{{totalPage}}</a> {{else}} 没有符合查询条件的销售订单
+					{{/if}}
 				</div>
 				<div class="col-33">
 					{{#if hasNextPage}} <a class="col button" id="buttonNextPage"
@@ -62,15 +64,18 @@
 				prePage : this.$route.context.currentPage - 1,
 				nextPage : this.$route.context.currentPage + 1,
 				hasPrePage : this.$route.context.currentPage > 1,
-				hasNextPage : this.$route.context.currentPage < this.$route.context.totalPage
+				hasNextPage : this.$route.context.currentPage < this.$route.context.totalPage,
+				hasData: this.$route.context.billList && this.$route.context.billList.length > 0
 			};
 		},
 		on : {
 			pageInit : function(e, page) {
 				var me = this;
 
-				var $$ = Dom7;
+				var $$ = me.$$;
+				var app = me.$app;
 
+				// 下一页
 				$$("#buttonNextPage").on("click", function() {
 					var ctx = me.$route.context;
 					ctx.currentPage += 1;
@@ -83,6 +88,7 @@
 					});
 				});
 
+				// 上一页
 				$$("#buttonPrePage").on("click", function() {
 					var ctx = me.$route.context;
 					ctx.currentPage -= 1;
@@ -92,6 +98,26 @@
 					page.router.navigate("/sobillList/", {
 						reloadCurrent : true,
 						context : ctx
+					});
+				});
+				
+				// 选择页码跳转
+				$$("#buttonSelectPage").on("click", function(){
+					app.dialog.prompt("输入要跳转的页码(1 - " + me.totalPage +")",function(value){
+						var pageNumber = parseInt(value);
+						if (!pageNumber || pageNumber < 1 || pageNumber > me.totalPage) {
+							app.dialog.alert("请输入正确的页码");
+						} else {
+							var ctx = me.$route.context;
+							ctx.currentPage = pageNumber;
+
+							delete ctx.billList;
+
+							page.router.navigate("/sobillList/", {
+								reloadCurrent : true,
+								context : ctx
+							});
+						}
 					});
 				});
 			}
