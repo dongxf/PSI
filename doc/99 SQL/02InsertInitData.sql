@@ -434,7 +434,7 @@ INSERT INTO `t_menu_item_h5` (`id`, `caption`, `fid`, `parent_id`, `show_order`)
 
 TRUNCATE TABLE `t_psi_db_version`;
 INSERT INTO `t_psi_db_version` (`db_version`, `update_dt`) VALUES
-('20180518-01', now());
+('20180522-01', now());
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

@@ -172,6 +172,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20180513_01();
 		$this->update_20180517_01();
 		$this->update_20180518_01();
+		$this->update_20180522_01();
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -192,6 +193,36 @@ class UpdateDBService extends PSIBaseService {
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	// ============================================
 	private function notForgot() {
+	}
+
+	private function update_20180522_01() {
+		// 本次更新：H5端菜单 - 增加客户资料
+		$db = $this->db;
+		
+		// 客户关系 - 一级菜单
+		$sql = "select count(*) as cnt from t_menu_item_h5
+				where id = '02' ";
+		$data = $db->query($sql);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_menu_item_h5(id, caption, fid, parent_id, show_order)
+					values ('02', '客户关系', null, null, 2)";
+			$db->execute($sql);
+		}
+		
+		// 客户资料 - 二级菜单
+		$fid = FIdConst::CUSTOMER;
+		$name = "客户资料";
+		
+		$sql = "select count(*) as cnt from t_menu_item_h5
+				where id = '0201' ";
+		$data = $db->query($sql);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			$sql = "insert into t_menu_item_h5(id, caption, fid, parent_id, show_order)
+					values ('0201', '%s', '%s', '02', 1)";
+			$db->execute($sql, $name, $fid);
+		}
 	}
 
 	private function update_20180518_01() {
