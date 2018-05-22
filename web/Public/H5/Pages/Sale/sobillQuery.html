@@ -85,7 +85,8 @@
 				</ul>
 			</div>
 		</form>
-		<a class="button button-round" id="queryButton" href="#">查询</a>
+		<a class="button button-round" id="buttonQuery" href="#">查询</a> <a
+			class="button button-round" id="buttonClear" href="#">重置查询条件</a>
 	</div>
 </div>
 </template>
@@ -151,7 +152,7 @@
 					}
 				});
 
-				$$("#queryButton").on("click", function() {
+				$$("#buttonQuery").on("click", function() {
 					page.router.navigate("/sobillList/", {
 						context : {
 							billStatus : $$("#editBillStatus").val(),
@@ -162,6 +163,16 @@
 							customerId : $$("#editCustomerId").val()
 						}
 					});
+				});
+
+				$$("#buttonClear").on("click", function() {
+					$$("#editBillStatus").val(0);
+					$$("#editRef").val("");
+					$$("#editReceivingType").val(-1);
+					$$("#editDealDTFrom").val("");
+					$$("#editDealDTTo").val("");
+					$$("#editCustomerId").val("");
+					$$("#editCustomerName").text("");
 				});
 			}
 		}
