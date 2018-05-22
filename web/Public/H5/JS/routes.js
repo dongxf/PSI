@@ -67,7 +67,8 @@ routesPSI.push({
 						ref : routeTo.context.ref,
 						receivingType : routeTo.context.receivingType,
 						fromDT : routeTo.context.fromDT,
-						toDT : routeTo.context.toDT
+						toDT : routeTo.context.toDT,
+						customerId : routeTo.context.customerId
 					}, function(data) {
 						app.preloader.hide();
 						resolve({

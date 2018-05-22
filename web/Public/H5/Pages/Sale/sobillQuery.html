@@ -30,6 +30,21 @@
 						</div></li>
 					<li><div class="item-content item-input">
 							<div class="item-inner">
+								<div class="item-title item-label">客户</div>
+								<div class="item-input-wrap">
+									<a class="item-link item-content" href="#" id="popupCustomer">
+										<input type="hidden">
+										<div class="item-inner">
+											<input type="hidden" name="customerId" id="editCustomerId">
+											<div class="item-title" id="editCustomerName"></div>
+											<div class="item-after"></div>
+										</div>
+									</a>
+								</div>
+							</div>
+						</div></li>
+					<li><div class="item-content item-input">
+							<div class="item-inner">
 								<div class="item-title item-label">单号</div>
 								<div class="item-input-wrap">
 									<input type="text" name="billNumber" id="editRef"><span
@@ -83,15 +98,58 @@
 		},
 		on : {
 			pageInit : function(e, page) {
-				page.app.calendar.create({
+				var app = page.app;
+				app.calendar.create({
 					inputEl : "#editDealDTFrom"
 				})
 
-				page.app.calendar.create({
+				app.calendar.create({
 					inputEl : "#editDealDTTo"
 				})
 
 				var $$ = Dom7;
+
+				app.autocomplete.create({
+					openIn : 'page',
+					openerEl : '#popupCustomer',
+					closeOnSelect : true,
+					valueProperty : 'id',
+					textProperty : 'name',
+					preloader : true,
+					source : function(query, render) {
+						var me = this;
+						var results = [];
+						if (query.length === 0) {
+							render(results);
+							return;
+						}
+
+						me.preloaderShow();
+
+						var url = app.data.PSI.baseURI
+								+ "H5/Sale/queryCustomerData";
+
+						app.request({
+							url : url,
+							method : 'POST',
+							dataType : 'json',
+							data : {
+								query : query,
+							},
+							success : function(data) {
+								me.preloaderHide();
+								render(data);
+							}
+						});
+					},
+					on : {
+						change : function(value) {
+							var v = value[0];
+							$$("#editCustomerId").val(v.id);
+							$$("#editCustomerName").text(v.name);
+						}
+					}
+				});
 
 				$$("#queryButton").on("click", function() {
 					page.router.navigate("/sobillList/", {
@@ -100,7 +158,8 @@
 							ref : $$("#editRef").val(),
 							receivingType : $$("#editReceivingType").val(),
 							fromDT : $$("#editDealDTFrom").val(),
-							toDT : $$("#editDealDTTo").val()
+							toDT : $$("#editDealDTTo").val(),
+							customerId : $$("#editCustomerId").val()
 						}
 					});
 				});

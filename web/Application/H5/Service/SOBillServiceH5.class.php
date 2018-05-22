@@ -3,6 +3,7 @@
 namespace H5\Service;
 
 use Home\Service\SOBillService;
+use H5\DAO\SOBillDAOH5;
 
 /**
  * 用户Service for H5
@@ -44,6 +45,10 @@ class SOBillServiceH5 extends SOBillService {
 	}
 
 	public function sobillListForH5($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$data = $this->sobillList($params);
 		
 		$result = [];
@@ -61,5 +66,14 @@ class SOBillServiceH5 extends SOBillService {
 		}
 		
 		return $result;
+	}
+
+	public function queryCustomerData($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$dao = new SOBillDAOH5($this->db());
+		return $dao->queryCustomerData($params);
 	}
 }

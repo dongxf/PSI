@@ -16,7 +16,8 @@ class SaleController extends Controller {
 					"ref" => I("post.ref"),
 					"receivingType" => I("post.receivingType"),
 					"fromDT" => I("post.fromDT"),
-					"toDT" => I("post.toDT")
+					"toDT" => I("post.toDT"),
+					"customerId" => I("post.customerId")
 			];
 			
 			$ss = new SOBillServiceH5();
@@ -34,6 +35,20 @@ class SaleController extends Controller {
 			$ss = new SOBillServiceH5();
 			
 			$data = $ss->soBillInfo($params);
+			
+			$this->ajaxReturn($data);
+		}
+	}
+
+	public function queryCustomerData() {
+		if (IS_POST) {
+			$params = [
+					"query" => I("post.query")
+			];
+			
+			$ss = new SOBillServiceH5();
+			
+			$data = $ss->queryCustomerData($params);
 			
 			$this->ajaxReturn($data);
 		}
