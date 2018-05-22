@@ -12,7 +12,7 @@
 	</div>
 	<div class="page-content">
 		<form>
-			<div class="list inline-labels no-hairlines">
+			<div class="list inline-labels no-hairlines no-hairlines-between">
 				<ul>
 					<li><div class="item-content item-input">
 							<div class="item-inner">
@@ -52,7 +52,11 @@
 								</div>
 							</div>
 						</div></li>
-					<li>交货日期</li>
+					<li><div class="item-content item-input">
+							<div class="item-inner">
+								<div class="item-title item-label">交货日期</div>
+							</div>
+						</div></li>
 					<li><div class="item-content item-input">
 							<div class="item-inner">
 								<div class="item-title item-label">起</div>
@@ -171,7 +175,7 @@
 							fromDT : $$("#editDealDTFrom").val(),
 							toDT : $$("#editDealDTTo").val(),
 							customerId : $$("#editCustomerId").val(),
-							currentPage: 1
+							currentPage : 1
 						}
 					});
 				});
