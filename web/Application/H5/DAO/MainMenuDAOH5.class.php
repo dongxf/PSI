@@ -15,6 +15,8 @@ class MainMenuDAOH5 extends PSIBaseExDAO {
 
 	private function fidToURL($fid) {
 		switch ($fid) {
+			case FIdConst::CUSTOMER :
+				return "/customerQuery/";
 			case FIdConst::ABOUT :
 				return "/about/";
 			case FIdConst::SALE_ORDER :

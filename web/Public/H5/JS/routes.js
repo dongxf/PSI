@@ -36,6 +36,7 @@ routesPSI = [{
 			}
 		}];
 
+// 销售订单查询条件界面
 routesPSI.push({
 			path : '/sobillQuery/',
 			async : function(routeTo, routeFrom, resolve, reject) {
@@ -130,6 +131,24 @@ routesPSI.push({
 		}
 	}
 });
+
+// 客户资料查询条件界面
+routesPSI.push({
+			path : '/customerQuery/',
+			async : function(routeTo, routeFrom, resolve, reject) {
+				if (app.data.PSI.userIsLoggedIn) {
+					resolve({
+								componentUrl : toURL("Customer/customerQuery.html")
+							});
+
+				} else {
+					resolve({
+								componentUrl : toURL("login.html")
+							});
+
+				}
+			}
+		});
 
 // 关于
 routesPSI.push({

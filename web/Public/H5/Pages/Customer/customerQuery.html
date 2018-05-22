@@ -1,0 +1,67 @@
+<template>
+<div class="page" data-name="sobill-query">
+	<div class="navbar">
+		<div class="navbar-inner sliding">
+			<div class="left">
+				<a href="#" class="link back"> <i class="icon icon-back"></i> <span
+					class="ios-only">返回</span>
+				</a>
+			</div>
+			<div class="title">客户资料查询</div>
+		</div>
+	</div>
+	<div class="page-content">
+		<form>
+			<div class="list inline-labels no-hairlines">
+				<ul>
+					<li><div class="item-content item-input">
+							<div class="item-inner">
+								<div class="item-title item-label">客户编码</div>
+								<div class="item-input-wrap">
+									<input type="text" name="code" id="editCode"><span
+										class="input-clear-button"></span>
+								</div>
+							</div>
+						</div></li>
+				</ul>
+			</div>
+		</form>
+
+		<div class="block">
+			<div class="row">
+				<div class="col-50">
+					<button class="col button button-fill" id="buttonClear" href="#">重置查询条件</button>
+				</div>
+				<div class="col-50">
+					<button class="col button button-fill" id="buttonQuery" href="#">查询</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</template>
+
+<script>
+	return {
+		methods : {},
+		data : function() {
+			return {};
+		},
+		on : {
+			pageInit : function(e, page) {
+				var app = page.app;
+
+				var $$ = Dom7;
+
+				$$("#buttonQuery").on("click", function() {
+					app.dialog.alert("TODO");
+				});
+
+				$$("#buttonClear").on("click", function() {
+					$$("#editCode").val("");
+				});
+			}
+		}
+	};
+</script>
+
