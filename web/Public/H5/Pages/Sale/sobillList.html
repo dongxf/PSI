@@ -34,11 +34,14 @@
 
 		<div class="block">
 			<div class="row">
-				<div class="col-50">
+				<div class="col-33">
 					{{#if hasPrePage}} <a class="col button" id="buttonPrePage"
 						href="#">上一页</a> {{/if}}
 				</div>
-				<div class="col-50">
+				<div class="col-33">
+					<a class="col button" id="buttonSelectPage" href="#">{{currentPage}}/{{totalPage}}</a>
+				</div>
+				<div class="col-33">
 					{{#if hasNextPage}} <a class="col button" id="buttonNextPage"
 						href="#">下一页</a> {{/if}}
 				</div>
