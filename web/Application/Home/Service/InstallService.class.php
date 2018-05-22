@@ -1582,6 +1582,8 @@ class InstallService extends PSIBaseExService {
 		$sql = "INSERT INTO `t_menu_item_h5` (`id`, `caption`, `fid`, `parent_id`, `show_order`) VALUES
 				('01', '销售', NULL, NULL, 1),
 				('0101', '销售订单', '2028', '01', 1),
+				('02', '客户关系', NULL, NULL, 2),
+				('0201', '客户资料', '1007', '02', 1),
 				('99', '关于', NULL, NULL, 99),
 				('9901', '关于PSI', '-9994', '99', 1),
 				('9902', '安全退出', '-9999', '99', 2);
