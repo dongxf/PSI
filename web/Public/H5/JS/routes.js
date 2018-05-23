@@ -195,6 +195,41 @@ routesPSI.push({
 	}
 });
 
+// 某个客户资料详细页面
+routesPSI.push({
+	path : '/customerDetail/:id',
+	async : function(routeTo, routeFrom, resolve, reject) {
+		if (app.data.PSI.userIsLoggedIn) {
+			var url = app.data.PSI.baseURI + "H5/Customer/customerDetail";
+
+			app.preloader.show();
+
+			app.request.post(url, {
+						id : routeTo.params.id
+					}, function(data) {
+						app.preloader.hide();
+						resolve({
+							componentUrl : toURL("Customer/customerDetail.html")
+						}, {
+							context : {
+								customer : data
+							}
+						});
+					}, function() {
+						app.preloader.hide();
+						app.dialog.alert("网络错误");
+						reject();
+					}, "json");
+
+		} else {
+			resolve({
+						componentUrl : toURL("login.html")
+					});
+
+		}
+	}
+});
+
 // 关于
 routesPSI.push({
 			path : '/about/',

@@ -31,4 +31,14 @@ class CustomerServiceH5 extends CustomerService {
 		$dao = new CustomerDAOH5($this->db());
 		return $dao->customerListForH5($params);
 	}
+
+	public function customerDetail($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$dao = new CustomerDAOH5($this->db());
+		
+		return $dao->customerDetail($params);
+	}
 }

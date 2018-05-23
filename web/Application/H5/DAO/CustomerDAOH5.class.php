@@ -223,4 +223,59 @@ class CustomerDAOH5 extends CustomerDAO {
 				"currentPage" => $page
 		];
 	}
+
+	public function customerDetail($params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		
+		$result = [];
+		
+		$sql = "select category_id, code, name, contact01, qq01, mobile01, tel01,
+					contact02, qq02, mobile02, tel02, address, address_receipt,
+					init_receivables, init_receivables_dt,
+					bank_name, bank_account, tax_number, fax, note, sales_warehouse_id
+				from t_customer
+				where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if ($data) {
+			$result["categoryId"] = $data[0]["category_id"];
+			$result["code"] = $data[0]["code"];
+			$result["name"] = $data[0]["name"];
+			$result["contact01"] = $data[0]["contact01"];
+			$result["qq01"] = $data[0]["qq01"];
+			$result["mobile01"] = $data[0]["mobile01"];
+			$result["tel01"] = $data[0]["tel01"];
+			$result["contact02"] = $data[0]["contact02"];
+			$result["qq02"] = $data[0]["qq02"];
+			$result["mobile02"] = $data[0]["mobile02"];
+			$result["tel02"] = $data[0]["tel02"];
+			$result["address"] = $data[0]["address"];
+			$result["addressReceipt"] = $data[0]["address_receipt"];
+			$result["initReceivables"] = $data[0]["init_receivables"];
+			$d = $data[0]["init_receivables_dt"];
+			if ($d) {
+				$result["initReceivablesDT"] = $this->toYMD($d);
+			}
+			$result["bankName"] = $data[0]["bank_name"];
+			$result["bankAccount"] = $data[0]["bank_account"];
+			$result["tax"] = $data[0]["tax_number"];
+			$result["fax"] = $data[0]["fax"];
+			$result["note"] = $data[0]["note"];
+			
+			$result["warehouseId"] = null;
+			$result["warehouseName"] = null;
+			$warehouseId = $data[0]["sales_warehouse_id"];
+			if ($warehouseId) {
+				$warehouseDAO = new WarehouseDAO($db);
+				$warehouse = $warehouseDAO->getWarehouseById($warehouseId);
+				if ($warehouse) {
+					$result["warehouseId"] = $warehouseId;
+					$result["warehouseName"] = $warehouse["name"];
+				}
+			}
+		}
+		
+		return $result;
+	}
 }

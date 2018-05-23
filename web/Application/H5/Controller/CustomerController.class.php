@@ -43,9 +43,21 @@ class CustomerController extends Controller {
 					"qq" => I("post.qq")
 			];
 			
-			$ss = new CustomerServiceH5();
+			$cs = new CustomerServiceH5();
 			
-			$this->ajaxReturn($ss->customerListForH5($params));
+			$this->ajaxReturn($cs->customerListForH5($params));
+		}
+	}
+
+	public function customerDetail() {
+		if (IS_POST) {
+			$params = [
+					"id" => I("post.id")
+			];
+			
+			$cs = new CustomerServiceH5();
+			
+			$this->ajaxReturn($cs->customerDetail($params));
 		}
 	}
 }
