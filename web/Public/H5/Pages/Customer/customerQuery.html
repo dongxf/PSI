@@ -20,8 +20,8 @@
 								<div class="item-input-wrap">
 									<a class="item-link item-content" href="#" id="popupCustomerCategory">
 										<div class="item-inner">
-											<input type="hidden" name="customerId" id="editCustomerId">
-											<div class="item-title" id="editCustomerName"></div>
+											<input type="hidden" name="customerId" id="editCategoryId">
+											<div class="item-title" id="editCategoryName"></div>
 											<div class="item-after"></div>
 										</div>
 									</a>
@@ -66,6 +66,48 @@
 				var app = page.app;
 
 				var $$ = Dom7;
+				
+				app.autocomplete.create({
+					openIn : 'page',
+					openerEl : '#popupCustomerCategory',
+					closeOnSelect : true,
+					valueProperty : 'id',
+					textProperty : 'name',
+					preloader : true,
+					source : function(query, render) {
+						var me = this;
+						var results = [];
+						if (query.length === 0) {
+							render(results);
+							return;
+						}
+
+						me.preloaderShow();
+
+						var url = app.data.PSI.baseURI
+								+ "H5/Customer/queryCustomerCategory";
+
+						app.request({
+							url : url,
+							method : 'POST',
+							dataType : 'json',
+							data : {
+								query : query,
+							},
+							success : function(data) {
+								me.preloaderHide();
+								render(data);
+							}
+						});
+					},
+					on : {
+						change : function(value) {
+							var v = value[0];
+							$$("#editCategoryId").val(v.id);
+							$$("#editCategoryName").text(v.name);
+						}
+					}
+				});
 
 				$$("#buttonQuery").on("click", function() {
 					app.dialog.alert("TODO");
