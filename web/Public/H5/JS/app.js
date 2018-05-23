@@ -4,7 +4,8 @@ var app = new Framework7({
 			name : 'PSI',
 			theme : 'auto',
 			view : {
-				pushState : true
+				pushState : true,
+				xhrCache : false
 			},
 			data : function() {
 				return {
