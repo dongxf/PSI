@@ -169,27 +169,11 @@ routesPSI.push({
 		if (app.data.PSI.userIsLoggedIn) {
 			var ctx = routeTo.params.ctx;
 			if (!ctx) {
-				ctx = "";
+				ctx = "currentPage=1";
 			}
 			ctx = "?" + ctx;
 			var context = app.utils.parseUrlQuery(ctx);
 			routeTo.context = context;
-			/*
-			console.log(context);
-			
-			if (!routeTo.context) {
-				routeTo.context = {
-					categoryId : null,
-					code : null,
-					name : null,
-					address : null,
-					contact : null,
-					mobile : null,
-					tel : null,
-					qq : null,
-					currentPage : 1
-				};
-			}*/
 
 			var url = app.data.PSI.baseURI + "H5/Customer/customerList";
 
