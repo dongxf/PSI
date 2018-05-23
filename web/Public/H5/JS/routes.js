@@ -164,9 +164,19 @@ routesPSI.push({
 
 // 客户资料列表
 routesPSI.push({
-	path : '/customerList/',
+	path : '/customerList/:ctx?',
 	async : function(routeTo, routeFrom, resolve, reject) {
 		if (app.data.PSI.userIsLoggedIn) {
+			var ctx = routeTo.params.ctx;
+			if (!ctx) {
+				ctx = "";
+			}
+			ctx = "?" + ctx;
+			var context = app.utils.parseUrlQuery(ctx);
+			routeTo.context = context;
+			/*
+			console.log(context);
+			
 			if (!routeTo.context) {
 				routeTo.context = {
 					categoryId : null,
@@ -179,7 +189,7 @@ routesPSI.push({
 					qq : null,
 					currentPage : 1
 				};
-			}
+			}*/
 
 			var url = app.data.PSI.baseURI + "H5/Customer/customerList";
 
@@ -194,7 +204,7 @@ routesPSI.push({
 						mobile : routeTo.context.mobile,
 						tel : routeTo.context.tel,
 						qq : routeTo.context.qq,
-						page : routeTo.context.currentPage
+						page : parseInt(routeTo.context.currentPage)
 					}, function(data) {
 						app.preloader.hide();
 						var ctx = routeTo.context;

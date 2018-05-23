@@ -55,11 +55,11 @@
 			return {
 				customerList : this.$route.context.customerList,
 				totalPage : this.$route.context.totalPage,
-				currentPage : this.$route.context.currentPage,
-				prePage : this.$route.context.currentPage - 1,
-				nextPage : this.$route.context.currentPage + 1,
-				hasPrePage : this.$route.context.currentPage > 1,
-				hasNextPage : this.$route.context.currentPage < this.$route.context.totalPage,
+				currentPage : parseInt(this.$route.context.currentPage),
+				prePage : parseInt(this.$route.context.currentPage) - 1,
+				nextPage : parseInt(this.$route.context.currentPage) + 1,
+				hasPrePage : parseInt(this.$route.context.currentPage) > 1,
+				hasNextPage : parseInt(this.$route.context.currentPage) < this.$route.context.totalPage,
 				hasData: this.$route.context.customerList && this.$route.context.customerList.length > 0
 			};
 		},
@@ -73,11 +73,12 @@
 				// 下一页
 				$$("#buttonNextPage").on("click", function() {
 					var ctx = me.$route.context;
-					ctx.currentPage += 1;
+					ctx.currentPage = parseInt(ctx.currentPage) + 1;
 
 					delete ctx.customerList;
 
-					page.router.navigate("/customerList/", {
+					var url = "/customerList/" + app.utils.serializeObject(ctx);
+					page.router.navigate(url, {
 						reloadCurrent : true,
 						context : ctx
 					});
@@ -86,11 +87,12 @@
 				// 上一页
 				$$("#buttonPrePage").on("click", function() {
 					var ctx = me.$route.context;
-					ctx.currentPage -= 1;
+					ctx.currentPage = parseInt(ctx.currentPage) - 1;
 
 					delete ctx.customerList;
 
-					page.router.navigate("/customerList/", {
+					var url = "/customerList/" + app.utils.serializeObject(ctx);
+					page.router.navigate(url, {
 						reloadCurrent : true,
 						context : ctx
 					});
@@ -108,7 +110,8 @@
 
 							delete ctx.customerList;
 
-							page.router.navigate("/customerList/", {
+							var url = "/customerList/" + app.utils.serializeObject(ctx);
+							page.router.navigate(url, {
 								reloadCurrent : true,
 								context : ctx
 							});
