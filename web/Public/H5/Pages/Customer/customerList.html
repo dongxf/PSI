@@ -1,0 +1,122 @@
+<template>
+<div class="page" data-name="sobill-list">
+	<div class="navbar">
+		<div class="navbar-inner sliding">
+			<div class="left">
+				<a href="#" class="link back"> <i class="icon icon-back"></i> <span
+					class="ios-only">返回</span>
+				</a>
+			</div>
+			<div class="title">客户资料</div>
+		</div>
+	</div>
+	<div class="page-content">
+		<div class="list media-list">
+			<ul>
+				{{#each customerList}}
+				<li><a href="/customerDetail/{{id}}"
+					class="item-link item-content">
+						<div class="item-inner">
+							<div class="item-title-row">
+								<div class="item-title">{{name}}</div>
+								<div class="item-after">{{code}}</div>
+							</div>
+							<div class="item-row"></div>
+						</div>
+				</a></li> {{/each}}
+			</ul>
+		</div>
+
+		<div class="block">
+			<div class="row">
+				<div class="col-33">
+					{{#if hasPrePage}} <a class="col button" id="buttonPrePage"
+						href="#">上一页</a> {{/if}}
+				</div>
+				<div class="col-33">
+					{{#if hasData}} <a class="col button" id="buttonSelectPage"
+						href="#">{{currentPage}}/{{totalPage}}</a> {{else}} 没有符合查询条件的客户资料
+					{{/if}}
+				</div>
+				<div class="col-33">
+					{{#if hasNextPage}} <a class="col button" id="buttonNextPage"
+						href="#">下一页</a> {{/if}}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</template>
+
+<script>
+	return {
+		methods : {},
+		data : function() {
+			return {
+				customerList : this.$route.context.customerList,
+				totalPage : this.$route.context.totalPage,
+				currentPage : this.$route.context.currentPage,
+				prePage : this.$route.context.currentPage - 1,
+				nextPage : this.$route.context.currentPage + 1,
+				hasPrePage : this.$route.context.currentPage > 1,
+				hasNextPage : this.$route.context.currentPage < this.$route.context.totalPage,
+				hasData: this.$route.context.customerList && this.$route.context.customerList.length > 0
+			};
+		},
+		on : {
+			pageInit : function(e, page) {
+				var me = this;
+
+				var $$ = me.$$;
+				var app = me.$app;
+
+				// 下一页
+				$$("#buttonNextPage").on("click", function() {
+					var ctx = me.$route.context;
+					ctx.currentPage += 1;
+
+					delete ctx.customerList;
+
+					page.router.navigate("/customerList/", {
+						reloadCurrent : true,
+						context : ctx
+					});
+				});
+
+				// 上一页
+				$$("#buttonPrePage").on("click", function() {
+					var ctx = me.$route.context;
+					ctx.currentPage -= 1;
+
+					delete ctx.customerList;
+
+					page.router.navigate("/customerList/", {
+						reloadCurrent : true,
+						context : ctx
+					});
+				});
+				
+				// 选择页码跳转
+				$$("#buttonSelectPage").on("click", function(){
+					app.dialog.prompt("输入要跳转的页码(1 - " + me.totalPage +")",function(value){
+						var pageNumber = parseInt(value);
+						if (!pageNumber || pageNumber < 1 || pageNumber > me.totalPage) {
+							app.dialog.alert("请输入正确的页码");
+						} else {
+							var ctx = me.$route.context;
+							ctx.currentPage = pageNumber;
+
+							delete ctx.customerList;
+
+							page.router.navigate("/customerList/", {
+								reloadCurrent : true,
+								context : ctx
+							});
+						}
+					});
+				});
+			}
+		}
+	};
+</script>
+

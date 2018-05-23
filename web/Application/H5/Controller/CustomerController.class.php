@@ -20,4 +20,32 @@ class CustomerController extends Controller {
 			$this->ajaxReturn($data);
 		}
 	}
+
+	public function customerList() {
+		if (IS_POST) {
+			$page = I("post.page");
+			
+			if (! $page) {
+				$page = 1;
+			}
+			
+			$params = [
+					"page" => $page,
+					"start" => ($page - 1) * 10,
+					"limit" => 10,
+					"categoryId" => I("post.categoryId"),
+					"code" => I("post.code"),
+					"name" => I("post.name"),
+					"address" => I("post.address"),
+					"contact" => I("post.contact"),
+					"mobile" => I("post.mobile"),
+					"tel" => I("post.tel"),
+					"qq" => I("post.qq")
+			];
+			
+			$ss = new CustomerServiceH5();
+			
+			$this->ajaxReturn($ss->customerListForH5($params));
+		}
+	}
 }

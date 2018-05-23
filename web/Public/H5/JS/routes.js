@@ -150,6 +150,51 @@ routesPSI.push({
 			}
 		});
 
+// 客户资料列表
+routesPSI.push({
+	path : '/customerList/',
+	async : function(routeTo, routeFrom, resolve, reject) {
+		if (app.data.PSI.userIsLoggedIn) {
+			var url = app.data.PSI.baseURI + "H5/Customer/customerList";
+
+			app.preloader.show();
+
+			app.request.post(url, {
+						categoryId : routeTo.context.categoryId,
+						code : routeTo.context.code,
+						name : routeTo.context.name,
+						address : routeTo.context.address,
+						contact : routeTo.context.contact,
+						mobile : routeTo.context.mobile,
+						tel : routeTo.context.tel,
+						qq : routeTo.context.qq,
+						page : routeTo.context.currentPage
+					}, function(data) {
+						app.preloader.hide();
+						var ctx = routeTo.context;
+						ctx.customerList = data.customerList;
+						ctx.totalPage = parseInt(data.totalPage);
+
+						resolve({
+									componentUrl : toURL("Customer/customerList.html")
+								}, {
+									context : ctx
+								});
+					}, function() {
+						app.preloader.hide();
+						app.dialog.alert("网络错误");
+						reject();
+					}, "json");
+
+		} else {
+			resolve({
+						componentUrl : toURL("login.html")
+					});
+
+		}
+	}
+});
+
 // 关于
 routesPSI.push({
 			path : '/about/',

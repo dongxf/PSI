@@ -166,7 +166,19 @@
 				});
 
 				$$("#buttonQuery").on("click", function() {
-					app.dialog.alert("TODO");
+					page.router.navigate("/customerList/", {
+						context : {
+							categoryId : $$("#editCategoryId").val(),
+							code : $$("#editCode").val(),
+							name : $$("#editName").val(),
+							addres : $$("#editAddress").val(),
+							contact : $$("#editContact").val(),
+							mobile : $$("#editMobile").val(),
+							tel : $$("#editTel").val(),
+							qq : $$("#editQQ").val(),
+							currentPage : 1
+						}
+					});
 				});
 
 				$$("#buttonClear").on("click", function() {
