@@ -59,6 +59,18 @@ routesPSI.push({
 	path : '/sobillList/',
 	async : function(routeTo, routeFrom, resolve, reject) {
 		if (app.data.PSI.userIsLoggedIn) {
+			if (!routeTo.context) {
+				routeTo.context = {
+					billStatus : -1,
+					ref : null,
+					receivingType : -1,
+					fromDT : null,
+					toDT : null,
+					customerId : null,
+					currentPage : 1
+				};
+			}
+
 			var url = app.data.PSI.baseURI + "H5/Sale/sobillList";
 
 			app.preloader.show();
@@ -155,6 +167,20 @@ routesPSI.push({
 	path : '/customerList/',
 	async : function(routeTo, routeFrom, resolve, reject) {
 		if (app.data.PSI.userIsLoggedIn) {
+			if (!routeTo.context) {
+				routeTo.context = {
+					categoryId : null,
+					code : null,
+					name : null,
+					address : null,
+					contact : null,
+					mobile : null,
+					tel : null,
+					qq : null,
+					currentPage : 1
+				};
+			}
+
 			var url = app.data.PSI.baseURI + "H5/Customer/customerList";
 
 			app.preloader.show();
