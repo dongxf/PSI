@@ -14,7 +14,7 @@ var app = new Framework7({
 						demoLoginInfo : demoLoginInfo,
 						baseURI : baseURI,
 						userIsLoggedIn : userIsLoggedIn,
-						version: "PSI-H5 2018 build201805232210"
+						version: "PSI-H5 2018 build201805232250"
 					}
 				};
 			},
