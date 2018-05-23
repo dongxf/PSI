@@ -165,33 +165,26 @@
 					}
 				});
 
-				$$("#buttonQuery").on("click", function() {
-					var ctx = {
-							categoryId : $$("#editCategoryId").val(),
-							code : $$("#editCode").val(),
-							name : $$("#editName").val(),
-							addres : $$("#editAddress").val(),
-							contact : $$("#editContact").val(),
-							mobile : $$("#editMobile").val(),
-							tel : $$("#editTel").val(),
-							qq : $$("#editQQ").val(),
-							currentPage : 1
-						};
-					var url = "/customerList/" + app.utils.serializeObject(ctx);
-					page.router.navigate(url, {
-						context : {
-							categoryId : $$("#editCategoryId").val(),
-							code : $$("#editCode").val(),
-							name : $$("#editName").val(),
-							addres : $$("#editAddress").val(),
-							contact : $$("#editContact").val(),
-							mobile : $$("#editMobile").val(),
-							tel : $$("#editTel").val(),
-							qq : $$("#editQQ").val(),
-							currentPage : 1
-						}
-					});
-				});
+				$$("#buttonQuery").on(
+						"click",
+						function() {
+							var ctx = {
+								categoryId : $$("#editCategoryId").val(),
+								code : $$("#editCode").val(),
+								name : $$("#editName").val(),
+								addres : $$("#editAddress").val(),
+								contact : $$("#editContact").val(),
+								mobile : $$("#editMobile").val(),
+								tel : $$("#editTel").val(),
+								qq : $$("#editQQ").val(),
+								currentPage : 1
+							};
+							var url = "/customerList/"
+									+ app.utils.serializeObject(ctx);
+							page.router.navigate(url, {
+								context : ctx
+							});
+						});
 
 				$$("#buttonClear").on("click", function() {
 					$$("#editCategoryId").val("");
