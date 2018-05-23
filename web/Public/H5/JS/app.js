@@ -3,6 +3,9 @@ var app = new Framework7({
 			id : 'com.gitee.crm8000.psi',
 			name : 'PSI',
 			theme : 'auto',
+			view : {
+				pushState : true
+			},
 			data : function() {
 				return {
 					PSI : {
