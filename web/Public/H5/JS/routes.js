@@ -249,7 +249,7 @@ routesPSI.push({
 // 关于
 routesPSI.push({
 			path : '/about/',
-			url : toURL("about.html")
+			componentUrl : toURL("about.html")
 		});
 
 // Default route (404 page). MUST BE THE LAST

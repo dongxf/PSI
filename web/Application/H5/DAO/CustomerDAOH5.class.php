@@ -68,99 +68,86 @@ class CustomerDAOH5 extends CustomerDAO {
 			return $this->emptyResult();
 		}
 		
-		$sql = "select id, category_id, code, name, address, contact01, qq01, tel01, mobile01,
-				 	contact02, qq02, tel02, mobile02, init_receivables, init_receivables_dt,
-					address_receipt, bank_name, bank_account, tax_number, fax, note, data_org,
-					sales_warehouse_id
-				 from t_customer where (1 = 1) ";
+		$sql = "select c.id, c.code, c.name, c.address, c.contact01, c.contact02,
+					c.address_receipt, g.name as category_name, g.ps_id
+				 from t_customer c, t_customer_category g where (c.category_id = g.id) ";
 		$queryParam = [];
 		if ($categoryId) {
-			$sql .= " and (category_id = '%s')";
+			$sql .= " and (c.category_id = '%s')";
 			$queryParam[] = $categoryId;
 		}
 		
 		if ($code) {
-			$sql .= " and (code like '%s' ) ";
+			$sql .= " and (c.code like '%s' ) ";
 			$queryParam[] = "%{$code}%";
 		}
 		if ($name) {
-			$sql .= " and (name like '%s' or py like '%s' ) ";
+			$sql .= " and (c.name like '%s' or c.py like '%s' ) ";
 			$queryParam[] = "%{$name}%";
 			$queryParam[] = "%{$name}%";
 		}
 		if ($address) {
-			$sql .= " and (address like '%s' or address_receipt like '%s') ";
+			$sql .= " and (c.address like '%s' or c.address_receipt like '%s') ";
 			$queryParam[] = "%$address%";
 			$queryParam[] = "%{$address}%";
 		}
 		if ($contact) {
-			$sql .= " and (contact01 like '%s' or contact02 like '%s' ) ";
+			$sql .= " and (c.contact01 like '%s' or c.contact02 like '%s' ) ";
 			$queryParam[] = "%{$contact}%";
 			$queryParam[] = "%{$contact}%";
 		}
 		if ($mobile) {
-			$sql .= " and (mobile01 like '%s' or mobile02 like '%s' ) ";
+			$sql .= " and (c.mobile01 like '%s' or c.mobile02 like '%s' ) ";
 			$queryParam[] = "%{$mobile}%";
 			$queryParam[] = "%{$mobile}";
 		}
 		if ($tel) {
-			$sql .= " and (tel01 like '%s' or tel02 like '%s' ) ";
+			$sql .= " and (c.tel01 like '%s' or c.tel02 like '%s' ) ";
 			$queryParam[] = "%{$tel}%";
 			$queryParam[] = "%{$tel}";
 		}
 		if ($qq) {
-			$sql .= " and (qq01 like '%s' or qq02 like '%s' ) ";
+			$sql .= " and (c.qq01 like '%s' or c.qq02 like '%s' ) ";
 			$queryParam[] = "%{$qq}%";
 			$queryParam[] = "%{$qq}";
 		}
 		
 		$ds = new DataOrgDAO($db);
-		$rs = $ds->buildSQL(FIdConst::CUSTOMER, "t_customer", $loginUserId);
+		$rs = $ds->buildSQL(FIdConst::CUSTOMER, "c", $loginUserId);
 		if ($rs) {
 			$sql .= " and " . $rs[0];
 			$queryParam = array_merge($queryParam, $rs[1]);
 		}
 		
-		$sql .= " order by code limit %d, %d";
+		$sql .= " order by c.code limit %d, %d";
 		$queryParam[] = $start;
 		$queryParam[] = $limit;
 		$result = [];
 		$data = $db->query($sql, $queryParam);
 		$warehouseDAO = new WarehouseDAO($db);
 		foreach ( $data as $v ) {
-			$initDT = $v["init_receivables_dt"] ? $this->toYMD($v["init_receivables_dt"]) : null;
-			
-			$warehouseId = $v["sales_warehouse_id"];
-			$warehouseName = "";
-			if ($warehouseId) {
-				$warehouse = $warehouseDAO->getWarehouseById($warehouseId);
-				$warehouseName = $warehouse["name"];
+			// 价格体系
+			$psId = $v["ps_id"];
+			$priceSystem = "";
+			if ($psId) {
+				$sql = "select name from t_price_system
+						where id = '%s' ";
+				$d = $db->query($sql, $psId);
+				if ($d) {
+					$priceSystem = $d[0]["name"];
+				}
 			}
 			
 			$result[] = [
 					"id" => $v["id"],
-					"categoryId" => $v["category_id"],
 					"code" => $v["code"],
 					"name" => $v["name"],
 					"address" => $v["address"],
 					"addressReceipt" => $v["address_receipt"],
 					"contact01" => $v["contact01"],
-					"qq01" => $v["qq01"],
-					"tel01" => $v["tel01"],
-					"mobile01" => $v["mobile01"],
 					"contact02" => $v["contact02"],
-					"qq02" => $v["qq02"],
-					"tel02" => $v["tel02"],
-					"mobile02" => $v["mobile02"],
-					"initReceivables" => $v["init_receivables"],
-					"initReceivablesDT" => $initDT,
-					"bankName" => $v["bank_name"],
-					"bankAccount" => $v["bank_account"],
-					"tax" => $v["tax_number"],
-					"fax" => $v["fax"],
-					"note" => $v["note"],
-					"dataOrg" => $v["data_org"],
-					"warehouseName" => $warehouseName
+					"categoryName" => $v["category_name"],
+					"priceSystem" => $priceSystem
 			];
 		}
 		
@@ -231,15 +218,16 @@ class CustomerDAOH5 extends CustomerDAO {
 		
 		$result = [];
 		
-		$sql = "select category_id, code, name, contact01, qq01, mobile01, tel01,
-					contact02, qq02, mobile02, tel02, address, address_receipt,
-					init_receivables, init_receivables_dt,
-					bank_name, bank_account, tax_number, fax, note, sales_warehouse_id
-				from t_customer
-				where id = '%s' ";
+		$sql = "select c.code, c.name, c.contact01, c.qq01, c.mobile01, c.tel01,
+					c.contact02, c.qq02, c.mobile02, c.tel02, c.address, c.address_receipt,
+					c.init_receivables, c.init_receivables_dt,
+					c.bank_name, c.bank_account, c.tax_number, c.fax, c.note, c.sales_warehouse_id,
+					g.name as category_name, g.ps_id
+				from t_customer c, t_customer_category g
+				where c.id = '%s' and c.category_id = g.id";
 		$data = $db->query($sql, $id);
 		if ($data) {
-			$result["categoryId"] = $data[0]["category_id"];
+			$result["categoryName"] = $data[0]["category_name"];
 			$result["code"] = $data[0]["code"];
 			$result["name"] = $data[0]["name"];
 			$result["contact01"] = $data[0]["contact01"];
@@ -263,17 +251,28 @@ class CustomerDAOH5 extends CustomerDAO {
 			$result["fax"] = $data[0]["fax"];
 			$result["note"] = $data[0]["note"];
 			
-			$result["warehouseId"] = null;
+			// 销售出库仓库
 			$result["warehouseName"] = null;
 			$warehouseId = $data[0]["sales_warehouse_id"];
 			if ($warehouseId) {
 				$warehouseDAO = new WarehouseDAO($db);
 				$warehouse = $warehouseDAO->getWarehouseById($warehouseId);
 				if ($warehouse) {
-					$result["warehouseId"] = $warehouseId;
 					$result["warehouseName"] = $warehouse["name"];
 				}
 			}
+			
+			// 价格体系
+			$psId = $data[0]["ps_id"];
+			$priceSystem = null;
+			if ($psId) {
+				$sql = "select name from t_price_system where id = '%s' ";
+				$data = $db->query($sql, $psId);
+				if ($data) {
+					$priceSystem = $data[0]["name"];
+				}
+			}
+			$result["priceSystem"] = $priceSystem;
 		}
 		
 		return $result;
