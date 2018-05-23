@@ -20,7 +20,7 @@ class CustomerDAOH5 extends CustomerDAO {
 		$query = $params["query"];
 		
 		$queryParams = [];
-		if ($query == "*" || $query == "?") {
+		if ($query == "*" || $query == "?" || $query = "？" || $query = "＊") {
 			// 所有分类
 			$sql = "select id, name
 					from t_customer_category
