@@ -16,13 +16,21 @@ class CustomerDAOH5 extends CustomerDAO {
 		
 		$query = $params["query"];
 		
-		$sql = "select id, name
-				from t_customer_category
-				where code like '%s' or name like '%s' 
-				order by code ";
 		$queryParams = [];
-		$queryParams[] = "%$query%";
-		$queryParams[] = "%$query%";
+		if ($query == "*" || $query == "?") {
+			// 所有分类
+			$sql = "select id, name
+					from t_customer_category
+					order by code";
+		} else {
+			$sql = "select id, name
+				from t_customer_category
+				where code like '%s' or name like '%s'
+				order by code ";
+			$queryParams[] = "%$query%";
+			$queryParams[] = "%$query%";
+		}
+		
 		$data = $db->query($sql, $queryParams);
 		
 		$result = [];

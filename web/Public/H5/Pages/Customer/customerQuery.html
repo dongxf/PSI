@@ -14,13 +14,14 @@
 		<form>
 			<div class="list inline-labels no-hairlines">
 				<ul>
-				<li><div class="item-content item-input">
+					<li><div class="item-content item-input">
 							<div class="item-inner">
 								<div class="item-title item-label">客户分类</div>
 								<div class="item-input-wrap">
-									<a class="item-link item-content" href="#" id="popupCustomerCategory">
+									<a class="item-link item-content" href="#"
+										id="popupCustomerCategory">
 										<div class="item-inner">
-											<input type="hidden" name="customerId" id="editCategoryId">
+											<input type="hidden" name="categroyId" id="editCategoryId">
 											<div class="item-title" id="editCategoryName"></div>
 											<div class="item-after"></div>
 										</div>
@@ -33,6 +34,60 @@
 								<div class="item-title item-label">客户编码</div>
 								<div class="item-input-wrap">
 									<input type="text" name="code" id="editCode"><span
+										class="input-clear-button"></span>
+								</div>
+							</div>
+						</div></li>
+					<li><div class="item-content item-input">
+							<div class="item-inner">
+								<div class="item-title item-label">客户名称</div>
+								<div class="item-input-wrap">
+									<input type="text" name="name" id="editName"><span
+										class="input-clear-button"></span>
+								</div>
+							</div>
+						</div></li>
+					<li><div class="item-content item-input">
+							<div class="item-inner">
+								<div class="item-title item-label">地址</div>
+								<div class="item-input-wrap">
+									<input type="text" name="address" id="editAddress"><span
+										class="input-clear-button"></span>
+								</div>
+							</div>
+						</div></li>
+					<li><div class="item-content item-input">
+							<div class="item-inner">
+								<div class="item-title item-label">联系人</div>
+								<div class="item-input-wrap">
+									<input type="text" name="contact" id="editContact"><span
+										class="input-clear-button"></span>
+								</div>
+							</div>
+						</div></li>
+					<li><div class="item-content item-input">
+							<div class="item-inner">
+								<div class="item-title item-label">手机</div>
+								<div class="item-input-wrap">
+									<input type="text" name="mobile" id="editMobile"><span
+										class="input-clear-button"></span>
+								</div>
+							</div>
+						</div></li>
+					<li><div class="item-content item-input">
+							<div class="item-inner">
+								<div class="item-title item-label">固话</div>
+								<div class="item-input-wrap">
+									<input type="text" name="tel" id="editTel"><span
+										class="input-clear-button"></span>
+								</div>
+							</div>
+						</div></li>
+					<li><div class="item-content item-input">
+							<div class="item-inner">
+								<div class="item-title item-label">QQ</div>
+								<div class="item-input-wrap">
+									<input type="text" name="qq" id="editQQ"><span
 										class="input-clear-button"></span>
 								</div>
 							</div>
@@ -66,11 +121,12 @@
 				var app = page.app;
 
 				var $$ = Dom7;
-				
+
 				app.autocomplete.create({
 					openIn : 'page',
 					openerEl : '#popupCustomerCategory',
 					closeOnSelect : true,
+					searchbarPlaceholder : "*或?可以显示全部分类",
 					valueProperty : 'id',
 					textProperty : 'name',
 					preloader : true,
@@ -114,7 +170,15 @@
 				});
 
 				$$("#buttonClear").on("click", function() {
+					$$("#editCategoryId").val("");
+					$$("#editCategoryName").text("");
 					$$("#editCode").val("");
+					$$("#editName").val("");
+					$$("#editAddress").val("");
+					$$("#editContact").val("");
+					$$("#editMobile").val("");
+					$$("#editTel").val("");
+					$$("#editQQ").val("");
 				});
 			}
 		}
