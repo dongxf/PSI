@@ -56,20 +56,16 @@ routesPSI.push({
 
 // 销售订单列表
 routesPSI.push({
-	path : '/sobillList/',
+	path : '/sobillList/:ctx?',
 	async : function(routeTo, routeFrom, resolve, reject) {
 		if (app.data.PSI.userIsLoggedIn) {
-			if (!routeTo.context) {
-				routeTo.context = {
-					billStatus : -1,
-					ref : null,
-					receivingType : -1,
-					fromDT : null,
-					toDT : null,
-					customerId : null,
-					currentPage : 1
-				};
+			var ctx = routeTo.params.ctx;
+			if (!ctx) {
+				ctx = "currentPage=1";
 			}
+			ctx = "?" + ctx;
+			var context = app.utils.parseUrlQuery(ctx);
+			routeTo.context = context;
 
 			var url = app.data.PSI.baseURI + "H5/Sale/sobillList";
 
@@ -82,7 +78,7 @@ routesPSI.push({
 						fromDT : routeTo.context.fromDT,
 						toDT : routeTo.context.toDT,
 						customerId : routeTo.context.customerId,
-						page : routeTo.context.currentPage
+						page : parseInt(routeTo.context.currentPage)
 					}, function(data) {
 						app.preloader.hide();
 						var ctx = routeTo.context;

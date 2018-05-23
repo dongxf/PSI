@@ -166,16 +166,18 @@
 				});
 
 				$$("#buttonQuery").on("click", function() {
-					page.router.navigate("/sobillList/", {
-						context : {
-							billStatus : $$("#editBillStatus").val(),
-							ref : $$("#editRef").val(),
-							receivingType : $$("#editReceivingType").val(),
-							fromDT : $$("#editDealDTFrom").val(),
-							toDT : $$("#editDealDTTo").val(),
-							customerId : $$("#editCustomerId").val(),
-							currentPage : 1
-						}
+					var ctx = {
+						billStatus : $$("#editBillStatus").val(),
+						ref : $$("#editRef").val(),
+						receivingType : $$("#editReceivingType").val(),
+						fromDT : $$("#editDealDTFrom").val(),
+						toDT : $$("#editDealDTTo").val(),
+						customerId : $$("#editCustomerId").val(),
+						currentPage : 1
+					};
+					var url = "/sobillList/" + app.utils.serializeObject(ctx);
+					page.router.navigate(url, {
+						context : ctx
 					});
 				});
 
