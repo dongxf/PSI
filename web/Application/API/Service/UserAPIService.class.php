@@ -2,7 +2,6 @@
 
 namespace API\Service;
 
-use Home\Service\PSIBaseExService;
 use API\DAO\UserApiDAO;
 
 /**
@@ -10,14 +9,18 @@ use API\DAO\UserApiDAO;
  *
  * @author 李静波
  */
-class UserAPIService extends PSIBaseExService {
+class UserAPIService extends PSIApiBaseService {
 
 	public function doLogin($params) {
 		$dao = new UserApiDAO($this->db());
 		
-		$tokenId = $dao->doLogin($params);
+		$userId = $dao->doLogin($params);
 		if ($tokenId) {
 			$result = $this->ok();
+			
+			$tokenId = session_id();
+			session($tokenId, $userId);
+			
 			$result["tokneId"] = $tokenId;
 			
 			return $result;
