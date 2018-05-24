@@ -9,7 +9,7 @@ use Home\Service\PSIBaseExService;
  *
  * @author 李静波
  */
-class PSIApiService extends PSIBaseExService {
+class PSIApiBaseService extends PSIBaseExService {
 
 	protected function tokenIsInvalid(string $tokenId): bool {
 		$userId = session($tokenId);

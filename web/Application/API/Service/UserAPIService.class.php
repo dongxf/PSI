@@ -15,7 +15,7 @@ class UserAPIService extends PSIApiBaseService {
 		$dao = new UserApiDAO($this->db());
 		
 		$userId = $dao->doLogin($params);
-		if ($tokenId) {
+		if ($userId) {
 			$result = $this->ok();
 			
 			$tokenId = session_id();
