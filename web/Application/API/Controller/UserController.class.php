@@ -3,6 +3,7 @@
 namespace API\Controller;
 
 use Think\Controller;
+use API\Service\UserAPIService;
 
 class UserController extends Controller {
 
@@ -11,11 +12,14 @@ class UserController extends Controller {
 	 */
 	public function doLogin() {
 		if (IS_POST) {
-			$this->ajaxReturn([
-					"success" => false,
-					"tokenId"=>"01",
-					"msg" => "密码错误"
-			]);
+			$params = [
+					"loginName" => I("post.loginName"),
+					"password" => I("post.password")
+			];
+			
+			$service = new UserAPIService();
+			
+			$this->ajaxReturn($service->doLogin($params));
 		}
 	}
 
