@@ -1,5 +1,7 @@
 需要安装git，用git的Git Bash打开
 
+build_All.sh 生成PC和移动版完整的发布版
+
 build_help.sh 生成帮助文档
 
 clone_PSI.sh 从gitee网站clone PSI的代码
