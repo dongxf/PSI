@@ -17,7 +17,7 @@ class UserController extends Controller {
 					"password" => I("post.password")
 			];
 			
-			$service = new UserAPIService();
+			$service = new UserApiService();
 			
 			$this->ajaxReturn($service->doLogin($params));
 		}
@@ -32,7 +32,7 @@ class UserController extends Controller {
 			$params = [
 					"tokenId" => I("post.tokenId")
 			];
-			$service = new UserAPIService();
+			$service = new UserApiService();
 			
 			$this->ajaxReturn($service->doLogout($params));
 		}
@@ -41,7 +41,7 @@ class UserController extends Controller {
 	public function getDemoLoginInfo() {
 		if (IS_POST) {
 			
-			$service = new UserAPIService();
+			$service = new UserApiService();
 			$this->ajaxReturn($service->getDemoLoginInfo());
 		}
 	}

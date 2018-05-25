@@ -9,7 +9,7 @@ use API\DAO\UserApiDAO;
  *
  * @author 李静波
  */
-class UserAPIService extends PSIApiBaseService {
+class UserApiService extends PSIApiBaseService {
 
 	public function doLogin($params) {
 		$dao = new UserApiDAO($this->db());
