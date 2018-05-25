@@ -11,6 +11,10 @@ use Home\Common\FIdConst;
  * @author 李静波
  */
 class MainMenuApiDAO extends PSIBaseExDAO {
+	
+	private function fidToURL($fid){
+		return "/";
+	}
 
 	public function mainMenuItems($params) {
 		$db = $this->db;
@@ -48,8 +52,7 @@ class MainMenuApiDAO extends PSIBaseExDAO {
 				if ($userDAO->hasPermission($userId, $fid) || $fid == FIdConst::ABOUT || $fid == FIdConst::RELOGIN) {
 					$menu2[] = [
 							"caption" => $v2["caption"],
-							"url" => $this->fidToURL($fid),
-							"click" => $this->fidToClick($fid)
+							"url" => $this->fidToURL($fid)
 					];
 				}
 			}

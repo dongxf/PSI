@@ -3,6 +3,7 @@
 namespace API\Controller;
 
 use Think\Controller;
+use API\Service\MainMenuApiService;
 
 class MainMenuController extends Controller {
 

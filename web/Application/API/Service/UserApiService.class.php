@@ -21,7 +21,7 @@ class UserApiService extends PSIApiBaseService {
 			$tokenId = session_id();
 			session($tokenId, $userId);
 			
-			$result["tokneId"] = $tokenId;
+			$result["tokenId"] = $tokenId;
 			
 			return $result;
 		} else {
@@ -32,7 +32,7 @@ class UserApiService extends PSIApiBaseService {
 	public function doLogout($params) {
 		$result = $this->ok();
 		
-		$tokenId = $params["tokneId"];
+		$tokenId = $params["tokenId"];
 		if (! $tokenId) {
 			return $result;
 		}
