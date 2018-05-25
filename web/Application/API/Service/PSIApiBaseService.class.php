@@ -26,4 +26,8 @@ class PSIApiBaseService extends PSIBaseExService {
 		
 		return $cnt == 1;
 	}
+
+	protected function getUserIdFromTokenId(string $tokenId): string {
+		return session($tokenId);
+	}
 }
