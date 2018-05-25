@@ -28,9 +28,13 @@ class UserController extends Controller {
 	 */
 	public function doLogout() {
 		if (IS_POST) {
-			$this->ajaxReturn([
-					"success" => true
-			]);
+			
+			$params = [
+					"tokenId" => I("post.tokenId")
+			];
+			$service = new UserAPIService();
+			
+			$this->ajaxReturn($service->doLogout($params));
 		}
 	}
 

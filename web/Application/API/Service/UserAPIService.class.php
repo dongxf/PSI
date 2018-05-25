@@ -29,6 +29,24 @@ class UserAPIService extends PSIApiBaseService {
 		}
 	}
 
+	public function doLogout($params) {
+		$result = $this->ok();
+		
+		$tokenId = $params["tokneId"];
+		if (! $tokenId) {
+			return $result;
+		}
+		
+		if ($this->tokenIsInvalid($tokenId)) {
+			return $result;
+		}
+		
+		// 清除session
+		session($tokenId, null);
+		
+		return $result;
+	}
+
 	public function getDemoLoginInfo() {
 		$result = $this->ok();
 		
