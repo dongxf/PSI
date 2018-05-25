@@ -38,6 +38,11 @@ class BizlogApiService extends PSIApiBaseService {
 		);
 		
 		$dao = new BizlogApiDAO($this->db());
-		return $dao->insertBizlog($params);
+		$result = $dao->insertBizlog($params);
+		if (! $result) {
+			$result = $this->ok();
+		}
+		
+		return $result;
 	}
 }
