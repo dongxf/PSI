@@ -23,6 +23,15 @@ class UserApiService extends PSIApiBaseService {
 			
 			$result["tokenId"] = $tokenId;
 			
+			$fromDevice = $params["fromDevice"];
+			if (! $fromDevice) {
+				$fromDevice = "移动端";
+			}
+			
+			$service = new BizlogApiService();
+			$log = "从{$fromDevice}登录系统";
+			$service->insertBizlog($tokenId, $log);
+			
 			return $result;
 		} else {
 			return $this->bad("用户名或密码错误");
@@ -40,6 +49,15 @@ class UserApiService extends PSIApiBaseService {
 		if ($this->tokenIsInvalid($tokenId)) {
 			return $result;
 		}
+		
+		$fromDevice = $params["fromDevice"];
+		if (! $fromDevice) {
+			$fromDevice = "移动端";
+		}
+		
+		$service = new BizlogApiService();
+		$log = "从{$fromDevice}退出系统";
+		$service->insertBizlog($tokenId, $log);
 		
 		// 清除session
 		session($tokenId, null);

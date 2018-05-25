@@ -68,7 +68,7 @@ class PSIApiBaseService extends PSIBaseExService {
 	}
 
 	protected function getDataOrgFromTokenId(string $tokenId): string {
-		$userId = $this->getCompanyIdFromTokenId($tokenId);
+		$userId = $this->getUserIdFromTokenId($tokenId);
 		
 		$db = $this->db();
 		
