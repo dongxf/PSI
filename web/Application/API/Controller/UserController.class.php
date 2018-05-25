@@ -3,7 +3,7 @@
 namespace API\Controller;
 
 use Think\Controller;
-use API\Service\UserAPIService;
+use API\Service\UserApiService;
 
 class UserController extends Controller {
 

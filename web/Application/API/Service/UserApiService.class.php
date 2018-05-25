@@ -52,6 +52,8 @@ class UserApiService extends PSIApiBaseService {
 		
 		if ($this->isDemo()) {
 			$result["msg"] = "当前处于演示环境，请勿保存正式数据，默认的登录名和密码均为 admin";
+		} else {
+			$result["msg"] = "";
 		}
 		
 		return $result;
