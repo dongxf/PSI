@@ -28,4 +28,14 @@ class UserAPIService extends PSIApiBaseService {
 			return $this->bad("用户名或密码错误");
 		}
 	}
+
+	public function getDemoLoginInfo() {
+		$result = $this->ok();
+		
+		if ($this->isDemo()) {
+			$result["msg"] = "当前处于演示环境，请勿保存正式数据，默认的登录名和密码均为 admin";
+		}
+		
+		return $result;
+	}
 }

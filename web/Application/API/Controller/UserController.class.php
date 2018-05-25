@@ -33,4 +33,12 @@ class UserController extends Controller {
 			]);
 		}
 	}
+
+	public function getDemoLoginInfo() {
+		if (IS_POST) {
+			
+			$service = new UserAPIService();
+			$this->ajaxReturn($service->getDemoLoginInfo());
+		}
+	}
 }
