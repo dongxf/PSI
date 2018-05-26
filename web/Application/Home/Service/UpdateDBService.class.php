@@ -173,6 +173,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20180517_01();
 		$this->update_20180518_01();
 		$this->update_20180522_01();
+		$this->update_20180526_01();
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -193,6 +194,14 @@ class UpdateDBService extends PSIBaseService {
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	// ============================================
 	private function notForgot() {
+	}
+
+	private function update_20180526_01() {
+		// 本次更新：H5菜单-删除关于和退出
+		$db = $this->db;
+		$sql = "delete from t_menu_item_h5 
+				where id in ('99', '9901', '9902')";
+		$db->execute($sql);
 	}
 
 	private function update_20180522_01() {
