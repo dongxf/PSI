@@ -12,7 +12,9 @@
 
 >PSI的演示见：<a target="_blank" href="http://psi.sturgeon.mopaasapp.com">http://psi.sturgeon.mopaasapp.com</a>
 >
->请用`360浏览器`或者是`谷歌浏览器`访问
+>PC端请用`360浏览器`或者是`谷歌浏览器`访问
+> 
+>移动端扫码访问![移动端扫码访问](PSI_Mobile_URL.png)
 
 # PSI运行环境
 
