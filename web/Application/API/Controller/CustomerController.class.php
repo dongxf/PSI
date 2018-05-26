@@ -10,7 +10,9 @@ class CustomerController extends Controller {
 	public function customerList() {
 		if (IS_POST) {
 			$params = [
-					"tokenId" => I("post.tokenId")
+					"tokenId" => I("post.tokenId"),
+					"page" => I("post.page"),
+					"limit" => 10
 			];
 			
 			$service = new CustomerApiService();
