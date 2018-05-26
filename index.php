@@ -20,8 +20,7 @@ if ($detect->isMobile()) {
 		// 调用React生成的H5页面
 		echo file_get_contents("m.html");
 	} else {
-		// 现有的H5，将会删除
-		header('Location: ' . $_root . '/web/H5/#!/');
+		echo "PSI移动端没有正确安装";
 	}
 } else {
 	header('Location: ' . $_root . '/web/');
