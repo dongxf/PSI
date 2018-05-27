@@ -20,4 +20,14 @@ class CustomerController extends Controller {
 			$this->ajaxReturn($service->customerList($params));
 		}
 	}
+	
+	public function categoryList() {
+		$params = [
+				"tokenId" => I("post.tokenId"),
+		];
+		
+		$service = new CustomerApiService();
+		
+		$this->ajaxReturn($service->categoryList($params));
+	}
 }
