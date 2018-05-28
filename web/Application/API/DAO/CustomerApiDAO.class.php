@@ -3,6 +3,8 @@
 namespace API\DAO;
 
 use Home\DAO\PSIBaseExDAO;
+use Home\DAO\DataOrgDAO;
+use Home\Common\FIdConst;
 
 /**
  * 客户API DAO
@@ -26,13 +28,27 @@ class CustomerApiDAO extends PSIBaseExDAO {
 		
 		$start = ($page - 1) * $limit;
 		
-		$result = [];
+		$loginUserId = $params["userId"];
 		
-		$sql = "select code, name
-				from t_customer
-				order by code
+		$result = [];
+		$queryParam = [];
+		
+		$sql = "select c.code, c.name, g.name as category_name
+				from t_customer c, t_customer_category g
+				where (c.category_id = g.id)";
+		$ds = new DataOrgDAO($db);
+		$rs = $ds->buildSQL(FIdConst::CUSTOMER, "c", $loginUserId);
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParam = array_merge($queryParam, $rs[1]);
+		}
+		
+		$sql .= "order by code
 				limit %d, %d";
-		$data = $db->query($sql, $start, $limit);
+		$queryParam[] = $start;
+		$queryParam[] = $limit;
+		
+		$data = $db->query($sql, $queryParam);
 		foreach ( $data as $v ) {
 			$result[] = [
 					"code" => $v["code"],
@@ -41,8 +57,16 @@ class CustomerApiDAO extends PSIBaseExDAO {
 		}
 		
 		$sql = "select count(*) as cnt
-				from t_customer";
-		$data = $db->query($sql);
+				from t_customer c
+				where (1 = 1) ";
+		$queryParam = [];
+		$ds = new DataOrgDAO($db);
+		$rs = $ds->buildSQL(FIdConst::CUSTOMER, "c", $loginUserId);
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParam = array_merge($queryParam, $rs[1]);
+		}
+		$data = $db->query($sql, $queryParam);
 		$cnt = $data[0]["cnt"];
 		
 		$totalPage = ceil($cnt / $limit);
