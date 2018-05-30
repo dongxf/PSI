@@ -13,7 +13,6 @@ use Home\Common\FIdConst;
  */
 class CustomerApiDAO extends PSIBaseExDAO {
 
-	// TODO 数据域
 	public function customerList($params) {
 		$db = $this->db;
 		
