@@ -2,8 +2,8 @@
 
 namespace API\Controller;
 
+use API\Service\SOBillApiService;
 use Think\Controller;
-use API\Service\CustomerApiService;
 
 class SOBillController extends Controller {
 
@@ -12,12 +12,13 @@ class SOBillController extends Controller {
 			$params = [
 					"tokenId" => I("post.tokenId"),
 					"page" => I("post.page"),
-					"limit" => 10
+					"limit" => 10,
+					"billStatus" => - 1
 			];
 			
-			$service = new CustomerApiService();
+			$service = new SOBillApiService();
 			
-			$this->ajaxReturn($service->customerList($params));
+			$this->ajaxReturn($service->sobillList($params));
 		}
 	}
 }

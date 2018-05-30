@@ -17,7 +17,7 @@ class SOBillApiService extends PSIApiBaseService {
 			return $this->emptyResult();
 		}
 		
-		$params["userId"] = $this->getUserIdFromTokenId($tokenId);
+		$params["loginUserId"] = $this->getUserIdFromTokenId($tokenId);
 		
 		$dao = new SOBillApiDAO($this->db());
 		return $dao->sobillList($params);
