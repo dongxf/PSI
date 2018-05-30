@@ -51,7 +51,8 @@ class CustomerApiDAO extends PSIBaseExDAO {
 		foreach ( $data as $v ) {
 			$result[] = [
 					"code" => $v["code"],
-					"name" => $v["name"]
+					"name" => $v["name"],
+					"categoryName" => $v["category_name"]
 			];
 		}
 		
