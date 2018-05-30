@@ -42,7 +42,7 @@ class CustomerApiDAO extends PSIBaseExDAO {
 			$queryParam = array_merge($queryParam, $rs[1]);
 		}
 		
-		$sql .= "order by code
+		$sql .= "order by g.code, c.code
 				limit %d, %d";
 		$queryParam[] = $start;
 		$queryParam[] = $limit;
