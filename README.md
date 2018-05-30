@@ -85,7 +85,7 @@
 >
 >4、ThinkPHP 3.2.3 (http://www.thinkphp.cn/)
 >
->5、乱码 / pinyin_php (https://git.oschina.net/cik/pinyin_php)
+>5、pinyin_php (https://gitee.com/cik/pinyin_php)
 >
 >6、PHPExcel (https://github.com/PHPOffice/PHPExcel)
 >
