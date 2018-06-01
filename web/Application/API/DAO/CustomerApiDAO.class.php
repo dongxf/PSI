@@ -30,6 +30,13 @@ class CustomerApiDAO extends PSIBaseExDAO {
 		$loginUserId = $params["userId"];
 		
 		$categoryId = $params["categoryId"];
+		$code = $params["code"];
+		$name = $params["name"];
+		$address = $params["address"];
+		$contact = $params["contact"];
+		$mobile = $params["mobile"];
+		$tel = $params["tel"];
+		$qq = $params["qq"];
 		
 		$result = [];
 		$queryParam = [];
@@ -46,6 +53,40 @@ class CustomerApiDAO extends PSIBaseExDAO {
 		if ($categoryId != "-1") {
 			$sql .= " and (c.category_id = '%s') ";
 			$queryParam[] = $categoryId;
+		}
+		if ($code) {
+			$sql .= " and (c.code like '%s' ) ";
+			$queryParam[] = "%{$code}%";
+		}
+		if ($name) {
+			$sql .= " and (c.name like '%s' or c.py like '%s' ) ";
+			$queryParam[] = "%{$name}%";
+			$queryParam[] = "%{$name}%";
+		}
+		if ($address) {
+			$sql .= " and (c.address like '%s' or c.address_receipt like '%s') ";
+			$queryParam[] = "%$address%";
+			$queryParam[] = "%{$address}%";
+		}
+		if ($contact) {
+			$sql .= " and (c.contact01 like '%s' or c.contact02 like '%s' ) ";
+			$queryParam[] = "%{$contact}%";
+			$queryParam[] = "%{$contact}%";
+		}
+		if ($mobile) {
+			$sql .= " and (c.mobile01 like '%s' or c.mobile02 like '%s' ) ";
+			$queryParam[] = "%{$mobile}%";
+			$queryParam[] = "%{$mobile}";
+		}
+		if ($tel) {
+			$sql .= " and (c.tel01 like '%s' or c.tel02 like '%s' ) ";
+			$queryParam[] = "%{$tel}%";
+			$queryParam[] = "%{$tel}";
+		}
+		if ($qq) {
+			$sql .= " and (c.qq01 like '%s' or c.qq02 like '%s' ) ";
+			$queryParam[] = "%{$qq}%";
+			$queryParam[] = "%{$qq}";
 		}
 		
 		$sql .= "order by g.code, c.code
@@ -75,6 +116,40 @@ class CustomerApiDAO extends PSIBaseExDAO {
 		if ($categoryId != "-1") {
 			$sql .= " and (c.category_id = '%s') ";
 			$queryParam[] = $categoryId;
+		}
+		if ($code) {
+			$sql .= " and (c.code like '%s' ) ";
+			$queryParam[] = "%{$code}%";
+		}
+		if ($name) {
+			$sql .= " and (c.name like '%s' or c.py like '%s' ) ";
+			$queryParam[] = "%{$name}%";
+			$queryParam[] = "%{$name}%";
+		}
+		if ($address) {
+			$sql .= " and (c.address like '%s' or c.address_receipt like '%s') ";
+			$queryParam[] = "%$address%";
+			$queryParam[] = "%{$address}%";
+		}
+		if ($contact) {
+			$sql .= " and (c.contact01 like '%s' or c.contact02 like '%s' ) ";
+			$queryParam[] = "%{$contact}%";
+			$queryParam[] = "%{$contact}%";
+		}
+		if ($mobile) {
+			$sql .= " and (c.mobile01 like '%s' or c.mobile02 like '%s' ) ";
+			$queryParam[] = "%{$mobile}%";
+			$queryParam[] = "%{$mobile}";
+		}
+		if ($tel) {
+			$sql .= " and (c.tel01 like '%s' or c.tel02 like '%s' ) ";
+			$queryParam[] = "%{$tel}%";
+			$queryParam[] = "%{$tel}";
+		}
+		if ($qq) {
+			$sql .= " and (c.qq01 like '%s' or c.qq02 like '%s' ) ";
+			$queryParam[] = "%{$qq}%";
+			$queryParam[] = "%{$qq}";
 		}
 		
 		$data = $db->query($sql, $queryParam);
