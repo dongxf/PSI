@@ -29,6 +29,8 @@ class CustomerApiDAO extends PSIBaseExDAO {
 		
 		$loginUserId = $params["userId"];
 		
+		$categoryId = $params["categoryId"];
+		
 		$result = [];
 		$queryParam = [];
 		
@@ -40,6 +42,10 @@ class CustomerApiDAO extends PSIBaseExDAO {
 		if ($rs) {
 			$sql .= " and " . $rs[0];
 			$queryParam = array_merge($queryParam, $rs[1]);
+		}
+		if ($categoryId != "-1") {
+			$sql .= " and (c.category_id = '%s') ";
+			$queryParam[] = $categoryId;
 		}
 		
 		$sql .= "order by g.code, c.code
@@ -66,6 +72,11 @@ class CustomerApiDAO extends PSIBaseExDAO {
 			$sql .= " and " . $rs[0];
 			$queryParam = array_merge($queryParam, $rs[1]);
 		}
+		if ($categoryId != "-1") {
+			$sql .= " and (c.category_id = '%s') ";
+			$queryParam[] = $categoryId;
+		}
+		
 		$data = $db->query($sql, $queryParam);
 		$cnt = $data[0]["cnt"];
 		
