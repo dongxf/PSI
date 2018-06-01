@@ -159,7 +159,8 @@ class CustomerApiDAO extends PSIBaseExDAO {
 		
 		return [
 				"dataList" => $result,
-				"totalPage" => $totalPage
+				"totalPage" => $totalPage,
+				"totalCount" => $cnt
 		];
 	}
 
