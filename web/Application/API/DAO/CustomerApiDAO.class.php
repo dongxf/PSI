@@ -176,7 +176,7 @@ class CustomerApiDAO extends PSIBaseExDAO {
 		
 		$ds = new DataOrgDAO($db);
 		$queryParam = [];
-		$sql = "select c.id, c.name
+		$sql = "select c.id, c.code, c.name
 				from t_customer_category c ";
 		$rs = $ds->buildSQL(FIdConst::CUSTOMER_CATEGORY, "c", $loginUserId);
 		if ($rs) {
@@ -207,7 +207,7 @@ class CustomerApiDAO extends PSIBaseExDAO {
 		
 		$ds = new DataOrgDAO($db);
 		$queryParam = [];
-		$sql = "select c.id, c.name
+		$sql = "select c.id, c.code, c.name
 				from t_customer_category c ";
 		$rs = $ds->buildSQL(FIdConst::CUSTOMER_CATEGORY, "c", $loginUserId);
 		if ($rs) {
