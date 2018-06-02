@@ -5,6 +5,7 @@ namespace API\DAO;
 use Home\DAO\PSIBaseExDAO;
 use Home\DAO\DataOrgDAO;
 use Home\Common\FIdConst;
+use Home\DAO\CustomerDAO;
 
 /**
  * 客户API DAO
@@ -225,5 +226,15 @@ class CustomerApiDAO extends PSIBaseExDAO {
 		}
 		
 		return $result;
+	}
+
+	public function addCustomerCategory(& $params) {
+		$dao = new CustomerDAO($this->db);
+		return $dao->addCustomerCategory($params);
+	}
+
+	public function updateCustomerCategory(& $params) {
+		$dao = new CustomerDAO($this->db);
+		return $dao->updateCustomerCategory($params);
 	}
 }

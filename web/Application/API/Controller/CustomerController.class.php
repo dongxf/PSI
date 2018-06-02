@@ -48,4 +48,19 @@ class CustomerController extends Controller {
 		
 		$this->ajaxReturn($service->categoryList($params));
 	}
+
+	public function editCategory() {
+		$params = [
+				"tokenId" => I("post.tokenId"),
+				"id" => I("post.id"),
+				"code" => I("post.code"),
+				"name" => I("post.name"),
+				"psId" => I("post.psId"),
+				"fromDevice"=>I("post.fromDevice")
+		];
+		
+		$service = new CustomerApiService();
+		
+		$this->ajaxReturn($service->editCategory($params));
+	}
 }
