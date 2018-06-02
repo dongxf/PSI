@@ -203,8 +203,6 @@ class CustomerApiDAO extends PSIBaseExDAO {
 		
 		$result = [];
 		
-		$result[] = [];
-		
 		$ds = new DataOrgDAO($db);
 		$queryParam = [];
 		$sql = "select c.id, c.code, c.name
