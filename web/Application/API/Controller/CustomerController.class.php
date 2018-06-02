@@ -29,6 +29,16 @@ class CustomerController extends Controller {
 		}
 	}
 
+	public function categoryListWithAllCategory() {
+		$params = [
+				"tokenId" => I("post.tokenId")
+		];
+		
+		$service = new CustomerApiService();
+		
+		$this->ajaxReturn($service->categoryListWithAllCategory($params));
+	}
+
 	public function categoryList() {
 		$params = [
 				"tokenId" => I("post.tokenId")

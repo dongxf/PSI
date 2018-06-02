@@ -164,7 +164,7 @@ class CustomerApiDAO extends PSIBaseExDAO {
 		];
 	}
 
-	public function categoryList($params) {
+	public function categoryListWithAllCategory($params) {
 		$db = $this->db;
 		
 		$result = [];
@@ -173,6 +173,37 @@ class CustomerApiDAO extends PSIBaseExDAO {
 				"id" => "-1",
 				"name" => "[所有分类]"
 		];
+		
+		$ds = new DataOrgDAO($db);
+		$queryParam = [];
+		$sql = "select c.id, c.name
+				from t_customer_category c ";
+		$rs = $ds->buildSQL(FIdConst::CUSTOMER_CATEGORY, "c", $loginUserId);
+		if ($rs) {
+			$sql .= " where " . $rs[0];
+			$queryParam = array_merge($queryParam, $rs[1]);
+		}
+		
+		$sql .= " order by c.code";
+		
+		$data = $db->query($sql, $queryParam);
+		foreach ( $data as $v ) {
+			$result[] = [
+					"id" => $v["id"],
+					"code" => $v["code"],
+					"name" => $v["name"]
+			];
+		}
+		
+		return $result;
+	}
+
+	public function categoryList($params) {
+		$db = $this->db;
+		
+		$result = [];
+		
+		$result[] = [];
 		
 		$ds = new DataOrgDAO($db);
 		$queryParam = [];

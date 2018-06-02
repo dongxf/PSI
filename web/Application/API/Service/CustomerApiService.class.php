@@ -22,7 +22,19 @@ class CustomerApiService extends PSIApiBaseService {
 		$dao = new CustomerApiDAO($this->db());
 		return $dao->customerList($params);
 	}
-	
+
+	public function categoryListWithAllCategory($params) {
+		$tokenId = $params["tokenId"];
+		if ($this->tokenIsInvalid($tokenId)) {
+			return $this->emptyResult();
+		}
+		
+		$params["userId"] = $this->getUserIdFromTokenId($tokenId);
+		
+		$dao = new CustomerApiDAO($this->db());
+		return $dao->categoryListWithAllCategory($params);
+	}
+
 	public function categoryList($params) {
 		$tokenId = $params["tokenId"];
 		if ($this->tokenIsInvalid($tokenId)) {
