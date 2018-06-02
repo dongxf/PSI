@@ -30,50 +30,58 @@ class CustomerController extends Controller {
 	}
 
 	public function categoryListWithAllCategory() {
-		$params = [
-				"tokenId" => I("post.tokenId")
-		];
-		
-		$service = new CustomerApiService();
-		
-		$this->ajaxReturn($service->categoryListWithAllCategory($params));
+		if (IS_POST) {
+			$params = [
+					"tokenId" => I("post.tokenId")
+			];
+			
+			$service = new CustomerApiService();
+			
+			$this->ajaxReturn($service->categoryListWithAllCategory($params));
+		}
 	}
 
 	public function categoryList() {
-		$params = [
-				"tokenId" => I("post.tokenId")
-		];
-		
-		$service = new CustomerApiService();
-		
-		$this->ajaxReturn($service->categoryList($params));
+		if (IS_POST) {
+			$params = [
+					"tokenId" => I("post.tokenId")
+			];
+			
+			$service = new CustomerApiService();
+			
+			$this->ajaxReturn($service->categoryList($params));
+		}
 	}
 
 	public function editCategory() {
-		$params = [
-				"tokenId" => I("post.tokenId"),
-				"id" => I("post.id"),
-				"code" => I("post.code"),
-				"name" => I("post.name"),
-				"psId" => I("post.psId"),
-				"fromDevice" => I("post.fromDevice")
-		];
-		
-		$service = new CustomerApiService();
-		
-		$this->ajaxReturn($service->editCategory($params));
+		if (IS_POST) {
+			$params = [
+					"tokenId" => I("post.tokenId"),
+					"id" => I("post.id"),
+					"code" => I("post.code"),
+					"name" => I("post.name"),
+					"psId" => I("post.psId"),
+					"fromDevice" => I("post.fromDevice")
+			];
+			
+			$service = new CustomerApiService();
+			
+			$this->ajaxReturn($service->editCategory($params));
+		}
 	}
 
 	/**
 	 * 获得所有的价格体系中的价格
 	 */
-	public function priceSystemList($params) {
-		$params = [
-				"tokenId" => I("post.tokenId")
-		];
-		
-		$service = new CustomerApiService();
-		
-		$this->ajaxReturn($service->priceSystemList($params));
+	public function priceSystemList() {
+		if (IS_POST) {
+			$params = [
+					"tokenId" => I("post.tokenId")
+			];
+			
+			$service = new CustomerApiService();
+			
+			$this->ajaxReturn($service->priceSystemList($params));
+		}
 	}
 }
