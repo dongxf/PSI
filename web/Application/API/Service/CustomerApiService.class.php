@@ -69,6 +69,11 @@ class CustomerApiService extends PSIApiBaseService {
 		$code = $params["code"];
 		$name = $params["name"];
 		
+		$psId = $params["psId"];
+		if ($psId == "-1") {
+			$params["psId"] = "";
+		}
+		
 		$dao = new CustomerApiDAO($db);
 		if ($id) {
 			// 编辑
@@ -102,5 +107,18 @@ class CustomerApiService extends PSIApiBaseService {
 		$db->commit();
 		
 		return $this->ok();
+	}
+
+	public function priceSystemList($params) {
+		$tokenId = $params["tokenId"];
+		if ($this->tokenIsInvalid($tokenId)) {
+			return $this->bad("当前用户没有登录");
+		}
+		
+		$params["loginUserId"] = $this->getUserIdFromTokenId($tokenId);
+		
+		$dao = new CustomerApiDAO($this->db());
+		
+		return $dao->priceSystemList($params);
 	}
 }

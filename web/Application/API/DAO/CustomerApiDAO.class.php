@@ -237,4 +237,28 @@ class CustomerApiDAO extends PSIBaseExDAO {
 		$dao = new CustomerDAO($this->db);
 		return $dao->updateCustomerCategory($params);
 	}
+
+	public function priceSystemList($params) {
+		$db = $this->db;
+		
+		$sql = "select id, name
+				from t_price_system
+				order by name";
+		$data = $db->query($sql);
+		
+		$result = [
+				[
+						"id" => "-1",
+						"name" => "[无]"
+				]
+		];
+		foreach ( $data as $v ) {
+			$result[] = [
+					"id" => $v["id"],
+					"name" => $v["name"]
+			];
+		}
+		
+		return $result;
+	}
 }

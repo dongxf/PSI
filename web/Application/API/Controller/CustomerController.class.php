@@ -56,11 +56,24 @@ class CustomerController extends Controller {
 				"code" => I("post.code"),
 				"name" => I("post.name"),
 				"psId" => I("post.psId"),
-				"fromDevice"=>I("post.fromDevice")
+				"fromDevice" => I("post.fromDevice")
 		];
 		
 		$service = new CustomerApiService();
 		
 		$this->ajaxReturn($service->editCategory($params));
+	}
+
+	/**
+	 * 获得所有的价格体系中的价格
+	 */
+	public function priceSystemList($params) {
+		$params = [
+				"tokenId" => I("post.tokenId")
+		];
+		
+		$service = new CustomerApiService();
+		
+		$this->ajaxReturn($service->priceSystemList($params));
 	}
 }
