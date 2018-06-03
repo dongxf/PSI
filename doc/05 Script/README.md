@@ -2,6 +2,6 @@
 
 build_All.sh 生成PC和移动版完整的发布版
 
-build_help.sh 生成帮助文档
+build_fast_All.sh 快速生成PC和移动版完整的发布版
 
-clone_PSI.sh 从gitee网站clone PSI的代码
+build_help.sh 生成帮助文档
