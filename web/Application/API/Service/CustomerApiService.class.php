@@ -132,4 +132,39 @@ class CustomerApiService extends PSIApiBaseService {
 		
 		return $dao->categoryInfo($params);
 	}
+
+	public function deleteCategory($params) {
+		$tokenId = $params["tokenId"];
+		if ($this->tokenIsInvalid($tokenId)) {
+			return $this->bad("当前用户没有登录");
+		}
+		
+		$fromDevice = $params["fromDevice"];
+		if (! $fromDevice) {
+			$fromDevice = "移动端";
+		}
+		
+		$code = $params["code"];
+		$name = $params["name"];
+		
+		$db = $this->db();
+		$db->startTrans();
+		
+		$dao = new CustomerApiDAO($db);
+		
+		$rc = $dao->deleteCategory($params);
+		if ($rc) {
+			$db->rollback();
+			return $rc;
+		}
+		
+		// 记录业务日志
+		$log = "从{$fromDevice}删除客户分类: 编码={$code}, 名称={$name}";
+		$bs = new BizlogApiService($db);
+		$bs->insertBizlog($tokenId, $log, $this->LOG_CATEGORY);
+		
+		$db->commit();
+		
+		return $this->ok();
+	}
 }

@@ -296,4 +296,12 @@ class CustomerApiDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	public function deleteCategory($params) {
+		$db = $this->db;
+		
+		$dao = new CustomerDAO($db);
+		
+		return $dao->deleteCustomerCategory($params);
+	}
 }

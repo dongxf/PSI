@@ -100,4 +100,20 @@ class CustomerController extends Controller {
 			$this->ajaxReturn($service->categoryInfo($params));
 		}
 	}
+
+	/**
+	 * 删除某个客户分类
+	 */
+	public function deleteCategory() {
+		if (IS_POST) {
+			$params = [
+					"tokenId" => I("post.tokenId"),
+					"id" => I("post.categoryId")
+			];
+			
+			$service = new CustomerApiService();
+			
+			$this->ajaxReturn($service->deleteCategory($params));
+		}
+	}
 }
