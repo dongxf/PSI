@@ -269,4 +269,29 @@ class CustomerApiDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	public function categoryInfo($params) {
+		$db = $this->db;
+		
+		$result = [];
+		
+		$sql = "select id, code, name, ps_id from t_customer_category where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if ($data) {
+			$v = $data[0];
+			
+			$result["id"] = $v["id"];
+			$result["code"] = $v["code"];
+			$result["name"] = $v["name"];
+			$psId = $v["ps_id"];
+			$result["psId"] = $psId;
+			if ($psId) {
+				$sql = "select name from t_price_system where id = '%s' ";
+				$d = $db->query($sql, $psId);
+				$result["psName"] = $d[0]["name"];
+			}
+		}
+		
+		return $result;
+	}
 }

@@ -121,4 +121,15 @@ class CustomerApiService extends PSIApiBaseService {
 		
 		return $dao->priceSystemList($params);
 	}
+
+	public function categoryInfo($params) {
+		$tokenId = $params["tokenId"];
+		if ($this->tokenIsInvalid($tokenId)) {
+			return $this->emptyResult();
+		}
+		
+		$dao = new CustomerApiDAO($this->db());
+		
+		return $dao->categoryInfo($params);
+	}
 }

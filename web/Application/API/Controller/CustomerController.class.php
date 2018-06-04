@@ -84,4 +84,20 @@ class CustomerController extends Controller {
 			$this->ajaxReturn($service->priceSystemList($params));
 		}
 	}
+
+	/**
+	 * 获得某个客户分类的详细信息
+	 */
+	public function categoryInfo() {
+		if (IS_POST) {
+			$params = [
+					"tokenId" => I("post.tokenId"),
+					"categoryId" => I("post.categoryId")
+			];
+			
+			$service = new CustomerApiService();
+			
+			$this->ajaxReturn($service->categoryInfo($params));
+		}
+	}
 }
