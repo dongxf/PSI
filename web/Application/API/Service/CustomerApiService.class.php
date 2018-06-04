@@ -128,6 +128,7 @@ class CustomerApiService extends PSIApiBaseService {
 			return $this->emptyResult();
 		}
 		
+		$params["loginUserId"] = $this->getUserIdFromTokenId($tokenId);
 		$dao = new CustomerApiDAO($this->db());
 		
 		return $dao->categoryInfo($params);

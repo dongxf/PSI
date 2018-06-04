@@ -175,6 +175,7 @@ class CustomerApiDAO extends PSIBaseExDAO {
 				"name" => "[所有分类]"
 		];
 		
+		$loginUserId = $params["userId"];
 		$ds = new DataOrgDAO($db);
 		$queryParam = [];
 		$sql = "select c.id, c.code, c.name
@@ -204,6 +205,8 @@ class CustomerApiDAO extends PSIBaseExDAO {
 		
 		$result = [];
 		
+		$loginUserId = $params["userId"];
+		
 		$ds = new DataOrgDAO($db);
 		$queryParam = [];
 		$sql = "select c.id, c.code, c.name, c.ps_id
@@ -225,11 +228,25 @@ class CustomerApiDAO extends PSIBaseExDAO {
 				$d = $db->query($sql, $psId);
 				$psName = $d[0]["name"];
 			}
+			
+			$queryParam = [];
+			$sql = "select count(*) as cnt from t_customer c
+					where (category_id = '%s') ";
+			$queryParam[] = $v["id"];
+			$rs = $ds->buildSQL(FIdConst::CUSTOMER, "c", $loginUserId);
+			if ($rs) {
+				$sql .= " and " . $rs[0];
+				$queryParam = array_merge($queryParam, $rs[1]);
+			}
+			$d = $db->query($sql, $queryParam);
+			$cnt = $d[0]["cnt"];
+			
 			$result[] = [
 					"id" => $v["id"],
 					"code" => $v["code"],
 					"name" => $v["name"],
-					"psName" => $psName
+					"psName" => $psName,
+					"cnt" => $cnt
 			];
 		}
 		
@@ -274,6 +291,8 @@ class CustomerApiDAO extends PSIBaseExDAO {
 		$db = $this->db;
 		
 		$id = $params["categoryId"];
+		$loginUserId = $params["loginUserId"];
+		
 		$result = [];
 		
 		$sql = "select id, code, name, ps_id from t_customer_category where id = '%s' ";
