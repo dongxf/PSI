@@ -311,6 +311,12 @@ class CustomerApiDAO extends PSIBaseExDAO {
 				$d = $db->query($sql, $psId);
 				$result["psName"] = $d[0]["name"];
 			}
+			
+			// 统计该分类下的客户数，不用考虑数据域，因为是用来判断是否可以删除该分类用的，需要考虑所有的数据
+			$sql = "select count(*) as cnt from t_customer where category_id = '%s' ";
+			$d = $db->query($sql, $v["id"]);
+			$cnt = $d[0]["cnt"];
+			$result["canDelete"] = $cnt == 0;
 		}
 		
 		return $result;
