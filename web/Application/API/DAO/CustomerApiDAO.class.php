@@ -273,6 +273,7 @@ class CustomerApiDAO extends PSIBaseExDAO {
 	public function categoryInfo($params) {
 		$db = $this->db;
 		
+		$id = $params["categoryId"];
 		$result = [];
 		
 		$sql = "select id, code, name, ps_id from t_customer_category where id = '%s' ";
@@ -285,6 +286,7 @@ class CustomerApiDAO extends PSIBaseExDAO {
 			$result["name"] = $v["name"];
 			$psId = $v["ps_id"];
 			$result["psId"] = $psId;
+			$result["psName"] = "[无]";
 			if ($psId) {
 				$sql = "select name from t_price_system where id = '%s' ";
 				$d = $db->query($sql, $psId);
