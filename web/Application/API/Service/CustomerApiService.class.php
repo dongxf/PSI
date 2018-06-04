@@ -144,9 +144,6 @@ class CustomerApiService extends PSIApiBaseService {
 			$fromDevice = "移动端";
 		}
 		
-		$code = $params["code"];
-		$name = $params["name"];
-		
 		$db = $this->db();
 		$db->startTrans();
 		
@@ -159,6 +156,8 @@ class CustomerApiService extends PSIApiBaseService {
 		}
 		
 		// 记录业务日志
+		$code = $params["code"];
+		$name = $params["name"];
 		$log = "从{$fromDevice}删除客户分类: 编码={$code}, 名称={$name}";
 		$bs = new BizlogApiService($db);
 		$bs->insertBizlog($tokenId, $log, $this->LOG_CATEGORY);
