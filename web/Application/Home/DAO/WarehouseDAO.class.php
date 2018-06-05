@@ -224,6 +224,17 @@ class WarehouseDAO extends PSIBaseExDAO {
 			return $this->bad("仓库[$warehouseName]已经在盘点单中使用，不能删除");
 		}
 		
+		// 判断仓库是否在业务设置中使用
+		$sql = "select o.name
+				from t_config c, t_org o
+				where c.company_id = o.id
+					and c.value = '%s' ";
+		$data = $db->query($sql, $id);
+		if ($data) {
+			$companyName = $data[0]["name"];
+			return $this->bad("仓库[$warehouseName]已经在公司[$companyName]的业务设置中使用，不能删除");
+		}
+		
 		$sql = "delete from t_warehouse where id = '%s' ";
 		$rc = $db->execute($sql, $id);
 		if ($rc === false) {
