@@ -7,6 +7,9 @@ use API\Service\CustomerApiService;
 
 class CustomerController extends Controller {
 
+	/**
+	 * 查询客户资料列表
+	 */
 	public function customerList() {
 		if (IS_POST) {
 			$params = [
@@ -29,6 +32,9 @@ class CustomerController extends Controller {
 		}
 	}
 
+	/**
+	 * 获得客户分类列表，包括[全部]分类这个数据里面没有的记录，用于查询条件界面里面的客户分类字段
+	 */
 	public function categoryListWithAllCategory() {
 		if (IS_POST) {
 			$params = [
@@ -41,6 +47,9 @@ class CustomerController extends Controller {
 		}
 	}
 
+	/**
+	 * 获得客户分类列表
+	 */
 	public function categoryList() {
 		if (IS_POST) {
 			$params = [
@@ -53,6 +62,9 @@ class CustomerController extends Controller {
 		}
 	}
 
+	/**
+	 * 新增或编辑某个客户分类
+	 */
 	public function editCategory() {
 		if (IS_POST) {
 			$params = [
