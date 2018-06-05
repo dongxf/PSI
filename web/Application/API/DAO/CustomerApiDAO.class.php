@@ -329,4 +329,62 @@ class CustomerApiDAO extends PSIBaseExDAO {
 		
 		return $dao->deleteCustomerCategory($params);
 	}
+
+	public function customerInfo($params) {
+		$db = $this->db;
+		
+		$Id = $params["id"];
+		
+		$result = [];
+		
+		$sql = "select c.category_id, c.code, c.name, c.contact01, c.qq01, c.mobile01, c.tel01,
+					c.contact02, c.qq02, c.mobile02, c.tel02, c.address, c.address_receipt,
+					c.init_receivables, c.init_receivables_dt,
+					c.bank_name, c.bank_account, c.tax_number, c.fax, c.note, c.sales_warehouse_id,
+					g.name as category_name
+				from t_customer c, t_customer_category g
+				where (c.id = '%s') and (c.category_id = g.id) ";
+		$data = $db->query($sql, $id);
+		if ($data) {
+			$result["id"] = $id;
+			$result["categoryId"] = $data[0]["category_id"];
+			$result["categoryName"] = $data[0]["category_name"];
+			$result["code"] = $data[0]["code"];
+			$result["name"] = $data[0]["name"];
+			$result["contact01"] = $data[0]["contact01"];
+			$result["qq01"] = $data[0]["qq01"];
+			$result["mobile01"] = $data[0]["mobile01"];
+			$result["tel01"] = $data[0]["tel01"];
+			$result["contact02"] = $data[0]["contact02"];
+			$result["qq02"] = $data[0]["qq02"];
+			$result["mobile02"] = $data[0]["mobile02"];
+			$result["tel02"] = $data[0]["tel02"];
+			$result["address"] = $data[0]["address"];
+			$result["addressReceipt"] = $data[0]["address_receipt"];
+			$result["initReceivables"] = $data[0]["init_receivables"];
+			$d = $data[0]["init_receivables_dt"];
+			if ($d) {
+				$result["initReceivablesDT"] = $this->toYMD($d);
+			}
+			$result["bankName"] = $data[0]["bank_name"];
+			$result["bankAccount"] = $data[0]["bank_account"];
+			$result["tax"] = $data[0]["tax_number"];
+			$result["fax"] = $data[0]["fax"];
+			$result["note"] = $data[0]["note"];
+			
+			$result["warehouseId"] = null;
+			$result["warehouseName"] = null;
+			$warehouseId = $data[0]["sales_warehouse_id"];
+			if ($warehouseId) {
+				$warehouseDAO = new WarehouseDAO($db);
+				$warehouse = $warehouseDAO->getWarehouseById($warehouseId);
+				if ($warehouse) {
+					$result["warehouseId"] = $warehouseId;
+					$result["warehouseName"] = $warehouse["name"];
+				}
+			}
+		}
+		
+		return $result;
+	}
 }

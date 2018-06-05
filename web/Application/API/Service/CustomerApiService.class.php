@@ -167,4 +167,17 @@ class CustomerApiService extends PSIApiBaseService {
 		
 		return $this->ok();
 	}
+
+	public function customerInfo($params) {
+		$tokenId = $params["tokenId"];
+		if ($this->tokenIsInvalid($tokenId)) {
+			return $this->emptyResult();
+		}
+		
+		$params["loginUserId"] = $this->getUserIdFromTokenId($tokenId);
+		
+		$dao = new CustomerApiDAO($this->db());
+		
+		return $dao->customerInfo($params);
+	}
 }
