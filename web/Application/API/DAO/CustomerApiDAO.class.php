@@ -6,6 +6,7 @@ use Home\DAO\PSIBaseExDAO;
 use Home\DAO\DataOrgDAO;
 use Home\Common\FIdConst;
 use Home\DAO\CustomerDAO;
+use Home\DAO\WarehouseDAO;
 
 /**
  * 客户API DAO
