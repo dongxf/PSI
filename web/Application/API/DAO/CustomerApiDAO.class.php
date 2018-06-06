@@ -42,7 +42,7 @@ class CustomerApiDAO extends PSIBaseExDAO {
 		$result = [];
 		$queryParam = [];
 		
-		$sql = "select c.code, c.name, g.name as category_name
+		$sql = "select c.id, c.code, c.name, g.name as category_name
 				from t_customer c, t_customer_category g
 				where (c.category_id = g.id)";
 		$ds = new DataOrgDAO($db);
@@ -98,6 +98,7 @@ class CustomerApiDAO extends PSIBaseExDAO {
 		$data = $db->query($sql, $queryParam);
 		foreach ( $data as $v ) {
 			$result[] = [
+					"id" => $v["id"],
 					"code" => $v["code"],
 					"name" => $v["name"],
 					"categoryName" => $v["category_name"]
