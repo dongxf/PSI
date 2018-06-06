@@ -136,7 +136,7 @@ class CustomerController extends Controller {
 		if (IS_POST) {
 			$params = [
 					"tokenId" => I("post.tokenId"),
-					"id" => I("post.categoryId")
+					"id" => I("post.id")
 			];
 			
 			$service = new CustomerApiService();

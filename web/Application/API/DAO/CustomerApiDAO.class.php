@@ -334,7 +334,7 @@ class CustomerApiDAO extends PSIBaseExDAO {
 	public function customerInfo($params) {
 		$db = $this->db;
 		
-		$Id = $params["id"];
+		$id = $params["id"];
 		
 		$result = [];
 		
@@ -373,8 +373,8 @@ class CustomerApiDAO extends PSIBaseExDAO {
 			$result["fax"] = $data[0]["fax"];
 			$result["note"] = $data[0]["note"];
 			
-			$result["warehouseId"] = null;
-			$result["warehouseName"] = null;
+			$result["warehouseId"] = "";
+			$result["warehouseName"] = "";
 			$warehouseId = $data[0]["sales_warehouse_id"];
 			if ($warehouseId) {
 				$warehouseDAO = new WarehouseDAO($db);
