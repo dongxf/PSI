@@ -389,4 +389,24 @@ class CustomerApiDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	public function getCustomerCategoryById($id) {
+		$dao = new CustomerDAO($this->db);
+		return $dao->getCustomerCategoryById($id);
+	}
+
+	public function addCustomer(& $params) {
+		$dao = new CustomerDAO($this->db);
+		return $dao->addCustomer($params);
+	}
+
+	public function updateCustomer(& $params) {
+		$dao = new CustomerDAO($this->db);
+		return $dao->updateCustomer($params);
+	}
+
+	public function initReceivables(& $params) {
+		$dao = new CustomerDAO($this->db);
+		return $dao->initReceivables($params);
+	}
 }

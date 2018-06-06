@@ -144,4 +144,40 @@ class CustomerController extends Controller {
 			$this->ajaxReturn($service->customerInfo($params));
 		}
 	}
+
+	/**
+	 * 新增或编辑客户资料
+	 */
+	public function editCustomer() {
+		if (IS_POST) {
+			$params = [
+					"id" => I("post.id"),
+					"code" => I("post.code"),
+					"name" => I("post.name"),
+					"address" => I("post.address"),
+					"addressReceipt" => I("post.addressReceipt"),
+					"contact01" => I("post.contact01"),
+					"mobile01" => I("post.mobile01"),
+					"tel01" => I("post.tel01"),
+					"qq01" => I("post.qq01"),
+					"contact02" => I("post.contact02"),
+					"mobile02" => I("post.mobile02"),
+					"tel02" => I("post.tel02"),
+					"qq02" => I("post.qq02"),
+					"bankName" => I("post.bankName"),
+					"bankAccount" => I("post.bankAccount"),
+					"tax" => I("post.tax"),
+					"fax" => I("post.fax"),
+					"note" => I("post.note"),
+					"categoryId" => I("post.categoryId"),
+					"initReceivables" => I("post.initReceivables"),
+					"initReceivablesDT" => I("post.initReceivablesDT"),
+					"warehouseId" => I("post.warehouseId")
+			];
+			
+			$service = new CustomerApiService();
+			
+			$this->ajaxReturn($service->editCustomer($params));
+		}
+	}
 }

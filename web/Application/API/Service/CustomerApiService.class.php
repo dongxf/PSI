@@ -3,6 +3,7 @@
 namespace API\Service;
 
 use API\DAO\CustomerApiDAO;
+use Home\Service\PinyinService;
 
 /**
  * 客户 API Service
@@ -179,5 +180,77 @@ class CustomerApiService extends PSIApiBaseService {
 		$dao = new CustomerApiDAO($this->db());
 		
 		return $dao->customerInfo($params);
+	}
+
+	public function editCustomer($params) {
+		$tokenId = $params["tokenId"];
+		if ($this->tokenIsInvalid($tokenId)) {
+			return $this->bad("当前用户没有登录");
+		}
+		
+		$id = $params["id"];
+		$code = $params["code"];
+		$name = $params["name"];
+		
+		$params["loginUserId"] = $this->getUserIdFromTokenId($tokenId);
+		$params["dataOrg"] = $this->getDataOrgFromTokenId($tokenId);
+		$params["companyId"] = $this->getCompanyIdFromTokenId($tokenId);
+		
+		$ps = new PinyinService();
+		$params["py"] = $ps->toPY($name);
+		
+		$db = $this->db();
+		$db->startTrans();
+		
+		$dao = new CustomerApiDAO($db);
+		
+		$category = $dao->getCustomerCategoryById($params["categoryId"]);
+		if (! $category) {
+			$db->rollback();
+			return $this->bad("客户分类不存在");
+		}
+		
+		$fromDevice = $params["fromDevice"];
+		if (! $fromDevice) {
+			$fromDevice = "移动端";
+		}
+		$log = null;
+		
+		if ($id) {
+			// 编辑
+			$rc = $dao->updateCustomer($params);
+			if ($rc) {
+				$db->rollback();
+				return $rc;
+			}
+			
+			$log = "从{$fromDevice}编辑客户：编码 = {$code}, 名称 = {$name}";
+		} else {
+			// 新增
+			$rc = $dao->addCustomer($params);
+			if ($rc) {
+				$db->rollback();
+				return $rc;
+			}
+			
+			$id = $params["id"];
+			
+			$log = "从{$fromDevice}新增客户：编码 = {$code}, 名称 = {$name}";
+		}
+		
+		// 处理应收账款期初
+		$rc = $dao->initReceivables($params);
+		if ($rc) {
+			$db->rollback();
+			return $rc;
+		}
+		
+		// 记录业务日志
+		$bs = new BizlogApiService($db);
+		$bs->insertBizlog($tokenId, $log, $this->LOG_CATEGORY);
+		
+		$db->commit();
+		
+		return $this->ok();
 	}
 }
