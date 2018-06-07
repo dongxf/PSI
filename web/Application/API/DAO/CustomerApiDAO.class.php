@@ -430,7 +430,7 @@ class CustomerApiDAO extends PSIBaseExDAO {
 		
 		$result = [
 				[
-						"id" => "-1",
+						"id" => "",
 						"name" => "[无]"
 				]
 		];

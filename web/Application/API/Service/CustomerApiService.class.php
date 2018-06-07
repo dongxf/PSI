@@ -4,6 +4,7 @@ namespace API\Service;
 
 use API\DAO\CustomerApiDAO;
 use Home\Service\PinyinService;
+use Home\DAO\WarehouseDAO;
 
 /**
  * 客户 API Service
@@ -208,6 +209,23 @@ class CustomerApiService extends PSIApiBaseService {
 		if (! $category) {
 			$db->rollback();
 			return $this->bad("客户分类不存在");
+		}
+		
+		$initReceivablesDT = $params["initReceivablesDT"];
+		if ($initReceivablesDT) {
+			if (! $this->dateIsValid($initReceivablesDT)) {
+				$db->rollback();
+				return $this->bad("应收账款期初日期不正确");
+			}
+		}
+		$warehouseId = $params["warehouseId"];
+		if ($warehouseId) {
+			$warehouseDAO = new WarehouseDAO($db);
+			$warehouse = $warehouseDAO->getWarehouseById($warehouseId);
+			if (! $warehouse) {
+				$db->rollback();
+				return $this->bad("选择的销售出库仓库不存在");
+			}
 		}
 		
 		$fromDevice = $params["fromDevice"];
