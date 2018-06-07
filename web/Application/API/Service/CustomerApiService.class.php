@@ -311,7 +311,7 @@ class CustomerApiService extends PSIApiBaseService {
 		}
 		$code = $params["code"];
 		$name = $params["name"];
-		$log = "从{$fromDevice}客户资料：编码 = {$code},  名称 = {$name}";
+		$log = "从{$fromDevice}删除客户资料：编码 = {$code},  名称 = {$name}";
 		$bs = new BizlogApiService($db);
 		$bs->insertBizlog($tokenId, $log, $this->LOG_CATEGORY);
 		
