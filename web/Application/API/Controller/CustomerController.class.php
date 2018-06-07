@@ -196,4 +196,17 @@ class CustomerController extends Controller {
 			$this->ajaxReturn($service->warehouseList($params));
 		}
 	}
+
+	public function deleteCustomer() {
+		if (IS_POST) {
+			$params = [
+					"tokenId" => I("post.tokenId"),
+					"id" => I("post.id")
+			];
+			
+			$service = new CustomerApiService();
+			
+			$this->ajaxReturn($service->deleteCustomer($params));
+		}
+	}
 }

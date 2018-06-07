@@ -284,4 +284,39 @@ class CustomerApiService extends PSIApiBaseService {
 		
 		return $dao->warehouseList($params);
 	}
+
+	public function deleteCustomer($params) {
+		$tokenId = $params["tokenId"];
+		if ($this->tokenIsInvalid($tokenId)) {
+			return $this->bad("当前用户没有登录");
+		}
+		
+		$params["loginUserId"] = $this->getUserIdFromTokenId($tokenId);
+		
+		$db = $this->db();
+		$db->startTrans();
+		
+		$dao = new CustomerApiDAO($this->db());
+		
+		$rc = $dao->deleteCustomer($params);
+		if ($rc) {
+			$db->rollback();
+			return $rc;
+		}
+		
+		// 记录业务日志
+		$fromDevice = $params["fromDevice"];
+		if (! $fromDevice) {
+			$fromDevice = "移动端";
+		}
+		$code = $params["code"];
+		$name = $params["name"];
+		$log = "从{$fromDevice}客户资料：编码 = {$code},  名称 = {$name}";
+		$bs = new BizlogApiService($db);
+		$bs->insertBizlog($tokenId, $log, $this->LOG_CATEGORY);
+		
+		$db->commit();
+		
+		return $this->ok();
+	}
 }
