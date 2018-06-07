@@ -151,6 +151,7 @@ class CustomerController extends Controller {
 	public function editCustomer() {
 		if (IS_POST) {
 			$params = [
+					"tokenId" => I("post.tokenId"),
 					"id" => I("post.id"),
 					"code" => I("post.code"),
 					"name" => I("post.name"),
