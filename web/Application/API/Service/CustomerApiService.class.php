@@ -269,7 +269,7 @@ class CustomerApiService extends PSIApiBaseService {
 		
 		$db->commit();
 		
-		return $this->ok();
+		return $this->ok($id);
 	}
 
 	public function warehouseList($params) {
