@@ -17,7 +17,7 @@ https://my.oschina.net/u/2525829/blog/532614
 参见：http://www.nginx.cn/426.html
 最简单的方法是：php.ini中设置 `cgi.fix_pathinfo=1`
 
-`如果实在是搞不定Nginx，可以用LMPA：https://lnmp.org/lnmpa.html`
+`如果实在是搞不定Nginx，可以用LNMPA：` https://lnmp.org/lnmpa.html
 
 使用其他的环境，可以参考这个配置说明：
 
