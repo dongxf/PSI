@@ -414,6 +414,7 @@ class CustomerApiDAO extends PSIBaseExDAO {
 		$db = $this->db;
 		
 		$loginUserId = $params["loginUserId"];
+		$ds = new DataOrgDAO($db);
 		$sql = "select w.id, w.name
 				from t_warehouse w ";
 		
