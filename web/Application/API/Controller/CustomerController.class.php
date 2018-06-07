@@ -180,4 +180,19 @@ class CustomerController extends Controller {
 			$this->ajaxReturn($service->editCustomer($params));
 		}
 	}
+
+	/**
+	 * 返回仓库列表，用于编辑客户资料的时候，选择销售出库仓库
+	 */
+	public function warehouseList() {
+		if (IS_POST) {
+			$params = [
+					"tokenId" => I("post.tokenId")
+			];
+			
+			$service = new CustomerApiService();
+			
+			$this->ajaxReturn($service->warehouseList($params));
+		}
+	}
 }

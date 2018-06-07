@@ -409,4 +409,37 @@ class CustomerApiDAO extends PSIBaseExDAO {
 		$dao = new CustomerDAO($this->db);
 		return $dao->initReceivables($params);
 	}
+
+	public function warehouseList($params) {
+		$db = $this->db;
+		
+		$loginUserId = $params["loginUserId"];
+		$sql = "select w.id, w.name
+				from t_warehouse w ";
+		
+		$queryParam = [];
+		$rs = $ds->buildSQL(FIdConst::WAREHOUSE, "w", $loginUserId);
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParam = array_merge($queryParam, $rs[1]);
+		}
+		
+		$sql .= " order by w.code ";
+		$data = $db->query($sql, $queryParam);
+		
+		$result = [
+				[
+						"id" => "-1",
+						"name" => "[无]"
+				]
+		];
+		foreach ( $data as $v ) {
+			$result[] = [
+					"id" => $v["id"],
+					"name" => $v["name"]
+			];
+		}
+		
+		return $result;
+	}
 }

@@ -113,7 +113,7 @@ class CustomerApiService extends PSIApiBaseService {
 	public function priceSystemList($params) {
 		$tokenId = $params["tokenId"];
 		if ($this->tokenIsInvalid($tokenId)) {
-			return $this->bad("当前用户没有登录");
+			return $this->emptyResult();
 		}
 		
 		$params["loginUserId"] = $this->getUserIdFromTokenId($tokenId);
@@ -252,5 +252,18 @@ class CustomerApiService extends PSIApiBaseService {
 		$db->commit();
 		
 		return $this->ok();
+	}
+
+	public function warehouseList($params) {
+		$tokenId = $params["tokenId"];
+		if ($this->tokenIsInvalid($tokenId)) {
+			return $this->emptyResult();
+		}
+		
+		$params["loginUserId"] = $this->getUserIdFromTokenId($tokenId);
+		
+		$dao = new CustomerApiDAO($this->db());
+		
+		return $dao->warehouseList($params);
 	}
 }
