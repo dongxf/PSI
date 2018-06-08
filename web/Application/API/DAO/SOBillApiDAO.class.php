@@ -5,6 +5,7 @@ namespace API\DAO;
 use Home\DAO\PSIBaseExDAO;
 use Home\DAO\DataOrgDAO;
 use Home\Common\FIdConst;
+use Home\DAO\BizConfigDAO;
 
 /**
  * 销售订单API DAO
@@ -12,6 +13,17 @@ use Home\Common\FIdConst;
  * @author 李静波
  */
 class SOBillApiDAO extends PSIBaseExDAO {
+
+	private function receivingTypeCodeToName($code) {
+		switch ($code) {
+			case 0 :
+				return "记应收账款";
+			case 1 :
+				return "现金收款";
+			default :
+				return $code;
+		}
+	}
 
 	private function billStatusCodeToName($code) {
 		switch ($code) {
@@ -154,5 +166,78 @@ class SOBillApiDAO extends PSIBaseExDAO {
 				"dataList" => $result,
 				"totalPage" => $totalPage
 		);
+	}
+
+	public function sobillInfo($params) {
+		$db = $this->db;
+		
+		// 采购订单主表id
+		$id = $params["id"];
+		
+		$companyId = $params["companyId"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->emptyResult();
+		}
+		
+		$result = [];
+		
+		$cs = new BizConfigDAO($db);
+		$dataScale = $cs->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
+		$sql = "select s.ref, s.deal_date, s.deal_address, s.customer_id,
+					c.name as customer_name, s.contact, s.tel, s.fax,
+					s.org_id, o.full_name, s.biz_user_id, u.name as biz_user_name,
+					s.receiving_type, s.bill_memo, s.bill_status
+				from t_so_bill s, t_customer c, t_user u, t_org o
+				where s.id = '%s' and s.customer_Id = c.id
+					and s.biz_user_id = u.id
+					and s.org_id = o.id";
+		$data = $db->query($sql, $id);
+		if ($data) {
+			$v = $data[0];
+			$result["ref"] = $v["ref"];
+			$result["dealDate"] = $this->toYMD($v["deal_date"]);
+			$result["dealAddress"] = $v["deal_address"];
+			$result["customerName"] = $v["customer_name"];
+			$result["contact"] = $v["contact"];
+			$result["tel"] = $v["tel"];
+			$result["fax"] = $v["fax"];
+			$result["orgFullName"] = $v["full_name"];
+			$result["bizUserName"] = $v["biz_user_name"];
+			$result["receivingType"] = $this->receivingTypeCodeToName($v["receiving_type"]);
+			$result["billMemo"] = $v["bill_memo"];
+			$result["billStatus"] = $this->billStatusCodeToName($v["bill_status"]);
+			
+			// 明细表
+			$sql = "select s.id, s.goods_id, g.code, g.name, g.spec,
+						convert(s.goods_count, " . $fmt . ") as goods_count, s.goods_price, s.goods_money,
+						s.tax_rate, s.tax, s.money_with_tax, u.name as unit_name, s.memo
+					from t_so_bill_detail s, t_goods g, t_goods_unit u
+					where s.sobill_id = '%s' and s.goods_id = g.id and g.unit_id = u.id
+					order by s.show_order";
+			$items = [];
+			$data = $db->query($sql, $id);
+			
+			foreach ( $data as $v ) {
+				$items[] = [
+						"goodsCode" => $v["code"],
+						"goodsName" => $v["name"],
+						"goodsSpec" => $v["spec"],
+						"goodsCount" => $v["goods_count"],
+						"goodsPrice" => $v["goods_price"],
+						"goodsMoney" => $v["goods_money"],
+						"taxRate" => $v["tax_rate"],
+						"tax" => $v["tax"],
+						"moneyWithTax" => $v["money_with_tax"],
+						"unitName" => $v["unit_name"],
+						"memo" => $v["memo"]
+				];
+			}
+			
+			$result["items"] = $items;
+		}
+		
+		return $result;
 	}
 }

@@ -21,4 +21,20 @@ class SOBillController extends Controller {
 			$this->ajaxReturn($service->sobillList($params));
 		}
 	}
+
+	/**
+	 * 某个采购订单的详情
+	 */
+	public function sobillInfo() {
+		if (IS_POST) {
+			$params = [
+					"tokenId" => I("post.tokenId"),
+					"id" => I("post.id")
+			];
+			
+			$service = new SOBillApiService();
+			
+			$this->ajaxReturn($service->sobillInfo($params));
+		}
+	}
 }
