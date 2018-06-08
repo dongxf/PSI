@@ -13,6 +13,21 @@ use Home\Common\FIdConst;
  */
 class SOBillApiDAO extends PSIBaseExDAO {
 
+	private function billStatusCodeToName($code) {
+		switch ($code) {
+			case 0 :
+				return "待审核";
+			case 1000 :
+				return "已审核";
+			case 2000 :
+				return "部分出库";
+			case 3000 :
+				return "全部出库";
+			default :
+				return $code;
+		}
+	}
+
 	public function sobillList($params) {
 		$db = $this->db;
 		
@@ -42,14 +57,10 @@ class SOBillApiDAO extends PSIBaseExDAO {
 		$queryParams = [];
 		
 		$result = [];
-		$sql = "select s.id, s.ref, s.bill_status, s.goods_money, s.tax, s.money_with_tax,
-					c.name as customer_name, s.contact, s.tel, s.fax, s.deal_address,
-					s.deal_date, s.receiving_type, s.bill_memo, s.date_created,
-					o.full_name as org_name, u1.name as biz_user_name, u2.name as input_user_name,
-					s.confirm_user_id, s.confirm_date
-				from t_so_bill s, t_customer c, t_org o, t_user u1, t_user u2
-				where (s.customer_id = c.id) and (s.org_id = o.id)
-					and (s.biz_user_id = u1.id) and (s.input_user_id = u2.id) ";
+		$sql = "select s.id, s.ref, s.bill_status, s.goods_money,
+					c.name as customer_name
+				from t_so_bill s, t_customer c
+				where (s.customer_id = c.id) ";
 		
 		$ds = new DataOrgDAO($db);
 		$rs = $ds->buildSQL(FIdConst::SALE_ORDER, "s", $loginUserId);
@@ -88,34 +99,14 @@ class SOBillApiDAO extends PSIBaseExDAO {
 		$queryParams[] = $limit;
 		$data = $db->query($sql, $queryParams);
 		foreach ( $data as $i => $v ) {
-			$result[$i]["id"] = $v["id"];
-			$result[$i]["ref"] = $v["ref"];
-			$result[$i]["billStatus"] = $v["bill_status"];
-			$result[$i]["dealDate"] = $this->toYMD($v["deal_date"]);
-			$result[$i]["dealAddress"] = $v["deal_address"];
-			$result[$i]["customerName"] = $v["customer_name"];
-			$result[$i]["contact"] = $v["contact"];
-			$result[$i]["tel"] = $v["tel"];
-			$result[$i]["fax"] = $v["fax"];
-			$result[$i]["goodsMoney"] = $v["goods_money"];
-			$result[$i]["tax"] = $v["tax"];
-			$result[$i]["moneyWithTax"] = $v["money_with_tax"];
-			$result[$i]["receivingType"] = $v["receiving_type"];
-			$result[$i]["billMemo"] = $v["bill_memo"];
-			$result[$i]["bizUserName"] = $v["biz_user_name"];
-			$result[$i]["orgName"] = $v["org_name"];
-			$result[$i]["inputUserName"] = $v["input_user_name"];
-			$result[$i]["dateCreated"] = $v["date_created"];
-			
-			$confirmUserId = $v["confirm_user_id"];
-			if ($confirmUserId) {
-				$sql = "select name from t_user where id = '%s' ";
-				$d = $db->query($sql, $confirmUserId);
-				if ($d) {
-					$result[$i]["confirmUserName"] = $d[0]["name"];
-					$result[$i]["confirmDate"] = $v["confirm_date"];
-				}
-			}
+			$result[] = [
+					"id" => $v["id"],
+					"ref" => $v["ref"],
+					"billStatus" => $this->billStatusCodeToName($v["bill_status"]),
+					"dealDate" => $this->toYMD($v["deal_date"]),
+					"goodsMoney" => $v["goods_money"],
+					"customerName" => $v["customer_name"]
+			];
 		}
 		
 		$sql = "select count(*) as cnt
