@@ -188,7 +188,8 @@ class SOBillApiDAO extends PSIBaseExDAO {
 		$sql = "select s.ref, s.deal_date, s.deal_address, s.customer_id,
 					c.name as customer_name, s.contact, s.tel, s.fax,
 					s.org_id, o.full_name, s.biz_user_id, u.name as biz_user_name,
-					s.receiving_type, s.bill_memo, s.bill_status
+					s.receiving_type, s.bill_memo, s.bill_status,
+					s.goods_money, s.tax, s.money_with_tax
 				from t_so_bill s, t_customer c, t_user u, t_org o
 				where s.id = '%s' and s.customer_Id = c.id
 					and s.biz_user_id = u.id
@@ -208,6 +209,9 @@ class SOBillApiDAO extends PSIBaseExDAO {
 			$result["receivingType"] = $this->receivingTypeCodeToName($v["receiving_type"]);
 			$result["billMemo"] = $v["bill_memo"];
 			$result["billStatus"] = $this->billStatusCodeToName($v["bill_status"]);
+			$result["goodsMoney"] = $v["goods_money"];
+			$result["tax"] = $v["tax"];
+			$result["moneyWithTax"] = $v["money_with_tax"];
 			
 			// 明细表
 			$sql = "select s.id, s.goods_id, g.code, g.name, g.spec,
