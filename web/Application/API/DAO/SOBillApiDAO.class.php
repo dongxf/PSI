@@ -58,7 +58,7 @@ class SOBillApiDAO extends PSIBaseExDAO {
 		
 		$result = [];
 		$sql = "select s.id, s.ref, s.bill_status, s.goods_money,
-					c.name as customer_name
+					c.name as customer_name, s.deal_date
 				from t_so_bill s, t_customer c
 				where (s.customer_id = c.id) ";
 		
