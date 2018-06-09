@@ -38,7 +38,7 @@ Ext.define("PSI.About.MainForm", {
 						+ PSI.Const.VERSION
 						+ "</h2>"
 						+ "<h2>产品源码下载请访问  <a href='https://gitee.com/crm8000/PSI' target='_blank'>https://gitee.com/crm8000/PSI</a></h2>"
-						+ "<p>技术支持QQ群 414474186</p>" + "<p>PHP版本号: "
+						+ "<p>PHP版本号: "
 						+ me.getPhpVersion() + " , MySQL版本号: "
 						+ me.getMySQLVersion() + "</p><p>数据库表结构版本号: "
 						+ me.getPSIDBVersion() + "</p><p>数据库表结构更新时间: "
