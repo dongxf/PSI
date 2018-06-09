@@ -4,7 +4,6 @@
 
 >PSI是一款基于SaaS模式(Software as a Service软件即服务)的企业管理软件。PSI以商贸企业的核心业务：采购、销售、库存（进销存）为切入点，最终目标是行业化的ERP解决方案。
 >
->为什么说PSI是一款基于SaaS的企业管理软件？详见：https://my.oschina.net/u/134395/blog/1551258
 
 # PSI演示
 
@@ -32,17 +31,6 @@
 
 >PSI的开源协议为GPL v3
 >
->允许任何人完全私有化PSI，详见：https://my.oschina.net/u/134395/blog/1543536
-
-# 如何参与PSI的研发
-
----
-
-> 《如何为开源项目做出自己的贡献》- https://my.oschina.net/u/134395/blog/670779
->
-> 《为什么PSI不接受外部代码》- https://my.oschina.net/u/134395/blog/1580780
->
-> 《为什么不用Java重写一个？》- https://my.oschina.net/u/134395/blog/1811490
 
 # PSI相关项目
 
