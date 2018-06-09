@@ -15,16 +15,6 @@
 > 
 >移动端扫码访问![移动端扫码访问](PSI_Mobile_URL.png)
 
-# PSI运行环境
-
----
-
->
->`PHP 7+`, `MySQL 5.5+`
->
->`安装文档`见：http://psi.sturgeon.mopaasapp.com/help/01.html
-
-
 # PSI的开源协议
 
 ---
