@@ -28,8 +28,6 @@
 
 > 1. PSI使用帮助：https://gitee.com/crm8000/PSI_Help
 >
-> 帮助手册采用Markdown格式编写，使用gitbook工具构建后集成到PSI代码里面
->
 > 2. PSI移动端：https://gitee.com/crm8000/PSI_Mobile
 
 # 如需要技术支持，请联系
