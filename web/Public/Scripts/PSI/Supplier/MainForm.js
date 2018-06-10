@@ -915,6 +915,7 @@ Ext.define("PSI.Supplier.MainForm", {
 	onQuery : function() {
 		var me = this;
 
+		me.getMainGrid().getStore().removeAll();
 		me.freshCategoryGrid();
 	},
 

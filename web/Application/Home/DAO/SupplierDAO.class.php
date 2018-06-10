@@ -28,6 +28,11 @@ class SupplierDAO extends PSIBaseExDAO {
 		$tel = $params["tel"];
 		$qq = $params["qq"];
 		
+		$inQuery = false;
+		if ($code || $name || $address || $contact || $mobile || $tel || $qq) {
+			$inQuery = true;
+		}
+		
 		$loginUserId = $params["loginUserId"];
 		if ($this->loginUserIdNotExists($loginUserId)) {
 			return $this->emptyResult();
@@ -97,6 +102,11 @@ class SupplierDAO extends PSIBaseExDAO {
 			
 			$d = $db->query($sql, $queryParam);
 			$supplierCount = $d[0]["cnt"];
+			
+			if ($inQuery && $supplierCount == 0) {
+				// 当前是查询，而且当前分类下没有符合查询条件的供应商，就不返回该供应商分类
+				continue;
+			}
 			
 			$result[] = [
 					"id" => $id,
