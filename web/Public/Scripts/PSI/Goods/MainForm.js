@@ -752,7 +752,10 @@ Ext.define("PSI.Goods.MainForm", {
 		var me = this;
 
 		me.getMainGrid().getStore().removeAll();
+		me.getSIGrid().setTitle("商品安全库存");
 		me.getSIGrid().getStore().removeAll();
+		me.getGoodsBOMGrid().getStore().removeAll();
+		me.getGoodsPriceGrid().getStore().removeAll();
 
 		me.queryTotalGoodsCount();
 

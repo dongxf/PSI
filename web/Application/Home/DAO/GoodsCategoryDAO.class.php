@@ -128,6 +128,11 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 		$spec = $params["spec"];
 		$barCode = $params["barCode"];
 		
+		$inQuery = false;
+		if ($code || $name || $spec || $barCode) {
+			$inQuery = true;
+		}
+		
 		$loginUserId = $params["loginUserId"];
 		if ($this->loginUserIdNotExists($loginUserId)) {
 			return $this->emptyResult();
@@ -168,6 +173,29 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 			$result[$i]["iconCls"] = "PSI-GoodsCategory";
 			
 			$result[$i]["cnt"] = $this->getGoodsCountWithAllSub($db, $id, $params, $rs);
+		}
+		
+		if ($inQuery) {
+			$result = $this->filterCategory($result);
+		}
+		
+		return $result;
+	}
+
+	/**
+	 * 把分类中商品数量是0的分类过滤掉
+	 *
+	 * @param array $data        	
+	 * @return array
+	 */
+	private function filterCategory($data) {
+		$result = [];
+		foreach ( $data as $v ) {
+			if ($v["cnt"] == 0) {
+				continue;
+			}
+			
+			$result[] = $v;
 		}
 		
 		return $result;
