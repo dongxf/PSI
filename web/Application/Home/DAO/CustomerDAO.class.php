@@ -28,6 +28,11 @@ class CustomerDAO extends PSIBaseExDAO {
 		$tel = $params["tel"];
 		$qq = $params["qq"];
 		
+		$inQuery = false;
+		if ($code || $name || $address || $contact || $mobile || $tel || $qq) {
+			$inQuery = true;
+		}
+		
 		$loginUserId = $params["loginUserId"];
 		if ($this->loginUserIdNotExists($loginUserId)) {
 			return $this->emptyResult();
@@ -97,6 +102,11 @@ class CustomerDAO extends PSIBaseExDAO {
 			}
 			$d = $db->query($sql, $queryParam);
 			$customerCount = $d[0]["cnt"];
+			
+			if ($inQuery && $customerCount == 0) {
+				// 当前是带查询条件 而且该分类下没有符合的客户资料，则不返回该分类
+				continue;
+			}
 			
 			// 价格体系
 			$psId = $v["ps_id"];

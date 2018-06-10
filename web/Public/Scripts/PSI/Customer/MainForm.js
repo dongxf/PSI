@@ -959,7 +959,10 @@ Ext.define("PSI.Customer.MainForm", {
 	 * 查询
 	 */
 	onQuery : function() {
-		this.freshCategoryGrid();
+		var me = this;
+		
+		me.getMainGrid().getStore().removeAll();
+		me.freshCategoryGrid();
 	},
 
 	/**
