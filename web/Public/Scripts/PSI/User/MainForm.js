@@ -709,6 +709,8 @@ Ext.define("PSI.User.MainForm", {
 	onQuery : function() {
 		var me = this;
 
+		me.getUserGrid().getStore().removeAll();
+
 		me.freshOrgGrid();
 	},
 
