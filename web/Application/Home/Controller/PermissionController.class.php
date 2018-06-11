@@ -41,9 +41,13 @@ class PermissionController extends PSIBaseController {
 	 */
 	public function roleList() {
 		if (IS_POST) {
+			$params = [
+					"loginName" => I("post.queryLoginName"),
+					"name" => I("post.queryName")
+			];
 			$ps = new PermissionService();
 			
-			$this->ajaxReturn($ps->roleList());
+			$this->ajaxReturn($ps->roleList($params));
 		}
 	}
 

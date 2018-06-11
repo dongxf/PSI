@@ -13,14 +13,12 @@ use Home\DAO\PermissionDAO;
 class PermissionService extends PSIBaseExService {
 	private $LOG_CATEGORY = "权限管理";
 
-	public function roleList() {
+	public function roleList($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
 		
-		$params = array(
-				"loginUserId" => $this->getLoginUserId()
-		);
+		$params["loginUserId"] = $this->getLoginUserId();
 		
 		$dao = new PermissionDAO($this->db());
 		

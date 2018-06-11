@@ -19,10 +19,18 @@ Ext.define("PSI.Permission.MainForm", {
 		Ext.apply(me, {
 			tbar : me.getToolbarCmp(),
 			items : [{
+						id : "panelQueryCmp",
 						region : "north",
-						height : 2,
 						border : 0,
-						bodyStyle : "background-color:#f5f5f5"
+						height : 35,
+						header : false,
+						collapsible : true,
+						collapseMode : "mini",
+						layout : {
+							type : "table",
+							columns : 4
+						},
+						items : me.getQueryCmp()
 					}, {
 						region : "center",
 						layout : "fit",
@@ -76,6 +84,57 @@ Ext.define("PSI.Permission.MainForm", {
 		me.userGrid = me.getUserGrid();
 
 		me.refreshRoleGrid();
+	},
+
+	getQueryCmp : function() {
+		var me = this;
+		return [{
+					id : "editQueryLoginName",
+					labelWidth : 60,
+					labelAlign : "right",
+					labelSeparator : "",
+					fieldLabel : "登录名",
+					margin : "5, 0, 0, 0",
+					xtype : "textfield"
+				}, {
+					id : "editQueryName",
+					labelWidth : 60,
+					labelAlign : "right",
+					labelSeparator : "",
+					fieldLabel : "用户姓名",
+					margin : "5, 0, 0, 0",
+					xtype : "textfield"
+				}, {
+					xtype : "container",
+					items : [{
+								xtype : "button",
+								text : "查询",
+								width : 100,
+								height : 26,
+								margin : "5, 0, 0, 20",
+								handler : me.onQuery,
+								scope : me
+							}, {
+								xtype : "button",
+								text : "清空查询条件",
+								width : 100,
+								height : 26,
+								margin : "5, 0, 0, 5",
+								handler : me.onClearQuery,
+								scope : me
+							}, {
+								xtype : "button",
+								text : "隐藏查询条件栏",
+								width : 130,
+								height : 26,
+								iconCls : "PSI-button-hide",
+								margin : "5 0 0 10",
+								handler : function() {
+									Ext.getCmp("panelQueryCmp").collapse();
+								},
+								scope : me
+							}]
+				}];
 	},
 
 	getToolbarCmp : function() {
@@ -260,6 +319,11 @@ Ext.define("PSI.Permission.MainForm", {
 		Ext.getBody().mask("数据加载中...");
 		me.ajax({
 					url : me.URL("Home/Permission/roleList"),
+					params : {
+						queryLoginName : Ext.getCmp("editQueryLoginName")
+								.getValue(),
+						queryName : Ext.getCmp("editQueryName").getValue()
+					},
 					callback : function(options, success, response) {
 						store.removeAll();
 
@@ -512,5 +576,27 @@ Ext.define("PSI.Permission.MainForm", {
 						el.unmask();
 					}
 				});
+	},
+
+	onClearQuery : function() {
+		var me = this;
+
+		Ext.getCmp("editQueryLoginName").setValue(null);
+		Ext.getCmp("editQueryName").setValue(null);
+
+		me.onQuery();
+	},
+
+	onQuery : function() {
+		var me = this;
+
+		me.getPermissionGrid().getStore().removeAll();
+		me.getPermissionGrid().setTitle("权限列表");
+		me.getUserGrid().getStore().removeAll();
+		me.getUserGrid().setTitle("用户列表");
+		me.getDataOrgGrid().getStore().removeAll();
+		me.getDataOrgGrid().setTitle("数据域");
+
+		me.refreshRoleGrid();
 	}
 });

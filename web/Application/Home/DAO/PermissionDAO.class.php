@@ -22,14 +22,36 @@ class PermissionDAO extends PSIBaseExDAO {
 		
 		$loginUserId = $params["loginUserId"];
 		
-		$sql = "select r.id, r.name, r.code from t_role r ";
+		// 查询条件
+		$loginName = $params["loginName"];
+		$name = $params["name"];
+		
+		$sql = "select r.id, r.name, r.code 
+				from t_role r 
+				where (1 = 1) ";
 		$queryParams = [];
 		
 		$ds = new DataOrgDAO($db);
 		$rs = $ds->buildSQL(FIdConst::PERMISSION_MANAGEMENT, "r", $loginUserId);
 		if ($rs) {
-			$sql .= " where " . $rs[0];
-			$queryParams = $rs[1];
+			$sql .= " and " . $rs[0];
+			$queryParams = array_merge($queryParams, $rs[1]);
+		}
+		
+		if ($loginName) {
+			$sql .= " and ( r.id in (
+						select ru.role_id
+						from  t_role_user ru, t_user u
+						where ru.user_id = u.id and u.login_name like '%s') )";
+			$queryParams[] = "%$loginName%";
+		}
+		if ($name) {
+			$sql .= " and ( r.id in (
+						select ru.role_id
+						from  t_role_user ru, t_user u
+						where ru.user_id = u.id and (u.name like '%s' or u.py like '%s')) )";
+			$queryParams[] = "%$name%";
+			$queryParams[] = "%$name%";
 		}
 		
 		$sql .= "	order by r.code ";
