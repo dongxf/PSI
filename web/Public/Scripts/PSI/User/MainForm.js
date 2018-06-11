@@ -92,7 +92,7 @@ Ext.define("PSI.User.MainForm", {
 								xtype : "panel",
 								region : "west",
 								layout : "fit",
-								width : 440,
+								width : 490,
 								split : true,
 								collapsible : true,
 								header : false,
@@ -232,7 +232,9 @@ Ext.define("PSI.User.MainForm", {
 									width : 100
 								}, {
 									text : "用户数",
-									dataIndex : "userCount"
+									dataIndex : "userCount",
+									width : 60,
+									align : "right"
 								}]
 					}
 				});
