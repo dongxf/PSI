@@ -154,14 +154,31 @@ class UserDAO extends PSIBaseExDAO {
 		$start = $params["start"];
 		$limit = $params["limit"];
 		
+		$loginName = $params["loginName"];
+		$name = $params["name"];
+		
 		$sql = "select id, login_name,  name, enabled, org_code, gender, birthday, id_card_number, tel,
 				    tel02, address, data_org
 				from t_user
-				where org_id = '%s'
-				order by org_code
-				limit %d , %d ";
+				where (org_id = '%s') ";
+		$queryParam = [];
+		$queryParam[] = $orgId;
 		
-		$data = $db->query($sql, $orgId, $start, $limit);
+		if ($loginName) {
+			$sql .= " and (login_name like '%s') ";
+			$queryParam[] = "%$loginName%";
+		}
+		if ($name) {
+			$sql .= " and (name like '%s' or py like '%s') ";
+			$queryParam[] = "%$name%";
+			$queryParam[] = "%$name%";
+		}
+		
+		$sql .= " order by org_code
+				limit %d , %d ";
+		$queryParam[] = $start;
+		$queryParam[] = $limit;
+		$data = $db->query($sql, $queryParam);
 		
 		$result = [];
 		

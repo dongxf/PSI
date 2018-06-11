@@ -3,6 +3,7 @@
 namespace Home\DAO;
 
 use Home\Common\FIdConst;
+use Think\Log;
 
 /**
  * 组织机构 DAO
@@ -452,7 +453,7 @@ class OrgDAO extends PSIBaseExDAO {
 		$sql .= " order by org_code";
 		
 		$orgList1 = $db->query($sql, $queryParams);
-		$result = array();
+		$result = [];
 		
 		// 第一级组织
 		foreach ( $orgList1 as $i => $org1 ) {
@@ -471,11 +472,78 @@ class OrgDAO extends PSIBaseExDAO {
 			$result[$i]["iconCls"] = "PSI-org";
 		}
 		
-		return $result;
+		// 统计每个组织机构下的用户数
+		for($i = 0; $i < count($result); $i ++) {
+			$this->getUserCountWithSubOrg($db, $result[$i], $params);
+		}
+		
+		$inQuery = false;
+		if ($params["loginName"] || $params["name"]) {
+			$inQuery = true;
+		}
+		
+		if ($inQuery) {
+			$data = [];
+			
+			// 在查询的时候，过滤掉没有用户记录的组织机构
+			foreach ( $result as $v ) {
+				if ($v["userCount"] > 0) {
+					$data[] = $v;
+				}
+			}
+			
+			return $data;
+		} else {
+			return $result;
+		}
+	}
+
+	private function getUserCountWithSubOrg($db, &$org, &$params) {
+		$loginUserId = $params["loginUserId"];
+		
+		// 这里要使用&引用children，这个地方因为少些&导致我浪费好多时间来debug这段代码
+		$children = &$org["children"];
+		
+		$subCount = 0;
+		for($i = 0; $i < count($children); $i ++) {
+			$c = $this->getUserCountWithSubOrg($db, $children[$i], $params); // 递归调用自己
+			$subCount += $c;
+		}
+		
+		$sql = "select count(*) as cnt
+				from t_user u 
+				where (u.org_id = '%s') ";
+		$ds = new DataOrgDAO($db);
+		$queryParam = [];
+		$queryParam[] = $org["id"];
+		$rs = $ds->buildSQL(FIdConst::USR_MANAGEMENT, "u", $loginUserId);
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParam = array_merge($queryParam, $rs[1]);
+		}
+		$loginName = $params["loginName"];
+		if ($loginName) {
+			$sql .= " and (u.login_name like '%s') ";
+			$queryParam[] = "%$loginName%";
+		}
+		$name = $params["name"];
+		if ($name) {
+			$sql .= " and (u.name like '%s' or u.py like '%s') ";
+			$queryParam[] = "%$name%";
+			$queryParam[] = "%$name%";
+		}
+		
+		$data = $db->query($sql, $queryParam);
+		$cnt = $data[0]["cnt"];
+		$totalCount = $subCount + $cnt;
+		
+		$org["userCount"] = $totalCount;
+		
+		return $totalCount;
 	}
 
 	private function allOrgsInternal($parentId, $db) {
-		$result = array();
+		$result = [];
 		$sql = "select id, name, org_code, full_name, data_org
 				from t_org
 				where parent_id = '%s'

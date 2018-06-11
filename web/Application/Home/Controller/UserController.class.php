@@ -144,10 +144,17 @@ class UserController extends PSIBaseController {
 	 * 获得组织机构树
 	 */
 	public function allOrgs() {
-		$us = new UserService();
-		$data = $us->allOrgs();
-		
-		$this->ajaxReturn($data);
+		if (IS_POST) {
+			$params = [
+					"loginName" => I("post.queryLoginName"),
+					"name" => I("post.queryName")
+			];
+			
+			$us = new UserService();
+			$data = $us->allOrgs($params);
+			
+			$this->ajaxReturn($data);
+		}
 	}
 
 	/**
@@ -159,7 +166,9 @@ class UserController extends PSIBaseController {
 			$params = array(
 					"orgId" => I("post.orgId"),
 					"start" => I("post.start"),
-					"limit" => I("post.limit")
+					"limit" => I("post.limit"),
+					"loginName" => I("post.queryLoginName"),
+					"name" => I("post.queryName")
 			);
 			
 			$this->ajaxReturn($us->users($params));

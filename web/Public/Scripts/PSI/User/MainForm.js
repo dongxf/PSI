@@ -69,10 +69,18 @@ Ext.define("PSI.User.MainForm", {
 								}
 							}],
 					items : [{
+								id : "panelQueryCmp",
 								region : "north",
-								height : 2,
 								border : 0,
-								bodyStyle : "background-color:#f5f5f5"
+								height : 35,
+								header : false,
+								collapsible : true,
+								collapseMode : "mini",
+								layout : {
+									type : "table",
+									columns : 4
+								},
+								items : me.getQueryCmp()
 							}, {
 								region : "center",
 								xtype : "panel",
@@ -99,6 +107,57 @@ Ext.define("PSI.User.MainForm", {
 		me.grid = me.getUserGrid();
 	},
 
+	getQueryCmp : function() {
+		var me = this;
+		return [{
+					id : "editQueryLoginName",
+					labelWidth : 60,
+					labelAlign : "right",
+					labelSeparator : "",
+					fieldLabel : "登录名",
+					margin : "5, 0, 0, 0",
+					xtype : "textfield"
+				}, {
+					id : "editQueryName",
+					labelWidth : 60,
+					labelAlign : "right",
+					labelSeparator : "",
+					fieldLabel : "姓名",
+					margin : "5, 0, 0, 0",
+					xtype : "textfield"
+				}, {
+					xtype : "container",
+					items : [{
+								xtype : "button",
+								text : "查询",
+								width : 100,
+								height : 26,
+								margin : "5, 0, 0, 20",
+								handler : me.onQuery,
+								scope : me
+							}, {
+								xtype : "button",
+								text : "清空查询条件",
+								width : 100,
+								height : 26,
+								margin : "5, 0, 0, 5",
+								handler : me.onClearQuery,
+								scope : me
+							}, {
+								xtype : "button",
+								text : "隐藏查询条件栏",
+								width : 130,
+								height : 26,
+								iconCls : "PSI-button-hide",
+								margin : "5 0 0 10",
+								handler : function() {
+									Ext.getCmp("panelQueryCmp").collapse();
+								},
+								scope : me
+							}]
+				}];
+	},
+
 	getOrgGrid : function() {
 		var me = this;
 		if (me.__orgGrid) {
@@ -109,14 +168,26 @@ Ext.define("PSI.User.MainForm", {
 		Ext.define(modelName, {
 					extend : "Ext.data.Model",
 					fields : ["id", "text", "fullName", "orgCode", "dataOrg",
-							"leaf", "children"]
+							"leaf", "children", "userCount"]
 				});
 
 		var orgStore = Ext.create("Ext.data.TreeStore", {
 					model : modelName,
 					proxy : {
 						type : "ajax",
+						actionMethods : {
+							read : "POST"
+						},
 						url : me.URL("Home/User/allOrgs")
+					},
+					listeners : {
+						beforeload : {
+							fn : function() {
+								orgStore.proxy.extraParams = me
+										.getQueryParamForCategory();
+							},
+							scope : me
+						}
 					}
 				});
 
@@ -159,6 +230,9 @@ Ext.define("PSI.User.MainForm", {
 									text : "数据域",
 									dataIndex : "dataOrg",
 									width : 100
+								}, {
+									text : "用户数",
+									dataIndex : "userCount"
 								}]
 					}
 				});
@@ -602,8 +676,56 @@ Ext.define("PSI.User.MainForm", {
 
 		var org = item[0];
 
-		return {
-			orgId : org.get("id")
+		var queryLoginName = null;
+		var editLoginName = Ext.getCmp("editQueryLoginName");
+		if (editLoginName) {
+			queryLoginName = editLoginName.getValue();
 		}
+
+		var queryName = null;
+		var editQueryName = Ext.getCmp("editQueryName");
+		if (editQueryName) {
+			queryName = editQueryName.getValue();
+		}
+
+		return {
+			orgId : org.get("id"),
+			queryLoginName : queryLoginName,
+			queryName : queryName
+		}
+	},
+
+	onClearQuery : function() {
+		var me = this;
+
+		Ext.getCmp("editQueryLoginName").setValue(null);
+		Ext.getCmp("editQueryName").setValue(null);
+
+		me.onQuery();
+	},
+
+	onQuery : function() {
+		var me = this;
+
+		me.freshOrgGrid();
+	},
+
+	getQueryParamForCategory : function() {
+		var queryLoginName = null;
+		var editLoginName = Ext.getCmp("editQueryLoginName");
+		if (editLoginName) {
+			queryLoginName = editLoginName.getValue();
+		}
+
+		var queryName = null;
+		var editQueryName = Ext.getCmp("editQueryName");
+		if (editQueryName) {
+			queryName = editQueryName.getValue();
+		}
+
+		return {
+			queryLoginName : queryLoginName,
+			queryName : queryName
+		};
 	}
 });
