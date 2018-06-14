@@ -6,8 +6,17 @@ use API\Service\BizlogApiService;
 use Think\Controller;
 use Home\Service\FIdService;
 
+/**
+ * 业务日志Controller
+ *
+ * @author 李静波
+ *        
+ */
 class BizlogController extends Controller {
 
+	/**
+	 * 记录进入某个模块的业务日志
+	 */
 	public function enterModule() {
 		if (IS_POST) {
 			$tokenId = I("post.tokenId");
