@@ -5,6 +5,12 @@ namespace API\Controller;
 use Think\Controller;
 use API\Service\UserApiService;
 
+/**
+ * 用户Controller
+ *
+ * @author 李静波
+ *        
+ */
 class UserController extends Controller {
 
 	/**
@@ -28,7 +34,6 @@ class UserController extends Controller {
 	 */
 	public function doLogout() {
 		if (IS_POST) {
-			
 			$params = [
 					"tokenId" => I("post.tokenId")
 			];
@@ -38,6 +43,9 @@ class UserController extends Controller {
 		}
 	}
 
+	/**
+	 * 获得演示环境下的提示信息
+	 */
 	public function getDemoLoginInfo() {
 		if (IS_POST) {
 			
