@@ -304,19 +304,21 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 								menuDisabled : true,
 								sortable : false
 							}, {
-								header : "平均入库单价",
+								header : "平均入库成本单价",
 								align : "right",
 								xtype : "numbercolumn",
 								dataIndex : "inPrice",
 								menuDisabled : true,
-								sortable : false
+								sortable : false,
+								width : 120
 							}, {
-								header : "入库总金额",
+								header : "入库成本总金额",
 								align : "right",
 								xtype : "numbercolumn",
 								dataIndex : "inMoney",
 								menuDisabled : true,
-								sortable : false
+								sortable : false,
+								width : 120
 							}, {
 								header : "出库数量",
 								align : "right",
@@ -324,19 +326,21 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 								menuDisabled : true,
 								sortable : false
 							}, {
-								header : "平均出库单价",
+								header : "平均出库成本单价",
 								align : "right",
 								xtype : "numbercolumn",
 								dataIndex : "outPrice",
 								menuDisabled : true,
-								sortable : false
+								sortable : false,
+								width : 120
 							}, {
-								header : "出库总金额",
+								header : "出库成本总金额",
 								align : "right",
 								xtype : "numbercolumn",
 								dataIndex : "outMoney",
 								menuDisabled : true,
-								sortable : false
+								sortable : false,
+								width : 120
 							}, {
 								header : "余额数量",
 								align : "right",
@@ -490,14 +494,14 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 								menuDisabled : true,
 								sortable : false
 							}, {
-								header : "入库单价",
+								header : "入库成本单价",
 								dataIndex : "inPrice",
 								align : "right",
 								xtype : "numbercolumn",
 								menuDisabled : true,
 								sortable : false
 							}, {
-								header : "入库金额",
+								header : "入库成本金额",
 								dataIndex : "inMoney",
 								align : "right",
 								xtype : "numbercolumn",
@@ -510,14 +514,14 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 								menuDisabled : true,
 								sortable : false
 							}, {
-								header : "出库单价",
+								header : "出库成本单价",
 								dataIndex : "outPrice",
 								align : "right",
 								xtype : "numbercolumn",
 								menuDisabled : true,
 								sortable : false
 							}, {
-								header : "出库金额",
+								header : "出库成本金额",
 								dataIndex : "outMoney",
 								align : "right",
 								xtype : "numbercolumn",
