@@ -15,11 +15,11 @@ Ext.define("PSI.Goods.BrandMainForm", {
 							text : "新增品牌",
 							handler : me.onAddBrand,
 							scope : me
-						}, {
+						}, "-", {
 							text : "编辑品牌",
 							handler : me.onEditBrand,
 							scope : me
-						}, {
+						}, "-", {
 							text : "删除品牌",
 							handler : me.onDeleteBrand,
 							scope : me

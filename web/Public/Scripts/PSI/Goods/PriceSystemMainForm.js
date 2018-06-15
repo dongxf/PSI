@@ -17,11 +17,11 @@ Ext.define("PSI.Goods.PriceSystemMainForm", {
 								text : "新增价格",
 								handler : me.onAddPrice,
 								scope : me
-							}, {
+							}, "-", {
 								text : "编辑价格",
 								handler : me.onEditPrice,
 								scope : me
-							}, {
+							}, "-", {
 								text : "删除价格",
 								handler : me.onDeletePrice,
 								scope : me
