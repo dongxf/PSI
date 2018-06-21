@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS `t_menu_item` (
 DROP TABLE IF EXISTS `t_org`;
 CREATE TABLE IF NOT EXISTS `t_org` (
   `id` varchar(255) NOT NULL,
-  `full_name` varchar(255) NOT NULL,
+  `full_name` varchar(1000) NOT NULL,
   `name` varchar(255) NOT NULL,
   `org_code` varchar(255) NOT NULL,
   `parent_id` varchar(255) DEFAULT NULL,
