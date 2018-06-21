@@ -174,6 +174,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20180518_01();
 		$this->update_20180522_01();
 		$this->update_20180526_01();
+		$this->update_20180621_01();
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -194,6 +195,31 @@ class UpdateDBService extends PSIBaseService {
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	// ============================================
 	private function notForgot() {
+	}
+
+	private function update_20180621_01() {
+		// 本次更新：t_org - full_name字段长度改为1000
+		$db = $this->db;
+		
+		$dbName = C('DB_NAME');
+		$tableName = "t_org";
+		$fieldName = "full_name";
+		
+		$sql = "select c.CHARACTER_MAXIMUM_LENGTH as max_length
+				from information_schema.`COLUMNS` c
+				where c.TABLE_SCHEMA = '%s' and c.TABLE_NAME = '%s' and c.COLUMN_NAME = '%s'";
+		$data = $db->query($sql, $dbName, $tableName, $fieldName);
+		if (! $data) {
+			return false;
+		}
+		
+		$maxLength = $data[0]["max_length"];
+		if ($maxLength == 1000) {
+			return;
+		}
+		
+		$sql = "alter table " . $tableName . " modify column " . $fieldName . " varchar(1000) ";
+		$db->execute($sql);
 	}
 
 	private function update_20180526_01() {
