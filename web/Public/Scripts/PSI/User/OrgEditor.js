@@ -33,6 +33,9 @@ Ext.define("PSI.User.OrgEditor", {
 							model : "PSIOrgModel_PSI_org_editor",
 							proxy : {
 								type : "ajax",
+								actionMethods : {
+									read : "POST"
+								},
 								url : PSI.Const.BASE_URL + "Home/User/allOrgs"
 							}
 						});
