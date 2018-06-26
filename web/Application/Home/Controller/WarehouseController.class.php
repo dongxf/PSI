@@ -79,7 +79,7 @@ class WarehouseController extends PSIBaseController {
 			
 			$params = array(
 					"id" => I("post.id"),
-					"code" => I("post.code"),
+					"code" => strtoupper(I("post.code")),
 					"name" => I("post.name")
 			);
 			$ws = new WarehouseService();
