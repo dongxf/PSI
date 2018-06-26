@@ -184,7 +184,7 @@ class UserController extends PSIBaseController {
 			$id = I("post.id");
 			$name = I("post.name");
 			$parentId = I("post.parentId");
-			$orgCode = I("post.orgCode");
+			$orgCode = strtoupper(I("post.orgCode"));
 			
 			if ($id) {
 				// 编辑组织机构
@@ -263,7 +263,7 @@ class UserController extends PSIBaseController {
 					"id" => I("post.id"),
 					"loginName" => I("post.loginName"),
 					"name" => I("post.name"),
-					"orgCode" => I("post.orgCode"),
+					"orgCode" => strtoupper(I("post.orgCode")),
 					"orgId" => I("post.orgId"),
 					"enabled" => I("post.enabled") == "true" ? 1 : 0,
 					"gender" => I("post.gender"),
