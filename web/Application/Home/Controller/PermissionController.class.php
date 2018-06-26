@@ -104,7 +104,7 @@ class PermissionController extends PSIBaseController {
 			$params = array(
 					"id" => I("post.id"),
 					"name" => I("post.name"),
-					"code" => I("post.code"),
+					"code" => strtoupper(I("post.code")),
 					"permissionIdList" => I("post.permissionIdList"),
 					"dataOrgList" => I("post.dataOrgList"),
 					"userIdList" => I("post.userIdList")
