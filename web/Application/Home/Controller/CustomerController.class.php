@@ -85,7 +85,7 @@ class CustomerController extends PSIBaseController {
 			
 			$params = array(
 					"id" => I("post.id"),
-					"code" => I("post.code"),
+					"code" => strtoupper(I("post.code")),
 					"name" => I("post.name"),
 					"psId" => I("post.psId")
 			);
@@ -135,7 +135,7 @@ class CustomerController extends PSIBaseController {
 			
 			$params = [
 					"id" => I("post.id"),
-					"code" => I("post.code"),
+					"code" => strtoupper(I("post.code")),
 					"name" => I("post.name"),
 					"address" => I("post.address"),
 					"addressReceipt" => I("post.addressReceipt"),
