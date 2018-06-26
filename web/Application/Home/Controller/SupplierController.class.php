@@ -105,7 +105,7 @@ class SupplierController extends PSIBaseController {
 			
 			$params = array(
 					"id" => I("post.id"),
-					"code" => I("post.code"),
+					"code" => strtoupper(I("post.code")),
 					"name" => I("post.name")
 			);
 			$ss = new SupplierService();
@@ -154,7 +154,7 @@ class SupplierController extends PSIBaseController {
 			
 			$params = array(
 					"id" => I("post.id"),
-					"code" => I("post.code"),
+					"code" => strtoupper(I("post.code")),
 					"name" => I("post.name"),
 					"address" => I("post.address"),
 					"addressShipping" => I("post.addressShipping"),
