@@ -142,7 +142,7 @@ class GoodsController extends PSIBaseController {
 			
 			$params = array(
 					"id" => I("post.id"),
-					"code" => I("post.code"),
+					"code" => strtoupper(I("post.code")),
 					"name" => I("post.name"),
 					"parentId" => I("post.parentId")
 			);
@@ -226,7 +226,7 @@ class GoodsController extends PSIBaseController {
 			$params = array(
 					"id" => I("post.id"),
 					"categoryId" => I("post.categoryId"),
-					"code" => I("post.code"),
+					"code" => strtoupper(I("post.code")),
 					"name" => I("post.name"),
 					"spec" => I("post.spec"),
 					"unitId" => I("post.unitId"),
