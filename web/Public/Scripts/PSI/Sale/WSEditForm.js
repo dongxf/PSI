@@ -404,27 +404,30 @@ Ext.define("PSI.Sale.WSEditForm", {
 		var me = this;
 		Ext.getBody().mask("正在保存中...");
 		Ext.Ajax.request({
-			url : PSI.Const.BASE_URL + "Home/Sale/editWSBill",
-			method : "POST",
-			params : {
-				jsonStr : me.getSaveData()
-			},
-			callback : function(options, success, response) {
-				Ext.getBody().unmask();
+					url : PSI.Const.BASE_URL + "Home/Sale/editWSBill",
+					method : "POST",
+					params : {
+						jsonStr : me.getSaveData()
+					},
+					callback : function(options, success, response) {
+						Ext.getBody().unmask();
 
-				if (success) {
-					var data = Ext.JSON.decode(response.responseText);
-					if (data.success) {
-						PSI.MsgBox.showInfo("成功保存数据", function() {
-									me.close();
-									me.getParentForm().refreshMainGrid(data.id);
-								});
-					} else {
-						PSI.MsgBox.showInfo(data.msg);
+						if (success) {
+							var data = Ext.JSON.decode(response.responseText);
+							if (data.success) {
+								PSI.MsgBox.showInfo("成功保存数据", function() {
+											me.close();
+											var pf = me.getParentForm();
+											if (pf) {
+												pf.refreshMainGrid(data.id);
+											}
+										});
+							} else {
+								PSI.MsgBox.showInfo(data.msg);
+							}
+						}
 					}
-				}
-			}
-		});
+				});
 	},
 
 	onEditBizDTSpecialKey : function(field, e) {
