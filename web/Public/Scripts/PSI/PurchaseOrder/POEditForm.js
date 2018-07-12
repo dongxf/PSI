@@ -680,6 +680,8 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 		return me.__goodsGrid;
 	},
 
+	// 控件 xtype:psi_goods_with_purchaseprice_field 会回调本方法
+	// 见PSI.Goods.GoodsWithPurchaseFieldField的onOK方法
 	__setGoodsInfo : function(data) {
 		var me = this;
 		var item = me.getGoodsGrid().getSelectionModel().getSelection();
