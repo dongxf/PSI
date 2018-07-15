@@ -843,6 +843,8 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 		Ext.getCmp("columnActionAppend").hide();
 	},
 
+	// xtype:psi_supplierfield回调本方法
+	// 参见PSI.Supplier.SupplierField的onOK方法
 	__setSupplierExtData : function(data, scope) {
 		var me = scope;
 
