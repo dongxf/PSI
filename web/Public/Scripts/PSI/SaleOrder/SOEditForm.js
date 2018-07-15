@@ -657,6 +657,8 @@ Ext.define("PSI.SaleOrder.SOEditForm", {
 		return me.__goodsGrid;
 	},
 
+	// xtype:psi_goods_with_saleprice_field回调本方法
+	// 参见PSI.Goods.GoodsWithSalePriceField的onOK方法
 	__setGoodsInfo : function(data) {
 		var me = this;
 		var item = me.getGoodsGrid().getSelectionModel().getSelection();
@@ -816,6 +818,8 @@ Ext.define("PSI.SaleOrder.SOEditForm", {
 		Ext.getCmp("columnActionAppend").hide();
 	},
 
+	// xtype:psi_customerfield回调本方法
+	// 参见PSI.Customer.CustomerField的onOK方法
 	__setCustomerExtData : function(data) {
 		Ext.getCmp("editDealAddress").setValue(data.address_receipt);
 		Ext.getCmp("editTel").setValue(data.tel01);
