@@ -434,7 +434,7 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 		if (me.__goodsGrid) {
 			return me.__goodsGrid;
 		}
-		var modelName = "PSIPWBillDetail_EditForm";
+		var modelName = "PSIPOBill_EditForm";
 		Ext.define(modelName, {
 					extend : "Ext.data.Model",
 					fields : ["id", "goodsId", "goodsCode", "goodsName",
