@@ -462,6 +462,8 @@ Ext.define("PSI.InvTransfer.ITEditForm", {
 		}
 	},
 
+	// xtype:psi_goodsfield回调本方法
+	// 参见PSI.Goods.GoodsField的onOK代码
 	__setGoodsInfo : function(data) {
 		var me = this;
 		var item = me.getGoodsGrid().getSelectionModel().getSelection();
