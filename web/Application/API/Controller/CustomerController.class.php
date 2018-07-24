@@ -5,6 +5,12 @@ namespace API\Controller;
 use Think\Controller;
 use API\Service\CustomerApiService;
 
+/**
+ * 客户资料 Controller
+ *
+ * @author 李静波
+ *        
+ */
 class CustomerController extends Controller {
 
 	/**
@@ -197,6 +203,9 @@ class CustomerController extends Controller {
 		}
 	}
 
+	/**
+	 * 删除某个客户资料
+	 */
 	public function deleteCustomer() {
 		if (IS_POST) {
 			$params = [

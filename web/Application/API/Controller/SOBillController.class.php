@@ -5,8 +5,17 @@ namespace API\Controller;
 use API\Service\SOBillApiService;
 use Think\Controller;
 
+/**
+ * 销售订单Controller
+ *
+ * @author 李静波
+ *        
+ */
 class SOBillController extends Controller {
 
+	/**
+	 * 销售订单列表
+	 */
 	public function sobillList() {
 		if (IS_POST) {
 			$params = [
