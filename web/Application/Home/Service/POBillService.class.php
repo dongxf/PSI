@@ -353,7 +353,7 @@ class POBillService extends PSIBaseExService {
 		
 		$db = $this->db();
 		$db->startTrans();
-		$dao = new POBillDAO($this->db());
+		$dao = new POBillDAO($db);
 		$rc = $dao->cancelClosedPOBill($params);
 		if ($rc) {
 			$db->rollback();
