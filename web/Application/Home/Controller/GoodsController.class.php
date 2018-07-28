@@ -26,21 +26,42 @@ class GoodsController extends PSIBaseController {
 			
 			$this->assign("title", "商品");
 			
+			// 按钮权限：新增商品分类
 			$this->assign("pAddCategory", $us->hasPermission(FIdConst::GOODS_CATEGORY_ADD) ? 1 : 0);
+			
+			// 按钮权限：编辑商品分类
 			$this->assign("pEditCategory", 
 					$us->hasPermission(FIdConst::GOODS_CATEGORY_EDIT) ? 1 : 0);
+			
+			// 按钮权限：删除商品分类
 			$this->assign("pDeleteCategory", 
 					$us->hasPermission(FIdConst::GOODS_CATEGORY_DELETE) ? 1 : 0);
+			
+			// 按钮权限：新增商品
 			$this->assign("pAddGoods", $us->hasPermission(FIdConst::GOODS_ADD) ? 1 : 0);
+			
+			// 按钮权限：编辑商品
 			$this->assign("pEditGoods", $us->hasPermission(FIdConst::GOODS_EDIT) ? 1 : 0);
+			
+			// 按钮权限：删除商品
 			$this->assign("pDeleteGoods", $us->hasPermission(FIdConst::GOODS_DELETE) ? 1 : 0);
+			
+			// 按钮权限：导入商品
 			$this->assign("pImportGoods", $us->hasPermission(FIdConst::GOODS_IMPORT) ? 1 : 0);
+			
+			// 按钮权限：设置商品安全库存
 			$this->assign("pGoodsSI", $us->hasPermission(FIdConst::GOODS_SI) ? 1 : 0);
 			
+			// 按钮权限：新增子商品
 			$this->assign("pAddBOM", $us->hasPermission(FIdConst::GOODS_BOM_ADD) ? 1 : 0);
+			
+			// 按钮权限：编辑子商品
 			$this->assign("pEditBOM", $us->hasPermission(FIdConst::GOODS_BOM_EDIT) ? 1 : 0);
+			
+			// 按钮权限：删除子商品
 			$this->assign("pDeleteBOM", $us->hasPermission(FIdConst::GOODS_BOM_DELETE) ? 1 : 0);
 			
+			// 按钮权限：设置商品价格体系
 			$this->assign("pPriceSystem", 
 					$us->hasPermission(FIdConst::PRICE_SYSTEM_SETTING_GOODS) ? 1 : 0);
 			
