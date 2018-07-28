@@ -90,6 +90,8 @@ class GoodsController extends PSIBaseController {
 
 	/**
 	 * 获得所有的商品计量单位列表
+	 *
+	 * JS:PSI.Goods.UnitMainForm中调用本Action
 	 */
 	public function allUnits() {
 		if (IS_POST) {
@@ -100,6 +102,8 @@ class GoodsController extends PSIBaseController {
 
 	/**
 	 * 新增或编辑商品单位
+	 *
+	 * JS:PSI.Goods.UnitEditForm中调用本Action
 	 */
 	public function editUnit() {
 		if (IS_POST) {
@@ -114,6 +118,8 @@ class GoodsController extends PSIBaseController {
 
 	/**
 	 * 删除商品计量单位
+	 *
+	 * JS:PSI.Goods.UnitMainForm中调用本Action
 	 */
 	public function deleteUnit() {
 		if (IS_POST) {
