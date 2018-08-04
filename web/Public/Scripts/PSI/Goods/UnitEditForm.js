@@ -142,6 +142,8 @@ Ext.define("PSI.Goods.UnitEditForm", {
 						PSI.MsgBox.tip("数据保存成功");
 						me.focus();
 						if (thenAdd) {
+							me.refreshParentFormMainGrid();
+
 							var editName = me.editName;
 							editName.focus();
 							editName.setValue(null);
@@ -194,5 +196,32 @@ Ext.define("PSI.Goods.UnitEditForm", {
 		var editName = me.editName;
 		editName.focus();
 		editName.setValue(editName.getValue());
+	},
+
+	/**
+	 * 刷新父窗体上Grid的数据
+	 * 
+	 * 连续新增计量单位后，这样不用关闭当前窗体就能看到数据
+	 */
+	refreshParentFormMainGrid : function() {
+		var me = this;
+		var form = me.getParentForm();
+		var grid = form.getMainGrid();
+		var r = {
+			url : me.URL(form.afxGetRefreshGridURL()),
+			params : form.afxGetRefreshGridParams(),
+			method : "POST",
+			callback : function(options, success, response) {
+				var store = grid.getStore();
+
+				store.removeAll();
+
+				if (success) {
+					var data = me.decodeJSON(response.responseText);
+					store.add(data);
+				}
+			}
+		};
+		Ext.Ajax.request(r);
 	}
 });
