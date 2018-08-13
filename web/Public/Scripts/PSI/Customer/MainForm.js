@@ -54,7 +54,7 @@ Ext.define("PSI.Customer.MainForm", {
 											xtype : "panel",
 											region : "west",
 											layout : "fit",
-											width : 400,
+											width : 410,
 											split : true,
 											collapsible : true,
 											header : false,
@@ -300,7 +300,7 @@ Ext.define("PSI.Customer.MainForm", {
 					columns : [{
 								header : "类别编码",
 								dataIndex : "code",
-								width : 60,
+								width : 80,
 								menuDisabled : true,
 								sortable : false
 							}, {
@@ -321,7 +321,7 @@ Ext.define("PSI.Customer.MainForm", {
 							}, {
 								header : "客户数",
 								dataIndex : "cnt",
-								width : 60,
+								width : 80,
 								menuDisabled : true,
 								sortable : false,
 								summaryType : "sum",
