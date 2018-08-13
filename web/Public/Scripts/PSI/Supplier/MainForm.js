@@ -286,7 +286,7 @@ Ext.define("PSI.Supplier.MainForm", {
 					columns : [{
 								header : "分类编码",
 								dataIndex : "code",
-								width : 60,
+								width : 80,
 								menuDisabled : true,
 								sortable : false
 							}, {
@@ -301,7 +301,7 @@ Ext.define("PSI.Supplier.MainForm", {
 							}, {
 								header : "供应商个数",
 								dataIndex : "cnt",
-								width : 80,
+								width : 100,
 								menuDisabled : true,
 								sortable : false,
 								summaryType : "sum",
