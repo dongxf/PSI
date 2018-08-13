@@ -47,7 +47,7 @@ Ext.define("PSI.Supplier.MainForm", {
 											xtype : "panel",
 											region : "west",
 											layout : "fit",
-											width : 350,
+											width : 370,
 											split : true,
 											collapsible : true,
 											header : false,
