@@ -23,13 +23,17 @@ class AboutController extends PSIBaseController {
 			
 			$this->assign("title", "关于");
 			
-			$as = new AboutService();
+			$service = new AboutService();
 			
-			$this->assign("phpVersion", $as->getPHPVersion());
-			$this->assign("mySQLVersion", $as->getMySQLVersion());
+			// PHP版本号
+			$this->assign("phpVersion", $service->getPHPVersion());
+			// MySQL版本号
+			$this->assign("mySQLVersion", $service->getMySQLVersion());
 			
-			$d = $as->getPSIDBVersion();
+			$d = $service->getPSIDBVersion();
+			// PSI数据库结构版本号
 			$this->assign("PSIDBVersion", $d["version"]);
+			// PSI数据库结构最后的更新时间
 			$this->assign("PSIDBUpdateDT", $d["dt"]);
 			
 			$this->display();
