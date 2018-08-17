@@ -14,11 +14,13 @@ Ext.define("PSI.Goods.GoodsWithSalePriceField", {
 	 * 初始化组件
 	 */
 	initComponent : function() {
-		this.enableKeyEvents = true;
+		var me = this;
 
-		this.callParent(arguments);
+		me.enableKeyEvents = true;
 
-		this.on("keydown", function(field, e) {
+		me.callParent(arguments);
+
+		me.on("keydown", function(field, e) {
 					if (e.getKey() == e.BACKSPACE) {
 						field.setValue(null);
 						e.preventDefault();
@@ -28,6 +30,12 @@ Ext.define("PSI.Goods.GoodsWithSalePriceField", {
 					if (e.getKey() != e.ENTER && !e.isSpecialKey(e.getKey())) {
 						this.onTriggerClick(e);
 					}
+				});
+
+		me.on("render", function(p) {
+					p.getEl().on("dblclick", function() {
+								me.onTriggerClick();
+							});
 				});
 	},
 

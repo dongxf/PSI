@@ -31,6 +31,13 @@ Ext.define("PSI.Goods.GoodsWithPurchaseFieldField", {
 						me.onTriggerClick(e);
 					}
 				});
+
+		me.on("render", function(p) {
+					p.getEl().on("dblclick", function() {
+								me.onTriggerClick();
+							});
+				});
+
 	},
 
 	/**
@@ -112,53 +119,53 @@ Ext.define("PSI.Goods.GoodsWithPurchaseFieldField", {
 				});
 
 		var wnd = Ext.create("Ext.window.Window", {
-					title : "选择 - 商品",
-					modal : true,
-					width : 950,
-					height : 390,
-					layout : "border",
-					items : [{
-								region : "center",
-								xtype : "panel",
-								layout : "fit",
-								border : 0,
-								items : [lookupGrid]
-							}, {
-								xtype : "panel",
-								region : "south",
-								height : 90,
-								layout : "fit",
-								border : 0,
-								items : [{
-											xtype : "form",
-											layout : "form",
-											bodyPadding : 5,
-											items : [{
-														id : "__editGoods",
-														xtype : "textfield",
-														fieldLabel : "商品",
-														labelWidth : 50,
-														labelAlign : "right",
-														labelSeparator : ""
-													}, {
-														xtype : "displayfield",
-														fieldLabel : " ",
-														value : "输入编码、商品名称拼音字头、规格型号拼音字头可以过滤查询",
-														labelWidth : 50,
-														labelAlign : "right",
-														labelSeparator : ""
-													}, {
-														xtype : "displayfield",
-														fieldLabel : " ",
-														value : "↑ ↓ 键改变当前选择项 ；回车键返回",
-														labelWidth : 50,
-														labelAlign : "right",
-														labelSeparator : ""
-													}]
-										}]
-							}],
-					buttons : buttons
-				});
+			title : "选择 - 商品",
+			modal : true,
+			width : 950,
+			height : 390,
+			layout : "border",
+			items : [{
+						region : "center",
+						xtype : "panel",
+						layout : "fit",
+						border : 0,
+						items : [lookupGrid]
+					}, {
+						xtype : "panel",
+						region : "south",
+						height : 90,
+						layout : "fit",
+						border : 0,
+						items : [{
+									xtype : "form",
+									layout : "form",
+									bodyPadding : 5,
+									items : [{
+												id : "__editGoods",
+												xtype : "textfield",
+												fieldLabel : "商品",
+												labelWidth : 50,
+												labelAlign : "right",
+												labelSeparator : ""
+											}, {
+												xtype : "displayfield",
+												fieldLabel : " ",
+												value : "输入编码、商品名称拼音字头、规格型号拼音字头可以过滤查询",
+												labelWidth : 50,
+												labelAlign : "right",
+												labelSeparator : ""
+											}, {
+												xtype : "displayfield",
+												fieldLabel : " ",
+												value : "↑ ↓ 键改变当前选择项 ；回车键返回",
+												labelWidth : 50,
+												labelAlign : "right",
+												labelSeparator : ""
+											}]
+								}]
+					}],
+			buttons : buttons
+		});
 
 		wnd.on("close", function() {
 					me.focus();
