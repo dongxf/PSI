@@ -41,7 +41,7 @@ class SaleReportService extends PSIBaseExService {
 				where g.unit_id = u.id and g.id in(
 					select distinct d.goods_id
 					from t_ws_bill w, t_ws_bill_detail d
-					where w.id = d.wsbill_id and w.bizdt = '%s' and w.bill_status = 1000
+					where w.id = d.wsbill_id and w.bizdt = '%s' and w.bill_status >= 1000
 						and w.company_id = '%s'
 					union
 					select distinct d.goods_id
@@ -64,7 +64,7 @@ class SaleReportService extends PSIBaseExService {
 						sum(convert(d.goods_count, $fmt)) as goods_count
 					from t_ws_bill w, t_ws_bill_detail d
 					where w.id = d.wsbill_id and w.bizdt = '%s' and d.goods_id = '%s' 
-						and w.bill_status = 1000 and w.company_id = '%s' ";
+						and w.bill_status >= 1000 and w.company_id = '%s' ";
 			$data = $db->query($sql, $dt, $goodsId, $companyId);
 			$saleCount = $data[0]["goods_count"];
 			if (! $saleCount) {
@@ -120,7 +120,7 @@ class SaleReportService extends PSIBaseExService {
 				where g.unit_id = u.id and g.id in(
 					select distinct d.goods_id
 					from t_ws_bill w, t_ws_bill_detail d
-					where w.id = d.wsbill_id and w.bizdt = '%s' and w.bill_status = 1000
+					where w.id = d.wsbill_id and w.bizdt = '%s' and w.bill_status >= 1000
 						and w.company_id = '%s'
 					union
 					select distinct d.goods_id
@@ -151,7 +151,7 @@ class SaleReportService extends PSIBaseExService {
 		$sql = "select sum(d.goods_money) as goods_money, sum(d.inventory_money) as inventory_money
 					from t_ws_bill w, t_ws_bill_detail d
 					where w.id = d.wsbill_id and w.bizdt = '%s'
-						and w.bill_status = 1000 and w.company_id = '%s' ";
+						and w.bill_status >= 1000 and w.company_id = '%s' ";
 		$data = $db->query($sql, $dt, $companyId);
 		$saleMoney = $data[0]["goods_money"];
 		if (! $saleMoney) {
@@ -227,7 +227,7 @@ class SaleReportService extends PSIBaseExService {
 				where c.id in(
 					select distinct w.customer_id
 					from t_ws_bill w
-					where w.bizdt = '%s' and w.bill_status = 1000
+					where w.bizdt = '%s' and w.bill_status >= 1000
 						and w.company_id = '%s'
 					union
 					select distinct s.customer_id
@@ -247,7 +247,7 @@ class SaleReportService extends PSIBaseExService {
 			$sql = "select sum(w.sale_money) as goods_money, sum(w.inventory_money) as inventory_money
 					from t_ws_bill w
 					where w.bizdt = '%s' and w.customer_id = '%s'
-						and w.bill_status = 1000 and w.company_id = '%s' ";
+						and w.bill_status >= 1000 and w.company_id = '%s' ";
 			$data = $db->query($sql, $dt, $customerId, $companyId);
 			$saleMoney = $data[0]["goods_money"];
 			if (! $saleMoney) {
@@ -290,7 +290,7 @@ class SaleReportService extends PSIBaseExService {
 				where c.id in(
 					select distinct w.customer_id
 					from t_ws_bill w
-					where w.bizdt = '%s' and w.bill_status = 1000
+					where w.bizdt = '%s' and w.bill_status >= 1000
 						and w.company_id = '%s'
 					union
 					select distinct s.customer_id
@@ -343,7 +343,7 @@ class SaleReportService extends PSIBaseExService {
 				where w.id in(
 					select distinct w.warehouse_id
 					from t_ws_bill w
-					where w.bizdt = '%s' and w.bill_status = 1000
+					where w.bizdt = '%s' and w.bill_status >= 1000
 						and w.company_id = '%s'
 					union
 					select distinct s.warehouse_id
@@ -363,7 +363,7 @@ class SaleReportService extends PSIBaseExService {
 			$sql = "select sum(w.sale_money) as goods_money, sum(w.inventory_money) as inventory_money
 					from t_ws_bill w
 					where w.bizdt = '%s' and w.warehouse_id = '%s'
-						and w.bill_status = 1000 and w.company_id = '%s' ";
+						and w.bill_status >= 1000 and w.company_id = '%s' ";
 			$data = $db->query($sql, $dt, $warehouseId, $companyId);
 			$saleMoney = $data[0]["goods_money"];
 			if (! $saleMoney) {
@@ -406,7 +406,7 @@ class SaleReportService extends PSIBaseExService {
 				where c.id in(
 					select distinct w.warehouse_id
 					from t_ws_bill w
-					where w.bizdt = '%s' and w.bill_status = 1000
+					where w.bizdt = '%s' and w.bill_status >= 1000
 						and w.company_id = '%s'
 					union
 					select distinct s.warehouse_id
@@ -459,7 +459,7 @@ class SaleReportService extends PSIBaseExService {
 				where u.id in(
 					select distinct w.biz_user_id
 					from t_ws_bill w
-					where w.bizdt = '%s' and w.bill_status = 1000
+					where w.bizdt = '%s' and w.bill_status >= 1000
 						and w.company_id = '%s'
 					union
 					select distinct s.biz_user_id
@@ -479,7 +479,7 @@ class SaleReportService extends PSIBaseExService {
 			$sql = "select sum(w.sale_money) as goods_money, sum(w.inventory_money) as inventory_money
 					from t_ws_bill w
 					where w.bizdt = '%s' and w.biz_user_id = '%s'
-						and w.bill_status = 1000 and w.company_id = '%s' ";
+						and w.bill_status >= 1000 and w.company_id = '%s' ";
 			$data = $db->query($sql, $dt, $userId, $companyId);
 			$saleMoney = $data[0]["goods_money"];
 			if (! $saleMoney) {
@@ -522,7 +522,7 @@ class SaleReportService extends PSIBaseExService {
 				where u.id in(
 					select distinct w.biz_user_id
 					from t_ws_bill w
-					where w.bizdt = '%s' and w.bill_status = 1000
+					where w.bizdt = '%s' and w.bill_status >= 1000
 						and w.company_id = '%s'
 					union
 					select distinct s.biz_user_id
@@ -582,7 +582,7 @@ class SaleReportService extends PSIBaseExService {
 					select distinct d.goods_id
 					from t_ws_bill w, t_ws_bill_detail d
 					where w.id = d.wsbill_id and year(w.bizdt) = %d and month(w.bizdt) = %d
-						and w.bill_status = 1000
+						and w.bill_status >= 1000
 						and w.company_id = '%s'
 					union
 					select distinct d.goods_id
@@ -613,7 +613,7 @@ class SaleReportService extends PSIBaseExService {
 					from t_ws_bill w, t_ws_bill_detail d
 					where w.id = d.wsbill_id and year(w.bizdt) = %d and month(w.bizdt) = %d 
 						and d.goods_id = '%s'
-						and w.bill_status = 1000 and w.company_id = '%s' ";
+						and w.bill_status >= 1000 and w.company_id = '%s' ";
 			$data = $db->query($sql, $year, $month, $goodsId, $companyId);
 			$saleCount = $data[0]["goods_count"];
 			if (! $saleCount) {
@@ -670,7 +670,7 @@ class SaleReportService extends PSIBaseExService {
 				where g.unit_id = u.id and g.id in(
 					select distinct d.goods_id
 					from t_ws_bill w, t_ws_bill_detail d
-					where w.id = d.wsbill_id and year(w.bizdt) = %d and month(w.bizdt) = %d and w.bill_status = 1000
+					where w.id = d.wsbill_id and year(w.bizdt) = %d and month(w.bizdt) = %d and w.bill_status >= 1000
 						and w.company_id = '%s'
 					union
 					select distinct d.goods_id
@@ -706,7 +706,7 @@ class SaleReportService extends PSIBaseExService {
 		$sql = "select sum(d.goods_money) as goods_money, sum(d.inventory_money) as inventory_money
 					from t_ws_bill w, t_ws_bill_detail d
 					where w.id = d.wsbill_id and year(w.bizdt) = %d and month(w.bizdt) = %d
-						and w.bill_status = 1000 and w.company_id = '%s' ";
+						and w.bill_status >= 1000 and w.company_id = '%s' ";
 		$data = $db->query($sql, $year, $month, $companyId);
 		$saleMoney = $data[0]["goods_money"];
 		if (! $saleMoney) {
@@ -784,7 +784,7 @@ class SaleReportService extends PSIBaseExService {
 					select distinct w.customer_id
 					from t_ws_bill w
 					where year(w.bizdt) = %d and month(w.bizdt) = %d
-						and w.bill_status = 1000 and w.company_id = '%s'
+						and w.bill_status >= 1000 and w.company_id = '%s'
 					union
 					select distinct s.customer_id
 					from t_sr_bill s
@@ -810,7 +810,7 @@ class SaleReportService extends PSIBaseExService {
 					from t_ws_bill w
 					where year(w.bizdt) = %d and month(w.bizdt) = %d 
 						and w.customer_id = '%s'
-						and w.bill_status = 1000 and w.company_id = '%s' ";
+						and w.bill_status >= 1000 and w.company_id = '%s' ";
 			$data = $db->query($sql, $year, $month, $customerId, $companyId);
 			$saleMoney = $data[0]["goods_money"];
 			if (! $saleMoney) {
@@ -855,7 +855,7 @@ class SaleReportService extends PSIBaseExService {
 					select distinct w.customer_id
 					from t_ws_bill w
 					where year(w.bizdt) = %d and month(w.bizdt) = %d
-						and w.bill_status = 1000 and w.company_id = '%s'
+						and w.bill_status >= 1000 and w.company_id = '%s'
 					union
 					select distinct s.customer_id
 					from t_sr_bill s
@@ -910,7 +910,7 @@ class SaleReportService extends PSIBaseExService {
 					select distinct w.warehouse_id
 					from t_ws_bill w
 					where year(w.bizdt) = %d and month(w.bizdt) = %d
-						and w.bill_status = 1000 and w.company_id = '%s'
+						and w.bill_status >= 1000 and w.company_id = '%s'
 					union
 					select distinct s.warehouse_id
 					from t_sr_bill s
@@ -936,7 +936,7 @@ class SaleReportService extends PSIBaseExService {
 					from t_ws_bill w
 					where year(w.bizdt) = %d and month(w.bizdt) = %d
 						and w.warehouse_id = '%s'
-						and w.bill_status = 1000 and w.company_id = '%s' ";
+						and w.bill_status >= 1000 and w.company_id = '%s' ";
 			$data = $db->query($sql, $year, $month, $warehouseId, $companyId);
 			$saleMoney = $data[0]["goods_money"];
 			if (! $saleMoney) {
@@ -981,7 +981,7 @@ class SaleReportService extends PSIBaseExService {
 					select distinct w.warehouse_id
 					from t_ws_bill w
 					where year(w.bizdt) = %d and month(w.bizdt) = %d
-						and w.bill_status = 1000 and w.company_id = '%s'
+						and w.bill_status >= 1000 and w.company_id = '%s'
 					union
 					select distinct s.warehouse_id
 					from t_sr_bill s
@@ -1036,7 +1036,7 @@ class SaleReportService extends PSIBaseExService {
 					select distinct w.biz_user_id
 					from t_ws_bill w
 					where year(w.bizdt) = %d and month(w.bizdt) = %d
-						and w.bill_status = 1000 and w.company_id = '%s'
+						and w.bill_status >= 1000 and w.company_id = '%s'
 					union
 					select distinct s.biz_user_id
 					from t_sr_bill s
@@ -1062,7 +1062,7 @@ class SaleReportService extends PSIBaseExService {
 					from t_ws_bill w
 					where year(w.bizdt) = %d and month(w.bizdt) = %d
 						and w.biz_user_id = '%s'
-						and w.bill_status = 1000 and w.company_id = '%s' ";
+						and w.bill_status >= 1000 and w.company_id = '%s' ";
 			$data = $db->query($sql, $year, $month, $userId, $companyId);
 			$saleMoney = $data[0]["goods_money"];
 			if (! $saleMoney) {
@@ -1107,7 +1107,7 @@ class SaleReportService extends PSIBaseExService {
 					select distinct w.biz_user_id
 					from t_ws_bill w
 					where year(w.bizdt) = %d and month(w.bizdt) = %d
-						and w.bill_status = 1000 and w.company_id = '%s'
+						and w.bill_status >= 1000 and w.company_id = '%s'
 					union
 					select distinct s.biz_user_id
 					from t_sr_bill s
