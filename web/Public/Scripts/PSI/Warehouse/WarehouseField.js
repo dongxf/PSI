@@ -36,6 +36,12 @@ Ext.define("PSI.Warehouse.WarehouseField", {
 						me.onTriggerClick(e);
 					}
 				});
+
+		me.on("render", function(p) {
+					p.getEl().on("dblclick", function() {
+								me.onTriggerClick();
+							});
+				});
 	},
 
 	/**
