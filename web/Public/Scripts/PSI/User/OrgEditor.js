@@ -6,19 +6,27 @@ Ext.define("PSI.User.OrgEditor", {
 			alias : "widget.PSI_org_editor",
 
 			initComponent : function() {
-				this.enableKeyEvents = true;
+				var me = this;
 
-				this.callParent(arguments);
+				me.enableKeyEvents = true;
 
-				this.on("keydown", function(field, e) {
+				me.callParent(arguments);
+
+				me.on("keydown", function(field, e) {
 							if (e.getKey() === e.BACKSPACE) {
 								e.preventDefault();
 								return false;
 							}
 
 							if (e.getKey() !== e.ENTER) {
-								this.onTriggerClick(e);
+								me.onTriggerClick(e);
 							}
+						});
+
+				me.on("render", function(p) {
+							p.getEl().on("dblclick", function() {
+										me.onTriggerClick();
+									});
 						});
 			},
 
