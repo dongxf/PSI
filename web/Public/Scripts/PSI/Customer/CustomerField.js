@@ -18,7 +18,7 @@ Ext.define("PSI.Customer.CustomerField", {
 
 		me.callParent(arguments);
 
-		this.on("keydown", function(field, e) {
+		me.on("keydown", function(field, e) {
 					if (me.readOnly) {
 						return;
 					}
@@ -33,6 +33,12 @@ Ext.define("PSI.Customer.CustomerField", {
 					if (e.getKey() != e.ENTER && !e.isSpecialKey(e.getKey())) {
 						me.onTriggerClick(e);
 					}
+				});
+
+		me.on("render", function(p) {
+					p.getEl().on("dblclick", function() {
+								me.onTriggerClick();
+							});
 				});
 	},
 
