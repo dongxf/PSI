@@ -36,6 +36,12 @@ Ext.define("PSI.Supplier.SupplierField", {
 						me.onTriggerClick(e);
 					}
 				});
+
+		me.on("render", function(p) {
+					p.getEl().on("dblclick", function() {
+								me.onTriggerClick();
+							});
+				});
 	},
 
 	onTriggerClick : function(e) {
