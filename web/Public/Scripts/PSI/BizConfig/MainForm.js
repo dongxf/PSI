@@ -148,7 +148,7 @@ Ext.define("PSI.BizConfig.MainForm", {
 
 				var companyId = me.comboCompany.getValue();
 				if (!companyId) {
-					PSI.MsgBos.showInfo("没有选择要设置的公司");
+					PSI.MsgBox.showInfo("没有选择要设置的公司");
 					return;
 				}
 
