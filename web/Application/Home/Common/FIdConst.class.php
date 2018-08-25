@@ -749,4 +749,15 @@ class FIdConst {
 	 * @var string
 	 */
 	const PRICE_SYSTEM_SETTING_GOODS = "2031-01";
+	
+	// -------------------------
+	// 财务总账系统GL fid使用2100段
+	// -------------------------
+	
+	/**
+	 * 会计科目
+	 *
+	 * @var string
+	 */
+	const GL_SUBJECT = "2101";
 }
