@@ -78,75 +78,75 @@ Ext.define("PSI.Supplier.SupplierField", {
 		me.lookupGrid.on("itemdblclick", me.onOK, me);
 
 		var wnd = Ext.create("Ext.window.Window", {
-					title : "选择 - 供应商",
-					modal : true,
-					width : 500,
-					height : 380,
-					layout : "border",
-					items : [{
-								region : "center",
-								xtype : "panel",
-								layout : "fit",
-								border : 0,
-								items : [lookupGrid]
-							}, {
-								xtype : "panel",
-								region : "south",
-								height : 90,
-								layout : "fit",
-								border : 0,
-								items : [{
-											xtype : "form",
-											layout : "form",
-											bodyPadding : 5,
-											items : [{
-														id : "__editSupplier",
-														xtype : "textfield",
-														fieldLabel : "供应商",
-														labelWidth : 50,
-														labelAlign : "right",
-														labelSeparator : ""
-													}, {
-														xtype : "displayfield",
-														fieldLabel : " ",
-														value : "输入编码、供应商拼音字头可以过滤查询",
-														labelWidth : 50,
-														labelAlign : "right",
-														labelSeparator : ""
-													}, {
-														xtype : "displayfield",
-														fieldLabel : " ",
-														value : "↑ ↓ 键改变当前选择项 ；回车键返回",
-														labelWidth : 50,
-														labelAlign : "right",
-														labelSeparator : ""
-													}]
-										}]
-							}],
-					buttons : [{
-								text : "新增供应商档案",
-								iconCls : "PSI-button-add",
-								hidden : !me.getShowAddButton(),
-								handler : me.onAdd,
-								scope : me
-							}, {
-								text : "确定",
-								handler : me.onOK,
-								scope : me
-							}, {
-								text : "取消",
-								handler : function() {
-									wnd.close();
-								}
-							}]
-				});
+			title : "选择 - 供应商",
+			modal : true,
+			width : 500,
+			height : 380,
+			layout : "border",
+			items : [{
+						region : "center",
+						xtype : "panel",
+						layout : "fit",
+						border : 0,
+						items : [lookupGrid]
+					}, {
+						xtype : "panel",
+						region : "south",
+						height : 90,
+						layout : "fit",
+						border : 0,
+						items : [{
+							xtype : "form",
+							layout : "form",
+							bodyPadding : 5,
+							items : [{
+										id : "PSI_Supplier_SupplierField_editSupplier",
+										xtype : "textfield",
+										fieldLabel : "供应商",
+										labelWidth : 50,
+										labelAlign : "right",
+										labelSeparator : ""
+									}, {
+										xtype : "displayfield",
+										fieldLabel : " ",
+										value : "输入编码、供应商拼音字头可以过滤查询",
+										labelWidth : 50,
+										labelAlign : "right",
+										labelSeparator : ""
+									}, {
+										xtype : "displayfield",
+										fieldLabel : " ",
+										value : "↑ ↓ 键改变当前选择项 ；回车键返回",
+										labelWidth : 50,
+										labelAlign : "right",
+										labelSeparator : ""
+									}]
+						}]
+					}],
+			buttons : [{
+						text : "新增供应商档案",
+						iconCls : "PSI-button-add",
+						hidden : !me.getShowAddButton(),
+						handler : me.onAdd,
+						scope : me
+					}, {
+						text : "确定",
+						handler : me.onOK,
+						scope : me
+					}, {
+						text : "取消",
+						handler : function() {
+							wnd.close();
+						}
+					}]
+		});
 
 		wnd.on("close", function() {
 					me.focus();
 				});
 		me.wnd = wnd;
 
-		var editName = Ext.getCmp("__editSupplier");
+		var editName = Ext.getCmp("PSI_Supplier_SupplierField_editSupplier");
 		editName.on("change", function() {
 			var store = me.lookupGrid.getStore();
 			Ext.Ajax.request({
