@@ -80,69 +80,69 @@ Ext.define("PSI.Warehouse.WarehouseField", {
 		me.lookupGrid.on("itemdblclick", me.onOK, me);
 
 		var wnd = Ext.create("Ext.window.Window", {
-					title : "选择 - 仓库",
-					modal : true,
-					width : 420,
-					height : 390,
-					layout : "border",
-					items : [{
-								region : "center",
-								xtype : "panel",
-								layout : "fit",
-								border : 0,
-								items : [lookupGrid]
+			title : "选择 - 仓库",
+			modal : true,
+			width : 420,
+			height : 390,
+			layout : "border",
+			items : [{
+						region : "center",
+						xtype : "panel",
+						layout : "fit",
+						border : 0,
+						items : [lookupGrid]
+					}, {
+						xtype : "panel",
+						region : "south",
+						height : 90,
+						layout : "fit",
+						border : 0,
+						items : [{
+							xtype : "form",
+							layout : "form",
+							bodyPadding : 5,
+							items : [{
+								id : "PSI_Warehouse_WarehouseField_editWarehouse",
+								xtype : "textfield",
+								fieldLabel : "仓库",
+								labelWidth : 50,
+								labelAlign : "right",
+								labelSeparator : ""
 							}, {
-								xtype : "panel",
-								region : "south",
-								height : 90,
-								layout : "fit",
-								border : 0,
-								items : [{
-											xtype : "form",
-											layout : "form",
-											bodyPadding : 5,
-											items : [{
-														id : "__editWarehouse",
-														xtype : "textfield",
-														fieldLabel : "仓库",
-														labelWidth : 50,
-														labelAlign : "right",
-														labelSeparator : ""
-													}, {
-														xtype : "displayfield",
-														fieldLabel : " ",
-														value : "输入编码、仓库名称拼音字头可以过滤查询",
-														labelWidth : 50,
-														labelAlign : "right",
-														labelSeparator : ""
-													}, {
-														xtype : "displayfield",
-														fieldLabel : " ",
-														value : "↑ ↓ 键改变当前选择项 ；回车键返回",
-														labelWidth : 50,
-														labelAlign : "right",
-														labelSeparator : ""
-													}]
-										}]
-							}],
-					buttons : [{
-								text : "确定",
-								handler : me.onOK,
-								scope : me
+								xtype : "displayfield",
+								fieldLabel : " ",
+								value : "输入编码、仓库名称拼音字头可以过滤查询",
+								labelWidth : 50,
+								labelAlign : "right",
+								labelSeparator : ""
 							}, {
-								text : "取消",
-								handler : function() {
-									wnd.close();
-								}
+								xtype : "displayfield",
+								fieldLabel : " ",
+								value : "↑ ↓ 键改变当前选择项 ；回车键返回",
+								labelWidth : 50,
+								labelAlign : "right",
+								labelSeparator : ""
 							}]
-				});
+						}]
+					}],
+			buttons : [{
+						text : "确定",
+						handler : me.onOK,
+						scope : me
+					}, {
+						text : "取消",
+						handler : function() {
+							wnd.close();
+						}
+					}]
+		});
 
 		wnd.on("close", function() {
 					me.focus();
 				});
 		me.wnd = wnd;
 
-		var editName = Ext.getCmp("__editWarehouse");
+		var editName = Ext.getCmp("PSI_Warehouse_WarehouseField_editWarehouse");
 		editName.on("change", function() {
 			var store = me.lookupGrid.getStore();
 			Ext.Ajax.request({
