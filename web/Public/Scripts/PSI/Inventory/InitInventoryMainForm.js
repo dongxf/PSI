@@ -185,7 +185,7 @@ Ext.define("PSI.Inventory.InitInventoryMainForm", {
 								dataIndex : "inited",
 								menuDisabled : true,
 								sortable : false,
-								width : 60,
+								width : 80,
 								renderer : function(value) {
 									return value == 1
 											? "完毕"
