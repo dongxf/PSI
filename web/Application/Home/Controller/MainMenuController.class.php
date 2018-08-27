@@ -217,6 +217,10 @@ class MainMenuController extends Controller {
 				// 价格体系
 				redirect(__ROOT__ . "/Home/Goods/psIndex");
 				break;
+			case FIdConst::GL_SUBJECT :
+				// 会计科目
+				redirect(__ROOT__ . "/Home/Subject/index");
+				break;
 			default :
 				redirect(__ROOT__ . "/Home");
 		}
