@@ -166,7 +166,7 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 								dataIndex : "code",
 								menuDisabled : true,
 								sortable : false,
-								width : 60
+								width : 80
 							}, {
 								header : "仓库名称",
 								dataIndex : "name",
@@ -276,7 +276,7 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 								dataIndex : "unitName",
 								menuDisabled : true,
 								sortable : false,
-								width : 60
+								width : 80
 							}, {
 								header : "在途数量",
 								align : "right",
@@ -310,7 +310,7 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 								dataIndex : "inPrice",
 								menuDisabled : true,
 								sortable : false,
-								width : 120
+								width : 130
 							}, {
 								header : "入库成本总金额",
 								align : "right",
@@ -332,7 +332,7 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 								dataIndex : "outPrice",
 								menuDisabled : true,
 								sortable : false,
-								width : 120
+								width : 130
 							}, {
 								header : "出库成本总金额",
 								align : "right",
@@ -486,7 +486,7 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 								dataIndex : "unitName",
 								menuDisabled : true,
 								sortable : false,
-								width : 60
+								width : 80
 							}, {
 								header : "入库数量",
 								dataIndex : "inCount",
