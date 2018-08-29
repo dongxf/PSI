@@ -219,7 +219,7 @@ Ext.define("PSI.Home.MainForm", {
 							}, {
 								header : "低于安全库存商品种类数",
 								dataIndex : "siCount",
-								width : 160,
+								width : 180,
 								menuDisabled : true,
 								sortable : false,
 								align : "right",
@@ -234,7 +234,7 @@ Ext.define("PSI.Home.MainForm", {
 							}, {
 								header : "超过库存上限的商品种类数",
 								dataIndex : "iuCount",
-								width : 170,
+								width : 180,
 								menuDisabled : true,
 								sortable : false,
 								align : "right",
@@ -319,7 +319,8 @@ Ext.define("PSI.Home.MainForm", {
 								menuDisabled : true,
 								sortable : false,
 								align : "right",
-								xtype : "numbercolumn"
+								xtype : "numbercolumn",
+								width : 120
 							}],
 					store : Ext.create("Ext.data.Store", {
 								model : modelName,
