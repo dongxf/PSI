@@ -192,7 +192,7 @@ class PortalService extends PSIBaseExService {
 			
 			$sql = "select sum(w.goods_money) as goods_money
 					from t_pw_bill w
-					where w.bill_status = 1000
+					where w.bill_status >= 1000
 						and year(w.biz_dt) = %d
 						and month(w.biz_dt) = %d";
 			$queryParams = array();
