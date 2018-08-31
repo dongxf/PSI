@@ -24,18 +24,18 @@ class SubjectDAO extends PSIBaseExDAO {
 				where (g.parent_id is null) ";
 		
 		$ds = new DataOrgDAO($db);
-		$queryParams = array();
+		$queryParams = [];
 		$rs = $ds->buildSQL(FIdConst::GL_SUBJECT, "g", $loginUserId);
 		if ($rs) {
 			$sql .= " and " . $rs[0];
-			$queryParams = $rs[1];
+			$queryParams = array_merge($queryParams, $rs[1]);
 		}
 		
 		$sql .= " order by g.org_code ";
 		
 		$result = [];
 		
-		$data = $db->query($sql);
+		$data = $db->query($sql, $queryParams);
 		foreach ( $data as $v ) {
 			$result[] = [
 					"id" => $v["id"],
