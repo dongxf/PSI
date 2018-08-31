@@ -4,6 +4,7 @@ namespace Home\Controller;
 
 use Home\Common\FIdConst;
 use Home\Service\UserService;
+use Home\Service\SubjectService;
 
 /**
  * 会计科目Controller
@@ -27,6 +28,16 @@ class SubjectController extends PSIBaseController {
 			$this->display();
 		} else {
 			$this->gotoLoginPage("/Home/Subject/index");
+		}
+	}
+
+	/**
+	 * 返回所有的公司列表
+	 */
+	public function companyList() {
+		if (IS_POST) {
+			$service = new SubjectService();
+			$this->ajaxReturn($service->companyList());
 		}
 	}
 }
