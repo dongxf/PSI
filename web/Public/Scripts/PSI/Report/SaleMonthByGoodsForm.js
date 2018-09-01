@@ -192,7 +192,7 @@ Ext.define("PSI.Report.SaleMonthByGoodsForm", {
 								dataIndex : "unitName",
 								menuDisabled : true,
 								sortable : false,
-								width : 60
+								width : 80
 							}, {
 								header : "销售出库金额",
 								dataIndex : "saleMoney",
