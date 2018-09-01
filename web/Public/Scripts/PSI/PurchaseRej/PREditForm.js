@@ -70,7 +70,7 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 							type : "table",
 							columns : 2
 						},
-						height : 120,
+						height : 130,
 						bodyPadding : 10,
 						border : 0,
 						items : [{
@@ -265,6 +265,12 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 
 	onOK : function() {
 		var me = this;
+
+		if (!me.__billId) {
+			me.showInfo("没有选择要退货的采购入库单，无法保存数据");
+			return;
+		}
+
 		Ext.getBody().mask("正在保存中...");
 		Ext.Ajax.request({
 			url : PSI.Const.BASE_URL + "Home/PurchaseRej/editPRBill",
