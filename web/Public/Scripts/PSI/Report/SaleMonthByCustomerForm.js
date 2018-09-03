@@ -135,6 +135,7 @@ Ext.define("PSI.Report.SaleMonthByCustomerForm", {
 					model : modelName,
 					data : [],
 					pageSize : 20,
+					remoteSort : true,
 					proxy : {
 						type : "ajax",
 						actionMethods : {
@@ -171,7 +172,7 @@ Ext.define("PSI.Report.SaleMonthByCustomerForm", {
 								header : "客户编码",
 								dataIndex : "customerCode",
 								menuDisabled : true,
-								sortable : false
+								sortable : true
 							}, {
 								header : "客户",
 								dataIndex : "customerName",
@@ -182,35 +183,35 @@ Ext.define("PSI.Report.SaleMonthByCustomerForm", {
 								header : "销售出库金额",
 								dataIndex : "saleMoney",
 								menuDisabled : true,
-								sortable : false,
+								sortable : true,
 								align : "right",
 								xtype : "numbercolumn"
 							}, {
 								header : "退货入库金额",
 								dataIndex : "rejMoney",
 								menuDisabled : true,
-								sortable : false,
+								sortable : true,
 								align : "right",
 								xtype : "numbercolumn"
 							}, {
 								header : "净销售金额",
 								dataIndex : "m",
 								menuDisabled : true,
-								sortable : false,
+								sortable : true,
 								align : "right",
 								xtype : "numbercolumn"
 							}, {
 								header : "毛利",
 								dataIndex : "profit",
 								menuDisabled : true,
-								sortable : false,
+								sortable : true,
 								align : "right",
 								xtype : "numbercolumn"
 							}, {
 								header : "毛利率",
 								dataIndex : "rate",
 								menuDisabled : true,
-								sortable : false,
+								sortable : true,
 								align : "right"
 							}],
 					store : store
