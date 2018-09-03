@@ -389,11 +389,6 @@ class SaleReportDAO extends PSIBaseExDAO {
 				)";
 		$db->execute($sql);
 		
-		$start = $params["start"];
-		$limit = $params["limit"];
-		
-		$dt = $params["dt"];
-		
 		$sql = "select w.id, w.code, w.name
 				from t_warehouse w
 				where w.id in(
@@ -822,6 +817,164 @@ class SaleReportDAO extends PSIBaseExDAO {
 					"bizDT" => $v["biz_dt"],
 					"customerCode" => $v["customer_code"],
 					"customerName" => $v["customer_name"],
+					"saleMoney" => $v["sale_money"],
+					"rejMoney" => $v["rej_money"],
+					"m" => $v["m"],
+					"profit" => $v["profit"],
+					"rate" => $v["rate"] == 0 ? null : sprintf("%0.2f", $v["rate"]) . "%"
+			];
+		}
+		
+		$sql = "select count(*) as cnt
+				from psi_sale_report
+				";
+		$data = $db->query($sql);
+		$cnt = $data[0]["cnt"];
+		
+		// 删除临时表
+		$sql = "DROP TEMPORARY TABLE IF EXISTS psi_sale_report";
+		$db->execute($sql);
+		
+		return array(
+				"dataList" => $result,
+				"totalCount" => $cnt
+		);
+	}
+
+	/**
+	 * 销售月报表(按仓库汇总) - 查询数据
+	 */
+	public function saleMonthByWarehouseQueryData($params) {
+		$db = $this->db;
+		
+		$companyId = $params["companyId"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->emptyResult();
+		}
+		
+		$start = $params["start"];
+		$limit = $params["limit"];
+		
+		$year = $params["year"];
+		$month = $params["month"];
+		$dt = "";
+		if ($month < 10) {
+			$dt = "$year-0$month";
+		} else {
+			$dt = "$year-$month";
+		}
+		
+		$sort = $params["sort"];
+		$sortProperty = "warehouse_code";
+		$sortDirection = "ASC";
+		if ($sort) {
+			$sortJSON = json_decode(html_entity_decode($sort), true);
+			if ($sortJSON) {
+				$sortProperty = strtolower($sortJSON[0]["property"]);
+				if ($sortProperty == strtolower("warehouseCode")) {
+					$sortProperty = "warehouse_code";
+				} else if ($sortProperty == strtolower("saleMoney")) {
+					$sortProperty = "sale_money";
+				} else if ($sortProperty == strtolower("rejMoney")) {
+					$sortProperty = "rej_money";
+				}
+				
+				$sortDirection = strtoupper($sortJSON[0]["direction"]);
+				if ($sortDirection != "ASC" && $sortDirection != "DESC") {
+					$sortDirection = "ASC";
+				}
+			}
+		}
+		
+		// 创建临时表保存数据
+		$sql = "CREATE TEMPORARY TABLE psi_sale_report (
+					biz_dt varchar(255),
+					warehouse_code varchar(255), warehouse_name varchar(255),
+					sale_money decimal(19,2),
+					rej_money decimal(19,2), m decimal(19,2),
+					profit decimal(19,2), rate decimal(19, 2)
+				)";
+		$db->execute($sql);
+		
+		$sql = "select w.id, w.code, w.name
+				from t_warehouse w
+				where w.id in(
+					select distinct w.warehouse_id
+					from t_ws_bill w
+					where year(w.bizdt) = %d and month(w.bizdt) = %d
+						and w.bill_status >= 1000 and w.company_id = '%s'
+					union
+					select distinct s.warehouse_id
+					from t_sr_bill s
+					where year(s.bizdt) = %d and month(s.bizdt) = %d
+						and s.bill_status = 1000 and w.company_id = '%s'
+					)
+				order by w.code ";
+		$items = $db->query($sql, $year, $month, $companyId, $year, $month, $companyId);
+		foreach ( $items as $v ) {
+			$warehouseCode = $v["code"];
+			$warehouseName = $v["name"];
+			
+			$warehouseId = $v["id"];
+			$sql = "select sum(w.sale_money) as goods_money, sum(w.inventory_money) as inventory_money
+					from t_ws_bill w
+					where year(w.bizdt) = %d and month(w.bizdt) = %d
+						and w.warehouse_id = '%s'
+						and w.bill_status >= 1000 and w.company_id = '%s' ";
+			$data = $db->query($sql, $year, $month, $warehouseId, $companyId);
+			$saleMoney = $data[0]["goods_money"];
+			if (! $saleMoney) {
+				$saleMoney = 0;
+			}
+			$saleInventoryMoney = $data[0]["inventory_money"];
+			if (! $saleInventoryMoney) {
+				$saleInventoryMoney = 0;
+			}
+			
+			$sql = "select sum(s.rejection_sale_money) as rej_money,
+						sum(s.inventory_money) as rej_inventory_money
+					from t_sr_bill s
+					where year(s.bizdt) = %d and month(s.bizdt) = %d
+						and s.warehouse_id = '%s'
+						and s.bill_status = 1000 and s.company_id = '%s' ";
+			$data = $db->query($sql, $year, $month, $warehouseId, $companyId);
+			$rejSaleMoney = $data[0]["rej_money"];
+			if (! $rejSaleMoney) {
+				$rejSaleMoney = 0;
+			}
+			$rejInventoryMoney = $data[0]["rej_inventory_money"];
+			if (! $rejInventoryMoney) {
+				$rejInventoryMoney = 0;
+			}
+			
+			$m = $saleMoney - $rejSaleMoney;
+			$profit = $saleMoney - $rejSaleMoney - $saleInventoryMoney + $rejInventoryMoney;
+			$rate = 0;
+			if ($m > 0) {
+				$rate = $profit / $m * 100;
+			}
+			$sql = "insert into psi_sale_report (biz_dt, warehouse_code, warehouse_name,
+						sale_money, rej_money, m, profit, rate)
+					values ('%s', '%s', '%s',
+							%f, %f, %f, %f, %f)";
+			$db->execute($sql, $dt, $warehouseCode, $warehouseName, $saleMoney, $rejSaleMoney, $m, 
+					$profit, $rate);
+		}
+		
+		$result = [];
+		$sql = "select biz_dt, warehouse_code, warehouse_name,
+					sale_money, rej_money,
+					m, profit, rate
+				from psi_sale_report
+				order by %s %s
+				limit %d, %d
+				";
+		$data = $db->query($sql, $sortProperty, $sortDirection, $start, $limit);
+		foreach ( $data as $v ) {
+			$result[] = [
+					"bizDT" => $v["biz_dt"],
+					"warehouseCode" => $v["warehouse_code"],
+					"warehouseName" => $v["warehouse_name"],
 					"saleMoney" => $v["sale_money"],
 					"rejMoney" => $v["rej_money"],
 					"m" => $v["m"],
