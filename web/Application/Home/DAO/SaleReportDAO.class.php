@@ -253,9 +253,8 @@ class SaleReportDAO extends PSIBaseExDAO {
 					where s.bizdt = '%s' and s.bill_status = 1000
 						and s.company_id = '%s'
 					)
-				order by c.code
-				limit %d, %d";
-		$items = $db->query($sql, $dt, $companyId, $dt, $companyId, $start, $limit);
+				order by c.code";
+		$items = $db->query($sql, $dt, $companyId, $dt, $companyId);
 		foreach ( $items as $v ) {
 			$customerCode = $v["code"];
 			$customerName = $v["name"];
@@ -575,10 +574,8 @@ class SaleReportDAO extends PSIBaseExDAO {
 						and s.bill_status = 1000
 						and s.company_id = '%s'
 					)
-				order by g.code
-				limit %d, %d";
-		$items = $db->query($sql, $year, $month, $companyId, $year, $month, $companyId, $start, 
-				$limit);
+				order by g.code ";
+		$items = $db->query($sql, $year, $month, $companyId, $year, $month, $companyId);
 		foreach ( $items as $v ) {
 			$goodsId = $v["id"];
 			$goodsCode = $v["code"];
@@ -757,10 +754,8 @@ class SaleReportDAO extends PSIBaseExDAO {
 					where year(s.bizdt) = %d and month(s.bizdt) = %d
 						and s.bill_status = 1000 and s.company_id = '%s'
 					)
-				order by c.code
-				limit %d, %d";
-		$items = $db->query($sql, $year, $month, $companyId, $year, $month, $companyId, $start, 
-				$limit);
+				order by c.code ";
+		$items = $db->query($sql, $year, $month, $companyId, $year, $month, $companyId);
 		foreach ( $items as $i => $v ) {
 			
 			$customerCode = $v["code"];
