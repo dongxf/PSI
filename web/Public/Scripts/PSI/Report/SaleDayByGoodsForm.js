@@ -119,6 +119,7 @@ Ext.define("PSI.Report.SaleDayByGoodsForm", {
 					model : modelName,
 					data : [],
 					pageSize : 20,
+					remoteSort : true,
 					proxy : {
 						type : "ajax",
 						actionMethods : {
@@ -155,7 +156,7 @@ Ext.define("PSI.Report.SaleDayByGoodsForm", {
 								header : "商品编码",
 								dataIndex : "goodsCode",
 								menuDisabled : true,
-								sortable : false
+								sortable : true
 							}, {
 								header : "商品名称",
 								dataIndex : "goodsName",
@@ -170,7 +171,7 @@ Ext.define("PSI.Report.SaleDayByGoodsForm", {
 								header : "销售出库数量",
 								dataIndex : "saleCount",
 								menuDisabled : true,
-								sortable : false,
+								sortable : true,
 								align : "right"
 							}, {
 								header : "计量单位",
@@ -182,47 +183,47 @@ Ext.define("PSI.Report.SaleDayByGoodsForm", {
 								header : "销售出库金额",
 								dataIndex : "saleMoney",
 								menuDisabled : true,
-								sortable : false,
+								sortable : true,
 								align : "right",
 								xtype : "numbercolumn"
 							}, {
 								header : "退货入库数量",
 								dataIndex : "rejCount",
 								menuDisabled : true,
-								sortable : false,
+								sortable : true,
 								align : "right"
 							}, {
 								header : "退货入库金额",
 								dataIndex : "rejMoney",
 								menuDisabled : true,
-								sortable : false,
+								sortable : true,
 								align : "right",
 								xtype : "numbercolumn"
 							}, {
 								header : "净销售数量",
 								dataIndex : "c",
 								menuDisabled : true,
-								sortable : false,
+								sortable : true,
 								align : "right"
 							}, {
 								header : "净销售金额",
 								dataIndex : "m",
 								menuDisabled : true,
-								sortable : false,
+								sortable : true,
 								align : "right",
 								xtype : "numbercolumn"
 							}, {
 								header : "毛利",
 								dataIndex : "profit",
 								menuDisabled : true,
-								sortable : false,
+								sortable : true,
 								align : "right",
 								xtype : "numbercolumn"
 							}, {
 								header : "毛利率",
 								dataIndex : "rate",
 								menuDisabled : true,
-								sortable : false,
+								sortable : true,
 								align : "right"
 							}],
 					store : store

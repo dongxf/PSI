@@ -3,6 +3,7 @@
 namespace Home\Service;
 
 use Home\DAO\BizConfigDAO;
+use Home\DAO\SaleReportDAO;
 
 /**
  * 销售报表Service
@@ -19,123 +20,10 @@ class SaleReportService extends PSIBaseExService {
 			return $this->emptyResult();
 		}
 		
-		$page = $params["page"];
-		$start = $params["start"];
-		$limit = $params["limit"];
+		$params["companyId"] = $this->getCompanyId();
 		
-		$dt = $params["dt"];
-		
-		$result = array();
-		
-		$us = new UserService();
-		$companyId = $us->getCompanyId();
-		
-		$db = M();
-		
-		$bcDAO = new BizConfigDAO($db);
-		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
-		$fmt = "decimal(19, " . $dataScale . ")";
-		
-		$sql = "select g.id, g.code, g.name, g.spec, u.name as unit_name
-				from t_goods g, t_goods_unit u
-				where g.unit_id = u.id and g.id in(
-					select distinct d.goods_id
-					from t_ws_bill w, t_ws_bill_detail d
-					where w.id = d.wsbill_id and w.bizdt = '%s' and w.bill_status >= 1000
-						and w.company_id = '%s'
-					union
-					select distinct d.goods_id
-					from t_sr_bill s, t_sr_bill_detail d
-					where s.id = d.srbill_id and s.bizdt = '%s' and s.bill_status = 1000
-						and s.company_id = '%s'
-					)
-				order by g.code
-				limit %d, %d";
-		$items = $db->query($sql, $dt, $companyId, $dt, $companyId, $start, $limit);
-		foreach ( $items as $i => $v ) {
-			$result[$i]["bizDT"] = $dt;
-			$result[$i]["goodsCode"] = $v["code"];
-			$result[$i]["goodsName"] = $v["name"];
-			$result[$i]["goodsSpec"] = $v["spec"];
-			$result[$i]["unitName"] = $v["unit_name"];
-			
-			$goodsId = $v["id"];
-			$sql = "select sum(d.goods_money) as goods_money, sum(d.inventory_money) as inventory_money,
-						sum(convert(d.goods_count, $fmt)) as goods_count
-					from t_ws_bill w, t_ws_bill_detail d
-					where w.id = d.wsbill_id and w.bizdt = '%s' and d.goods_id = '%s' 
-						and w.bill_status >= 1000 and w.company_id = '%s' ";
-			$data = $db->query($sql, $dt, $goodsId, $companyId);
-			$saleCount = $data[0]["goods_count"];
-			if (! $saleCount) {
-				$saleCount = 0;
-			}
-			$saleMoney = $data[0]["goods_money"];
-			if (! $saleMoney) {
-				$saleMoney = 0;
-			}
-			$saleInventoryMoney = $data[0]["inventory_money"];
-			if (! $saleInventoryMoney) {
-				$saleInventoryMoney = 0;
-			}
-			$result[$i]["saleMoney"] = $saleMoney;
-			$result[$i]["saleCount"] = $saleCount;
-			
-			$sql = "select sum(convert(d.rejection_goods_count, $fmt)) as rej_count, 
-						sum(d.rejection_sale_money) as rej_money,
-						sum(d.inventory_money) as rej_inventory_money
-					from t_sr_bill s, t_sr_bill_detail d
-					where s.id = d.srbill_id and s.bizdt = '%s' and d.goods_id = '%s' 
-						and s.bill_status = 1000 and s.company_id = '%s' ";
-			$data = $db->query($sql, $dt, $goodsId, $companyId);
-			$rejCount = $data[0]["rej_count"];
-			if (! $rejCount) {
-				$rejCount = 0;
-			}
-			$rejSaleMoney = $data[0]["rej_money"];
-			if (! $rejSaleMoney) {
-				$rejSaleMoney = 0;
-			}
-			$rejInventoryMoney = $data[0]["rej_inventory_money"];
-			if (! $rejInventoryMoney) {
-				$rejInventoryMoney = 0;
-			}
-			
-			$result[$i]["rejCount"] = $rejCount;
-			$result[$i]["rejMoney"] = $rejSaleMoney;
-			
-			$c = $saleCount - $rejCount;
-			$m = $saleMoney - $rejSaleMoney;
-			$result[$i]["c"] = number_format($c, $dataScale, ".", "");
-			$result[$i]["m"] = $m;
-			$profit = $saleMoney - $rejSaleMoney - $saleInventoryMoney + $rejInventoryMoney;
-			$result[$i]["profit"] = $profit;
-			if ($m > 0) {
-				$result[$i]["rate"] = sprintf("%0.2f", $profit / $m * 100) . "%";
-			}
-		}
-		
-		$sql = "select count(*) as cnt
-				from t_goods g, t_goods_unit u
-				where g.unit_id = u.id and g.id in(
-					select distinct d.goods_id
-					from t_ws_bill w, t_ws_bill_detail d
-					where w.id = d.wsbill_id and w.bizdt = '%s' and w.bill_status >= 1000
-						and w.company_id = '%s'
-					union
-					select distinct d.goods_id
-					from t_sr_bill s, t_sr_bill_detail d
-					where s.id = d.srbill_id and s.bizdt = '%s' and s.bill_status = 1000
-						and s.company_id = '%s'
-					)
-				";
-		$data = $db->query($sql, $dt, $companyId, $dt, $companyId);
-		$cnt = $data[0]["cnt"];
-		
-		return array(
-				"dataList" => $result,
-				"totalCount" => $cnt
-		);
+		$dao = new SaleReportDAO($this->db());
+		return $dao->saleDayByGoodsQueryData($params);
 	}
 
 	private function saleDaySummaryQueryData($params) {
