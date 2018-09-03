@@ -145,7 +145,8 @@ class ReportController extends PSIBaseController {
 					"dt" => I("post.dt"),
 					"page" => I("post.page"),
 					"start" => I("post.start"),
-					"limit" => I("post.limit")
+					"limit" => I("post.limit"),
+					"sort" => I("post.sort")
 			);
 			
 			$rs = new SaleReportService();
