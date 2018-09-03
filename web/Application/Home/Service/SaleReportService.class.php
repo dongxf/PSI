@@ -2,7 +2,6 @@
 
 namespace Home\Service;
 
-use Home\DAO\BizConfigDAO;
 use Home\DAO\SaleReportDAO;
 
 /**
@@ -98,106 +97,10 @@ class SaleReportService extends PSIBaseExService {
 			return $this->emptyResult();
 		}
 		
-		$params["companyId"]=$this->getCompanyId();
+		$params["companyId"] = $this->getCompanyId();
 		
 		$dao = new SaleReportDAO($this->db());
 		return $dao->saleDayByCustomerQueryData($params);
-		
-		$page = $params["page"];
-		$start = $params["start"];
-		$limit = $params["limit"];
-		
-		$dt = $params["dt"];
-		
-		$result = array();
-		
-		$us = new UserService();
-		$companyId = $us->getCompanyId();
-		
-		$db = M();
-		$sql = "select c.id, c.code, c.name
-				from t_customer c
-				where c.id in(
-					select distinct w.customer_id
-					from t_ws_bill w
-					where w.bizdt = '%s' and w.bill_status >= 1000
-						and w.company_id = '%s'
-					union
-					select distinct s.customer_id
-					from t_sr_bill s
-					where s.bizdt = '%s' and s.bill_status = 1000
-						and s.company_id = '%s'
-					)
-				order by c.code
-				limit %d, %d";
-		$items = $db->query($sql, $dt, $companyId, $dt, $companyId, $start, $limit);
-		foreach ( $items as $i => $v ) {
-			$result[$i]["bizDT"] = $dt;
-			$result[$i]["customerCode"] = $v["code"];
-			$result[$i]["customerName"] = $v["name"];
-			
-			$customerId = $v["id"];
-			$sql = "select sum(w.sale_money) as goods_money, sum(w.inventory_money) as inventory_money
-					from t_ws_bill w
-					where w.bizdt = '%s' and w.customer_id = '%s'
-						and w.bill_status >= 1000 and w.company_id = '%s' ";
-			$data = $db->query($sql, $dt, $customerId, $companyId);
-			$saleMoney = $data[0]["goods_money"];
-			if (! $saleMoney) {
-				$saleMoney = 0;
-			}
-			$saleInventoryMoney = $data[0]["inventory_money"];
-			if (! $saleInventoryMoney) {
-				$saleInventoryMoney = 0;
-			}
-			$result[$i]["saleMoney"] = $saleMoney;
-			
-			$sql = "select sum(s.rejection_sale_money) as rej_money,
-						sum(s.inventory_money) as rej_inventory_money
-					from t_sr_bill s
-					where s.bizdt = '%s' and s.customer_id = '%s'
-						and s.bill_status = 1000 and s.company_id = '%s' ";
-			$data = $db->query($sql, $dt, $customerId, $companyId);
-			$rejSaleMoney = $data[0]["rej_money"];
-			if (! $rejSaleMoney) {
-				$rejSaleMoney = 0;
-			}
-			$rejInventoryMoney = $data[0]["rej_inventory_money"];
-			if (! $rejInventoryMoney) {
-				$rejInventoryMoney = 0;
-			}
-			
-			$result[$i]["rejMoney"] = $rejSaleMoney;
-			
-			$m = $saleMoney - $rejSaleMoney;
-			$result[$i]["m"] = $m;
-			$profit = $saleMoney - $rejSaleMoney - $saleInventoryMoney + $rejInventoryMoney;
-			$result[$i]["profit"] = $profit;
-			if ($m > 0) {
-				$result[$i]["rate"] = sprintf("%0.2f", $profit / $m * 100) . "%";
-			}
-		}
-		
-		$sql = "select count(*) as cnt
-				from t_customer c
-				where c.id in(
-					select distinct w.customer_id
-					from t_ws_bill w
-					where w.bizdt = '%s' and w.bill_status >= 1000
-						and w.company_id = '%s'
-					union
-					select distinct s.customer_id
-					from t_sr_bill s
-					where s.bizdt = '%s' and s.bill_status = 1000
-						and s.company_id = '%s'
-					)";
-		$data = $db->query($sql, $dt, $companyId, $dt, $companyId);
-		$cnt = $data[0]["cnt"];
-		
-		return array(
-				"dataList" => $result,
-				"totalCount" => $cnt
-		);
 	}
 
 	/**
