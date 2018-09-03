@@ -98,6 +98,11 @@ class SaleReportService extends PSIBaseExService {
 			return $this->emptyResult();
 		}
 		
+		$params["companyId"]=$this->getCompanyId();
+		
+		$dao = new SaleReportDAO($this->db());
+		return $dao->saleDayByCustomerQueryData($params);
+		
 		$page = $params["page"];
 		$start = $params["start"];
 		$limit = $params["limit"];
