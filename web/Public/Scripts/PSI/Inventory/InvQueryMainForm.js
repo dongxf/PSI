@@ -70,6 +70,19 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 									}
 								}
 							}, {
+								xtype : "checkbox",
+								boxLabel : "只显示有库存的商品",
+								inputValue : "1",
+								id : "editQueryHasInv",
+								listeners : {
+									change : {
+										fn : function() {
+											me.onQueryGoods();
+										},
+										scoep : me
+									}
+								}
+							}, " ", "-", {
 								text : "查询",
 								iconCls : "PSI-button-refresh",
 								handler : me.onQueryGoods,
@@ -221,6 +234,7 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 		var store = Ext.create("Ext.data.Store", {
 					model : "PSIInventory",
 					pageSize : 20,
+					remoteSort : true,
 					proxy : {
 						type : "ajax",
 						actionMethods : {
@@ -260,7 +274,7 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 								header : "商品编码",
 								dataIndex : "goodsCode",
 								menuDisabled : true,
-								sortable : false
+								sortable : true
 							}, {
 								header : "商品名称",
 								dataIndex : "goodsName",
@@ -282,34 +296,34 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 								align : "right",
 								dataIndex : "afloatCount",
 								menuDisabled : true,
-								sortable : false
+								sortable : true
 							}, {
 								header : "在途单价",
 								align : "right",
 								xtype : "numbercolumn",
 								dataIndex : "afloatPrice",
 								menuDisabled : true,
-								sortable : false
+								sortable : true
 							}, {
 								header : "在途金额",
 								align : "right",
 								xtype : "numbercolumn",
 								dataIndex : "afloatMoney",
 								menuDisabled : true,
-								sortable : false
+								sortable : true
 							}, {
 								header : "入库数量",
 								align : "right",
 								dataIndex : "inCount",
 								menuDisabled : true,
-								sortable : false
+								sortable : true
 							}, {
 								header : "平均入库成本单价",
 								align : "right",
 								xtype : "numbercolumn",
 								dataIndex : "inPrice",
 								menuDisabled : true,
-								sortable : false,
+								sortable : true,
 								width : 130
 							}, {
 								header : "入库成本总金额",
@@ -317,21 +331,21 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 								xtype : "numbercolumn",
 								dataIndex : "inMoney",
 								menuDisabled : true,
-								sortable : false,
+								sortable : true,
 								width : 120
 							}, {
 								header : "出库数量",
 								align : "right",
 								dataIndex : "outCount",
 								menuDisabled : true,
-								sortable : false
+								sortable : true
 							}, {
 								header : "平均出库成本单价",
 								align : "right",
 								xtype : "numbercolumn",
 								dataIndex : "outPrice",
 								menuDisabled : true,
-								sortable : false,
+								sortable : true,
 								width : 130
 							}, {
 								header : "出库成本总金额",
@@ -339,28 +353,28 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 								xtype : "numbercolumn",
 								dataIndex : "outMoney",
 								menuDisabled : true,
-								sortable : false,
+								sortable : true,
 								width : 120
 							}, {
 								header : "余额数量",
 								align : "right",
 								dataIndex : "balanceCount",
 								menuDisabled : true,
-								sortable : false
+								sortable : true
 							}, {
 								header : "余额平均单价",
 								align : "right",
 								xtype : "numbercolumn",
 								dataIndex : "balancePrice",
 								menuDisabled : true,
-								sortable : false
+								sortable : true
 							}, {
 								header : "余额总金额",
 								align : "right",
 								xtype : "numbercolumn",
 								dataIndex : "balanceMoney",
 								menuDisabled : true,
-								sortable : false
+								sortable : true
 							}],
 					store : store,
 					listeners : {
@@ -625,6 +639,11 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 			result.spec = spec;
 		}
 
+		var hasInv = Ext.getCmp("editQueryHasInv").getValue();
+		if (hasInv) {
+			result.hasInv = hasInv ? 1 : 0;
+		}
+
 		return result;
 	},
 
@@ -696,6 +715,8 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 				edit.setValue(null);
 			}
 		}
+
+		Ext.getCmp("editQueryHasInv").setValue(false);
 
 		this.onQueryGoods();
 	},

@@ -51,6 +51,49 @@ class InventoryService extends PSIBaseService {
 		$page = $params["page"];
 		$start = $params["start"];
 		$limit = $params["limit"];
+		$hasInv = $params["hasInv"] == "1";
+		
+		$sort = $params["sort"];
+		$sortProperty = "g.code";
+		$sortDirection = "ASC";
+		if ($sort) {
+			$sortJSON = json_decode(html_entity_decode($sort), true);
+			if ($sortJSON) {
+				$sortProperty = strtolower($sortJSON[0]["property"]);
+				if ($sortProperty == strtolower("goodsCode")) {
+					$sortProperty = "g.code";
+				} else if ($sortProperty == strtolower("afloatCount")) {
+					$sortProperty = "v.afloat_count";
+				} else if ($sortProperty == strtolower("afloatPrice")) {
+					$sortProperty = "v.afloat_price";
+				} else if ($sortProperty == strtolower("afloatMoney")) {
+					$sortProperty = "v.afloat_money";
+				} else if ($sortProperty == strtolower("inCount")) {
+					$sortProperty = "v.in_count";
+				} else if ($sortProperty == strtolower("inPrice")) {
+					$sortProperty = "v.in_price";
+				} else if ($sortProperty == strtolower("inMoney")) {
+					$sortProperty = "v.in_money";
+				} else if ($sortProperty == strtolower("outCount")) {
+					$sortProperty = "v.out_count";
+				} else if ($sortProperty == strtolower("outPrice")) {
+					$sortProperty = "v.out_price";
+				} else if ($sortProperty == strtolower("outMoney")) {
+					$sortProperty = "v.out_money";
+				} else if ($sortProperty == strtolower("balanceCount")) {
+					$sortProperty = "v.balance_count";
+				} else if ($sortProperty == strtolower("balancePrice")) {
+					$sortProperty = "v.balance_price";
+				} else if ($sortProperty == strtolower("balanceMoney")) {
+					$sortProperty = "v.balance_money";
+				}
+				
+				$sortDirection = strtoupper($sortJSON[0]["direction"]);
+				if ($sortDirection != "ASC" && $sortDirection != "DESC") {
+					$sortDirection = "ASC";
+				}
+			}
+		}
 		
 		$queryParams = [];
 		$queryParams[] = $warehouseId;
@@ -76,8 +119,13 @@ class InventoryService extends PSIBaseService {
 			$sql .= " and (g.spec like '%s')";
 			$queryParams[] = "%{$spec}%";
 		}
-		$sql .= " order by g.code
+		if ($hasInv) {
+			$sql .= " and (convert(v.balance_count, $fmt) > 0) ";
+		}
+		$sql .= " order by %s %s
 				limit %d, %d";
+		$queryParams[] = $sortProperty;
+		$queryParams[] = $sortDirection;
 		$queryParams[] = $start;
 		$queryParams[] = $limit;
 		
