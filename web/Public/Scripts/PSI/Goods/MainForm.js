@@ -792,8 +792,10 @@ Ext.define("PSI.Goods.MainForm", {
 		Ext.define(modelName, {
 					extend : "Ext.data.Model",
 					fields : ["id", "warehouseCode", "warehouseName",
-							"safetyInventory", "inventoryCount", "unitName",
-							"inventoryUpper"]
+							"safetyInventory", {
+								name : "inventoryCount",
+								type : "float"
+							}, "unitName", "inventoryUpper"]
 				});
 
 		me.__siGrid = Ext.create("Ext.grid.Panel", {
@@ -801,6 +803,9 @@ Ext.define("PSI.Goods.MainForm", {
 					viewConfig : {
 						enableTextSelection : true
 					},
+					features : [{
+								ftype : "summary"
+							}],
 					title : "商品安全库存",
 					tbar : [{
 								text : "设置商品安全库存",
@@ -839,7 +844,10 @@ Ext.define("PSI.Goods.MainForm", {
 								sortable : false,
 								align : "right",
 								xtype : "numbercolumn",
-								format : "0"
+								format : "0",
+								summaryRenderer : function() {
+									return "当前库存合计";
+								}
 							}, {
 								header : "当前库存",
 								dataIndex : "inventoryCount",
@@ -848,6 +856,7 @@ Ext.define("PSI.Goods.MainForm", {
 								sortable : false,
 								align : "right",
 								xtype : "numbercolumn",
+								summaryType : "sum",
 								format : "0"
 							}, {
 								header : "计量单位",
