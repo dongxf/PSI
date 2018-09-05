@@ -1250,10 +1250,18 @@ class WSBillDAO extends PSIBaseExDAO {
 					$outMoneyDetail = $balanceMoney;
 					$balanceMoney = 0;
 				} else {
-					$outMoney += $goodsCount * $balancePrice;
-					$outPriceDetail = $balancePrice;
-					$outMoneyDetail = $goodsCount * $balancePrice;
-					$balanceMoney -= $goodsCount * $balancePrice;
+					if ($goodsCount * $balancePrice > $balanceMoney) {
+						// 因为单价是保存两位小数，所以当单价小，数量大的时候会出现这种情形
+						$outMoney = $balanceMoney;
+						$outPriceDetail = $balancePrice;
+						$outMoneyDetail = $balanceMoney;
+						$balanceMoney = 0;
+					} else {
+						$outMoney += $goodsCount * $balancePrice;
+						$outPriceDetail = $balancePrice;
+						$outMoneyDetail = $goodsCount * $balancePrice;
+						$balanceMoney -= $goodsCount * $balancePrice;
+					}
 				}
 				$outCount += $goodsCount;
 				$outPrice = $outMoney / $outCount;
