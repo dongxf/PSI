@@ -804,7 +804,8 @@ Ext.define("PSI.Goods.MainForm", {
 						enableTextSelection : true
 					},
 					features : [{
-								ftype : "summary"
+								ftype : "summary",
+								dock : "bottom"
 							}],
 					title : "商品安全库存",
 					tbar : [{
@@ -814,7 +815,7 @@ Ext.define("PSI.Goods.MainForm", {
 								handler : me.onSafetyInventory,
 								scope : me
 							}],
-					columnLines : true,
+					columnLines : false,
 					columns : [{
 								header : "仓库编码",
 								dataIndex : "warehouseCode",
