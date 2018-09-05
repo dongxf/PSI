@@ -199,10 +199,24 @@ Ext.define("PSI.Bizlog.MainForm", {
 								menuDisabled : true,
 								sortable : false
 							}],
-					store : store
+					store : store,
+					listeners : {
+						celldblclick : {
+							fn : me.onCellDbclick,
+							scope : me
+						}
+					}
 				});
 
 		return me.__mainGrid;
+	},
+
+	onCellDbclick : function(ths, td, cellIndex, record, tr, rowIndex, e, eOpts) {
+		var me = this;
+		
+		if (cellIndex == 3) {
+			Ext.getCmp("editIP").setValue(record.get("ip"));
+		}
 	},
 
 	/**
