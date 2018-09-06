@@ -30,10 +30,13 @@ Ext.define("PSI.User.UserField", {
 					}
 				});
 
-		me.on("render", function(p) {
-					p.getEl().on("dblclick", function() {
-								me.onTriggerClick();
-							});
+		me.on({
+					render : function(p) {
+						p.getEl().on("dblclick", function() {
+									me.onTriggerClick();
+								});
+					},
+					single : true
 				});
 	},
 
