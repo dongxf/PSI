@@ -7,7 +7,8 @@ Ext.define("PSI.Customer.CustomerField", {
 
 	config : {
 		showAddButton : false,
-		callbackFunc : null
+		callbackFunc : null,
+		showModal : false
 	},
 
 	initComponent : function() {
@@ -91,6 +92,7 @@ Ext.define("PSI.Customer.CustomerField", {
 
 		var wnd = Ext.create("Ext.window.Window", {
 			title : "选择 - 客户",
+			modal : me.getShowModal(),
 			header : false,
 			border : 0,
 			width : 700,
@@ -158,9 +160,11 @@ Ext.define("PSI.Customer.CustomerField", {
 		wnd.on("close", function() {
 					me.focus();
 				});
-		wnd.on("deactivate", function() {
-					wnd.close();
-				});
+		if (!me.getShowModal()) {
+			wnd.on("deactivate", function() {
+						wnd.close();
+					});
+		}
 		me.wnd = wnd;
 
 		var editName = Ext.getCmp("__editCustomer");

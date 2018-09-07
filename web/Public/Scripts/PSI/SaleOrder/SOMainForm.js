@@ -208,6 +208,7 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 		}, {
 			id : "editQueryCustomer",
 			xtype : "psi_customerfield",
+			showModal : true,
 			labelAlign : "right",
 			labelSeparator : "",
 			labelWidth : 60,

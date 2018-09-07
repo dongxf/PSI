@@ -178,6 +178,7 @@ Ext.define("PSI.Sale.SRMainForm", {
 				}, {
 					id : "editQueryCustomer",
 					xtype : "psi_customerfield",
+					showModal : true,
 					labelAlign : "right",
 					labelSeparator : "",
 					labelWidth : 60,
