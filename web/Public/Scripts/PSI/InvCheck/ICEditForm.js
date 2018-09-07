@@ -322,7 +322,8 @@ Ext.define("PSI.InvCheck.ICEditForm", {
 
 		me.__goodsGrid = Ext.create("Ext.grid.Panel", {
 					viewConfig : {
-						enableTextSelection : true
+						enableTextSelection : true,
+						markDirty : !me.adding
 					},
 					plugins : [me.__cellEditing],
 					columnLines : true,
@@ -360,7 +361,7 @@ Ext.define("PSI.InvCheck.ICEditForm", {
 								draggable : false,
 								sortable : false,
 								align : "right",
-								width : 100,
+								width : 120,
 								editor : {
 									xtype : "numberfield",
 									allowDecimals : PSI.Const.GC_DEC_NUMBER > 0,
@@ -383,7 +384,7 @@ Ext.define("PSI.InvCheck.ICEditForm", {
 								draggable : false,
 								align : "right",
 								xtype : "numbercolumn",
-								width : 100,
+								width : 120,
 								editor : {
 									xtype : "numberfield",
 									hideTrigger : true

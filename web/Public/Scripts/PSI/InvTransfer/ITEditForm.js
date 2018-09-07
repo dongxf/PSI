@@ -325,7 +325,8 @@ Ext.define("PSI.InvTransfer.ITEditForm", {
 
 		me.__goodsGrid = Ext.create("Ext.grid.Panel", {
 					viewConfig : {
-						enableTextSelection : true
+						enableTextSelection : true,
+						markDirty : !me.adding
 					},
 					plugins : [me.__cellEditing],
 					columnLines : true,

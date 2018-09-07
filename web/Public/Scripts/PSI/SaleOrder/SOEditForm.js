@@ -453,7 +453,8 @@ Ext.define("PSI.SaleOrder.SOEditForm", {
 
 		me.__goodsGrid = Ext.create("Ext.grid.Panel", {
 					viewConfig : {
-						enableTextSelection : true
+						enableTextSelection : true,
+						markDirty : !me.adding
 					},
 					features : [{
 								ftype : "summary"
