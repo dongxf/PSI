@@ -178,6 +178,7 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
 				}, {
 					id : "editQuerySupplier",
 					xtype : "psi_supplierfield",
+					showModal : true,
 					labelAlign : "right",
 					labelSeparator : "",
 					labelWidth : 60,

@@ -8,7 +8,8 @@ Ext.define("PSI.Supplier.SupplierField", {
 	config : {
 		callbackFunc : null,
 		callbackScope : null,
-		showAddButton : false
+		showAddButton : false,
+		showModal : false
 	},
 
 	initComponent : function() {
@@ -82,6 +83,7 @@ Ext.define("PSI.Supplier.SupplierField", {
 
 		var wnd = Ext.create("Ext.window.Window", {
 			title : "选择 - 供应商",
+			modal : me.getShowModal(),
 			header : false,
 			border : 0,
 			width : 500,
@@ -148,9 +150,11 @@ Ext.define("PSI.Supplier.SupplierField", {
 		wnd.on("close", function() {
 					me.focus();
 				});
-		wnd.on("deactivate", function() {
-					wnd.close();
-				});
+		if (!me.getShowModal()) {
+			wnd.on("deactivate", function() {
+						wnd.close();
+					});
+		}
 		me.wnd = wnd;
 
 		var editName = Ext.getCmp("PSI_Supplier_SupplierField_editSupplier");

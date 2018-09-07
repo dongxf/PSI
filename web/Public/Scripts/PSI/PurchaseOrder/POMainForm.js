@@ -227,6 +227,7 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 			id : "editQuerySupplier",
 			xtype : "psi_supplierfield",
 			parentCmp : me,
+			showModal : true,
 			labelAlign : "right",
 			labelSeparator : "",
 			labelWidth : 60,
