@@ -25,6 +25,14 @@ Ext.define("PSI.Goods.GoodsBrandField", {
 								this.onTriggerClick(e);
 							}
 						});
+				me.on({
+							render : function(p) {
+								p.getEl().on("dblclick", function() {
+											me.onTriggerClick();
+										});
+							},
+							single : true
+						});
 			},
 
 			onTriggerClick : function(e) {
