@@ -186,6 +186,7 @@ Ext.define("PSI.Sale.SRMainForm", {
 				}, {
 					id : "editQueryWarehouse",
 					xtype : "psi_warehousefield",
+					showModal : true,
 					labelAlign : "right",
 					labelSeparator : "",
 					labelWidth : 60,

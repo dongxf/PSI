@@ -178,6 +178,7 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
 				}, {
 					id : "editQueryFromWarehouse",
 					xtype : "psi_warehousefield",
+					showModal : true,
 					labelAlign : "right",
 					labelSeparator : "",
 					labelWidth : 60,
@@ -186,6 +187,7 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
 				}, {
 					id : "editQueryToWarehouse",
 					xtype : "psi_warehousefield",
+					showModal : true,
 					labelAlign : "right",
 					labelSeparator : "",
 					labelWidth : 60,

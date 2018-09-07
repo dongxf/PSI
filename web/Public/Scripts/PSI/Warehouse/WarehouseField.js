@@ -6,7 +6,8 @@ Ext.define("PSI.Warehouse.WarehouseField", {
 	alias : "widget.psi_warehousefield",
 
 	config : {
-		fid : null
+		fid : null,
+		showModal : false
 	},
 
 	/**
@@ -84,6 +85,7 @@ Ext.define("PSI.Warehouse.WarehouseField", {
 
 		var wnd = Ext.create("Ext.window.Window", {
 			title : "选择 - 仓库",
+			modal : me.getShowModal(),
 			width : 420,
 			height : 390,
 			header : false,
@@ -144,9 +146,11 @@ Ext.define("PSI.Warehouse.WarehouseField", {
 		wnd.on("close", function() {
 					me.focus();
 				});
-		wnd.on("deactivate", function() {
-					wnd.close();
-				});
+		if (!me.getShowModal()) {
+			wnd.on("deactivate", function() {
+						wnd.close();
+					});
+		}
 		me.wnd = wnd;
 
 		var editName = Ext.getCmp("PSI_Warehouse_WarehouseField_editWarehouse");

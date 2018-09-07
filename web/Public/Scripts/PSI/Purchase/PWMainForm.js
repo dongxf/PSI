@@ -190,6 +190,7 @@ Ext.define("PSI.Purchase.PWMainForm", {
 			id : "editQueryWarehouse",
 			xtype : "psi_warehousefield",
 			parentCmp : me,
+			showModal : true,
 			labelAlign : "right",
 			labelSeparator : "",
 			labelWidth : 60,

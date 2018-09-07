@@ -181,6 +181,7 @@ Ext.define("PSI.InvCheck.InvCheckMainForm", {
 				}, {
 					id : "editQueryWarehouse",
 					xtype : "psi_warehousefield",
+					showModal : true,
 					labelAlign : "right",
 					labelSeparator : "",
 					labelWidth : 60,
