@@ -74,7 +74,8 @@ Ext.define("PSI.User.UserField", {
 
 		var wnd = Ext.create("Ext.window.Window", {
 					title : "选择 - 人员",
-					modal : true,
+					header : false,
+					border : 0,
 					width : 400,
 					height : 300,
 					layout : "border",
@@ -118,6 +119,9 @@ Ext.define("PSI.User.UserField", {
 
 		wnd.on("close", function() {
 					me.focus();
+				});
+		wnd.on("deactivate", function() {
+					wnd.close();
 				});
 		me.wnd = wnd;
 
@@ -191,7 +195,7 @@ Ext.define("PSI.User.UserField", {
 					editName.focus();
 					editName.fireEvent("change");
 				}, me);
-		wnd.show();
+		wnd.showBy(me);
 	},
 
 	onOK : function() {

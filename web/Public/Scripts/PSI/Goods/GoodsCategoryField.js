@@ -90,7 +90,8 @@ Ext.define("PSI.Goods.GoodsCategoryField", {
 
 				var wnd = Ext.create("Ext.window.Window", {
 							title : "选择商品分类",
-							modal : true,
+							header : false,
+							border : 0,
 							width : 400,
 							height : 300,
 							layout : "fit",
@@ -107,7 +108,11 @@ Ext.define("PSI.Goods.GoodsCategoryField", {
 									}]
 						});
 				this.wnd = wnd;
-				wnd.show();
+				wnd.on("deactivate", function() {
+							wnd.close();
+						});
+
+				wnd.showBy(this);
 			},
 
 			onOK : function() {

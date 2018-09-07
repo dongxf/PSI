@@ -67,7 +67,8 @@ Ext.define("PSI.User.OrgWithDataOrgField", {
 
 				var wnd = Ext.create("Ext.window.Window", {
 							title : "选择组织机构",
-							modal : true,
+							border : 0,
+							header : false,
 							width : 500,
 							height : 400,
 							layout : "fit",
@@ -84,7 +85,12 @@ Ext.define("PSI.User.OrgWithDataOrgField", {
 									}]
 						});
 				this.wnd = wnd;
-				wnd.show();
+
+				wnd.on("deactivate", function() {
+							wnd.close();
+						});
+
+				wnd.showBy(this);
 
 				me.refreshGrid();
 			},

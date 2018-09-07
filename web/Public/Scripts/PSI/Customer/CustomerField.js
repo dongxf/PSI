@@ -91,7 +91,8 @@ Ext.define("PSI.Customer.CustomerField", {
 
 		var wnd = Ext.create("Ext.window.Window", {
 			title : "选择 - 客户",
-			modal : true,
+			header : false,
+			border : 0,
 			width : 700,
 			height : 390,
 			layout : "border",
@@ -156,6 +157,9 @@ Ext.define("PSI.Customer.CustomerField", {
 
 		wnd.on("close", function() {
 					me.focus();
+				});
+		wnd.on("deactivate", function() {
+					wnd.close();
 				});
 		me.wnd = wnd;
 
@@ -229,7 +233,7 @@ Ext.define("PSI.Customer.CustomerField", {
 					editName.focus();
 					editName.fireEvent("change");
 				}, me);
-		wnd.show();
+		wnd.showBy(me);
 	},
 
 	onOK : function() {

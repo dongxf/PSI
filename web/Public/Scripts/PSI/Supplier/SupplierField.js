@@ -82,7 +82,8 @@ Ext.define("PSI.Supplier.SupplierField", {
 
 		var wnd = Ext.create("Ext.window.Window", {
 			title : "选择 - 供应商",
-			modal : true,
+			header : false,
+			border : 0,
 			width : 500,
 			height : 380,
 			layout : "border",
@@ -146,6 +147,9 @@ Ext.define("PSI.Supplier.SupplierField", {
 
 		wnd.on("close", function() {
 					me.focus();
+				});
+		wnd.on("deactivate", function() {
+					wnd.close();
 				});
 		me.wnd = wnd;
 
@@ -219,7 +223,7 @@ Ext.define("PSI.Supplier.SupplierField", {
 					editName.focus();
 					editName.fireEvent("change");
 				}, me);
-		wnd.show();
+		wnd.showBy(me);
 	},
 
 	// private

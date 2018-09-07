@@ -84,9 +84,10 @@ Ext.define("PSI.Warehouse.WarehouseField", {
 
 		var wnd = Ext.create("Ext.window.Window", {
 			title : "选择 - 仓库",
-			modal : true,
 			width : 420,
 			height : 390,
+			header : false,
+			border : 0,
 			layout : "border",
 			items : [{
 						region : "center",
@@ -142,6 +143,9 @@ Ext.define("PSI.Warehouse.WarehouseField", {
 
 		wnd.on("close", function() {
 					me.focus();
+				});
+		wnd.on("deactivate", function() {
+					wnd.close();
 				});
 		me.wnd = wnd;
 
@@ -216,7 +220,7 @@ Ext.define("PSI.Warehouse.WarehouseField", {
 					editName.focus();
 					editName.fireEvent("change");
 				}, me);
-		wnd.show();
+		wnd.showBy(me);
 	},
 
 	onOK : function() {

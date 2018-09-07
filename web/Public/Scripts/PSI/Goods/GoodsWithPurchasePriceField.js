@@ -122,10 +122,11 @@ Ext.define("PSI.Goods.GoodsWithPurchaseFieldField", {
 
 		var wnd = Ext.create("Ext.window.Window", {
 			title : "选择 - 商品",
-			modal : true,
 			width : 950,
-			height : 390,
+			height : 300,
 			layout : "border",
+			header : false,
+			border : 0,
 			items : [{
 						region : "center",
 						xtype : "panel",
@@ -171,6 +172,9 @@ Ext.define("PSI.Goods.GoodsWithPurchaseFieldField", {
 
 		wnd.on("close", function() {
 					me.focus();
+				});
+		wnd.on("deactivate", function() {
+					wnd.close();
 				});
 		me.wnd = wnd;
 
@@ -245,7 +249,7 @@ Ext.define("PSI.Goods.GoodsWithPurchaseFieldField", {
 					editName.focus();
 					editName.fireEvent("change");
 				}, me);
-		wnd.show();
+		wnd.showBy(me);
 	},
 
 	onOK : function() {
