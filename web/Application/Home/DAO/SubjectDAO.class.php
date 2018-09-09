@@ -109,7 +109,7 @@ class SubjectDAO extends PSIBaseExDAO {
 					"code" => $v["code"],
 					"name" => $v["name"],
 					"category" => $v["category"],
-					"is_leaf" => $v["is_leaf"],
+					"isLeaf" => $v["is_leaf"] == 1 ? "末级科目" : null,
 					"children" => $children,
 					"leaf" => count($children) == 0,
 					"expanded" => true
@@ -182,6 +182,21 @@ class SubjectDAO extends PSIBaseExDAO {
 		$result[] = [
 				"code" => "1131",
 				"name" => "应收股利",
+				"category" => 1
+		];
+		$result[] = [
+				"code" => "1132",
+				"name" => "应收利息",
+				"category" => 1
+		];
+		$result[] = [
+				"code" => "1221",
+				"name" => "其他应收款",
+				"category" => 1
+		];
+		$result[] = [
+				"code" => "1231",
+				"name" => "坏账准备",
 				"category" => 1
 		];
 		

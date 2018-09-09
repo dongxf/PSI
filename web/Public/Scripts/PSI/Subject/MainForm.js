@@ -171,8 +171,8 @@ Ext.define("PSI.Subject.MainForm", {
 				var modelName = "PSISubject";
 				Ext.define(modelName, {
 							extend : "Ext.data.Model",
-							fields : ["id", "code", "name", "categoryName",
-									"leaf", "children", "isLeaf"]
+							fields : ["id", "code", "name", "category", "leaf",
+									"children", "isLeaf"]
 						});
 
 				var store = Ext.create("Ext.data.TreeStore", {
@@ -221,11 +221,16 @@ Ext.define("PSI.Subject.MainForm", {
 										}, {
 											text : "科目名称",
 											dataIndex : "name",
-											width : 200
+											width : 400
 										}, {
 											text : "分类",
-											dataIndex : "categoryName",
-											width : 200
+											dataIndex : "category",
+											width : 80,
+											renderer : function(value) {
+												if (value == 1) {
+													return "资产";
+												}
+											}
 										}, {
 											text : "末级科目",
 											dataIndex : "isLeaf",
