@@ -47,4 +47,75 @@ class SubjectDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	private function subjectListInternal($parentId, $companyId) {
+		$db = $this->db;
+		
+		$sql = "select id, code, name, category, is_leaf from t_subject
+				where parent_id = '%s' and company_id = '%s'
+				order by code ";
+		$data = $db->query($sql, $parentId, $companyId);
+		$result = [];
+		foreach ( $data as $v ) {
+			// 递归调用自己
+			$children = $this->subjectListInternal($v["id"]);
+			
+			$result[] = [
+					"id" => $v["id"],
+					"code" => $v["code"],
+					"name" => $v["name"],
+					"category" => $v["category"],
+					"is_leaf" => $v["is_leaf"],
+					"children" => $children,
+					"leaf" => count($children) == 0,
+					"expanded" => false
+			];
+		}
+		
+		return $result;
+	}
+
+	/**
+	 * 某个公司的科目码列表
+	 *
+	 * @param array $params        	
+	 * @return array
+	 */
+	public function subjectList($params) {
+		$db = $this->db;
+		
+		$companyId = $params["companyId"];
+		
+		// 判断$companyId是否是公司id
+		$sql = "select count(*) as cnt
+				from t_org where id = '%s' and parent_id is null ";
+		$data = $db->query($sql, $companyId);
+		$cnt = $data[0]["cnt"];
+		if ($cnt == 0) {
+			return $this->emptyResult();
+		}
+		
+		$result = [];
+		
+		$sql = "select id, code, name, category, is_leaf from t_subject
+				where parent_id is null
+				order by code ";
+		$data = $db->query($sql);
+		foreach ( $data as $v ) {
+			$children = $this->subjectListInternal($v["id"], $companyId);
+			
+			$result[] = [
+					"id" => $v["id"],
+					"code" => $v["code"],
+					"name" => $v["name"],
+					"category" => $v["category"],
+					"is_leaf" => $v["is_leaf"],
+					"children" => $children,
+					"leaf" => count($children) == 0,
+					"expanded" => true
+			];
+		}
+		
+		return $result;
+	}
 }

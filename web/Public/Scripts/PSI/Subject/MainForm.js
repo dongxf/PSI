@@ -24,7 +24,7 @@ Ext.define("PSI.Subject.MainForm", {
 										xtype : "panel",
 										layout : "fit",
 										border : 0,
-										items : []
+										items : me.getMainGrid()
 									}]
 						});
 
@@ -126,7 +126,9 @@ Ext.define("PSI.Subject.MainForm", {
 			},
 
 			onCompanyGridSelect : function() {
-
+				var me = this;
+				var store = me.getMainGrid().getStore();
+				store.load();
 			},
 
 			onAddSubject : function() {
@@ -142,5 +144,97 @@ Ext.define("PSI.Subject.MainForm", {
 			onDeleteSubject : function() {
 				var me = this;
 				me.showInfo("TODO");
+			},
+
+			getMainGrid : function() {
+				var me = this;
+				if (me.__mainGrid) {
+					return me.__mainGrid;
+				}
+
+				var modelName = "PSISubject";
+				Ext.define(modelName, {
+							extend : "Ext.data.Model",
+							fields : ["id", "code", "name", "categoryName",
+									"leaf", "children", "isLeaf"]
+						});
+
+				var store = Ext.create("Ext.data.TreeStore", {
+							model : modelName,
+							proxy : {
+								type : "ajax",
+								actionMethods : {
+									read : "POST"
+								},
+								url : me.URL("Home/Subject/subjectList")
+							},
+							listeners : {
+								beforeload : {
+									fn : function() {
+										store.proxy.extraParams = me
+												.getQueryParamForSubject();
+									},
+									scope : me
+								}
+							}
+						});
+
+				me.__mainGrid = Ext.create("Ext.tree.Panel", {
+							cls : "PSI",
+							header : {
+								height : 30,
+								title : me.formatGridHeaderTitle("会计科目")
+							},
+							store : store,
+							rootVisible : false,
+							useArrows : true,
+							viewConfig : {
+								loadMask : true
+							},
+							columns : {
+								defaults : {
+									sortable : false,
+									menuDisabled : true,
+									draggable : false
+								},
+								items : [{
+											xtype : "treecolumn",
+											text : "科目码",
+											dataIndex : "code",
+											width : 200
+										}, {
+											text : "科目名称",
+											dataIndex : "name",
+											width : 200
+										}, {
+											text : "分类",
+											dataIndex : "categoryName",
+											width : 200
+										}, {
+											text : "末级科目",
+											dataIndex : "isLeaf",
+											width : 100
+										}]
+							}
+						});
+
+				return me.__mainGrid;
+			},
+
+			getQueryParamForSubject : function() {
+				var me = this;
+				var item = me.getCompanyGrid().getSelectionModel()
+						.getSelection();
+				if (item == null || item.length != 1) {
+					return {};
+				}
+
+				var company = item[0];
+
+				var result = {
+					companyId : company.get("id")
+				};
+
+				return result;
 			}
 		});

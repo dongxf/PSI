@@ -40,4 +40,18 @@ class SubjectController extends PSIBaseController {
 			$this->ajaxReturn($service->companyList());
 		}
 	}
+
+	/**
+	 * 某个公司的科目码列表
+	 */
+	public function subjectList() {
+		if (IS_POST) {
+			$params = [
+					"companyId" => I("post.companyId")
+			];
+			
+			$service = new SubjectService();
+			$this->ajaxReturn($service->subjectList($params));
+		}
+	}
 }

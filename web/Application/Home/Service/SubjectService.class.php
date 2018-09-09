@@ -13,7 +13,7 @@ class SubjectService extends PSIBaseExService {
 
 	/**
 	 * 返回所有的公司列表
-	 * 
+	 *
 	 * @return array
 	 */
 	public function companyList() {
@@ -27,5 +27,20 @@ class SubjectService extends PSIBaseExService {
 		
 		$dao = new SubjectDAO($this->db());
 		return $dao->companyList($params);
+	}
+
+	/**
+	 * 某个公司的科目码列表
+	 *
+	 * @param array $params        	
+	 * @return array
+	 */
+	public function subjectList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$dao = new SubjectDAO($this->db());
+		return $dao->subjectList($params);
 	}
 }
