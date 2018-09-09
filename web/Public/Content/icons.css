@@ -357,3 +357,7 @@
 .PSI-button-print-preview {
     background-image:url(../Images/icons/print_preview.png?v=2018041801) !important;
 }
+
+.PSI-Subject {
+    background-image:url(../Images/icons/gl_subject.png) !important;
+}

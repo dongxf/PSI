@@ -68,6 +68,7 @@ class SubjectDAO extends PSIBaseExDAO {
 					"is_leaf" => $v["is_leaf"],
 					"children" => $children,
 					"leaf" => count($children) == 0,
+					"iconCls" => "PSI-Subject",
 					"expanded" => false
 			];
 		}
@@ -112,6 +113,7 @@ class SubjectDAO extends PSIBaseExDAO {
 					"isLeaf" => $v["is_leaf"] == 1 ? "末级科目" : null,
 					"children" => $children,
 					"leaf" => count($children) == 0,
+					"iconCls" => "PSI-Subject",
 					"expanded" => true
 			];
 		}
