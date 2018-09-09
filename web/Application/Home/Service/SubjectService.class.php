@@ -10,6 +10,7 @@ use Home\DAO\SubjectDAO;
  * @author 李静波
  */
 class SubjectService extends PSIBaseExService {
+	private $LOG_CATEGORY = "会计科目";
 
 	/**
 	 * 返回所有的公司列表
@@ -42,5 +43,36 @@ class SubjectService extends PSIBaseExService {
 		
 		$dao = new SubjectDAO($this->db());
 		return $dao->subjectList($params);
+	}
+
+	/**
+	 * 初始国家标准科目
+	 */
+	public function init($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
+		$params["dataOrg"] = $this->getLoginUserDataOrg();
+		
+		$db = $this->db();
+		$db->startTrans();
+		
+		$dao = new SubjectDAO($db);
+		$rc = $dao->init($params, new PinyinService());
+		if ($rc) {
+			$db->rollback();
+			return $rc;
+		}
+		
+		// 记录业务日志
+		$companyName = $params["companyName"];
+		$log = "为[{$companyName}]初始化国家标准会计科目";
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$db->commit();
+		
+		return $this->ok();
 	}
 }

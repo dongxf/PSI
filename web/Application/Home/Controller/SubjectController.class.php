@@ -54,4 +54,18 @@ class SubjectController extends PSIBaseController {
 			$this->ajaxReturn($service->subjectList($params));
 		}
 	}
+
+	/**
+	 * 初始国家标准科目
+	 */
+	public function init() {
+		if (IS_POST) {
+			$params = [
+					"id" => I("post.id")
+			];
+			
+			$service = new SubjectService();
+			$this->ajaxReturn($service->init($params));
+		}
+	}
 }

@@ -36,6 +36,10 @@ Ext.define("PSI.Subject.MainForm", {
 			getToolbarCmp : function() {
 				var me = this;
 				return [{
+							text : "初始化国家标准科目",
+							handler : me.onInit,
+							scope : me
+						}, "-", {
 							text : "新建科目",
 							handler : me.onAddSubject,
 							scope : me
@@ -127,6 +131,18 @@ Ext.define("PSI.Subject.MainForm", {
 
 			onCompanyGridSelect : function() {
 				var me = this;
+				me.getMainGrid().setTitle(me.formatGridHeaderTitle("会计科目"));
+				var item = me.getCompanyGrid().getSelectionModel()
+						.getSelection();
+				if (item == null || item.length != 1) {
+					return;
+				}
+
+				var company = item[0];
+				var title = Ext.String
+						.format("{0} - 会计科目", company.get("name"));
+				me.getMainGrid().setTitle(me.formatGridHeaderTitle(title));
+
 				var store = me.getMainGrid().getStore();
 				store.load();
 			},
@@ -236,5 +252,52 @@ Ext.define("PSI.Subject.MainForm", {
 				};
 
 				return result;
+			},
+
+			onInit : function() {
+				var me = this;
+				var item = me.getCompanyGrid().getSelectionModel()
+						.getSelection();
+				if (item == null || item.length != 1) {
+					me.showInfo("请选择要初始化科目的公司");
+					return;
+				}
+
+				var company = item[0];
+
+				var confirmFunc = function() {
+					var el = Ext.getBody();
+					el.mask("正在操作中...");
+					var r = {
+						url : me.URL("Home/Subject/init"),
+						params : {
+							id : company.get("id")
+						},
+						callback : function(options, success, response) {
+							el.unmask();
+
+							if (success) {
+								var data = Ext.JSON
+										.decode(response.responseText);
+								if (data.success) {
+									me.showInfo("成功完成初始化操作", function() {
+												me.onCompanyGridSelect();
+											});
+								} else {
+									me.showInfo(data.msg);
+								}
+							} else {
+								me.showInfo("网络错误");
+							}
+						}
+					};
+
+					me.ajax(r);
+				};
+
+				var info = Ext.String.format(
+						"请确认是否初始化<span style='color:red'>{0}</span>的科目",
+						company.get("name"));
+				me.confirm(info, confirmFunc);
 			}
 		});

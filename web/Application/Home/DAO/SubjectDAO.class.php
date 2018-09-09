@@ -98,9 +98,9 @@ class SubjectDAO extends PSIBaseExDAO {
 		$result = [];
 		
 		$sql = "select id, code, name, category, is_leaf from t_subject
-				where parent_id is null
+				where parent_id is null and company_id = '%s'
 				order by code ";
-		$data = $db->query($sql);
+		$data = $db->query($sql, $companyId);
 		foreach ( $data as $v ) {
 			$children = $this->subjectListInternal($v["id"], $companyId);
 			
@@ -117,5 +117,119 @@ class SubjectDAO extends PSIBaseExDAO {
 		}
 		
 		return $result;
+	}
+
+	private function insertSubjectInternal($code, $name, $category, $companyId, $py, $dataOrg) {
+		$db = $this->db;
+		
+		$sql = "select count(*) as cnt from t_subject where code = '%s' and company_id = '%s' ";
+		$data = $db->query($sql, $code, $companyId);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return;
+		}
+		
+		$id = $this->newId();
+		
+		$sql = "insert into t_subject(id, category, code, name, is_leaf, py, data_org, company_id, parent_id)
+				values ('%s', '%s', '%s', '%s', 0, '%s', '%s', '%s', null)";
+		$rc = $db->execute($sql, $id, $category, $code, $name, $py, $dataOrg, $companyId);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		return null;
+	}
+
+	private function getStandardSubjectList() {
+		$result = [];
+		
+		$result[] = [
+				"code" => "1001",
+				"name" => "库存现金",
+				"category" => 1
+		];
+		$result[] = [
+				"code" => "1002",
+				"name" => "银行存款",
+				"category" => 1
+		];
+		$result[] = [
+				"code" => "1012",
+				"name" => "其他货币资金",
+				"category" => 1
+		];
+		$result[] = [
+				"code" => "1101",
+				"name" => "交易性金融资产",
+				"category" => 1
+		];
+		$result[] = [
+				"code" => "1121",
+				"name" => "应收票据",
+				"category" => 1
+		];
+		$result[] = [
+				"code" => "1122",
+				"name" => "应收账款",
+				"category" => 1
+		];
+		$result[] = [
+				"code" => "1123",
+				"name" => "预付账款",
+				"category" => 1
+		];
+		$result[] = [
+				"code" => "1131",
+				"name" => "应收股利",
+				"category" => 1
+		];
+		
+		return $result;
+	}
+
+	/**
+	 * 初始国家标准科目
+	 */
+	public function init(& $params, $pinYinService) {
+		$db = $this->db;
+		
+		$dataOrg = $params["dataOrg"];
+		
+		$companyId = $params["id"];
+		$sql = "select name 
+				from t_org
+				where id = '%s' and parent_id is null";
+		$data = $db->query($sql, $companyId);
+		if (! $data) {
+			return $this->badParam("companyId");
+		}
+		
+		$companyName = $data[0]["name"];
+		
+		$sql = "select count(*) as cnt from t_subject where company_id = '%s' ";
+		$data = $db->query($sql, $companyId);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("国家科目表已经初始化完毕，不能再次初始化");
+		}
+		
+		$subjectList = $this->getStandardSubjectList();
+		foreach ( $subjectList as $v ) {
+			$code = $v["code"];
+			$name = $v["name"];
+			$category = $v["category"];
+			
+			$rc = $this->insertSubjectInternal($code, $name, $category, $companyId, 
+					$pinYinService->toPY($name), $dataOrg);
+			if ($rc) {
+				return $rc;
+			}
+		}
+		
+		// 操作成功
+		$params["companyName"] = $companyName;
+		
+		return null;
 	}
 }
