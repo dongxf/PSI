@@ -551,7 +551,7 @@ Ext.define("PSI.SaleOrder.SOEditForm", {
 								sortable : false,
 								draggable : false,
 								align : "right",
-								width : 60
+								width : 80
 							}, {
 								header : "税金",
 								dataIndex : "tax",
