@@ -199,6 +199,96 @@ class SubjectDAO extends PSIBaseExDAO {
 				"name" => "坏账准备",
 				"category" => 1
 		];
+		$result[] = [
+				"code" => "1401",
+				"name" => "材料采购",
+				"category" => 1
+		];
+		$result[] = [
+				"code" => "1402",
+				"name" => "在途物资",
+				"category" => 1
+		];
+		$result[] = [
+				"code" => "1403",
+				"name" => "原材料",
+				"category" => 1
+		];
+		$result[] = [
+				"code" => "1405",
+				"name" => "库存商品",
+				"category" => 1
+		];
+		$result[] = [
+				"code" => "1406",
+				"name" => "发出商品",
+				"category" => 1
+		];
+		$result[] = [
+				"code" => "1408",
+				"name" => "委托加工物资",
+				"category" => 1
+		];
+		$result[] = [
+				"code" => "1411",
+				"name" => "周转材料",
+				"category" => 1
+		];
+		$result[] = [
+				"code" => "1511",
+				"name" => "长期股权投资",
+				"category" => 1
+		];
+		$result[] = [
+				"code" => "1601",
+				"name" => "固定资产",
+				"category" => 1
+		];
+		$result[] = [
+				"code" => "1602",
+				"name" => "累计折旧",
+				"category" => 1
+		];
+		$result[] = [
+				"code" => "1604",
+				"name" => "在建工程",
+				"category" => 1
+		];
+		$result[] = [
+				"code" => "1605",
+				"name" => "工程物资",
+				"category" => 1
+		];
+		$result[] = [
+				"code" => "1606",
+				"name" => "固定资产清理",
+				"category" => 1
+		];
+		$result[] = [
+				"code" => "1701",
+				"name" => "无形资产",
+				"category" => 1
+		];
+		$result[] = [
+				"code" => "1702",
+				"name" => "累计摊销",
+				"category" => 1
+		];
+		$result[] = [
+				"code" => "1801",
+				"name" => "长期待摊费用",
+				"category" => 1
+		];
+		$result[] = [
+				"code" => "1901",
+				"name" => "待处理财产损溢",
+				"category" => 1
+		];
+		$result[] = [
+				"code" => "2001",
+				"name" => "短期借款",
+				"category" => 2
+		];
 		
 		return $result;
 	}

@@ -229,6 +229,16 @@ Ext.define("PSI.Subject.MainForm", {
 											renderer : function(value) {
 												if (value == 1) {
 													return "资产";
+												} else if (value == 2) {
+													return "负债";
+												} else if (value == 4) {
+													return "所有者权益";
+												} else if (value == 5) {
+													return "成本";
+												} else if (vlaue == 6) {
+													return "损益";
+												} else {
+													return "";
 												}
 											}
 										}, {
