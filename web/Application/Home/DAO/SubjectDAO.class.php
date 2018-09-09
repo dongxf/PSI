@@ -289,6 +289,156 @@ class SubjectDAO extends PSIBaseExDAO {
 				"name" => "短期借款",
 				"category" => 2
 		];
+		$result[] = [
+				"code" => "2201",
+				"name" => "应付票据",
+				"category" => 2
+		];
+		$result[] = [
+				"code" => "2202",
+				"name" => "应付账款",
+				"category" => 2
+		];
+		$result[] = [
+				"code" => "2203",
+				"name" => "预收账款",
+				"category" => 2
+		];
+		$result[] = [
+				"code" => "2211",
+				"name" => "应付职工薪酬",
+				"category" => 2
+		];
+		$result[] = [
+				"code" => "2221",
+				"name" => "应交税费",
+				"category" => 2
+		];
+		$result[] = [
+				"code" => "2231",
+				"name" => "应付利息",
+				"category" => 2
+		];
+		$result[] = [
+				"code" => "2232",
+				"name" => "应付股利",
+				"category" => 2
+		];
+		$result[] = [
+				"code" => "2241",
+				"name" => "其他应付款",
+				"category" => 2
+		];
+		$result[] = [
+				"code" => "2501",
+				"name" => "长期借款",
+				"category" => 2
+		];
+		$result[] = [
+				"code" => "4001",
+				"name" => "实收资本",
+				"category" => 4
+		];
+		$result[] = [
+				"code" => "4002",
+				"name" => "资本公积",
+				"category" => 4
+		];
+		$result[] = [
+				"code" => "4101",
+				"name" => "盈余公积",
+				"category" => 4
+		];
+		$result[] = [
+				"code" => "4103",
+				"name" => "本年利润",
+				"category" => 4
+		];
+		$result[] = [
+				"code" => "4104",
+				"name" => "利润分配",
+				"category" => 4
+		];
+		$result[] = [
+				"code" => "5001",
+				"name" => "生产成本",
+				"category" => 5
+		];
+		$result[] = [
+				"code" => "5101",
+				"name" => "制造费用",
+				"category" => 5
+		];
+		$result[] = [
+				"code" => "5201",
+				"name" => "劳务成本",
+				"category" => 5
+		];
+		$result[] = [
+				"code" => "6001",
+				"name" => "主营业务收入",
+				"category" => 6
+		];
+		$result[] = [
+				"code" => "6051",
+				"name" => "其他业务收入",
+				"category" => 6
+		];
+		$result[] = [
+				"code" => "6111",
+				"name" => "投资收益",
+				"category" => 6
+		];
+		$result[] = [
+				"code" => "6301",
+				"name" => "营业外收入",
+				"category" => 6
+		];
+		$result[] = [
+				"code" => "6401",
+				"name" => "主营业务成本",
+				"category" => 6
+		];
+		$result[] = [
+				"code" => "6402",
+				"name" => "其他业务成本",
+				"category" => 6
+		];
+		$result[] = [
+				"code" => "6403",
+				"name" => "营业税金及附加",
+				"category" => 6
+		];
+		$result[] = [
+				"code" => "6601",
+				"name" => "销售费用",
+				"category" => 6
+		];
+		$result[] = [
+				"code" => "6602",
+				"name" => "管理费用",
+				"category" => 6
+		];
+		$result[] = [
+				"code" => "6603",
+				"name" => "财务费用",
+				"category" => 6
+		];
+		$result[] = [
+				"code" => "6701",
+				"name" => "资产减值损失",
+				"category" => 6
+		];
+		$result[] = [
+				"code" => "6711",
+				"name" => "营业外支出",
+				"category" => 6
+		];
+		$result[] = [
+				"code" => "6801",
+				"name" => "所得税费用",
+				"category" => 6
+		];
 		
 		return $result;
 	}

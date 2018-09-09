@@ -235,7 +235,7 @@ Ext.define("PSI.Subject.MainForm", {
 													return "所有者权益";
 												} else if (value == 5) {
 													return "成本";
-												} else if (vlaue == 6) {
+												} else if (value == 6) {
 													return "损益";
 												} else {
 													return "";
