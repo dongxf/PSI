@@ -9,7 +9,7 @@
 
 ---
 
->PSI的演示见：<a target="_blank" href="http://psi.sturgeon.mopaasapp.com">http://psi.sturgeon.mopaasapp.com</a>
+>PSI的演示见：<a target="_blank" href="https://psi.sturgeon.mopaasapp.com">https://psi.sturgeon.mopaasapp.com</a>
 >
 >PC端请用`360浏览器`或者是`谷歌浏览器`访问
 > 
