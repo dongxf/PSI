@@ -49,6 +49,7 @@ Ext.define("PSI.PurchaseRej.PRSelectPWBillForm", {
 										}, {
 											id : "editPWSupplier",
 											xtype : "psi_supplierfield",
+											showModal : true,
 											labelAlign : "right",
 											labelSeparator : "",
 											fieldLabel : "供应商"
@@ -71,6 +72,7 @@ Ext.define("PSI.PurchaseRej.PRSelectPWBillForm", {
 										}, {
 											id : "editPWWarehouse",
 											xtype : "psi_warehousefield",
+											showModal : true,
 											labelAlign : "right",
 											labelSeparator : "",
 											fieldLabel : "仓库"

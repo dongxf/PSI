@@ -48,6 +48,7 @@ Ext.define("PSI.Sale.SRSelectWSBillForm", {
 											fieldLabel : "销售出库单单号"
 										}, {
 											xtype : "psi_customerfield",
+											showModal : true,
 											id : "editWSCustomer",
 											labelAlign : "right",
 											labelSeparator : "",
@@ -70,6 +71,7 @@ Ext.define("PSI.Sale.SRSelectWSBillForm", {
 											fieldLabel : "业务日期（止）"
 										}, {
 											xtype : "psi_warehousefield",
+											showModal : true,
 											id : "editWSWarehouse",
 											labelAlign : "right",
 											labelSeparator : "",

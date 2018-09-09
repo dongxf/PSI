@@ -256,6 +256,10 @@ Ext.define("PSI.Purchase.PWEditForm", {
 	},
 
 	onWndClose : function() {
+		// 加上这个调用是为了解决 #IMQB2 - https://gitee.com/crm8000/PSI/issues/IMQB2
+		// 这个只是目前的临时应急方法，实现的太丑陋了
+		Ext.WindowManager.hideAll();
+
 		Ext.get(window).un('beforeunload', this.onWindowBeforeUnload);
 	},
 
