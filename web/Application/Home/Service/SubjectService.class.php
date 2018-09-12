@@ -75,4 +75,14 @@ class SubjectService extends PSIBaseExService {
 		
 		return $this->ok();
 	}
+
+	/**
+	 * 新增或编辑会计科目
+	 * 
+	 * @param array $params        	
+	 * @return array
+	 */
+	public function editSubject($params) {
+		return $this->todo();
+	}
 }

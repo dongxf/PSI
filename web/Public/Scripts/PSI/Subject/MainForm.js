@@ -149,7 +149,19 @@ Ext.define("PSI.Subject.MainForm", {
 
 			onAddSubject : function() {
 				var me = this;
-				me.showInfo("TODO");
+				var item = me.getCompanyGrid().getSelectionModel()
+						.getSelection();
+				if (item == null || item.length != 1) {
+					me.showInfo("没有选择公司");
+					return;
+				}
+
+				var company = item[0];
+
+				var form = Ext.create("PSI.Subject.EditForm", {
+							company : company
+						});
+				form.show();
 			},
 
 			onEditSubject : function() {

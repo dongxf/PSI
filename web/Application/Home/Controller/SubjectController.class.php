@@ -68,4 +68,18 @@ class SubjectController extends PSIBaseController {
 			$this->ajaxReturn($service->init($params));
 		}
 	}
+
+	public function editSubject() {
+		if (IS_POST) {
+			$params = [
+					"companyId" => I("post.companyId"),
+					"id" => I("post.id"),
+					"code" => I("post.code"),
+					"name" => I("post.name")
+			];
+			
+			$service = new SubjectService();
+			$this->ajaxReturn($service->editSubject($params));
+		}
+	}
 }

@@ -4,6 +4,10 @@
 Ext.define("PSI.Subject.EditForm", {
 	extend : "PSI.AFX.BaseDialogForm",
 
+	config : {
+		company : null
+	},
+
 	/**
 	 * 初始化组件
 	 */
@@ -67,7 +71,7 @@ Ext.define("PSI.Subject.EditForm", {
 						height : 40
 					},
 					width : 400,
-					height : 240,
+					height : 300,
 					layout : "border",
 					listeners : {
 						show : {
@@ -109,6 +113,29 @@ Ext.define("PSI.Subject.EditForm", {
 									name : "id",
 									value : entity == null ? null : entity
 											.get("id")
+								}, {
+									xtype : "hidden",
+									name : "companyId",
+									value : me.getCompany().get("id")
+								}, {
+									xtype : "displayfield",
+									fieldLabel : "公司名称",
+									value : me.getCompany().get("name")
+								}, {
+									id : "PSI_Subject_EditForm_editParentCode",
+									xtype : "PSI_parent_subject_field",
+									showModal : true,
+									fieldLabel : "上级科目",
+									allowBlank : false,
+									blankText : "没有输入上级科目",
+									beforeLabelTextTpl : PSI.Const.REQUIRED,
+									name : "parentCode",
+									listeners : {
+										specialkey : {
+											fn : me.onEditParentCodeSpecialKey,
+											scope : me
+										}
+									}
 								}, {
 									id : "PSI_Subject_EditForm_editCode",
 									fieldLabel : "科目码",
