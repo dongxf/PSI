@@ -111,7 +111,7 @@ class HelpController extends PSIBaseController {
 				break;
 			default :
 				$bs->insertBizlog("通过主菜单进入帮助页面", "帮助");
-				redirect("/help");
+				redirect("/help/index.html");
 		}
 	}
 }
