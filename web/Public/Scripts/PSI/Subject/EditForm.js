@@ -175,6 +175,7 @@ Ext.define("PSI.Subject.EditForm", {
 
 		me.editForm = Ext.getCmp("PSI_Subject_EditForm_editForm");
 
+		me.editParentCode = Ext.getCmp("PSI_Subject_EditForm_editParentCode");
 		me.editCode = Ext.getCmp("PSI_Subject_EditForm_editCode");
 		me.editName = Ext.getCmp("PSI_Subject_EditForm_editName");
 	},
@@ -267,8 +268,8 @@ Ext.define("PSI.Subject.EditForm", {
 
 		Ext.get(window).on('beforeunload', me.onWindowBeforeUnload);
 
-		var editCode = me.editCode;
-		editCode.focus();
-		editCode.setValue(editCode.getValue());
+		var edit = me.editParentCode;
+		edit.focus();
+		edit.setValue(edit.getValue());
 	}
 });
