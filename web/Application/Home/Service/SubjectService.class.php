@@ -83,7 +83,45 @@ class SubjectService extends PSIBaseExService {
 	 * @return array
 	 */
 	public function editSubject($params) {
-		return $this->todo();
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
+		$id = $params["id"];
+		$code = $params["code"];
+		
+		$db = $this->db();
+		$db->startTrans();
+		
+		$log = null;
+		$dao = new SubjectDAO($db);
+		if ($id) {
+			// 编辑
+			$rc = $dao->updateSubject($params);
+			if ($rc) {
+				$db->rollback();
+				return $rc;
+			}
+			$log = "编辑科目：{$code}";
+		} else {
+			// 新增
+			$rc = $dao->addSubject($params);
+			if ($rc) {
+				$db->rollback();
+				return $rc;
+			}
+			$id = $params["id"];
+			
+			$log = "新增科目：{$code}";
+		}
+		
+		// 记录业务日志
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$db->commit();
+		
+		return $this->ok($id);
 	}
 
 	/**

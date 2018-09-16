@@ -519,4 +519,26 @@ class SubjectDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 新增科目
+	 *
+	 * @param array $params        	
+	 */
+	public function addSubject(& $params) {
+		$db = $this->db;
+		
+		return $this->todo();
+	}
+
+	/**
+	 * 编辑科目
+	 *
+	 * @param array $params        	
+	 */
+	public function updateSubject(& $params) {
+		$db = $this->db;
+		
+		return $this->todo();
+	}
 }
