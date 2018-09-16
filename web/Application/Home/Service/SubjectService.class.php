@@ -90,6 +90,8 @@ class SubjectService extends PSIBaseExService {
 		$id = $params["id"];
 		$code = $params["code"];
 		
+		$params["dataOrg"] = $this->getLoginUserDataOrg();
+		
 		$db = $this->db();
 		$db->startTrans();
 		

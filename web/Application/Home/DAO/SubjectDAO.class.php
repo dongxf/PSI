@@ -3,6 +3,7 @@
 namespace Home\DAO;
 
 use Home\Common\FIdConst;
+use Home\Service\PinyinService;
 
 /**
  * 会计科目 DAO
@@ -58,7 +59,7 @@ class SubjectDAO extends PSIBaseExDAO {
 		$result = [];
 		foreach ( $data as $v ) {
 			// 递归调用自己
-			$children = $this->subjectListInternal($v["id"]);
+			$children = $this->subjectListInternal($v["id"], $companyId);
 			
 			$result[] = [
 					"id" => $v["id"],
@@ -528,7 +529,67 @@ class SubjectDAO extends PSIBaseExDAO {
 	public function addSubject(& $params) {
 		$db = $this->db;
 		
-		return $this->todo();
+		$dataOrg = $params["dataOrg"];
+		if ($this->dataOrgNotExists($dataOrg)) {
+			return $this->badParam("dataOrg");
+		}
+		
+		$companyId = $params["companyId"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->badParam("companyId");
+		}
+		$code = $params["code"];
+		$name = $params["name"];
+		$isLeaf = $params["isLeaf"];
+		
+		$parentCode = $params["parentCode"];
+		$sql = "select id, category 
+				from t_subject 
+				where company_id = '%s' and code = '%s' ";
+		$data = $db->query($sql, $companyId, $parentCode);
+		if (! $data) {
+			return $this->bad("上级科目不存在");
+		}
+		$parentId = $data[0]["id"];
+		$category = $data[0]["category"];
+		
+		// 检查科目码是否正确
+		if (strlen($parentCode) == 4) {
+			// 上级科目是一级科目
+			if (strlen($code) != 6) {
+				return $this->bad("二级科目码的长度需要是6位");
+			}
+			if (substr($code, 0, 4) != $parentCode) {
+				return $this->bad("二级科目码的前四位必须是一级科目码");
+			}
+		} else if (strlen($parentCode) == 6) {
+			// 上级科目是二级科目
+			if (strlen($code) != 8) {
+				return $this->bad("三级科目码的长度需要是8位");
+			}
+			if (substr($code, 0, 4) != $parentCode) {
+				return $this->bad("三级科目码的前六位必须是二级科目码");
+			}
+		} else {
+			return $this->bad("上级科目只能是一级科目或者是二级科目");
+		}
+		
+		$ps = new PinyinService();
+		$py = $ps->toPY($name);
+		
+		$id = $this->newId();
+		$sql = "insert into t_subject(id, category, code, name, is_leaf, py, data_org,
+					company_id, parent_id)
+				values ('%s', '%s', '%s', '%s', %d, '%s', '%s',
+					'%s', '%s')";
+		$rc = $db->execute($sql, $id, $category, $code, $name, $isLeaf, $py, $dataOrg, $companyId, 
+				$parentId);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		return null;
 	}
 
 	/**
