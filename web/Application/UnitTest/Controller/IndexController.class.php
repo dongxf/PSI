@@ -6,6 +6,7 @@ use Home\Controller\PSIBaseController;
 use Home\Service\UserService;
 use Think\Controller;
 use UnitTest\Service\PSIUnitTestService;
+use Home\Service\UnitTestService;
 
 /**
  * 单元测试首页Controller
@@ -39,6 +40,12 @@ class IndexController extends PSIBaseController {
 
 	public function runAllTests() {
 		if (IS_POST) {
+			$s = new UnitTestService();
+			if (! $s->canUnitTest()) {
+				$this->ajaxReturn([]);
+				return;
+			}
+			
 			$service = new PSIUnitTestService();
 			$this->ajaxReturn($service->getAllUnitTestsResult());
 		}
