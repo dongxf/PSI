@@ -72,7 +72,7 @@ Ext.define("PSI.UnitTest.MainForm", {
 							border : 0,
 							columns : [Ext.create("Ext.grid.RowNumberer", {
 												text : "序号",
-												width : 30
+												width : 100
 											}), {
 										header : "名称",
 										dataIndex : "name",
