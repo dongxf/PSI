@@ -569,7 +569,7 @@ class SubjectDAO extends PSIBaseExDAO {
 			if (strlen($code) != 8) {
 				return $this->bad("三级科目码的长度需要是8位");
 			}
-			if (substr($code, 0, 4) != $parentCode) {
+			if (substr($code, 0, 6) != $parentCode) {
 				return $this->bad("三级科目码的前六位必须是二级科目码");
 			}
 		} else {

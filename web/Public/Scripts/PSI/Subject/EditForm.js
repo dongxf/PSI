@@ -295,7 +295,7 @@ Ext.define("PSI.Subject.EditForm", {
 
 		if (me.__lastId) {
 			if (me.getParentForm()) {
-				me.getParentForm().freshGrid(me.__lastId);
+				me.getParentForm().onCompanyGridSelect();
 			}
 		}
 	},

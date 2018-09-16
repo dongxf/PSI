@@ -72,6 +72,10 @@ Ext.define("PSI.Subject.MainForm", {
 						if (success) {
 							var data = me.decodeJSON(response.responseText);
 							store.add(data);
+							if (store.getCount() > 0) {
+								me.getCompanyGrid().getSelectionModel()
+										.select(0);
+							}
 						}
 
 						el.unmask();
@@ -159,6 +163,7 @@ Ext.define("PSI.Subject.MainForm", {
 				var company = item[0];
 
 				var form = Ext.create("PSI.Subject.EditForm", {
+							parentForm : me,
 							company : company
 						});
 				form.show();
