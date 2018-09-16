@@ -70,7 +70,7 @@ class SubjectDAO extends PSIBaseExDAO {
 					"children" => $children,
 					"leaf" => count($children) == 0,
 					"iconCls" => "PSI-Subject",
-					"expanded" => false
+					"expanded" => true
 			];
 		}
 		
