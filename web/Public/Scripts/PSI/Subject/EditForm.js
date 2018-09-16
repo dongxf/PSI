@@ -66,49 +66,49 @@ Ext.define("PSI.Subject.EditForm", {
 				+ "</h2>"
 				+ "<p style='color:#196d83'>标记 <span style='color:red;font-weight:bold'>*</span>的是必须录入数据的字段</p>";
 		Ext.apply(me, {
-					header : {
-						title : me.formatTitle(PSI.Const.PROD_NAME),
-						height : 40
-					},
-					width : 400,
-					height : 300,
-					layout : "border",
-					listeners : {
-						show : {
-							fn : me.onWndShow,
-							scope : me
+			header : {
+				title : me.formatTitle(PSI.Const.PROD_NAME),
+				height : 40
+			},
+			width : 400,
+			height : 300,
+			layout : "border",
+			listeners : {
+				show : {
+					fn : me.onWndShow,
+					scope : me
+				},
+				close : {
+					fn : me.onWndClose,
+					scope : me
+				}
+			},
+			items : [{
+						region : "north",
+						height : 90,
+						border : 0,
+						html : logoHtml
+					}, {
+						region : "center",
+						border : 0,
+						id : "PSI_Subject_EditForm_editForm",
+						xtype : "form",
+						layout : {
+							type : "table",
+							columns : 1
 						},
-						close : {
-							fn : me.onWndClose,
-							scope : me
-						}
-					},
-					items : [{
-								region : "north",
-								height : 90,
-								border : 0,
-								html : logoHtml
-							}, {
-								region : "center",
-								border : 0,
-								id : "PSI_Subject_EditForm_editForm",
-								xtype : "form",
-								layout : {
-									type : "table",
-									columns : 1
-								},
-								height : "100%",
-								bodyPadding : 5,
-								defaultType : 'textfield',
-								fieldDefaults : {
-									labelWidth : 60,
-									labelAlign : "right",
-									labelSeparator : "",
-									msgTarget : 'side',
-									width : 370,
-									margin : "5"
-								},
-								items : [{
+						height : "100%",
+						bodyPadding : 5,
+						defaultType : 'textfield',
+						fieldDefaults : {
+							labelWidth : 60,
+							labelAlign : "right",
+							labelSeparator : "",
+							msgTarget : 'side',
+							width : 370,
+							margin : "5"
+						},
+						items : [{
 									xtype : "hidden",
 									name : "id",
 									value : entity == null ? null : entity
@@ -122,13 +122,17 @@ Ext.define("PSI.Subject.EditForm", {
 									fieldLabel : "公司名称",
 									value : me.getCompany().get("name")
 								}, {
+									xtype : "hidden",
+									id : "PSI_Subject_EditForm_hiddenParentCode",
+									name : "parentCode",
+									value : null
+								}, {
 									id : "PSI_Subject_EditForm_editParentCode",
 									xtype : "PSI_parent_subject_field",
 									fieldLabel : "上级科目",
 									allowBlank : false,
 									blankText : "没有输入上级科目",
 									beforeLabelTextTpl : PSI.Const.REQUIRED,
-									name : "parentCode",
 									listeners : {
 										specialkey : {
 											fn : me.onEditParentCodeSpecialKey,
@@ -166,14 +170,16 @@ Ext.define("PSI.Subject.EditForm", {
 										}
 									}
 								}],
-								buttons : buttons
-							}]
-				});
+						buttons : buttons
+					}]
+		});
 
 		me.callParent(arguments);
 
 		me.editForm = Ext.getCmp("PSI_Subject_EditForm_editForm");
 
+		me.hiddenParentCode = Ext
+				.getCmp("PSI_Subject_EditForm_hiddenParentCode");
 		me.editParentCode = Ext.getCmp("PSI_Subject_EditForm_editParentCode");
 		me.editCode = Ext.getCmp("PSI_Subject_EditForm_editCode");
 		me.editName = Ext.getCmp("PSI_Subject_EditForm_editName");
@@ -184,6 +190,9 @@ Ext.define("PSI.Subject.EditForm", {
 	 */
 	onOK : function(thenAdd) {
 		var me = this;
+
+		me.hiddenParentCode.setValue(me.editParentCode.getIdValue());
+
 		var f = me.editForm;
 		var el = f.getEl();
 		el.mask(PSI.Const.SAVING);
@@ -213,6 +222,16 @@ Ext.define("PSI.Subject.EditForm", {
 		f.submit(sf);
 	},
 
+	onEditParentCodeSpecialKey : function(field, e) {
+		var me = this;
+
+		if (e.getKey() == e.ENTER) {
+			var editName = me.editCode;
+			editName.focus();
+			editName.setValue(editName.getValue());
+		}
+	},
+
 	onEditCodeSpecialKey : function(field, e) {
 		var me = this;
 
@@ -238,7 +257,7 @@ Ext.define("PSI.Subject.EditForm", {
 		var me = this;
 		me.editCode.focus();
 
-		var editors = [me.editCode, me.editName];
+		var editors = [me.editParentCode, me.editCode, me.editName];
 		for (var i = 0; i < editors.length; i++) {
 			var edit = editors[i];
 			edit.setValue(null);

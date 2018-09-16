@@ -227,8 +227,6 @@ Ext.define("PSI.Subject.ParentSubjectField", {
 		me.setValue(data.code + " - " + data.name);
 		me.setIdValue(data.code);
 		me.focus();
-
-		me.setIdValue(data.id);
 	},
 
 	setIdValue : function(id) {
