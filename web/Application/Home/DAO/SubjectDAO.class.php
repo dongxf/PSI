@@ -576,6 +576,15 @@ class SubjectDAO extends PSIBaseExDAO {
 			return $this->bad("上级科目只能是一级科目或者是二级科目");
 		}
 		
+		// 判断科目码是否已经存在
+		$sql = "select count(*) as cnt from t_subject
+				where company_id = '%s' and code = '%s' ";
+		$data = $db->query($sql, $companyId, $code);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("科目码[{$code}]已经存在");
+		}
+		
 		$ps = new PinyinService();
 		$py = $ps->toPY($name);
 		
@@ -591,6 +600,7 @@ class SubjectDAO extends PSIBaseExDAO {
 		}
 		
 		// 操作成功
+		$params["id"] = $id;
 		return null;
 	}
 

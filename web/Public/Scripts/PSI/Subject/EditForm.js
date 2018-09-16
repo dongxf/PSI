@@ -274,7 +274,7 @@ Ext.define("PSI.Subject.EditForm", {
 
 	clearEdit : function() {
 		var me = this;
-		me.editCode.focus();
+		me.editParentCode.focus();
 
 		var editors = [me.editParentCode, me.editCode, me.editName];
 		for (var i = 0; i < editors.length; i++) {
