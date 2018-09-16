@@ -5,6 +5,7 @@ namespace UnitTest\Controller;
 use Home\Controller\PSIBaseController;
 use Home\Service\UserService;
 use Think\Controller;
+use UnitTest\Service\PSIUnitTestService;
 
 /**
  * 单元测试首页Controller
@@ -33,6 +34,13 @@ class IndexController extends PSIBaseController {
 			$this->display();
 		} else {
 			$this->gotoLoginPage();
+		}
+	}
+
+	public function runAllTests() {
+		if (IS_POST) {
+			$service = new PSIUnitTestService();
+			$this->ajaxReturn($service->getAllUnitTestsResult());
 		}
 	}
 }
