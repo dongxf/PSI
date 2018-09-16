@@ -140,7 +140,8 @@ Ext.define("PSI.Subject.EditForm", {
 										}
 									},
 									callbackFunc : me.onParentCodeCallback,
-									callbackScope : me
+									callbackScope : me,
+									companyId : me.getCompany().get("id")
 								}, {
 									id : "PSI_Subject_EditForm_editCode",
 									fieldLabel : "科目码",

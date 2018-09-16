@@ -131,12 +131,12 @@ class SubjectService extends PSIBaseExService {
 	 *
 	 * @param string $queryKey        	
 	 */
-	public function queryDataForParentSubject($queryKey) {
+	public function queryDataForParentSubject($queryKey, $companyId) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
 		
 		$dao = new SubjectDAO($this->db());
-		return $dao->queryDataForParentSubject($queryKey);
+		return $dao->queryDataForParentSubject($queryKey, $companyId);
 	}
 }

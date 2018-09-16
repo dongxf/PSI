@@ -91,9 +91,10 @@ class SubjectController extends PSIBaseController {
 	public function queryDataForParentSubject() {
 		if (IS_POST) {
 			$queryKey = I("post.queryKey");
+			$companyId = I("post.companyId");
 			
 			$service = new SubjectService();
-			$this->ajaxReturn($service->queryDataForParentSubject($queryKey));
+			$this->ajaxReturn($service->queryDataForParentSubject($queryKey, $companyId));
 		}
 	}
 }

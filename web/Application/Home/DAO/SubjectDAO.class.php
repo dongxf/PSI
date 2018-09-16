@@ -496,17 +496,19 @@ class SubjectDAO extends PSIBaseExDAO {
 	 *
 	 * @param string $queryKey        	
 	 */
-	public function queryDataForParentSubject($queryKey) {
+	public function queryDataForParentSubject($queryKey, $companyId) {
 		$db = $this->db;
 		
 		// length(code) < 8 : 只查询一级二级科目
 		$sql = "select code, name
 				from t_subject
 				where (code like '%s') and (length(code) < 8) 
+					and (company_id = '%s') 
 				order by code 
 				limit 20 ";
 		$queryParams = [];
 		$queryParams[] = "{$queryKey}%";
+		$queryParams[] = $companyId;
 		$data = $db->query($sql, $queryParams);
 		
 		$result = [];

@@ -8,7 +8,8 @@ Ext.define("PSI.Subject.ParentSubjectField", {
 	config : {
 		showModal : false,
 		callbackFunc : null,
-		callbackScope : null
+		callbackScope : null,
+		companyId : null
 	},
 
 	/**
@@ -147,7 +148,8 @@ Ext.define("PSI.Subject.ParentSubjectField", {
 						url : PSI.Const.BASE_URL
 								+ "Home/Subject/queryDataForParentSubject",
 						params : {
-							queryKey : editName.getValue()
+							queryKey : editName.getValue(),
+							companyId : me.getCompanyId()
 						},
 						method : "POST",
 						callback : function(opt, success, response) {
