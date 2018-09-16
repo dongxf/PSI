@@ -489,4 +489,34 @@ class SubjectDAO extends PSIBaseExDAO {
 		
 		return null;
 	}
+
+	/**
+	 * 上级科目字段 - 查询数据
+	 *
+	 * @param string $queryKey        	
+	 */
+	public function queryDataForParentSubject($queryKey) {
+		$db = $this->db;
+		
+		// length(code) < 8 : 只查询一级二级科目
+		$sql = "select code, name
+				from t_subject
+				where (code like '%s') and (length(code) < 8) 
+				order by code 
+				limit 20 ";
+		$queryParams = [];
+		$queryParams[] = "{$queryKey}%";
+		$data = $db->query($sql, $queryParams);
+		
+		$result = [];
+		
+		foreach ( $data as $v ) {
+			$result[] = [
+					"code" => $v["code"],
+					"name" => $v["name"]
+			];
+		}
+		
+		return $result;
+	}
 }

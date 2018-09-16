@@ -78,11 +78,25 @@ class SubjectService extends PSIBaseExService {
 
 	/**
 	 * 新增或编辑会计科目
-	 * 
+	 *
 	 * @param array $params        	
 	 * @return array
 	 */
 	public function editSubject($params) {
 		return $this->todo();
+	}
+
+	/**
+	 * 上级科目字段 - 查询数据
+	 *
+	 * @param string $queryKey        	
+	 */
+	public function queryDataForParentSubject($queryKey) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$dao = new SubjectDAO($this->db());
+		return $dao->queryDataForParentSubject($queryKey);
 	}
 }

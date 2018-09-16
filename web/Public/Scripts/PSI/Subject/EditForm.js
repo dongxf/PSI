@@ -124,7 +124,6 @@ Ext.define("PSI.Subject.EditForm", {
 								}, {
 									id : "PSI_Subject_EditForm_editParentCode",
 									xtype : "PSI_parent_subject_field",
-									showModal : true,
 									fieldLabel : "上级科目",
 									allowBlank : false,
 									blankText : "没有输入上级科目",

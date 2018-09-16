@@ -82,4 +82,16 @@ class SubjectController extends PSIBaseController {
 			$this->ajaxReturn($service->editSubject($params));
 		}
 	}
+
+	/**
+	 * 上级科目字段 - 查询数据
+	 */
+	public function queryDataForParentSubject() {
+		if (IS_POST) {
+			$queryKey = I("post.queryKey");
+			
+			$service = new SubjectService();
+			$this->ajaxReturn($service->queryDataForParentSubject($queryKey));
+		}
+	}
 }
