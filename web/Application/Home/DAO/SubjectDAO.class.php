@@ -66,7 +66,7 @@ class SubjectDAO extends PSIBaseExDAO {
 					"code" => $v["code"],
 					"name" => $v["name"],
 					"category" => $v["category"],
-					"is_leaf" => $v["is_leaf"],
+					"isLeaf" => $v["is_leaf"] == 1 ? "末级科目" : null,
 					"children" => $children,
 					"leaf" => count($children) == 0,
 					"iconCls" => "PSI-Subject",
