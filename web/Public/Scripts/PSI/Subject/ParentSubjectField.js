@@ -6,7 +6,9 @@ Ext.define("PSI.Subject.ParentSubjectField", {
 	alias : "widget.PSI_parent_subject_field",
 
 	config : {
-		showModal : false
+		showModal : false,
+		callbackFunc : null,
+		callbackScope : null
 	},
 
 	/**
@@ -226,6 +228,12 @@ Ext.define("PSI.Subject.ParentSubjectField", {
 		me.focus();
 		me.setValue(data.code + " - " + data.name);
 		me.setIdValue(data.code);
+
+		var func = me.getCallbackFunc();
+		if (func) {
+			func.call(me.getCallbackScope() || me, data);
+		}
+
 		me.focus();
 	},
 

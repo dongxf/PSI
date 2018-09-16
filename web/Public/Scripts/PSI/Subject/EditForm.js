@@ -71,7 +71,7 @@ Ext.define("PSI.Subject.EditForm", {
 				height : 40
 			},
 			width : 400,
-			height : 300,
+			height : 340,
 			layout : "border",
 			listeners : {
 				show : {
@@ -138,7 +138,9 @@ Ext.define("PSI.Subject.EditForm", {
 											fn : me.onEditParentCodeSpecialKey,
 											scope : me
 										}
-									}
+									},
+									callbackFunc : me.onParentCodeCallback,
+									callbackScope : me
 								}, {
 									id : "PSI_Subject_EditForm_editCode",
 									fieldLabel : "科目码",
@@ -169,6 +171,22 @@ Ext.define("PSI.Subject.EditForm", {
 											scope : me
 										}
 									}
+								}, {
+									id : "PSI_Subject_EditForm_editName_editIsLeaf",
+									xtype : "combo",
+									name : "isLeaf",
+									queryMode : "local",
+									editable : false,
+									valueField : "id",
+									labelWidth : 60,
+									labelAlign : "right",
+									labelSeparator : "",
+									fieldLabel : "末级科目",
+									store : Ext.create("Ext.data.ArrayStore", {
+												fields : ["id", "text"],
+												data : [[1, "是"], [0, "否"]]
+											}),
+									value : 1
 								}],
 						buttons : buttons
 					}]
@@ -289,5 +307,11 @@ Ext.define("PSI.Subject.EditForm", {
 		var edit = me.editParentCode;
 		edit.focus();
 		edit.setValue(edit.getValue());
+	},
+
+	onParentCodeCallback : function(data) {
+		var me = this;
+		me.editCode.setValue(data.code);
+		me.editName.setValue(data.name + " - ");
 	}
 });
