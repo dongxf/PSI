@@ -74,8 +74,10 @@ class SubjectController extends PSIBaseController {
 			$params = [
 					"companyId" => I("post.companyId"),
 					"id" => I("post.id"),
+					"parentCode" => I("post.parentCode"),
 					"code" => I("post.code"),
-					"name" => I("post.name")
+					"name" => I("post.name"),
+					"isLeaf" => I("post.isLeaf")
 			];
 			
 			$service = new SubjectService();
