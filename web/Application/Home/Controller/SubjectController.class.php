@@ -97,4 +97,18 @@ class SubjectController extends PSIBaseController {
 			$this->ajaxReturn($service->queryDataForParentSubject($queryKey, $companyId));
 		}
 	}
+
+	/**
+	 * 某个科目的详情
+	 */
+	public function subjectInfo() {
+		if (IS_POST) {
+			$params = [
+					"id" => I("post.id")
+			];
+			
+			$service = new SubjectService();
+			$this->ajaxReturn($service->subjectInfo($params));
+		}
+	}
 }

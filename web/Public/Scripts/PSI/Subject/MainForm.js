@@ -171,7 +171,28 @@ Ext.define("PSI.Subject.MainForm", {
 
 			onEditSubject : function() {
 				var me = this;
-				me.showInfo("TODO");
+				var item = me.getCompanyGrid().getSelectionModel()
+						.getSelection();
+				if (item == null || item.length != 1) {
+					me.showInfo("没有选择公司");
+					return;
+				}
+
+				var company = item[0];
+
+				var item = me.getMainGrid().getSelectionModel().getSelection();
+				if (item == null || item.length != 1) {
+					me.showInfo("没有选择要编辑的科目");
+					return;
+				}
+
+				var subject = item[0];
+				var form = Ext.create("PSI.Subject.EditForm", {
+							parentForm : me,
+							company : company,
+							entity : subject
+						});
+				form.show();
 			},
 
 			onDeleteSubject : function() {

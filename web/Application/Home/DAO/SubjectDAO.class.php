@@ -614,4 +614,44 @@ class SubjectDAO extends PSIBaseExDAO {
 		
 		return $this->todo();
 	}
+
+	/**
+	 * 某个科目的详情
+	 *
+	 * @param array $params        	
+	 */
+	public function subjectInfo($params) {
+		$db = $this->db;
+		
+		// 科目id
+		$id = $params["id"];
+		
+		$sql = "select code, name, is_leaf, parent_id 
+				from t_subject
+				where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if (! $data) {
+			return $this->emptyResult();
+		}
+		
+		$v = $data[0];
+		
+		$result = [
+				"code" => $v["code"],
+				"name" => $v["name"],
+				"isLeaf" => $v["is_leaf"],
+				"parentCode" => "[无]"
+		];
+		
+		$parentId = $v["parent_id"];
+		$sql = "select code, name
+					from t_subject
+					where id = '%s' ";
+		$data = $db->query($sql, $parentId);
+		if ($data) {
+			$result["parentCode"] = $data[0]["code"];
+		}
+		
+		return $result;
+	}
 }

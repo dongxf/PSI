@@ -3,6 +3,7 @@
 namespace Home\Service;
 
 use Home\DAO\SubjectDAO;
+use Home\Controller\SubjectController;
 
 /**
  * 会计科目 Service
@@ -138,5 +139,19 @@ class SubjectService extends PSIBaseExService {
 		
 		$dao = new SubjectDAO($this->db());
 		return $dao->queryDataForParentSubject($queryKey, $companyId);
+	}
+
+	/**
+	 * 某个科目的详情
+	 *
+	 * @param array $params        	
+	 */
+	public function subjectInfo($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$dao = new SubjectDAO($this->db());
+		return $dao->subjectInfo($params);
 	}
 }

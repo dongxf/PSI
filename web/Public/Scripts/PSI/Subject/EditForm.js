@@ -110,6 +110,7 @@ Ext.define("PSI.Subject.EditForm", {
 						},
 						items : [{
 									xtype : "hidden",
+									id : "PSI_Subject_EditForm_hiddenId",
 									name : "id",
 									value : entity == null ? null : entity
 											.get("id")
@@ -149,8 +150,6 @@ Ext.define("PSI.Subject.EditForm", {
 									blankText : "没有输入科目码",
 									beforeLabelTextTpl : PSI.Const.REQUIRED,
 									name : "code",
-									value : entity == null ? null : entity
-											.get("code"),
 									listeners : {
 										specialkey : {
 											fn : me.onEditCodeSpecialKey,
@@ -164,8 +163,6 @@ Ext.define("PSI.Subject.EditForm", {
 									blankText : "没有输入科目名称",
 									beforeLabelTextTpl : PSI.Const.REQUIRED,
 									name : "name",
-									value : entity == null ? null : entity
-											.get("name"),
 									listeners : {
 										specialkey : {
 											fn : me.onEditNameSpecialKey,
@@ -197,11 +194,14 @@ Ext.define("PSI.Subject.EditForm", {
 
 		me.editForm = Ext.getCmp("PSI_Subject_EditForm_editForm");
 
+		me.hiddenId = Ext.getCmp("PSI_Subject_EditForm_hiddenId");
+
 		me.hiddenParentCode = Ext
 				.getCmp("PSI_Subject_EditForm_hiddenParentCode");
 		me.editParentCode = Ext.getCmp("PSI_Subject_EditForm_editParentCode");
 		me.editCode = Ext.getCmp("PSI_Subject_EditForm_editCode");
 		me.editName = Ext.getCmp("PSI_Subject_EditForm_editName");
+		me.editIsLeaf = Ext.getCmp("PSI_Subject_EditForm_editName_editIsLeaf");
 	},
 
 	/**
@@ -305,9 +305,41 @@ Ext.define("PSI.Subject.EditForm", {
 
 		Ext.get(window).on('beforeunload', me.onWindowBeforeUnload);
 
-		var edit = me.editParentCode;
-		edit.focus();
-		edit.setValue(edit.getValue());
+		if (me.adding) {
+			me.editParentCode.focus();
+			return;
+		}
+
+		var el = me.getEl() || Ext.getBody();
+		el.mask(PSI.Const.LOADING);
+		var r = {
+			url : me.URL("Home/Subject/subjectInfo"),
+			params : {
+				id : me.hiddenId.getValue()
+			},
+			callback : function(options, success, response) {
+				el.unmask();
+
+				if (success) {
+					var data = me.decodeJSON(response.responseText);
+
+					me.editParentCode.setValue(data.parentCode);
+					me.editParentCode.setReadOnly(true);
+
+					var edit = me.editCode;
+					edit.setValue(data.code);
+					edit.focus();
+					edit.setValue(edit.getValue());
+
+					me.editName.setValue(data.name);
+					me.editIsLeaf.setValue(parseInt(data.isLeaf));
+				} else {
+					me.showInfo("网络错误")
+				}
+			}
+		};
+
+		me.ajax(r);
 	},
 
 	onParentCodeCallback : function(data) {
