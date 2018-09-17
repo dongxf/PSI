@@ -326,13 +326,23 @@ Ext.define("PSI.Subject.EditForm", {
 					me.editParentCode.setValue(data.parentCode);
 					me.editParentCode.setReadOnly(true);
 
-					var edit = me.editCode;
-					edit.setValue(data.code);
-					edit.focus();
-					edit.setValue(edit.getValue());
+					me.editCode.setValue(data.code);
 
 					me.editName.setValue(data.name);
 					me.editIsLeaf.setValue(parseInt(data.isLeaf));
+
+					// 编辑的时候不允许编辑科目码
+					me.editCode.setReadOnly(true);
+
+					if (data.code.length == 4) {
+						// 一级科目
+						me.editName.setReadOnly(true);
+
+						me.editIsLeaf.focus();
+					} else {
+						me.editName.focus();
+						me.editName.setValue(me.editName.getValue());
+					}
 				} else {
 					me.showInfo("网络错误")
 				}

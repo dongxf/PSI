@@ -612,7 +612,42 @@ class SubjectDAO extends PSIBaseExDAO {
 	public function updateSubject(& $params) {
 		$db = $this->db;
 		
-		return $this->todo();
+		$id = $params["id"];
+		$code = $params["code"];
+		$name = $params["name"];
+		$isLeaf = $params["isLeaf"];
+		$companyId = $params["companyId"];
+		
+		$sql = "select parent_id from t_subject where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if (! $data) {
+			return $this->bad("要编辑的科目不存在");
+		}
+		
+		$parentId = $data[0]["parent_id"];
+		if (! $parentId) {
+			// 当前科目是一级科目，一级科目只能编辑“末级科目”
+			$sql = "update t_subject set is_leaf = %d
+					where id = '%s' ";
+			$rc = $db->execute($sql, $isLeaf, $id);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+		} else {
+			// 二级或三级科目
+			$ps = new PinyinService();
+			$py = $ps->toPY($name);
+			$sql = "update t_subject
+						set name = '%s', py = '%s', is_leaf = %d
+					where id = '%s' ";
+			$rc = $db->execute($sql, $name, $py, $isLeaf, $id);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+		}
+		
+		// 操作成功
+		return null;
 	}
 
 	/**
