@@ -187,6 +187,11 @@ Ext.define("PSI.Subject.MainForm", {
 				}
 
 				var subject = item[0];
+				if (!subject.get("id")) {
+					me.showInfo("没有获得科目id，请刷新界面");
+					return;
+				}
+
 				var form = Ext.create("PSI.Subject.EditForm", {
 							parentForm : me,
 							company : company,
@@ -197,7 +202,68 @@ Ext.define("PSI.Subject.MainForm", {
 
 			onDeleteSubject : function() {
 				var me = this;
-				me.showInfo("TODO");
+				var item = me.getCompanyGrid().getSelectionModel()
+						.getSelection();
+				if (item == null || item.length != 1) {
+					me.showInfo("没有选择公司");
+					return;
+				}
+
+				var company = item[0];
+
+				var item = me.getMainGrid().getSelectionModel().getSelection();
+				if (item == null || item.length != 1) {
+					me.showInfo("没有选择要删除的科目");
+					return;
+				}
+
+				var subject = item[0];
+				if (!subject.get("id")) {
+					me.showInfo("没有获得科目id，请刷新界面");
+					return;
+				}
+
+				var code = subject.get("code");
+				if (!code) {
+					me.showInfo("没有获得科目码，请刷新界面");
+					return;
+				}
+				if (code.length == 4) {
+					me.showInfo("一级科目不能删除");
+					return;
+				}
+
+				var info = "请确认是否删除科目: <span style='color:red'>" + code
+						+ "</span>?";
+				var funcConfirm = function() {
+					var el = Ext.getBody();
+					el.mask("正在删除中...");
+					var r = {
+						url : me.URL("Home/Subject/deleteSubject"),
+						params : {
+							id : subject.get("id")
+						},
+						callback : function(options, success, response) {
+							el.unmask();
+
+							if (success) {
+								var data = me.decodeJSON(response.responseText);
+								if (data.success) {
+									me.showInfo("成功完成删除操作", function() {
+												me.onCompanyGridSelect();
+											});
+								} else {
+									me.showInfo(data.msg);
+								}
+							} else {
+								me.showInfo("网络错误");
+							}
+						}
+					};
+					me.ajax(r);
+				};
+
+				me.confirm(info, funcConfirm);
 			},
 
 			getMainGrid : function() {

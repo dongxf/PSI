@@ -689,4 +689,50 @@ class SubjectDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 删除科目
+	 *
+	 * @param array $params        	
+	 */
+	public function deleteSubject(&$params) {
+		$db = $this->db;
+		
+		// 科目id
+		$id = $params["id"];
+		
+		$sql = "select code, parent_id from t_subject where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if (! $data) {
+			return $this->bad("要删除的科目不存在");
+		}
+		
+		$code = $data[0]["code"];
+		$parentId = $data[0]["parent_id"];
+		if (! $parentId) {
+			return $this->bad("不能删除一级科目");
+		}
+		
+		// 检查科目是否有下级科目
+		$sql = "select count(*) as cnt from t_subject where parent_id = '%s' ";
+		$data = $db->query($sql, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("科目[{$code}]还有下级科目，不能删除");
+		}
+		
+		// TODO 判断科目是否在其他表中使用
+		//
+		//
+		
+		$sql = "delete from t_subject where id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		$params["code"] = $code;
+		return null;
+	}
 }

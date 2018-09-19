@@ -3,7 +3,6 @@
 namespace Home\Service;
 
 use Home\DAO\SubjectDAO;
-use Home\Controller\SubjectController;
 
 /**
  * 会计科目 Service
@@ -153,5 +152,37 @@ class SubjectService extends PSIBaseExService {
 		
 		$dao = new SubjectDAO($this->db());
 		return $dao->subjectInfo($params);
+	}
+
+	/**
+	 * 删除科目
+	 *
+	 * @param array $params        	
+	 */
+	public function deleteSubject($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
+		$db = $this->db();
+		
+		$db->startTrans();
+		$dao = new SubjectDAO($db);
+		
+		$rc = $dao->deleteSubject($params);
+		if ($rc) {
+			$db->rollback();
+			return $rc;
+		}
+		
+		// 记录业务日志
+		$code = $params["code"];
+		$log = "删除科目: $code";
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$db->commit();
+		
+		return $this->ok();
 	}
 }
