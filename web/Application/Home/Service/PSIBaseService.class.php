@@ -176,5 +176,5 @@ class PSIBaseService {
 	/**
 	 * 当前数据库表结构版本
 	 */
-	protected $CURRENT_DB_VERSION = "20180825-01";
+	protected $CURRENT_DB_VERSION = "20180920-01";
 }
