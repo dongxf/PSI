@@ -1134,6 +1134,37 @@ class InstallService extends PSIBaseExService {
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
 		$db->execute($sql);
+		
+		// t_acc_fmt
+		$sql = "CREATE TABLE IF NOT EXISTS `t_acc_fmt` (
+				  `id` varchar(255) NOT NULL,
+				  `acc_number` varchar(255) NOT NULL,
+				  `subject_code` varchar(255) NOT NULL,
+				  `memo` varchar(255) DEFAULT NULL,
+				  `date_created` datetime DEFAULT NULL,
+				  `data_org` varchar(255) DEFAULT NULL,
+				  `company_id` varchar(255) NOT NULL,
+				  `in_use` int(11) DEFAULT 1,
+				  `db_table_name_prefix` varchar(255) NOT NULL,
+				  PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		";
+		$db->execute($sql);
+		
+		// t_acc_fmt_cols
+		$sql = "CREATE TABLE IF NOT EXISTS `t_acc_fmt_cols` (
+				  `id` varchar(255) NOT NULL,
+				  `fmt_id` varchar(255) NOT NULL,
+				  `db_field_name` varchar(255) NOT NULL,
+				  `db_field_type` varchar(255) DEFAULT NULL,
+				  `db_field_length` int(11) NOT NULL,
+				  `db_field_decimal` int(11) NOT NULL,
+				  `show_order` int(11) NOT NULL,
+				  `caption` varchar(255) NOT NULL,
+				  PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		";
+		$db->execute($sql);
 	}
 
 	/**
