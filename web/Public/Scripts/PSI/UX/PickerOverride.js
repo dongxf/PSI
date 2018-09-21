@@ -3,7 +3,10 @@ Ext.define("PSI.UX.PickerOverride", {
 
 			initEvents : function() {
 				var me = this;
-				me.callParent();
+				
+				// 这里ExtJS原来的代码是me.callParent()
+				// 当使用override方法给ExtJS内部代码打补丁的时候，需要改为me.callSuper()
+				me.callSuper();
 
 				// Add handlers for keys to expand/collapse the picker
 				me.keyNav = new Ext.util.KeyNav(me.inputEl, {
@@ -29,6 +32,8 @@ Ext.define("PSI.UX.PickerOverride", {
 
 				// 上面的代码都是原来ExtJS的代码
 				// 增加了下面的功能：双击鼠标弹出日期选择框
-				me.mon(me.inputEl, 'dblclick', me.onTriggerClick, me);
+				if (me.editable) {
+					me.mon(me.inputEl, 'dblclick', me.onTriggerClick, me);
+				}
 			}
 		});
