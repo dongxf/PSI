@@ -760,4 +760,11 @@ class FIdConst {
 	 * @var string
 	 */
 	const GL_SUBJECT = "2101";
+	
+	/**
+	 * 银行账户
+	 *
+	 * @var string
+	 */
+	const GL_BANK_ACCOUNT = "2102";
 }
