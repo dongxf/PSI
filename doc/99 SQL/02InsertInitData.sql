@@ -121,7 +121,8 @@ INSERT INTO `t_fid` (`fid`, `name`) VALUES
 ('2030-03', '商品构成-删除子商品'),
 ('2031', '价格体系'),
 ('2031-01', '商品-设置商品价格体系'),
-('2101', '会计科目');
+('2101', '会计科目'),
+('2102', '银行账户');
 
 TRUNCATE TABLE `t_menu_item`;
 INSERT INTO `t_menu_item` (`id`, `caption`, `fid`, `parent_id`, `show_order`) VALUES
@@ -170,6 +171,7 @@ INSERT INTO `t_menu_item` (`id`, `caption`, `fid`, `parent_id`, `show_order`) VA
 ('11', '财务总账', NULL, NULL, 8),
 ('1101', '基础数据', NULL, '11', 1),
 ('110101', '会计科目', '2101', '1101', 1),
+('110102', '银行账户', '2102', '1101', 2),
 ('08', '基础数据', NULL, NULL, 9),
 ('0801', '商品', NULL, '08', 1),
 ('080101', '商品', '1001', '0801', 1),
@@ -338,6 +340,7 @@ INSERT INTO `t_permission` (`id`, `fid`, `name`, `note`, `category`, `py`, `show
 ('2031', '2031', '价格体系', '模块权限：通过菜单进入价格体系模块的权限', '商品', 'JGTX', 700),
 ('2031-01', '2031-01', '商品-设置商品价格体系', '按钮权限：商品模块[设置商品价格体系]按钮权限', '商品', 'JGTX', 701),
 ('2101', '2101', '会计科目', '模块权限：通过菜单进入会计科目模块的权限', '会计科目', 'KJKM', 100);
+('2102', '2102', '银行账户', '模块权限：通过菜单进入银行账户模块的权限', '银行账户', 'YHZH', 100);
 
 TRUNCATE TABLE `t_role`;
 INSERT INTO `t_role` (`id`, `name`, `data_org`, `company_id`, `code`) VALUES
