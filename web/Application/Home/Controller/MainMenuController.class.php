@@ -221,6 +221,10 @@ class MainMenuController extends Controller {
 				// 会计科目
 				redirect(__ROOT__ . "/Home/Subject/index");
 				break;
+			case FIdConst::GL_BANK_ACCOUNT :
+				// 银行账户
+				redirect(__ROOT__ . "/Home/Bank/index");
+				break;
 			default :
 				redirect(__ROOT__ . "/Home");
 		}
