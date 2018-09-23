@@ -4,6 +4,7 @@ namespace Home\Controller;
 
 use Home\Common\FIdConst;
 use Home\Service\UserService;
+use Home\Service\BankService;
 
 /**
  * 银行账户Controller
@@ -29,4 +30,15 @@ class BankController extends PSIBaseController {
 			$this->gotoLoginPage("/Home/Bank/index");
 		}
 	}
+	
+	/**
+	 * 返回所有的公司列表
+	 */
+	public function companyList() {
+		if (IS_POST) {
+			$service = new BankService();
+			$this->ajaxReturn($service->companyList());
+		}
+	}
+	
 }
