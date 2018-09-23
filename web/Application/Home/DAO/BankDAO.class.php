@@ -31,7 +31,7 @@ class BankDAO extends PSIBaseExDAO {
 		
 		$ds = new DataOrgDAO($db);
 		$queryParams = [];
-		$rs = $ds->buildSQL(FIdConst::GL_SUBJECT, "g", $loginUserId);
+		$rs = $ds->buildSQL(FIdConst::GL_BANK_ACCOUNT, "g", $loginUserId);
 		if ($rs) {
 			$sql .= " and " . $rs[0];
 			$queryParams = array_merge($queryParams, $rs[1]);
