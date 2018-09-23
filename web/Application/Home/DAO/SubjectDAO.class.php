@@ -12,6 +12,12 @@ use Home\Service\PinyinService;
  */
 class SubjectDAO extends PSIBaseExDAO {
 
+	/**
+	 * 公司列表
+	 *
+	 * @param array $params        	
+	 * @return array
+	 */
 	public function companyList($params) {
 		$db = $this->db;
 		
@@ -144,6 +150,11 @@ class SubjectDAO extends PSIBaseExDAO {
 		return null;
 	}
 
+	/**
+	 * 国家标准科目表
+	 *
+	 * @return array
+	 */
 	private function getStandardSubjectList() {
 		$result = [];
 		
@@ -701,10 +712,14 @@ class SubjectDAO extends PSIBaseExDAO {
 		// 科目id
 		$id = $params["id"];
 		
-		$sql = "select code, parent_id from t_subject where id = '%s' ";
+		$sql = "select code, parent_id, company_id from t_subject where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if (! $data) {
 			return $this->bad("要删除的科目不存在");
+		}
+		$companyId = $data[0]["company_id"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->bad("当前科目的companyId字段值异常");
 		}
 		
 		$code = $data[0]["code"];
@@ -721,9 +736,15 @@ class SubjectDAO extends PSIBaseExDAO {
 			return $this->bad("科目[{$code}]还有下级科目，不能删除");
 		}
 		
-		// TODO 判断科目是否在其他表中使用
-		//
-		//
+		// 判断科目是否在账样中使用
+		$sql = "select count(*) as cnt 
+				from t_acc_fmt
+				where company_id = '%s' and subject_code = '%s' ";
+		$data = $db->query($sql, $companyId, $code);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("科目[{$code}]已经在账样中使用，不能删除");
+		}
 		
 		$sql = "delete from t_subject where id = '%s' ";
 		$rc = $db->execute($sql, $id);
