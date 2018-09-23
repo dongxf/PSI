@@ -24,7 +24,7 @@ Ext.define("PSI.Bank.MainForm", {
 										xtype : "panel",
 										layout : "fit",
 										border : 0,
-										html : "模块待开发"
+										items : [me.getMainGrid()]
 									}]
 						});
 
@@ -127,6 +127,60 @@ Ext.define("PSI.Bank.MainForm", {
 							}
 						});
 				return me.__companyGrid;
+			},
+
+			getMainGrid : function() {
+				var me = this;
+				if (me.__mainGrid) {
+					return me.__mainGrid;
+				}
+
+				var modelName = "PSI_Bank_BankAccountModel";
+
+				Ext.define(modelName, {
+							extend : "Ext.data.Model",
+							fields : ["id", "bankName", "bankNumber", "memo"]
+						});
+
+				me.__mainGrid = Ext.create("Ext.grid.Panel", {
+							cls : "PSI",
+							header : {
+								height : 30,
+								title : me.formatGridHeaderTitle("银行账户")
+							},
+							columnLines : true,
+							columns : [{
+										header : "银行",
+										dataIndex : "bankName",
+										menuDisabled : true,
+										sortable : false,
+										width : 300
+									}, {
+										header : "账号",
+										dataIndex : "bankNumber",
+										width : 300,
+										menuDisabled : true,
+										sortable : false
+									}, {
+										header : "备注",
+										dataIndex : "memo",
+										width : 200,
+										menuDisabled : true,
+										sortable : false
+									}],
+							store : Ext.create("Ext.data.Store", {
+										model : modelName,
+										autoLoad : false,
+										data : []
+									}),
+							listeners : {
+								select : {
+									fn : me.onCompanyGridSelect,
+									scope : me
+								}
+							}
+						});
+				return me.__mainGrid;
 			},
 
 			onCompanyGridSelect : function() {
