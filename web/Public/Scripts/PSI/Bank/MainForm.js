@@ -80,6 +80,46 @@ Ext.define("PSI.Bank.MainForm", {
 				me.ajax(r);
 			},
 
+			refreshMainGrid : function() {
+				var me = this;
+
+				me.getMainGrid().setTitle(me.formatGridHeaderTitle("银行账户"));
+				var item = me.getCompanyGrid().getSelectionModel()
+						.getSelection();
+				if (item == null || item.length != 1) {
+					return;
+				}
+
+				var company = item[0];
+				var title = Ext.String
+						.format("{0} - 银行账户", company.get("name"));
+				me.getMainGrid().setTitle(me.formatGridHeaderTitle(title));
+
+				var el = me.getMainGrid().getEl();
+				var store = me.getMainGrid().getStore();
+				el && el.mask(PSI.Const.LOADING);
+				var r = {
+					params : {
+						companyId : company.get("id")
+					},
+					url : me.URL("Home/Bank/bankList"),
+					callback : function(options, success, response) {
+						store.removeAll();
+
+						if (success) {
+							var data = me.decodeJSON(response.responseText);
+							store.add(data);
+							if (store.getCount() > 0) {
+								me.getMainGrid().getSelectionModel().select(0);
+							}
+						}
+
+						el && el.unmask();
+					}
+				};
+				me.ajax(r);
+			},
+
 			getCompanyGrid : function() {
 				var me = this;
 				if (me.__companyGrid) {
@@ -185,6 +225,8 @@ Ext.define("PSI.Bank.MainForm", {
 
 			onCompanyGridSelect : function() {
 				var me = this;
+
+				me.refreshMainGrid();
 			},
 
 			onAddBank : function() {
