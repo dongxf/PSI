@@ -53,4 +53,50 @@ class BankDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 某个公司的银行账户
+	 *
+	 * @param array $params        	
+	 */
+	public function bankList($params) {
+		$db = $this->db;
+		
+		$companyId = $params["companyId"];
+		
+		$loginUserId = $params["loginUserId"];
+		if ($this->loginUserIdNotExists($loginUserId)) {
+			return $this->emptyResult();
+		}
+		
+		$sql = "select b.id, b.bank_name, b.bank_number, b.memo
+				from t_bank_account b
+				where (b.company_id = '%s') ";
+		
+		$ds = new DataOrgDAO($db);
+		$queryParams = [];
+		$queryParams[] = $companyId;
+		
+		$rs = $ds->buildSQL(FIdConst::GL_BANK_ACCOUNT, "b", $loginUserId);
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = array_merge($queryParams, $rs[1]);
+		}
+		
+		$sql .= " order by b.bank_name ";
+		
+		$result = [];
+		
+		$data = $db->query($sql, $queryParams);
+		foreach ( $data as $v ) {
+			$result[] = [
+					"id" => $v["id"],
+					"bankName" => $v["bank_name"],
+					"bankNumber" => $v["bank_number"],
+					"memo" => $v["memo"]
+			];
+		}
+		
+		return $result;
+	}
 }

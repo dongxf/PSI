@@ -29,4 +29,22 @@ class BankService extends PSIBaseExService {
 		$dao = new BankDAO($this->db());
 		return $dao->companyList($params);
 	}
+
+	/**
+	 * 某个公司的银行账户
+	 * 
+	 * @param array $params        	
+	 */
+	public function bankList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$params = [
+				"loginUserId" => $this->getLoginUserId()
+		];
+		
+		$dao = new BankDAO($this->db());
+		return $dao->bankList($params);
+	}
 }

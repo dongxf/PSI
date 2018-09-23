@@ -30,7 +30,7 @@ class BankController extends PSIBaseController {
 			$this->gotoLoginPage("/Home/Bank/index");
 		}
 	}
-	
+
 	/**
 	 * 返回所有的公司列表
 	 */
@@ -40,5 +40,18 @@ class BankController extends PSIBaseController {
 			$this->ajaxReturn($service->companyList());
 		}
 	}
-	
+
+	/**
+	 * 某个公司的银行账户
+	 */
+	public function bankList() {
+		if (IS_POST) {
+			$params = [
+					"companyId" => I("post.companyId")
+			];
+			
+			$service = new BankService();
+			$this->ajaxReturn($service->bankList($params));
+		}
+	}
 }
