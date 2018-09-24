@@ -54,4 +54,22 @@ class BankController extends PSIBaseController {
 			$this->ajaxReturn($service->bankList($params));
 		}
 	}
+
+	/**
+	 * 新增或编辑银行账户
+	 */
+	public function editBank() {
+		if (IS_POST) {
+			$params = [
+					"id" => I("post.id"),
+					"companyId" => I("post.companyId"),
+					"bankName" => I("post.bankName"),
+					"bankNumber" => I("post.bankNumber"),
+					"memo" => I("post.memo")
+			];
+			
+			$service = new BankService();
+			$this->ajaxReturn($service->editBank($params));
+		}
+	}
 }

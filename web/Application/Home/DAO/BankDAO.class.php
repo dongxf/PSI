@@ -99,4 +99,22 @@ class BankDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 新增银行账户
+	 * 
+	 * @param array $params        	
+	 */
+	public function addBank($params) {
+		return $this->todo();
+	}
+
+	/**
+	 * 编辑银行账户
+	 * 
+	 * @param array $params        	
+	 */
+	public function updateBank($params) {
+		return $this->todo();
+	}
 }
