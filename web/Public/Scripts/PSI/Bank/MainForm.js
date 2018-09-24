@@ -270,6 +270,47 @@ Ext.define("PSI.Bank.MainForm", {
 
 			onDeleteBank : function() {
 				var me = this;
-				me.showInfo("TODO");
+				var item = me.getMainGrid().getSelectionModel().getSelection();
+				if (item == null || item.length != 1) {
+					me.showInfo("没有选择要删除的银行账户");
+					return;
+				}
+
+				var bank = item[0];
+
+				var info = Ext.String.format(
+						"请确认是否删除银行账户 <span style='color:red'>{0}-{1}</span> ?",
+						bank.get("bankName"), bank.get("bankNumber"));
+
+				var funcConfirm = function() {
+					var el = Ext.getBody();
+					el.mask(PSI.Const.LOADING);
+					var r = {
+						url : me.URL("Home/Bank/deleteBank"),
+						params : {
+							id : bank.get("id")
+						},
+						method : "POST",
+						callback : function(options, success, response) {
+							el.unmask();
+							if (success) {
+								var data = me.decodeJSON(response.responseText);
+								if (data.success) {
+									me.tip("成功完成删除操作");
+									me.refreshMainGrid();
+								} else {
+									me.showInfo(data.msg);
+								}
+							} else {
+								me.showInfo("网络错误");
+							}
+						}
+					};
+
+					me.ajax(r);
+				};
+
+				me.confirm(info, funcConfirm);
+
 			}
 		});
