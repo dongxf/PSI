@@ -244,7 +244,28 @@ Ext.define("PSI.Bank.MainForm", {
 
 			onEditBank : function() {
 				var me = this;
-				me.showInfo("TODO");
+				var item = me.getCompanyGrid().getSelectionModel()
+						.getSelection();
+				if (item == null || item.length != 1) {
+					me.showInfo("没有选择公司");
+					return;
+				}
+
+				var company = item[0];
+
+				var item = me.getMainGrid().getSelectionModel().getSelection();
+				if (item == null || item.length != 1) {
+					me.showInfo("没有选择要编辑的银行账户");
+					return;
+				}
+
+				var bank = item[0];
+				var form = Ext.create("PSI.Bank.EditForm", {
+							parentForm : me,
+							company : company,
+							entity : bank
+						});
+				form.show();
 			},
 
 			onDeleteBank : function() {
