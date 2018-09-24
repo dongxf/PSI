@@ -102,19 +102,56 @@ class BankDAO extends PSIBaseExDAO {
 
 	/**
 	 * 新增银行账户
-	 * 
+	 *
 	 * @param array $params        	
 	 */
-	public function addBank($params) {
-		return $this->todo();
+	public function addBank(&$params) {
+		$db = $this->db;
+		
+		$companyId = $params["companyId"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->badParam("companyId");
+		}
+		$dataOrg = $params["dataOrg"];
+		if ($this->dataOrgNotExists($dataOrg)) {
+			return $this->badParam("dataOrg");
+		}
+		
+		$bankName = $params["bankName"];
+		$bankNumber = $params["bankNumber"];
+		$memo = $params["memo"];
+		
+		// 检查银行账户是否存在
+		$sql = "select count(*) as cnt 
+				from t_bank_account 
+				where company_id = '%s' and bank_name = '%s' and bank_number = '%s' ";
+		$data = $db->query($sql, $companyId, $bankName, $bankNumber);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("[{$bankName}-{$bankNumber}]已经存在");
+		}
+		
+		$id = $this->newId();
+		$sql = "insert into t_bank_account(id, bank_name, bank_number, memo,
+					date_created, data_org, company_id)
+				values ('%s', '%s', '%s', '%s',
+					now(), '%s', '%s')";
+		$rc = $db->execute($sql, $id, $bankName, $bankNumber, $memo, $dataOrg, $companyId);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		$params["id"] = $id;
+		return null;
 	}
 
 	/**
 	 * 编辑银行账户
-	 * 
+	 *
 	 * @param array $params        	
 	 */
-	public function updateBank($params) {
+	public function updateBank(&$params) {
 		return $this->todo();
 	}
 }

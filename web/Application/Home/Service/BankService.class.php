@@ -40,9 +40,7 @@ class BankService extends PSIBaseExService {
 			return $this->emptyResult();
 		}
 		
-		$params = [
-				"loginUserId" => $this->getLoginUserId()
-		];
+		$params["loginUserId"] = $this->getLoginUserId();
 		
 		$dao = new BankDAO($this->db());
 		return $dao->bankList($params);

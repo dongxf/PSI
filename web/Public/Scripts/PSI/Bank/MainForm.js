@@ -212,13 +212,7 @@ Ext.define("PSI.Bank.MainForm", {
 										model : modelName,
 										autoLoad : false,
 										data : []
-									}),
-							listeners : {
-								select : {
-									fn : me.onCompanyGridSelect,
-									scope : me
-								}
-							}
+									})
 						});
 				return me.__mainGrid;
 			},
