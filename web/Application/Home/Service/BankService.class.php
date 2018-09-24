@@ -93,6 +93,40 @@ class BankService extends PSIBaseExService {
 		$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		
 		$db->commit();
+		
 		return $this->ok($id);
+	}
+
+	/**
+	 * 删除银行账户
+	 *
+	 * @param array $params        	
+	 */
+	public function deleteBank($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
+		$db = $this->db();
+		$db->startTrans();
+		
+		$dao = new BankDAO($db);
+		
+		$rc = $dao->deleteBank($params);
+		if ($rc) {
+			$db->rollback();
+			return $rc;
+		}
+		
+		// 记录业务日志
+		$bankName = $params["bankName"];
+		$bankNumber = $params["bankNumber"];
+		$log = "删除银行账户：{$bankName}-{$bankNumber}";
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$db->commit();
+		
+		return $this->ok();
 	}
 }

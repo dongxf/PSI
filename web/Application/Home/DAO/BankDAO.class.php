@@ -210,4 +210,35 @@ class BankDAO extends PSIBaseExDAO {
 		// 操作成功
 		return null;
 	}
+
+	/**
+	 * 删除银行账户
+	 *
+	 * @param array $params        	
+	 */
+	public function deleteBank(&$params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		
+		$bank = $this->getBankById($id);
+		if (! $bank) {
+			return $this->bad("要删除的银行账户不存在");
+		}
+		$bankName = $bank["bankName"];
+		$bankNumber = $bank["bankNumber"];
+		
+		// TODO 需要判断银行账户在其他表中是否使用了
+		
+		$sql = "delete from t_bank_account where id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		$params["bankName"] = $bankName;
+		$params["bankNumber"] = $bankNumber;
+		return null;
+	}
 }

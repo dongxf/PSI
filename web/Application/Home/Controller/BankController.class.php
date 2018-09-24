@@ -72,4 +72,18 @@ class BankController extends PSIBaseController {
 			$this->ajaxReturn($service->editBank($params));
 		}
 	}
+
+	/**
+	 * 删除银行账户
+	 */
+	public function deleteBank() {
+		if (IS_POST) {
+			$params = [
+					"id" => I("post.id")
+			];
+			
+			$service = new BankService();
+			$this->ajaxReturn($service->deleteBank($params));
+		}
+	}
 }
