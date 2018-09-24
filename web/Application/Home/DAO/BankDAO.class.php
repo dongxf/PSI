@@ -146,12 +146,68 @@ class BankDAO extends PSIBaseExDAO {
 		return null;
 	}
 
+	public function getBankById($id) {
+		$db = $this->db;
+		
+		$sql = "select bank_name, bank_number from t_bank_account where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if ($data) {
+			return [
+					"id" => $id,
+					"bankName" => $data[0]["bank_name"],
+					"bankNumber" => $data[0]["bank_number"]
+			];
+		} else {
+			return null;
+		}
+	}
+
 	/**
 	 * 编辑银行账户
 	 *
 	 * @param array $params        	
 	 */
 	public function updateBank(&$params) {
-		return $this->todo();
+		$db = $this->db;
+		
+		$companyId = $params["companyId"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->badParam("companyId");
+		}
+		$dataOrg = $params["dataOrg"];
+		if ($this->dataOrgNotExists($dataOrg)) {
+			return $this->badParam("dataOrg");
+		}
+		
+		$id = $params["id"];
+		if (! $this->getBankById($id)) {
+			return $this->bad("要编辑的银行账户不存在");
+		}
+		
+		$bankName = $params["bankName"];
+		$bankNumber = $params["bankNumber"];
+		$memo = $params["memo"];
+		
+		// 检查银行账户是否存在
+		$sql = "select count(*) as cnt
+				from t_bank_account
+				where company_id = '%s' and bank_name = '%s' 
+					and bank_number = '%s' and id <> '%s' ";
+		$data = $db->query($sql, $companyId, $bankName, $bankNumber, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("[{$bankName}-{$bankNumber}]已经存在");
+		}
+		
+		$sql = "update t_bank_account
+					set bank_name = '%s', bank_number = '%s', memo = '%s'
+				where id = '%s' ";
+		$rc = $db->execute($sql, $bankName, $bankNumber, $memo, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		return null;
 	}
 }

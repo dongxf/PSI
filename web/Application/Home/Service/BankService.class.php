@@ -84,6 +84,7 @@ class BankService extends PSIBaseExService {
 				return $rc;
 			}
 			
+			$id = $params["id"];
 			$log = "新增银行账户：{$bankName}-{$bankNumber}";
 		}
 		
@@ -92,6 +93,6 @@ class BankService extends PSIBaseExService {
 		$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		
 		$db->commit();
-		return $this->ok();
+		return $this->ok($id);
 	}
 }
