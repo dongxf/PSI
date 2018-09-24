@@ -4,6 +4,10 @@
 Ext.define("PSI.Bank.EditForm", {
 	extend : "PSI.AFX.BaseDialogForm",
 
+	config : {
+		company : null
+	},
+
 	/**
 	 * 初始化组件
 	 */
@@ -67,7 +71,7 @@ Ext.define("PSI.Bank.EditForm", {
 						height : 40
 					},
 					width : 400,
-					height : 240,
+					height : 310,
 					layout : "border",
 					listeners : {
 						show : {
@@ -110,6 +114,14 @@ Ext.define("PSI.Bank.EditForm", {
 									value : entity == null ? null : entity
 											.get("id")
 								}, {
+									xtype : "hidden",
+									name : "companyId",
+									value : me.getCompany().get("id")
+								}, {
+									fieldLabel : "公司",
+									xtype : "displayfield",
+									value : me.getCompany().get("name")
+								}, {
 									id : "PSI_Bank_EditForm_editBankName",
 									fieldLabel : "银行",
 									allowBlank : false,
@@ -139,6 +151,18 @@ Ext.define("PSI.Bank.EditForm", {
 											scope : me
 										}
 									}
+								}, {
+									id : "PSI_Bank_EditForm_editMemo",
+									fieldLabel : "备注",
+									name : "memo",
+									value : entity == null ? null : entity
+											.get("memo"),
+									listeners : {
+										specialkey : {
+											fn : me.onEditMemoSpecialKey,
+											scope : me
+										}
+									}
 								}],
 								buttons : buttons
 							}]
@@ -150,6 +174,7 @@ Ext.define("PSI.Bank.EditForm", {
 
 		me.editBankName = Ext.getCmp("PSI_Bank_EditForm_editBankName");
 		me.editBankNumber = Ext.getCmp("PSI_Bank_EditForm_editBankNumber");
+		me.editMemo = Ext.getCmp("PSI_Bank_EditForm_editMemo");
 	},
 
 	/**
@@ -190,12 +215,21 @@ Ext.define("PSI.Bank.EditForm", {
 		var me = this;
 
 		if (e.getKey() == e.ENTER) {
-			me.editBankName.focus();
-			me.editBankName.setValue(me.editBankName.getValue());
+			me.editBankNumber.focus();
+			me.editBankNumber.setValue(me.editBankNumber.getValue());
 		}
 	},
 
 	onEditBankNumberSpecialKey : function(field, e) {
+		var me = this;
+
+		if (e.getKey() == e.ENTER) {
+			me.editMemo.focus();
+			me.editMemo.setValue(me.editMemo.getValue());
+		}
+	},
+
+	onEditMemoSpecialKey : function(field, e) {
 		var me = this;
 
 		if (e.getKey() == e.ENTER) {
