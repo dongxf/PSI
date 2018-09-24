@@ -244,7 +244,7 @@ Ext.define("PSI.Bank.EditForm", {
 		var me = this;
 		me.editBankName.focus();
 
-		var editors = [me.editBankName, me.editBankNumber];
+		var editors = [me.editBankName, me.editBankNumber, me.editMemo];
 		for (var i = 0; i < editors.length; i++) {
 			var edit = editors[i];
 			edit.setValue(null);
