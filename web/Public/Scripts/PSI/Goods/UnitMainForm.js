@@ -67,7 +67,7 @@ Ext.define("PSI.Goods.UnitMainForm", {
 										menuDisabled : true,
 										sortable : false,
 										align : "right",
-										width : 160
+										width : 180
 									}],
 							store : Ext.create("Ext.data.Store", {
 										model : modelName,
