@@ -17,14 +17,15 @@ class InventoryService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		$sql = "select id, code, name from t_warehouse ";
-		$queryParams = array();
+		$sql = "select id, code, name from t_warehouse 
+				where (inited = 1) ";
+		$queryParams = [];
 		
 		$ds = new DataOrgService();
 		$rs = $ds->buildSQL(FIdConst::INVENTORY_QUERY, "t_warehouse");
 		if ($rs) {
-			$sql .= " where " . $rs[0];
-			$queryParams = $rs[1];
+			$sql .= " and " . $rs[0];
+			$queryParams = array_merge($queryParams, $rs[1]);
 		}
 		
 		$sql .= " order by code";

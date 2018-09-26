@@ -165,7 +165,7 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 					cls : "PSI",
 					header : {
 						height : 30,
-						title : me.formatGridHeaderTitle("仓库")
+						title : me.formatGridHeaderTitle("已经建账的仓库")
 					},
 					tools : [{
 								type : "close",
