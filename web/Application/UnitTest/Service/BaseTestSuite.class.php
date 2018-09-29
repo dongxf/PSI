@@ -7,12 +7,13 @@ namespace UnitTest\Service;
  *
  * @author 李静波
  */
-class BaseTestSuiteService {
+class BaseTestSuite {
 	/**
 	 *
 	 * @var \Think\Model $db
 	 */
 	protected $db;
+	protected $tests = [];
 
 	function __construct() {
 		$this->db = M();
@@ -24,5 +25,19 @@ class BaseTestSuiteService {
 
 	protected function teardown() {
 		$this->db->rollback();
+	}
+
+	protected function regTest($test) {
+		$this->tests[] = $test;
+	}
+
+	public function run() {
+		$this->setup();
+		
+		foreach ( $this->tests as $test ) {
+			$rc = $test->run($this->db);
+		}
+		
+		$this->teardown();
 	}
 }
