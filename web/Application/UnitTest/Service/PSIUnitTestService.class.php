@@ -2,6 +2,8 @@
 
 namespace UnitTest\Service;
 
+use UnitTest\Service\Warehouse\WarehouseTestSuite;
+
 /**
  * PSI单元测试 Service
  *
@@ -17,31 +19,14 @@ class PSIUnitTestService {
 	public function getAllUnitTestsResult() {
 		$result = [];
 		
-		// 下面的是示例数据
-		$result[] = [
-				"id" => "A000001",
-				"name" => "UnitTest\\WarehouseUnitTest\\testAddWarehouse",
-				"result" => 1,
-				"msg" => ""
-		];
-		$result[] = [
-				"id" => "A000002",
-				"name" => "UnitTest\\WarehouseUnitTest\\testDeleteWarehouse",
-				"result" => 0,
-				"msg" => "要删除的仓库不存在"
-		];
-		$result[] = [
-				"id" => "A000003",
-				"name" => "UnitTest\\WarehouseUnitTest\\testEditWarehouse",
-				"result" => 1,
-				"msg" => ""
-		];
-		$result[] = [
-				"id" => "A000004",
-				"name" => "UnitTest\\WarehouseUnitTest\\testEditWarehouseDataOrg",
-				"result" => 1,
-				"msg" => ""
-		];
+		$ts = new WarehouseTestSuite();
+		$ts->run();
+		
+		$tr = $ts->getResults();
+		
+		foreach ( $tr as $r ) {
+			$result[] = $r;
+		}
 		
 		return $result;
 	}

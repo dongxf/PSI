@@ -19,11 +19,11 @@ class BaseTestSuite {
 
 	function __construct() {
 		$this->db = M();
+		$this->tests=[];
 	}
 
 	protected function setup() {
 		$this->db->startTrans();
-		$this->tests = [];
 		$this->results = [];
 	}
 
@@ -40,7 +40,7 @@ class BaseTestSuite {
 		
 		foreach ( $this->tests as $test ) {
 			$rc = $test->run($this->db);
-			$this->tests[] = $rc;
+			$this->results[] = $rc;
 		}
 		
 		$this->teardown();

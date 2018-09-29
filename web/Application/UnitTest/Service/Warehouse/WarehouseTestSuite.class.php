@@ -10,4 +10,10 @@ use UnitTest\Service\BaseTestSuite;
  * @author 李静波
  */
 class WarehouseTestSuite extends BaseTestSuite {
+
+	function __construct() {
+		parent::__construct();
+		
+		$this->addTest(new Warehouse0001TestCase());
+	}
 }
