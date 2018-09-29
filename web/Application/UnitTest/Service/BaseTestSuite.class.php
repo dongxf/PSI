@@ -8,12 +8,14 @@ namespace UnitTest\Service;
  * @author 李静波
  */
 class BaseTestSuite {
+	private $tests;
+	private $results;
+	
 	/**
 	 *
 	 * @var \Think\Model $db
 	 */
 	protected $db;
-	protected $tests = [];
 
 	function __construct() {
 		$this->db = M();
@@ -21,13 +23,15 @@ class BaseTestSuite {
 
 	protected function setup() {
 		$this->db->startTrans();
+		$this->tests = [];
+		$this->results = [];
 	}
 
 	protected function teardown() {
 		$this->db->rollback();
 	}
 
-	protected function regTest($test) {
+	protected function addTest($test) {
 		$this->tests[] = $test;
 	}
 
@@ -36,8 +40,13 @@ class BaseTestSuite {
 		
 		foreach ( $this->tests as $test ) {
 			$rc = $test->run($this->db);
+			$this->tests[] = $rc;
 		}
 		
 		$this->teardown();
+	}
+
+	public function getResults() {
+		return $this->results;
 	}
 }

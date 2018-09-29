@@ -7,14 +7,19 @@ namespace UnitTest\Service;
  *
  * @author 李静波
  */
-class BaseTestCase {
-	/**
-	 *
-	 * @var \Think\Model $db
-	 */
-	protected $db;
+abstract class BaseTestCase {
 
-	function __construct($db) {
-		$this->db = $db;
+	/**
+	 * 运行测试用例
+	 */
+	abstract function run($db);
+
+	protected function toResult($id, $name, $result, $msg) {
+		return [
+				"id" => $id,
+				"name" => $name,
+				"result" => $result,
+				"msg" => $msg
+		];
 	}
 }
