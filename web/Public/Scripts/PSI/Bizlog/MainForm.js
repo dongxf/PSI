@@ -139,81 +139,71 @@ Ext.define("PSI.Bizlog.MainForm", {
 				});
 
 		me.__mainGrid = Ext.create("Ext.grid.Panel", {
-					cls : "PSI",
-					viewConfig : {
-						enableTextSelection : true
-					},
-					loadMask : true,
-					border : 0,
-					columnLines : true,
-					columns : [Ext.create("Ext.grid.RowNumberer", {
-										text : "序号",
-										width : 50
-									}), {
-								text : "登录名",
-								dataIndex : "loginName",
-								width : 60,
-								menuDisabled : true,
-								sortable : false
-							}, {
-								text : "姓名",
-								dataIndex : "userName",
-								width : 80,
-								menuDisabled : true,
-								sortable : false
-							}, {
-								text : "IP",
-								dataIndex : "ip",
-								width : 120,
-								menuDisabled : true,
-								sortable : false,
-								renderer : function(value, md, record) {
-									return "<a href='http://www.baidu.com/s?wd="
-											+ encodeURIComponent(value)
-											+ "' target='_blank'>"
-											+ value
-											+ "</a>";
-								}
-							}, {
-								text : "IP所属地",
-								dataIndex : "ipFrom",
-								width : 200,
-								menuDisabled : true,
-								sortable : false
-							}, {
-								text : "日志分类",
-								dataIndex : "logCategory",
-								width : 150,
-								menuDisabled : true,
-								sortable : false
-							}, {
-								text : "日志内容",
-								dataIndex : "content",
-								flex : 1,
-								menuDisabled : true,
-								sortable : false
-							}, {
-								text : "日志记录时间",
-								dataIndex : "dt",
-								width : 140,
-								menuDisabled : true,
-								sortable : false
-							}],
-					store : store,
-					listeners : {
-						celldblclick : {
-							fn : me.onCellDbclick,
-							scope : me
-						}
-					}
-				});
+			cls : "PSI",
+			viewConfig : {
+				enableTextSelection : true
+			},
+			loadMask : true,
+			border : 0,
+			columnLines : true,
+			columns : {
+				defaults : {
+					menuDisabled : true,
+					sortable : false
+				},
+				items : [Ext.create("Ext.grid.RowNumberer", {
+									text : "序号",
+									width : 50
+								}), {
+							text : "登录名",
+							dataIndex : "loginName",
+							width : 60
+						}, {
+							text : "姓名",
+							dataIndex : "userName",
+							width : 80
+						}, {
+							text : "IP",
+							dataIndex : "ip",
+							width : 120,
+							renderer : function(value, md, record) {
+								return "<a href='http://www.baidu.com/s?wd="
+										+ encodeURIComponent(value)
+										+ "' target='_blank'>" + value + "</a>";
+							}
+						}, {
+							text : "IP所属地",
+							dataIndex : "ipFrom",
+							width : 200
+						}, {
+							text : "日志分类",
+							dataIndex : "logCategory",
+							width : 150
+						}, {
+							text : "日志内容",
+							dataIndex : "content",
+							flex : 1
+						}, {
+							text : "日志记录时间",
+							dataIndex : "dt",
+							width : 140
+						}]
+			},
+			store : store,
+			listeners : {
+				celldblclick : {
+					fn : me.onCellDbclick,
+					scope : me
+				}
+			}
+		});
 
 		return me.__mainGrid;
 	},
 
 	onCellDbclick : function(ths, td, cellIndex, record, tr, rowIndex, e, eOpts) {
 		var me = this;
-		
+
 		if (cellIndex == 3) {
 			Ext.getCmp("editIP").setValue(record.get("ip"));
 		}
