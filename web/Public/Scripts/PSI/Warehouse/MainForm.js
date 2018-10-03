@@ -94,39 +94,37 @@ Ext.define("PSI.Warehouse.MainForm", {
 						enableTextSelection : true
 					},
 					columnLines : true,
-					columns : [{
-								xtype : "rownumberer",
-								width : 40
-							}, {
-								header : "仓库编码",
-								dataIndex : "code",
-								menuDisabled : true,
-								sortable : false,
-								width : 100
-							}, {
-								header : "仓库名称",
-								dataIndex : "name",
-								menuDisabled : true,
-								sortable : false,
-								width : 300
-							}, {
-								header : "库存建账",
-								dataIndex : "inited",
-								menuDisabled : true,
-								sortable : false,
-								width : 90,
-								renderer : function(value) {
-									return value == 1
-											? "建账完毕"
-											: "<span style='color:red'>待建账</span>";
-								}
-							}, {
-								header : "创建人的数据域",
-								dataIndex : "dataOrg",
-								menuDisabled : true,
-								sortable : false,
-								width : 150
-							}],
+					columns : {
+						defaults : {
+							menuDisabled : true,
+							sortable : false
+						},
+						items : [{
+									xtype : "rownumberer",
+									width : 40
+								}, {
+									header : "仓库编码",
+									dataIndex : "code",
+									width : 100
+								}, {
+									header : "仓库名称",
+									dataIndex : "name",
+									width : 300
+								}, {
+									header : "库存建账",
+									dataIndex : "inited",
+									width : 90,
+									renderer : function(value) {
+										return value == 1
+												? "建账完毕"
+												: "<span style='color:red'>待建账</span>";
+									}
+								}, {
+									header : "创建人的数据域",
+									dataIndex : "dataOrg",
+									width : 150
+								}]
+					},
 					store : Ext.create("Ext.data.Store", {
 								model : modelName,
 								autoLoad : false,
