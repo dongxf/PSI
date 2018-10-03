@@ -194,22 +194,24 @@ Ext.define("PSI.Goods.PriceSystemMainForm", {
 					cls : "PSI",
 					border : 0,
 					columnLines : true,
-					columns : [{
-								xtype : "rownumberer"
-							}, {
-								header : "价格名称",
-								dataIndex : "name",
-								menuDisabled : true,
-								sortable : false,
-								width : 400
-							}, {
-								header : "销售基准价的倍数",
-								width : 120,
-								dataIndex : "factor",
-								menuDisabled : true,
-								sortable : false,
-								align : "right"
-							}],
+					columns : {
+						defaults : {
+							menuDisabled : true,
+							sortable : false
+						},
+						items : [{
+									xtype : "rownumberer"
+								}, {
+									header : "价格名称",
+									dataIndex : "name",
+									width : 400
+								}, {
+									header : "销售基准价的倍数",
+									width : 130,
+									dataIndex : "factor",
+									align : "right"
+								}]
+					},
 					store : Ext.create("Ext.data.Store", {
 								model : modelName,
 								autoLoad : false,
