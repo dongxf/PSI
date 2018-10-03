@@ -332,206 +332,173 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 				});
 
 		me.__mainGrid = Ext.create("Ext.grid.Panel", {
-					cls : "PSI",
-					viewConfig : {
-						enableTextSelection : true
-					},
-					border : 1,
-					columnLines : true,
-					columns : [{
-								xtype : "rownumberer",
-								width : 50
-							}, {
-								header : "状态",
-								dataIndex : "billStatus",
-								menuDisabled : true,
-								sortable : false,
-								width : 100,
-								renderer : function(value) {
-									if (value == 0) {
-										return "<span style='color:red'>待审核</span>";
-									} else if (value == 1000) {
-										return "已审核";
-									} else if (value == 2000) {
-										return "<span style='color:green'>部分入库</span>";
-									} else if (value == 3000) {
-										return "全部入库";
-									} else if (value == 4000) {
-										return "关闭(未入库)";
-									} else if (value == 4001) {
-										return "关闭(部分入库)";
-									} else if (value == 4002) {
-										return "关闭(全部入库)";
-									} else {
-										return "";
-									}
+			cls : "PSI",
+			viewConfig : {
+				enableTextSelection : true
+			},
+			border : 1,
+			columnLines : true,
+			columns : {
+				defaults : {
+					menuDisabled : true,
+					sortable : false
+				},
+				items : [{
+							xtype : "rownumberer",
+							width : 50
+						}, {
+							header : "状态",
+							dataIndex : "billStatus",
+							width : 100,
+							renderer : function(value) {
+								if (value == 0) {
+									return "<span style='color:red'>待审核</span>";
+								} else if (value == 1000) {
+									return "已审核";
+								} else if (value == 2000) {
+									return "<span style='color:green'>部分入库</span>";
+								} else if (value == 3000) {
+									return "全部入库";
+								} else if (value == 4000) {
+									return "关闭(未入库)";
+								} else if (value == 4001) {
+									return "关闭(部分入库)";
+								} else if (value == 4002) {
+									return "关闭(全部入库)";
+								} else {
+									return "";
 								}
-							}, {
-								header : "采购订单号",
-								dataIndex : "ref",
-								width : 110,
-								menuDisabled : true,
-								sortable : false
-							}, {
-								header : "交货日期",
-								dataIndex : "dealDate",
-								menuDisabled : true,
-								sortable : false
-							}, {
-								header : "交货地址",
-								dataIndex : "dealAddress",
-								menuDisabled : true,
-								sortable : false
-							}, {
-								header : "供应商",
-								dataIndex : "supplierName",
-								width : 300,
-								menuDisabled : true,
-								sortable : false
-							}, {
-								header : "供应商联系人",
-								dataIndex : "contact",
-								menuDisabled : true,
-								sortable : false
-							}, {
-								header : "供应商电话",
-								dataIndex : "tel",
-								menuDisabled : true,
-								sortable : false
-							}, {
-								header : "供应商传真",
-								dataIndex : "fax",
-								menuDisabled : true,
-								sortable : false
-							}, {
-								header : "采购金额",
-								dataIndex : "goodsMoney",
-								menuDisabled : true,
-								sortable : false,
-								align : "right",
-								xtype : "numbercolumn",
-								width : 150
-							}, {
-								header : "税金",
-								dataIndex : "tax",
-								menuDisabled : true,
-								sortable : false,
-								align : "right",
-								xtype : "numbercolumn",
-								width : 150
-							}, {
-								header : "价税合计",
-								dataIndex : "moneyWithTax",
-								menuDisabled : true,
-								sortable : false,
-								align : "right",
-								xtype : "numbercolumn",
-								width : 150
-							}, {
-								header : "付款方式",
-								dataIndex : "paymentType",
-								menuDisabled : true,
-								sortable : false,
-								width : 100,
-								renderer : function(value) {
-									if (value == 0) {
-										return "记应付账款";
-									} else if (value == 1) {
-										return "现金付款";
-									} else if (value == 2) {
-										return "预付款";
-									} else {
-										return "";
-									}
+							}
+						}, {
+							header : "采购订单号",
+							dataIndex : "ref",
+							width : 110
+						}, {
+							header : "交货日期",
+							dataIndex : "dealDate"
+						}, {
+							header : "交货地址",
+							dataIndex : "dealAddress"
+						}, {
+							header : "供应商",
+							dataIndex : "supplierName",
+							width : 300
+						}, {
+							header : "供应商联系人",
+							dataIndex : "contact"
+						}, {
+							header : "供应商电话",
+							dataIndex : "tel"
+						}, {
+							header : "供应商传真",
+							dataIndex : "fax"
+						}, {
+							header : "采购金额",
+							dataIndex : "goodsMoney",
+							align : "right",
+							xtype : "numbercolumn",
+							width : 150
+						}, {
+							header : "税金",
+							dataIndex : "tax",
+							align : "right",
+							xtype : "numbercolumn",
+							width : 150
+						}, {
+							header : "价税合计",
+							dataIndex : "moneyWithTax",
+							align : "right",
+							xtype : "numbercolumn",
+							width : 150
+						}, {
+							header : "付款方式",
+							dataIndex : "paymentType",
+							width : 100,
+							renderer : function(value) {
+								if (value == 0) {
+									return "记应付账款";
+								} else if (value == 1) {
+									return "现金付款";
+								} else if (value == 2) {
+									return "预付款";
+								} else {
+									return "";
 								}
-							}, {
-								header : "业务员",
-								dataIndex : "bizUserName",
-								menuDisabled : true,
-								sortable : false
-							}, {
-								header : "组织机构",
-								dataIndex : "orgName",
-								menuDisabled : true,
-								sortable : false
-							}, {
-								header : "制单人",
-								dataIndex : "inputUserName",
-								menuDisabled : true,
-								sortable : false
-							}, {
-								header : "制单时间",
-								dataIndex : "dateCreated",
-								menuDisabled : true,
-								sortable : false,
-								width : 140
-							}, {
-								header : "审核人",
-								dataIndex : "confirmUserName",
-								menuDisabled : true,
-								sortable : false
-							}, {
-								header : "审核时间",
-								dataIndex : "confirmDate",
-								menuDisabled : true,
-								sortable : false,
-								width : 140
-							}, {
-								header : "备注",
-								dataIndex : "billMemo",
-								menuDisabled : true,
-								sortable : false
-							}],
-					store : store,
-					bbar : ["->", {
-								id : "pagingToobar",
-								xtype : "pagingtoolbar",
-								border : 0,
-								store : store
-							}, "-", {
-								xtype : "displayfield",
-								value : "每页显示"
-							}, {
-								id : "comboCountPerPage",
-								xtype : "combobox",
-								editable : false,
-								width : 60,
-								store : Ext.create("Ext.data.ArrayStore", {
-											fields : ["text"],
-											data : [["20"], ["50"], ["100"],
-													["300"], ["1000"]]
-										}),
-								value : 20,
-								listeners : {
-									change : {
-										fn : function() {
-											store.pageSize = Ext
-													.getCmp("comboCountPerPage")
-													.getValue();
-											store.currentPage = 1;
-											Ext.getCmp("pagingToobar")
-													.doRefresh();
-										},
-										scope : me
-									}
-								}
-							}, {
-								xtype : "displayfield",
-								value : "条记录"
-							}],
-					listeners : {
-						select : {
-							fn : me.onMainGridSelect,
-							scope : me
-						},
-						itemdblclick : {
-							fn : me.getPermission().edit == "1"
-									? me.onEditBill
-									: Ext.emptyFn,
-							scope : me
+							}
+						}, {
+							header : "业务员",
+							dataIndex : "bizUserName"
+						}, {
+							header : "组织机构",
+							dataIndex : "orgName"
+						}, {
+							header : "制单人",
+							dataIndex : "inputUserName"
+						}, {
+							header : "制单时间",
+							dataIndex : "dateCreated",
+							width : 140
+						}, {
+							header : "审核人",
+							dataIndex : "confirmUserName"
+						}, {
+							header : "审核时间",
+							dataIndex : "confirmDate",
+							width : 140
+						}, {
+							header : "备注",
+							dataIndex : "billMemo"
+						}]
+			},
+			store : store,
+			bbar : ["->", {
+						id : "pagingToobar",
+						xtype : "pagingtoolbar",
+						border : 0,
+						store : store
+					}, "-", {
+						xtype : "displayfield",
+						value : "每页显示"
+					}, {
+						id : "comboCountPerPage",
+						xtype : "combobox",
+						editable : false,
+						width : 60,
+						store : Ext.create("Ext.data.ArrayStore", {
+									fields : ["text"],
+									data : [["20"], ["50"], ["100"], ["300"],
+											["1000"]]
+								}),
+						value : 20,
+						listeners : {
+							change : {
+								fn : function() {
+									store.pageSize = Ext
+											.getCmp("comboCountPerPage")
+											.getValue();
+									store.currentPage = 1;
+									Ext.getCmp("pagingToobar").doRefresh();
+								},
+								scope : me
+							}
 						}
-					}
-				});
+					}, {
+						xtype : "displayfield",
+						value : "条记录"
+					}],
+			listeners : {
+				select : {
+					fn : me.onMainGridSelect,
+					scope : me
+				},
+				itemdblclick : {
+					fn : me.getPermission().edit == "1"
+							? me.onEditBill
+							: Ext.emptyFn,
+					scope : me
+				}
+			}
+		});
 
 		return me.__mainGrid;
 	},
@@ -566,106 +533,86 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 						enableTextSelection : true
 					},
 					columnLines : true,
-					columns : [Ext.create("Ext.grid.RowNumberer", {
-										text : "序号",
-										width : 40
-									}), {
-								header : "商品编码",
-								dataIndex : "goodsCode",
-								menuDisabled : true,
-								sortable : false,
-								width : 120
-							}, {
-								header : "商品名称",
-								dataIndex : "goodsName",
-								menuDisabled : true,
-								sortable : false,
-								width : 200
-							}, {
-								header : "规格型号",
-								dataIndex : "goodsSpec",
-								menuDisabled : true,
-								sortable : false,
-								width : 200
-							}, {
-								header : "采购数量",
-								dataIndex : "goodsCount",
-								menuDisabled : true,
-								sortable : false,
-								align : "right"
-							}, {
-								header : "入库数量",
-								dataIndex : "pwCount",
-								menuDisabled : true,
-								sortable : false,
-								align : "right"
-							}, {
-								header : "未入库数量",
-								dataIndex : "leftCount",
-								menuDisabled : true,
-								sortable : false,
-								align : "right",
-								renderer : function(value) {
-									if (value > 0) {
-										return "<span style='color:red'>"
-												+ value + "</span>";
-									} else {
-										return value;
+					columns : {
+						defaults : {
+							menuDisabled : true,
+							sortable : false
+						},
+						items : [Ext.create("Ext.grid.RowNumberer", {
+											text : "序号",
+											width : 40
+										}), {
+									header : "商品编码",
+									dataIndex : "goodsCode",
+									width : 120
+								}, {
+									header : "商品名称",
+									dataIndex : "goodsName",
+									width : 200
+								}, {
+									header : "规格型号",
+									dataIndex : "goodsSpec",
+									width : 200
+								}, {
+									header : "采购数量",
+									dataIndex : "goodsCount",
+									align : "right"
+								}, {
+									header : "入库数量",
+									dataIndex : "pwCount",
+									align : "right"
+								}, {
+									header : "未入库数量",
+									dataIndex : "leftCount",
+									align : "right",
+									renderer : function(value) {
+										if (value > 0) {
+											return "<span style='color:red'>"
+													+ value + "</span>";
+										} else {
+											return value;
+										}
 									}
-								}
-							}, {
-								header : "单位",
-								dataIndex : "unitName",
-								menuDisabled : true,
-								sortable : false,
-								width : 60
-							}, {
-								header : "采购单价",
-								dataIndex : "goodsPrice",
-								menuDisabled : true,
-								sortable : false,
-								align : "right",
-								xtype : "numbercolumn",
-								width : 150
-							}, {
-								header : "采购金额",
-								dataIndex : "goodsMoney",
-								menuDisabled : true,
-								sortable : false,
-								align : "right",
-								xtype : "numbercolumn",
-								width : 150
-							}, {
-								header : "税率(%)",
-								dataIndex : "taxRate",
-								menuDisabled : true,
-								sortable : false,
-								align : "right",
-								xtype : "numbercolumn",
-								format : "0"
-							}, {
-								header : "税金",
-								dataIndex : "tax",
-								menuDisabled : true,
-								sortable : false,
-								align : "right",
-								xtype : "numbercolumn",
-								width : 150
-							}, {
-								header : "价税合计",
-								dataIndex : "moneyWithTax",
-								menuDisabled : true,
-								sortable : false,
-								align : "right",
-								xtype : "numbercolumn",
-								width : 150
-							}, {
-								header : "备注",
-								dataIndex : "memo",
-								menuDisabled : true,
-								sortable : false,
-								width : 120
-							}],
+								}, {
+									header : "单位",
+									dataIndex : "unitName",
+									width : 60
+								}, {
+									header : "采购单价",
+									dataIndex : "goodsPrice",
+									align : "right",
+									xtype : "numbercolumn",
+									width : 150
+								}, {
+									header : "采购金额",
+									dataIndex : "goodsMoney",
+									align : "right",
+									xtype : "numbercolumn",
+									width : 150
+								}, {
+									header : "税率(%)",
+									dataIndex : "taxRate",
+									align : "right",
+									xtype : "numbercolumn",
+									format : "0"
+								}, {
+									header : "税金",
+									dataIndex : "tax",
+									align : "right",
+									xtype : "numbercolumn",
+									width : 150
+								}, {
+									header : "价税合计",
+									dataIndex : "moneyWithTax",
+									align : "right",
+									xtype : "numbercolumn",
+									width : 150
+								}, {
+									header : "备注",
+									dataIndex : "memo",
+									width : 120
+								}]
+					},
 					store : store
 				});
 
@@ -1117,97 +1064,83 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 				enableTextSelection : true
 			},
 			columnLines : true,
-			columns : [{
-						xtype : "rownumberer",
-						width : 50
-					}, {
-						header : "状态",
-						dataIndex : "billStatus",
-						menuDisabled : true,
-						sortable : false,
-						width : 60,
-						renderer : function(value) {
-							if (value == "待入库") {
-								return "<span style='color:red'>" + value
-										+ "</span>";
-							} else if (value == "已退货") {
-								return "<span style='color:blue'>" + value
-										+ "</span>";
-							} else {
-								return value;
+			columns : {
+				defaults : {
+					menuDisabled : true,
+					sortable : false
+				},
+				items : [{
+							xtype : "rownumberer",
+							width : 50
+						}, {
+							header : "状态",
+							dataIndex : "billStatus",
+							width : 60,
+							renderer : function(value) {
+								if (value == "待入库") {
+									return "<span style='color:red'>" + value
+											+ "</span>";
+								} else if (value == "已退货") {
+									return "<span style='color:blue'>" + value
+											+ "</span>";
+								} else {
+									return value;
+								}
 							}
-						}
-					}, {
-						header : "入库单号",
-						dataIndex : "ref",
-						width : 110,
-						menuDisabled : true,
-						sortable : false,
-						renderer : function(value, md, record) {
-							return "<a href='"
-									+ PSI.Const.BASE_URL
-									+ "Home/Bill/viewIndex?fid=2027&refType=采购入库&ref="
-									+ encodeURIComponent(record.get("ref"))
-									+ "' target='_blank'>" + value + "</a>";
-						}
-					}, {
-						header : "业务日期",
-						dataIndex : "bizDate",
-						menuDisabled : true,
-						sortable : false
-					}, {
-						header : "供应商",
-						dataIndex : "supplierName",
-						width : 300,
-						menuDisabled : true,
-						sortable : false
-					}, {
-						header : "采购金额",
-						dataIndex : "amount",
-						menuDisabled : true,
-						sortable : false,
-						align : "right",
-						xtype : "numbercolumn",
-						width : 150
-					}, {
-						header : "付款方式",
-						dataIndex : "paymentType",
-						menuDisabled : true,
-						sortable : false,
-						width : 100,
-						renderer : function(value) {
-							if (value == 0) {
-								return "记应付账款";
-							} else if (value == 1) {
-								return "现金付款";
-							} else if (value == 2) {
-								return "预付款";
-							} else {
-								return "";
+						}, {
+							header : "入库单号",
+							dataIndex : "ref",
+							width : 110,
+							renderer : function(value, md, record) {
+								return "<a href='"
+										+ PSI.Const.BASE_URL
+										+ "Home/Bill/viewIndex?fid=2027&refType=采购入库&ref="
+										+ encodeURIComponent(record.get("ref"))
+										+ "' target='_blank'>" + value + "</a>";
 							}
-						}
-					}, {
-						header : "入库仓库",
-						dataIndex : "warehouseName",
-						menuDisabled : true,
-						sortable : false
-					}, {
-						header : "业务员",
-						dataIndex : "bizUserName",
-						menuDisabled : true,
-						sortable : false
-					}, {
-						header : "制单人",
-						dataIndex : "inputUserName",
-						menuDisabled : true,
-						sortable : false
-					}, {
-						header : "制单时间",
-						dataIndex : "dateCreated",
-						menuDisabled : true,
-						sortable : false,
-						width : 140
-					}],
+						}, {
+							header : "业务日期",
+							dataIndex : "bizDate"
+						}, {
+							header : "供应商",
+							dataIndex : "supplierName",
+							width : 300
+						}, {
+							header : "采购金额",
+							dataIndex : "amount",
+							align : "right",
+							xtype : "numbercolumn",
+							width : 150
+						}, {
+							header : "付款方式",
+							dataIndex : "paymentType",
+							width : 100,
+							renderer : function(value) {
+								if (value == 0) {
+									return "记应付账款";
+								} else if (value == 1) {
+									return "现金付款";
+								} else if (value == 2) {
+									return "预付款";
+								} else {
+									return "";
+								}
+							}
+						}, {
+							header : "入库仓库",
+							dataIndex : "warehouseName"
+						}, {
+							header : "业务员",
+							dataIndex : "bizUserName"
+						}, {
+							header : "制单人",
+							dataIndex : "inputUserName"
+						}, {
+							header : "制单时间",
+							dataIndex : "dateCreated",
+							width : 140
+						}]
+			},
 			store : store
 		});
 
