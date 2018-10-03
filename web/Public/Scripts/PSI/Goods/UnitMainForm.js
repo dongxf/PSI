@@ -53,22 +53,24 @@ Ext.define("PSI.Goods.UnitMainForm", {
 				me.__mainGrid = Ext.create("Ext.grid.Panel", {
 							cls : "PSI",
 							columnLines : true,
-							columns : [{
-										xtype : "rownumberer"
-									}, {
-										header : "商品计量单位",
-										dataIndex : "name",
-										menuDisabled : true,
-										sortable : false,
-										width : 200
-									}, {
-										header : "使用该计量单位的商品数",
-										dataIndex : "goodsCount",
-										menuDisabled : true,
-										sortable : false,
-										align : "right",
-										width : 180
-									}],
+							columns : {
+								defaults : {
+									menuDisabled : true,
+									sortable : false
+								},
+								items : [{
+											xtype : "rownumberer"
+										}, {
+											header : "商品计量单位",
+											dataIndex : "name",
+											width : 200
+										}, {
+											header : "使用该计量单位的商品数",
+											dataIndex : "goodsCount",
+											align : "right",
+											width : 180
+										}]
+							},
 							store : Ext.create("Ext.data.Store", {
 										model : modelName,
 										autoLoad : false,
