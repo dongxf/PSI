@@ -497,145 +497,120 @@ Ext.define("PSI.Purchase.PWEditForm", {
 					}],
 			plugins : [me.__cellEditing],
 			columnLines : true,
-			columns : [{
-						xtype : "rownumberer"
-					}, {
-						header : "商品编码",
-						dataIndex : "goodsCode",
-						menuDisabled : true,
-						sortable : false,
-						draggable : false,
-						id : "columnGoodsCode"
-					}, {
-						header : "商品名称",
-						dataIndex : "goodsName",
-						menuDisabled : true,
-						sortable : false,
-						draggable : false,
-						width : 200
-					}, {
-						header : "规格型号",
-						dataIndex : "goodsSpec",
-						menuDisabled : true,
-						sortable : false,
-						draggable : false,
-						width : 200
-					}, {
-						header : "入库数量",
-						dataIndex : "goodsCount",
-						menuDisabled : true,
-						sortable : false,
-						draggable : false,
-						align : "right",
-						width : 100,
-						editor : {
-							xtype : "numberfield",
-							allowDecimals : PSI.Const.GC_DEC_NUMBER > 0,
-							decimalPrecision : PSI.Const.GC_DEC_NUMBER,
-							minValue : 0,
-							hideTrigger : true
-						}
-					}, {
-						header : "单位",
-						dataIndex : "unitName",
-						menuDisabled : true,
-						sortable : false,
-						draggable : false,
-						width : 60
-					}, {
-						header : "采购单价",
-						dataIndex : "goodsPrice",
-						menuDisabled : true,
-						sortable : false,
-						draggable : false,
-						align : "right",
-						xtype : "numbercolumn",
-						width : 100,
-						id : "columnGoodsPrice",
-						summaryRenderer : function() {
-							return "采购金额合计";
-						},
-						hidden : !me.getViewPrice()
-					}, {
-						header : "采购金额",
-						dataIndex : "goodsMoney",
-						menuDisabled : true,
-						sortable : false,
-						draggable : false,
-						align : "right",
-						xtype : "numbercolumn",
-						width : 120,
-						id : "columnGoodsMoney",
-						summaryType : "sum",
-						hidden : !me.getViewPrice()
-					}, {
-						header : "备注",
-						dataIndex : "memo",
-						menuDisabled : true,
-						sortable : false,
-						draggable : false,
-						width : 200,
-						editor : {
-							xtype : "textfield"
-						}
-					}, {
-						header : "",
-						id : "columnActionDelete",
-						align : "center",
-						menuDisabled : true,
-						draggable : false,
-						width : 50,
-						xtype : "actioncolumn",
-						items : [{
-									icon : me
-											.URL("Public/Images/icons/delete.png"),
-									tooltip : "删除当前记录",
-									handler : function(grid, row) {
-										var store = grid.getStore();
-										store.remove(store.getAt(row));
-										if (store.getCount() == 0) {
-											store.add({});
-										}
-									},
-									scope : me
-								}]
-					}, {
-						header : "",
-						id : "columnActionAdd",
-						align : "center",
-						menuDisabled : true,
-						draggable : false,
-						width : 50,
-						xtype : "actioncolumn",
-						items : [{
-									icon : me
-											.URL("Public/Images/icons/insert.png"),
-									tooltip : "在当前记录之前插入新记录",
-									handler : function(grid, row) {
-										var store = grid.getStore();
-										store.insert(row, [{}]);
-									},
-									scope : me
-								}]
-					}, {
-						header : "",
-						id : "columnActionAppend",
-						align : "center",
-						menuDisabled : true,
-						draggable : false,
-						width : 50,
-						xtype : "actioncolumn",
-						items : [{
-									icon : me
-											.URL("Public/Images/icons/add.png"),
-									tooltip : "在当前记录之后新增记录",
-									handler : function(grid, row) {
-										var store = grid.getStore();
-										store.insert(row + 1, [{}]);
-									},
-									scope : me
-								}]
-					}],
+			columns : {
+				defaults : {
+					menuDisabled : true,
+					sortable : false,
+					draggable : false
+				},
+				items : [{
+							xtype : "rownumberer"
+						}, {
+							header : "商品编码",
+							dataIndex : "goodsCode",
+							id : "columnGoodsCode"
+						}, {
+							header : "商品名称",
+							dataIndex : "goodsName",
+							width : 200
+						}, {
+							header : "规格型号",
+							dataIndex : "goodsSpec",
+							width : 200
+						}, {
+							header : "入库数量",
+							dataIndex : "goodsCount",
+							align : "right",
+							width : 100,
+							editor : {
+								xtype : "numberfield",
+								allowDecimals : PSI.Const.GC_DEC_NUMBER > 0,
+								decimalPrecision : PSI.Const.GC_DEC_NUMBER,
+								minValue : 0,
+								hideTrigger : true
+							}
+						}, {
+							header : "单位",
+							dataIndex : "unitName",
+							width : 60
+						}, {
+							header : "采购单价",
+							dataIndex : "goodsPrice",
+							align : "right",
+							xtype : "numbercolumn",
+							width : 100,
+							id : "columnGoodsPrice",
+							summaryRenderer : function() {
+								return "采购金额合计";
+							},
+							hidden : !me.getViewPrice()
+						}, {
+							header : "采购金额",
+							dataIndex : "goodsMoney",
+							align : "right",
+							xtype : "numbercolumn",
+							width : 120,
+							id : "columnGoodsMoney",
+							summaryType : "sum",
+							hidden : !me.getViewPrice()
+						}, {
+							header : "备注",
+							dataIndex : "memo",
+							width : 200,
+							editor : {
+								xtype : "textfield"
+							}
+						}, {
+							header : "",
+							id : "columnActionDelete",
+							align : "center",
+							width : 50,
+							xtype : "actioncolumn",
+							items : [{
+								icon : me.URL("Public/Images/icons/delete.png"),
+								tooltip : "删除当前记录",
+								handler : function(grid, row) {
+									var store = grid.getStore();
+									store.remove(store.getAt(row));
+									if (store.getCount() == 0) {
+										store.add({});
+									}
+								},
+								scope : me
+							}]
+						}, {
+							header : "",
+							id : "columnActionAdd",
+							align : "center",
+							width : 50,
+							xtype : "actioncolumn",
+							items : [{
+								icon : me.URL("Public/Images/icons/insert.png"),
+								tooltip : "在当前记录之前插入新记录",
+								handler : function(grid, row) {
+									var store = grid.getStore();
+									store.insert(row, [{}]);
+								},
+								scope : me
+							}]
+						}, {
+							header : "",
+							id : "columnActionAppend",
+							align : "center",
+							width : 50,
+							xtype : "actioncolumn",
+							items : [{
+										icon : me
+												.URL("Public/Images/icons/add.png"),
+										tooltip : "在当前记录之后新增记录",
+										handler : function(grid, row) {
+											var store = grid.getStore();
+											store.insert(row + 1, [{}]);
+										},
+										scope : me
+									}]
+						}]
+			},
 			store : store,
 			listeners : {
 				cellclick : function() {
