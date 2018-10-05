@@ -213,6 +213,10 @@ h1, h2, h3, p {
 	height: 32px !important;
 }
 
+.x-tab-bar .x-tab-bar-body {
+	background-color: #f5f5f5;
+}
+
 .x-tab-bar .x-tab-bar-body .x-box-inner .x-tab {
 	height: 32px !important;
 }
@@ -234,8 +238,19 @@ h1, h2, h3, p {
 	color: #002766;
 }
 
+.x-tab-default-top {
+	background-image: none;
+	background-color: #f5f5f5;
+}
+
+.x-tab-default-top-active {
+	background-image: none;
+	background-color: #f5f5f5;
+	border-bottom: 1px solid #f5f5f5;
+}
+
 .x-horizontal-box-overflow-body {
-	background-color: #dae6f3;
+	background-color: #f5f5f5;
 }
 
 .x-splitter-horizontal {
