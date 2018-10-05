@@ -4,6 +4,7 @@ namespace Home\Controller;
 
 use Home\Common\DemoConst;
 use Home\Service\UserService;
+use Home\Service\FormViewService;
 
 /**
  * 表单视图Controller
@@ -29,5 +30,13 @@ class FormViewController extends PSIBaseController {
 		} else {
 			redirect(__ROOT__ . "/Home");
 		}
+	}
+
+	/**
+	 * 视图列表 - 开发助手
+	 */
+	public function fvListForDev() {
+		$service = new FormViewService();
+		$this->ajaxReturn($service->fvListForDev());
 	}
 }

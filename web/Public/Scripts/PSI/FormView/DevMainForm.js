@@ -17,6 +17,8 @@ Ext.define("PSI.FormView.DevMainForm", {
 				});
 
 		me.callParent(arguments);
+
+		me.refreshMainGrid();
 	},
 
 	getToolbarCmp : function() {
@@ -118,6 +120,15 @@ Ext.define("PSI.FormView.DevMainForm", {
 				});
 
 		return me.__mainGrid;
+	},
 
+	refreshMainGrid : function(id) {
+		var me = this;
+
+		Ext.getCmp("pagingToobar").doRefresh();
+	},
+
+	getQueryParam : function() {
+		return {};
 	}
 });
