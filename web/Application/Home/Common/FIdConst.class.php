@@ -15,6 +15,20 @@ class FIdConst {
 	const FORM_SYSTEM = "-7999";
 	
 	/**
+	 * 表单视图
+	 *
+	 * @var string
+	 */
+	const FORM_VIEW_SYSTEM = "-7998";
+	
+	/**
+	 * 表单视图开发助手
+	 * 
+	 * @var string
+	 */
+	const FROM_VIEW_SYSTEM_DEV = "-7997";
+	
+	/**
 	 * 首页
 	 */
 	const HOME = "-9997";

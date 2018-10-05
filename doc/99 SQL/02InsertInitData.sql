@@ -7,6 +7,7 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 
 TRUNCATE TABLE `t_fid`;
 INSERT INTO `t_fid` (`fid`, `name`) VALUES
+('-7997', '表单视图开发助手'),
 ('-9999', '重新登录'),
 ('-9997', '首页'),
 ('-9996', '修改我的密码'),
@@ -185,6 +186,8 @@ INSERT INTO `t_menu_item` (`id`, `caption`, `fid`, `parent_id`, `show_order`) VA
 ('0902', '权限管理', '-8996', '09', 2),
 ('0903', '业务日志', '-8997', '09', 3),
 ('0904', '业务设置', '2008', '09', 4),
+('0905', '二次开发', NULL, '09', 5),
+('090501', '表单视图开发助手', '-7997', '0905', 1),
 ('10', '帮助', NULL, NULL, 11),
 ('1001', '使用帮助', '-9995', '10', 1),
 ('1003', '关于', '-9994', '10', 3);
@@ -439,7 +442,7 @@ INSERT INTO `t_menu_item_h5` (`id`, `caption`, `fid`, `parent_id`, `show_order`)
 
 TRUNCATE TABLE `t_psi_db_version`;
 INSERT INTO `t_psi_db_version` (`db_version`, `update_dt`) VALUES
-('20181005-01', now());
+('20181005-02', now());
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
