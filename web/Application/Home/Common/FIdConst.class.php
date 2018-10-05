@@ -23,10 +23,10 @@ class FIdConst {
 	
 	/**
 	 * 表单视图开发助手
-	 * 
+	 *
 	 * @var string
 	 */
-	const FROM_VIEW_SYSTEM_DEV = "-7997";
+	const FORM_VIEW_SYSTEM_DEV = "-7997";
 	
 	/**
 	 * 首页

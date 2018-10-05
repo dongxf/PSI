@@ -225,6 +225,10 @@ class MainMenuController extends Controller {
 				// 银行账户
 				redirect(__ROOT__ . "/Home/Bank/index");
 				break;
+			case FIdConst::FORM_VIEW_SYSTEM_DEV :
+				// 表单视图开发助手
+				redirect(__ROOT__ . "/Home/FormView/devIndex");
+				break;
 			default :
 				redirect(__ROOT__ . "/Home");
 		}
