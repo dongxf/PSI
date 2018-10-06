@@ -54,4 +54,44 @@ class FormViewDAO extends PSIBaseExDAO {
 			return "";
 		}
 	}
+
+	/**
+	 * 获得某个表单视图的全部元数据
+	 */
+	public function getFormViewMetaData(string $viewId) {
+		$db = $this->db;
+		
+		// 检查表单视图是否存在
+		$sql = "select prop_name from t_fv_md where id = '%s' ";
+		$data = $db->query($sql, $viewId);
+		if (! $data) {
+			return $this->emptyResult();
+		}
+		
+		$result = [];
+		
+		// 工具栏按钮
+		$sql = "select prop_value from t_fv_md
+				where parent_id = '%s' and prop_name = 'tool_bar_id' ";
+		$data = $db->query($sql, $viewId);
+		if ($data) {
+			$toolBarId = $data[0]["prop_value"];
+			
+			$sql = "select prop_value from t_fv_md
+					where parent_id = '%s' and prop_name = 'button_text'
+					order by show_order";
+			$data = $db->query($sql, $toolBarId);
+			$toolBar = [];
+			foreach ( $data as $v ) {
+				$buttonText = $v["prop_value"];
+				$toolBar[] = [
+						"text" => $buttonText
+				];
+			}
+			
+			$result["toolBar"] = $toolBar;
+		}
+		
+		return $result;
+	}
 }

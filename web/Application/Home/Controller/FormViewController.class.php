@@ -61,4 +61,15 @@ class FormViewController extends PSIBaseController {
 		$service = new FormViewService();
 		$this->ajaxReturn($service->fvListForDev());
 	}
+
+	/**
+	 * 获得某个表单视图的全部元数据
+	 */
+	public function getFormViewMetaData() {
+		if (IS_POST) {
+			$viewId = I("post.viewId");
+			$service = new FormViewService();
+			$this->ajaxReturn($service->getFormViewMetaData($viewId));
+		}
+	}
 }
