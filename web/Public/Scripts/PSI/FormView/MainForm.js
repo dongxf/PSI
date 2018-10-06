@@ -35,7 +35,7 @@ Ext.define("PSI.FormView.MainForm", {
 						});
 
 				me.callParent(arguments);
-				
+
 				me.__toolBar = Ext.getCmp("PSI_FormView_MainForm_toolBar");
 
 				me.fetchMeatData();
@@ -69,15 +69,23 @@ Ext.define("PSI.FormView.MainForm", {
 			initUI : function() {
 				var me = this;
 				var data = me.__md;
-					debugger;
+				if (!data) {
+					return;
+				}
 
 				// 创建工具栏
 				if (data.toolBar) {
 					var toolBar = data.toolBar;
 					for (var i = 0; i < toolBar.length; i++) {
-						me.__toolBar.add({
-									text : toolBar[i]["text"]
-								});
+						var item = toolBar[i];
+						var text = item.text;
+						if (text == "-") {
+							me.__toolbar.add("-");
+						} else {
+							me.__toolBar.add({
+										text : text
+									});
+						}
 					}
 				}
 			}
