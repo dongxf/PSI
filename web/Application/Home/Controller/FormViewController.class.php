@@ -26,7 +26,8 @@ class FormViewController extends PSIBaseController {
 		if ($us->getLoginUserId() == DemoConst::ADMIN_USER_ID) {
 			$this->initVar();
 			
-			$this->assign("title", "查看视图");
+			$service = new FormViewService();
+			$this->assign("title", $service->getTitle($viewId));
 			$this->assign("viewId", $viewId);
 			
 			$this->display();

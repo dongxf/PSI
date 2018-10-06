@@ -35,4 +35,23 @@ class FormViewDAO extends PSIBaseExDAO {
 				"totalCount" => $cnt
 		];
 	}
+
+	/**
+	 * 获得表单视图的标题
+	 *
+	 * @param string $viewId        	
+	 * @return string
+	 */
+	public function getTitle(string $viewId) {
+		$db = $this->db;
+		
+		$sql = "select prop_value from t_fv_md
+				where parent_id = '%s' and prop_name = 'title' ";
+		$data = $db->query($sql, $viewId);
+		if ($data) {
+			return $data[0]["prop_value"];
+		} else {
+			return "";
+		}
+	}
 }

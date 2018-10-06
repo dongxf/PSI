@@ -23,4 +23,19 @@ class FormViewService extends PSIBaseExService {
 		$dao = new FormViewDAO($this->db());
 		return $dao->fvListForDev();
 	}
+
+	/**
+	 * 获得表单视图的标题
+	 * 
+	 * @param string $viewId        	
+	 * @return string
+	 */
+	public function getTitle(string $viewId) {
+		if ($this->isNotOnline()) {
+			return "";
+		}
+		
+		$dao = new FormViewDAO($this->db());
+		return $dao->getTitle($viewId);
+	}
 }
