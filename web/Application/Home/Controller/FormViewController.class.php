@@ -27,6 +27,7 @@ class FormViewController extends PSIBaseController {
 			$this->initVar();
 			
 			$this->assign("title", "查看视图");
+			$this->assign("viewId", $viewId);
 			
 			$this->display();
 		} else {

@@ -1,4 +1,7 @@
 <layout name="layout" />
+<script src="{$uri}Public/Scripts/PSI/FormView/MainForm.js?dt={$dtFlag}"
+	type="text/javascript"></script>
+
 
 <script>
 	Ext.onReady(function() {
@@ -10,5 +13,9 @@
 		app.setAppHeader({
 			title : "{$title}",
 		});
+
+		app.add(Ext.create("PSI.FormView.MainForm", {
+			formViewId : "{$viewId}"
+		}));
 	});
 </script>
