@@ -181,6 +181,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20180921_01();
 		$this->update_20181005_01();
 		$this->update_20181005_02();
+		$this->update_20181006_01();
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -201,6 +202,18 @@ class UpdateDBService extends PSIBaseService {
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	// ============================================
 	private function notForgot() {
+	}
+
+	private function update_20181006_01() {
+		// 本次更新：t_fv_md新增字段show_order
+		$db = $this->db;
+		
+		$tableName = "t_fv_md";
+		$columnName = "show_order";
+		if (! $this->columnExists($db, $tableName, $columnName)) {
+			$sql = "alter table {$tableName} add {$columnName} int(11) NOT NULL DEFAULT 0;";
+			$db->execute($sql);
+		}
 	}
 
 	private function update_20181005_02() {
