@@ -76,11 +76,12 @@ Ext.define("PSI.FormView.MainForm", {
 				// 创建工具栏
 				if (data.toolBar) {
 					var toolBar = data.toolBar;
+
 					for (var i = 0; i < toolBar.length; i++) {
 						var item = toolBar[i];
 						var text = item.text;
 						if (text == "-") {
-							me.__toolbar.add("-");
+							me.__toolBar.add("-");
 						} else {
 							me.__toolBar.add({
 										text : text
