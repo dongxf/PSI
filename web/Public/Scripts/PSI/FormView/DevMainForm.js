@@ -24,10 +24,15 @@ Ext.define("PSI.FormView.DevMainForm", {
 	getToolbarCmp : function() {
 		var me = this;
 		return [{
+					text : "查看视图",
+					handler : me.onView,
+					scope : me
+				}, "-", {
 					text : "关闭",
 					handler : function() {
 						me.closeWindow();
-					}
+					},
+					scope : me
 				}];
 	},
 
@@ -130,5 +135,21 @@ Ext.define("PSI.FormView.DevMainForm", {
 
 	getQueryParam : function() {
 		return {};
+	},
+
+	onView : function() {
+		var me = this;
+
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			me.showInfo("请选择要查看的表单视图");
+			return;
+		}
+
+		var formView = item[0];
+
+		var url = me.URL(Ext.String.format("Home/FormView/devView?id={0}",
+				formView.get("id")));
+		window.open(url);
 	}
 });

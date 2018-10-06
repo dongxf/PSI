@@ -15,6 +15,26 @@ use Home\Service\FormViewService;
 class FormViewController extends PSIBaseController {
 
 	/**
+	 * 表单视图 - 测试助手用于查看视图
+	 */
+	public function devView() {
+		$viewId = I("get.id");
+		
+		$us = new UserService();
+		
+		// 开发助手只允许admin访问
+		if ($us->getLoginUserId() == DemoConst::ADMIN_USER_ID) {
+			$this->initVar();
+			
+			$this->assign("title", "查看视图");
+			
+			$this->display();
+		} else {
+			redirect(__ROOT__ . "/Home");
+		}
+	}
+
+	/**
 	 * 表单视图开发助手 - 主页面
 	 */
 	public function devIndex() {
