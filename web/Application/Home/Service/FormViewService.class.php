@@ -20,7 +20,7 @@ class FormViewService extends PSIBaseExService {
 			return $this->emptyResult();
 		}
 		
-		$dao = new FormViewDAO($db);
+		$dao = new FormViewDAO($this->db());
 		return $dao->fvListForDev();
 	}
 }
