@@ -34,5 +34,9 @@ INSERT INTO `t_fv_md` (id, parent_id, prop_name, prop_value, show_order) VALUES
 ('02040105', '020401', 'button_text', '删除仓库', 5),
 ('0204010501', '02040105', 'button_handler', 'onTodo', 0),
 ('02040106', '020401', 'button_text', '-', 6),
-('02040107', '020401', 'button_text', '关闭', 6),
-('0204010701', '02040107', 'button_handler', 'onCloseForm', 0);
+('02040107', '020401', 'button_text', '帮助', 7),
+('0204010701', '02040107', 'button_handler', 'onHelp', 0),
+('02040108', '020401', 'button_text', '-', 8),
+('02040109', '020401', 'button_text', '关闭', 9),
+('0204010901', '02040109', 'button_handler', 'onCloseForm', 0),
+('0205', '02', 'help_id', 'warehouse', 0);
