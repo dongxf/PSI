@@ -23,6 +23,22 @@ Ext.define("PSI.FormView.MainForm", {
 				return Ext.JSON.decode(str);
 			},
 
+			onCloseForm : function() {
+				if (PSI.Const.MOT == "0") {
+					window.location.replace(PSI.Const.BASE_URL);
+				} else {
+					window.close();
+
+					if (!window.closed) {
+						window.location.replace(PSI.Const.BASE_URL);
+					}
+				}
+			},
+
+			onTodo : function() {
+				PSI.MsgBox.showInfo("TODO");
+			},
+
 			initComponent : function() {
 				var me = this;
 
@@ -83,8 +99,15 @@ Ext.define("PSI.FormView.MainForm", {
 						if (text == "-") {
 							me.__toolBar.add("-");
 						} else {
+							var handler = Ext.emptyFn;
+							if (item.handler && me[item.handler]) {
+								handler = me[item.handler];
+							}
+
 							me.__toolBar.add({
-										text : text
+										text : text,
+										handler : handler,
+										socpe : me
 									});
 						}
 					}

@@ -77,15 +77,27 @@ class FormViewDAO extends PSIBaseExDAO {
 		if ($data) {
 			$toolBarId = $data[0]["prop_value"];
 			
-			$sql = "select prop_value from t_fv_md
+			$sql = "select id, prop_value from t_fv_md
 					where parent_id = '%s' and prop_name = 'button_text'
 					order by show_order";
 			$data = $db->query($sql, $toolBarId);
 			$toolBar = [];
 			foreach ( $data as $v ) {
 				$buttonText = $v["prop_value"];
+				$buttonId = $v["id"];
+				
+				// 获得按钮单击handler
+				$handler = null;
+				$sql = "select prop_value from t_fv_md
+						where parent_id = '%s' and prop_name = 'button_handler'";
+				$d = $db->query($sql, $buttonId);
+				if ($d) {
+					$handler = $d[0]["prop_value"];
+				}
+				
 				$toolBar[] = [
-						"text" => $buttonText
+						"text" => $buttonText,
+						"handler" => $handler
 				];
 			}
 			
