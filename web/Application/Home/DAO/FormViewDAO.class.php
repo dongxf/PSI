@@ -103,9 +103,19 @@ class FormViewDAO extends PSIBaseExDAO {
 					$handler = $d[0]["prop_value"];
 				}
 				
+				// 按钮的icon
+				$icon = null;
+				$sql = "select prop_value from t_fv_md
+						where parent_id = '%s' and prop_name = 'button_icon'";
+				$d = $db->query($sql, $buttonId);
+				if ($d) {
+					$icon = $d[0]["prop_value"];
+				}
+				
 				$toolBarItem = [
 						"text" => $buttonText,
-						"handler" => $handler
+						"handler" => $handler,
+						"iconCls" => $icon
 				
 				];
 				
@@ -134,9 +144,19 @@ class FormViewDAO extends PSIBaseExDAO {
 							$btnHandler = $d[0]["prop_value"];
 						}
 						
+						// 按钮的icon
+						$sql = "select prop_value from t_fv_md
+								where parent_id = '%s' and prop_name = 'button_icon' ";
+						$d = $db->query($sql, $btnId);
+						$btnIcon = null;
+						if ($d) {
+							$btnIcon = $d[0]["prop_value"];
+						}
+						
 						$subButtonList[] = [
 								"text" => $btnText,
-								"handler" => $btnHandler
+								"handler" => $btnHandler,
+								"iconCls" => $btnIcon
 						];
 					}
 					

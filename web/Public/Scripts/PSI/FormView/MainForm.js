@@ -130,6 +130,9 @@ Ext.define("PSI.FormView.MainForm", {
 							var btn = {
 								text : text
 							};
+							if (item.iconCls) {
+								btn.iconCls = item.iconCls;
+							}
 							if (item.subButtons) {
 								// 有子按钮
 								btn.menu = [];
@@ -143,11 +146,15 @@ Ext.define("PSI.FormView.MainForm", {
 										if (b.handler && me[b.handler]) {
 											h = me[b.handler];
 										}
-										btn.menu.push({
-													text : b.text,
-													handler : h,
-													scope : me
-												});
+										var subBtn = {
+											text : b.text,
+											handler : h,
+											scope : me
+										};
+										if (b.iconCls) {
+											subBtn.iconCls = b.iconCls;
+										}
+										btn.menu.push(subBtn);
 									}
 								}
 							} else {
