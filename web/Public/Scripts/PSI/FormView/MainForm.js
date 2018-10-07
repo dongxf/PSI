@@ -26,7 +26,7 @@ Ext.define("PSI.FormView.MainForm", {
 
 			onCloseForm : function() {
 				var me = this;
-				
+
 				if (me.getDevMode()) {
 					window.close();
 					if (!window.closed) {
@@ -48,6 +48,18 @@ Ext.define("PSI.FormView.MainForm", {
 
 			onTodo : function() {
 				PSI.MsgBox.showInfo("TODO");
+			},
+
+			onHelp : function() {
+				var me = this;
+
+				var helpId = me.__md.helpId;
+				if (!helpId) {
+					return;
+				}
+				
+				var url = Ext.String.format("/Home/Help/index?t={0}", helpId);
+				window.open(me.URL(url));
 			},
 
 			initComponent : function() {

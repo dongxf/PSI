@@ -70,6 +70,14 @@ class FormViewDAO extends PSIBaseExDAO {
 		
 		$result = [];
 		
+		// 使用帮助Id
+		$sql = "select prop_value from t_fv_md 
+				where parent_id = '%s' and prop_name = 'help_id' ";
+		$data = $db->query($sql, $viewId);
+		if ($data) {
+			$result["helpId"] = $data[0]["prop_value"];
+		}
+		
 		// 工具栏按钮
 		$sql = "select prop_value from t_fv_md
 				where parent_id = '%s' and prop_name = 'tool_bar_id' ";
