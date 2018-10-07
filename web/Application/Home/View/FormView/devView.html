@@ -13,9 +13,10 @@
 		app.setAppHeader({
 			title : "{$title}",
 		});
-
+		
 		app.add(Ext.create("PSI.FormView.MainForm", {
-			formViewId : "{$viewId}"
+			formViewId : "{$viewId}",
+			devMode : true
 		}));
 	});
 </script>

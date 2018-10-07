@@ -5,7 +5,8 @@ Ext.define("PSI.FormView.MainForm", {
 			extend : "Ext.panel.Panel",
 
 			config : {
-				formViewId : null
+				formViewId : null,
+				devMode : false
 			},
 
 			URL : function(url) {
@@ -24,6 +25,16 @@ Ext.define("PSI.FormView.MainForm", {
 			},
 
 			onCloseForm : function() {
+				var me = this;
+				
+				if (me.getDevMode()) {
+					window.close();
+					if (!window.closed) {
+						window.location.replace(PSI.Const.BASE_URL);
+					}
+					return;
+				}
+
 				if (PSI.Const.MOT == "0") {
 					window.location.replace(PSI.Const.BASE_URL);
 				} else {
@@ -107,7 +118,7 @@ Ext.define("PSI.FormView.MainForm", {
 							me.__toolBar.add({
 										text : text,
 										handler : handler,
-										socpe : me
+										scope : me
 									});
 						}
 					}
