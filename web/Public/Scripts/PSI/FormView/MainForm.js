@@ -57,7 +57,7 @@ Ext.define("PSI.FormView.MainForm", {
 				if (!helpId) {
 					return;
 				}
-				
+
 				var url = Ext.String.format("/Home/Help/index?t={0}", helpId);
 				window.open(me.URL(url));
 			},
@@ -127,11 +127,37 @@ Ext.define("PSI.FormView.MainForm", {
 								handler = me[item.handler];
 							}
 
-							me.__toolBar.add({
-										text : text,
-										handler : handler,
-										scope : me
-									});
+							var btn = {
+								text : text
+							};
+							if (item.subButtons) {
+								// 有子按钮
+								btn.menu = [];
+								for (var si = 0; si < item.subButtons.length; si++) {
+									var b = item.subButtons[si];
+
+									if (b.text == "-") {
+										btn.menu.push("-");
+									} else {
+										var h = Ext.emptyFn;
+										if (b.handler && me[b.handler]) {
+											h = me[b.handler];
+										}
+										btn.menu.push({
+													text : b.text,
+													handler : h,
+													scope : me
+												});
+									}
+								}
+							} else {
+								Ext.apply(btn, {
+											handler : handler,
+											scope : me
+										});
+							}
+
+							me.__toolBar.add(btn);
 						}
 					}
 				}
