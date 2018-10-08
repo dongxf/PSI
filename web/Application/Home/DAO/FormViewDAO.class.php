@@ -55,6 +55,40 @@ class FormViewDAO extends PSIBaseExDAO {
 		}
 	}
 
+	private function getPropId($parentId, $propName) {
+		$db = $this->db;
+		$sql = "select id from t_fv_md
+				where parent_id = '%s' and prop_name = '%s'
+				limit 1";
+		$data = $db->query($sql, $parentId, $propName);
+		if ($data) {
+			return $data[0]["id"];
+		} else {
+			return null;
+		}
+	}
+
+	private function getPropValue($parentId, $propName) {
+		$db = $this->db;
+		$sql = "select prop_value from t_fv_md 
+				where parent_id = '%s' and prop_name = '%s' 
+				limit 1";
+		$data = $db->query($sql, $parentId, $propName);
+		if ($data) {
+			return $data[0]["prop_value"];
+		} else {
+			return null;
+		}
+	}
+
+	private function getPropValueArray($parentId, $propName) {
+		$db = $this->db;
+		$sql = "select prop_value from t_fv_md
+				where parent_id = '%s' and prop_name = '%s' 
+				order by show_order";
+		return $db->query($sql, $parentId, $propName);
+	}
+
 	/**
 	 * 获得某个表单视图的全部元数据
 	 */
@@ -167,6 +201,40 @@ class FormViewDAO extends PSIBaseExDAO {
 			}
 			
 			$result["toolBar"] = $toolBar;
+		}
+		
+		// 查询栏
+		$queryPanelId = $this->getPropValue($viewId, "query_panel_id");
+		if ($queryPanelId) {
+			$queryCmp = [];
+			
+			$queryPanelColCount = $this->getPropValue($viewId, "query_panel_col_count");
+			if (! $queryPanelColCount) {
+				$queryPanelColCount = 4;
+			}
+			
+			$data = $this->getPropValueArray($queryPanelId, "query_cmp_label");
+			foreach ( $data as $v ) {
+				$queryCmpLabel = $v["prop_value"];
+				
+				$queryCmpId = $this->getPropId($queryPanelId, "query_cmp_label");
+				
+				if (! $queryCmpId) {
+					continue;
+				}
+				
+				$xtype = $this->getPropValue($queryCmpId, "query_cmp_xtype");
+				if (! $xtype) {
+					$xtype = "textfield";
+				}
+				
+				$queryCmp[] = [
+						"label" => $queryCmpLabel,
+						"xtype" => $xtype
+				];
+			}
+			
+			$result["queryCmp"] = $queryCmp;
 		}
 		
 		return $result;
