@@ -22,7 +22,6 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 						id : "panelQueryCmp",
 						region : "north",
 						height : 65,
-						layout : "fit",
 						header : false,
 						collapsible : true,
 						collapseMode : "mini",
