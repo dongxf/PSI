@@ -28,6 +28,15 @@ Ext.define("PSI.User.SelectUserDataOrg", {
 						me.onTriggerClick(e);
 					}
 				});
+
+		me.on({
+					render : function(p) {
+						p.getEl().on("dblclick", function() {
+									me.onTriggerClick();
+								});
+					},
+					single : true
+				});
 	},
 
 	onTriggerClick : function(e) {
@@ -44,6 +53,7 @@ Ext.define("PSI.User.SelectUserDataOrg", {
 					data : []
 				});
 		var lookupGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
 					columnLines : true,
 					border : 0,
 					store : store,
