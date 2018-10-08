@@ -70,12 +70,32 @@ Ext.define("PSI.FormView.MainForm", {
 							tbar : {
 								id : "PSI_FormView_MainForm_toolBar",
 								xtype : "toolbar"
-							}
+							},
+							layout : "border",
+							items : [{
+										id : "PSI_FormView_MainForm_panelQueryCmp",
+										region : "north",
+										height : 0,
+										header : false,
+										collapsible : true,
+										collapseMode : "mini",
+										border : 0,
+										layout : {
+											type : "table",
+											columns : 4
+										}
+									}, {
+										id : "PSI_FormView_MainForm_panelMain",
+										region : "center"
+									}]
 						});
 
 				me.callParent(arguments);
 
 				me.__toolBar = Ext.getCmp("PSI_FormView_MainForm_toolBar");
+				me.__panelQueryCmp = Ext
+						.getCmp("PSI_FormView_MainForm_panelQueryCmp");
+				me.__panelMain = Ext.getCmp("PSI_FormView_MainForm_panelMain");
 
 				me.fetchMeatData();
 			},
@@ -166,6 +186,32 @@ Ext.define("PSI.FormView.MainForm", {
 
 							me.__toolBar.add(btn);
 						}
+					}
+				}
+
+				// 查询栏
+				if (data.queryCmp) {
+					var qcList = data.queryCmp;
+					var len = qcList.length;
+					var col = parseInt(data.queryCmpColCount);
+					if (!col) {
+						col = 4;
+					}
+					var rowHeight = 40;
+					var height = Math.ceil(len / col) * rowHeight;
+
+					me.__panelQueryCmp.setHeight(height);
+
+					for (var i = 0; i < len; i++) {
+						var qc = qcList[i];
+						me.__panelQueryCmp.add({
+									labelWidth : 60,
+									labelAlign : "right",
+									labelSeparator : "",
+									fieldLabel : qc.label,
+									margin : "5, 0, 0, 0",
+									xtype : qc.xtype
+								});
 					}
 				}
 			}

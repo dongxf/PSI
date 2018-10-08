@@ -234,6 +234,7 @@ class FormViewDAO extends PSIBaseExDAO {
 				];
 			}
 			
+			$result["queryCmpColCount"] = $queryPanelColCount;
 			$result["queryCmp"] = $queryCmp;
 		}
 		
