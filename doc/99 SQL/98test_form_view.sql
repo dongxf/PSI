@@ -35,6 +35,8 @@ INSERT INTO `t_fv_md` (id, parent_id, prop_name, prop_value, show_order) VALUES
 ('0107', '01', 'query_panel_id', '010701', 0),
 ('01070101', '010701', 'query_cmp_label', '状态', 1),
 ('0107010101', '01070101', 'query_cmp_xtype', 'textfield', 0),
+('01070102', '010701', 'query_cmp_label', '单号', 2),
+('0107010201', '01070102', 'query_cmp_xtype', 'textfield', 0),
 ('02', NULL, 'view_name', '仓库', 2),
 ('0201', '02', 'fid', '1003', 0),
 ('0202', '02', 'title', '仓库', 0),
