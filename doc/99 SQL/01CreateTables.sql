@@ -41,6 +41,7 @@ CREATE TABLE IF NOT EXISTS `t_org` (
   `org_code` varchar(255) NOT NULL,
   `parent_id` varchar(255) DEFAULT NULL,
   `data_org` varchar(255) DEFAULT NULL,
+  `org_type` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
