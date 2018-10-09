@@ -182,6 +182,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20181005_01();
 		$this->update_20181005_02();
 		$this->update_20181006_01();
+		$this->update_20181009_01();
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -202,6 +203,18 @@ class UpdateDBService extends PSIBaseService {
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	// ============================================
 	private function notForgot() {
+	}
+
+	private function update_20181009_01() {
+		// 本次更新：t_org新增字段org_type
+		$db = $this->db;
+		
+		$tableName = "t_org";
+		$columnName = "org_type";
+		if (! $this->columnExists($db, $tableName, $columnName)) {
+			$sql = "alter table {$tableName} add {$columnName} int(11) DEFAULT NULL;";
+			$db->execute($sql);
+		}
 	}
 
 	private function update_20181006_01() {
