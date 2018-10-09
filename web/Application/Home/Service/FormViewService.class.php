@@ -52,4 +52,18 @@ class FormViewService extends PSIBaseExService {
 		$dao = new FormViewDAO($this->db());
 		return $dao->getFormViewMetaData($viewId);
 	}
+
+	/**
+	 * 获得视图的主属性
+	 * 
+	 * @param array $params        	
+	 */
+	public function viewMainPropList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$dao = new FormViewDAO($this->db());
+		return $dao->viewMainPropList($params);
+	}
 }

@@ -72,4 +72,18 @@ class FormViewController extends PSIBaseController {
 			$this->ajaxReturn($service->getFormViewMetaData($viewId));
 		}
 	}
+
+	/**
+	 * 获得视图的主属性
+	 */
+	public function viewMainPropList() {
+		if (IS_POST) {
+			$params = [
+					"id" => I("post.id")
+			];
+			
+			$service = new FormViewService();
+			$this->ajaxReturn($service->viewMainPropList($params));
+		}
+	}
 }

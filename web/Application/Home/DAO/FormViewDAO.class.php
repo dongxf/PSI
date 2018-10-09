@@ -240,4 +240,31 @@ class FormViewDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 获得视图的主属性
+	 *
+	 * @param array $params        	
+	 */
+	public function viewMainPropList($params) {
+		$db = $this->db;
+		
+		// 表单视图id
+		$id = $params["id"];
+		
+		$sql = "select id, prop_name, prop_value from t_fv_md
+				where parent_id = '%s'
+				order by prop_name";
+		$data = $db->query($sql, $id);
+		$result = [];
+		foreach ( $data as $v ) {
+			$result[] = [
+					"id" => $v["id"],
+					"propName" => $v["prop_name"],
+					"propValue" => $v["prop_value"]
+			];
+		}
+		
+		return $result;
+	}
 }
