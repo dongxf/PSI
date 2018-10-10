@@ -157,7 +157,7 @@ class UserService extends PSIBaseExService {
 		return $dao->users($params);
 	}
 
-	public function editOrg($id, $name, $parentId, $orgCode) {
+	public function editOrg($id, $name, $parentId, $orgCode, $orgType) {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
 		}
@@ -171,12 +171,13 @@ class UserService extends PSIBaseExService {
 			}
 		}
 		
-		$params = array(
+		$params = [
 				"id" => $id,
 				"name" => $name,
 				"parentId" => $parentId,
-				"orgCode" => $orgCode
-		);
+				"orgCode" => $orgCode,
+				"orgType" => $orgType
+		];
 		
 		$db = $this->db();
 		$db->startTrans();

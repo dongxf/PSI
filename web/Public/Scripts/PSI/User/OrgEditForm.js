@@ -31,7 +31,7 @@ Ext.define("PSI.User.OrgEditForm", {
 				height : 40
 			},
 			width : 400,
-			height : 290,
+			height : 330,
 			layout : "border",
 			items : [{
 						region : "north",
@@ -110,6 +110,25 @@ Ext.define("PSI.User.OrgEditForm", {
 											scope : me
 										}
 									},
+									width : 370
+								}, {
+									id : "PSI_User_OrgEditForm_editOrgType",
+									xtype : "combo",
+									queryMode : "local",
+									editable : false,
+									valueField : "id",
+									labelAlign : "right",
+									labelSeparator : "",
+									fieldLabel : "性质",
+									name : "orgType",
+									store : Ext.create("Ext.data.ArrayStore", {
+												fields : ["id", "text"],
+												data : [[0, "[无]"],
+														[2000, "客户"],
+														[3000, "供应商"],
+														[4000, "外协工厂"]]
+											}),
+									value : 0,
 									width : 370
 								}, {
 									xtype : "displayfield",

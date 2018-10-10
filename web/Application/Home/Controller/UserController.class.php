@@ -185,6 +185,7 @@ class UserController extends PSIBaseController {
 			$name = I("post.name");
 			$parentId = I("post.parentId");
 			$orgCode = strtoupper(I("post.orgCode"));
+			$orgType = I("post.orgType");
 			
 			if ($id) {
 				// 编辑组织机构
@@ -200,7 +201,7 @@ class UserController extends PSIBaseController {
 				}
 			}
 			
-			$result = $us->editOrg($id, $name, $parentId, $orgCode);
+			$result = $us->editOrg($id, $name, $parentId, $orgCode, $orgType);
 			
 			$this->ajaxReturn($result);
 		}

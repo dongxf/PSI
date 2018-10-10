@@ -66,6 +66,7 @@ class OrgDAO extends PSIBaseExDAO {
 		$id = $this->newId();
 		$name = trim($params["name"]);
 		$orgCode = trim($params["orgCode"]);
+		$orgType = $params["orgType"];
 		
 		$result = $this->checkParams($params);
 		if ($result) {
@@ -92,10 +93,10 @@ class OrgDAO extends PSIBaseExDAO {
 				$dataOrg = $this->incDataOrg($data[0]["data_org"]);
 			}
 			
-			$sql = "insert into t_org (id, name, full_name, org_code, parent_id, data_org)
-						values ('%s', '%s', '%s', '%s', null, '%s')";
+			$sql = "insert into t_org (id, name, full_name, org_code, parent_id, data_org, org_type)
+						values ('%s', '%s', '%s', '%s', null, '%s', %d)";
 			
-			$rc = $db->execute($sql, $id, $name, $fullName, $orgCode, $dataOrg);
+			$rc = $db->execute($sql, $id, $name, $fullName, $orgCode, $dataOrg, $orgType);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
@@ -116,10 +117,10 @@ class OrgDAO extends PSIBaseExDAO {
 				$dataOrg = $data[0]["data_org"] . "01";
 			}
 			
-			$sql = "insert into t_org (id, name, full_name, org_code, parent_id, data_org)
-						values ('%s', '%s', '%s', '%s', '%s', '%s')";
+			$sql = "insert into t_org (id, name, full_name, org_code, parent_id, data_org, org_type)
+						values ('%s', '%s', '%s', '%s', '%s', '%s', %d)";
 			
-			$rc = $db->execute($sql, $id, $name, $fullName, $orgCode, $parentId, $dataOrg);
+			$rc = $db->execute($sql, $id, $name, $fullName, $orgCode, $parentId, $dataOrg, $orgType);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
