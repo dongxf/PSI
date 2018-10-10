@@ -145,6 +145,7 @@ class OrgDAO extends PSIBaseExDAO {
 		$id = $params["id"];
 		$name = trim($params["name"]);
 		$orgCode = trim($params["orgCode"]);
+		$orgType = $params["orgType"];
 		
 		$result = $this->checkParams($params);
 		if ($result) {
@@ -171,9 +172,10 @@ class OrgDAO extends PSIBaseExDAO {
 		if ($parentId == null) {
 			$fullName = $name;
 			$sql = "update t_org
-						set name = '%s', full_name = '%s', org_code = '%s', parent_id = null
+						set name = '%s', full_name = '%s', org_code = '%s', parent_id = null,
+							org_type = %d
 						where id = '%s' ";
-			$rc = $db->execute($sql, $name, $fullName, $orgCode, $id);
+			$rc = $db->execute($sql, $name, $fullName, $orgCode, $orgType, $id);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
@@ -200,9 +202,10 @@ class OrgDAO extends PSIBaseExDAO {
 				$fullName = $parentFullName . "\\" . $name;
 				
 				$sql = "update t_org
-							set name = '%s', full_name = '%s', org_code = '%s', parent_id = '%s'
+							set name = '%s', full_name = '%s', org_code = '%s', parent_id = '%s',
+								org_type = %d
 							where id = '%s' ";
-				$rc = $db->execute($sql, $name, $fullName, $orgCode, $parentId, $id);
+				$rc = $db->execute($sql, $name, $fullName, $orgCode, $parentId, $orgType, $id);
 				if ($rc === false) {
 					return $this->sqlError(__METHOD__, __LINE__);
 				}
@@ -603,13 +606,15 @@ class OrgDAO extends PSIBaseExDAO {
 		
 		$result = array();
 		
-		$data = $db->query("select parent_id, name, org_code from t_org where id = '%s' ", $id);
+		$data = $db->query("select parent_id, name, org_code, org_type from t_org where id = '%s' ", 
+				$id);
 		
 		if ($data) {
 			$parentId = $data[0]["parent_id"];
 			$result["name"] = $data[0]["name"];
 			$result["orgCode"] = $data[0]["org_code"];
 			$result["parentOrgId"] = $parentId;
+			$result["orgType"] = $data[0]["org_type"];
 			
 			$data = $db->query("select full_name from t_org where id = '%s' ", $parentId);
 			

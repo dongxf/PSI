@@ -169,6 +169,7 @@ Ext.define("PSI.User.OrgEditForm", {
 		me.editParentOrgId = Ext.getCmp("PSI_User_OrgEditForm_editParentOrgId");
 		me.editName = Ext.getCmp("PSI_User_OrgEditForm_editName");
 		me.editOrgCode = Ext.getCmp("PSI_User_OrgEditForm_editOrgCode");
+		me.editOrgType = Ext.getCmp("PSI_User_OrgEditForm_editOrgType");
 
 		me.editForm = Ext.getCmp("PSI_User_OrgEditForm_editForm");
 	},
@@ -209,6 +210,11 @@ Ext.define("PSI.User.OrgEditForm", {
 							me.editParentOrgId.setValue(data.parentOrgId);
 							me.editName.setValue(data.name);
 							me.editOrgCode.setValue(data.orgCode);
+							var orgType = data.orgType;
+							if (!orgType) {
+								orgType = 0;
+							}
+							me.editOrgType.setValue(parseInt(orgType));
 						}
 					}
 				});
