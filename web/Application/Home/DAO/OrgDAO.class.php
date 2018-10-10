@@ -436,6 +436,19 @@ class OrgDAO extends PSIBaseExDAO {
 		);
 	}
 
+	private function orgTypeCodeToName($code) {
+		switch ($code) {
+			case 2000 :
+				return "客户";
+			case 3000 :
+				return "供应商";
+			case 4000 :
+				return "外协工厂";
+			default :
+				return "";
+		}
+	}
+
 	/**
 	 * 所有组织机构
 	 *
@@ -451,7 +464,7 @@ class OrgDAO extends PSIBaseExDAO {
 		$queryParams = array();
 		$rs = $ds->buildSQL(FIdConst::USR_MANAGEMENT, "t_org", $loginUserId);
 		
-		$sql = "select id, name, org_code, full_name, data_org
+		$sql = "select id, name, org_code, full_name, data_org, org_type
 				from t_org
 				where parent_id is null ";
 		if ($rs) {
@@ -470,6 +483,7 @@ class OrgDAO extends PSIBaseExDAO {
 			$result[$i]["orgCode"] = $org1["org_code"];
 			$result[$i]["fullName"] = $org1["full_name"];
 			$result[$i]["dataOrg"] = $org1["data_org"];
+			$result[$i]["orgType"] = $this->orgTypeCodeToName($org1["org_type"]);
 			
 			// 第二级
 			$c2 = $this->allOrgsInternal($org1["id"], $db);
@@ -552,7 +566,7 @@ class OrgDAO extends PSIBaseExDAO {
 
 	private function allOrgsInternal($parentId, $db) {
 		$result = [];
-		$sql = "select id, name, org_code, full_name, data_org
+		$sql = "select id, name, org_code, full_name, data_org, org_type
 				from t_org
 				where parent_id = '%s'
 				order by org_code";
@@ -563,6 +577,7 @@ class OrgDAO extends PSIBaseExDAO {
 			$result[$i]["orgCode"] = $v["org_code"];
 			$result[$i]["fullName"] = $v["full_name"];
 			$result[$i]["dataOrg"] = $v["data_org"];
+			$result[$i]["orgType"] = $this->orgTypeCodeToName($v["org_type"]);
 			
 			$c2 = $this->allOrgsInternal($v["id"], $db); // 递归调用自己
 			

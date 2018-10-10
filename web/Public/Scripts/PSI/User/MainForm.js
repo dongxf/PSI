@@ -168,7 +168,7 @@ Ext.define("PSI.User.MainForm", {
 		Ext.define(modelName, {
 					extend : "Ext.data.Model",
 					fields : ["id", "text", "fullName", "orgCode", "dataOrg",
-							"leaf", "children", "userCount"]
+							"leaf", "children", "userCount", "orgType"]
 				});
 
 		var orgStore = Ext.create("Ext.data.TreeStore", {
@@ -235,6 +235,10 @@ Ext.define("PSI.User.MainForm", {
 									dataIndex : "userCount",
 									width : 80,
 									align : "right"
+								}, {
+									text : "组织机构性质",
+									dataIndex : "orgType",
+									width : 200
 								}]
 					}
 				});
