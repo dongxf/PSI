@@ -125,4 +125,18 @@ class SubjectController extends PSIBaseController {
 			$this->ajaxReturn($service->deleteSubject($params));
 		}
 	}
+
+	/**
+	 * 初始化科目的标准账样
+	 */
+	public function initFmt() {
+		if (IS_POST) {
+			$params = [
+					"id" => I("post.id")
+			];
+			
+			$service = new SubjectService();
+			$this->ajaxReturn($service->initFmt($params));
+		}
+	}
 }

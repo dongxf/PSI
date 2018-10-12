@@ -756,4 +756,13 @@ class SubjectDAO extends PSIBaseExDAO {
 		$params["code"] = $code;
 		return null;
 	}
+
+	/**
+	 * 初始化科目的标准账样
+	 *
+	 * @param array $params        	
+	 */
+	public function initFmt(&$params) {
+		return $this->todo();
+	}
 }

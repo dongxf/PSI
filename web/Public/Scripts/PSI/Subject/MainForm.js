@@ -35,7 +35,7 @@ Ext.define("PSI.Subject.MainForm", {
 											layout : "border",
 											border : 1,
 											tbar : [{
-														text : "初始化标准账样",
+														text : "初始化科目的标准账样",
 														handler : me.onInitFmt,
 														scope : me
 													}, "-", {
@@ -498,11 +498,58 @@ Ext.define("PSI.Subject.MainForm", {
 
 	// 初始化标准账样
 	onInitFmt : function() {
-		PSI.MsgBox.showInfo("TODO");
+		var me = this;
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			me.showInfo("没有选择要初始化账样的科目");
+			return;
+		}
+
+		var subject = item[0];
+
+		var info = "请确认是否初始化科目: <span style='color:red'>" + subject.get("code")
+				+ "</span>的账样?";
+		var funcConfirm = function() {
+			var el = Ext.getBody();
+			el.mask("正在删除中...");
+			var r = {
+				url : me.URL("Home/Subject/initFmt"),
+				params : {
+					id : subject.get("id")
+				},
+				callback : function(options, success, response) {
+					el.unmask();
+
+					if (success) {
+						var data = me.decodeJSON(response.responseText);
+						if (data.success) {
+							me.showInfo("成功完成操作", function() {
+										me.refreshFmtPropGrid();
+									});
+						} else {
+							me.showInfo(data.msg);
+						}
+					} else {
+						me.showInfo("网络错误");
+					}
+				}
+			};
+			me.ajax(r);
+		};
+
+		me.confirm(info, funcConfirm);
+
 	},
 
 	// 启用账样
 	onEnableFmt : function() {
+		var me = this;
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			me.showInfo("没有选择要启用账样的科目");
+			return;
+		}
+
 		PSI.MsgBox.showInfo("TODO");
 	},
 
@@ -559,12 +606,21 @@ Ext.define("PSI.Subject.MainForm", {
 
 		if (!record) {
 			me.getFmtPropGrid().setTitle("账样属性");
+			me.getFmtColsGrid().setTitle("账样字段");
 			return;
 		}
 
 		var title = Ext.String.format("{0} {1} - 账样属性", record.get("code"),
 				record.get("name"));
 		me.getFmtPropGrid().setTitle(title);
+		var title = Ext.String.format("{0} {1} - 账样字段", record.get("code"),
+				record.get("name"));
+		me.getFmtColsGrid().setTitle(title);
+
+		me.refreshFmtPropGrid();
+	},
+
+	refreshFmtPropGrid : function() {
 
 	}
 });

@@ -185,4 +185,36 @@ class SubjectService extends PSIBaseExService {
 		
 		return $this->ok();
 	}
+
+	/**
+	 * 初始化科目的标准账样
+	 *
+	 * @param array $params        	
+	 */
+	public function initFmt($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
+		$db = $this->db();
+		
+		$db->startTrans();
+		$dao = new SubjectDAO($db);
+		
+		$rc = $dao->initFmt($params);
+		if ($rc) {
+			$db->rollback();
+			return $rc;
+		}
+		
+		// 记录业务日志
+		$code = $params["code"];
+		$log = "初始科目: $code 的标准账样";
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$db->commit();
+		
+		return $this->ok();
+	}
 }
