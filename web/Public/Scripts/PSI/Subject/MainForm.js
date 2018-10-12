@@ -377,6 +377,14 @@ Ext.define("PSI.Subject.MainForm", {
 									dataIndex : "isLeaf",
 									width : 100
 								}]
+					},
+					listeners : {
+						select : {
+							fn : function(rowModel, record) {
+								me.onMainGridItemSelect(record);
+							},
+							scope : me
+						}
 					}
 				});
 
@@ -544,5 +552,19 @@ Ext.define("PSI.Subject.MainForm", {
 				});
 
 		return me.__fmtColsGrid;
+	},
+
+	onMainGridItemSelect : function(record) {
+		var me = this;
+
+		if (!record) {
+			me.getFmtPropGrid().setTitle("账样属性");
+			return;
+		}
+
+		var title = Ext.String.format("{0} {1} - 账样属性", record.get("code"),
+				record.get("name"));
+		me.getFmtPropGrid().setTitle(title);
+
 	}
 });
