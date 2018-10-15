@@ -846,6 +846,54 @@ class SubjectDAO extends PSIBaseExDAO {
 						"decimal" => 0,
 						"showOrder" => - 1000,
 						"caption" => "会计经办id"
+				],
+				[
+						"name" => "biz_user_name",
+						"type" => "varchar",
+						"length" => 255,
+						"decimal" => 0,
+						"showOrder" => 9,
+						"caption" => "责任人"
+				],
+				[
+						"name" => "biz_user_is",
+						"type" => "varchar",
+						"length" => 255,
+						"decimal" => 0,
+						"showOrder" => - 1000,
+						"caption" => "责任人id"
+				],
+				[
+						"name" => "acc_db",
+						"type" => "decimal",
+						"length" => 19,
+						"decimal" => 2,
+						"showOrder" => 10,
+						"caption" => "借方金额"
+				],
+				[
+						"name" => "acc_cr",
+						"type" => "decimal",
+						"length" => 19,
+						"decimal" => 2,
+						"showOrder" => 11,
+						"caption" => "贷方金额"
+				],
+				[
+						"name" => "acc_balance_dbcr",
+						"type" => "varchar",
+						"length" => 255,
+						"decimal" => 0,
+						"showOrder" => 12,
+						"caption" => "余额借贷方向"
+				],
+				[
+						"name" => "acc_balance",
+						"type" => "decimal",
+						"length" => 19,
+						"decimal" => 2,
+						"showOrder" => 13,
+						"caption" => "余额金额"
 				]
 		];
 	}
