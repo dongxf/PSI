@@ -499,6 +499,14 @@ Ext.define("PSI.Subject.MainForm", {
 	// 初始化标准账样
 	onInitFmt : function() {
 		var me = this;
+		var item = me.getCompanyGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			me.showInfo("没有选择公司");
+			return;
+		}
+
+		var company = item[0];
+
 		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
 			me.showInfo("没有选择要初始化账样的科目");
@@ -515,7 +523,8 @@ Ext.define("PSI.Subject.MainForm", {
 			var r = {
 				url : me.URL("Home/Subject/initFmt"),
 				params : {
-					id : subject.get("id")
+					id : subject.get("id"),
+					companyId : company.get("id")
 				},
 				callback : function(options, success, response) {
 					el.unmask();

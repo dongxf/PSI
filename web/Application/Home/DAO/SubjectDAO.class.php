@@ -763,6 +763,33 @@ class SubjectDAO extends PSIBaseExDAO {
 	 * @param array $params        	
 	 */
 	public function initFmt(&$params) {
-		return $this->todo();
+		$db = $this->db;
+		
+		// id:科目id
+		$id = $params["id"];
+		$companyId = $params["companyId"];
+		
+		$sql = "select code, is_leaf from t_subject where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if (! $data) {
+			return $this->bad("科目不存在");
+		}
+		$subjectCode = $data[0]["code"];
+		$isLeaf = $data[0]["is_leaf"] == 1;
+		if (! $isLeaf) {
+			return $this->bad("科目[{$subjectCode}]不是末级科目，不能设置账样");
+		}
+		
+		$sql = "select count(*) as cnt from t_acc_fmt 
+				where company_id = '%s' and subject_code = '%s' ";
+		$data = $db->query($sql, $companyId, $subjectCode);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("科目[{$subjectCode}]已经完成了标准账样的初始化");
+		}
+		
+		// 操作成功
+		$params["code"] = $subjectCode;
+		return null;
 	}
 }

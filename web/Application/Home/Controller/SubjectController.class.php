@@ -132,7 +132,8 @@ class SubjectController extends PSIBaseController {
 	public function initFmt() {
 		if (IS_POST) {
 			$params = [
-					"id" => I("post.id")
+					"id" => I("post.id"),
+					"companyId" => I("post.companyId")
 			];
 			
 			$service = new SubjectService();
