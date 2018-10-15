@@ -757,6 +757,99 @@ class SubjectDAO extends PSIBaseExDAO {
 		return null;
 	}
 
+	private function insertFmtCols($fmtId, $dbFieldName, $dbFieldType, $dbFieldLength, $dbFieldDecimal, $showOrder, $caption) {
+		$db = $this->db;
+		
+		$sql = "insert into t_acc_fmt_cols (id, fmt_id, db_field_name, db_field_type,
+					db_field_length, db_field_decimal, show_order, caption)
+				values ('%s', '%s', '%s', '%s',
+					%d, %d, %d, '%s')";
+		$rc = $db->execute($sql, $this->newId(), $fmtId, $dbFieldName, $dbFieldType, $dbFieldLength, 
+				$dbFieldDecimal, $showOrder, $caption);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		return null;
+	}
+
+	private function getStandardFmtCols() {
+		return [
+				[
+						"name" => "subject_code",
+						"type" => "varchar",
+						"length" => 255,
+						"decimal" => 0,
+						"showOrder" => 1,
+						"caption" => "科目"
+				],
+				[
+						"name" => "voucher_dt",
+						"type" => "date",
+						"length" => 0,
+						"decimal" => 0,
+						"showOrder" => 2,
+						"caption" => "凭证日期"
+				],
+				[
+						"name" => "voucher_year",
+						"type" => "int",
+						"length" => 11,
+						"decimal" => 0,
+						"showOrder" => 3,
+						"caption" => "凭证年度"
+				],
+				[
+						"name" => "voucher_month",
+						"type" => "int",
+						"length" => 11,
+						"decimal" => 0,
+						"showOrder" => 4,
+						"caption" => "凭证月份"
+				],
+				[
+						"name" => "voucher_word",
+						"type" => "varchar",
+						"length" => 255,
+						"decimal" => 0,
+						"showOrder" => 5,
+						"caption" => "凭证字"
+				],
+				[
+						"name" => "voucher_number",
+						"type" => "int",
+						"length" => 11,
+						"decimal" => 0,
+						"showOrder" => 6,
+						"caption" => "凭证号"
+				],
+				[
+						"name" => "je_number",
+						"type" => "int",
+						"length" => 0,
+						"decimal" => 0,
+						"showOrder" => 7,
+						"caption" => "分录号"
+				],
+				[
+						"name" => "acc_user_name",
+						"type" => "varchar",
+						"length" => 255,
+						"decimal" => 0,
+						"showOrder" => 8,
+						"caption" => "会计经办"
+				],
+				[
+						"name" => "acc_user_id",
+						"type" => "varchar",
+						"length" => 255,
+						"decimal" => 0,
+						"showOrder" => - 1000,
+						"caption" => "会计经办id"
+				]
+		];
+	}
+
 	/**
 	 * 初始化科目的标准账样
 	 *
@@ -816,6 +909,17 @@ class SubjectDAO extends PSIBaseExDAO {
 		$rc = $db->execute($sql, $id, $accNumber, $subjectCode, $dataOrg, $companyId, $tableName);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 标准列
+		$fmtId = $id;
+		$cols = $this->getStandardFmtCols();
+		foreach ( $cols as $v ) {
+			$rc = $this->insertFmtCols($fmtId, $v["name"], $v["type"], $v["length"], $v["decimal"], 
+					$v["showOrder"], $v["caption"]);
+			if ($rc) {
+				return $rc;
+			}
 		}
 		
 		// 操作成功
