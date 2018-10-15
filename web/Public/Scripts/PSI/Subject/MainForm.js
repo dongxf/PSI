@@ -576,7 +576,8 @@ Ext.define("PSI.Subject.MainForm", {
 		var modelName = "PSIFMTCols";
 		Ext.define(modelName, {
 					extend : "Ext.data.Model",
-					fields : ["id", "showOrder", "caption", "dbFieldInfo"]
+					fields : ["id", "showOrder", "caption", "fieldName",
+							"fieldType", "fieldLength", "fieldDecimal"]
 				});
 
 		me.__fmtColsGrid = Ext.create("Ext.grid.Panel", {
@@ -600,9 +601,21 @@ Ext.define("PSI.Subject.MainForm", {
 									dataIndex : "caption",
 									width : 200
 								}, {
-									header : "数据库字段信息",
-									dataIndex : "dbFieldInfo",
-									width : 200
+									header : "数据库字段名称",
+									dataIndex : "fieldName",
+									width : 120
+								}, {
+									header : "字段类型",
+									dataIndex : "fieldType",
+									width : 100
+								}, {
+									header : "字段长度",
+									dataIndex : "fieldLength",
+									width : 100
+								}, {
+									header : "字段小数位数",
+									dataIndex : "fieldDecimal",
+									width : 100
 								}]
 					},
 					store : Ext.create("Ext.data.Store", {
@@ -632,6 +645,7 @@ Ext.define("PSI.Subject.MainForm", {
 		me.getFmtColsGrid().setTitle(title);
 
 		me.refreshFmtPropGrid();
+		me.refreshFmtColsGrid();
 	},
 
 	refreshFmtPropGrid : function() {
@@ -640,7 +654,6 @@ Ext.define("PSI.Subject.MainForm", {
 		if (item == null || item.length != 1) {
 			return;
 		}
-
 		var company = item[0];
 
 		var item = me.getMainGrid().getSelectionModel().getSelection();
@@ -655,6 +668,46 @@ Ext.define("PSI.Subject.MainForm", {
 
 		var r = {
 			url : me.URL("Home/Subject/fmtPropList"),
+			params : {
+				id : subject.get("id"),
+				companyId : company.get("id")
+			},
+			callback : function(options, success, response) {
+				var store = grid.getStore();
+
+				store.removeAll();
+
+				if (success) {
+					var data = me.decodeJSON(response.responseText);
+					store.add(data);
+				}
+
+				el && el.unmask();
+			}
+		};
+		me.ajax(r);
+	},
+
+	refreshFmtColsGrid : function() {
+		var me = this;
+		var item = me.getCompanyGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			return;
+		}
+		var company = item[0];
+
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			return;
+		}
+		var subject = item[0];
+
+		var grid = me.getFmtColsGrid();
+		var el = grid.getEl();
+		el && el.mask(PSI.Const.LOADING);
+
+		var r = {
+			url : me.URL("Home/Subject/fmtColsList"),
 			params : {
 				id : subject.get("id"),
 				companyId : company.get("id")

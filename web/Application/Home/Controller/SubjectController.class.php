@@ -155,4 +155,19 @@ class SubjectController extends PSIBaseController {
 			$this->ajaxReturn($service->fmtPropList($params));
 		}
 	}
+
+	/**
+	 * 某个科目账样的字段列表
+	 */
+	public function fmtColsList() {
+		if (IS_POST) {
+			$params = [
+					"id" => I("post.id"),
+					"companyId" => I("post.companyId")
+			];
+			
+			$service = new SubjectService();
+			$this->ajaxReturn($service->fmtColsList($params));
+		}
+	}
 }

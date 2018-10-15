@@ -221,7 +221,7 @@ class SubjectService extends PSIBaseExService {
 
 	/**
 	 * 某个科目的账样属性
-	 * 
+	 *
 	 * @param array $params        	
 	 */
 	public function fmtPropList($params) {
@@ -231,5 +231,19 @@ class SubjectService extends PSIBaseExService {
 		
 		$dao = new SubjectDAO($this->db());
 		return $dao->fmtPropList($params);
+	}
+
+	/**
+	 * 某个科目的账样字段列表
+	 *
+	 * @param array $params        	
+	 */
+	public function fmtColsList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$dao = new SubjectDAO($this->db());
+		return $dao->fmtColsList($params);
 	}
 }

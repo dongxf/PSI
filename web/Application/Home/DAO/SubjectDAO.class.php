@@ -1005,17 +1005,51 @@ class SubjectDAO extends PSIBaseExDAO {
 					"propValue" => $v["in_use"] == 1 ? "启用" : "停用"
 			
 			];
-		
+			
 			$result[] = [
 					"propName" => "表名前缀",
 					"propValue" => $v["db_table_name_prefix"]
-					
+			
 			];
-		
+			
 			$result[] = [
 					"propName" => "初始化时间",
 					"propValue" => $v["date_created"]
-					
+			
+			];
+		}
+		
+		return $result;
+	}
+
+	/**
+	 * 某个科目的账样字段列表
+	 *
+	 * @param array $params        	
+	 */
+	public function fmtColsList($params) {
+		$db = $this->db;
+		$result = [];
+		
+		// id: 科目id
+		$id = $params["id"];
+		$companyId = $params["companyId"];
+		
+		$sql = "select c.show_order, c.caption, c.db_field_name, c.db_field_type,
+					c.db_field_length, c.db_field_decimal
+				from t_subject s, t_acc_fmt f, t_acc_fmt_cols c
+				where s.id = '%s' and s.code = f.subject_code and f.company_id = '%s'
+					and f.id = c.fmt_id and c.show_order > 0
+				order by c.show_order";
+		$data = $db->query($sql, $id, $companyId);
+		foreach ( $data as $v ) {
+			$result[] = [
+					"showOrder" => $v["show_order"],
+					"caption" => $v["caption"],
+					"fieldName" => $v["db_field_name"],
+					"fieldType" => $v["db_field_type"],
+					"fieldLength" => $v["db_field_length"] == 0 ? null : $v["db_field_length"],
+					"fieldDecimal" => $v["db_field_decimal"] == 0 ? null : $v["db_field_decimal"]
 			];
 		}
 		
