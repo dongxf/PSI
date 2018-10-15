@@ -524,7 +524,7 @@ Ext.define("PSI.Subject.MainForm", {
 				+ "</span>的账样?";
 		var funcConfirm = function() {
 			var el = Ext.getBody();
-			el.mask("正在删除中...");
+			el.mask("正在初始化中...");
 			var r = {
 				url : me.URL("Home/Subject/initFmt"),
 				params : {
@@ -539,6 +539,7 @@ Ext.define("PSI.Subject.MainForm", {
 						if (data.success) {
 							me.showInfo("成功完成操作", function() {
 										me.refreshFmtPropGrid();
+										me.refreshFmtColsGrid();
 									});
 						} else {
 							me.showInfo(data.msg);
