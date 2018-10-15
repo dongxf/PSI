@@ -201,6 +201,7 @@ class SubjectService extends PSIBaseExService {
 		$db->startTrans();
 		$dao = new SubjectDAO($db);
 		
+		$params["dataOrg"]=$this->getLoginUserDataOrg();
 		$rc = $dao->initFmt($params);
 		if ($rc) {
 			$db->rollback();

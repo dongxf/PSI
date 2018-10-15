@@ -765,6 +765,11 @@ class SubjectDAO extends PSIBaseExDAO {
 	public function initFmt(&$params) {
 		$db = $this->db;
 		
+		$dataOrg = $params["dataOrg"];
+		if ($this->dataOrgNotExists($dataOrg)) {
+			return $this->badParam("dataOrg");
+		}
+		
 		// id:科目id
 		$id = $params["id"];
 		$companyId = $params["companyId"];
@@ -786,6 +791,31 @@ class SubjectDAO extends PSIBaseExDAO {
 		$cnt = $data[0]["cnt"];
 		if ($cnt > 0) {
 			return $this->bad("科目[{$subjectCode}]已经完成了标准账样的初始化");
+		}
+		
+		$accNumber = str_pad($subjectCode, 8, "0", STR_PAD_RIGHT);
+		
+		$tableName = "t_acc_" . $accNumber;
+		$sql = "select count(*) as cnt from t_acc_fmt where db_table_name_prefix like '%s' ";
+		$data = $db->query($sql, "{$tableName}%");
+		$cnt = $data[0]["cnt"];
+		$cnt += 1;
+		if ($cnt < 10) {
+			$t = "_0{$cnt}";
+		} else {
+			$t = "_{$cnt}";
+		}
+		$tableName .= $t;
+		
+		$id = $this->newId();
+		
+		$sql = "insert into t_acc_fmt (id, acc_number, subject_code, memo,
+					date_created, data_org, company_id, in_use, db_table_name_prefix)
+				values ('%s', '%s', '%s', '',
+					now(), '%s', '%s', 1, '%s')";
+		$rc = $db->execute($sql, $id, $accNumber, $subjectCode, $dataOrg, $companyId, $tableName);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
 		}
 		
 		// 操作成功
