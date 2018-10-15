@@ -974,4 +974,51 @@ class SubjectDAO extends PSIBaseExDAO {
 		$params["code"] = $subjectCode;
 		return null;
 	}
+
+	/**
+	 * 某个科目的账样属性
+	 *
+	 * @param array $params        	
+	 */
+	public function fmtPropList($params) {
+		$db = $this->db;
+		$result = [];
+		
+		// id: 科目id
+		$id = $params["id"];
+		$companyId = $params["companyId"];
+		
+		$sql = "select f.acc_number, f.in_use, f.db_table_name_prefix, f.date_created
+				from t_subject s, t_acc_fmt f
+				where s.id = '%s' and  s.code = f.subject_code and f.company_id = '%s' ";
+		
+		$data = $db->query($sql, $id, $companyId);
+		if ($data) {
+			$v = $data[0];
+			$result[] = [
+					"propName" => "账簿号",
+					"propValue" => $v["acc_number"]
+			];
+			
+			$result[] = [
+					"propName" => "状态",
+					"propValue" => $v["in_use"] == 1 ? "启用" : "停用"
+			
+			];
+		
+			$result[] = [
+					"propName" => "表名前缀",
+					"propValue" => $v["db_table_name_prefix"]
+					
+			];
+		
+			$result[] = [
+					"propName" => "初始化时间",
+					"propValue" => $v["date_created"]
+					
+			];
+		}
+		
+		return $result;
+	}
 }

@@ -201,7 +201,7 @@ class SubjectService extends PSIBaseExService {
 		$db->startTrans();
 		$dao = new SubjectDAO($db);
 		
-		$params["dataOrg"]=$this->getLoginUserDataOrg();
+		$params["dataOrg"] = $this->getLoginUserDataOrg();
 		$rc = $dao->initFmt($params);
 		if ($rc) {
 			$db->rollback();
@@ -217,5 +217,19 @@ class SubjectService extends PSIBaseExService {
 		$db->commit();
 		
 		return $this->ok();
+	}
+
+	/**
+	 * 某个科目的账样属性
+	 * 
+	 * @param array $params        	
+	 */
+	public function fmtPropList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$dao = new SubjectDAO($this->db());
+		return $dao->fmtPropList($params);
 	}
 }

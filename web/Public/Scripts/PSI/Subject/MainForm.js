@@ -168,6 +168,11 @@ Ext.define("PSI.Subject.MainForm", {
 
 	onCompanyGridSelect : function() {
 		var me = this;
+		me.getFmtPropGrid().setTitle("账样属性");
+		me.getFmtPropGrid().getStore().removeAll();
+		me.getFmtColsGrid().setTitle("账样字段");
+		me.getFmtColsGrid().getStore().removeAll();
+
 		me.getMainGrid().setTitle(me.formatGridHeaderTitle("会计科目"));
 		var item = me.getCompanyGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
@@ -479,7 +484,7 @@ Ext.define("PSI.Subject.MainForm", {
 						items : [{
 									header : "属性名称",
 									dataIndex : "propName",
-									width : 70
+									width : 90
 								}, {
 									header : "属性值",
 									dataIndex : "propValue",
@@ -630,6 +635,43 @@ Ext.define("PSI.Subject.MainForm", {
 	},
 
 	refreshFmtPropGrid : function() {
+		var me = this;
+		var item = me.getCompanyGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			return;
+		}
 
+		var company = item[0];
+
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			return;
+		}
+		var subject = item[0];
+
+		var grid = me.getFmtPropGrid();
+		var el = grid.getEl();
+		el && el.mask(PSI.Const.LOADING);
+
+		var r = {
+			url : me.URL("Home/Subject/fmtPropList"),
+			params : {
+				id : subject.get("id"),
+				companyId : company.get("id")
+			},
+			callback : function(options, success, response) {
+				var store = grid.getStore();
+
+				store.removeAll();
+
+				if (success) {
+					var data = me.decodeJSON(response.responseText);
+					store.add(data);
+				}
+
+				el && el.unmask();
+			}
+		};
+		me.ajax(r);
 	}
 });
