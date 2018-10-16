@@ -352,15 +352,21 @@ Ext.define("PSI.Permission.EditForm", {
 	setSelectedPermission : function(data, dataOrgList, fullNameList) {
 		var store = this.permissionGrid.getStore();
 
-		for (var i = 0; i < data.length; i++) {
+		var cnt = data.length;
+
+		var d = [];
+
+		for (var i = 0; i < cnt; i++) {
 			var item = data[i];
-			store.add({
+			d.push({
 						id : item.id,
 						name : item.name,
 						dataOrg : dataOrgList,
 						dataOrgFullName : fullNameList
 					});
 		}
+
+		store.add(d);
 	},
 
 	setSelectedUsers : function(data) {

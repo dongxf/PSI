@@ -399,16 +399,22 @@ Ext.define("PSI.Permission.SelectPermissionForm", {
 
 		var selectStore = me.getSelectedGrid().getStore();
 
-		for (var i = 0; i < store.getCount(); i++) {
+		var cnt = store.getCount();
+
+		var d = [];
+
+		for (var i = 0; i < cnt; i++) {
 			var item = store.getAt(i);
 
 			if (selectStore.findExact("id", item.get("id")) == -1) {
-				selectStore.add({
+				d.push({
 							id : item.get("id"),
 							name : item.get("name")
 						});
 			}
 		}
+
+		selectStore.add(d);
 
 		me.getSelectedGrid().focus();
 	}
