@@ -931,7 +931,7 @@ class SubjectDAO extends PSIBaseExDAO {
 		$data = $db->query($sql, $companyId, $subjectCode);
 		$cnt = $data[0]["cnt"];
 		if ($cnt > 0) {
-			return $this->bad("科目[{$subjectCode}]已经完成了标准账样的初始化");
+			return $this->bad("科目[{$subjectCode}]已经完成了标准账样的初始化，不能再次初始化");
 		}
 		
 		$accNumber = str_pad($subjectCode, 8, "0", STR_PAD_RIGHT);
