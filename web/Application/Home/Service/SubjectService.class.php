@@ -246,4 +246,34 @@ class SubjectService extends PSIBaseExService {
 		$dao = new SubjectDAO($this->db());
 		return $dao->fmtColsList($params);
 	}
+
+	/**
+	 * 清空科目的标准账样
+	 */
+	public function undoInitFmt($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
+		$db = $this->db();
+		
+		$db->startTrans();
+		$dao = new SubjectDAO($db);
+		
+		$rc = $dao->undoInitFmt($params);
+		if ($rc) {
+			$db->rollback();
+			return $rc;
+		}
+		
+		// 记录业务日志
+		$code = $params["code"];
+		$log = "清空科目: $code 的标准账样";
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$db->commit();
+		
+		return $this->ok();
+	}
 }

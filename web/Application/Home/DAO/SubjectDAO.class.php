@@ -1055,4 +1055,73 @@ class SubjectDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	private function tableExists($tableName) {
+		$db = $this->db;
+		
+		$dbName = C('DB_NAME');
+		$sql = "select count(*) as cnt
+				from information_schema.columns
+				where table_schema = '%s'
+					and table_name = '%s' ";
+		$data = $db->query($sql, $dbName, $tableName);
+		return $data[0]["cnt"] != 0;
+	}
+
+	/**
+	 * 清空科目的标准账样
+	 */
+	public function undoInitFmt(& $params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		$companyId = $params["companyId"];
+		
+		$sql = "select code from t_subject where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if (! $data) {
+			return $this->bad("科目不存在");
+		}
+		$code = $data[0]["code"];
+		
+		$sql = "select id, db_table_name_prefix from t_acc_fmt
+				where subject_code = '%s' and company_id = '%s' ";
+		$data = $db->query($sql, $code, $companyId);
+		if (! $data) {
+			return $this->bad("科目[{$code}]还没有初始化标准账样");
+		}
+		$fmtId = $data[0]["id"];
+		
+		// 检查是否已经创建了数据库账样表
+		$tableName = $data[0]["db_table_name_prefix"];
+		if ($this->tableExists($tableName)) {
+			return $this->bad("科目[{$code}]的账样已经创建数据库表，不能再做清除操作");
+		}
+		
+		// 检查账样是否增加了自定义字段
+		$sql = "select count(*) as cnt from t_acc_fmt_cols
+				where fmt_id = '%s' ";
+		$data = $db->query($sql, $fmtId);
+		$cnt = $data[0]["cnt"];
+		$standardList = $this->getStandardSubjectList();
+		if ($cnt > count($standardList)) {
+			return $this->bad("账样已经设置了自定义字段，不能清空标准账样了");
+		}
+		
+		$sql = "delete from t_acc_fmt_cols where fmt_id = '%s' ";
+		$rc = $db->execute($sql, $fmtId);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		$sql = "delete from t_acc_fmt where id = '%s' ";
+		$rc = $db->execute($sql, $fmtId);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		$params["code"] = $code;
+		return null;
+	}
 }

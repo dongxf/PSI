@@ -170,4 +170,19 @@ class SubjectController extends PSIBaseController {
 			$this->ajaxReturn($service->fmtColsList($params));
 		}
 	}
+
+	/**
+	 * 清空科目的标准账样
+	 */
+	public function undoInitFmt() {
+		if (IS_POST) {
+			$params = [
+					"id" => I("post.id"),
+					"companyId" => I("post.companyId")
+			];
+			
+			$service = new SubjectService();
+			$this->ajaxReturn($service->undoInitFmt($params));
+		}
+	}
 }

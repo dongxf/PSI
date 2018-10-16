@@ -39,6 +39,10 @@ Ext.define("PSI.Subject.MainForm", {
 														handler : me.onInitFmt,
 														scope : me
 													}, "-", {
+														text : "清空标准账样设置",
+														handler : me.onUndoInitFmt,
+														scope : me
+													}, "-", {
 														text : "启用账样",
 														handler : me.onEnableFmt,
 														scope : me
@@ -553,7 +557,6 @@ Ext.define("PSI.Subject.MainForm", {
 		};
 
 		me.confirm(info, funcConfirm);
-
 	},
 
 	// 启用账样
@@ -727,5 +730,59 @@ Ext.define("PSI.Subject.MainForm", {
 			}
 		};
 		me.ajax(r);
+	},
+
+	// 清空标准账样
+	onUndoInitFmt : function() {
+		var me = this;
+		var item = me.getCompanyGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			me.showInfo("没有选择公司");
+			return;
+		}
+
+		var company = item[0];
+
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			me.showInfo("没有选择要清空账样的科目");
+			return;
+		}
+
+		var subject = item[0];
+
+		var info = "请确认是否清空科目: <span style='color:red'>" + subject.get("code")
+				+ "</span> 的账样?";
+		var funcConfirm = function() {
+			var el = Ext.getBody();
+			el.mask("正在操作中...");
+			var r = {
+				url : me.URL("Home/Subject/undoInitFmt"),
+				params : {
+					id : subject.get("id"),
+					companyId : company.get("id")
+				},
+				callback : function(options, success, response) {
+					el.unmask();
+
+					if (success) {
+						var data = me.decodeJSON(response.responseText);
+						if (data.success) {
+							me.showInfo("成功完成操作", function() {
+										me.refreshFmtPropGrid();
+										me.refreshFmtColsGrid();
+									});
+						} else {
+							me.showInfo(data.msg);
+						}
+					} else {
+						me.showInfo("网络错误");
+					}
+				}
+			};
+			me.ajax(r);
+		};
+
+		me.confirm(info, funcConfirm);
 	}
 });
