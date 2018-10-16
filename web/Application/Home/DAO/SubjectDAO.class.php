@@ -853,7 +853,7 @@ class SubjectDAO extends PSIBaseExDAO {
 						"length" => 255,
 						"decimal" => 0,
 						"showOrder" => 9,
-						"caption" => "责任人"
+						"caption" => "业务责任人"
 				],
 				[
 						"name" => "biz_user_is",
@@ -861,7 +861,7 @@ class SubjectDAO extends PSIBaseExDAO {
 						"length" => 255,
 						"decimal" => 0,
 						"showOrder" => - 1000,
-						"caption" => "责任人id"
+						"caption" => "业务责任人id"
 				],
 				[
 						"name" => "acc_db",
