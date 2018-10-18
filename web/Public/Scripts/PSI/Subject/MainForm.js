@@ -34,19 +34,7 @@ Ext.define("PSI.Subject.MainForm", {
 											region : "center",
 											layout : "border",
 											border : 1,
-											tbar : [{
-														text : "初始化科目的标准账样",
-														handler : me.onInitFmt,
-														scope : me
-													}, "-", {
-														text : "清空标准账样设置",
-														handler : me.onUndoInitFmt,
-														scope : me
-													}, "-", {
-														text : "启用账样",
-														handler : me.onEnableFmt,
-														scope : me
-													}],
+											tbar : me.getFmtToolbarCmp(),
 											items : [{
 														region : "west",
 														width : 300,
@@ -94,6 +82,27 @@ Ext.define("PSI.Subject.MainForm", {
 					handler : function() {
 						me.closeWindow();
 					}
+				}];
+	},
+
+	getFmtToolbarCmp : function() {
+		var me = this;
+		return [{
+					text : "初始化科目的标准账样",
+					handler : me.onInitFmt,
+					scope : me
+				}, "-", {
+					text : "清空标准账样设置",
+					handler : me.onUndoInitFmt,
+					scope : me
+				}, "-", {
+					text : "新增账样字段",
+					handler : me.onAddFmtCol,
+					scope : me
+				}, "-", {
+					text : "启用账样",
+					handler : me.onEnableFmt,
+					scope : me
 				}];
 	},
 
@@ -784,5 +793,36 @@ Ext.define("PSI.Subject.MainForm", {
 		};
 
 		me.confirm(info, funcConfirm);
+	},
+
+	onAddFmtCol : function() {
+		var me = this;
+
+		var item = me.getCompanyGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			me.showInfo("没有选择公司");
+			return;
+		}
+
+		var company = item[0];
+
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			me.showInfo("没有选择科目");
+			return;
+		}
+
+		var subject = item[0];
+
+		if (me.getFmtPropGrid().getStore().getCount() == 0) {
+			me.showInfo("还没有初始化标准账样");
+			return;
+		}
+
+		var form = Ext.create("PSI.Subject.FmtColEditForm", {
+					company : company,
+					subject : subject
+				});
+		form.show();
 	}
 });
