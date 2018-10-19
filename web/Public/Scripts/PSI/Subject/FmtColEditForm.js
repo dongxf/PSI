@@ -250,9 +250,9 @@ Ext.define("PSI.Subject.FmtColEditForm", {
 
 	clearEdit : function() {
 		var me = this;
-		me.editParentCode.focus();
+		me.editCaption.focus();
 
-		var editors = [];
+		var editors = [me.editCaption, me.editName];
 		for (var i = 0; i < editors.length; i++) {
 			var edit = editors[i];
 			edit.setValue(null);

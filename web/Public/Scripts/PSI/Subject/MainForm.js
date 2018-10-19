@@ -820,6 +820,7 @@ Ext.define("PSI.Subject.MainForm", {
 		}
 
 		var form = Ext.create("PSI.Subject.FmtColEditForm", {
+					parentForm : me,
 					company : company,
 					subject : subject
 				});
