@@ -185,4 +185,23 @@ class SubjectController extends PSIBaseController {
 			$this->ajaxReturn($service->undoInitFmt($params));
 		}
 	}
+
+	/**
+	 * 新增或编辑账样字段
+	 */
+	public function editFmtCol() {
+		if (IS_POST) {
+			$params = [
+					"id" => I("post.id"),
+					"companyId" => I("post.companyId"),
+					"subjectCode" => I("post.subjectCode"),
+					"fieldName" => I("post.fieldName"),
+					"fieldCaption" => I("post.fieldCaption"),
+					"fieldType" => I("post.fieldType")
+			];
+			
+			$service = new SubjectService();
+			$this->ajaxReturn($service->editFmtCol($params));
+		}
+	}
 }

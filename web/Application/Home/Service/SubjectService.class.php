@@ -276,4 +276,52 @@ class SubjectService extends PSIBaseExService {
 		
 		return $this->ok();
 	}
+
+	/**
+	 * 新增或编辑账样字段
+	 */
+	public function editFmtCol($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
+		$id = $params["id"];
+		$subjectCode = $params["subjectCode"];
+		$fieldCaption = $params["fieldCatpion"];
+		
+		$db = $this->db();
+		
+		$db->startTrans();
+		$dao = new SubjectDAO($db);
+		
+		$log = null;
+		if ($id) {
+			// 编辑账样字段
+			$rc = $dao->updateFmtCol($params);
+			if ($rc) {
+				$db->rollback();
+				return $rc;
+			}
+			
+			$log = "编辑科目[{$subjectCode}]的账样字段[{$fieldCaption}]";
+		} else {
+			// 新增账样字段
+			$rc = $dao->addFmtCol($params);
+			if ($rc) {
+				$db->rollback();
+				return $rc;
+			}
+			$log = "新增科目[{$subjectCode}]的账样字段[{$fieldCaption}]";
+			
+			$id = $params["id"];
+		}
+		
+		// 记录业务日志
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$db->commit();
+		
+		return $this->ok($id);
+	}
 }

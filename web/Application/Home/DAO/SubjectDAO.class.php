@@ -1124,4 +1124,22 @@ class SubjectDAO extends PSIBaseExDAO {
 		$params["code"] = $code;
 		return null;
 	}
+
+	/**
+	 * 新增账样字段
+	 *
+	 * @param array $params        	
+	 */
+	public function addFmtCol(& $params) {
+		return $this->todo();
+	}
+
+	/**
+	 * 编辑账样字段
+	 * 
+	 * @param array $params        	
+	 */
+	public function updateFmtCol(& $params) {
+		return $this->todo();
+	}
 }

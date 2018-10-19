@@ -69,7 +69,7 @@ Ext.define("PSI.Subject.FmtColEditForm", {
 				height : 40
 			},
 			width : 400,
-			height : 280,
+			height : 310,
 			layout : "border",
 			listeners : {
 				show : {
@@ -118,9 +118,13 @@ Ext.define("PSI.Subject.FmtColEditForm", {
 									value : me.getCompany().get("id")
 								}, {
 									xtype : "hidden",
-									id : "PSI_Subject_FmtColEditForm_hiddenId",
-									name : "parentCode",
-									value : null
+									name : "subjectCode",
+									value : me.getSubject().get("code")
+								}, {
+									xtype : "displayfield",
+									fieldLabel : "科目",
+									value : me.getSubject().get("code") + " - "
+											+ me.getSubject().get("name")
 								}, {
 									id : "PSI_Subject_FmtColEditForm_editCaption",
 									fieldLabel : "列标题",
@@ -208,7 +212,9 @@ Ext.define("PSI.Subject.FmtColEditForm", {
 			},
 			failure : function(form, action) {
 				el && el.unmask();
-				PSI.MsgBox.showInfo(action.result.msg);
+				PSI.MsgBox.showInfo(action.result.msg, function() {
+							me.editCaption.focus();
+						});
 			}
 		};
 		f.submit(sf);
