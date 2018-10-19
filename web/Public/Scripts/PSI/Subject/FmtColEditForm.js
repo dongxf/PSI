@@ -64,49 +64,49 @@ Ext.define("PSI.Subject.FmtColEditForm", {
 				+ "</h2>"
 				+ "<p style='color:#196d83'>标记 <span style='color:red;font-weight:bold'>*</span>的是必须录入数据的字段</p>";
 		Ext.apply(me, {
-					header : {
-						title : me.formatTitle(PSI.Const.PROD_NAME),
-						height : 40
-					},
-					width : 400,
-					height : 280,
-					layout : "border",
-					listeners : {
-						show : {
-							fn : me.onWndShow,
-							scope : me
+			header : {
+				title : me.formatTitle(PSI.Const.PROD_NAME),
+				height : 40
+			},
+			width : 400,
+			height : 280,
+			layout : "border",
+			listeners : {
+				show : {
+					fn : me.onWndShow,
+					scope : me
+				},
+				close : {
+					fn : me.onWndClose,
+					scope : me
+				}
+			},
+			items : [{
+						region : "north",
+						height : 90,
+						border : 0,
+						html : logoHtml
+					}, {
+						region : "center",
+						border : 0,
+						id : "PSI_Subject_FmtColEditForm_editForm",
+						xtype : "form",
+						layout : {
+							type : "table",
+							columns : 1
 						},
-						close : {
-							fn : me.onWndClose,
-							scope : me
-						}
-					},
-					items : [{
-								region : "north",
-								height : 90,
-								border : 0,
-								html : logoHtml
-							}, {
-								region : "center",
-								border : 0,
-								id : "PSI_Subject_FmtColEditForm_editForm",
-								xtype : "form",
-								layout : {
-									type : "table",
-									columns : 1
-								},
-								height : "100%",
-								bodyPadding : 5,
-								defaultType : 'textfield',
-								fieldDefaults : {
-									labelWidth : 80,
-									labelAlign : "right",
-									labelSeparator : "",
-									msgTarget : 'side',
-									width : 370,
-									margin : "5"
-								},
-								items : [{
+						height : "100%",
+						bodyPadding : 5,
+						defaultType : 'textfield',
+						fieldDefaults : {
+							labelWidth : 80,
+							labelAlign : "right",
+							labelSeparator : "",
+							msgTarget : 'side',
+							width : 370,
+							margin : "5"
+						},
+						items : [{
 									xtype : "hidden",
 									id : "PSI_Subject_FmtColEditForm_hiddenId",
 									name : "id",
@@ -148,7 +148,7 @@ Ext.define("PSI.Subject.FmtColEditForm", {
 										}
 									}
 								}, {
-									id : "PSI_Subject_Fmt_editFieldType",
+									id : "PSI_Subject_FmtColEditForm_editFieldType",
 									xtype : "combo",
 									name : "fieldType",
 									queryMode : "local",
@@ -158,20 +158,29 @@ Ext.define("PSI.Subject.FmtColEditForm", {
 									beforeLabelTextTpl : PSI.Const.REQUIRED,
 									store : Ext.create("Ext.data.ArrayStore", {
 												fields : ["id", "text"],
-												data : [[1, "字符串"], [2, "日期"], [3, "金额(两位小数)"]]
+												data : [[1, "字符串"], [2, "日期"],
+														[3, "金额(两位小数)"]]
 											}),
-									value : 1
+									value : 1,
+									listeners : {
+										specialkey : {
+											fn : me.onEditTypeSpecialKey,
+											scope : me
+										}
+									}
 								}],
-								buttons : buttons
-							}]
-				});
+						buttons : buttons
+					}]
+		});
 
 		me.callParent(arguments);
 
 		me.editForm = Ext.getCmp("PSI_Subject_FmtColEditForm_editForm");
 
 		me.hiddenId = Ext.getCmp("PSI_Subject_FmtColEditForm_hiddenId");
-
+		me.editCaption = Ext.getCmp("PSI_Subject_FmtColEditForm_editCaption");
+		me.editName = Ext.getCmp("PSI_Subject_FmtColEditForm_editName");
+		me.editType = Ext.getCmp("PSI_Subject_FmtColEditForm_editFieldType");
 	},
 
 	// 保存
@@ -198,14 +207,31 @@ Ext.define("PSI.Subject.FmtColEditForm", {
 				}
 			},
 			failure : function(form, action) {
-				el.unmask();
+				el && el.unmask();
 				PSI.MsgBox.showInfo(action.result.msg);
 			}
 		};
 		f.submit(sf);
 	},
 
+	onEditCaptionSpecialKey : function(field, e) {
+		var me = this;
+
+		if (e.getKey() == e.ENTER) {
+			me.editName.focus();
+			me.editName.setValue(me.editName.getValue());
+		}
+	},
+
 	onEditNameSpecialKey : function(field, e) {
+		var me = this;
+
+		if (e.getKey() == e.ENTER) {
+			me.editType.focus();
+		}
+	},
+
+	onEditTypeSpecialKey : function(field, e) {
 		var me = this;
 
 		if (e.getKey() == e.ENTER) {
@@ -250,6 +276,7 @@ Ext.define("PSI.Subject.FmtColEditForm", {
 		Ext.get(window).on('beforeunload', me.onWindowBeforeUnload);
 
 		if (me.adding) {
+			me.editCaption.focus();
 			return;
 		}
 
