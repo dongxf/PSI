@@ -1126,17 +1126,114 @@ class SubjectDAO extends PSIBaseExDAO {
 	}
 
 	/**
+	 * 盘点字符串中是否都是小写字母
+	 *
+	 * @param string $s        	
+	 * @return boolean
+	 */
+	private function strIsAllLetters($s) {
+		for($i = 0; $i < strlen($s); $i ++) {
+			$c = ord($s[$i]);
+			if (ord('a') > $c || $c > ord('z')) {
+				return false;
+			}
+		}
+		
+		return true;
+	}
+
+	/**
 	 * 新增账样字段
 	 *
 	 * @param array $params        	
 	 */
 	public function addFmtCol(& $params) {
-		return $this->todo();
+		$db = $this->db;
+		
+		$companyId = $params["companyId"];
+		$subjectCode = $params["subjectCode"];
+		$fieldCaption = $params["fieldCaption"];
+		$fieldName = strtolower($params["fieldName"]);
+		$fieldType = $params["fieldType"];
+		
+		// 检查账样
+		$sql = "select id, db_table_name_prefix as cnt from t_acc_fmt
+				where company_id = '%s' and subject_code = '%s' ";
+		$data = $db->query($sql, $companyId, $subjectCode);
+		if (! $data) {
+			return $this->bad("科目[$subjectCode]的标准账样还没有初始化");
+		}
+		$dbTableName = $data[0]["db_table_name_prefix"];
+		$fmtId = $data[0]["id"];
+		
+		// 检查账样是否已经启用
+		if ($this->tableExists($dbTableName)) {
+			return $this->bad("科目[{$subjectCode}]的账样已经启用，不能再新增账样字段");
+		}
+		
+		// 检查字段名是否合格
+		if (strlen($fieldName) == 0) {
+			return $this->bad("没有输入数据库字段名");
+		}
+		if (! $this->strIsAllLetters($fieldName)) {
+			return $this->bad("数据库字段名需要是小写字母");
+		}
+		$sql = "select count(*) as cnt from t_acc_fmt_cols 
+				where fmt_id = '%s' and db_field_name = '%s' ";
+		$data = $db->query($sql, $fmtId, $fieldName);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("科目[{$subjectCode}]的账样中已经存在字段[{$fieldName}]");
+		}
+		
+		$type = "varchar";
+		$length = 255;
+		$dec = 0;
+		switch ($fieldType) {
+			case 1 :
+				$type = "varchar";
+				$length = 255;
+				$dec = 0;
+				break;
+			case 2 :
+				$type = "date";
+				$length = 0;
+				$dec = 0;
+				break;
+			case 3 :
+				$type = "decimal";
+				$length = 19;
+				$dec = 2;
+				break;
+			default :
+				return $this->bad("字段类型不正确");
+		}
+		
+		$sql = "select count(*) as cnt from t_acc_fmt_cols
+				where fmt_id = '%s' and show_order > 0 ";
+		$data = $db->query($sql, $fmtId);
+		$cnt = $data[0]["cnt"];
+		$showOrder = $cnt + 1;
+		
+		$id = $this->newId();
+		$sql = "insert into t_acc_fmt_cols (id, fmt_id, caption, db_field_name,
+					db_field_type, db_field_length, db_field_decimal, show_order)
+				values ('%s', '%s', '%s', '%s',
+					'%s', %d, %d, %d)";
+		$rc = $db->execute($sql, $id, $fmtId, $fieldCaption, $fieldName, $type, $length, $dec, 
+				$showOrder);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		$params["id"] = $id;
+		return null;
 	}
 
 	/**
 	 * 编辑账样字段
-	 * 
+	 *
 	 * @param array $params        	
 	 */
 	public function updateFmtCol(& $params) {
