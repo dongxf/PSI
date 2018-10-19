@@ -170,15 +170,12 @@ Ext.define("PSI.Subject.EditForm", {
 										}
 									}
 								}, {
-									id : "PSI_Subject_EditForm_editName_editIsLeaf",
+									id : "PSI_Subject_EditForm_editIsLeaf",
 									xtype : "combo",
 									name : "isLeaf",
 									queryMode : "local",
 									editable : false,
 									valueField : "id",
-									labelWidth : 60,
-									labelAlign : "right",
-									labelSeparator : "",
 									fieldLabel : "末级科目",
 									store : Ext.create("Ext.data.ArrayStore", {
 												fields : ["id", "text"],
@@ -201,7 +198,7 @@ Ext.define("PSI.Subject.EditForm", {
 		me.editParentCode = Ext.getCmp("PSI_Subject_EditForm_editParentCode");
 		me.editCode = Ext.getCmp("PSI_Subject_EditForm_editCode");
 		me.editName = Ext.getCmp("PSI_Subject_EditForm_editName");
-		me.editIsLeaf = Ext.getCmp("PSI_Subject_EditForm_editName_editIsLeaf");
+		me.editIsLeaf = Ext.getCmp("PSI_Subject_EditForm_editIsLeaf");
 	},
 
 	/**
