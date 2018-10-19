@@ -69,7 +69,7 @@ Ext.define("PSI.Subject.FmtColEditForm", {
 						height : 40
 					},
 					width : 400,
-					height : 340,
+					height : 280,
 					layout : "border",
 					listeners : {
 						show : {
@@ -99,7 +99,7 @@ Ext.define("PSI.Subject.FmtColEditForm", {
 								bodyPadding : 5,
 								defaultType : 'textfield',
 								fieldDefaults : {
-									labelWidth : 60,
+									labelWidth : 80,
 									labelAlign : "right",
 									labelSeparator : "",
 									msgTarget : 'side',
@@ -121,6 +121,46 @@ Ext.define("PSI.Subject.FmtColEditForm", {
 									id : "PSI_Subject_FmtColEditForm_hiddenId",
 									name : "parentCode",
 									value : null
+								}, {
+									id : "PSI_Subject_FmtColEditForm_editCaption",
+									fieldLabel : "列标题",
+									allowBlank : false,
+									blankText : "没有输入列标题",
+									beforeLabelTextTpl : PSI.Const.REQUIRED,
+									name : "fieldCaption",
+									listeners : {
+										specialkey : {
+											fn : me.onEditCaptionSpecialKey,
+											scope : me
+										}
+									}
+								}, {
+									id : "PSI_Subject_FmtColEditForm_editName",
+									fieldLabel : "数据库字段",
+									allowBlank : false,
+									blankText : "没有输入数据库字段名称",
+									beforeLabelTextTpl : PSI.Const.REQUIRED,
+									name : "fieldName",
+									listeners : {
+										specialkey : {
+											fn : me.onEditNameSpecialKey,
+											scope : me
+										}
+									}
+								}, {
+									id : "PSI_Subject_Fmt_editFieldType",
+									xtype : "combo",
+									name : "fieldType",
+									queryMode : "local",
+									editable : false,
+									valueField : "id",
+									fieldLabel : "类型",
+									beforeLabelTextTpl : PSI.Const.REQUIRED,
+									store : Ext.create("Ext.data.ArrayStore", {
+												fields : ["id", "text"],
+												data : [[1, "字符串"], [2, "日期"], [3, "金额(两位小数)"]]
+											}),
+									value : 1
 								}],
 								buttons : buttons
 							}]
@@ -134,9 +174,7 @@ Ext.define("PSI.Subject.FmtColEditForm", {
 
 	},
 
-	/**
-	 * 保存
-	 */
+	// 保存
 	onOK : function(thenAdd) {
 		var me = this;
 
