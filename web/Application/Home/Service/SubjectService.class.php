@@ -287,7 +287,7 @@ class SubjectService extends PSIBaseExService {
 		
 		$id = $params["id"];
 		$subjectCode = $params["subjectCode"];
-		$fieldCaption = $params["fieldCatpion"];
+		$fieldCaption = $params["fieldCaption"];
 		
 		$db = $this->db();
 		
