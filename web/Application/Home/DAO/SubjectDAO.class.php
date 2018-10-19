@@ -1209,10 +1209,10 @@ class SubjectDAO extends PSIBaseExDAO {
 				return $this->bad("字段类型不正确");
 		}
 		
-		$sql = "select count(*) as cnt from t_acc_fmt_cols
+		$sql = "select max(show_order) as max_show_order from t_acc_fmt_cols
 				where fmt_id = '%s' and show_order > 0 ";
 		$data = $db->query($sql, $fmtId);
-		$cnt = $data[0]["cnt"];
+		$cnt = $data[0]["max_show_order"];
 		$showOrder = $cnt + 1;
 		
 		$id = $this->newId();
