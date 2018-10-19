@@ -1126,7 +1126,7 @@ class SubjectDAO extends PSIBaseExDAO {
 	}
 
 	/**
-	 * 盘点字符串中是否都是小写字母
+	 * 盘点字符串中是否都是小写字母或是下划线
 	 *
 	 * @param string $s        	
 	 * @return boolean
@@ -1134,6 +1134,10 @@ class SubjectDAO extends PSIBaseExDAO {
 	private function strIsAllLetters($s) {
 		for($i = 0; $i < strlen($s); $i ++) {
 			$c = ord($s[$i]);
+			if ($c == ord('_')) {
+				continue;
+			}
+			
 			if (ord('a') > $c || $c > ord('z')) {
 				return false;
 			}
