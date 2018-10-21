@@ -761,9 +761,9 @@ class SubjectDAO extends PSIBaseExDAO {
 		$db = $this->db;
 		
 		$sql = "insert into t_acc_fmt_cols (id, fmt_id, db_field_name, db_field_type,
-					db_field_length, db_field_decimal, show_order, caption)
+					db_field_length, db_field_decimal, show_order, caption, sys_col)
 				values ('%s', '%s', '%s', '%s',
-					%d, %d, %d, '%s')";
+					%d, %d, %d, '%s', 1)";
 		$rc = $db->execute($sql, $this->newId(), $fmtId, $dbFieldName, $dbFieldType, $dbFieldLength, 
 				$dbFieldDecimal, $showOrder, $caption);
 		if ($rc === false) {
@@ -1221,9 +1221,9 @@ class SubjectDAO extends PSIBaseExDAO {
 		
 		$id = $this->newId();
 		$sql = "insert into t_acc_fmt_cols (id, fmt_id, caption, db_field_name,
-					db_field_type, db_field_length, db_field_decimal, show_order)
+					db_field_type, db_field_length, db_field_decimal, show_order, sys_col)
 				values ('%s', '%s', '%s', '%s',
-					'%s', %d, %d, %d)";
+					'%s', %d, %d, %d, 0)";
 		$rc = $db->execute($sql, $id, $fmtId, $fieldCaption, $fieldName, $type, $length, $dec, 
 				$showOrder);
 		if ($rc === false) {
