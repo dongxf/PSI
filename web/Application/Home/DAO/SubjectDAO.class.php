@@ -1242,7 +1242,107 @@ class SubjectDAO extends PSIBaseExDAO {
 	 * @param array $params        	
 	 */
 	public function updateFmtCol(& $params) {
-		return $this->todo();
+		$db = $this->db;
+		
+		$id = $params["id"];
+		$companyId = $params["companyId"];
+		$subjectCode = $params["subjectCode"];
+		$fieldCaption = $params["fieldCaption"];
+		$fieldName = strtolower($params["fieldName"]);
+		$fieldType = $params["fieldType"];
+		
+		$sql = "select fmt_id, sys_col from t_acc_fmt_cols where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if (! $data) {
+			return $this->bad("要编辑的账样字段不存在");
+		}
+		$fmtId = $data[0]["fmt_id"];
+		$sysCol = $data[0]["sys_col"] == 1;
+		
+		$sql = "select db_table_name_prefix from t_acc_fmt where id = '%s' ";
+		$data = $db->query($sql, $fmtId);
+		if (! $data) {
+			return $this->bad("账样不存在");
+		}
+		$tableName = $data[0]["db_table_name_prefix"];
+		$inited = $this->tableExists($tableName);
+		
+		if ($inited) {
+			// $inited:ture 账样已经创建了数据库表，这个时候就不能修改账样的字段类型了
+			
+			$sql = "update t_acc_fmt_cols
+						set caption = '%s' 
+					where id = '%s' ";
+			$rc = $db->execute($sql, $fieldCaption, $id);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+		} else {
+			if ($sysCol) {
+				// 系统账样字段，也只能修改标题，不能修改字段类型
+				$sql = "update t_acc_fmt_cols
+						set caption = '%s'
+					where id = '%s' ";
+				$rc = $db->execute($sql, $fieldCaption, $id);
+				if ($rc === false) {
+					return $this->sqlError(__METHOD__, __LINE__);
+				}
+			} else {
+				// 用户自定义字段，并且还没有创建数据库表
+				// 检查字段名是否合格
+				if (strlen($fieldName) == 0) {
+					return $this->bad("没有输入数据库字段名");
+				}
+				if (! $this->strIsAllLetters($fieldName)) {
+					return $this->bad("数据库字段名需要是小写字母");
+				}
+				$sql = "select count(*) as cnt from t_acc_fmt_cols
+						where fmt_id = '%s' and db_field_name = '%s' 
+							and id <> '%s' ";
+				$data = $db->query($sql, $fmtId, $fieldName, $id);
+				$cnt = $data[0]["cnt"];
+				if ($cnt > 0) {
+					return $this->bad("科目[{$subjectCode}]的账样中已经存在字段[{$fieldName}]");
+				}
+				
+				$type = "varchar";
+				$length = 255;
+				$dec = 0;
+				switch ($fieldType) {
+					case 1 :
+						$type = "varchar";
+						$length = 255;
+						$dec = 0;
+						break;
+					case 2 :
+						$type = "date";
+						$length = 0;
+						$dec = 0;
+						break;
+					case 3 :
+						$type = "decimal";
+						$length = 19;
+						$dec = 2;
+						break;
+					default :
+						return $this->bad("字段类型不正确");
+				}
+				
+				$sql = "update t_acc_fmt_cols
+							set caption = '%s', db_field_name = '%s',
+								db_field_type = '%s',
+								db_field_length = %d,
+								db_field_decimal = %d
+						where id = '%s' ";
+				$rc = $db->execute($sql, $fieldCaption, $fieldName, $type, $length, $dec, $id);
+				if ($rc === false) {
+					return $this->sqlError(__METHOD__, __LINE__);
+				}
+			}
+		}
+		
+		// 操作成功
+		return null;
 	}
 
 	private function fieldTypeNameToCode($name) {
