@@ -1268,7 +1268,7 @@ class SubjectDAO extends PSIBaseExDAO {
 		$result = [];
 		
 		$sql = "select caption, db_field_name, sys_col,
-					db_field_type 
+					db_field_type, fmt_id 
 				from t_acc_fmt_cols 
 				where id = '%s' ";
 		$data = $db->query($sql, $id);
@@ -1279,6 +1279,18 @@ class SubjectDAO extends PSIBaseExDAO {
 			$result["fieldName"] = $v["db_field_name"];
 			$result["sysCol"] = $v["sys_col"];
 			$result["fieldType"] = $this->fieldTypeNameToCode($v["db_field_type"]);
+			
+			$fmtId = $v["fmt_id"];
+			$sql = "select db_table_name_prefix from t_acc_fmt where id = '%s' ";
+			$data = $db->query($sql, $fmtId);
+			if ($data) {
+				$tableName = $data[0]["db_table_name_prefix"];
+				if ($this->tableExists($tableName)) {
+					$result["dbTableCreated"] = 1;
+				} else {
+					$result["dbTableCreated"] = 0;
+				}
+			}
 		}
 		
 		return $result;

@@ -307,6 +307,12 @@ Ext.define("PSI.Subject.FmtColEditForm", {
 						me.editType.setReadOnly(true);
 					}
 
+					if (parseInt(data.dbTableCreated) == 1) {
+						// 已经创建了数据库表，字段名和类型也不能修改了
+						me.editName.setReadOnly(true);
+						me.editType.setReadOnly(true);
+					}
+
 					me.editCaption.focus();
 				} else {
 					me.showInfo("网络错误")
