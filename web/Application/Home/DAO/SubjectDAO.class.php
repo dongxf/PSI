@@ -1035,7 +1035,7 @@ class SubjectDAO extends PSIBaseExDAO {
 		$id = $params["id"];
 		$companyId = $params["companyId"];
 		
-		$sql = "select c.show_order, c.caption, c.db_field_name, c.db_field_type,
+		$sql = "select c.id, c.show_order, c.caption, c.db_field_name, c.db_field_type,
 					c.db_field_length, c.db_field_decimal
 				from t_subject s, t_acc_fmt f, t_acc_fmt_cols c
 				where s.id = '%s' and s.code = f.subject_code and f.company_id = '%s'
@@ -1044,6 +1044,7 @@ class SubjectDAO extends PSIBaseExDAO {
 		$data = $db->query($sql, $id, $companyId);
 		foreach ( $data as $v ) {
 			$result[] = [
+					"id" => $v["id"],
 					"showOrder" => $v["show_order"],
 					"caption" => $v["caption"],
 					"fieldName" => $v["db_field_name"],
@@ -1242,5 +1243,44 @@ class SubjectDAO extends PSIBaseExDAO {
 	 */
 	public function updateFmtCol(& $params) {
 		return $this->todo();
+	}
+
+	private function fieldTypeNameToCode($name) {
+		switch ($name) {
+			case "varchar" :
+				return 1;
+			case "date" :
+				return 2;
+			case "decimal" :
+				return 3;
+			default :
+				return 0;
+		}
+	}
+
+	/**
+	 * 获得某个账样字段的详情
+	 */
+	public function fmtColInfo($params) {
+		$db = $this->db;
+		$id = $params["id"];
+		
+		$result = [];
+		
+		$sql = "select caption, db_field_name, sys_col,
+					db_field_type 
+				from t_acc_fmt_cols 
+				where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if ($data) {
+			$v = $data[0];
+			
+			$result["caption"] = $v["caption"];
+			$result["fieldName"] = $v["db_field_name"];
+			$result["sysCol"] = $v["sys_col"];
+			$result["fieldType"] = $this->fieldTypeNameToCode($v["db_field_type"]);
+		}
+		
+		return $result;
 	}
 }

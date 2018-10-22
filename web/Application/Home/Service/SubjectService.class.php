@@ -324,4 +324,16 @@ class SubjectService extends PSIBaseExService {
 		
 		return $this->ok($id);
 	}
+
+	/**
+	 * 获得某个账样字段的详情
+	 */
+	public function fmtColInfo($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$dao = new SubjectDAO($this->db());
+		return $dao->fmtColInfo($params);
+	}
 }

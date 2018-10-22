@@ -100,6 +100,10 @@ Ext.define("PSI.Subject.MainForm", {
 					handler : me.onAddFmtCol,
 					scope : me
 				}, "-", {
+					text : "编辑账样字段",
+					handler : me.onEditFmtCol,
+					scope : me
+				}, "-", {
 					text : "启用账样",
 					handler : me.onEnableFmt,
 					scope : me
@@ -823,6 +827,44 @@ Ext.define("PSI.Subject.MainForm", {
 					parentForm : me,
 					company : company,
 					subject : subject
+				});
+		form.show();
+	},
+
+	onEditFmtCol : function() {
+		var me = this;
+
+		var item = me.getCompanyGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			me.showInfo("没有选择公司");
+			return;
+		}
+		var company = item[0];
+
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			me.showInfo("没有选择科目");
+			return;
+		}
+		var subject = item[0];
+
+		if (me.getFmtPropGrid().getStore().getCount() == 0) {
+			me.showInfo("还没有初始化标准账样");
+			return;
+		}
+
+		var item = me.getFmtColsGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			me.showInfo("没有选择要编辑的账样字段");
+			return;
+		}
+		var entity = item[0];
+
+		var form = Ext.create("PSI.Subject.FmtColEditForm", {
+					parentForm : me,
+					company : company,
+					subject : subject,
+					entity : entity
 				});
 		form.show();
 	}

@@ -298,7 +298,16 @@ Ext.define("PSI.Subject.FmtColEditForm", {
 
 				if (success) {
 					var data = me.decodeJSON(response.responseText);
+					me.editCaption.setValue(data.caption);
+					me.editName.setValue(data.fieldName);
+					me.editType.setValue(data.fieldType);
+					if (parseInt(data.sysCol) != 0) {
+						// 标准账样字段，不能字段名和类型
+						me.editName.setReadOnly(true);
+						me.editType.setReadOnly(true);
+					}
 
+					me.editCaption.focus();
 				} else {
 					me.showInfo("网络错误")
 				}
