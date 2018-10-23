@@ -71,7 +71,8 @@ Ext.define("PSI.Subject.FmtColShowOrderEditForm", {
 							}, {
 								region : "center",
 								border : 0,
-								items : [],
+								layout : "fit",
+								items : [me.getMainGrid()],
 								buttons : buttons
 							}]
 				});
@@ -103,6 +104,42 @@ Ext.define("PSI.Subject.FmtColShowOrderEditForm", {
 		}
 	},
 
+	getMainGrid : function() {
+		var me = this;
+		if (me.__mainGrid) {
+			return me.__mainGrid;
+		}
+
+		var modelName = "PSIEditFMTColsShowOrder";
+		Ext.define(modelName, {
+					extend : "Ext.data.Model",
+					fields : ["id"]
+				});
+
+		me.__mainGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
+					header : {
+						height : 30,
+						title : me.formatGridHeaderTitle("账样字段")
+					},
+					columnLines : true,
+					columns : {
+						defaults : {
+							menuDisabled : true,
+							sortable : false
+						},
+						items : []
+					},
+					store : Ext.create("Ext.data.Store", {
+								model : modelName,
+								autoLoad : false,
+								data : []
+							})
+				});
+
+		return me.__mainGrid;
+	},
+
 	onWndShow : function() {
 		var me = this;
 
@@ -122,7 +159,7 @@ Ext.define("PSI.Subject.FmtColShowOrderEditForm", {
 
 				if (success) {
 					var data = me.decodeJSON(response.responseText);
-
+					me.reconfigMainGrid(data);
 				} else {
 					me.showInfo("网络错误")
 				}
@@ -130,5 +167,18 @@ Ext.define("PSI.Subject.FmtColShowOrderEditForm", {
 		};
 
 		me.ajax(r);
+	},
+
+	reconfigMainGrid : function(data) {
+		var me = this;
+		var cols = [];
+		for (var i = 0; i < data.length; i++) {
+			var item = data[i];
+			cols.push({
+						text : item.caption,
+						dataIndex : item.id
+					});
+		}
+		me.getMainGrid().reconfigure(me.getMainGrid().getStore(), cols);
 	}
 });
