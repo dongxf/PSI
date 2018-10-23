@@ -50,6 +50,9 @@ $pathList = array(
 	$baseDir . "/Application/Home/Service",
 	$baseDir . "/Application/Home/Controller",
 	$baseDir . "/Application/Home/View",
+	$baseDir . "/Application/API/DAO",
+	$baseDir . "/Application/API/Service",
+	$baseDir . "/Application/API/Controller",
 	$baseDir . "/Public/Scripts/PSI",
 	$baseDir . "/Public/Content",
 	);
