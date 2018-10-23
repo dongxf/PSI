@@ -26,7 +26,7 @@ Ext.define("PSI.Subject.FmtColShowOrderEditForm", {
 		buttons.push(btn);
 
 		var btn = {
-			text : "关闭",
+			text : "取消",
 			handler : function() {
 				me.close();
 			},
@@ -44,7 +44,7 @@ Ext.define("PSI.Subject.FmtColShowOrderEditForm", {
 				+ "<h2 style='color:#196d83'>"
 				+ t
 				+ "</h2>"
-				+ "<p style='color:#196d83'>标记 <span style='color:red;font-weight:bold'>*</span>的是必须录入数据的字段</p>";
+				+ "<p style='color:#196d83'>通过拖动列来调整显示次序</p>";
 		Ext.apply(me, {
 					header : {
 						title : me.formatTitle(PSI.Const.PROD_NAME),

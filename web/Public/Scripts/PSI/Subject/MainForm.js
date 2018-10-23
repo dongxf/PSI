@@ -108,6 +108,10 @@ Ext.define("PSI.Subject.MainForm", {
 					handler : me.onDeleteFmtCol,
 					scope : me
 				}, "-", {
+					text : "设置字段显示次序",
+					handler : me.onEditFmtColShowOrder,
+					scope : me
+				}, "-", {
 					text : "启用账样",
 					handler : me.onEnableFmt,
 					scope : me
@@ -914,5 +918,35 @@ Ext.define("PSI.Subject.MainForm", {
 		};
 
 		me.confirm(info, funcConfirm);
+	},
+
+	onEditFmtColShowOrder : function() {
+		var me = this;
+		var item = me.getCompanyGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			me.showInfo("没有选择公司");
+			return;
+		}
+
+		var company = item[0];
+
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			me.showInfo("没有选择科目");
+			return;
+		}
+		var subject = item[0];
+
+		var store = me.getFmtPropGrid().getStore();
+		if (store.getCount() == 0) {
+			me.showInfo("还没有初始化标准账样");
+			return;
+		}
+
+		var form = Ext.create("PSI.Subject.FmtColShowOrderEditForm", {
+					company : company,
+					subject : subject
+				});
+		form.show();
 	}
 });
