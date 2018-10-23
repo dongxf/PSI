@@ -1021,6 +1021,21 @@ CREATE TABLE IF NOT EXISTS `t_fv_md` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `t_acc_period`;
+CREATE TABLE IF NOT EXISTS `t_acc_period` (
+  `id` varchar(255) NOT NULL,
+  `acc_year` int(11) NOT NULL,
+  `acc_month` int(11) NOT NULL,
+  `company_id` varchar(255) NOT NULL,
+  `acc_gl_kept` int(11) NOT NULL,
+  `acc_gl_closed` int(11) NOT NULL,
+  `acc_detail_kept` int(11) NOT NULL,
+  `acc_detail_closed` int(11) NOT NULL,
+  `period_closed` int(11) NOT NULL,
+  `year_forward` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
