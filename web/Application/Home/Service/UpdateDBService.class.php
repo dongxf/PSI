@@ -184,6 +184,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20181006_01();
 		$this->update_20181009_01();
 		$this->update_20181021_01();
+		$this->update_20181023_01();
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -204,6 +205,30 @@ class UpdateDBService extends PSIBaseService {
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	// ============================================
 	private function notForgot() {
+	}
+
+	private function update_20181023_01() {
+		// 本次更新：新增表t_acc_period
+		$db = $this->db;
+		
+		$tableName = "t_acc_period";
+		if (! $this->tableExists($db, $tableName)) {
+			$sql = "CREATE TABLE IF NOT EXISTS `t_acc_period` (
+					  `id` varchar(255) NOT NULL,
+					  `acc_year` int(11) NOT NULL,
+					  `acc_month` int(11) NOT NULL,
+					  `company_id` varchar(255) NOT NULL,
+					  `acc_gl_kept` int(11) NOT NULL,
+					  `acc_gl_closed` int(11) NOT NULL,
+					  `acc_detail_kept` int(11) NOT NULL,
+					  `acc_detail_closed` int(11) NOT NULL,
+					  `period_closed` int(11) NOT NULL,
+					  `year_forward` int(11) NOT NULL,
+					  PRIMARY KEY (`id`)
+					) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+			";
+			$db->execute($sql);
+		}
 	}
 
 	private function update_20181021_01() {
