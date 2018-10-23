@@ -232,4 +232,18 @@ class SubjectController extends PSIBaseController {
 			$this->ajaxReturn($service->deleteFmtCol($params));
 		}
 	}
+
+	/**
+	 * 某个账样所有字段 - 设置字段显示次序用
+	 */
+	public function fmtGridColsList() {
+		if (IS_POST) {
+			$params = [
+					"id" => I("post.id")
+			];
+			
+			$service = new SubjectService();
+			$this->ajaxReturn($service->fmtGridColsList($params));
+		}
+	}
 }

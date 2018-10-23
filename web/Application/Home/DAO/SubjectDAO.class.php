@@ -1447,4 +1447,30 @@ class SubjectDAO extends PSIBaseExDAO {
 		$params["accNumber"] = $accNumber;
 		return null;
 	}
+
+	/**
+	 * 某个账样所有字段 - 设置字段显示次序用
+	 */
+	public function fmtGridColsList($params) {
+		$db = $this->db;
+		
+		// id - 科目的id
+		$id = $params["id"];
+		$sql = "select c.id, c.caption
+				from t_subject s, t_acc_fmt f, t_acc_fmt_cols c
+				where s.id = '%s' 
+					and s.company_id = f.company_id and s.code = f.subject_code
+					and f.id = c.fmt_id and c.show_order > 0
+				order by c.show_order";
+		$result = [];
+		$data = $db->query($sql, $id);
+		foreach ( $data as $v ) {
+			$result[] = [
+					"id" => $v["id"],
+					"caption" => $v["caption"]
+			];
+		}
+		
+		return $result;
+	}
 }

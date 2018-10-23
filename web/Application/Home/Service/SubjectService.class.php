@@ -368,4 +368,16 @@ class SubjectService extends PSIBaseExService {
 		
 		return $this->ok();
 	}
+
+	/**
+	 * 某个账样所有字段 - 设置字段显示次序用
+	 */
+	public function fmtGridColsList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$dao = new SubjectDAO($this->db());
+		return $dao->fmtGridColsList($params);
+	}
 }

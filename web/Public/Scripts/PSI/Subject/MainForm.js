@@ -928,8 +928,6 @@ Ext.define("PSI.Subject.MainForm", {
 			return;
 		}
 
-		var company = item[0];
-
 		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
 			me.showInfo("没有选择科目");
@@ -944,8 +942,7 @@ Ext.define("PSI.Subject.MainForm", {
 		}
 
 		var form = Ext.create("PSI.Subject.FmtColShowOrderEditForm", {
-					company : company,
-					subject : subject
+					entity : subject
 				});
 		form.show();
 	}
