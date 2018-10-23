@@ -104,6 +104,10 @@ Ext.define("PSI.Subject.MainForm", {
 					handler : me.onEditFmtCol,
 					scope : me
 				}, "-", {
+					text : "删除账样字段",
+					handler : me.onDeleteFmtCol,
+					scope : me
+				}, "-", {
 					text : "启用账样",
 					handler : me.onEnableFmt,
 					scope : me
@@ -867,5 +871,48 @@ Ext.define("PSI.Subject.MainForm", {
 					entity : entity
 				});
 		form.show();
+	},
+
+	onDeleteFmtCol : function() {
+		var me = this;
+		var item = me.getFmtColsGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			me.showInfo("没有选择要删除的账样字段");
+			return;
+		}
+
+		var fmtCol = item[0];
+
+		var info = "请确认是否删除账样字段: <span style='color:red'>"
+				+ fmtCol.get("caption") + "</span>?";
+		var funcConfirm = function() {
+			var el = Ext.getBody();
+			el.mask("正在删除中...");
+			var r = {
+				url : me.URL("Home/Subject/deleteFmtCol"),
+				params : {
+					id : fmtCol.get("id")
+				},
+				callback : function(options, success, response) {
+					el.unmask();
+
+					if (success) {
+						var data = me.decodeJSON(response.responseText);
+						if (data.success) {
+							me.showInfo("成功完成删除操作", function() {
+										me.refreshFmtColsGrid();
+									});
+						} else {
+							me.showInfo(data.msg);
+						}
+					} else {
+						me.showInfo("网络错误");
+					}
+				}
+			};
+			me.ajax(r);
+		};
+
+		me.confirm(info, funcConfirm);
 	}
 });

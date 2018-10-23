@@ -1395,4 +1395,56 @@ class SubjectDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 删除某个账样字段
+	 */
+	public function deleteFmtCol(& $params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		
+		$sql = "select fmt_id, caption, sys_col 
+				from t_acc_fmt_cols
+				where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if (! $data) {
+			return $this->bad("要删除的账样字段不存在");
+		}
+		$v = $data[0];
+		$fmtId = $v["fmt_id"];
+		$caption = $v["caption"];
+		$sysCol = $v["sys_col"];
+		if ($sysCol == 1) {
+			return $this->bad("账样字段[{$caption}]是标准账样字段，不能删除");
+		}
+		
+		$sql = "select subject_code, acc_number, db_table_name_prefix 
+				from t_acc_fmt 
+				where id = '%s' ";
+		$data = $db->query($sql, $fmtId);
+		if (! $data) {
+			return $this->bad("账样不存在");
+		}
+		$v = $data[0];
+		$tableName = $v["db_table_name_prefix"];
+		if ($this->tableExists($tableName)) {
+			return $this->bad("账样创建数据库表之后不能删除账样字段");
+		}
+		$subjectCode = $v["subject_code"];
+		$accNumber = $v["acc_number"];
+		
+		$sql = "delete from t_acc_fmt_cols where id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		$params["caption"] = $caption;
+		$params["subjectCode"] = $subjectCode;
+		$params["accNumber"] = $accNumber;
+		return null;
+	}
 }

@@ -336,4 +336,36 @@ class SubjectService extends PSIBaseExService {
 		$dao = new SubjectDAO($this->db());
 		return $dao->fmtColInfo($params);
 	}
+
+	/**
+	 * 删除某个账样字段
+	 */
+	public function deleteFmtCol($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
+		$db = $this->db();
+		
+		$db->startTrans();
+		$dao = new SubjectDAO($db);
+		
+		$rc = $dao->deleteFmtCol($params);
+		if ($rc) {
+			$db->rollback();
+			return $rc;
+		}
+		
+		// 记录业务日志
+		$caption = $params["caption"];
+		$code = $params["subjectCode"];
+		$accNumber = $params["accNumber"];
+		$log = "删除科目[{$code}]账样[账样号 = {$accNumber}]的字段: $caption";
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$db->commit();
+		
+		return $this->ok();
+	}
 }

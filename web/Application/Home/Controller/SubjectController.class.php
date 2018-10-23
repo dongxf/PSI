@@ -218,4 +218,18 @@ class SubjectController extends PSIBaseController {
 			$this->ajaxReturn($service->fmtColInfo($params));
 		}
 	}
+
+	/**
+	 * 删除某个账样字段
+	 */
+	public function deleteFmtCol() {
+		if (IS_POST) {
+			$params = [
+					"id" => I("post.id")
+			];
+			
+			$service = new SubjectService();
+			$this->ajaxReturn($service->deleteFmtCol($params));
+		}
+	}
 }
