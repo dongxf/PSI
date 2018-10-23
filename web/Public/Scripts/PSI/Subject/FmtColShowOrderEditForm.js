@@ -86,6 +86,46 @@ Ext.define("PSI.Subject.FmtColShowOrderEditForm", {
 	onOK : function(thenAdd) {
 		var me = this;
 
+		var columns = me.getMainGrid().columnManager.columns;
+
+		var data = [];
+		for (var i = 0; i < columns.length; i++) {
+			var col = columns[i];
+
+			data.push(col.dataIndex);
+		}
+
+		var showOrder = data.join(",");
+
+		var el = Ext.getBody();
+		el.mask("正在操作中...");
+		var r = {
+			url : me.URL("Home/Subject/editFmtColShowOrder"),
+			params : {
+				id : me.getEntity().get("id"), // 科目id
+				idList : showOrder
+			},
+			callback : function(options, success, response) {
+				el.unmask();
+
+				if (success) {
+					var data = me.decodeJSON(response.responseText);
+					if (data.success) {
+						me.showInfo("成功修改字段显示次序", function() {
+									me.close();
+									if (me.getParentForm()) {
+										me.getParentForm().refreshFmtColsGrid();
+									}
+								});
+					} else {
+						me.showInfo(data.msg);
+					}
+				} else {
+					me.showInfo("网络错误");
+				}
+			}
+		};
+		me.ajax(r);
 	},
 
 	onWindowBeforeUnload : function(e) {

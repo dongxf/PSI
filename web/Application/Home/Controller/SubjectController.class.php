@@ -246,4 +246,19 @@ class SubjectController extends PSIBaseController {
 			$this->ajaxReturn($service->fmtGridColsList($params));
 		}
 	}
+
+	/**
+	 * 编辑账样字段的显示次序
+	 */
+	public function editFmtColShowOrder() {
+		if (IS_POST) {
+			$params = [
+					"id"=>I("post.id"), // 科目id
+					"idList" => I("post.idList")
+			];
+			
+			$service = new SubjectService();
+			$this->ajaxReturn($service->editFmtColShowOrder($params));
+		}
+	}
 }

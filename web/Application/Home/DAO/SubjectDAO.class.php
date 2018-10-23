@@ -1473,4 +1473,44 @@ class SubjectDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 编辑账样字段的显示次序
+	 */
+	public function editFmtColShowOrder(& $params) {
+		$db = $this->db;
+		
+		// id:科目id
+		$id = $params["id"];
+		
+		// 账样字段id，以逗号分隔形成的List
+		$idList = $params["idList"];
+		
+		$idArray = explode(",", $idList);
+		
+		$sql = "select company_id, code from t_subject where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if (! $data) {
+			return $this->bad("科目不存在");
+		}
+		$v = $data[0];
+		$companyId = $v["companyId"];
+		$subjectCode = $v["code"];
+		
+		foreach ( $idArray as $i => $colId ) {
+			$showOrder = $i + 1;
+			
+			$sql = "update t_acc_fmt_cols
+						set show_order = %d
+					where id = '%s' ";
+			$rc = $db->execute($sql, $showOrder, $colId);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+		}
+		
+		// 操作成功
+		$params["subjectCode"] = $subjectCode;
+		return null;
+	}
 }

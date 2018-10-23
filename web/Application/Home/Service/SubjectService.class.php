@@ -380,4 +380,34 @@ class SubjectService extends PSIBaseExService {
 		$dao = new SubjectDAO($this->db());
 		return $dao->fmtGridColsList($params);
 	}
+
+	/**
+	 * 编辑账样字段的显示次序
+	 */
+	public function editFmtColShowOrder($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
+		$db = $this->db();
+		
+		$db->startTrans();
+		$dao = new SubjectDAO($db);
+		
+		$rc = $dao->editFmtColShowOrder($params);
+		if ($rc) {
+			$db->rollback();
+			return $rc;
+		}
+		
+		// 记录业务日志
+		$code = $params["subjectCode"];
+		$log = "编辑科目[{$code}]账样字段的显示次序";
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$db->commit();
+		
+		return $this->ok();
+	}
 }

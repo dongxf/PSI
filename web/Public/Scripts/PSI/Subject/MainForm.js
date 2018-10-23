@@ -942,6 +942,7 @@ Ext.define("PSI.Subject.MainForm", {
 		}
 
 		var form = Ext.create("PSI.Subject.FmtColShowOrderEditForm", {
+					parentForm : me,
 					entity : subject
 				});
 		form.show();
