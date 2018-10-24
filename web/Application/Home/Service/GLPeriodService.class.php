@@ -29,4 +29,16 @@ class GLPeriodService extends PSIBaseExService {
 		$dao = new GLPeriodDAO($this->db());
 		return $dao->companyList($params);
 	}
+
+	/**
+	 * 某个公司的全部会计期间
+	 */
+	public function periodList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$dao = new GLPeriodDAO($this->db());
+		return $dao->periodList($params);
+	}
 }

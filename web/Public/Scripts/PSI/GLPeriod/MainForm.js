@@ -130,10 +130,34 @@ Ext.define("PSI.GLPeriod.MainForm", {
 				}
 
 				var company = item[0];
+
 				var title = Ext.String
 						.format("{0} - 会计期间", company.get("name"));
 				me.getMainGrid().setTitle(me.formatGridHeaderTitle(title));
 
+				var grid = me.getMainGrid();
+				var el = grid.getEl();
+				el && el.mask(PSI.Const.LOADING);
+
+				var r = {
+					url : me.URL("Home/GLPeriod/periodList"),
+					params : {
+						companyId : company.get("id")
+					},
+					callback : function(options, success, response) {
+						var store = grid.getStore();
+
+						store.removeAll();
+
+						if (success) {
+							var data = me.decodeJSON(response.responseText);
+							store.add(data);
+						}
+
+						el && el.unmask();
+					}
+				};
+				me.ajax(r);
 			},
 
 			getMainGrid : function() {
@@ -146,7 +170,7 @@ Ext.define("PSI.GLPeriod.MainForm", {
 				Ext.define(modelName, {
 							extend : "Ext.data.Model",
 							fields : ["id", "year", "month", "glKept",
-									"glClose", "detailKept", "detailClose",
+									"glClosed", "detailKept", "detailClosed",
 									"periodClosed", "yearForword"]
 						});
 
