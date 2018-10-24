@@ -229,6 +229,10 @@ class MainMenuController extends Controller {
 				// 表单视图开发助手
 				redirect(__ROOT__ . "/Home/FormView/devIndex");
 				break;
+			case FIdConst::GL_PERIOD :
+				// 会计期间
+				redirect(__ROOT__ . "/Home/GLPeriod/index");
+				break;
 			default :
 				redirect(__ROOT__ . "/Home");
 		}
