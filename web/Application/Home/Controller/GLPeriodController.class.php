@@ -54,4 +54,18 @@ class GLPeriodController extends PSIBaseController {
 			$this->ajaxReturn($service->periodList($params));
 		}
 	}
+
+	/**
+	 * 初始化某个公司的本年度会计期间
+	 */
+	public function initPeriod() {
+		if (IS_POST) {
+			$params = [
+					"companyId" => I("post.companyId")
+			];
+			
+			$service = new GLPeriodService();
+			$this->ajaxReturn($service->initPeriod($params));
+		}
+	}
 }

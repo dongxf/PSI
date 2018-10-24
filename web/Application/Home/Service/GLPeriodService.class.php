@@ -41,4 +41,35 @@ class GLPeriodService extends PSIBaseExService {
 		$dao = new GLPeriodDAO($this->db());
 		return $dao->periodList($params);
 	}
+
+	/**
+	 * 初始化某个公司的本年度会计期间
+	 */
+	public function initPeriod($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
+		$db = $this->db();
+		
+		$db->startTrans();
+		$dao = new GLPeriodDAO($db);
+		
+		$rc = $dao->initPeriod($params);
+		if ($rc) {
+			$db->rollback();
+			return $rc;
+		}
+		
+		// 记录业务日志
+		$year = $params["year"];
+		$name = $params["name"];
+		$log = "初始化[{$name}]{$year}年的会计期间";
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$db->commit();
+		
+		return $this->ok();
+	}
 }
