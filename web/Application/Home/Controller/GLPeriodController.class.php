@@ -4,6 +4,7 @@ namespace Home\Controller;
 
 use Home\Common\FIdConst;
 use Home\Service\UserService;
+use Home\Service\GLPeriodService;
 
 /**
  * 会计期间Controller
@@ -27,6 +28,16 @@ class GLPeriodController extends PSIBaseController {
 			$this->display();
 		} else {
 			$this->gotoLoginPage("/Home/GLPeriod/index");
+		}
+	}
+
+	/**
+	 * 返回所有的公司列表
+	 */
+	public function companyList() {
+		if (IS_POST) {
+			$service = new GLPeriodService();
+			$this->ajaxReturn($service->companyList());
 		}
 	}
 }

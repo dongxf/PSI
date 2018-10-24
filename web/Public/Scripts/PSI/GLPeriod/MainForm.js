@@ -165,11 +165,11 @@ Ext.define("PSI.GLPeriod.MainForm", {
 								items : [{
 											header : "年",
 											dataIndex : "year",
-											width : 90
+											width : 60
 										}, {
 											header : "月",
 											dataIndex : "month",
-											width : 90
+											width : 60
 										}, {
 											header : "总账已记账",
 											dataIndex : "glKept",
