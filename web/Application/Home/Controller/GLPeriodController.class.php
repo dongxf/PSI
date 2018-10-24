@@ -47,7 +47,7 @@ class GLPeriodController extends PSIBaseController {
 	public function periodList() {
 		if (IS_POST) {
 			$params = [
-					"companyId" => I("post.id")
+					"companyId" => I("post.companyId")
 			];
 			
 			$service = new GLPeriodService();

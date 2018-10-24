@@ -171,7 +171,7 @@ Ext.define("PSI.GLPeriod.MainForm", {
 		Ext.define(modelName, {
 			extend : "Ext.data.Model",
 			fields : ["id", "year", "month", "glKept", "glClosed",
-					"detailKept", "detailClosed", "periodClosed", "yearForword"]
+					"detailKept", "detailClosed", "periodClosed", "yearForward"]
 		});
 
 		me.__mainGrid = Ext.create("Ext.grid.Panel", {
@@ -184,40 +184,67 @@ Ext.define("PSI.GLPeriod.MainForm", {
 					columns : {
 						defaults : {
 							menuDisabled : true,
-							sortable : false
+							sortable : false,
+							draggable : false
 						},
 						items : [{
 									header : "年",
 									dataIndex : "year",
-									width : 60
+									width : 60,
+									align : "center"
 								}, {
 									header : "月",
 									dataIndex : "month",
-									width : 60
+									width : 60,
+									align : "center"
 								}, {
-									header : "总账已记账",
-									dataIndex : "glKept",
-									width : 90
+									header : "总账",
+									columns : [{
+												header : "已记账",
+												dataIndex : "glKept",
+												width : 90,
+												align : "center",
+												menuDisabled : true,
+												sortable : false,
+												draggable : false
+											}, {
+												header : "已结账",
+												dataIndex : "glClosed",
+												width : 90,
+												align : "center",
+												menuDisabled : true,
+												sortable : false,
+												draggable : false
+											}]
 								}, {
-									header : "总账已结账",
-									dataIndex : "glClosed",
-									width : 90
-								}, {
-									header : "明细账已记账",
-									dataIndex : "detailKept",
-									width : 100
-								}, {
-									header : "明细账已结账",
-									dataIndex : "detailClosed",
-									width : 100
+									header : "明细账",
+									columns : [{
+												header : "已记账",
+												dataIndex : "detailKept",
+												width : 100,
+												align : "center",
+												menuDisabled : true,
+												sortable : false,
+												draggable : false
+											}, {
+												header : "已结账",
+												dataIndex : "detailClosed",
+												width : 100,
+												align : "center",
+												menuDisabled : true,
+												sortable : false,
+												draggable : false
+											}]
 								}, {
 									header : "本期间已结账",
 									dataIndex : "periodClosed",
-									width : 100
+									width : 100,
+									align : "center"
 								}, {
 									header : "年终结转",
-									dataIndex : "yearForword",
-									width : 90
+									dataIndex : "yearForward",
+									width : 90,
+									align : "center"
 								}]
 					},
 					store : Ext.create("Ext.data.Store", {
