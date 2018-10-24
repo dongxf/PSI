@@ -781,4 +781,10 @@ class FIdConst {
 	 * @var string
 	 */
 	const GL_BANK_ACCOUNT = "2102";
+	
+	/**
+	 * 会计期间
+	 * @var string
+	 */
+	const GL_PERIOD = "2103";
 }
