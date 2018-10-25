@@ -59,7 +59,8 @@ Ext.define("PSI.Goods.UnitMainForm", {
 									sortable : false
 								},
 								items : [{
-											xtype : "rownumberer"
+											xtype : "rownumberer",
+											width : 40
 										}, {
 											header : "商品计量单位",
 											dataIndex : "name",
