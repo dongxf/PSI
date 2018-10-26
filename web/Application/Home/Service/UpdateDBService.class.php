@@ -186,6 +186,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20181021_01();
 		$this->update_20181023_01();
 		$this->update_20181024_01();
+		$this->update_20181026_01();
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -206,6 +207,73 @@ class UpdateDBService extends PSIBaseService {
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	// ============================================
 	private function notForgot() {
+	}
+
+	private function update_20181026_01() {
+		// 本次更新：新增表t_sc_bill t_sc_bill_detail
+		$db = $this->db;
+		
+		$tableName = "t_sc_bill";
+		if (! $this->tableExists($db, $tableName)) {
+			$sql = "CREATE TABLE IF NOT EXISTS `t_sc_bill` (
+					  `id` varchar(255) NOT NULL,
+					  `ref` varchar(255) NOT NULL,
+					  `customer_id` varchar(255) NOT NULL,
+					  `org_id` varchar(255) NOT NULL,
+					  `biz_user_id` varchar(255) NOT NULL,
+					  `biz_dt` datetime NOT NULL,
+					  `input_user_id` varchar(255) NOT NULL,
+					  `date_created` datetime DEFAULT NULL,
+					  `bill_status` int(11) NOT NULL,
+					  `goods_money` decimal(19,2) NOT NULL,
+					  `tax` decimal(19,2) NOT NULL,
+					  `money_with_tax` decimal(19,2) NOT NULL,
+					  `deal_date` datetime NOT NULL,
+					  `deal_address` varchar(255) DEFAULT NULL,
+					  `confirm_user_id` varchar(255) DEFAULT NULL,
+					  `confirm_date` datetime DEFAULT NULL,
+					  `bill_memo` varchar(255) DEFAULT NULL,
+					  `data_org` varchar(255) DEFAULT NULL,
+					  `company_id` varchar(255) DEFAULT NULL,
+					  `begin_dt` date NOT NULL,
+					  `end_dt` date NOT NULL,
+					  `discount` int(11) NOT NULL,
+					  `quality_clause` varchar(500) DEFAULT NULL,
+					  `insurance_clause` varchar(500) DEFAULT NULL,
+					  `transport_clause` varchar(500) DEFAULT NULL,
+					  `other_clause` varchar(500) DEFAULT NULL,
+					  PRIMARY KEY (`id`)
+					) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+			";
+			$db->execute($sql);
+		}
+		
+		// t_sc_bill_detail
+		$tableName = "t_sc_bill_detail";
+		if (! $this->tableExists($db, $tableName)) {
+			$sql = "CREATE TABLE IF NOT EXISTS `t_sc_bill_detail` (
+					  `id` varchar(255) NOT NULL,
+					  `scbill_id` varchar(255) NOT NULL,
+					  `show_order` int(11) NOT NULL,
+					  `goods_id` varchar(255) NOT NULL,
+					  `goods_count` decimal(19,8) NOT NULL,
+					  `goods_money` decimal(19,2) NOT NULL,
+					  `goods_price` decimal(19,2) NOT NULL,
+					  `tax_rate` decimal(19,2) NOT NULL,
+					  `tax` decimal(19,2) NOT NULL,
+					  `money_with_tax` decimal(19,2) NOT NULL,
+					  `date_created` datetime DEFAULT NULL,
+					  `data_org` varchar(255) DEFAULT NULL,
+					  `company_id` varchar(255) DEFAULT NULL,
+					  `memo` varchar(500) DEFAULT NULL,
+					  `discount` int(11) NOT NULL,
+					  `so_count` decimal(19,8) NOT NULL,
+					  `left_count` decimal(19,8) NOT NULL,
+					  PRIMARY KEY (`id`)
+					) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+			";
+			$db->execute($sql);
+		}
 	}
 
 	private function update_20181024_01() {
