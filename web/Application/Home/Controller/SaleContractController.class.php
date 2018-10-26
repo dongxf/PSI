@@ -4,6 +4,7 @@ namespace Home\Controller;
 
 use Home\Service\UserService;
 use Home\Common\FIdConst;
+use Home\Service\SCBillService;
 
 /**
  * 销售合同Controller
@@ -27,6 +28,26 @@ class SaleContractController extends PSIBaseController {
 			$this->display();
 		} else {
 			$this->gotoLoginPage("/Home/SaleContract/index");
+		}
+	}
+
+	/**
+	 * 销售合同主表列表
+	 */
+	public function scbillList() {
+		if (IS_POST) {
+			$params = [
+					"billStatus" => I("post.billStatus"),
+					"ref" => I("post.ref"),
+					"fromDT" => I("post.fromDT"),
+					"toDT" => I("post.toDT"),
+					"customerId" => I("post.customerId"),
+					"start" => I("post.start"),
+					"limit" => I("post.limit")
+			];
+			
+			$service = new SCBillService();
+			$this->ajaxReturn($service->scbillList($params));
 		}
 	}
 }
