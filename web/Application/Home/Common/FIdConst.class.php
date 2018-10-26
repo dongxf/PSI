@@ -764,6 +764,13 @@ class FIdConst {
 	 */
 	const PRICE_SYSTEM_SETTING_GOODS = "2031-01";
 	
+	/**
+	 * 销售合同
+	 * 
+	 * @var string
+	 */
+	const SALE_CONTRACT = "2032";
+	
 	// -------------------------
 	// 财务总账系统GL fid使用2100段
 	// -------------------------
@@ -784,6 +791,7 @@ class FIdConst {
 	
 	/**
 	 * 会计期间
+	 * 
 	 * @var string
 	 */
 	const GL_PERIOD = "2103";
