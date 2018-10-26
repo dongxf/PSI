@@ -233,6 +233,10 @@ class MainMenuController extends Controller {
 				// 会计期间
 				redirect(__ROOT__ . "/Home/GLPeriod/index");
 				break;
+			case FIdConst::SALE_CONTRACT :
+				// 销售合同
+				redirect(__ROOT__ . "/Home/SaleContract/index");
+				break;
 			default :
 				redirect(__ROOT__ . "/Home");
 		}
