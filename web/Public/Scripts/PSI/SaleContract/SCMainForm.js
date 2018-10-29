@@ -140,7 +140,7 @@ Ext.define("PSI.SaleContract.SCMainForm", {
 					margin : "5, 0, 0, 0",
 					store : Ext.create("Ext.data.ArrayStore", {
 								fields : ["id", "text"],
-								data : [[-1, "全部"], [0, "待审核"]]
+								data : [[-1, "全部"], [0, "待审核"], [1000, "已审核"]]
 							}),
 					value : -1
 				}, {
@@ -148,7 +148,7 @@ Ext.define("PSI.SaleContract.SCMainForm", {
 					labelWidth : 60,
 					labelAlign : "right",
 					labelSeparator : "",
-					fieldLabel : "单号",
+					fieldLabel : "合同号",
 					margin : "5, 0, 0, 0",
 					xtype : "textfield"
 				}, {
