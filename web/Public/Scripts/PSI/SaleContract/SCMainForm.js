@@ -223,12 +223,12 @@ Ext.define("PSI.SaleContract.SCMainForm", {
 		var modelName = "PSISOBill";
 		Ext.define(modelName, {
 					extend : "Ext.data.Model",
-					fields : ["id", "ref", "customerName", "contact", "tel",
-							"fax", "inputUserName", "bizUserName",
-							"billStatus", "goodsMoney", "dateCreated",
-							"receivingType", "tax", "moneyWithTax", "dealDate",
-							"dealAddress", "orgName", "confirmUserName",
-							"confirmDate", "billMemo"]
+					fields : ["id", "ref", "customerName", "inputUserName",
+							"bizUserName", "billStatus", "goodsMoney",
+							"dateCreated", "tax", "moneyWithTax", "beginDT",
+							"endDT", "dealDate", "dealAddress", "discount",
+							"orgName", "confirmUserName", "confirmDate",
+							"billMemo"]
 				});
 		var store = Ext.create("Ext.data.Store", {
 					autoLoad : false,
@@ -257,162 +257,149 @@ Ext.define("PSI.SaleContract.SCMainForm", {
 				});
 
 		me.__mainGrid = Ext.create("Ext.grid.Panel", {
-					cls : "PSI",
-					viewConfig : {
-						enableTextSelection : true
-					},
-					border : 1,
-					columnLines : true,
-					columns : [{
-								xtype : "rownumberer",
-								width : 50
-							}, {
-								header : "状态",
-								dataIndex : "billStatus",
-								menuDisabled : true,
-								sortable : false,
-								width : 80,
-								renderer : function(value) {
-									if (value == 0) {
-										return "<span style='color:red'>待审核</span>";
-									} else if (value == 1000) {
-										return "已审核";
-									} else {
-										return "";
-									}
+			cls : "PSI",
+			viewConfig : {
+				enableTextSelection : true
+			},
+			border : 1,
+			columnLines : true,
+			columns : {
+				defaults : {
+					menuDisabled : true,
+					sortable : false
+				},
+				items : [{
+							xtype : "rownumberer",
+							width : 50
+						}, {
+							header : "状态",
+							dataIndex : "billStatus",
+							width : 80,
+							renderer : function(value) {
+								if (value == 0) {
+									return "<span style='color:red'>待审核</span>";
+								} else if (value == 1000) {
+									return "已审核";
+								} else {
+									return "";
 								}
-							}, {
-								header : "销售合同号",
-								dataIndex : "ref",
-								width : 110,
-								menuDisabled : true,
-								sortable : false
-							}, {
-								header : "交货日期",
-								dataIndex : "dealDate",
-								menuDisabled : true,
-								sortable : false
-							}, {
-								header : "交货地址",
-								dataIndex : "dealAddress",
-								menuDisabled : true,
-								sortable : false
-							}, {
-								header : "客户",
-								dataIndex : "customerName",
-								width : 300,
-								menuDisabled : true,
-								sortable : false
-							}, {
-								header : "销售金额",
-								dataIndex : "goodsMoney",
-								menuDisabled : true,
-								sortable : false,
-								align : "right",
-								xtype : "numbercolumn",
-								width : 150
-							}, {
-								header : "税金",
-								dataIndex : "tax",
-								menuDisabled : true,
-								sortable : false,
-								align : "right",
-								xtype : "numbercolumn",
-								width : 150
-							}, {
-								header : "价税合计",
-								dataIndex : "moneyWithTax",
-								menuDisabled : true,
-								sortable : false,
-								align : "right",
-								xtype : "numbercolumn",
-								width : 150
-							}, {
-								header : "业务员",
-								dataIndex : "bizUserName",
-								menuDisabled : true,
-								sortable : false
-							}, {
-								header : "组织机构",
-								dataIndex : "orgName",
-								menuDisabled : true,
-								sortable : false
-							}, {
-								header : "制单人",
-								dataIndex : "inputUserName",
-								menuDisabled : true,
-								sortable : false
-							}, {
-								header : "制单时间",
-								dataIndex : "dateCreated",
-								menuDisabled : true,
-								sortable : false,
-								width : 140
-							}, {
-								header : "审核人",
-								dataIndex : "confirmUserName",
-								menuDisabled : true,
-								sortable : false
-							}, {
-								header : "审核时间",
-								dataIndex : "confirmDate",
-								menuDisabled : true,
-								sortable : false,
-								width : 140
-							}, {
-								header : "备注",
-								dataIndex : "billMemo",
-								menuDisabled : true,
-								sortable : false
-							}],
-					store : store,
-					bbar : ["->", {
-								id : "pagingToobar",
-								xtype : "pagingtoolbar",
-								border : 0,
-								store : store
-							}, "-", {
-								xtype : "displayfield",
-								value : "每页显示"
-							}, {
-								id : "comboCountPerPage",
-								xtype : "combobox",
-								editable : false,
-								width : 60,
-								store : Ext.create("Ext.data.ArrayStore", {
-											fields : ["text"],
-											data : [["20"], ["50"], ["100"],
-													["300"], ["1000"]]
-										}),
-								value : 20,
-								listeners : {
-									change : {
-										fn : function() {
-											store.pageSize = Ext
-													.getCmp("comboCountPerPage")
-													.getValue();
-											store.currentPage = 1;
-											Ext.getCmp("pagingToobar")
-													.doRefresh();
-										},
-										scope : me
-									}
-								}
-							}, {
-								xtype : "displayfield",
-								value : "条记录"
-							}],
-					listeners : {
-						select : {
-							fn : me.onMainGridSelect,
-							scope : me
-						},
-						itemdblclick : {
-							fn : me.onEditBill,
-							scope : me
+							}
+						}, {
+							header : "销售合同号",
+							dataIndex : "ref",
+							width : 110
+						}, {
+							header : "客户(甲方)",
+							dataIndex : "customerName",
+							width : 300
+						}, {
+							header : "销售组织机构(乙方)",
+							dataIndex : "orgName",
+							width : 200
+						}, {
+							header : "合同开始日期",
+							dataIndex : "beginDT"
+						}, {
+							header : "合同结束日期",
+							dataIndex : "endDT"
+						}, {
+							header : "销售金额",
+							dataIndex : "goodsMoney",
+							align : "right",
+							xtype : "numbercolumn",
+							width : 150
+						}, {
+							header : "税金",
+							dataIndex : "tax",
+							align : "right",
+							xtype : "numbercolumn",
+							width : 150
+						}, {
+							header : "价税合计",
+							dataIndex : "moneyWithTax",
+							align : "right",
+							xtype : "numbercolumn",
+							width : 150
+						}, {
+							header : "交货日期",
+							dataIndex : "dealDate"
+						}, {
+							header : "交货地点",
+							dataIndex : "dealAddress"
+						}, {
+							header : "折扣率(%)",
+							dataIndex : "discount",
+							align : "right"
+						}, {
+							header : "业务员",
+							dataIndex : "bizUserName"
+						}, {
+							header : "制单人",
+							dataIndex : "inputUserName"
+						}, {
+							header : "制单时间",
+							dataIndex : "dateCreated",
+							width : 140
+						}, {
+							header : "审核人",
+							dataIndex : "confirmUserName"
+						}, {
+							header : "审核时间",
+							dataIndex : "confirmDate",
+							width : 140
+						}, {
+							header : "备注",
+							dataIndex : "billMemo",
+							width: 200
+						}]
+			},
+			store : store,
+			bbar : ["->", {
+						id : "pagingToobar",
+						xtype : "pagingtoolbar",
+						border : 0,
+						store : store
+					}, "-", {
+						xtype : "displayfield",
+						value : "每页显示"
+					}, {
+						id : "comboCountPerPage",
+						xtype : "combobox",
+						editable : false,
+						width : 60,
+						store : Ext.create("Ext.data.ArrayStore", {
+									fields : ["text"],
+									data : [["20"], ["50"], ["100"], ["300"],
+											["1000"]]
+								}),
+						value : 20,
+						listeners : {
+							change : {
+								fn : function() {
+									store.pageSize = Ext
+											.getCmp("comboCountPerPage")
+											.getValue();
+									store.currentPage = 1;
+									Ext.getCmp("pagingToobar").doRefresh();
+								},
+								scope : me
+							}
 						}
-					}
-				});
+					}, {
+						xtype : "displayfield",
+						value : "条记录"
+					}],
+			listeners : {
+				select : {
+					fn : me.onMainGridSelect,
+					scope : me
+				},
+				itemdblclick : {
+					fn : me.onEditBill,
+					scope : me
+				}
+			}
+		});
 
 		return me.__mainGrid;
 	},
