@@ -225,7 +225,7 @@ Ext.define("PSI.SaleContract.SCMainForm", {
 		Ext.define(modelName, {
 					extend : "Ext.data.Model",
 					fields : ["id", "ref", "customerName", "inputUserName",
-							"bizUserName", "billStatus", "goodsMoney",
+							"bizUserName", "bizDT", "billStatus", "goodsMoney",
 							"dateCreated", "tax", "moneyWithTax", "beginDT",
 							"endDT", "dealDate", "dealAddress", "discount",
 							"orgName", "confirmUserName", "confirmDate",
@@ -334,6 +334,9 @@ Ext.define("PSI.SaleContract.SCMainForm", {
 						}, {
 							header : "业务员",
 							dataIndex : "bizUserName"
+						}, {
+							header : "合同签订日期",
+							dataIndex : "bizDT"
 						}, {
 							header : "制单人",
 							dataIndex : "inputUserName"
