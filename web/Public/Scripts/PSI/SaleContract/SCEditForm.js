@@ -54,10 +54,10 @@ Ext.define("PSI.SaleContract.SCEditForm", {
 					}],
 			items : [{
 						region : "center",
-						layout : "fit",
+						xtype : "tabpanel",
 						border : 0,
 						bodyPadding : 10,
-						items : [me.getGoodsGrid()]
+						items : [me.getGoodsGrid(), me.getClausePanel()]
 					}, {
 						region : "north",
 						id : "editForm",
@@ -455,6 +455,7 @@ Ext.define("PSI.SaleContract.SCEditForm", {
 						enableTextSelection : true,
 						markDirty : !me.adding
 					},
+					title : "商品明细",
 					features : [{
 								ftype : "summary"
 							}],
@@ -655,6 +656,45 @@ Ext.define("PSI.SaleContract.SCEditForm", {
 				});
 
 		return me.__goodsGrid;
+	},
+
+	getClausePanel : function() {
+		var me = this;
+		if (me.__clausePanel) {
+			return me.__clausePanel;
+		}
+
+		me.__clausePanel = Ext.create("Ext.panel.Panel", {
+					title : "合同条款",
+					autoScroll : true,
+					border : 0,
+					layout : "form",
+					padding : 5,
+					defaults : {
+						labelAlign : "top",
+						labelSeparator : "",
+						rows : 3
+					},
+					items : [{
+								xtype : "textareafield",
+								fieldLabel : "品质条款",
+								id : "PSI_SaleContract_SCEditForm_editQulityClause"
+							}, {
+								xtype : "textareafield",
+								fieldLabel : "保险条款",
+								id : "PSI_SaleContract_SCEditForm_editInsuranceClause"
+							}, {
+								xtype : "textareafield",
+								fieldLabel : "运输条款",
+								id : "PSI_SaleContract_SCEditForm_editTrasportClause"
+							}, {
+								xtype : "textareafield",
+								fieldLabel : "其他条款",
+								id : "PSI_SaleContract_SCEditForm_editOtherClause"
+							}]
+				});
+
+		return me.__clausePanel;
 	},
 
 	// xtype:psi_goods_with_saleprice_field回调本方法

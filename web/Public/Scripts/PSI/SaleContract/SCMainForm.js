@@ -422,7 +422,7 @@ Ext.define("PSI.SaleContract.SCMainForm", {
 					padding : 5,
 					defaults : {
 						readOnly : true,
-						labelAlign : "right",
+						labelAlign : "top",
 						labelSeparator : "",
 						rows : 3
 					},
