@@ -610,7 +610,10 @@ Ext.define("PSI.SaleContract.SCMainForm", {
 	onAddBill : function() {
 		var me = this;
 
-		me.showInfo("TODO");
+		var form = Ext.create("PSI.SaleContract.SCEditForm", {
+					parentForm : me
+				});
+		form.show();
 	},
 
 	onEditBill : function() {
