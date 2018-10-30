@@ -419,28 +419,37 @@ Ext.define("PSI.SaleContract.SCMainForm", {
 					autoScroll : true,
 					border : 0,
 					layout : "form",
-					padding : 5,
+					bodyPadding : 5,
 					defaults : {
 						readOnly : true,
-						labelAlign : "top",
+						hideLabel : true,
 						labelSeparator : "",
 						rows : 3
 					},
+					cls : "PSI-SCBill",
 					items : [{
+								xtype : "displayfield",
+								value : "品质条款"
+							}, {
 								xtype : "textareafield",
-								fieldLabel : "品质条款",
 								id : "PSI_SaleContract_SCMainForm_editQulityClause"
 							}, {
+								xtype : "displayfield",
+								value : "保险条款"
+							}, {
 								xtype : "textareafield",
-								fieldLabel : "保险条款",
 								id : "PSI_SaleContract_SCMainForm_editInsuranceClause"
 							}, {
-								xtype : "textareafield",
-								fieldLabel : "运输条款",
-								id : "PSI_SaleContract_SCMainForm_editTrasportClause"
+								xtype : "displayfield",
+								value : "运输条款"
 							}, {
 								xtype : "textareafield",
-								fieldLabel : "其他条款",
+								id : "PSI_SaleContract_SCMainForm_editTrasportClause"
+							}, {
+								xtype : "displayfield",
+								value : "其他条款"
+							}, {
+								xtype : "textareafield",
 								id : "PSI_SaleContract_SCMainForm_editOtherClause"
 							}]
 				});

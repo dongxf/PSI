@@ -395,6 +395,10 @@ h1, h2, h3, p {
 	background-image: none;
 }
 
+.PSI-SCBill .x-form-text {
+	border-color: #adc6ff;
+}
+
 .PSI-toolbox .x-form-text {
 	background-image: none;
 	border-color: #adc6ff;
