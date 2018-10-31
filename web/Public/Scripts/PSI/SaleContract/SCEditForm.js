@@ -20,7 +20,7 @@ Ext.define("PSI.SaleContract.SCEditForm", {
 						height : 40,
 						iconCls : iconCls
 					},
-					defaultFocus : "editCustomer",
+					defaultFocus : "PSI_SaleContract_SCEditForm_editCustomer",
 					maximized : true,
 					width : 1000,
 					height : 600,
@@ -87,6 +87,32 @@ Ext.define("PSI.SaleContract.SCEditForm", {
 
 		me.callParent(arguments);
 
+		me.hiddenId = Ext.getCmp("PSI_SaleContract_SCEditForm_hiddenId");
+		me.editRef = Ext.getCmp("PSI_SaleContract_SCEditForm_editRef");
+		me.editCustomer = Ext
+				.getCmp("PSI_SaleContract_SCEditForm_editCustomer");
+		me.editBeginDT = Ext.getCmp("PSI_SaleContract_SCEditForm_editBeginDT");
+		me.editEndDT = Ext.getCmp("PSI_SaleContract_SCEditForm_editEndDT");
+		me.editOrg = Ext.getCmp("PSI_SaleContract_SCEditForm_editOrg");
+		me.editBizDT = Ext.getCmp("PSI_SaleContract_SCEditForm_editBizDT");
+		me.editDealDate = Ext
+				.getCmp("PSI_SaleContract_SCEditForm_editDealDate");
+		me.editDealAddress = Ext
+				.getCmp("PSI_SaleContract_SCEditForm_editDealAddress");
+		me.editBizUser = Ext.getCmp("PSI_SaleContract_SCEditForm_editBizUser");
+		me.editDiscount = Ext
+				.getCmp("PSI_SaleContract_SCEditForm_editDiscount");
+		me.editBillMemo = Ext
+				.getCmp("PSI_SaleContract_SCEditForm_editBillMemo");
+		me.editQulityClause = Ext
+				.getCmp("PSI_SaleContract_SCEditForm_editQulityClause");
+		me.editInsuranceClause = Ext
+				.getCmp("PSI_SaleContract_SCEditForm_editInsuranceClause");
+		me.editTransportClause = Ext
+				.getCmp("PSI_SaleContract_SCEditForm_editTrasportClause");
+		me.editOtherClause = Ext
+				.getCmp("PSI_SaleContract_SCEditForm_editOtherClause");
+
 		me.__editorList = ["editDealDate", "editCustomer", "editDealAddress",
 				"editContact", "editTel", "editFax", "editOrg", "editBizUser",
 				"editReceivingType", "editBillMemo"];
@@ -98,11 +124,10 @@ Ext.define("PSI.SaleContract.SCEditForm", {
 
 		return [{
 					xtype : "hidden",
-					id : "hiddenId",
-					name : "id",
+					id : "PSI_SaleContract_SCEditForm_hiddenId",
 					value : entity == null ? null : entity.get("id")
 				}, {
-					id : "editRef",
+					id : "PSI_SaleContract_SCEditForm_editRef",
 					labelWidth : 90,
 					labelAlign : "right",
 					labelSeparator : "",
@@ -111,7 +136,7 @@ Ext.define("PSI.SaleContract.SCEditForm", {
 					colspan : 4,
 					value : "<span style='color:red'>保存后自动生成</span>"
 				}, {
-					id : "editCustomer",
+					id : "PSI_SaleContract_SCEditForm_editCustomer",
 					colspan : 2,
 					width : 430,
 					labelWidth : 90,
@@ -131,7 +156,7 @@ Ext.define("PSI.SaleContract.SCEditForm", {
 					showAddButton : true,
 					callbackFunc : me.__setCustomerExtData
 				}, {
-					id : "editBeginDT",
+					id : "PSI_SaleContract_SCEditForm_editBeginDT",
 					fieldLabel : "合同开始日期",
 					labelWidth : 90,
 					labelAlign : "right",
@@ -148,7 +173,7 @@ Ext.define("PSI.SaleContract.SCEditForm", {
 						}
 					}
 				}, {
-					id : "editEndDT",
+					id : "PSI_SaleContract_SCEditForm_editEndDT",
 					fieldLabel : "合同结束日期",
 					labelWidth : 90,
 					labelAlign : "right",
@@ -165,7 +190,7 @@ Ext.define("PSI.SaleContract.SCEditForm", {
 						}
 					}
 				}, {
-					id : "editOrg",
+					id : "PSI_SaleContract_SCEditForm_editOrg",
 					labelWidth : 90,
 					labelAlign : "right",
 					labelSeparator : "",
@@ -183,7 +208,7 @@ Ext.define("PSI.SaleContract.SCEditForm", {
 						}
 					}
 				}, {
-					id : "editBizDT",
+					id : "PSI_SaleContract_SCEditForm_editBizDT",
 					fieldLabel : "合同签订日期",
 					labelWidth : 90,
 					labelAlign : "right",
@@ -200,7 +225,7 @@ Ext.define("PSI.SaleContract.SCEditForm", {
 						}
 					}
 				}, {
-					id : "editDealDate",
+					id : "PSI_SaleContract_SCEditForm_editDealDate",
 					fieldLabel : "交货日期",
 					labelWidth : 90,
 					labelAlign : "right",
@@ -219,7 +244,7 @@ Ext.define("PSI.SaleContract.SCEditForm", {
 						}
 					}
 				}, {
-					id : "editDealAddress",
+					id : "PSI_SaleContract_SCEditForm_editDealAddress",
 					labelWidth : 90,
 					labelAlign : "right",
 					labelSeparator : "",
@@ -234,7 +259,7 @@ Ext.define("PSI.SaleContract.SCEditForm", {
 						}
 					}
 				}, {
-					id : "editBizUser",
+					id : "PSI_SaleContract_SCEditForm_editBizUser",
 					labelWidth : 90,
 					labelAlign : "right",
 					labelSeparator : "",
@@ -250,7 +275,7 @@ Ext.define("PSI.SaleContract.SCEditForm", {
 						}
 					}
 				}, {
-					id : "editDiscount",
+					id : "PSI_SaleContract_SCEditForm_editDiscount",
 					labelWidth : 90,
 					labelAlign : "right",
 					labelSeparator : "",
@@ -258,6 +283,7 @@ Ext.define("PSI.SaleContract.SCEditForm", {
 					xtype : "numberfield",
 					hideTrigger : true,
 					allowDecimals : false,
+					value : 100,
 					listeners : {
 						specialkey : {
 							fn : me.onEditSpecialKey,
@@ -265,7 +291,7 @@ Ext.define("PSI.SaleContract.SCEditForm", {
 						}
 					}
 				}, {
-					id : "editBillMemo",
+					id : "PSI_SaleContract_SCEditForm_editBillMemo",
 					labelWidth : 90,
 					labelAlign : "right",
 					labelSeparator : "",
@@ -304,7 +330,7 @@ Ext.define("PSI.SaleContract.SCEditForm", {
 		Ext.Ajax.request({
 					url : PSI.Const.BASE_URL + "Home/SaleContract/scBillInfo",
 					params : {
-						id : Ext.getCmp("hiddenId").getValue()
+						id : me.hiddenId.getValue()
 					},
 					method : "POST",
 					callback : function(options, success, response) {
