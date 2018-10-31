@@ -15,256 +15,271 @@ Ext.define("PSI.SaleContract.SCEditForm", {
 		var iconCls = entity == null ? "PSI-button-add" : "PSI-button-edit";
 
 		Ext.apply(me, {
-			header : {
-				title : title,
-				height : 40,
-				iconCls : iconCls
-			},
-			defaultFocus : "editCustomer",
-			maximized : true,
-			width : 1000,
-			height : 600,
-			layout : "border",
-			tbar : [{
-						text : "保存",
-						id : "buttonSave",
-						iconCls : "PSI-button-ok",
-						handler : me.onOK,
-						scope : me
-					}, "-", {
-						text : "取消",
-						id : "buttonCancel",
-						handler : function() {
-							if (me.__readonly) {
-								me.close();
-								return;
-							}
-
-							PSI.MsgBox.confirm("请确认是否取消当前操作？", function() {
+					header : {
+						title : title,
+						height : 40,
+						iconCls : iconCls
+					},
+					defaultFocus : "editCustomer",
+					maximized : true,
+					width : 1000,
+					height : 600,
+					layout : "border",
+					tbar : [{
+								text : "保存",
+								id : "buttonSave",
+								iconCls : "PSI-button-ok",
+								handler : me.onOK,
+								scope : me
+							}, "-", {
+								text : "取消",
+								id : "buttonCancel",
+								handler : function() {
+									if (me.__readonly) {
 										me.close();
-									});
+										return;
+									}
+
+									PSI.MsgBox.confirm("请确认是否取消当前操作？",
+											function() {
+												me.close();
+											});
+								},
+								scope : me
+							}, "->", {
+								text : "表单通用操作帮助",
+								iconCls : "PSI-help",
+								handler : function() {
+									window
+											.open(me
+													.URL("/Home/Help/index?t=commBill"));
+								}
+							}],
+					items : [{
+								region : "center",
+								xtype : "tabpanel",
+								border : 0,
+								bodyPadding : 10,
+								items : [me.getGoodsGrid(), me.getClausePanel()]
+							}, {
+								region : "north",
+								id : "editForm",
+								layout : {
+									type : "table",
+									columns : 4
+								},
+								height : 150,
+								bodyPadding : 10,
+								border : 0,
+								items : me.getEditorList()
+							}],
+					listeners : {
+						show : {
+							fn : me.onWndShow,
+							scope : me
 						},
-						scope : me
-					}, "->", {
-						text : "表单通用操作帮助",
-						iconCls : "PSI-help",
-						handler : function() {
-							window.open(me.URL("/Home/Help/index?t=commBill"));
+						close : {
+							fn : me.onWndClose,
+							scope : me
 						}
-					}],
-			items : [{
-						region : "center",
-						xtype : "tabpanel",
-						border : 0,
-						bodyPadding : 10,
-						items : [me.getGoodsGrid(), me.getClausePanel()]
-					}, {
-						region : "north",
-						id : "editForm",
-						layout : {
-							type : "table",
-							columns : 4
-						},
-						height : 120,
-						bodyPadding : 10,
-						border : 0,
-						items : [{
-									xtype : "hidden",
-									id : "hiddenId",
-									name : "id",
-									value : entity == null ? null : entity
-											.get("id")
-								}, {
-									id : "editRef",
-									labelWidth : 60,
-									labelAlign : "right",
-									labelSeparator : "",
-									fieldLabel : "单号",
-									xtype : "displayfield",
-									value : "<span style='color:red'>保存后自动生成</span>"
-								}, {
-									id : "editDealDate",
-									fieldLabel : "交货日期",
-									labelWidth : 60,
-									labelAlign : "right",
-									labelSeparator : "",
-									allowBlank : false,
-									blankText : "没有输入交货日期",
-									beforeLabelTextTpl : PSI.Const.REQUIRED,
-									xtype : "datefield",
-									format : "Y-m-d",
-									value : new Date(),
-									name : "bizDT",
-									listeners : {
-										specialkey : {
-											fn : me.onEditSpecialKey,
-											scope : me
-										}
-									}
-								}, {
-									id : "editCustomer",
-									colspan : 2,
-									width : 430,
-									labelWidth : 60,
-									labelAlign : "right",
-									labelSeparator : "",
-									xtype : "psi_customerfield",
-									fieldLabel : "客户",
-									allowBlank : false,
-									blankText : "没有输入客户",
-									beforeLabelTextTpl : PSI.Const.REQUIRED,
-									listeners : {
-										specialkey : {
-											fn : me.onEditSpecialKey,
-											scope : me
-										}
-									},
-									showAddButton : true,
-									callbackFunc : me.__setCustomerExtData
-								}, {
-									id : "editDealAddress",
-									labelWidth : 60,
-									labelAlign : "right",
-									labelSeparator : "",
-									fieldLabel : "交货地址",
-									colspan : 2,
-									width : 430,
-									xtype : "textfield",
-									listeners : {
-										specialkey : {
-											fn : me.onEditSpecialKey,
-											scope : me
-										}
-									}
-								}, {
-									id : "editContact",
-									labelWidth : 60,
-									labelAlign : "right",
-									labelSeparator : "",
-									fieldLabel : "联系人",
-									xtype : "textfield",
-									listeners : {
-										specialkey : {
-											fn : me.onEditSpecialKey,
-											scope : me
-										}
-									}
-								}, {
-									id : "editTel",
-									labelWidth : 60,
-									labelAlign : "right",
-									labelSeparator : "",
-									fieldLabel : "电话",
-									xtype : "textfield",
-									listeners : {
-										specialkey : {
-											fn : me.onEditSpecialKey,
-											scope : me
-										}
-									}
-								}, {
-									id : "editFax",
-									labelWidth : 60,
-									labelAlign : "right",
-									labelSeparator : "",
-									fieldLabel : "传真",
-									xtype : "textfield",
-									listeners : {
-										specialkey : {
-											fn : me.onEditSpecialKey,
-											scope : me
-										}
-									}
-								}, {
-									id : "editOrg",
-									labelWidth : 60,
-									labelAlign : "right",
-									labelSeparator : "",
-									fieldLabel : "组织机构",
-									xtype : "psi_orgwithdataorgfield",
-									colspan : 2,
-									width : 430,
-									allowBlank : false,
-									blankText : "没有输入组织机构",
-									beforeLabelTextTpl : PSI.Const.REQUIRED,
-									listeners : {
-										specialkey : {
-											fn : me.onEditSpecialKey,
-											scope : me
-										}
-									}
-								}, {
-									id : "editBizUser",
-									labelWidth : 60,
-									labelAlign : "right",
-									labelSeparator : "",
-									fieldLabel : "业务员",
-									xtype : "psi_userfield",
-									allowBlank : false,
-									blankText : "没有输入业务员",
-									beforeLabelTextTpl : PSI.Const.REQUIRED,
-									listeners : {
-										specialkey : {
-											fn : me.onEditSpecialKey,
-											scope : me
-										}
-									}
-								}, {
-									id : "editReceivingType",
-									labelWidth : 60,
-									labelAlign : "right",
-									labelSeparator : "",
-									fieldLabel : "收款方式",
-									xtype : "combo",
-									queryMode : "local",
-									editable : false,
-									valueField : "id",
-									store : Ext.create("Ext.data.ArrayStore", {
-												fields : ["id", "text"],
-												data : [["0", "记应收账款"],
-														["1", "现金收款"]]
-											}),
-									value : "0",
-									listeners : {
-										specialkey : {
-											fn : me.onEditSpecialKey,
-											scope : me
-										}
-									}
-								}, {
-									id : "editBillMemo",
-									labelWidth : 60,
-									labelAlign : "right",
-									labelSeparator : "",
-									fieldLabel : "备注",
-									xtype : "textfield",
-									colspan : 3,
-									width : 645,
-									listeners : {
-										specialkey : {
-											fn : me.onLastEditSpecialKey,
-											scope : me
-										}
-									}
-								}]
-					}],
-			listeners : {
-				show : {
-					fn : me.onWndShow,
-					scope : me
-				},
-				close : {
-					fn : me.onWndClose,
-					scope : me
-				}
-			}
-		});
+					}
+				});
 
 		me.callParent(arguments);
 
 		me.__editorList = ["editDealDate", "editCustomer", "editDealAddress",
 				"editContact", "editTel", "editFax", "editOrg", "editBizUser",
 				"editReceivingType", "editBillMemo"];
+	},
+
+	getEditorList : function() {
+		var me = this;
+		var entity = me.getEntity();
+
+		return [{
+					xtype : "hidden",
+					id : "hiddenId",
+					name : "id",
+					value : entity == null ? null : entity.get("id")
+				}, {
+					id : "editRef",
+					labelWidth : 90,
+					labelAlign : "right",
+					labelSeparator : "",
+					fieldLabel : "销售合同号",
+					xtype : "displayfield",
+					colspan : 4,
+					value : "<span style='color:red'>保存后自动生成</span>"
+				}, {
+					id : "editCustomer",
+					colspan : 2,
+					width : 430,
+					labelWidth : 90,
+					labelAlign : "right",
+					labelSeparator : "",
+					xtype : "psi_customerfield",
+					fieldLabel : "甲方客户",
+					allowBlank : false,
+					blankText : "没有输入客户",
+					beforeLabelTextTpl : PSI.Const.REQUIRED,
+					listeners : {
+						specialkey : {
+							fn : me.onEditSpecialKey,
+							scope : me
+						}
+					},
+					showAddButton : true,
+					callbackFunc : me.__setCustomerExtData
+				}, {
+					id : "editBeginDT",
+					fieldLabel : "合同开始日期",
+					labelWidth : 90,
+					labelAlign : "right",
+					labelSeparator : "",
+					allowBlank : false,
+					blankText : "没有输入合同开始日期",
+					beforeLabelTextTpl : PSI.Const.REQUIRED,
+					xtype : "datefield",
+					format : "Y-m-d",
+					listeners : {
+						specialkey : {
+							fn : me.onEditSpecialKey,
+							scope : me
+						}
+					}
+				}, {
+					id : "editEndDT",
+					fieldLabel : "合同结束日期",
+					labelWidth : 90,
+					labelAlign : "right",
+					labelSeparator : "",
+					allowBlank : false,
+					blankText : "没有输入合同结束日期",
+					beforeLabelTextTpl : PSI.Const.REQUIRED,
+					xtype : "datefield",
+					format : "Y-m-d",
+					listeners : {
+						specialkey : {
+							fn : me.onEditSpecialKey,
+							scope : me
+						}
+					}
+				}, {
+					id : "editOrg",
+					labelWidth : 90,
+					labelAlign : "right",
+					labelSeparator : "",
+					fieldLabel : "乙方组织机构",
+					xtype : "psi_orgwithdataorgfield",
+					colspan : 2,
+					width : 430,
+					allowBlank : false,
+					blankText : "没有输入组织机构",
+					beforeLabelTextTpl : PSI.Const.REQUIRED,
+					listeners : {
+						specialkey : {
+							fn : me.onEditSpecialKey,
+							scope : me
+						}
+					}
+				}, {
+					id : "editBizDT",
+					fieldLabel : "合同签订日期",
+					labelWidth : 90,
+					labelAlign : "right",
+					labelSeparator : "",
+					allowBlank : false,
+					blankText : "没有输入合同签订日期",
+					beforeLabelTextTpl : PSI.Const.REQUIRED,
+					xtype : "datefield",
+					format : "Y-m-d",
+					listeners : {
+						specialkey : {
+							fn : me.onEditSpecialKey,
+							scope : me
+						}
+					}
+				}, {
+					id : "editDealDate",
+					fieldLabel : "交货日期",
+					labelWidth : 90,
+					labelAlign : "right",
+					labelSeparator : "",
+					allowBlank : false,
+					blankText : "没有输入交货日期",
+					beforeLabelTextTpl : PSI.Const.REQUIRED,
+					xtype : "datefield",
+					format : "Y-m-d",
+					value : new Date(),
+					name : "bizDT",
+					listeners : {
+						specialkey : {
+							fn : me.onEditSpecialKey,
+							scope : me
+						}
+					}
+				}, {
+					id : "editDealAddress",
+					labelWidth : 90,
+					labelAlign : "right",
+					labelSeparator : "",
+					fieldLabel : "交货地址",
+					colspan : 2,
+					width : 430,
+					xtype : "textfield",
+					listeners : {
+						specialkey : {
+							fn : me.onEditSpecialKey,
+							scope : me
+						}
+					}
+				}, {
+					id : "editBizUser",
+					labelWidth : 90,
+					labelAlign : "right",
+					labelSeparator : "",
+					fieldLabel : "业务员",
+					xtype : "psi_userfield",
+					allowBlank : false,
+					blankText : "没有输入业务员",
+					beforeLabelTextTpl : PSI.Const.REQUIRED,
+					listeners : {
+						specialkey : {
+							fn : me.onEditSpecialKey,
+							scope : me
+						}
+					}
+				}, {
+					id : "editDiscount",
+					labelWidth : 90,
+					labelAlign : "right",
+					labelSeparator : "",
+					fieldLabel : "折扣率(%)",
+					xtype : "numberfield",
+					hideTrigger : true,
+					allowDecimals : false,
+					listeners : {
+						specialkey : {
+							fn : me.onEditSpecialKey,
+							scope : me
+						}
+					}
+				}, {
+					id : "editBillMemo",
+					labelWidth : 90,
+					labelAlign : "right",
+					labelSeparator : "",
+					fieldLabel : "备注",
+					xtype : "textfield",
+					colspan : 3,
+					width : 670,
+					listeners : {
+						specialkey : {
+							fn : me.onLastEditSpecialKey,
+							scope : me
+						}
+					}
+				}];
 	},
 
 	onWindowBeforeUnload : function(e) {
