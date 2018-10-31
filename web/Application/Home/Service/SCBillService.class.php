@@ -27,4 +27,20 @@ class SCBillService extends PSIBaseExService {
 		$dao = new SCBillDAO($this->db());
 		return $dao->scbillList($params);
 	}
+
+	/**
+	 * 销售合同详情
+	 */
+	public function scBillInfo($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$params["loginUserId"] = $this->getLoginUserId();
+		$params["loginUserName"] = $this->getLoginUserName();
+		$params["companyId"] = $this->getCompanyId();
+		
+		$dao = new SCBillDAO($this->db());
+		return $dao->scBillInfo($params);
+	}
 }

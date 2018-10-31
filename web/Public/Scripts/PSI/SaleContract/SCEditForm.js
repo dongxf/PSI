@@ -113,9 +113,16 @@ Ext.define("PSI.SaleContract.SCEditForm", {
 		me.editOtherClause = Ext
 				.getCmp("PSI_SaleContract_SCEditForm_editOtherClause");
 
-		me.__editorList = ["editDealDate", "editCustomer", "editDealAddress",
-				"editContact", "editTel", "editFax", "editOrg", "editBizUser",
-				"editReceivingType", "editBillMemo"];
+		me.__editorList = ["PSI_SaleContract_SCEditForm_editCustomer",
+				"PSI_SaleContract_SCEditForm_editBeginDT",
+				"PSI_SaleContract_SCEditForm_editEndDT",
+				"PSI_SaleContract_SCEditForm_editOrg",
+				"PSI_SaleContract_SCEditForm_editBizDT",
+				"PSI_SaleContract_SCEditForm_editDealDate",
+				"PSI_SaleContract_SCEditForm_editDealAddress",
+				"PSI_SaleContract_SCEditForm_editBizUser",
+				"PSI_SaleContract_SCEditForm_editDiscount",
+				"PSI_SaleContract_SCEditForm_editBillMemo"];
 	},
 
 	getEditorList : function() {
@@ -340,36 +347,13 @@ Ext.define("PSI.SaleContract.SCEditForm", {
 							var data = Ext.JSON.decode(response.responseText);
 
 							if (data.ref) {
-								Ext.getCmp("editRef").setValue(data.ref);
-								var editCustomer = Ext.getCmp("editCustomer");
-								editCustomer.setIdValue(data.customerId);
-								editCustomer.setValue(data.customerName);
-								Ext.getCmp("editBillMemo")
-										.setValue(data.billMemo);
-								Ext.getCmp("editDealDate")
-										.setValue(data.dealDate);
-								Ext.getCmp("editDealAddress")
-										.setValue(data.dealAddress);
-								Ext.getCmp("editContact")
-										.setValue(data.contact);
-								Ext.getCmp("editTel").setValue(data.tel);
-								Ext.getCmp("editFax").setValue(data.fax);
 							}
-							me.__taxRate = data.taxRate;
 
-							Ext.getCmp("editBizUser")
-									.setIdValue(data.bizUserId);
-							Ext.getCmp("editBizUser")
-									.setValue(data.bizUserName);
+							me.editBizUser.setIdValue(data.bizUserId);
+							me.editBizUser.setValue(data.bizUserName);
 							if (data.orgId) {
-								Ext.getCmp("editOrg").setIdValue(data.orgId);
-								Ext.getCmp("editOrg")
-										.setValue(data.orgFullName);
-							}
-
-							if (data.receivingType) {
-								Ext.getCmp("editReceivingType")
-										.setValue(data.receivingType);
+								me.editOrg.setIdValue(data.orgId);
+								me.editOrg.setValue(data.orgFullName);
 							}
 
 							var store = me.getGoodsGrid().getStore();
@@ -378,14 +362,14 @@ Ext.define("PSI.SaleContract.SCEditForm", {
 								store.add(data.items);
 							}
 							if (store.getCount() == 0) {
-								store.add({
-											taxRate : me.__taxRate
-										});
+								store.add({});
 							}
 
 							if (data.billStatus && data.billStatus != 0) {
 								me.setBillReadonly();
 							}
+
+							me.editCustomer.focus();
 						}
 					}
 				});
@@ -892,16 +876,12 @@ Ext.define("PSI.SaleContract.SCEditForm", {
 		me.setTitle("<span style='font-size:160%;'>查看采购订单</span>");
 		Ext.getCmp("buttonSave").setDisabled(true);
 		Ext.getCmp("buttonCancel").setText("关闭");
-		Ext.getCmp("editDealDate").setReadOnly(true);
-		Ext.getCmp("editCustomer").setReadOnly(true);
-		Ext.getCmp("editDealAddress").setReadOnly(true);
-		Ext.getCmp("editContact").setReadOnly(true);
-		Ext.getCmp("editTel").setReadOnly(true);
-		Ext.getCmp("editFax").setReadOnly(true);
-		Ext.getCmp("editOrg").setReadOnly(true);
-		Ext.getCmp("editBizUser").setReadOnly(true);
-		Ext.getCmp("editReceivingType").setReadOnly(true);
-		Ext.getCmp("editBillMemo").setReadOnly(true);
+		me.editDealDate.setReadOnly(true);
+		me.editCustomer.setReadOnly(true);
+		me.editDealAddress.setReadOnly(true);
+		me.editOrg.setReadOnly(true);
+		me.editBizUser.setReadOnly(true);
+		me.editBillMemo.setReadOnly(true);
 
 		Ext.getCmp("columnActionDelete").hide();
 		Ext.getCmp("columnActionAdd").hide();

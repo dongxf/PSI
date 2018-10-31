@@ -154,4 +154,36 @@ class SCBillDAO extends PSIBaseExDAO {
 				"totalCount" => $cnt
 		];
 	}
+
+	/**
+	 * 销售合同详情
+	 */
+	public function scBillInfo($params) {
+		$db = $this->db;
+		
+		// 销售合同id
+		$id = $params["id"];
+		
+		$result = [];
+		
+		if ($id) {
+			// 编辑或查看
+		} else {
+			// 新建
+			$loginUserId = $params["loginUserId"];
+			$result["bizUserId"] = $loginUserId;
+			$result["bizUserName"] = $params["loginUserName"];
+			
+			$sql = "select o.id, o.full_name
+					from t_org o, t_user u
+					where o.id = u.org_id and u.id = '%s' ";
+			$data = $db->query($sql, $loginUserId);
+			if ($data) {
+				$result["orgId"] = $data[0]["id"];
+				$result["orgFullName"] = $data[0]["full_name"];
+			}
+		}
+		
+		return $result;
+	}
 }
