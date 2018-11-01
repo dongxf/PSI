@@ -207,6 +207,13 @@ class BizConfigDAO extends PSIBaseExDAO {
 						"value" => "SO",
 						"note" => "",
 						"showOrder" => 608
+				],
+				[
+						"id" => "9003-09",
+						"name" => "销售合同号前缀",
+						"value" => "SC",
+						"note" => "",
+						"showOrder" => 609
 				]
 		];
 	}
@@ -479,7 +486,8 @@ class BizConfigDAO extends PSIBaseExDAO {
 				"9003-05",
 				"9003-06",
 				"9003-07",
-				"9003-08"
+				"9003-08",
+				"9003-09"
 		);
 		
 		// 检查值是否合法
@@ -591,7 +599,7 @@ class BizConfigDAO extends PSIBaseExDAO {
 				}
 				
 				$sql = "update t_config set value = '%s'
-				where id = '%s' and company_id = '%s' ";
+						where id = '%s' and company_id = '%s' ";
 				$rc = $db->execute($sql, $value, $key, $companyId);
 				if ($rc === false) {
 					return $this->sqlError(__METHOD__, __LINE__);
