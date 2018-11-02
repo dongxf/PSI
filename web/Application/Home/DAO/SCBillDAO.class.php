@@ -163,8 +163,18 @@ class SCBillDAO extends PSIBaseExDAO {
 		
 		// 销售合同id
 		$id = $params["id"];
-		
 		$result = [];
+		
+		$companyId = $params["companyId"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->emptyResult();
+		}
+		
+		$cs = new BizConfigDAO($db);
+		$result["taxRate"] = $cs->getTaxRate($companyId);
+		
+		$dataScale = $cs->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
 		
 		if ($id) {
 			// 编辑或查看

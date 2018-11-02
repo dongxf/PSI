@@ -356,13 +356,17 @@ Ext.define("PSI.SaleContract.SCEditForm", {
 								me.editOrg.setValue(data.orgFullName);
 							}
 
+							me.__taxRate = data.taxRate;
+
 							var store = me.getGoodsGrid().getStore();
 							store.removeAll();
 							if (data.items) {
 								store.add(data.items);
 							}
 							if (store.getCount() == 0) {
-								store.add({});
+								store.add({
+											taxRate : me.__taxRate
+										});
 							}
 
 							if (data.billStatus && data.billStatus != 0) {
@@ -626,7 +630,9 @@ Ext.define("PSI.SaleContract.SCEditForm", {
 										var store = grid.getStore();
 										store.remove(store.getAt(row));
 										if (store.getCount() == 0) {
-											store.add({});
+											store.add({
+														taxRate : me.__taxRate
+													});
 										}
 									},
 									scope : me
