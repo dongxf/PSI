@@ -104,8 +104,8 @@ Ext.define("PSI.SaleContract.SCEditForm", {
 				.getCmp("PSI_SaleContract_SCEditForm_editDiscount");
 		me.editBillMemo = Ext
 				.getCmp("PSI_SaleContract_SCEditForm_editBillMemo");
-		me.editQulityClause = Ext
-				.getCmp("PSI_SaleContract_SCEditForm_editQulityClause");
+		me.editQualityClause = Ext
+				.getCmp("PSI_SaleContract_SCEditForm_editQualityClause");
 		me.editInsuranceClause = Ext
 				.getCmp("PSI_SaleContract_SCEditForm_editInsuranceClause");
 		me.editTransportClause = Ext
@@ -706,7 +706,7 @@ Ext.define("PSI.SaleContract.SCEditForm", {
 								value : "品质条款"
 							}, {
 								xtype : "textareafield",
-								id : "PSI_SaleContract_SCEditForm_editQulityClause"
+								id : "PSI_SaleContract_SCEditForm_editQualityClause"
 							}, {
 								xtype : "displayfield",
 								value : "保险条款"
@@ -835,23 +835,28 @@ Ext.define("PSI.SaleContract.SCEditForm", {
 	},
 
 	getSaveData : function() {
+		var me = this;
+
 		var result = {
-			id : Ext.getCmp("hiddenId").getValue(),
-			dealDate : Ext.Date.format(Ext.getCmp("editDealDate").getValue(),
-					"Y-m-d"),
-			customerId : Ext.getCmp("editCustomer").getIdValue(),
-			dealAddress : Ext.getCmp("editDealAddress").getValue(),
-			contact : Ext.getCmp("editContact").getValue(),
-			tel : Ext.getCmp("editTel").getValue(),
-			fax : Ext.getCmp("editFax").getValue(),
-			orgId : Ext.getCmp("editOrg").getIdValue(),
-			bizUserId : Ext.getCmp("editBizUser").getIdValue(),
-			receivingType : Ext.getCmp("editReceivingType").getValue(),
-			billMemo : Ext.getCmp("editBillMemo").getValue(),
+			id : me.hiddenId.getValue(),
+			customerId : me.editCustomer.getIdValue(),
+			beginDT : Ext.Date.format(me.editBeginDT.getValue(), "Y-m-d"),
+			endDT : Ext.Date.format(me.editEndDT.getValue(), "Y-m-d"),
+			orgId : me.editOrg.getIdValue(),
+			bizDT : Ext.Date.format(me.editBizDT.getValue(), "Y-m-d"),
+			dealDate : Ext.Date.format(me.editDealDate.getValue(), "Y-m-d"),
+			dealAddress : me.editDealAddress.getValue(),
+			bizUserId : me.editBizUser.getIdValue(),
+			discount : me.editDiscount.getValue(),
+			billMemo : me.editBillMemo.getValue(),
+			qualityClause : me.editQualityClause.getValue(),
+			insuranceClause : me.editInsuranceClause.getValue(),
+			transportClause : me.editTransportClause.getValue(),
+			otherClause : me.editOtherClause.getValue(),
 			items : []
 		};
 
-		var store = this.getGoodsGrid().getStore();
+		var store = me.getGoodsGrid().getStore();
 		for (var i = 0; i < store.getCount(); i++) {
 			var item = store.getAt(i);
 			result.items.push({
