@@ -196,4 +196,28 @@ class SCBillDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 新增销售合同
+	 *
+	 * @param array $params        	
+	 * @return array|null
+	 */
+	public function addSCBill(& $params) {
+		$db = $this->db;
+		
+		return $this->todo();
+	}
+
+	/**
+	 * 编辑销售合同
+	 * 
+	 * @param array $params        	
+	 * @return array|null
+	 */
+	public function updateSCBill(& $params) {
+		$db = $this->db;
+		
+		return $this->todo();
+	}
 }
