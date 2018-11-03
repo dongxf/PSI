@@ -49,6 +49,15 @@ Ext.define("PSI.SaleContract.SCMainForm", {
 
 		me.callParent(arguments);
 
+		me.editQualityClause = Ext
+				.getCmp("PSI_SaleContract_SCMainForm_editQulityClause");
+		me.editInsuranceClause = Ext
+				.getCmp("PSI_SaleContract_SCMainForm_editInsuranceClause");
+		me.editTransportClause = Ext
+				.getCmp("PSI_SaleContract_SCMainForm_editTrasportClause");
+		me.editOtherClause = Ext
+				.getCmp("PSI_SaleContract_SCMainForm_editOtherClause");
+
 		me.refreshMainGrid();
 	},
 
@@ -472,7 +481,7 @@ Ext.define("PSI.SaleContract.SCMainForm", {
 					fields : ["id", "goodsCode", "goodsName", "goodsSpec",
 							"unitName", "goodsCount", "goodsMoney",
 							"goodsPrice", "taxRate", "tax", "moneyWithTax",
-							"wsCount", "leftCount", "memo"]
+							"soCount", "leftCount", "memo"]
 				});
 		var store = Ext.create("Ext.data.Store", {
 					autoLoad : false,
@@ -597,6 +606,14 @@ Ext.define("PSI.SaleContract.SCMainForm", {
 		return me.__detailGrid;
 	},
 
+	clearClauseEditor : function() {
+		var me = this;
+		me.editQualityClause.setValue(null);
+		me.editInsuranceClause.setValue(null);
+		me.editTransportClause.setValue(null);
+		me.editOtherClause.setValue(null);
+	},
+
 	/**
 	 * 刷新销售订单主表记录
 	 */
@@ -607,6 +624,8 @@ Ext.define("PSI.SaleContract.SCMainForm", {
 		Ext.getCmp("buttonDelete").setDisabled(true);
 		Ext.getCmp("buttonCommit").setDisabled(true);
 		Ext.getCmp("buttonCancelConfirm").setDisabled(true);
+
+		me.clearClauseEditor();
 
 		var gridDetail = me.getDetailGrid();
 		gridDetail.setTitle("销售合同明细");
@@ -692,7 +711,11 @@ Ext.define("PSI.SaleContract.SCMainForm", {
 
 				if (success) {
 					var data = me.decodeJSON(response.responseText);
-					store.add(data);
+					store.add(data.items);
+					me.editQualityClause.setValue(data.qualityClause);
+					me.editInsuranceClause.setValue(data.insuranceClause);
+					me.editTransportClause.setValue(data.transportClause);
+					me.editOtherClause.setValue(data.otherClause);
 
 					if (store.getCount() > 0) {
 						if (id) {

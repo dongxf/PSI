@@ -398,4 +398,72 @@ class SCBillDAO extends PSIBaseExDAO {
 		
 		return $this->todo();
 	}
+
+	/**
+	 * 销售合同商品明细
+	 */
+	public function scBillDetailList($params) {
+		$db = $this->db;
+		
+		$companyId = $params["companyId"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->emptyResult();
+		}
+		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
+		// 销售合同主表id
+		$id = $params["id"];
+		
+		$sql = "select quality_clause, insurance_clause, transport_clause, other_clause
+				from t_sc_bill where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if (! $data) {
+			return $this->emptyResult();
+		}
+		
+		$v = $data[0];
+		$result = [
+				"qualityClause" => $v["quality_clause"],
+				"insuranceClause" => $v["insurance_clause"],
+				"transportClause" => $v["transport_clause"],
+				"otherClause" => $v["other_clause"]
+		];
+		
+		$sql = "select s.id, g.code, g.name, g.spec, convert(s.goods_count, " . $fmt . ") as goods_count,
+					s.goods_price, s.goods_money,
+					s.tax_rate, s.tax, s.money_with_tax, u.name as unit_name,
+					convert(s.so_count, " . $fmt . ") as so_count,
+					convert(s.left_count, " . $fmt . ") as left_count, s.memo
+				from t_sc_bill_detail s, t_goods g, t_goods_unit u
+				where s.scbill_id = '%s' and s.goods_id = g.id and g.unit_id = u.id
+				order by s.show_order";
+		$items = [];
+		$data = $db->query($sql, $id);
+		
+		foreach ( $data as $v ) {
+			$items[] = [
+					"id" => $v["id"],
+					"goodsCode" => $v["code"],
+					"goodsName" => $v["name"],
+					"goodsSpec" => $v["spec"],
+					"goodsCount" => $v["goods_count"],
+					"goodsPrice" => $v["goods_price"],
+					"goodsMoney" => $v["goods_money"],
+					"taxRate" => $v["tax_rate"],
+					"tax" => $v["tax"],
+					"moneyWithTax" => $v["money_with_tax"],
+					"unitName" => $v["unit_name"],
+					"soCount" => $v["so_count"],
+					"leftCount" => $v["left_count"],
+					"memo" => $v["memo"]
+			];
+		}
+		
+		$result["items"] = $items;
+		
+		return $result;
+	}
 }

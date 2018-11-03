@@ -75,4 +75,18 @@ class SaleContractController extends PSIBaseController {
 			$this->ajaxReturn($ps->editSCBill($json));
 		}
 	}
+
+	/**
+	 * 销售合同商品明细
+	 */
+	public function scBillDetailList() {
+		if (IS_POST) {
+			$params = [
+					"id" => I("post.id")
+			];
+			
+			$service = new SCBillService();
+			$this->ajaxReturn($service->scBillDetailList($params));
+		}
+	}
 }

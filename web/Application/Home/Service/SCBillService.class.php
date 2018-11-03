@@ -109,4 +109,18 @@ class SCBillService extends PSIBaseExService {
 		
 		return $this->ok($id);
 	}
+
+	/**
+	 * 销售合同商品明细
+	 */
+	public function scBillDetailList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$params["companyId"] = $this->getCompanyId();
+		
+		$dao = new SCBillDAO($this->db());
+		return $dao->scBillDetailList($params);
+	}
 }
