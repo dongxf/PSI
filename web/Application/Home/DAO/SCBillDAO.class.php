@@ -12,6 +12,34 @@ use Home\Common\FIdConst;
 class SCBillDAO extends PSIBaseExDAO {
 
 	/**
+	 * 生成新的销售合同号
+	 *
+	 * @param string $companyId        	
+	 *
+	 * @return string
+	 */
+	private function genNewBillRef($companyId) {
+		$db = $this->db;
+		
+		$bs = new BizConfigDAO($db);
+		$pre = $bs->getSCBillRefPre($companyId);
+		
+		$mid = date("Ymd");
+		
+		$sql = "select ref from t_sc_bill where ref like '%s' order by ref desc limit 1";
+		$data = $db->query($sql, $pre . $mid . "%");
+		$sufLength = 3;
+		$suf = str_pad("1", $sufLength, "0", STR_PAD_LEFT);
+		if ($data) {
+			$ref = $data[0]["ref"];
+			$nextNumber = intval(substr($ref, strlen($pre . $mid))) + 1;
+			$suf = str_pad($nextNumber, $sufLength, "0", STR_PAD_LEFT);
+		}
+		
+		return $pre . $mid . $suf;
+	}
+
+	/**
 	 * 获得销售合同主表信息列表
 	 *
 	 * @param array $params        	
@@ -203,19 +231,169 @@ class SCBillDAO extends PSIBaseExDAO {
 	 * @param array $params        	
 	 * @return array|null
 	 */
-	public function addSCBill(& $params) {
+	public function addSCBill(& $bill) {
 		$db = $this->db;
 		
-		return $this->todo();
+		$companyId = $bill["companyId"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->badParam("companyId");
+		}
+		
+		$dataOrg = $bill["dataOrg"];
+		if ($this->dataOrgNotExists($dataOrg)) {
+			return $this->badParam("dataOrg");
+		}
+		
+		$loginUserId = $bill["loginUserId"];
+		if ($this->loginUserIdNotExists($loginUserId)) {
+			return $this->badParam("loginUserId");
+		}
+		
+		$customerId = $bill["customerId"];
+		$customerDAO = new CustomerDAO($db);
+		$customer = $customerDAO->getCustomerById($customerId);
+		if (! $customer) {
+			return $this->bad("甲方客户不存在");
+		}
+		
+		$beginDT = $bill["beginDT"];
+		if (! $this->dateIsValid($beginDT)) {
+			return $this->bad("合同开始日期不正确");
+		}
+		$endDT = $bill["endDT"];
+		if (! $this->dateIsValid($endDT)) {
+			return $this->bad("合同结束日期不正确");
+		}
+		
+		$orgId = $bill["orgId"];
+		$orgDAO = new OrgDAO($db);
+		$org = $orgDAO->getOrgById($orgId);
+		if (! $org) {
+			return $this->bad("乙方组织机构不存在");
+		}
+		
+		$dealDate = $bill["dealDate"];
+		if (! $this->dateIsValid($dealDate)) {
+			return $this->bad("交货日期不正确");
+		}
+		
+		$bizDT = $bill["bizDT"];
+		if (! $this->dateIsValid($bizDT)) {
+			return $this->bad("合同签订日期不正确");
+		}
+		$bizUserId = $bill["bizUserId"];
+		$userDAO = new UserDAO($db);
+		$user = $userDAO->getUserById($bizUserId);
+		if (! $user) {
+			return $this->bad("业务员不存在");
+		}
+		
+		$dealAddress = $bill["dealAddress"];
+		$discount = intval($bill["discount"]);
+		if ($discount < 0 || $discount > 100) {
+			$discount = 100;
+		}
+		
+		$billMemo = $bill["billMemo"];
+		$qualityClause = $bill["qualityClause"];
+		$insuranceClause = $bill["insuranceClause"];
+		$transportClause = $bill["transportClause"];
+		$otherClause = $bill["otherClause"];
+		
+		$items = $bill["items"];
+		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
+		$id = $this->newId();
+		$ref = $this->genNewBillRef($companyId);
+		
+		// 主表
+		$sql = "insert into t_sc_bill (id, ref, customer_id, org_id, biz_user_id,
+					biz_dt, input_user_id, date_created, bill_status, goods_money,
+					tax, money_with_tax, deal_date, deal_address, bill_memo, 
+					data_org, company_id, begin_dt, end_dt, discount,
+					quality_clause, insurance_clause, transport_clause, other_clause)
+				values ('%s', '%s', '%s', '%s', '%s',
+					'%s', '%s', now(), 0, 0,
+					0, 0, '%s', '%s', '%s',
+					'%s', '%s', '%s', '%s', %d,
+					'%s', '%s', '%s', '%s')";
+		$rc = $db->execute($sql, $id, $ref, $customerId, $orgId, $bizUserId, $bizDT, $loginUserId, 
+				$dealDate, $dealAddress, $billMemo, $dataOrg, $companyId, $beginDT, $endDT, 
+				$discount, $qualityClause, $insuranceClause, $transportClause, $otherClause);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 明细表
+		foreach ( $items as $i => $v ) {
+			$goodsId = $v["goodsId"];
+			if (! $goodsId) {
+				continue;
+			}
+			$goodsCount = $v["goodsCount"];
+			$goodsPrice = $v["goodsPrice"];
+			$goodsMoney = $v["goodsMoney"];
+			$taxRate = $v["taxRate"];
+			$tax = $v["tax"];
+			$moneyWithTax = $v["moneyWithTax"];
+			$memo = $v["memo"];
+			
+			$sql = "insert into t_sc_bill_detail(id, date_created, goods_id, goods_count, goods_money,
+						goods_price, scbill_id, tax_rate, tax, money_with_tax, so_count, left_count,
+						show_order, data_org, company_id, memo, discount)
+					values ('%s', now(), '%s', convert(%f, $fmt), %f,
+						%f, '%s', %d, %f, %f, 0, convert(%f, $fmt), %d, '%s', '%s', '%s', %d)";
+			$rc = $db->execute($sql, $this->newId(), $goodsId, $goodsCount, $goodsMoney, 
+					$goodsPrice, $id, $taxRate, $tax, $moneyWithTax, $goodsCount, $i, $dataOrg, 
+					$companyId, $memo, $discount);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+		}
+		
+		// 同步主表的金额合计字段
+		$sql = "select sum(goods_money) as sum_goods_money, sum(tax) as sum_tax,
+					sum(money_with_tax) as sum_money_with_tax
+				from t_sc_bill_detail
+				where scbill_id = '%s' ";
+		$data = $db->query($sql, $id);
+		$sumGoodsMoney = $data[0]["sum_goods_money"];
+		if (! $sumGoodsMoney) {
+			$sumGoodsMoney = 0;
+		}
+		$sumTax = $data[0]["sum_tax"];
+		if (! $sumTax) {
+			$sumTax = 0;
+		}
+		$sumMoneyWithTax = $data[0]["sum_money_with_tax"];
+		if (! $sumMoneyWithTax) {
+			$sumMoneyWithTax = 0;
+		}
+		
+		$sql = "update t_sc_bill
+				set goods_money = %f, tax = %f, money_with_tax = %f
+				where id = '%s' ";
+		$rc = $db->execute($sql, $sumGoodsMoney, $sumTax, $sumMoneyWithTax, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		$bill["id"] = $id;
+		$bill["ref"] = $ref;
+		return null;
 	}
 
 	/**
 	 * 编辑销售合同
-	 * 
+	 *
 	 * @param array $params        	
 	 * @return array|null
 	 */
-	public function updateSCBill(& $params) {
+	public function updateSCBill(& $bill) {
 		$db = $this->db;
 		
 		return $this->todo();
