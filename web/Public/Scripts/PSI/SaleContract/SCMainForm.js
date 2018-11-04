@@ -121,7 +121,7 @@ Ext.define("PSI.SaleContract.SCMainForm", {
 				}, {
 					text : "帮助",
 					handler : function() {
-						me.showInto("TODO");
+						me.showInfo("TODO");
 					}
 				}, "-", {
 					text : "关闭",
