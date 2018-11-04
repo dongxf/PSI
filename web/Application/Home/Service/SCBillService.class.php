@@ -132,6 +132,24 @@ class SCBillService extends PSIBaseExService {
 			return $this->notOnlineError();
 		}
 		
-		return $this->todo();
+		$db = $this->db();
+		
+		$db->startTrans();
+		
+		$dao = new SCBillDAO($db);
+		$rc = $dao->deleteSCBill($params);
+		if ($rc) {
+			$db->rollback();
+			return $rc;
+		}
+		
+		$ref = $params["ref"];
+		$log = "删除销售合同，合同号：{$ref}";
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$db->commit();
+		
+		return $this->ok();
 	}
 }

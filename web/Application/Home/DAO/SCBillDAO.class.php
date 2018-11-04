@@ -707,4 +707,42 @@ class SCBillDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 删除销售合同
+	 */
+	public function deleteSCBill(& $params) {
+		$db = $this->db;
+		
+		// 销售合同主表
+		$id = $params["id"];
+		
+		$bill = $this->getSCBillById($id);
+		if (! $bill) {
+			return $this->bad("要删除的销售合同不存在");
+		}
+		$ref = $bill["ref"];
+		$billStatus = $bill["billStatus"];
+		if ($billStatus > 0) {
+			return $this->bad("销售合同[合同号：{$ref}]已经审核，不能被删除");
+		}
+		
+		// 删除明细表
+		$sql = "delete from t_sc_bill_detail where scbill_id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 删除主表
+		$sql = "delete from t_sc_bill where id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		$params["ref"] = $ref;
+		return null;
+	}
 }
