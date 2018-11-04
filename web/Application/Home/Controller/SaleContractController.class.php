@@ -117,4 +117,18 @@ class SaleContractController extends PSIBaseController {
 			$this->ajaxReturn($service->commitSCBill($params));
 		}
 	}
+
+	/**
+	 * 取消审核销售合同
+	 */
+	public function cancelConfirmSCBill() {
+		if (IS_POST) {
+			$params = [
+					"id" => I("post.id")
+			];
+			
+			$service = new SCBillService();
+			$this->ajaxReturn($service->cancelConfirmSCBill($params));
+		}
+	}
 }

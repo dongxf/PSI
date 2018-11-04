@@ -777,4 +777,46 @@ class SCBillDAO extends PSIBaseExDAO {
 		$params["ref"] = $ref;
 		return null;
 	}
+
+	/**
+	 * 取消审核销售合同
+	 */
+	public function cancelConfirmSCBill(& $params) {
+		$db = $this->db;
+		
+		// 销售合同主表
+		$id = $params["id"];
+		
+		$bill = $this->getSCBillById($id);
+		if (! $bill) {
+			return $this->bad("要取消审核的销售合同不存在");
+		}
+		$ref = $bill["ref"];
+		$billStatus = $bill["billStatus"];
+		if ($billStatus == 0) {
+			return $this->bad("销售合同[合同号：{$ref}]还没有审核，无需取消");
+		}
+		
+		// 检查是否生成了销售订单
+		$sql = "select count(*) as cnt
+				from t_sc_so
+				where sc_id = '%s' ";
+		$data = $db->query($sql, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("销售合同[合同号：{$ref}]已经生成了销售订单，不能再取消");
+		}
+		
+		$sql = "update t_sc_bill
+				set bill_status = 0
+				where id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		$params["ref"] = $ref;
+		return null;
+	}
 }
