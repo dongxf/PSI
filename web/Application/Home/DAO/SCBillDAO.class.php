@@ -66,7 +66,8 @@ class SCBillDAO extends PSIBaseExDAO {
 					u.name as input_user_name, g.full_name as org_name,
 					s.begin_dt, s.end_dt, s.goods_money, s.tax, s.money_with_tax,
 					s.deal_date, s.deal_address, s.bill_memo, s.discount,
-					u2.name as biz_user_name, s.biz_dt, s.confirm_user_id, s.confirm_date
+					u2.name as biz_user_name, s.biz_dt, s.confirm_user_id, s.confirm_date,
+					s.date_created
 				from t_sc_bill s, t_customer c, t_user u, t_org g, t_user u2
 				where (s.customer_id = c.id) and (s.input_user_id = u.id) 
 					and (s.org_id = g.id) and (s.biz_user_id = u2.id) ";
