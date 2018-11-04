@@ -646,7 +646,18 @@ Ext.define("PSI.SaleContract.SCMainForm", {
 
 	onEditBill : function() {
 		var me = this;
-		me.showInfo("TODO");
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			me.showInfo("没有选择要编辑的销售合同");
+			return;
+		}
+		var bill = item[0];
+
+		var form = Ext.create("PSI.SaleContract.SCEditForm", {
+					parentForm : me,
+					entity : bill
+				});
+		form.show();
 	},
 
 	onDeleteBill : function() {

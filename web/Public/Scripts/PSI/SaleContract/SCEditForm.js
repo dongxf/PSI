@@ -347,14 +347,29 @@ Ext.define("PSI.SaleContract.SCEditForm", {
 							var data = Ext.JSON.decode(response.responseText);
 
 							if (data.ref) {
+								me.editRef.setValue(data.ref);
+								me.editCustomer.setIdValue(data.customerId);
+								me.editCustomer.setValue(data.customerName);
+								me.editBeginDT.setValue(data.beginDT);
+								me.editEndDT.setValue(data.endDT);
+								me.editBizDT.setValue(data.bizDT);
+								me.editDealDate.setValue(data.dealDate);
+								me.editDealAddress.setValue(data.dealAddress);
+								me.editDiscount.setValue(data.discount);
+								me.editBillMemo.setValue(data.billMemo);
+								me.editOrg.setIdValue(data.orgId);
+								me.editOrg.setValue(data.orgFullName);
+								me.editQualityClause
+										.setValue(data.qualityClause);
+								me.editInsuranceClause
+										.setValue(data.insuranceClause);
+								me.editTransportClause
+										.setValue(data.transportClause);
+								me.editOtherClause.setValue(data.otherClause);
 							}
 
 							me.editBizUser.setIdValue(data.bizUserId);
 							me.editBizUser.setValue(data.bizUserName);
-							if (data.orgId) {
-								me.editOrg.setIdValue(data.orgId);
-								me.editOrg.setValue(data.orgFullName);
-							}
 
 							me.__taxRate = data.taxRate;
 

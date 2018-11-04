@@ -207,6 +207,71 @@ class SCBillDAO extends PSIBaseExDAO {
 		
 		if ($id) {
 			// 编辑或查看
+			
+			// 主表
+			$sql = "select s.ref, s.customer_id, c.name as customer_name,
+						s.begin_dt, s.end_dt, s.org_id, g.full_name as org_name,
+						s.biz_dt, s.biz_user_id, u.name as biz_user_name,
+						s.deal_date, s.deal_address, s.discount, s.bill_memo,
+						s.quality_clause, s.insurance_clause, s.transport_clause,
+						s.other_clause
+					from t_sc_bill s, t_customer c, t_org g, t_user u
+					where s.id = '%s' and s.customer_id = c.id 
+						and s.org_id = g.id and s.biz_user_id = u.id";
+			$data = $db->query($sql, $id);
+			if (! $data) {
+				return $this->emptyResult();
+			}
+			
+			$v = $data[0];
+			$result["ref"] = $v["ref"];
+			$result["customerId"] = $v["customer_id"];
+			$result["customerName"] = $v["customer_name"];
+			$result["beginDT"] = $this->toYMD($v["begin_dt"]);
+			$result["endDT"] = $this->toYMD($v["end_dt"]);
+			$result["orgId"] = $v["org_id"];
+			$result["orgFullName"] = $v["org_name"];
+			$result["bizDT"] = $this->toYMD($v["biz_dt"]);
+			$result["bizUserId"] = $v["biz_user_id"];
+			$result["bizUserName"] = $v["biz_user_name"];
+			$result["dealDate"] = $this->toYMD($v["deal_date"]);
+			$result["dealAddress"] = $v["deal_address"];
+			$result["discount"] = $v["discount"];
+			$result["billMemo"] = $v["bill_memo"];
+			$result["qualityClause"] = $v["quality_clause"];
+			$result["insuranceClause"] = $v["insurance_clause"];
+			$result["transportClause"] = $v["transport_clause"];
+			$result["otherClause"] = $v["other_clause"];
+			
+			// 明细
+			$sql = "select s.id, s.goods_id, g.code, g.name, g.spec,
+							convert(s.goods_count, " . $fmt . ") as goods_count, s.goods_price, s.goods_money,
+					s.tax_rate, s.tax, s.money_with_tax, u.name as unit_name, s.memo
+				from t_sc_bill_detail s, t_goods g, t_goods_unit u
+				where s.scbill_id = '%s' and s.goods_id = g.id and g.unit_id = u.id
+				order by s.show_order";
+			$items = [];
+			$data = $db->query($sql, $id);
+			
+			foreach ( $data as $v ) {
+				$items[] = [
+						"id" => $v["id"],
+						"goodsId" => $v["goods_id"],
+						"goodsCode" => $v["code"],
+						"goodsName" => $v["name"],
+						"goodsSpec" => $v["spec"],
+						"goodsCount" => $v["goods_count"],
+						"goodsPrice" => $v["goods_price"],
+						"goodsMoney" => $v["goods_money"],
+						"taxRate" => $v["tax_rate"],
+						"tax" => $v["tax"],
+						"moneyWithTax" => $v["money_with_tax"],
+						"unitName" => $v["unit_name"],
+						"memo" => $v["memo"]
+				];
+			}
+			
+			$result["items"] = $items;
 		} else {
 			// 新建
 			$loginUserId = $params["loginUserId"];
