@@ -89,11 +89,11 @@ class SaleContractController extends PSIBaseController {
 			$this->ajaxReturn($service->scBillDetailList($params));
 		}
 	}
-	
+
 	/**
 	 * 删除销售合同
 	 */
-	public function deleteSCBill(){
+	public function deleteSCBill() {
 		if (IS_POST) {
 			$params = [
 					"id" => I("post.id")
@@ -101,6 +101,20 @@ class SaleContractController extends PSIBaseController {
 			
 			$service = new SCBillService();
 			$this->ajaxReturn($service->deleteSCBill($params));
+		}
+	}
+
+	/**
+	 * 审核销售合同
+	 */
+	public function commitSCBill() {
+		if (IS_POST) {
+			$params = [
+					"id" => I("post.id")
+			];
+			
+			$service = new SCBillService();
+			$this->ajaxReturn($service->commitSCBill($params));
 		}
 	}
 }

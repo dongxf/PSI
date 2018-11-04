@@ -152,4 +152,33 @@ class SCBillService extends PSIBaseExService {
 		
 		return $this->ok();
 	}
+
+	/**
+	 * 审核销售合同
+	 */
+	public function commitSCBill($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
+		$db = $this->db();
+		
+		$db->startTrans();
+		
+		$dao = new SCBillDAO($db);
+		$rc = $dao->commitSCBill($params);
+		if ($rc) {
+			$db->rollback();
+			return $rc;
+		}
+		
+		$ref = $params["ref"];
+		$log = "审核销售合同，合同号：{$ref}";
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$db->commit();
+		
+		return $this->ok();
+	}
 }

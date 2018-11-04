@@ -796,9 +796,59 @@ Ext.define("PSI.SaleContract.SCMainForm", {
 		me.ajax(r);
 	},
 
+	// 审核
 	onCommit : function() {
 		var me = this;
-		me.showInfo("TODO");
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			me.showInfo("没有选择要审核的销售合同");
+			return;
+		}
+		var bill = item[0];
+
+		if (bill.get("billStatus") > 0) {
+			me.showInfo("当前销售合同已经审核，不能再次审核");
+			return;
+		}
+
+		var detailCount = me.getDetailGrid().getStore().getCount();
+		if (detailCount == 0) {
+			me.showInfo("当前销售合同没有录入商品明细，不能审核");
+			return;
+		}
+
+		var info = "请确认是否审核编号: <span style='color:red'>" + bill.get("ref")
+				+ "</span> 的销售合同?";
+		var id = bill.get("id");
+
+		var funcConfirm = function() {
+			var el = Ext.getBody();
+			el.mask("正在操作中...");
+			var r = {
+				url : me.URL("Home/SaleContract/commitSCBill"),
+				params : {
+					id : id
+				},
+				callback : function(options, success, response) {
+					el.unmask();
+
+					if (success) {
+						var data = me.decodeJSON(response.responseText);
+						if (data.success) {
+							me.showInfo("成功完成审核操作", function() {
+										me.refreshMainGrid(id);
+									});
+						} else {
+							me.showInfo(data.msg);
+						}
+					} else {
+						me.showInfo("网络错误");
+					}
+				}
+			};
+			me.ajax(r);
+		};
+		me.confirm(info, funcConfirm);
 	},
 
 	onCancelConfirm : function() {
