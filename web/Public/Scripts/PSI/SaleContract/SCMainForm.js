@@ -662,7 +662,59 @@ Ext.define("PSI.SaleContract.SCMainForm", {
 
 	onDeleteBill : function() {
 		var me = this;
-		me.showInfo("TODO");
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			me.showInfo("请选择要删除的销售合同");
+			return;
+		}
+
+		var bill = item[0];
+
+		if (bill.get("billStatus") > 0) {
+			me.showInfo("当前销售合同已经审核，不能删除");
+			return;
+		}
+
+		var store = me.getMainGrid().getStore();
+		var index = store.findExact("id", bill.get("id"));
+		index--;
+		var preIndex = null;
+		var preItem = store.getAt(index);
+		if (preItem) {
+			preIndex = preItem.get("id");
+		}
+
+		var info = "请确认是否删除销售合同: <span style='color:red'>" + bill.get("ref")
+				+ "</span>";
+		var funcConfirm = function() {
+			var el = Ext.getBody();
+			el.mask("正在删除中...");
+			var r = {
+				url : me.URL("Home/SaleContract/deleteSCBill"),
+				params : {
+					id : bill.get("id")
+				},
+				callback : function(options, success, response) {
+					el.unmask();
+
+					if (success) {
+						var data = me.decodeJSON(response.responseText);
+						if (data.success) {
+							me.showInfo("成功完成删除操作", function() {
+										me.refreshMainGrid(preIndex);
+									});
+						} else {
+							me.showInfo(data.msg);
+						}
+					} else {
+						me.showInfo("网络错误");
+					}
+				}
+			};
+			me.ajax(r);
+		};
+
+		me.confirm(info, funcConfirm);
 	},
 
 	onMainGridSelect : function() {

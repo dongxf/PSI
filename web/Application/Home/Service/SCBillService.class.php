@@ -123,4 +123,15 @@ class SCBillService extends PSIBaseExService {
 		$dao = new SCBillDAO($this->db());
 		return $dao->scBillDetailList($params);
 	}
+
+	/**
+	 * 删除销售合同
+	 */
+	public function deleteSCBill($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
+		return $this->todo();
+	}
 }
