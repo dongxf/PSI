@@ -851,9 +851,53 @@ Ext.define("PSI.SaleContract.SCMainForm", {
 		me.confirm(info, funcConfirm);
 	},
 
+	// 取消审核
 	onCancelConfirm : function() {
 		var me = this;
-		me.showInfo("TODO");
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			me.showInfo("没有选择要取消审核的销售合同");
+			return;
+		}
+		var bill = item[0];
+
+		if (bill.get("billStatus") == 0) {
+			me.showInfo("当前销售合同还没有审核，不需要取消审核");
+			return;
+		}
+
+		var info = "请确认是否取消审核编号: <span style='color:red'>" + bill.get("ref")
+				+ "</span> 的销售合同?";
+		var id = bill.get("id");
+
+		var funcConfirm = function() {
+			var el = Ext.getBody();
+			el.mask("正在操作中...");
+			var r = {
+				url : me.URL("Home/SaleContract/cancelConfirmSCBill"),
+				params : {
+					id : id
+				},
+				callback : function(options, success, response) {
+					el.unmask();
+
+					if (success) {
+						var data = me.decodeJSON(response.responseText);
+						if (data.success) {
+							me.showInfo("成功完成取消审核操作", function() {
+										me.refreshMainGrid(id);
+									});
+						} else {
+							me.showInfo(data.msg);
+						}
+					} else {
+						me.showInfo("网络错误");
+					}
+				}
+			};
+			me.ajax(r);
+		};
+		me.confirm(info, funcConfirm);
 	},
 
 	gotoMainGridRecord : function(id) {
