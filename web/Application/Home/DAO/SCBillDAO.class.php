@@ -100,7 +100,7 @@ class SCBillDAO extends PSIBaseExDAO {
 			$sql .= " and (s.customer_id = '%s')";
 			$queryParams[] = $customerId;
 		}
-		$sql .= " order by s.deal_date desc, s.ref desc
+		$sql .= " order by s.ref desc
 				  limit %d , %d";
 		$queryParams[] = $start;
 		$queryParams[] = $limit;
