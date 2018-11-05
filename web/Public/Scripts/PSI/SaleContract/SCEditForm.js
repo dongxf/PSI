@@ -396,6 +396,49 @@ Ext.define("PSI.SaleContract.SCEditForm", {
 
 	onOK : function() {
 		var me = this;
+		var customerId = me.editCustomer.getIdValue();
+		if (!customerId) {
+			me.showInfo("没有输入甲方客户", function() {
+						me.editCustomer.focus();
+					});
+			return;
+		}
+		var beginDT = me.editBeginDT.getValue();
+		if (!beginDT) {
+			me.showInfo("没有输入合同开始日期", function() {
+						me.editBeginDT.focus();
+					});
+			return;
+		}
+		var endDT = me.editEndDT.getValue();
+		if (!endDT) {
+			me.showInfo("没有输入合同结束日期", function() {
+						me.editEndDT.focus();
+					});
+			return;
+		}
+		var orgId = me.editOrg.getIdValue();
+		if (!orgId) {
+			me.showInfo("没有输入乙方组织机构", function() {
+						me.editOrg.focus();
+					});
+			return;
+		}
+		var bizDT = me.editBizDT.getValue();
+		if (!bizDT) {
+			me.showInfo("没有输入合同签订日期", function() {
+						me.editBizDT.focus();
+					});
+			return;
+		}
+		var dealDate = me.editDealDate.getValue();
+		if (!dealDate) {
+			me.showInfo("没有输入交货日期", function() {
+						me.editDealDate.focus();
+					});
+			return;
+		}
+
 		Ext.getBody().mask("正在保存中...");
 		Ext.Ajax.request({
 			url : PSI.Const.BASE_URL + "Home/SaleContract/editSCBill",
@@ -917,9 +960,9 @@ Ext.define("PSI.SaleContract.SCEditForm", {
 	// xtype:psi_customerfield回调本方法
 	// 参见PSI.Customer.CustomerField的onOK方法
 	__setCustomerExtData : function(data) {
-		Ext.getCmp("editDealAddress").setValue(data.address_receipt);
-		Ext.getCmp("editTel").setValue(data.tel01);
-		Ext.getCmp("editFax").setValue(data.fax);
-		Ext.getCmp("editContact").setValue(data.contact01);
+		var me = this;
+
+		Ext.getCmp("PSI_SaleContract_SCEditForm_editDealDate")
+				.setValue(data.address_receipt);
 	}
 });
