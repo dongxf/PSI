@@ -442,6 +442,8 @@ class OrgDAO extends PSIBaseExDAO {
 
 	private function orgTypeCodeToName($code) {
 		switch ($code) {
+			case 400 :
+				return "事业部";
 			case 500 :
 				return "门店";
 			case 600 :
