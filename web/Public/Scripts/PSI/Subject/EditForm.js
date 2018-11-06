@@ -120,7 +120,7 @@ Ext.define("PSI.Subject.EditForm", {
 									value : me.getCompany().get("id")
 								}, {
 									xtype : "displayfield",
-									fieldLabel : "公司名称",
+									fieldLabel : "组织机构",
 									value : me.getCompany().get("name")
 								}, {
 									xtype : "hidden",
