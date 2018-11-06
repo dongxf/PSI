@@ -3,6 +3,8 @@
 namespace Home\Service;
 
 use Home\DAO\SubjectDAO;
+use Home\Common\FIdConst;
+use Home\DAO\OrgDAO;
 
 /**
  * 会计科目 Service
@@ -23,11 +25,12 @@ class SubjectService extends PSIBaseExService {
 		}
 		
 		$params = [
-				"loginUserId" => $this->getLoginUserId()
+				"loginUserId" => $this->getLoginUserId(),
+				"fid" => FIdConst::GL_SUBJECT
 		];
 		
-		$dao = new SubjectDAO($this->db());
-		return $dao->companyList($params);
+		$dao = new OrgDAO($this->db());
+		return $dao->getCompanyExList($params);
 	}
 
 	/**

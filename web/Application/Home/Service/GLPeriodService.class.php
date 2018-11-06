@@ -3,6 +3,8 @@
 namespace Home\Service;
 
 use Home\DAO\GLPeriodDAO;
+use Home\Common\FIdConst;
+use Home\DAO\OrgDAO;
 
 /**
  * 会计期间 Service
@@ -23,11 +25,12 @@ class GLPeriodService extends PSIBaseExService {
 		}
 		
 		$params = [
-				"loginUserId" => $this->getLoginUserId()
+				"loginUserId" => $this->getLoginUserId(),
+				"fid" => FIdConst::GL_PERIOD
 		];
 		
-		$dao = new GLPeriodDAO($this->db());
-		return $dao->companyList($params);
+		$dao = new OrgDAO($this->db());
+		return $dao->getCompanyExList($params);
 	}
 
 	/**
