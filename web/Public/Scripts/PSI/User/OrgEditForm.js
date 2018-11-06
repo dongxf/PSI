@@ -124,9 +124,12 @@ Ext.define("PSI.User.OrgEditForm", {
 									store : Ext.create("Ext.data.ArrayStore", {
 												fields : ["id", "text"],
 												data : [[0, "[无]"],
+														[500, "门店"],
+														[600, "内部物流组织机构"],
 														[2000, "客户"],
 														[3000, "供应商"],
-														[4000, "外协工厂"]]
+														[4000, "外协工厂"],
+														[5000, "外部物流商"]]
 											}),
 									value : 0,
 									width : 370
