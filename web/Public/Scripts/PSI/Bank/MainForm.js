@@ -130,27 +130,33 @@ Ext.define("PSI.Bank.MainForm", {
 
 				Ext.define(modelName, {
 							extend : "Ext.data.Model",
-							fields : ["id", "code", "name"]
+							fields : ["id", "code", "name", "orgType"]
 						});
 
 				me.__companyGrid = Ext.create("Ext.grid.Panel", {
 							cls : "PSI",
 							header : {
 								height : 30,
-								title : me.formatGridHeaderTitle("公司")
+								title : me.formatGridHeaderTitle("核算组织机构")
 							},
 							forceFit : true,
 							columnLines : true,
 							columns : [{
-										header : "公司编码",
+										header : "编码",
 										dataIndex : "code",
 										menuDisabled : true,
 										sortable : false,
 										width : 70
 									}, {
-										header : "公司名称",
+										header : "组织机构名称",
 										dataIndex : "name",
 										flex : 1,
+										menuDisabled : true,
+										sortable : false
+									}, {
+										header : "组织机构性质",
+										dataIndex : "orgType",
+										width : 100,
 										menuDisabled : true,
 										sortable : false
 									}],

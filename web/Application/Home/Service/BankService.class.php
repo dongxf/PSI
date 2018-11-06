@@ -3,6 +3,8 @@
 namespace Home\Service;
 
 use Home\DAO\BankDAO;
+use Home\Common\FIdConst;
+use Home\DAO\OrgDAO;
 
 /**
  * 银行账户Service
@@ -23,11 +25,12 @@ class BankService extends PSIBaseExService {
 		}
 		
 		$params = [
-				"loginUserId" => $this->getLoginUserId()
+				"loginUserId" => $this->getLoginUserId(),
+				"fid" => FIdConst::GL_BANK_ACCOUNT
 		];
 		
-		$dao = new BankDAO($this->db());
-		return $dao->companyList($params);
+		$dao = new OrgDAO($this->db());
+		return $dao->getCompanyExList($params);
 	}
 
 	/**
