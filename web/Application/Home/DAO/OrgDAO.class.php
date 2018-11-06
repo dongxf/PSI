@@ -665,4 +665,49 @@ class OrgDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 公司和事业部列表
+	 * 
+	 * @param array $params        	
+	 * @return array
+	 */
+	public function getCompanyExList($params) {
+		$db = $this->db;
+		
+		$loginUserId = $params["loginUserId"];
+		if ($this->loginUserIdNotExists($loginUserId)) {
+			return $this->emptyResult();
+		}
+		$fid = $params["fid"];
+		
+		$sql = "select g.id, g.org_code, g.full_name, g.org_type
+				from t_org g
+				where ((g.parent_id is null and (g.org_type is null or g.org_type = 0)) 
+						or g.org_type = 400) ";
+		
+		$ds = new DataOrgDAO($db);
+		$queryParams = [];
+		$rs = $ds->buildSQL($fid, "g", $loginUserId);
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = array_merge($queryParams, $rs[1]);
+		}
+		
+		$sql .= " order by g.org_code ";
+		
+		$result = [];
+		
+		$data = $db->query($sql, $queryParams);
+		foreach ( $data as $v ) {
+			$result[] = [
+					"id" => $v["id"],
+					"code" => $v["org_code"],
+					"name" => $v["full_name"],
+					"orgType" => $this->orgTypeCodeToName($v["org_type"])
+			];
+		}
+		
+		return $result;
+	}
 }
