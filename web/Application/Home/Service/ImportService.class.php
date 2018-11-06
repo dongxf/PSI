@@ -32,11 +32,11 @@ class ImportService extends PSIBaseService {
 		);
 		if (! $dataFile || ! $ext)
 			return $result;
-		
+
 		$inputFileType = 'Excel5';
 		if ($ext == 'xlsx')
 			$inputFileType = 'Excel2007';
-			
+
 			// 设置php服务器可用内存，上传较大文件时可能会用到
 		ini_set('memory_limit', '1024M');
 		ini_set('max_execution_time', 300); // 300 seconds = 5 minutes
@@ -50,11 +50,11 @@ class ImportService extends PSIBaseService {
 			$currentSheet = $objPHPExcel->getSheet(0);
 			// 获取总行数
 			$allRow = $currentSheet->getHighestRow();
-			
+
 			// 如果没有数据行，直接返回
 			if ($allRow < 2)
 				return $result;
-			
+
 			$ps = new PinyinService();
 			$idGen = new IdGenService();
 			$bs = new BizlogService();
@@ -62,12 +62,13 @@ class ImportService extends PSIBaseService {
 			$db = M();
 			$units = array(); // 将计量单位缓存，以免频繁访问数据库
 			$categories = array(); // 同上
+			$brands = array(); //将品牌供应商缓存，以免频繁访问数据库
 			$params = array(); // 数据参数
 			
 			$us = new UserService();
 			$dataOrg = $us->getLoginUserDataOrg();
-			
-			$insertSql = "insert into t_goods (id, code, name, spec, category_id, unit_id, sale_price,	py, 
+
+			$insertSql = "insert into t_goods (id, code, name, spec, category_id, unit_id, sale_price,	py,
 					purchase_price, bar_code, data_org, memo, spec_py) values";
 			$dataSql = "('%s', '%s', '%s', '%s', '%s', '%s', %f, '%s', %f, '%s', '%s', '%s', '%s'),";
 			/**
@@ -104,14 +105,14 @@ class ImportService extends PSIBaseService {
 				$purchasePrice = $currentSheet->getCell($indexPurchasePrice)->getValue();
 				$barcode = $currentSheet->getCell($indexBarcode)->getValue();
 				$memo = $currentSheet->getCell($indexMemo)->getValue();
-				
+
 				// 如果为空则直接读取下一条记录
 				if (! $category || ! $code || ! $name || ! $unit)
 					continue;
-				
+
 				$unitId = null;
 				$categoryId = null;
-				
+
 				if ($units["{$unit}"]) {
 					$unitId = $units["{$unit}"];
 				} else {
@@ -131,7 +132,7 @@ class ImportService extends PSIBaseService {
 							"{$unit}" => "{$unitId}"
 					);
 				}
-				
+
 				if ($categories["{$category}"]) {
 					$categoryId = $categories["{$category}"];
 				} else {
@@ -147,7 +148,7 @@ class ImportService extends PSIBaseService {
 							"{$category}" => "{$categoryId}"
 					);
 				}
-				
+
 				// 新增
 				// 检查商品编码是否唯一
 				$sql = "select 1  from t_goods where code = '%s' ";
@@ -156,7 +157,7 @@ class ImportService extends PSIBaseService {
 					$message .= "商品: 商品编码 = {$code}, 品名 = {$name}, 规格型号 = {$spec} 已存在; \r\n";
 					continue;
 				}
-				
+
 				// 如果录入了条形码，则需要检查条形码是否唯一
 				if ($barcode) {
 					$sql = "select 1  from t_goods where bar_code = '%s' ";
@@ -166,26 +167,26 @@ class ImportService extends PSIBaseService {
 						continue;
 					}
 				}
-				
+
 				$id = $idGen->newId();
 				$py = $ps->toPY($name);
 				$specPY = $ps->toPY($spec);
-				
+
 				$insertSql .= $dataSql;
 				// 数据参数加入
-				array_push($params, $id, $code, $name, $spec, $categoryId, $unitId, $salePrice, $py, 
+				array_push($params, $id, $code, $name, $spec, $categoryId, $unitId, $salePrice, $py,
 						$purchasePrice, $barcode, $dataOrg, $memo, $specPY);
 			}
-			
+
 			$db->execute(rtrim($insertSql, ','), $params);
-			
+
 			$log = "导入方式新增商品;{$dataFile}";
 			$bs->insertBizlog($log, "基础数据-商品");
 		} catch ( Exception $e ) {
 			$success = false;
 			$message = $e;
 		}
-		
+
 		$result = array(
 				"msg" => $message,
 				"success" => $success
@@ -210,14 +211,14 @@ class ImportService extends PSIBaseService {
 				"msg" => $message,
 				"success" => $success
 		);
-		
+
 		if (! $dataFile || ! $ext)
 			return $result;
-		
+
 		$inputFileType = 'Excel5';
 		if ($ext == 'xlsx')
 			$inputFileType = 'Excel2007';
-			
+
 			// 设置php服务器可用内存，上传较大文件时可能会用到
 		ini_set('memory_limit', '1024M');
 		// Deal with the Fatal error: Maximum execution time of 30 seconds exceeded
@@ -225,7 +226,7 @@ class ImportService extends PSIBaseService {
 		$objReader = \PHPExcel_IOFactory::createReader($inputFileType);
 		// 设置只读，可取消类似"3.08E-05"之类自动转换的数据格式，避免写库失败
 		$objReader->setReadDataOnly(true);
-		
+
 		try {
 			// 载入文件
 			$objPHPExcel = $objReader->load($dataFile);
@@ -233,22 +234,22 @@ class ImportService extends PSIBaseService {
 			$currentSheet = $objPHPExcel->getSheet(0);
 			// 获取总行数
 			$allRow = $currentSheet->getHighestRow();
-			
+
 			// 如果没有数据行，直接返回
 			if ($allRow < 2)
 				return $result;
-			
+
 			$ps = new PinyinService();
 			$idGen = new IdGenService();
 			$bs = new BizlogService();
 			$db = M();
 			$categories = array(); // 同上
 			$params = array(); // 数据参数
-			
+
 			$us = new UserService();
 			$dataOrg = $us->getLoginUserDataOrg();
 			$companyId = $us->getCompanyId();
-			
+
 			$insertSql = "
 				insert into t_customer (id, category_id, code, name, py,
 					contact01, qq01, tel01, mobile01, contact02, qq02, tel02, mobile02, address,
@@ -329,7 +330,7 @@ class ImportService extends PSIBaseService {
 						$initReceivablesDT = null;
 					}
 				}
-				
+
 				; // 格式化日期
 				$addressShipping = $currentSheet->getCell($indexAddressShipping)->getValue();
 				$addressReceipt = $currentSheet->getCell($indexAddressReceipt)->getValue();
@@ -338,13 +339,13 @@ class ImportService extends PSIBaseService {
 				$taxNumber = $currentSheet->getCell($indexTaxNumber)->getValue();
 				$fax = $currentSheet->getCell($indexFax)->getValue();
 				$note = $currentSheet->getCell($indexNote)->getValue();
-				
+
 				// 如果为空则直接读取下一条记录
 				if (! $category || ! $code || ! $name)
 					continue;
-				
+
 				$categoryId = null;
-				
+
 				if ($categories["{$category}"]) {
 					$categoryId = $categories["{$category}"];
 				} else {
@@ -360,7 +361,7 @@ class ImportService extends PSIBaseService {
 							"{$category}" => "{$categoryId}"
 					);
 				}
-				
+
 				// 新增
 				// 检查商品编码是否唯一
 				$sql = "select 1 from t_customer where code = '%s' ";
@@ -369,22 +370,22 @@ class ImportService extends PSIBaseService {
 					$message .= "编码为 [{$code}] 的客户已经存在; \r\n";
 					continue;
 				}
-				
+
 				$id = $idGen->newId();
 				$py = $ps->toPY($name);
-				
-				$db->execute($insertSql, $id, $categoryId, $code, $name, $py, $contact01, $qq01, 
-						$tel01, $mobile01, $contact02, $qq02, $tel02, $mobile02, $address, 
-						$addressShipping, $addressReceipt, $bankName, $bankAccount, $taxNumber, $fax, 
+
+				$db->execute($insertSql, $id, $categoryId, $code, $name, $py, $contact01, $qq01,
+						$tel01, $mobile01, $contact02, $qq02, $tel02, $mobile02, $address,
+						$addressShipping, $addressReceipt, $bankName, $bankAccount, $taxNumber, $fax,
 						$note, $dataOrg);
-				
+
 				// 处理应收账款
 				$initReceivables = floatval($initReceivables);
-				
+
 				if ($initReceivables && $initReceivablesDT && $this->dateIsValid($initReceivablesDT)) {
 					$sql = "select count(*) as cnt
 					from t_receivables_detail
-					where ca_id = '%s' and ca_type = 'customer' and ref_type <> '应收账款期初建账' 
+					where ca_id = '%s' and ca_type = 'customer' and ref_type <> '应收账款期初建账'
 							and company_id = '%s' ";
 					$data = $db->query($sql, $id, $companyId);
 					$cnt = $data[0]["cnt"];
@@ -392,24 +393,24 @@ class ImportService extends PSIBaseService {
 						// 已经有应收业务发生，就不再更改期初数据
 						continue;
 					}
-					
+
 					$sql = "update t_customer
 							set init_receivables = %f, init_receivables_dt = '%s'
 							where id = '%s' ";
 					$db->execute($sql, $initReceivables, $initReceivablesDT, $id);
-					
+
 					// 应收明细账
 					$sql = "select id from t_receivables_detail
-							where ca_id = '%s' and ca_type = 'customer' and ref_type = '应收账款期初建账' 
+							where ca_id = '%s' and ca_type = 'customer' and ref_type = '应收账款期初建账'
 							and company_id = '%s' ";
 					$data = $db->query($sql, $id, $companyId);
 					if ($data) {
 						$rvId = $data[0]["id"];
 						$sql = "update t_receivables_detail
-								set rv_money = %f, act_money = 0, balance_money = %f, biz_date ='%s', 
+								set rv_money = %f, act_money = 0, balance_money = %f, biz_date ='%s',
 									date_created = now()
 								where id = '%s' ";
-						$db->execute($sql, $initReceivables, $initReceivables, $initReceivablesDT, 
+						$db->execute($sql, $initReceivables, $initReceivables, $initReceivablesDT,
 								$rvId);
 					} else {
 						$idGen = new IdGenService();
@@ -417,13 +418,13 @@ class ImportService extends PSIBaseService {
 						$sql = "insert into t_receivables_detail (id, rv_money, act_money, balance_money,
 						biz_date, date_created, ca_id, ca_type, ref_number, ref_type, company_id)
 						values ('%s', %f, 0, %f, '%s', now(), '%s', 'customer', '%s', '应收账款期初建账', '%s') ";
-						$db->execute($sql, $rvId, $initReceivables, $initReceivables, 
+						$db->execute($sql, $rvId, $initReceivables, $initReceivables,
 								$initReceivablesDT, $id, $id, $companyId);
 					}
-					
+
 					// 应收总账
-					$sql = "select id from t_receivables 
-							where ca_id = '%s' and ca_type = 'customer' 
+					$sql = "select id from t_receivables
+							where ca_id = '%s' and ca_type = 'customer'
 								and company_id = '%s' ";
 					$data = $db->query($sql, $id, $companyId);
 					if ($data) {
@@ -436,21 +437,21 @@ class ImportService extends PSIBaseService {
 						$idGen = new IdGenService();
 						$rvId = $idGen->newId();
 						$sql = "insert into t_receivables (id, rv_money, act_money, balance_money,
-								ca_id, ca_type, company_id) 
+								ca_id, ca_type, company_id)
 								values ('%s', %f, 0, %f, '%s', 'customer', '%s')";
-						$db->execute($sql, $rvId, $initReceivables, $initReceivables, $id, 
+						$db->execute($sql, $rvId, $initReceivables, $initReceivables, $id,
 								$companyId);
 					}
 				}
 			} // for
-			
+
 			$log = "导入方式新增客户";
 			$bs->insertBizlog($log, "客户关系-客户资料");
 		} catch ( Exception $e ) {
 			$success = false;
 			$message = $e;
 		}
-		
+
 		return array(
 				"msg" => $message,
 				"success" => $success
