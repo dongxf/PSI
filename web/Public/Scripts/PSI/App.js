@@ -150,7 +150,7 @@ Ext.define("PSI.App", {
 										titleAlign : "center",
 										title : "Copyright &copy; 2015-"
 												+ year
-												+ " PSI Team, All Rights Reserved"
+												+ " FOODTRUST Team, All Rights Reserved"
 									}
 								}]
 					}]
