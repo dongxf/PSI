@@ -38,7 +38,19 @@
 			productionName : "{$productionName}"
 		});
 
-		app.add(Ext.create("PSI.SaleContract.SCMainForm"));
+		var permission = {
+			add : "{$pAdd}",
+			edit : "{$pEdit}",
+			del : "{$pDelete}",
+			genPDF : "{$pGenPDF}",
+			commit : "{$pCommit}",
+			genSOBill : "{$pGenSOBill}",
+			print : "{$pPrint}"
+		};
+
+		app.add(Ext.create("PSI.SaleContract.SCMainForm", {
+			permission : permission
+		}));
 
 		app.setAppHeader({
 			title : "{$title}"

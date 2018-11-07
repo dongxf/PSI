@@ -69,45 +69,57 @@ Ext.define("PSI.SaleContract.SCMainForm", {
 		return [{
 					text : "新建销售合同",
 					id : "buttonAdd",
+					hidden : me.getPermission().add == "0",
 					scope : me,
 					handler : me.onAddBill
 				}, {
+					hidden : me.getPermission().add == "0",
 					xtype : "tbseparator"
 				}, {
 					text : "编辑销售合同",
 					scope : me,
+					hidden : me.getPermission().edit == "0",
 					handler : me.onEditBill,
 					id : "buttonEdit"
 				}, {
+					hidden : me.getPermission().edit == "0",
 					xtype : "tbseparator"
 				}, {
 					text : "删除销售合同",
 					scope : me,
+					hidden : me.getPermission().del == "0",
 					handler : me.onDeleteBill,
 					id : "buttonDelete"
 				}, {
+					hidden : me.getPermission().del == "0",
 					xtype : "tbseparator",
 					id : "tbseparator1"
 				}, {
 					text : "审核",
+					hidden : me.getPermission().commit == "0",
 					scope : me,
 					handler : me.onCommit,
 					id : "buttonCommit"
 				}, {
 					text : "取消审核",
+					hidden : me.getPermission().commit == "0",
 					scope : me,
 					handler : me.onCancelConfirm,
 					id : "buttonCancelConfirm"
 				}, {
+					hidden : me.getPermission().commit == "0",
 					xtype : "tbseparator",
 					id : "tbseparator2"
 				}, {
 					text : "生成销售订单",
+					hidden : me.getPermission().genSOBill == "0",
 					scope : me,
 					handler : me.onGenSOBill
 				}, {
+					hidden : me.getPermission().genSOBill == "0",
 					xtype : "tbseparator"
 				}, {
+					hidden : me.getPermission().genPDF == "0",
 					text : "导出",
 					menu : [{
 								text : "单据生成pdf",
@@ -117,6 +129,7 @@ Ext.define("PSI.SaleContract.SCMainForm", {
 								handler : me.onPDF
 							}]
 				}, {
+					hidden : me.getPermission().genPDF == "0",
 					xtype : "tbseparator"
 				}, {
 					text : "帮助",
@@ -408,7 +421,9 @@ Ext.define("PSI.SaleContract.SCMainForm", {
 					scope : me
 				},
 				itemdblclick : {
-					fn : me.onEditBill,
+					fn : me.getPermission().genPDF == "0"
+							? Ext.emptyFn
+							: me.onEditBill,
 					scope : me
 				}
 			}

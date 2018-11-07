@@ -25,6 +25,16 @@ class SaleContractController extends PSIBaseController {
 			
 			$this->assign("title", "销售合同");
 			
+			$this->assign("pCommit", $us->hasPermission(FIdConst::SALE_CONTRACT_COMMIT) ? "1" : "0");
+			$this->assign("pGenSOBill", 
+					$us->hasPermission(FIdConst::SALE_CONTRACT_GEN_SOBILL) ? "1" : "0");
+			
+			$this->assign("pAdd", $us->hasPermission(FIdConst::SALE_CONTRACT_ADD) ? "1" : "0");
+			$this->assign("pEdit", $us->hasPermission(FIdConst::SALE_CONTRACT_EDIT) ? "1" : "0");
+			$this->assign("pDelete", $us->hasPermission(FIdConst::SALE_CONTRACT_DELETE) ? "1" : "0");
+			$this->assign("pGenPDF", $us->hasPermission(FIdConst::SALE_CONTRACT_PDF) ? "1" : "0");
+			$this->assign("pPrint", $us->hasPermission(FIdConst::SALE_CONTRACT_PRINT) ? "1" : "0");
+			
 			$this->display();
 		} else {
 			$this->gotoLoginPage("/Home/SaleContract/index");
