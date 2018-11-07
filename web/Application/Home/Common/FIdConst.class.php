@@ -766,10 +766,59 @@ class FIdConst {
 	
 	/**
 	 * 销售合同
-	 * 
+	 *
 	 * @var string
 	 */
 	const SALE_CONTRACT = "2032";
+	
+	/**
+	 * 销售合同 - 新增销售合同
+	 *
+	 * @var string
+	 */
+	const SALE_CONTRACT_ADD = "2032-01";
+	
+	/**
+	 * 销售合同 - 编辑销售合同
+	 *
+	 * @var string
+	 */
+	const SALE_CONTRACT_EDIT = "2032-02";
+	
+	/**
+	 * 销售合同 - 删除销售合同
+	 *
+	 * @var string
+	 */
+	const SALE_CONTRACT_DELETE = "2032-03";
+	
+	/**
+	 * 销售合同 - 审核/取消审核
+	 *
+	 * @var string
+	 */
+	const SALE_CONTRACT_COMMIT = "2032-04";
+	
+	/**
+	 * 销售合同 - 生成销售订单
+	 *
+	 * @var string
+	 */
+	const SALE_CONTRACT_GEN_SOBILL = "2032-05";
+	
+	/**
+	 * 销售合同 - 单据生成PDF
+	 *
+	 * @var string
+	 */
+	const SALE_CONTRACT_PDF = "2032-06";
+	
+	/**
+	 * 销售合同 - 打印
+	 *
+	 * @var string
+	 */
+	const SALE_CONTRACT_PRINT = "2032-07";
 	
 	// -------------------------
 	// 财务总账系统GL fid使用2100段
@@ -791,7 +840,7 @@ class FIdConst {
 	
 	/**
 	 * 会计期间
-	 * 
+	 *
 	 * @var string
 	 */
 	const GL_PERIOD = "2103";
